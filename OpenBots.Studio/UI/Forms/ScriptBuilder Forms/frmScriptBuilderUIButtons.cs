@@ -183,6 +183,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }           
         }
 
+        //Helper Method
+        public void OpenScriptFile(string scriptFilePath)
+        {
+            OpenFile(scriptFilePath);
+        }
+
         private void uiBtnSave_Click(object sender, EventArgs e)
         {
             //clear selected items
@@ -706,6 +712,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 
                 LoadCommands();
             }
+        }
+
+        private void uiBtnPackageManager_Click(object sender, EventArgs e)
+        {
+            packageManagerToolStripMenuItem_Click(sender, e);
         }
         #endregion
 
