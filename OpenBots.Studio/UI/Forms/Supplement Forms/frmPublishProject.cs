@@ -16,13 +16,13 @@ namespace OpenBots.UI.Supplement_Forms
         public string NotificationMessage { get; set; }
         private string _projectPath;
         private string _projectName;
-        private Guid _projectId;
+        private Dictionary<string, string> _projectDependencies { get; set; }
         
         public frmPublishProject(string projectPath, Project project)
         {
             _projectPath = projectPath;
             _projectName = project.ProjectName;
-            _projectId = project.ProjectID;
+            _projectDependencies = project.Dependencies;
             InitializeComponent();           
         }
 
@@ -78,9 +78,25 @@ namespace OpenBots.UI.Supplement_Forms
                     {
                         Dependencies = new List<ManifestDependency>()
                         {
+                            
                             new ManifestDependency()
                             {
                                 Id = "OpenBots.Studio",
+                                Version = new Version(Application.ProductVersion).ToString()
+                            },
+                            new ManifestDependency()
+                            {
+                                Id = "OpenBots.Core",
+                                Version = new Version(Application.ProductVersion).ToString()
+                            },
+                            new ManifestDependency()
+                            {
+                                Id = "OpenBots.Engine",
+                                Version = new Version(Application.ProductVersion).ToString()
+                            },
+                            new ManifestDependency()
+                            {
+                                Id = "OpenBots.UI",
                                 Version = new Version(Application.ProductVersion).ToString()
                             }
                         }
@@ -88,6 +104,16 @@ namespace OpenBots.UI.Supplement_Forms
                 },
                     ContentFiles = manifestFiles,
                 };
+
+                foreach (var dependency in _projectDependencies)
+                {
+                    var dep = new ManifestDependency
+                    {
+                        Id = dependency.Key,
+                        Version = dependency.Value
+                    };
+                    metadata.DependencySets[0].Dependencies.Add(dep);
+                }
 
                 PackageBuilder builder = new PackageBuilder();
                 builder.PopulateFiles(_projectPath, new[] { new ManifestFile() { Source = "**" } });

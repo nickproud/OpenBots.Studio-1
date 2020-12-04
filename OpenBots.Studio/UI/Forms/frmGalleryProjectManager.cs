@@ -23,7 +23,7 @@ namespace OpenBots.UI.Forms
         private IPackageSearchMetadata _catalog;
         private List<NuGetVersion> _projectVersions;
         private List<IPackageSearchMetadata> _selectedPackageMetaData;
-        private string _gallerySourceUrl = "https://dev.gallery.openbots.io/v3/Automation.json";
+        private string _gallerySourceUrl = "https://gallery.openbots.io/v3/Automation.json";
 
         public frmGalleryProjectManager(string projectLocation, string projectName)
         {
