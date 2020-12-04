@@ -149,11 +149,7 @@ namespace OpenBots.UI.Forms
 
                 _projectVersions.Clear();
 
-                if (lblPackageCategory.Text == "Project Dependencies")
-                {
-                    _projectVersions.AddRange(await NugetPackageManager.GetPackageVersions(projectId, _appDataPackagePath, _includePrerelease));
-                }
-                else if (lblPackageCategory.Text == "All Packages")
+                if (lblPackageCategory.Text == "All Packages" || lblPackageCategory.Text == "Project Dependencies")
                 {
                     foreach (DataRow row in _packageSourceDT.Rows)
                     {
