@@ -56,7 +56,7 @@ namespace OpenBots.Core.Project
             Dependencies = new Dictionary<string, string>();
 
             foreach (string commandSet in DefaultCommands)
-                Dependencies.Add($"OpenBots.Commands.{commandSet}", "1.1.0");
+                Dependencies.Add($"OpenBots.Commands.{commandSet}", "1.2.0");
         }
 
         public void SaveProject(string scriptPath)
