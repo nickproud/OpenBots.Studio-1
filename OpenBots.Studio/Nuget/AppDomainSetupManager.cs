@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Policy;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace OpenBots.Nuget
 {
@@ -37,7 +39,7 @@ namespace OpenBots.Nuget
         public static ContainerBuilder LoadBuilder(List<string> assemblyPaths)
         {
             List<Assembly> existingAssemblies = new List<Assembly>();
-            foreach (var path in assemblyPaths)
+            Parallel.ForEach(assemblyPaths, path =>
             {
                 try
                 {
@@ -45,21 +47,15 @@ namespace OpenBots.Nuget
                     var name = assemblyinfo.Name;
                     var version = assemblyinfo.Version.ToString();
 
-                    if (name.Contains("OpenBots.Core") || name.Contains("OpenBots.Engine") || name.Contains("RestSharp"))
-                    {
-                        //pause
-                    }
-
                     var assemblies = AppDomain.CurrentDomain.GetAssemblies();
                     var existingAssembly = assemblies.Where(x => x.GetName().Name == name &&
                                                                  x.GetName().Version.ToString() == version)
                                                      .FirstOrDefault();
 
-                    if ((existingAssembly == null && name != "OpenBots.Engine"))// || name == "RestSharp")
+                    if ((existingAssembly == null && name != "OpenBots.Engine"))
                     {
                         var assembly = Assembly.LoadFrom(path);
-                        //if (name != "OpenBots.Core")
-                            existingAssemblies.Add(assembly);
+                        existingAssemblies.Add(assembly);
                     }
                     else if (name != "OpenBots.Engine")
                         existingAssemblies.Add(existingAssembly);
@@ -68,7 +64,7 @@ namespace OpenBots.Nuget
                 {
                     Console.WriteLine(ex);
                 }
-            }
+            });
 
             ContainerBuilder builder = new ContainerBuilder();
 

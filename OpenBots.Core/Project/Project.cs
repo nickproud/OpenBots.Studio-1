@@ -32,6 +32,7 @@ namespace OpenBots.Core.Project
             "File",
             "Folder",
             "If",
+            "Image",
             "Input",
             "List",
             "Loop",
