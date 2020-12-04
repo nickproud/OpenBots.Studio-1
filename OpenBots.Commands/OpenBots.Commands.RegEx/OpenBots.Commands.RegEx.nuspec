@@ -21,7 +21,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Debug\*.dll" target="lib" />
-	<file src="bin\Debug\*.pdb" target="lib" />
+    <file src="bin\Debug\*.dll" target="lib\net48" />
+	<file src="bin\Debug\*.pdb" target="lib\net48" />
   </files>
 </package>
