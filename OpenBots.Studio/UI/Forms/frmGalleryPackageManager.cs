@@ -44,7 +44,7 @@ namespace OpenBots.UI.Forms
             _appDataPackagePath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
 
             _settings = new ApplicationSettings().GetOrCreateApplicationSettings();
-            _packageSourceDT = _settings.EngineSettings.PackageSourceDT;
+            _packageSourceDT = _settings.ClientSettings.PackageSourceDT;
 
             _projectDependenciesDict = projectDependenciesDict;
             _packageLocation = packageLocation;

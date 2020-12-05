@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 
 namespace OpenBots.Core.Settings
@@ -18,6 +19,7 @@ namespace OpenBots.Core.Settings
         public string StartupMode { get; set; }
         public bool PreloadBuilderCommands { get; set; }
         public bool UseSlimActionBar { get; set; }
+        public DataTable PackageSourceDT { get; set; }
 
         public ClientSettings()
         {

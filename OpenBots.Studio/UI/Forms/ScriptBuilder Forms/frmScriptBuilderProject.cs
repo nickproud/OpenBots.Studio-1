@@ -67,7 +67,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 var assemblyList = await NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 _container = _builder.Build();
-                         
+                        
                 string mainScriptPath = Path.Combine(ScriptProjectPath, "Main.json");
                 string mainScriptName = Path.GetFileNameWithoutExtension(mainScriptPath);
                 UIListView mainScriptActions = NewLstScriptActions(mainScriptName);
