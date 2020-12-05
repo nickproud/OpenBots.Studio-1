@@ -32,10 +32,12 @@ namespace OpenBots.Core.Project
             "File",
             "Folder",
             "If",
+            "Image",
             "Input",
             "List",
             "Loop",
             "Misc",
+            "Outlook",
             "Process",
             "RegEx",
             "SecureData",
@@ -45,6 +47,7 @@ namespace OpenBots.Core.Project
             "Variable",
             "WebBrowser",
             "Window",
+            "Word",
         };
 
         public Project(string projectName)
