@@ -78,13 +78,13 @@ namespace OpenBots.Core.Settings
                 catch (Exception)
                 {
                     appSettings = new ApplicationSettings();
-                    appSettings.EngineSettings.PackageSourceDT = DefaultPackageSourceDT();
+                    appSettings.ClientSettings.PackageSourceDT = DefaultPackageSourceDT();
                 }
             }
             else
             {
                 appSettings = new ApplicationSettings();
-                appSettings.EngineSettings.PackageSourceDT = DefaultPackageSourceDT();
+                appSettings.ClientSettings.PackageSourceDT = DefaultPackageSourceDT();
             }
 
             return appSettings;

@@ -114,7 +114,7 @@ namespace OpenBots.Core.Gallery
 
         public static async Task InstallPackage(string packageId, string version, Dictionary<string, string> projectDependenciesDict)
         {
-            var packageSources = new ApplicationSettings().GetOrCreateApplicationSettings().EngineSettings.PackageSourceDT;
+            var packageSources = new ApplicationSettings().GetOrCreateApplicationSettings().ClientSettings.PackageSourceDT;
             var packageVersion = NuGetVersion.Parse(version);
             var nuGetFramework = NuGetFramework.ParseFolder("net48");
             var settings = NuGet.Configuration.Settings.LoadDefaultSettings(root: null);

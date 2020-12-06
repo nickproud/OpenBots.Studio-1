@@ -1,7 +1,6 @@
 ﻿using OpenBots.Core.Enums;
 using Serilog.Events;
 using System;
-using System.Data;
 using System.Windows.Forms;
 
 namespace OpenBots.Core.Settings
@@ -28,8 +27,7 @@ namespace OpenBots.Core.Settings
         public string LoggingValue2 { get; set; }
         public string LoggingValue3 { get; set; }
         public string LoggingValue4 { get; set; }
-        public LogEventLevel MinLogLevel { get; set; }
-        public DataTable PackageSourceDT { get; set; }
+        public LogEventLevel MinLogLevel { get; set; }        
 
         public EngineSettings()
         {
