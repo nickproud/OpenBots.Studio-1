@@ -1103,16 +1103,6 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap OpenBots_splash {
-            get {
-                object obj = ResourceManager.GetObject("OpenBots_splash", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap openbots_splash2 {
             get {
                 object obj = ResourceManager.GetObject("openbots_splash2", resourceCulture);
@@ -1156,36 +1146,6 @@ namespace OpenBots.Core.Properties {
         public static System.Drawing.Bitmap recent_files {
             get {
                 object obj = ResourceManager.GetObject("recent-files", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap robot_bouncing_transparent {
-            get {
-                object obj = ResourceManager.GetObject("robot-bouncing-transparent", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap robot_error {
-            get {
-                object obj = ResourceManager.GetObject("robot-error", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap robot_source {
-            get {
-                object obj = ResourceManager.GetObject("robot source", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
