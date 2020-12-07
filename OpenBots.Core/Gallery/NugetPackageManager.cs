@@ -57,7 +57,7 @@ namespace OpenBots.Core.Gallery
                 packageKeyword,
                 searchFilter,
                 skip: 0,
-                take: 20,
+                take: 35,
                 logger,
                 cancellationToken);
 
@@ -252,7 +252,7 @@ namespace OpenBots.Core.Gallery
 
                     using (var cacheContext = new SourceCacheContext())
                     {
-                        var localRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(packagePath, "Local OpenBots Repo", true));
+                        var localRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(packagePath, "Local OpenBots Repository", true));
                         var repositories = new List<SourceRepository>();
                         repositories.Add(localRepo);
 
