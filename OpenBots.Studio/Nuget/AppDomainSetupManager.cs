@@ -12,30 +12,7 @@ using System.Threading.Tasks;
 namespace OpenBots.Nuget
 {
     public class AppDomainSetupManager
-    {
-        public static AppDomain SetupAppDomain()
-        {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string packagePath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
-            string applicationBase = Path.GetDirectoryName(packagePath);
-            AppDomainSetup setup = new AppDomainSetup
-            {
-               // ShadowCopyFiles = "true",
-                //LoaderOptimization = LoaderOptimization.MultiDomainHost,
-                ApplicationName = "OpenBots_Studio_AD",
-                ApplicationBase = applicationBase,
-                PrivateBinPath = applicationBase,//AppDomain.CurrentDomain.BaseDirectory,
-                //PrivateBinPathProbe = AppDomain.CurrentDomain.BaseDirectory,
-                ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile
-            };
-
-            Evidence evidence = new Evidence(AppDomain.CurrentDomain.Evidence);
-            var appDomain = AppDomain.CreateDomain("OpenBots_Studio_AD", evidence, setup);
-            //appDomain.CreateInstanceFrom(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Host.AssemblyLoader.dll"), "Host.AssemblyLoader");
-            return appDomain;
-
-        }
-
+    {       
         public static ContainerBuilder LoadBuilder(List<string> assemblyPaths)
         {
             List<Assembly> existingAssemblies = new List<Assembly>();
