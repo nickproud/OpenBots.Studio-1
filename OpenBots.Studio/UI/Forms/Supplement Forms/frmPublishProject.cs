@@ -66,7 +66,7 @@ namespace OpenBots.UI.Supplement_Forms
 
                 ManifestMetadata metadata = new ManifestMetadata()
                 {
-                    Id = _projectName,
+                    Id = _projectName.Replace(" ", ""),
                     Title = _projectName,
                     Authors = txtAuthorName.Text.Trim(),
                     Version = txtVersion.Text.Trim(),

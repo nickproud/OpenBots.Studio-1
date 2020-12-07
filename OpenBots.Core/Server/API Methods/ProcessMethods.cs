@@ -10,7 +10,7 @@ namespace OpenBots.Core.Server.API_Methods
     {
         public static Guid CreateProcess(RestClient client, string name)
         {
-            var request = new RestRequest("api/v1/Processes", Method.POST);
+            var request = new RestRequest("api/v1/Automations", Method.POST);
             request.RequestFormat = DataFormat.Json;
             request.AddJsonBody(new { name });
 
@@ -30,7 +30,7 @@ namespace OpenBots.Core.Server.API_Methods
         public static void UploadProcess(RestClient client, string name, string filePath)
         {
             Guid processId = CreateProcess(client, name);
-            var request = new RestRequest("api/v1/Processes/{id}/upload", Method.POST);
+            var request = new RestRequest("api/v1/Automations/{id}/upload", Method.POST);
             request.AddUrlSegment("id", processId.ToString());
             request.RequestFormat = DataFormat.Json;
 

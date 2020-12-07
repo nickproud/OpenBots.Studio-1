@@ -28,6 +28,7 @@ namespace OpenBots.Core.Project
             "Dictionary",
             "Email",
             "Engine",
+            "ErrorHandling",
             "Excel",
             "File",
             "Folder",
