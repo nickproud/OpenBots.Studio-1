@@ -96,14 +96,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 var commandName = commandNode.Text;
                 var commandGroupName = commandNode.Parent.Text;
-                ScriptCommand newCommand = _automationCommands.Where(x => x.ShortName == commandName && x.DisplayGroup == commandGroupName)
-                                                              .Select(x => x.Command).FirstOrDefault();
+
+                var newCommandName = _automationCommands.Where(x => x.ShortName == commandName && x.DisplayGroup == commandGroupName)
+                                                              .Select(x => x.Command).FirstOrDefault().GetType();
+
+                dynamic newCommandInstance = TypeMethods.CreateTypeInstance(_container, newCommandName.Name);
 
                 CreateUndoSnapshot();
                 if (dragToItem != null)
-                    AddCommandToListView(newCommand, dragToItem.Index);
+                    AddCommandToListView(newCommandInstance, dragToItem.Index);
                 else
-                    AddCommandToListView(newCommand, _selectedTabScriptActions.Items.Count);
+                    AddCommandToListView(newCommandInstance, _selectedTabScriptActions.Items.Count);
             }
             else
             {

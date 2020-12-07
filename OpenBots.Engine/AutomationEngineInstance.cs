@@ -272,7 +272,7 @@ namespace OpenBots.Engine
             if (parentCommand == null)
                 return;
 
-            if (ScriptEngineUI != null && (parentCommand.CommandName == "RunTaskCommand" || parentCommand.CommandName == "MessageBoxCommand"))
+            if (ScriptEngineUI != null && (parentCommand.CommandName == "RunTaskCommand" || parentCommand.CommandName == "ShowMessageCommand"))
                 parentCommand.CurrentScriptBuilder = ScriptEngineUI.CallBackForm;
 
             //set LastCommandExecuted
