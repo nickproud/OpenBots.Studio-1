@@ -362,8 +362,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Dependencies\7z.dll" />
-    <Content Include="Resources\Dependencies\7z.exe" />
     <Content Include="Resources\Icons\ActionBar\action-bar-add-command.png" />
     <Content Include="Resources\Icons\ActionBar\action-bar-clear.png" />
     <Content Include="Resources\Icons\ActionBar\action-bar-debug.png" />
@@ -391,7 +389,6 @@
     <Content Include="Resources\Icons\Browser\browser-home.png" />
     <Content Include="Resources\Icons\Browser\browser-refresh.png" />
     <Content Include="Resources\Icons\Browser\browser-save.png" />
-    <Content Include="Resources\Dependencies\chromedriver.exe" />
     <Content Include="Resources\Icons\Buttons\close-button.png" />
     <None Include="Resources\Icons\Commands\command-asset.png" />
     <None Include="Resources\Icons\Buttons\settings.png" />
@@ -468,13 +465,11 @@
     <Content Include="Resources\Icons\Misc\header-backing.png" />
     <Content Include="Resources\Icons\Misc\header_backing_dark.png" />
     <Content Include="Resources\Samples\HTMLInputSample.html" />
-    <Content Include="Resources\Dependencies\IEDriverServer.exe" />
     <Content Include="Resources\Icons\Buttons\links-header - rotated.png" />
     <Content Include="Resources\Icons\Buttons\links-header.png" />
     <Content Include="Resources\Icons\FileIcons\microsoft-excel-icon.png" />
     <Content Include="Resources\Icons\FileIcons\microsoft-word-icon.png" />
     <Content Include="Resources\Icons\Logo\OpenBots-logo.png" />
-    <None Include="Resources\Dependencies\OpenBots.Updater.exe" />
     <Content Include="Resources\Icons\Buttons\paste.png" />
     <Content Include="Resources\Icons\FileIcons\pdf-icon.png" />
     <Content Include="Resources\Icons\Buttons\project-collapse.png" />

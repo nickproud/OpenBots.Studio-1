@@ -1031,16 +1031,6 @@ namespace OpenBots.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] IEDriverServer {
-            get {
-                object obj = ResourceManager.GetObject("IEDriverServer", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap links_header {
@@ -1127,16 +1117,6 @@ namespace OpenBots.Core.Properties {
             get {
                 object obj = ResourceManager.GetObject("openbots_splash2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] OpenBots_Updater {
-            get {
-                object obj = ResourceManager.GetObject("OpenBots_Updater", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         
