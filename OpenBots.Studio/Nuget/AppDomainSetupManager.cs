@@ -52,12 +52,12 @@ namespace OpenBots.Nuget
                                                                  x.GetName().Version.ToString() == version)
                                                      .FirstOrDefault();
 
-                    if ((existingAssembly == null && name != "OpenBots.Engine"))
+                    if ((existingAssembly == null && name != "OpenBots.Engine" && name != "RestSharp"))
                     {
                         var assembly = Assembly.LoadFrom(path);
                         existingAssemblies.Add(assembly);
                     }
-                    else if (name != "OpenBots.Engine")
+                    else if (name != "OpenBots.Engine" && name != "RestSharp")
                         existingAssemblies.Add(existingAssembly);
                 }
                 catch (Exception ex)
