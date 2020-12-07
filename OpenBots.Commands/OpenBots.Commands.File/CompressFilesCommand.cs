@@ -72,7 +72,7 @@ namespace OpenBots.Commands.File
 			// get password to extract files
 			var vPassword = v_Password.ConvertUserVariableToString(engine);
 
-			string[] filenames = Directory.GetFiles(vSourceDirectoryPathOrigin);
+			string[] filenames = Directory.GetFiles(vSourceDirectoryPathOrigin, "*.*", SearchOption.AllDirectories);
 
 			string sourceDirectoryName = new DirectoryInfo(vSourceDirectoryPathOrigin).Name;
 			string compressedFileName = Path.Combine(vFilePathDestination, sourceDirectoryName + ".zip");
