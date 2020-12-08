@@ -311,9 +311,10 @@ namespace OpenBots.Core.Nuget
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    //assembly not found
+                    Console.WriteLine(ex);
                 }                
             }
             return assemblyPaths;
