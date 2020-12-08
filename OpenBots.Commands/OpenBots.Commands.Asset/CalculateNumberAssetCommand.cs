@@ -1,0 +1,139 @@
+﻿using Newtonsoft.Json;
+using OpenBots.Core.Attributes.PropertyAttributes;
+using OpenBots.Core.Command;
+using OpenBots.Core.Common;
+using OpenBots.Core.Enums;
+using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Server.API_Methods;
+using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Engine;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Windows.Forms;
+
+namespace OpenBots.Commands.Asset
+{
+    [Serializable]
+    [Category("Asset Commands")]
+    [Description("This command increments, decrements, adds, or subtracts an Asset in OpenBots Server.")]
+    public class CalculateNumberAssetCommand : ScriptCommand
+    {
+        [Required]
+        [DisplayName("Number Asset Name")]
+        [Description("Enter the name of the Asset.")]
+        [SampleUsage("Name || {vCredentialName}")]
+        [Remarks("This command will throw an exception if an asset of the wrong type is used")]
+        [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        public string v_AssetName { get; set; }
+
+        [Required]
+        [DisplayName("Asset Action Type")]
+        [PropertyUISelectionOption("Increment")]
+        [PropertyUISelectionOption("Decrement")]
+        [PropertyUISelectionOption("Add")]
+        [PropertyUISelectionOption("Subtract")]
+        [Description("Specify the type of calculation of the Asset.")]
+        [SampleUsage("")]
+        [Remarks("")]
+        public string v_AssetActionType { get; set; }
+
+        [Required]
+        [DisplayName("Asset Action Value")]
+        [Description("Enter the new value you would like to add or subtract from the Asset.")]
+        [SampleUsage("5 || {vAssetValue}")]
+        [Remarks("")]
+        [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        public string v_AssetActionValue { get; set; }
+
+        [JsonIgnore]
+        [Browsable(false)]
+        private List<Control> _assetActionValueControls;
+
+        public CalculateNumberAssetCommand()
+        {
+            CommandName = "CalculateNumberAssetCommand";
+            SelectionName = "Calculate Number Asset";
+            CommandEnabled = true;
+            v_AssetActionType = "Increment";
+            Common.InitializeDefaultWebProtocol();
+        }
+
+        public override void RunCommand(object sender)
+        {
+            var engine = (AutomationEngineInstance)sender;
+            var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
+            var vAssetActionValue = v_AssetActionValue.ConvertUserVariableToString(engine);
+
+            var client = AuthMethods.GetAuthToken();
+            var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq 'Number'");
+
+            if (asset == null)
+                throw new Exception($"No Asset was found for '{vAssetName}' and type 'Number'");
+
+            switch (v_AssetActionType)
+            {
+                case "Increment":
+                    AssetMethods.IncrementAsset(client, asset.Id);
+                    break;
+                case "Decrement":
+                    AssetMethods.DecrementAsset(client, asset.Id);
+                    break;
+                case "Add":
+                    AssetMethods.AddAsset(client, asset.Id, vAssetActionValue);
+                    break;
+                case "Subtract":
+                    AssetMethods.SubtractAsset(client, asset.Id, vAssetActionValue);
+                    break;
+            }
+        }
+
+        public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
+        {
+            base.Render(editor, commandControls);
+
+            RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AssetName", this, editor));
+            RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_AssetActionType", this, editor));
+            ((ComboBox)RenderedControls[4]).SelectedIndexChanged += AssetActionTypeComboBox_SelectedValueChanged;
+
+            _assetActionValueControls = new List<Control>();
+            _assetActionValueControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AssetActionValue", this, editor));
+            foreach (var ctrl in _assetActionValueControls)
+                ctrl.Visible = false;
+            RenderedControls.AddRange(_assetActionValueControls);
+
+            return RenderedControls;
+        }
+
+        public override string GetDisplayValue()
+        {
+            if (v_AssetActionType == "Increment")
+                return base.GetDisplayValue() + $" (Increment) ['{v_AssetName}']";
+            else if (v_AssetActionType == "Decrement")
+                return base.GetDisplayValue() + $" (Decrement) ['{v_AssetName}']";
+            else if (v_AssetActionType == "Add")
+                return base.GetDisplayValue() + $" (Add {v_AssetActionValue}) ['{v_AssetName}']";
+            else
+                return base.GetDisplayValue() + $" (Subtract {v_AssetActionValue}) ['{v_AssetName}']";
+        }
+
+        private void AssetActionTypeComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (((ComboBox)RenderedControls[4]).Text == "Add" || ((ComboBox)RenderedControls[4]).Text == "Subtract")
+            {
+                foreach (var ctrl in _assetActionValueControls)
+                    ctrl.Visible = true;
+            }
+            else
+            {
+                foreach (var ctrl in _assetActionValueControls)
+                {
+                    ctrl.Visible = false;
+                    if (ctrl is TextBox)
+                        ((TextBox)ctrl).Clear();
+                }
+            }
+        }
+    }
+}

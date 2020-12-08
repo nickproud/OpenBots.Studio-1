@@ -72,5 +72,55 @@ namespace OpenBots.Core.Server.API_Methods
             if (!response.IsSuccessful)
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
         }
+
+        public static void IncrementAsset(RestClient client, Guid? assetId)
+        {
+            var request = new RestRequest("api/v1/Assets/{id}/Increment", Method.PUT);
+            request.AddUrlSegment("id", assetId.ToString());
+            request.RequestFormat = DataFormat.Json;
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+        }
+
+        public static void DecrementAsset(RestClient client, Guid? assetId)
+        {
+            var request = new RestRequest("api/v1/Assets/{id}/Decrement", Method.PUT);
+            request.AddUrlSegment("id", assetId.ToString());
+            request.RequestFormat = DataFormat.Json;
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+        }
+
+        public static void AddAsset(RestClient client, Guid? assetId, string value)
+        {
+            var request = new RestRequest("api/v1/Assets/{id}/Add", Method.PUT);
+            request.AddUrlSegment("id", assetId.ToString());
+            request.AddQueryParameter("value", value);
+            request.RequestFormat = DataFormat.Json;
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+        }
+
+        public static void SubtractAsset(RestClient client, Guid? assetId, string value)
+        {
+            var request = new RestRequest("api/v1/Assets/{id}/Subtract", Method.PUT);
+            request.AddUrlSegment("id", assetId.ToString());
+            request.AddQueryParameter("value", value);
+            request.RequestFormat = DataFormat.Json;
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+        }
     }
 }
