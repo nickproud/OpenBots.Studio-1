@@ -19,7 +19,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OpenBots.Core.Nuget
+namespace OpenBots.Core.Gallery
 {
     public class NugetPackageManager
     {
@@ -159,17 +159,19 @@ namespace OpenBots.Core.Nuget
                     NullLogger.Instance);
 
                 var frameworkReducer = new FrameworkReducer();
+                PackageReaderBase packageReader;
+                PackageDownloadContext downloadContext = new PackageDownloadContext(cacheContext);
 
-                foreach (var packageToInstall in packagesToInstall)
+                Parallel.ForEach(packagesToInstall, async packageToInstall =>
                 {
-                    PackageReaderBase packageReader;
+
                     var installedPath = packagePathResolver.GetInstalledPath(packageToInstall);
                     if (installedPath == null)
                     {
                         var downloadResource = await packageToInstall.Source.GetResourceAsync<DownloadResource>(CancellationToken.None);
                         var downloadResult = await downloadResource.GetDownloadResourceResultAsync(
                             packageToInstall,
-                            new PackageDownloadContext(cacheContext),
+                            downloadContext,
                             SettingsUtility.GetGlobalPackagesFolder(settings),
                             NullLogger.Instance, CancellationToken.None);
 
@@ -188,7 +190,7 @@ namespace OpenBots.Core.Nuget
                     }
 
                     var libItems = packageReader.GetLibItems();
-                    var nearest = frameworkReducer.GetNearest(nuGetFramework, libItems.Select(x => x.TargetFramework));                            
+                    var nearest = frameworkReducer.GetNearest(nuGetFramework, libItems.Select(x => x.TargetFramework));
 
                     if (packageToInstall.Id == packageId)
                     {
@@ -200,7 +202,7 @@ namespace OpenBots.Core.Nuget
 
                         projectDependenciesDict.Add(packageToInstall.Id, packageToInstall.Version.ToString());
                     }
-                }
+                });
             }            
         }
 
@@ -238,26 +240,32 @@ namespace OpenBots.Core.Nuget
 
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string packagePath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            var packagePathResolver = new PackagePathResolver(packagePath);
 
-            foreach (var dependency in dependencies)
+            var nuGetFramework = NuGetFramework.ParseFolder("net48");
+            var settings = NuGet.Configuration.Settings.LoadDefaultSettings(root: null);
+
+            var sourceRepositoryProvider = new SourceRepositoryProvider(settings, Repository.Provider.GetCoreV3());
+            var localRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(packagePath, "Local OpenBots Repo", true));
+            
+            var resolver = new PackageResolver();
+            var frameworkReducer = new FrameworkReducer();
+            var repositories = new List<SourceRepository>
+            {
+                localRepo
+            };
+
+            Parallel.ForEach(dependencies, dependency =>
             {
                 try
                 {
                     var packageId = dependency.Key;
                     var packageVersion = NuGetVersion.Parse(dependency.Value);
-                    var nuGetFramework = NuGetFramework.ParseFolder("net48");
-                    var settings = NuGet.Configuration.Settings.LoadDefaultSettings(root: null);
-
-                    var sourceRepositoryProvider = new SourceRepositoryProvider(settings, Repository.Provider.GetCoreV3());
 
                     using (var cacheContext = new SourceCacheContext())
                     {
-                        var localRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(packagePath, "Local OpenBots Repository", true));
-                        var repositories = new List<SourceRepository>();
-                        repositories.Add(localRepo);
-
                         var availablePackages = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
-                        await GetPackageDependencies(
+                        GetPackageDependencies(
                             new PackageIdentity(packageId, packageVersion),
                             nuGetFramework, cacheContext, NullLogger.Instance, repositories, availablePackages);
 
@@ -271,18 +279,8 @@ namespace OpenBots.Core.Nuget
                             sourceRepositoryProvider.GetRepositories().Select(s => s.PackageSource),
                             NullLogger.Instance);
 
-                        var resolver = new PackageResolver();
                         var packagesToInstall = resolver.Resolve(resolverContext, CancellationToken.None)
                             .Select(p => availablePackages.Single(x => PackageIdentityComparer.Default.Equals(x, p)));
-
-                        var packagePathResolver = new PackagePathResolver(packagePath);
-                        var packageExtractionContext = new PackageExtractionContext(
-                            PackageSaveMode.Defaultv3,
-                            XmlDocFileSaveMode.None,
-                            ClientPolicyContext.GetClientPolicy(settings, NullLogger.Instance),
-                            NullLogger.Instance);
-
-                        var frameworkReducer = new FrameworkReducer();
 
                         foreach (var packageToInstall in packagesToInstall)
                         {
@@ -311,12 +309,12 @@ namespace OpenBots.Core.Nuget
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    //assembly not found
-                    Console.WriteLine(ex);
-                }                
-            }
+
+                }
+            });
+
             return assemblyPaths;
         }        
     }
