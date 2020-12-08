@@ -195,6 +195,7 @@
     <Compile Include="Interfaces\Commands\ISendMouseMoveCommand.cs" />
     <Compile Include="Interfaces\Commands\ISequenceCommand.cs" />
     <Compile Include="Interfaces\Commands\IUIAutomationCommand.cs" />
+    <Compile Include="Nuget\AppDomainSetupManager.cs" />
     <Compile Include="Nuget\NugetPackageManager.cs" />
     <Compile Include="Interfaces\ICommandControls.cs" />
     <Compile Include="Interfaces\IfrmAdvancedUIElementRecorder.cs" />

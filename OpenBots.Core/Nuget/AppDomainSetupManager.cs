@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace OpenBots.Nuget
+namespace OpenBots.Core.Nuget
 {
     public class AppDomainSetupManager
     {       

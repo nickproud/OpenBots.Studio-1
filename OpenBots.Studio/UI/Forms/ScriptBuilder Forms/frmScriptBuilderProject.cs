@@ -4,7 +4,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Nuget;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
-using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
