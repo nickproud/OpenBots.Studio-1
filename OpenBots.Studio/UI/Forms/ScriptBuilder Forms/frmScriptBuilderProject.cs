@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using OpenBots.Core.Command;
-using OpenBots.Core.Gallery;
+using OpenBots.Core.Nuget;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Nuget;

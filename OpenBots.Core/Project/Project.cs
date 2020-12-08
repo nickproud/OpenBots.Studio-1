@@ -2,7 +2,6 @@
 using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using OpenBots.Core.Gallery;
 using System;
 using System.Collections.Generic;
 using System.IO;

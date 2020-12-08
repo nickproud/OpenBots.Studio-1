@@ -19,7 +19,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OpenBots.Core.Gallery
+namespace OpenBots.Core.Nuget
 {
     public class NugetPackageManager
     {
