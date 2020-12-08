@@ -131,7 +131,7 @@ namespace OpenBots.UI.Supplement_Forms
                 try {
                     lblError.Text = $"Publishing {_projectName} to the server...";
                     var client = AuthMethods.GetAuthToken();
-                    ProcessMethods.UploadProcess(client, _projectName, nugetFilePath);
+                    AutomationMethods.UploadAutomation(client, _projectName, nugetFilePath);
                 }
                 catch (Exception)
                 {
