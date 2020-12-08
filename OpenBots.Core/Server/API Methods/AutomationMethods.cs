@@ -6,11 +6,11 @@ using System.Net.Http;
 
 namespace OpenBots.Core.Server.API_Methods
 {
-    public class ProcessMethods
+    public class AutomationMethods
     {
-        public static Guid CreateProcess(RestClient client, string name)
+        public static Guid CreateAutomation(RestClient client, string name)
         {
-            var request = new RestRequest("api/v1/Processes", Method.POST);
+            var request = new RestRequest("api/v1/Automations", Method.POST);
             request.RequestFormat = DataFormat.Json;
             request.AddJsonBody(new { name });
 
@@ -22,15 +22,15 @@ namespace OpenBots.Core.Server.API_Methods
             var deserializer = new JsonDeserializer();
             var output = deserializer.Deserialize<Dictionary<string, string>>(response);
 
-            Guid processId = Guid.Parse(output["id"]);
+            Guid automationId = Guid.Parse(output["id"]);
 
-            return processId;
+            return automationId;
         }
 
-        public static void UploadProcess(RestClient client, string name, string filePath)
+        public static void UploadAutomation(RestClient client, string name, string filePath)
         {
-            Guid processId = CreateProcess(client, name);
-            var request = new RestRequest("api/v1/Processes/{id}/upload", Method.POST);
+            Guid processId = CreateAutomation(client, name);
+            var request = new RestRequest("api/v1/Automations/{id}/upload", Method.POST);
             request.AddUrlSegment("id", processId.ToString());
             request.RequestFormat = DataFormat.Json;
 

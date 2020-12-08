@@ -66,7 +66,7 @@ namespace OpenBots.UI.Supplement_Forms
 
                 ManifestMetadata metadata = new ManifestMetadata()
                 {
-                    Id = _projectName,
+                    Id = _projectName.Replace(" ", "_"),
                     Title = _projectName,
                     Authors = txtAuthorName.Text.Trim(),
                     Version = txtVersion.Text.Trim(),
@@ -131,7 +131,7 @@ namespace OpenBots.UI.Supplement_Forms
                 try {
                     lblError.Text = $"Publishing {_projectName} to the server...";
                     var client = AuthMethods.GetAuthToken();
-                    ProcessMethods.UploadProcess(client, _projectName, nugetFilePath);
+                    AutomationMethods.UploadAutomation(client, _projectName, nugetFilePath);
                 }
                 catch (Exception)
                 {

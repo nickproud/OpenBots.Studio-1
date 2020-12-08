@@ -3,11 +3,13 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Common;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
+using System.Data;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -66,6 +68,7 @@ namespace OpenBots.Commands.Asset
 
 		public GetAssetCommand()
 		{
+			Common.InitializeDefaultWebProtocol();
 			CommandName = "GetAssetCommand";
 			SelectionName = "Get Asset";
 			CommandEnabled = true;           
@@ -82,7 +85,7 @@ namespace OpenBots.Commands.Asset
 			var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq '{v_AssetType}'");
 
 			if (asset == null)
-				throw new Exception($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
+				throw new DataException($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
 
 			string assetValue = string.Empty;
 			switch (v_AssetType)

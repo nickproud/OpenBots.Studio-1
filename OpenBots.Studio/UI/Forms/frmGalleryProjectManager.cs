@@ -1,6 +1,6 @@
 ﻿using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
-using OpenBots.Core.Gallery;
+using OpenBots.Core.Nuget;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Forms;
 using System;
