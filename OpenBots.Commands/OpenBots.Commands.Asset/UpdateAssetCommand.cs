@@ -7,6 +7,7 @@ using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
+using System.Data;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -82,7 +83,7 @@ namespace OpenBots.Commands.Asset
 			var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq '{v_AssetType}'");
 
 			if (asset == null)
-				throw new Exception($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
+				throw new DataException($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
 
 			switch (v_AssetType)
 			{
