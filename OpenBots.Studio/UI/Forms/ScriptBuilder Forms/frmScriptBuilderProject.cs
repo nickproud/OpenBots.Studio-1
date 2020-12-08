@@ -63,6 +63,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //create config file
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
 
+                //Uncomment to install all default packages
+                //foreach (var dep in ScriptProject.Dependencies)
+                //    await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>());
+
                 var assemblyList = await NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 _container = _builder.Build();

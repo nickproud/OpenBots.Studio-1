@@ -43,6 +43,7 @@ namespace OpenBots.Core.Project
             "SecureData",
             "Switch",
             "System",
+            "Task",
             "TextFile",
             "Variable",
             "WebBrowser",
