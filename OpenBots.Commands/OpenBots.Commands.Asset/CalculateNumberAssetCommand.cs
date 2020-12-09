@@ -110,7 +110,7 @@ namespace OpenBots.Commands.Asset
         public override string GetDisplayValue()
         {
             if (v_AssetActionType == "Increment")
-                return base.GetDisplayValue() + $" (Increment) ['{v_AssetName}']";
+                return base.GetDisplayValue() + $" [Increment '{v_AssetName}']";
             else if (v_AssetActionType == "Decrement")
                 return base.GetDisplayValue() + $" (Decrement) ['{v_AssetName}']";
             else if (v_AssetActionType == "Add")
