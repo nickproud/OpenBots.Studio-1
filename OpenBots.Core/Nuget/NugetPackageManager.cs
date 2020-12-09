@@ -245,7 +245,7 @@ namespace OpenBots.Core.Nuget
             var nuGetFramework = NuGetFramework.ParseFolder("net48");
             var settings = NuGet.Configuration.Settings.LoadDefaultSettings(root: null);
 
-            var sourceRepositoryProvider = new SourceRepositoryProvider(settings, Repository.Provider.GetCoreV3());
+            var sourceRepositoryProvider = new SourceRepositoryProvider(new PackageSourceProvider(settings), Repository.Provider.GetCoreV3());
             var localRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(packagePath, "Local OpenBots Repo", true));
             
             var resolver = new PackageResolver();
@@ -309,9 +309,9 @@ namespace OpenBots.Core.Nuget
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    Console.WriteLine(ex);
                 }
             });
 
