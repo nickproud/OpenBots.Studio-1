@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\OpenBots.Studio\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -51,7 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddCodeCommentCommand.cs" />
-    <Compile Include="BrokenCodeCommentCommand.cs" />
     <Compile Include="EncryptionCommand.cs" />
     <Compile Include="GetClipboardTextCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -79,4 +78,7 @@
     <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>nuget pack $(ProjectPath) -Properties Configuration=$(ConfigurationName) -IncludeReferencedProjects -OutputDirectory $(ProjectDir)..\..\OpenBots.Packages</PostBuildEvent>
+  </PropertyGroup>
 </Project>

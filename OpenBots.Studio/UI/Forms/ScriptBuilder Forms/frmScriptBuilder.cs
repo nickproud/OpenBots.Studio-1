@@ -12,17 +12,19 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
+using Autofac;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
+using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
-using OpenBots.Utilities;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
@@ -150,6 +152,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private string _txtCommandWatermark = "Type Here to Search";   
         public string HTMLElementRecorderURL { get; set; }
         private bool _isSequence;
+
+        private IContainer _container;
+        private ContainerBuilder _builder;
+        private string _packagesPath;
         #endregion
 
         #region Form Events
@@ -173,9 +179,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void frmScriptBuilder_Load(object sender, EventArgs e)
         {
-            //load all commands
-            _automationCommands = UIControlsHelper.GenerateCommandsandControls();
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            if (!Directory.Exists(_packagesPath))
+                Directory.CreateDirectory(_packagesPath);
 
+            _builder = new ContainerBuilder();
+            
             //set controls double buffered
             foreach (Control control in Controls)
             {
@@ -252,10 +262,24 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _selectedTabScriptActions.SmallImageList = _uiImages;
 
             //set listview column size
-            frmScriptBuilder_SizeChanged(null, null);
+            frmScriptBuilder_SizeChanged(null, null);        
 
+            //start attended mode if selected
+            if (_appSettings.ClientSettings.StartupMode == "Attended Task Mode")
+            {
+                WindowState = FormWindowState.Minimized;
+                var frmAttended = new frmAttendedMode(ScriptProjectPath);
+                frmAttended.Show();
+            }
+        }
+
+        private void LoadCommands()
+        {
+            //load all commands           
+            _automationCommands = TypeMethods.GenerateCommands(_container);
             var groupedCommands = _automationCommands.GroupBy(f => f.DisplayGroup);
 
+            tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)
             {
                 TreeNode newGroup = new TreeNode(cmd.Key);
@@ -277,15 +301,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _tvCommandsCopy.ShowNodeToolTips = true;
             CopyTreeView(tvCommands, _tvCommandsCopy);
             txtCommandSearch.Text = _txtCommandWatermark;
-
-            //start attended mode if selected
-            if (_appSettings.ClientSettings.StartupMode == "Attended Task Mode")
-            {
-                WindowState = FormWindowState.Minimized;
-                var frmAttended = new frmAttendedMode(ScriptProjectPath);
-                frmAttended.Show();
-            }
-
         }
 
         private void frmScriptBuilder_FormClosing(object sender, FormClosingEventArgs e)
@@ -370,15 +385,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private void frmScriptBuilder_Shown(object sender, EventArgs e)
+        private async void frmScriptBuilder_Shown(object sender, EventArgs e)
         {
             Program.SplashForm.Close();
 
             if (_editMode)
                 return;
 
-            AddProject();
-            Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+            var result = await AddProject();
+            if (result != DialogResult.Abort)
+                Notify("Welcome! Press 'Add Command' to get started!", Color.White);
         }
 
         private void pnlControlContainer_Paint(object sender, PaintEventArgs e)
@@ -523,7 +539,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 CreationModeInstance = CreationMode.Add,
                 ScriptVariables = _scriptVariables,
-                ScriptElements = _scriptElements
+                ScriptElements = _scriptElements,
+                Container = _container
             };
 
             if (specificCommand != "")
@@ -711,14 +728,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LinkLabel senderLink = (LinkLabel)sender;
             OpenFile(Path.Combine(Folders.GetFolder(FolderType.ScriptsFolder), senderLink.Text));
         }
-        #endregion
-
-        #region Helper Methods
-        public void OpenScriptFile(string scriptFilePath)
-        {
-            OpenFile(scriptFilePath);
-        }
-        #endregion Helper Methods
+        #endregion      
     }
 }
 

@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Misc
 
 		public ShowMessageCommand()
 		{
-			CommandName = "MessageBoxCommand";
+			CommandName = "ShowMessageCommand";
 			SelectionName = "Show Message";
 			CommandEnabled = true;          
 			

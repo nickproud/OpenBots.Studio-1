@@ -1031,21 +1031,31 @@ namespace OpenBots.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static byte[] IEDriverServer {
+        public static System.Drawing.Bitmap links_header {
             get {
-                object obj = ResourceManager.GetObject("IEDriverServer", resourceCulture);
-                return ((byte[])(obj));
+                object obj = ResourceManager.GetObject("links_header", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap links_header {
+        public static System.Drawing.Bitmap loading_spinner {
             get {
-                object obj = ResourceManager.GetObject("links_header", resourceCulture);
+                object obj = ResourceManager.GetObject("loading_spinner", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap nuget_icon {
+            get {
+                object obj = ResourceManager.GetObject("nuget_icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1093,30 +1103,10 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap OpenBots_splash {
-            get {
-                object obj = ResourceManager.GetObject("OpenBots_splash", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap openbots_splash2 {
             get {
                 object obj = ResourceManager.GetObject("openbots_splash2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] OpenBots_Updater {
-            get {
-                object obj = ResourceManager.GetObject("OpenBots_Updater", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         
@@ -1163,29 +1153,9 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap robot_bouncing_transparent {
+        public static System.Drawing.Bitmap settings {
             get {
-                object obj = ResourceManager.GetObject("robot-bouncing-transparent", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap robot_error {
-            get {
-                object obj = ResourceManager.GetObject("robot-error", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap robot_source {
-            get {
-                object obj = ResourceManager.GetObject("robot source", resourceCulture);
+                object obj = ResourceManager.GetObject("settings", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

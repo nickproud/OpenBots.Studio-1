@@ -72,7 +72,7 @@ namespace OpenBots.Commands.Data
 			foreach (DataRow rw in v_ParseObjects.Rows)
 			{
 				var jsonSelector = rw.Field<string>("Json Selector").ConvertUserVariableToString(engine);
-				var targetVariableName = rw.Field<string>("Output Variable").ConvertUserVariableToString(engine);
+				var targetVariableName = rw.Field<string>("Output Variable");
 
 				//create objects
 				JObject o;

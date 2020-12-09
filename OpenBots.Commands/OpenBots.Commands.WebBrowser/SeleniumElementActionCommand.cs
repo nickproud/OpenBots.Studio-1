@@ -12,7 +12,6 @@ using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
