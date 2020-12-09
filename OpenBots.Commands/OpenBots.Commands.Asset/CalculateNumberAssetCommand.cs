@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Asset
         [DisplayName("Number Asset Name")]
         [Description("Enter the name of the Asset.")]
         [SampleUsage("Name || {vCredentialName}")]
-        [Remarks("This command will throw an exception if an asset of the wrong type is used")]
+        [Remarks("This command will throw an exception if an asset of the wrong type is used.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         public string v_AssetName { get; set; }
 
