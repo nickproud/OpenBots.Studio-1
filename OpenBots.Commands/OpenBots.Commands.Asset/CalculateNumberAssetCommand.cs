@@ -112,11 +112,11 @@ namespace OpenBots.Commands.Asset
             if (v_AssetActionType == "Increment")
                 return base.GetDisplayValue() + $" [Increment '{v_AssetName}']";
             else if (v_AssetActionType == "Decrement")
-                return base.GetDisplayValue() + $" (Decrement) ['{v_AssetName}']";
+                return base.GetDisplayValue() + $" [Decrement '{v_AssetName}']";
             else if (v_AssetActionType == "Add")
-                return base.GetDisplayValue() + $" (Add {v_AssetActionValue}) ['{v_AssetName}']";
+                return base.GetDisplayValue() + $" [Add {v_AssetActionValue} to '{v_AssetName}']";
             else
-                return base.GetDisplayValue() + $" (Subtract {v_AssetActionValue}) ['{v_AssetName}']";
+                return base.GetDisplayValue() + $" [Subtract {v_AssetActionValue} to '{v_AssetName}']";
         }
 
         private void AssetActionTypeComboBox_SelectedValueChanged(object sender, EventArgs e)
