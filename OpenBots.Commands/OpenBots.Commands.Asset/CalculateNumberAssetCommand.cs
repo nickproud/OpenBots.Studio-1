@@ -116,7 +116,7 @@ namespace OpenBots.Commands.Asset
             else if (v_AssetActionType == "Add")
                 return base.GetDisplayValue() + $" [Add {v_AssetActionValue} to '{v_AssetName}']";
             else
-                return base.GetDisplayValue() + $" [Subtract {v_AssetActionValue} to '{v_AssetName}']";
+                return base.GetDisplayValue() + $" [Subtract {v_AssetActionValue} from '{v_AssetName}']";
         }
 
         private void AssetActionTypeComboBox_SelectedValueChanged(object sender, EventArgs e)
