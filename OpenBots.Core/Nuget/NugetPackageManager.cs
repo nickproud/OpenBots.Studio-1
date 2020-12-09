@@ -118,7 +118,7 @@ namespace OpenBots.Core.Nuget
             var packageVersion = NuGetVersion.Parse(version);
             var nuGetFramework = NuGetFramework.ParseFolder("net48");
             var settings = NuGet.Configuration.Settings.LoadDefaultSettings(root: null);
-            var sourceRepositoryProvider = new SourceRepositoryProvider(settings, Repository.Provider.GetCoreV3());
+            var sourceRepositoryProvider = new SourceRepositoryProvider(new PackageSourceProvider(settings), Repository.Provider.GetCoreV3());
 
             using (var cacheContext = new SourceCacheContext())
             {
