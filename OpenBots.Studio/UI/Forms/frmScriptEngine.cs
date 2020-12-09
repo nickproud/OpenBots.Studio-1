@@ -594,9 +594,10 @@ namespace OpenBots.UI.Forms
                 {
                     TemplateHTML = htmlTemplate
                 };
-                var dialogResult = inputForm.ShowDialog();
+                
+                inputForm.ShowDialog();
 
-                if (inputForm.Result == DialogResult.OK)
+                if (inputForm.DialogResult == DialogResult.OK)
                 {
                     var variables = inputForm.GetVariablesFromHTML("input");
                     variables.AddRange(inputForm.GetVariablesFromHTML("select"));

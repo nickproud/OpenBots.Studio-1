@@ -27,7 +27,7 @@ namespace OpenBots.Core.Settings
         public string LoggingValue2 { get; set; }
         public string LoggingValue3 { get; set; }
         public string LoggingValue4 { get; set; }
-        public LogEventLevel MinLogLevel { get; set; }
+        public LogEventLevel MinLogLevel { get; set; }        
 
         public EngineSettings()
         {
@@ -48,6 +48,6 @@ namespace OpenBots.Core.Settings
             LoggingValue3 = "";
             LoggingValue4 = "";
             MinLogLevel = LogEventLevel.Verbose;
-        }
+        }        
     }
 }

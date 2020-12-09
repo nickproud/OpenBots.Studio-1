@@ -1,4 +1,8 @@
-﻿using OpenBots.Core.Enums;
+﻿using Autofac;
+using Newtonsoft.Json;
+using OpenBots.Core.Command;
+using OpenBots.Core.Enums;
+using OpenBots.Core.Nuget;
 using OpenBots.Core.IO;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
@@ -178,6 +182,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }           
         }
 
+        //Helper Method
+        public void OpenScriptFile(string scriptFilePath)
+        {
+            OpenFile(scriptFilePath);
+        }
+
         private void uiBtnSave_Click(object sender, EventArgs e)
         {
             //clear selected items
@@ -222,7 +232,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             foreach (ListViewItem item in _selectedTabScriptActions.Items)
             {
-                if(item.Tag.GetType().Name == "BrokenCodeCommentCommand")
+                if(item.Tag is BrokenCodeCommentCommand)
                 {
                     Notify("Please verify that all broken code has been removed or replaced.", Color.Yellow);
                     return;
@@ -478,7 +488,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 var dateTimeNow = DateTime.Now.ToString();
 
                 //comment
-                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AppDomain.CurrentDomain, "AddCodeCommentCommand");
+                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(_container, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Imported From " + fileName + " @ " + dateTimeNow;
                 _selectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(addCodeCommentCommand));
 
@@ -501,7 +511,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
 
                 //comment
-                dynamic codeCommentCommand = TypeMethods.CreateTypeInstance(AppDomain.CurrentDomain, "AddCodeCommentCommand");
+                dynamic codeCommentCommand = TypeMethods.CreateTypeInstance(_container, "AddCodeCommentCommand");
                 codeCommentCommand.v_Comment = "End Import From " + fileName + " @ " + dateTimeNow;
                 _selectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(codeCommentCommand));
 
@@ -525,7 +535,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _selectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(item.ScriptCommand));
                 else
                 {
-                    dynamic brokenCodeCommentCommand = TypeMethods.CreateTypeInstance(AppDomain.CurrentDomain, "BrokenCodeCommentCommand");
+                    var brokenCodeCommentCommand = new BrokenCodeCommentCommand();
                     brokenCodeCommentCommand.v_Comment = item.SerializationError;
                     _selectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(brokenCodeCommentCommand));
                 }
@@ -682,10 +692,35 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             frmAbout frmAboutForm = new frmAbout();
             frmAboutForm.Show();
         }
+
+        private async void packageManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string packagePath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            string configPath = Path.Combine(ScriptProjectPath, "project.config");
+            frmGalleryPackageManager frmManager = new frmGalleryPackageManager(ScriptProject.Dependencies, packagePath);
+            frmManager.ShowDialog();
+
+            if (frmManager.DialogResult == DialogResult.OK)
+            {
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
+
+                var assemblyList = await NugetPackageManager.LoadPackageAssemblies(configPath);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                _container = _builder.Build();
+                
+                LoadCommands();
+            }
+        }
+
+        private void uiBtnPackageManager_Click(object sender, EventArgs e)
+        {
+            packageManagerToolStripMenuItem_Click(sender, e);
+        }
         #endregion
 
         #region Script Events Tool Strip and Buttons
-        
+
 
         private void scheduleToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -797,7 +832,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region Recorder Buttons
         private void elementRecorderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmWebElementRecorder elementRecorder = new frmWebElementRecorder(HTMLElementRecorderURL)
+            frmWebElementRecorder elementRecorder = new frmWebElementRecorder(_container, HTMLElementRecorderURL)
             {
                 CallBackForm = this,
                 IsRecordingSequence = true,
@@ -832,10 +867,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void RecordSequence()
         {
             Hide();
-            frmScreenRecorder sequenceRecorder = new frmScreenRecorder
+            frmScreenRecorder sequenceRecorder = new frmScreenRecorder(_container)
             {
                 CallBackForm = this,
-                IsCommandItemSelected = _selectedTabScriptActions.SelectedItems.Count > 0
+                IsCommandItemSelected = _selectedTabScriptActions.SelectedItems.Count > 0,               
             };
 
             sequenceRecorder.ShowDialog();
@@ -850,7 +885,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             Hide();
 
-            frmAdvancedUIElementRecorder appElementRecorder = new frmAdvancedUIElementRecorder
+            frmAdvancedUIElementRecorder appElementRecorder = new frmAdvancedUIElementRecorder(_container)
             {
                 CallBackForm = this,
                 IsRecordingSequence = true
