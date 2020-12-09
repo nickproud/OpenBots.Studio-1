@@ -13,7 +13,7 @@ namespace OpenBots.Core.Nuget
         public static ContainerBuilder LoadBuilder(List<string> assemblyPaths)
         {
             List<Assembly> existingAssemblies = new List<Assembly>();
-            Parallel.ForEach(assemblyPaths, path =>
+            foreach(var path in assemblyPaths)
             {
                 try
                 {
@@ -38,7 +38,7 @@ namespace OpenBots.Core.Nuget
                 {
                     Console.WriteLine(ex);
                 }
-            });
+            }
 
             ContainerBuilder builder = new ContainerBuilder();
 
