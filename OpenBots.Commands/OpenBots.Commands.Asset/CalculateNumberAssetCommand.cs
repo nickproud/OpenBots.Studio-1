@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Asset
@@ -70,7 +71,7 @@ namespace OpenBots.Commands.Asset
             var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq 'Number'");
 
             if (asset == null)
-                throw new Exception($"No Asset was found for '{vAssetName}' and type 'Number'");
+                throw new DataException($"No Asset was found for '{vAssetName}' and type 'Number'");
 
             switch (v_AssetActionType)
             {
