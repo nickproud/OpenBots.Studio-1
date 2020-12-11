@@ -208,6 +208,7 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
             uiImages.Add("RegexSplitCommand", Resources.command_regex);
             uiImages.Add("GetAssetCommand", Resources.command_asset);
             uiImages.Add("UpdateAssetCommand", Resources.command_asset);
+            uiImages.Add("AppendTextAssetCommand", Resources.command_asset);
             uiImages.Add("CalculateNumberAssetCommand", Resources.command_asset);
             uiImages.Add("GetCredentialCommand", Resources.command_credential);
             uiImages.Add("UpdateCredentialCommand", Resources.command_credential);
