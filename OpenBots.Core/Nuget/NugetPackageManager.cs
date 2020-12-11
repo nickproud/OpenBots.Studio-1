@@ -162,7 +162,7 @@ namespace OpenBots.Core.Nuget
                 PackageReaderBase packageReader;
                 PackageDownloadContext downloadContext = new PackageDownloadContext(cacheContext);
 
-                Parallel.ForEach(packagesToInstall, async packageToInstall =>
+                foreach(var packageToInstall in packagesToInstall)
                 {
 
                     var installedPath = packagePathResolver.GetInstalledPath(packageToInstall);
@@ -202,7 +202,7 @@ namespace OpenBots.Core.Nuget
 
                         projectDependenciesDict.Add(packageToInstall.Id, packageToInstall.Version.ToString());
                     }
-                });
+                }
             }            
         }
 
@@ -255,7 +255,7 @@ namespace OpenBots.Core.Nuget
                 localRepo
             };
 
-            Parallel.ForEach(dependencies, dependency =>
+            Parallel.ForEach(dependencies, async dependency =>
             {
                 try
                 {
@@ -265,7 +265,7 @@ namespace OpenBots.Core.Nuget
                     using (var cacheContext = new SourceCacheContext())
                     {
                         var availablePackages = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
-                        GetPackageDependencies(
+                        await GetPackageDependencies(
                             new PackageIdentity(packageId, packageVersion),
                             nuGetFramework, cacheContext, NullLogger.Instance, repositories, availablePackages);
 

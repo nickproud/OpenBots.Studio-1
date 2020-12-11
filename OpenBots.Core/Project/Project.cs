@@ -25,7 +25,6 @@ namespace OpenBots.Core.Project
             "Data",
             "DataTable",
             "Dictionary",
-            "Email",
             "Engine",
             "ErrorHandling",
             "Excel",
@@ -39,16 +38,12 @@ namespace OpenBots.Core.Project
             "Misc",
             "Outlook",
             "Process",
-            "RegEx",
-            "SecureData",
             "Switch",
-            "System",
             "Task",
             "TextFile",
             "Variable",
             "WebBrowser",
             "Window",
-            "Word",
         };
 
         public Project(string projectName)
