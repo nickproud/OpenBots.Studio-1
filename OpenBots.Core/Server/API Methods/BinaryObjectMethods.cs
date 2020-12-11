@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Server.Models;
 using RestSharp;
+using RestSharp.Serialization.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 
@@ -40,7 +42,7 @@ namespace OpenBots.Core.Server.API_Methods
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
         }
 
-        public static BinaryObject GetBinaryObject(RestClient client, Guid? binaryObjectID)
+        public static BinaryObject GetBinaryObject(RestClient client, Guid? binaryObjectID, Guid? correlationEntityId = null)
         {
             var request = new RestRequest("api/v1/BinaryObjects/{id}", Method.GET);
             request.AddUrlSegment("id", binaryObjectID.ToString());
@@ -52,6 +54,23 @@ namespace OpenBots.Core.Server.API_Methods
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
 
             return JsonConvert.DeserializeObject<BinaryObject>(response.Content);
+        }
+
+        public static List<BinaryObject> GetBinaryObjectsByCorrelationEntityId(RestClient client, Guid? correlationEntityId = null)
+        {
+            var request = new RestRequest("api/v1/BinaryObjects", Method.GET);
+            if (correlationEntityId != null || correlationEntityId != Guid.Empty)
+                request.AddQueryParameter("$filter", $"CorrelationEntityId eq guid'{correlationEntityId}'");
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+
+            var deserializer = new JsonDeserializer();
+            var output = deserializer.Deserialize<Dictionary<string, string>>(response);
+            var items = output["items"];
+            return JsonConvert.DeserializeObject<List<BinaryObject>>(items);
         }
     }
 }
