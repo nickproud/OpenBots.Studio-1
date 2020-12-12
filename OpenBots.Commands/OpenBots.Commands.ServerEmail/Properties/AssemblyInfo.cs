@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("OpenBots.Commands.ServerEmail")]
-[assembly: AssemblyDescription("OpenBots commands for sending EmailMessage email objects. Supports Azure and SMTP.")]
+[assembly: AssemblyDescription("OpenBots command for sending an email message with optional attachments in OpenBots Server. Supports Azure and SMTP.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenBots Inc")]
 [assembly: AssemblyProduct("OpenBots.Commands.ServerEmail")]

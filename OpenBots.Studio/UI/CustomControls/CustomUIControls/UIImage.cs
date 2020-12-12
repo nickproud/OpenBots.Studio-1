@@ -218,7 +218,8 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
             uiImages.Add("ExtendQueueItemCommand", Resources.command_queueitem);
             uiImages.Add("SetQueueItemStatusCommand", Resources.command_queueitem);
             uiImages.Add("WorkQueueItemCommand", Resources.command_queueitem);
-            
+            uiImages.Add("SendServerEmailCommand", Resources.command_smtp);
+
 
             return uiImages;
         }
