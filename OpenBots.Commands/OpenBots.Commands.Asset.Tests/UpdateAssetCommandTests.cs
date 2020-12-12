@@ -131,9 +131,12 @@ namespace OpenBots.Commands.Asset.Tests
             _getAsset.v_AssetType = "File";
             _getAsset.v_OutputDirectoryPath = filepath + @"Download\";
 
+            if (!Directory.Exists(_getAsset.v_OutputDirectoryPath))
+                Directory.CreateDirectory(_getAsset.v_OutputDirectoryPath);
+
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = "{output}".ConvertUserVariableToString(_engine);
+            //string outputAsset = "{output}".ConvertUserVariableToString(_engine);
             Assert.True(File.Exists(filepath + @"Download\newtest.txt"));
 
             File.Delete(filepath+@"Download\newtest.txt");
