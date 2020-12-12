@@ -59,35 +59,5 @@ namespace OpenBots.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] chromedriver {
-            get {
-                object obj = ResourceManager.GetObject("chromedriver", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] geckodriver {
-            get {
-                object obj = ResourceManager.GetObject("geckodriver", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] IEDriverServer {
-            get {
-                object obj = ResourceManager.GetObject("IEDriverServer", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }

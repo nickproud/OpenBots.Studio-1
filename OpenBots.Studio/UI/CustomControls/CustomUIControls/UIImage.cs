@@ -128,6 +128,8 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
             uiImages.Add("DeleteOutlookEmailCommand", Resources.command_smtp);
             uiImages.Add("ForwardOutlookEmailCommand", Resources.command_smtp);
             uiImages.Add("ReplyToOutlookEmailCommand", Resources.command_smtp);
+            uiImages.Add("GetMimeMessagePropertyCommand", Resources.command_smtp);
+            uiImages.Add("GetOutlookEmailPropertyCommand", Resources.command_smtp);
             uiImages.Add("ErrorHandlingCommand", Resources.command_error);
             uiImages.Add("BeginTryCommand", Resources.command_try);
             uiImages.Add("CatchCommand", Resources.command_catch);
@@ -208,6 +210,7 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
             uiImages.Add("RegexSplitCommand", Resources.command_regex);
             uiImages.Add("GetAssetCommand", Resources.command_asset);
             uiImages.Add("UpdateAssetCommand", Resources.command_asset);
+            uiImages.Add("AppendTextAssetCommand", Resources.command_asset);
             uiImages.Add("CalculateNumberAssetCommand", Resources.command_asset);
             uiImages.Add("GetCredentialCommand", Resources.command_credential);
             uiImages.Add("UpdateCredentialCommand", Resources.command_credential);
@@ -215,6 +218,7 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
             uiImages.Add("ExtendQueueItemCommand", Resources.command_queueitem);
             uiImages.Add("SetQueueItemStatusCommand", Resources.command_queueitem);
             uiImages.Add("WorkQueueItemCommand", Resources.command_queueitem);
+            
 
             return uiImages;
         }

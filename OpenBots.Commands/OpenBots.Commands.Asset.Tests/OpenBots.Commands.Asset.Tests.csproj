@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppendTextAssetCommandTests.cs" />
     <Compile Include="CalculateNumberAssetCommandTests.cs" />
     <Compile Include="GetAssetCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

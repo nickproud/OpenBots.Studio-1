@@ -72,6 +72,19 @@ namespace OpenBots.Core.Server.API_Methods
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
         }
 
+        public static void AppendAsset(RestClient client, Guid? assetId, string appendText)
+        {
+            var request = new RestRequest("api/v1/Assets/{id}/Append", Method.PUT);
+            request.AddUrlSegment("id", assetId.ToString());
+            request.AddQueryParameter("value", appendText);
+            request.RequestFormat = DataFormat.Json;
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+        }
+      
         public static void IncrementAsset(RestClient client, Guid? assetId)
         {
             var request = new RestRequest("api/v1/Assets/{id}/Increment", Method.PUT);

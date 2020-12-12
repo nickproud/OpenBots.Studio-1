@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeleteOutlookEmailCommand.cs" />
+    <Compile Include="GetOutlookEmailPropertyCommand.cs" />
     <Compile Include="ForwardOutlookEmailCommand.cs" />
     <Compile Include="GetOutlookEmailsCommand.cs" />
     <Compile Include="MoveCopyOutlookEmailCommand.cs" />
