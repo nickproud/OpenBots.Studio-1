@@ -61,7 +61,6 @@ namespace OpenBots.Core.Server.API_Methods
         {
             var request = new RestRequest("api/v1/Assets/{id}/Update", Method.PUT);
             request.AddUrlSegment("id", asset.Id.ToString());
-            request.AddParameter("id", asset.Id.ToString());
             request.RequestFormat = DataFormat.Json;
 
             request.AddHeader("Content-Type", "multipart/form-data");
