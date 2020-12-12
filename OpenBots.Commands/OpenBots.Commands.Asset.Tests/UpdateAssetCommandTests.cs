@@ -136,7 +136,6 @@ namespace OpenBots.Commands.Asset.Tests
 
             _getAsset.RunCommand(_engine);
 
-            //string outputAsset = "{output}".ConvertUserVariableToString(_engine);
             Assert.True(File.Exists(filepath + @"Download\newtest.txt"));
 
             File.Delete(filepath+@"Download\newtest.txt");
