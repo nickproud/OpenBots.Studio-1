@@ -44,7 +44,7 @@ namespace OpenBots.Core.Server.API_Methods
 
         public static void DownloadFileAsset(RestClient client, Guid? assetID, string directoryPath, string fileName)
         {
-            var request = new RestRequest("api/v1/assets/{id}/export", Method.GET);
+            var request = new RestRequest("api/v1/assets/{id}/Export", Method.GET);
             request.AddUrlSegment("id", assetID.ToString());
             request.RequestFormat = DataFormat.Json;
 
@@ -61,7 +61,6 @@ namespace OpenBots.Core.Server.API_Methods
         {
             var request = new RestRequest("api/v1/Assets/{id}/Update", Method.PUT);
             request.AddUrlSegment("id", asset.Id.ToString());
-            request.AddParameter("id", asset.Id.ToString());
             request.RequestFormat = DataFormat.Json;
 
             request.AddHeader("Content-Type", "multipart/form-data");
