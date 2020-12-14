@@ -41,6 +41,15 @@ namespace OpenBots.Commands.Data
 		public string v_DecimalSeparator { get; set; }
 
 		[Required]
+		[DisplayName("Accept Undefined")]
+		[PropertyUISelectionOption("Yes")]
+		[PropertyUISelectionOption("No")]
+		[Description("Specify whether the equation can return undefined as a valid result. Otherwise throw a 'DivideByZeroException'.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_AcceptUndefined { get; set; }
+
+		[Required]
 		[Editable(false)]
 		[DisplayName("Output Result Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
@@ -52,11 +61,12 @@ namespace OpenBots.Commands.Data
 		{
 			CommandName = "MathCalculationCommand";
 			SelectionName = "Math Calculation";
-			CommandEnabled = true;           
+			CommandEnabled = true;
 
 			v_MathExpression = "(2 + 5) * 3";
 			v_DecimalSeparator = ".";
 			v_ThousandSeparator = ",";
+			v_AcceptUndefined = "No";
 		}
 
 		public override void RunCommand(object sender)
@@ -67,37 +77,49 @@ namespace OpenBots.Commands.Data
 			var variableMath = v_MathExpression.ConvertUserVariableToString(engine);
 			var thousandSeparator = v_ThousandSeparator.ConvertUserVariableToString(engine);
 			var decimalSeparator = v_DecimalSeparator.ConvertUserVariableToString(engine);
-				
-			//remove thousandths markers
-			if (!string.IsNullOrEmpty(thousandSeparator))
-				variableMath = variableMath.Replace(thousandSeparator, "");
 
-			//check decimal seperator
-			if (decimalSeparator != "." && !string.IsNullOrEmpty(decimalSeparator))
-				variableMath = variableMath.Replace(decimalSeparator, ".");
-
-			//perform compute
-			DataTable dt = new DataTable();
-			string result = dt.Compute(variableMath, "").ToString();
-
-			//restore thousandths markers
-			if (!string.IsNullOrEmpty(thousandSeparator))
+			//Check if expression calculation is infinity
+			if (variableMath == "∞")
 			{
-				result = double.Parse(result).ToString("N");
-				result = result.Replace(",", thousandSeparator);
+				if (v_AcceptUndefined == "No")
+					throw new DivideByZeroException("Expression calculation resulted inifinty");
+				else
+					typeof(Nullable).StoreInUserVariable(engine, v_OutputUserVariableName);
+			}
+			else
+			{
+				//remove thousandths markers
+				if (!string.IsNullOrEmpty(thousandSeparator))
+					variableMath = variableMath.Replace(thousandSeparator, "");
+
+				//check decimal seperator
+				if (decimalSeparator != "." && !string.IsNullOrEmpty(decimalSeparator))
+					variableMath = variableMath.Replace(decimalSeparator, ".");
+
+				//perform compute
+				DataTable dt = new DataTable();
+				string result = dt.Compute(variableMath, "").ToString();
+
+				//restore thousandths markers
+				if (!string.IsNullOrEmpty(thousandSeparator))
+				{
+					result = double.Parse(result).ToString("N");
+					result = result.Replace(",", thousandSeparator);
+				}
+
+				//restore decimal seperator
+				if (decimalSeparator != "." && !string.IsNullOrEmpty(decimalSeparator))
+				{
+					var lastIndex = result.LastIndexOf(".");
+
+					if (lastIndex != -1)
+						result = result.Remove(lastIndex, 1).Insert(lastIndex, decimalSeparator);
+				}
+
+				//store string in variable
+				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
 			}
 
-			//restore decimal seperator
-			if (decimalSeparator != "." && !string.IsNullOrEmpty(decimalSeparator))
-			{
-				var lastIndex = result.LastIndexOf(".");
-
-				if (lastIndex != -1)
-					result = result.Remove(lastIndex, 1).Insert(lastIndex, decimalSeparator);
-			}
-			   
-			//store string in variable
-			result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -108,6 +130,7 @@ namespace OpenBots.Commands.Data
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_MathExpression", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ThousandSeparator", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DecimalSeparator", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_AcceptUndefined", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
