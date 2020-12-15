@@ -204,9 +204,9 @@ namespace OpenBots.Commands.Task
 			base.Render(editor, commandControls);
 
 			//create file path and helpers
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_taskPath", this));
-			var taskPathControl = commandControls.CreateDefaultInputFor("v_taskPath", this);
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_taskPath", this, new Control[] { taskPathControl }, editor));
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_TaskPath", this));
+			var taskPathControl = commandControls.CreateDefaultInputFor("v_TaskPath", this);
+			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_TaskPath", this, new Control[] { taskPathControl }, editor));
 			RenderedControls.Add(taskPathControl);
 			taskPathControl.TextChanged += TaskPathControl_TextChanged;
 
