@@ -11,7 +11,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 {
     public static class InstanceMethods
     {
-        public static void AddAppInstance(this object appObject, IEngine engine, string instanceName)
+        public static void AddAppInstance(this object appObject, IAutomationEngineInstance engine, string instanceName)
         {
 
             if (engine.AppInstances.ContainsKey(instanceName) && engine.EngineSettings.OverrideExistingAppInstances)
@@ -33,7 +33,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             }
         }
 
-        public static object GetAppInstance(this string instanceName, IEngine engine)
+        public static object GetAppInstance(this string instanceName, IAutomationEngineInstance engine)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             }
         }
 
-        public static void RemoveAppInstance(this string instanceName, IEngine engine)
+        public static void RemoveAppInstance(this string instanceName, IAutomationEngineInstance engine)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             }
         }
 
-        public static bool InstanceExists(this string instanceName, IEngine engine)
+        public static bool InstanceExists(this string instanceName, IAutomationEngineInstance engine)
         {          
             try
             {

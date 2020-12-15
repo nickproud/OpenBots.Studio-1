@@ -143,6 +143,7 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
             uiImages.Add("BeginSwitchCommand", Resources.command_begin_switch);
             uiImages.Add("CaseCommand", Resources.command_case);
             uiImages.Add("EndSwitchCommand", Resources.command_end_switch);
+            uiImages.Add("StringContainsCommand", Resources.command_string);
             uiImages.Add("SubstringCommand", Resources.command_string);
             uiImages.Add("SplitTextCommand", Resources.command_string);
             uiImages.Add("ReplaceTextCommand", Resources.command_string);

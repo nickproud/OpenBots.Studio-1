@@ -41,11 +41,13 @@
             this.uiBtnCancel = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnPause = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.pbBotIcon = new System.Windows.Forms.PictureBox();
+            this.uiBtnScheduleManagement = new OpenBots.Core.UI.Controls.UIPictureButton();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnStepInto)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnStepOver)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnPause)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbBotIcon)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uiBtnScheduleManagement)).BeginInit();
             this.SuspendLayout();
             // 
             // lstSteppingCommands
@@ -214,12 +216,32 @@
             this.pbBotIcon.TabStop = false;
             this.pbBotIcon.Click += new System.EventHandler(this.pbBotIcon_Click);
             // 
+            // uiBtnScheduleManagement
+            // 
+            this.uiBtnScheduleManagement.BackColor = System.Drawing.Color.Transparent;
+            this.uiBtnScheduleManagement.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.uiBtnScheduleManagement.DisplayText = "Schedule";
+            this.uiBtnScheduleManagement.DisplayTextBrush = System.Drawing.Color.AliceBlue;
+            this.uiBtnScheduleManagement.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.uiBtnScheduleManagement.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnScheduleManagement.Image")));
+            this.uiBtnScheduleManagement.IsMouseOver = false;
+            this.uiBtnScheduleManagement.Location = new System.Drawing.Point(850, 227);
+            this.uiBtnScheduleManagement.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnScheduleManagement.Name = "uiBtnScheduleManagement";
+            this.uiBtnScheduleManagement.Size = new System.Drawing.Size(65, 62);
+            this.uiBtnScheduleManagement.TabIndex = 24;
+            this.uiBtnScheduleManagement.TabStop = false;
+            this.uiBtnScheduleManagement.Text = "Schedule";
+            this.uiBtnScheduleManagement.Visible = false;
+            this.uiBtnScheduleManagement.Click += new System.EventHandler(this.uiBtnScheduleManagement_Click);
+            // 
             // frmScriptEngine
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
             this.ClientSize = new System.Drawing.Size(929, 292);
+            this.Controls.Add(this.uiBtnScheduleManagement);
             this.Controls.Add(this.uiBtnStepInto);
             this.Controls.Add(this.uiBtnStepOver);
             this.Controls.Add(this.lblAction);
@@ -236,12 +258,13 @@
             this.Text = "OpenBots Engine";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmScriptEngine_FormClosing);
-            this.Load += new System.EventHandler(this.frmProcessingStatus_Load);
+            this.Load += new System.EventHandler(this.frmProcessingStatus_LoadAsync);
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnStepInto)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnStepOver)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnPause)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbBotIcon)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uiBtnScheduleManagement)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -259,5 +282,6 @@
         private System.Windows.Forms.Label lblAction;
         private OpenBots.Core.UI.Controls.UIPictureButton uiBtnStepInto;
         private OpenBots.Core.UI.Controls.UIPictureButton uiBtnStepOver;
+        private Core.UI.Controls.UIPictureButton uiBtnScheduleManagement;
     }
 }

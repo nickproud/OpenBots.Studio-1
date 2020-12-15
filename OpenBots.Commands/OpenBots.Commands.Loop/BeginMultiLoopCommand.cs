@@ -139,14 +139,14 @@ namespace OpenBots.Commands.Loop
 			}
 		}
 
-		private bool DetermineMultiStatementTruth(IEngine engine)
+		private bool DetermineMultiStatementTruth(IAutomationEngineInstance engine)
 		{
 			bool isTrueStatement = true;
 			foreach (DataRow rw in v_LoopConditionsTable.Rows)
 			{
 				var commandData = rw["CommandData"].ToString();
 				var loopCommand = JsonConvert.DeserializeObject<BeginLoopCommand>(commandData);
-				var statementResult = UICommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_LoopActionParameterTable);
+				var statementResult = UICommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable);
 
 				if (!statementResult)
 				{

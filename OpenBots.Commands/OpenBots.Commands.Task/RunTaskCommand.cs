@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Task
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		public string v_taskPath { get; set; }
+		public string v_TaskPath { get; set; }
 
 		[Required]
 		[DisplayName("Assign Variables")]
@@ -68,7 +68,7 @@ namespace OpenBots.Commands.Task
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private IfrmScriptEngine _newEngine;
+		private IfrmScriptEngine _childfrmScriptEngine;
 
 		public RunTaskCommand()
 		{
@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Task
 			SelectionName = "Run Task";
 			CommandEnabled = true;
 			
-			v_taskPath = "{ProjectPath}";
+			v_TaskPath = "{ProjectPath}";
 
 			v_VariableAssignments = new DataTable();
 			v_VariableAssignments.Columns.Add("VariableName");
@@ -96,95 +96,106 @@ namespace OpenBots.Commands.Task
 
 		public override void RunCommand(object sender)
 		{
-			AutomationEngineInstance currentScriptEngine = (AutomationEngineInstance)sender;
-			if(currentScriptEngine.ScriptEngineUI == null)
+			var parentAutomationEngineInstance = (AutomationEngineInstance)sender;
+			if(parentAutomationEngineInstance.ScriptEngineUI == null)
 			{
 				RunServerTask(sender);
 				return;
 			}
 
-			var childTaskPath = v_taskPath.ConvertUserVariableToString(currentScriptEngine);
+			var childTaskPath = v_TaskPath.ConvertUserVariableToString(parentAutomationEngineInstance);
 			if (!File.Exists(childTaskPath))
 				throw new FileNotFoundException("Task file was not found");
 
-			IfrmScriptEngine parentEngine = currentScriptEngine.ScriptEngineUI;
-			string parentTaskPath = currentScriptEngine.ScriptEngineUI.FilePath;
-			int parentDebugLine = currentScriptEngine.ScriptEngineUI.DebugLineNumber;
+			IfrmScriptEngine parentfrmScriptEngine = parentAutomationEngineInstance.ScriptEngineUI;
+			string parentTaskPath = parentAutomationEngineInstance.ScriptEngineUI.FilePath;
+			int parentDebugLine = parentAutomationEngineInstance.ScriptEngineUI.DebugLineNumber;
 
 			//create variable list
-			InitializeVariableLists(currentScriptEngine);
+			InitializeVariableLists(parentAutomationEngineInstance);
 
-			string projectPath = parentEngine.ProjectPath;
-			_newEngine = parentEngine.CommandControls.CreateScriptEngineForm(childTaskPath, projectPath, CurrentScriptBuilder,
-				_variableList, null, currentScriptEngine.AppInstances, false, parentEngine.IsDebugMode);
-	
-			_newEngine.IsChildEngine = true;
-			_newEngine.IsHiddenTaskEngine = true;
+			string projectPath = parentfrmScriptEngine.ProjectPath;
+			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childTaskPath, projectPath, CurrentScriptBuilder, 
+				parentfrmScriptEngine.ScriptEngineLogger, _variableList, null, parentAutomationEngineInstance.AppInstances, false, parentfrmScriptEngine.IsDebugMode);
+
+			if (parentAutomationEngineInstance.ScriptEngineUI.IsScheduledTask)
+				_childfrmScriptEngine.IsScheduledTask = true;
+
+			_childfrmScriptEngine.IsChildEngine = true;
+			_childfrmScriptEngine.IsHiddenTaskEngine = true;
 
 			if (IsSteppedInto)
 			{                
-				_newEngine.IsNewTaskSteppedInto = true;
-				_newEngine.IsHiddenTaskEngine = false;
+				_childfrmScriptEngine.IsNewTaskSteppedInto = true;
+				_childfrmScriptEngine.IsHiddenTaskEngine = false;
 			}
 
-			CurrentScriptBuilder.EngineLogger.Information("Executing Child Task: " + Path.GetFileName(childTaskPath));
-			((Form)currentScriptEngine.ScriptEngineUI).Invoke((Action)delegate()
+			if (CurrentScriptBuilder != null)
+				CurrentScriptBuilder.EngineLogger.Information("Executing Child Task: " + Path.GetFileName(childTaskPath));
+			else
+				Log.Information("Executing Child Task: " + Path.GetFileName(childTaskPath));
+
+			((Form)parentAutomationEngineInstance.ScriptEngineUI).Invoke((Action)delegate()
 			{
-				((Form)currentScriptEngine.ScriptEngineUI).TopMost = false;
+				((Form)parentAutomationEngineInstance.ScriptEngineUI).TopMost = false;
 			});
-			Application.Run((Form)_newEngine);
+			Application.Run((Form)_childfrmScriptEngine);
 			
-			if (_newEngine.ClosingAllEngines)
+			if (_childfrmScriptEngine.ClosingAllEngines)
 			{
-				currentScriptEngine.ScriptEngineUI.ClosingAllEngines = true;
-				currentScriptEngine.ScriptEngineUI.CloseWhenDone = true;
+				parentAutomationEngineInstance.ScriptEngineUI.ClosingAllEngines = true;
+				parentAutomationEngineInstance.ScriptEngineUI.CloseWhenDone = true;
 			}
 
 			// Update Current Engine Context Post Run Task
-			_newEngine.UpdateCurrentEngineContext(currentScriptEngine, _newEngine, _variableReturnList);
+			_childfrmScriptEngine.UpdateCurrentEngineContext(parentAutomationEngineInstance, _childfrmScriptEngine, _variableReturnList);
 
-			CurrentScriptBuilder.EngineLogger.Information("Resuming Parent Task: " + Path.GetFileName(parentTaskPath));
-			if (parentEngine.IsDebugMode)
+			if (CurrentScriptBuilder != null)
+				CurrentScriptBuilder.EngineLogger.Information("Resuming Parent Task: " + Path.GetFileName(parentTaskPath));
+			else
+				Log.Information("Resuming Parent Task: " + Path.GetFileName(parentTaskPath));
+
+			if (parentfrmScriptEngine.IsDebugMode)
 			{
-				((Form)currentScriptEngine.ScriptEngineUI).Invoke((Action)delegate()
+				((Form)parentAutomationEngineInstance.ScriptEngineUI).Invoke((Action)delegate()
 				{
-					((Form)parentEngine).TopMost = true;
-					parentEngine.IsHiddenTaskEngine = true;
+					((Form)parentfrmScriptEngine).TopMost = true;
+					parentfrmScriptEngine.IsHiddenTaskEngine = true;
 
-					if ((IsSteppedInto || !_newEngine.IsHiddenTaskEngine) && !_newEngine.IsNewTaskResumed && !_newEngine.IsNewTaskCancelled)
+					if ((IsSteppedInto || !_childfrmScriptEngine.IsHiddenTaskEngine) && !_childfrmScriptEngine.IsNewTaskResumed && !_childfrmScriptEngine.IsNewTaskCancelled)
 					{
-						parentEngine.CallBackForm.CurrentEngine = parentEngine;
-						parentEngine.CallBackForm.IsScriptSteppedInto = true;
-						parentEngine.IsHiddenTaskEngine = false;
+						parentfrmScriptEngine.CallBackForm.CurrentEngine = parentfrmScriptEngine;
+						parentfrmScriptEngine.CallBackForm.IsScriptSteppedInto = true;
+						parentfrmScriptEngine.IsHiddenTaskEngine = false;
 
 						//toggle running flag to allow for tab selection
-						parentEngine.CallBackForm.IsScriptRunning = false;
-						parentEngine.CallBackForm.OpenScriptFile(parentTaskPath);
-						parentEngine.CallBackForm.IsScriptRunning = true;
+						parentfrmScriptEngine.CallBackForm.IsScriptRunning = false;
+						parentfrmScriptEngine.CallBackForm.OpenScriptFile(parentTaskPath);
+						parentfrmScriptEngine.CallBackForm.IsScriptRunning = true;
 
-						parentEngine.UpdateLineNumber(parentDebugLine + 1);
-						parentEngine.AddStatus("Pausing Before Execution");
+						parentfrmScriptEngine.UpdateLineNumber(parentDebugLine + 1);
+						parentfrmScriptEngine.AddStatus("Pausing Before Execution");
 					}
-					else if (_newEngine.IsNewTaskResumed)
+					else if (_childfrmScriptEngine.IsNewTaskResumed)
 					{
-						parentEngine.CallBackForm.CurrentEngine = parentEngine;
-						parentEngine.IsNewTaskResumed = true;
-						parentEngine.IsHiddenTaskEngine = true;
-						parentEngine.CallBackForm.IsScriptSteppedInto = false;
-						parentEngine.CallBackForm.IsScriptPaused = false;
-						parentEngine.ResumeParentTask();
+						parentfrmScriptEngine.CallBackForm.CurrentEngine = parentfrmScriptEngine;
+						parentfrmScriptEngine.IsNewTaskResumed = true;
+						parentfrmScriptEngine.IsHiddenTaskEngine = true;
+						parentfrmScriptEngine.CallBackForm.IsScriptSteppedInto = false;
+						parentfrmScriptEngine.CallBackForm.IsScriptPaused = false;
+						parentfrmScriptEngine.ResumeParentTask();
 					}
-					else if (_newEngine.IsNewTaskCancelled)
-						parentEngine.uiBtnCancel_Click(null, null);
+					else if (_childfrmScriptEngine.IsNewTaskCancelled)
+						parentfrmScriptEngine.uiBtnCancel_Click(null, null);
 					else //child task never stepped into
-						parentEngine.IsHiddenTaskEngine = false;
+						parentfrmScriptEngine.IsHiddenTaskEngine = false;
 				});
 			}
 			else
 			{
-				((Form)currentScriptEngine.ScriptEngineUI).Invoke((Action)delegate()
+				((Form)parentAutomationEngineInstance.ScriptEngineUI).Invoke((Action)delegate()
 				{
-					((Form)parentEngine).TopMost = true;
+					((Form)parentfrmScriptEngine).TopMost = true;
 				});
 			}          
 		}
@@ -219,7 +230,7 @@ namespace OpenBots.Commands.Task
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Run '{v_taskPath}']";
+			return base.GetDisplayValue() + $" [Run '{v_TaskPath}']";
 		}
 
 		private void TaskPathControl_TextChanged(object sender, EventArgs e)
@@ -233,7 +244,7 @@ namespace OpenBots.Commands.Task
 			currentScriptEngine.VariableList.AddRange(editor.ScriptVariables);
 			currentScriptEngine.ElementList.AddRange(editor.ScriptElements);
 
-			var startFile = v_taskPath;
+			var startFile = v_TaskPath;
 			if (startFile.Contains("{ProjectPath}"))
 				startFile = startFile.Replace("{ProjectPath}", editor.ProjectPath);
 
@@ -275,28 +286,27 @@ namespace OpenBots.Commands.Task
 
 		private void RunServerTask(object sender)
 		{
-			AutomationEngineInstance currentScriptEngine = (AutomationEngineInstance)sender;
-			var childTaskPath = v_taskPath.ConvertUserVariableToString(currentScriptEngine);
-
-			string parentTaskPath = currentScriptEngine.FileName;
+			AutomationEngineInstance parentAutomationEngineInstance = (AutomationEngineInstance)sender;
+			string childTaskPath = v_TaskPath.ConvertUserVariableToString(parentAutomationEngineInstance);
+			string parentTaskPath = parentAutomationEngineInstance.FileName;
 
 			//create variable list
-			InitializeVariableLists(currentScriptEngine);
+			InitializeVariableLists(parentAutomationEngineInstance);
 
-			var newEngine = new AutomationEngineInstance((Logger)Log.Logger);
-			newEngine.VariableList = _variableList;
-			newEngine.AppInstances = currentScriptEngine.AppInstances;
-			newEngine.IsServerChildExecution = true;
+			var childAutomationEngineInstance = new AutomationEngineInstance((Logger)Log.Logger);
+			childAutomationEngineInstance.VariableList = _variableList;
+			childAutomationEngineInstance.AppInstances = parentAutomationEngineInstance.AppInstances;
+			childAutomationEngineInstance.IsServerChildExecution = true;
 
 			Log.Information("Executing Child Task: " + Path.GetFileName(childTaskPath));
-			newEngine.ExecuteScriptSync(childTaskPath, currentScriptEngine.GetProjectPath());
+			childAutomationEngineInstance.ExecuteScriptSync(childTaskPath, parentAutomationEngineInstance.GetProjectPath());
 
-			UpdateCurrentEngineContext(currentScriptEngine, newEngine);
+			UpdateCurrentEngineContext(parentAutomationEngineInstance, childAutomationEngineInstance);
 
 			Log.Information("Resuming Parent Task: " + Path.GetFileName(parentTaskPath));
 		}
 
-		private void InitializeVariableLists(IEngine engine)
+		private void InitializeVariableLists(IAutomationEngineInstance parentAutomationEngineInstance)
 		{
 			_variableList = new List<ScriptVariable>();
 			_variableReturnList = new List<ScriptVariable>();
@@ -307,10 +317,10 @@ namespace OpenBots.Commands.Task
 				object variableValue = null;
 
 				if (((string)rw.ItemArray[1]).StartsWith("{") && ((string)rw.ItemArray[1]).EndsWith("}"))
-					variableValue = ((string)rw.ItemArray[1]).ConvertUserVariableToObject(engine);
+					variableValue = ((string)rw.ItemArray[1]).ConvertUserVariableToObject(parentAutomationEngineInstance);
 
 				if (variableValue is string || variableValue == null)
-					variableValue = ((string)rw.ItemArray[1]).ConvertUserVariableToString(engine);
+					variableValue = ((string)rw.ItemArray[1]).ConvertUserVariableToString(parentAutomationEngineInstance);
 
 				var variableReturn = (string)rw.ItemArray[2];
 
@@ -331,40 +341,40 @@ namespace OpenBots.Commands.Task
 			}
 		}
 
-		private void UpdateCurrentEngineContext(IEngine currentScriptEngine, IEngine newEngine)
+		private void UpdateCurrentEngineContext(IAutomationEngineInstance parentAutomationEngineIntance, IAutomationEngineInstance childAutomationEngineInstance)
 		{
 			//get new variable list from the new task engine after it finishes running
-			var newVariableList = newEngine.VariableList;
+			var childVariableList = childAutomationEngineInstance.VariableList;
 			foreach (var variable in _variableReturnList)
 			{
 				//check if the variables we wish to return are in the new variable list
-				if (newVariableList.Exists(x => x.VariableName == variable.VariableName))
+				if (childVariableList.Exists(x => x.VariableName == variable.VariableName))
 				{
 					//if yes, get that variable from the new list
-					ScriptVariable newTemp = newVariableList.Where(x => x.VariableName == variable.VariableName).FirstOrDefault();
+					ScriptVariable newTemp = childVariableList.Where(x => x.VariableName == variable.VariableName).FirstOrDefault();
 					//check if that variable previously existed in the current engine
-					if (currentScriptEngine.VariableList.Exists(x => x.VariableName == newTemp.VariableName))
+					if (parentAutomationEngineIntance.VariableList.Exists(x => x.VariableName == newTemp.VariableName))
 					{
 						//if yes, overwrite it
-						ScriptVariable currentTemp = currentScriptEngine.VariableList.Where(x => x.VariableName == newTemp.VariableName).FirstOrDefault();
-						currentScriptEngine.VariableList.Remove(currentTemp);
+						ScriptVariable currentTemp = parentAutomationEngineIntance.VariableList.Where(x => x.VariableName == newTemp.VariableName).FirstOrDefault();
+						parentAutomationEngineIntance.VariableList.Remove(currentTemp);
 					}
 					//Add to current engine variable list
-					currentScriptEngine.VariableList.Add(newTemp);
+					parentAutomationEngineIntance.VariableList.Add(newTemp);
 				}
 			}
 
 			//get updated app instance dictionary after the new engine finishes running
-			currentScriptEngine.AppInstances = newEngine.AppInstances;
+			parentAutomationEngineIntance.AppInstances = childAutomationEngineInstance.AppInstances;
 
 			//get errors from new engine (if any)
-			var newEngineErrors = newEngine.ErrorsOccured;
+			var newEngineErrors = childAutomationEngineInstance.ErrorsOccured;
 			if (newEngineErrors.Count > 0)
 			{
-				currentScriptEngine.ChildScriptFailed = true;
+				parentAutomationEngineIntance.ChildScriptFailed = true;
 				foreach (var error in newEngineErrors)
 				{
-					currentScriptEngine.ErrorsOccured.Add(error);
+					parentAutomationEngineIntance.ErrorsOccured.Add(error);
 				}
 			}
 		}

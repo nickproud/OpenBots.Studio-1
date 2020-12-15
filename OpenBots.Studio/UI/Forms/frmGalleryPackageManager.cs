@@ -539,5 +539,22 @@ namespace OpenBots.UI.Forms
         {
             _includePrerelease = chbxIncludePrerelease.Checked;
         }
+
+        private void lbxNugetPackages_ListBoxScroll(object sender, ScrollEventArgs e)
+        {
+            //TODO fire event when user scrolls to end of listbox. Event will load more nuget ListItems
+
+            //VScrollProperties vsp = lbxNugetPackages.VerticalScroll;
+
+            //int scrollmax = vsp.Maximum - vsp.LargeChange + 1;
+
+            //if (e.NewValue == lbxNugetPackages.Bottom)
+            //    ScrolledToBottom(e.NewValue, lbxNugetPackages.Bottom);
+
+            //if (e.NewValue == lbxNugetPackages.VerticalScroll.Maximum)
+                //ScrolledToBottom(e.NewValue, scrollmax);
+            //if (e.NewValue == scrollmax)
+                //ScrolledToBottom(e.NewValue, scrollmax);
+        }
     }
 }

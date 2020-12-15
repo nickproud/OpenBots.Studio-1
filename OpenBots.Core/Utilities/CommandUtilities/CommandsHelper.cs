@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -59,8 +60,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             return descriptions[0].Description;
         }
 
-        public static AutomationElement SearchForGUIElement(IEngine engine, DataTable uiaSearchParams, string variableWindowName)
+        public static AutomationElement SearchForGUIElement(IAutomationEngineInstance engine, DataTable uiaSearchParams, string variableWindowName)
         {
+            User32Functions.ActivateWindow(variableWindowName);
             //create search params
             var searchParams = from rw in uiaSearchParams.AsEnumerable()
                                where rw.Field<string>("Enabled") == "True"
@@ -151,7 +153,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             }
         }
 
-        public static bool ElementExists(IEngine engine, string instanceName, string searchMethod, string parameterName, 
+        public static bool ElementExists(IAutomationEngineInstance engine, string instanceName, string searchMethod, string parameterName, 
             string searchOption, int timeout)
         {
             //get engine reference
@@ -182,7 +184,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             }
         }
 
-        public static object FindElement(IEngine engine, IWebDriver seleniumInstance, List<string[]> searchParameterRows, 
+        public static object FindElement(IAutomationEngineInstance engine, IWebDriver seleniumInstance, List<string[]> searchParameterRows, 
             string searchOption, int timeout)
         {
             var wait = new WebDriverWait(seleniumInstance, new TimeSpan(0, 0, timeout));

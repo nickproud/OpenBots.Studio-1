@@ -1,4 +1,4 @@
-﻿namespace OpenBots.Updater
+﻿namespace OpenBots.UI.Forms.Supplement_Forms
 {
     partial class frmUpdating
     {

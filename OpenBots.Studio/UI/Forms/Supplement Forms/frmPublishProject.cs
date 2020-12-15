@@ -72,6 +72,7 @@ namespace OpenBots.UI.Supplement_Forms
                     Version = txtVersion.Text.Trim(),
                     Description = txtDescription.Text.Trim(),
                     RequireLicenseAcceptance = false,
+                    IconUrl = "https://openbots.ai/wp-content/uploads/2020/11/Studio-Icon-256px.png",
                     DependencySets = new List<ManifestDependencySet>()
                 {
                     new ManifestDependencySet()
@@ -84,21 +85,6 @@ namespace OpenBots.UI.Supplement_Forms
                                 Id = "OpenBots.Studio",
                                 Version = new Version(Application.ProductVersion).ToString()
                             },
-                            new ManifestDependency()
-                            {
-                                Id = "OpenBots.Core",
-                                Version = new Version(Application.ProductVersion).ToString()
-                            },
-                            new ManifestDependency()
-                            {
-                                Id = "OpenBots.Engine",
-                                Version = new Version(Application.ProductVersion).ToString()
-                            },
-                            new ManifestDependency()
-                            {
-                                Id = "OpenBots.UI",
-                                Version = new Version(Application.ProductVersion).ToString()
-                            }
                         }
                     }
                 },

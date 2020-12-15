@@ -27,6 +27,7 @@ namespace OpenBots.Core.Infrastructure
         bool IsChildEngine { get; set; }
         Logger ScriptEngineLogger { get; set; }
         ICommandControls CommandControls { get; set; }
+        bool IsScheduledTask { get; set; }
 
         void ShowMessage(string message, string title, DialogType dialogType, int closeAfter);
         void ShowEngineContext(string context, int closeAfter);
@@ -38,6 +39,6 @@ namespace OpenBots.Core.Infrastructure
         void uiBtnCancel_Click(object sender, EventArgs e);
         void UpdateLineNumber(int lineNumber);
         void ResumeParentTask();
-        void UpdateCurrentEngineContext(IEngine currentEngine, IfrmScriptEngine newScriptEngine, List<ScriptVariable> variableReturnList);
+        void UpdateCurrentEngineContext(IAutomationEngineInstance parentEngine, IfrmScriptEngine childfrmScriptEngine, List<ScriptVariable> variableReturnList);
     }
 }

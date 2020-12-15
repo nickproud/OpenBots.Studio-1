@@ -185,7 +185,7 @@
     <Compile Include="Command\ScriptCommand.cs" />
     <Compile Include="Common\Common.cs" />
     <Compile Include="Enums\Enums.cs" />
-    <Compile Include="Interfaces\Commands\IBeginIfCommand.cs" />
+    <Compile Include="Interfaces\Commands\IConditionCommand.cs" />
     <Compile Include="Interfaces\Commands\IExecuteDLLCommand.cs" />
     <Compile Include="Interfaces\Commands\IImageCommands.cs" />
     <Compile Include="Interfaces\Commands\ISeleniumCreateBrowserCommand.cs" />
@@ -203,7 +203,7 @@
     <Compile Include="Interfaces\IfrmDialog.cs" />
     <Compile Include="Interfaces\IfrmScriptBuilder.cs" />
     <Compile Include="Interfaces\IfrmScriptEngine.cs" />
-    <Compile Include="Interfaces\IEngine.cs" />
+    <Compile Include="Interfaces\IAutomationEngineInstance.cs" />
     <Compile Include="Interfaces\IfrmWebElementRecorder.cs" />
     <Compile Include="IO\Folders.cs" />
     <Compile Include="Metrics\ExecutionMetric.cs" />
@@ -437,17 +437,12 @@
     <Content Include="Resources\Icons\Buttons\project-expand.png" />
     <Content Include="Resources\Icons\Buttons\project-open-directory.png" />
     <Content Include="Resources\Icons\Buttons\recent-files.png" />
-    <Content Include="Resources\Icons\Misc\robot source.png" />
-    <Content Include="Resources\Icons\Misc\robot-bouncing-transparent.gif" />
-    <Content Include="Resources\Icons\Misc\robot-bouncing.gif" />
-    <Content Include="Resources\Icons\Misc\robot-error.png" />
-    <Content Include="Resources\Icons\Misc\robot-error1.png" />
     <Content Include="Resources\Icons\Buttons\various-question.png" />
     <Content Include="Resources\Icons\Buttons\various-record-button.png" />
     <Content Include="Resources\Icons\Buttons\various-stop-button.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>nuget pack $(ProjectPath) -Properties Configuration=$(ConfigurationName) -IncludeReferencedProjects -OutputDirectory $(ProjectDir)..\OpenBots.Packages</PostBuildEvent>
+    <PostBuildEvent>nuget pack "$(ProjectPath)" -Properties Configuration=$(ConfigurationName) -IncludeReferencedProjects -OutputDirectory "$(ProjectDir)..\OpenBots.Packages"</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -164,7 +164,6 @@ namespace OpenBots.Core.Nuget
 
                 foreach(var packageToInstall in packagesToInstall)
                 {
-
                     var installedPath = packagePathResolver.GetInstalledPath(packageToInstall);
                     if (installedPath == null)
                     {
@@ -185,22 +184,14 @@ namespace OpenBots.Core.Nuget
                         packageReader = downloadResult.PackageReader;
                     }
                     else
-                    {
                         packageReader = new PackageFolderReader(installedPath);
-                    }
-
-                    var libItems = packageReader.GetLibItems();
-                    var nearest = frameworkReducer.GetNearest(nuGetFramework, libItems.Select(x => x.TargetFramework));
 
                     if (packageToInstall.Id == packageId)
                     {
-                        var existingPackage = projectDependenciesDict.Where(x => x.Key == packageToInstall.Id)
-                                                                     .Select(e => (KeyValuePair<string, string>?)e)
-                                                                     .FirstOrDefault();
-                        if (existingPackage != null)
-                            projectDependenciesDict.Remove(((KeyValuePair<string, string>)existingPackage).Key);
-
-                        projectDependenciesDict.Add(packageToInstall.Id, packageToInstall.Version.ToString());
+                        if (projectDependenciesDict.ContainsKey(packageToInstall.Id))
+                            projectDependenciesDict[packageToInstall.Id] = packageToInstall.Version.ToString();
+                        else
+                            projectDependenciesDict.Add(packageToInstall.Id, packageToInstall.Version.ToString());
                     }
                 }
             }            
@@ -233,7 +224,7 @@ namespace OpenBots.Core.Nuget
             }
         }
 
-        public static async Task<List<string>> LoadPackageAssemblies(string configPath)
+        public static List<string> LoadPackageAssemblies(string configPath, bool throwException = false)
         {
             List<string> assemblyPaths = new List<string>();
             var dependencies = JsonConvert.DeserializeObject<Project.Project>(File.ReadAllText(configPath)).Dependencies;
@@ -259,19 +250,16 @@ namespace OpenBots.Core.Nuget
             {
                 try
                 {
-                    var packageId = dependency.Key;
-                    var packageVersion = NuGetVersion.Parse(dependency.Value);
-
                     using (var cacheContext = new SourceCacheContext())
                     {
                         var availablePackages = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
                         await GetPackageDependencies(
-                            new PackageIdentity(packageId, packageVersion),
+                            new PackageIdentity(dependency.Key, NuGetVersion.Parse(dependency.Value)),
                             nuGetFramework, cacheContext, NullLogger.Instance, repositories, availablePackages);
 
                         var resolverContext = new PackageResolverContext(
                             DependencyBehavior.Lowest,
-                            new[] { packageId },
+                            new[] { dependency.Key },
                             Enumerable.Empty<string>(),
                             Enumerable.Empty<PackageReference>(),
                             Enumerable.Empty<PackageIdentity>(),
@@ -284,15 +272,11 @@ namespace OpenBots.Core.Nuget
 
                         foreach (var packageToInstall in packagesToInstall)
                         {
-                            PackageReaderBase packageReader;
-                            var installedPath = packagePathResolver.GetInstalledPath(packageToInstall);
+                            PackageReaderBase packageReader = new PackageFolderReader(packagePathResolver.GetInstalledPath(packageToInstall));
 
-                            packageReader = new PackageFolderReader(installedPath);
+                            var nearest = frameworkReducer.GetNearest(nuGetFramework, packageReader.GetLibItems().Select(x => x.TargetFramework));
 
-                            var libItems = packageReader.GetLibItems();
-                            var nearest = frameworkReducer.GetNearest(nuGetFramework, libItems.Select(x => x.TargetFramework));
-
-                            var packageListAssemblyPaths = libItems
+                            var packageListAssemblyPaths = packageReader.GetLibItems()
                                 .Where(x => x.TargetFramework.Equals(nearest))
                                 .SelectMany(x => x.Items.Where(i => i.EndsWith(".dll"))).ToList();
 
@@ -300,18 +284,21 @@ namespace OpenBots.Core.Nuget
                             {
                                 foreach (string path in packageListAssemblyPaths)
                                 {
-                                    var dependencyPath = Path.Combine(packagePath, $"{packageToInstall.Id}.{packageToInstall.Version}", path);
-
-                                    if (!assemblyPaths.Contains(dependencyPath))
-                                        assemblyPaths.Add(dependencyPath);
+                                    if (!assemblyPaths.Contains(Path.Combine(packagePath, $"{packageToInstall.Id}.{packageToInstall.Version}", path)))
+                                        assemblyPaths.Add(Path.Combine(packagePath, $"{packageToInstall.Id}.{packageToInstall.Version}", path));
                                 }
+                                    
                             }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    if (throwException)
+                        throw new FileNotFoundException($"Unable to load {packagePath}\\{dependency.Key}.{dependency.Value}. " +
+                                                        "Please install this package using the OpenBots Studio Package Manager.");
+                    else
+                        Console.WriteLine(ex);
                 }
             });
 

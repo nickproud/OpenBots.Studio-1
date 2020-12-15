@@ -9,7 +9,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
     [System.Runtime.InteropServices.ComVisibleAttribute(true)]
     public partial class frmHTMLDisplayForm : UIForm
     {
-        public DialogResult Result { get; set; }
         public string TemplateHTML { get; set; }
 
         public frmHTMLDisplayForm()
@@ -23,19 +22,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             webBrowserHTML.ObjectForScripting = this;
             webBrowserHTML.DocumentText = TemplateHTML;
             TopMost = true;
-        }
-
-        public void OK()
-        {
-            //Todo: figure out why return DialogResult not working for some reason
-            Result = DialogResult.OK;
-            Close();
-        }
-        public void Cancel()
-        {
-            //Todo: figure out why return DialogResult not working for some reason
-            Result = DialogResult.Cancel;
-            Close();
         }
 
         public List<ScriptVariable> GetVariablesFromHTML(string tagSearch)
@@ -77,6 +63,16 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 }
             }
             return varList;
+        }
+
+        private void btnOkay_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
         }
     }
 }

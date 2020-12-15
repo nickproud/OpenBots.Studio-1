@@ -693,7 +693,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             frmAboutForm.Show();
         }
 
-        private async void packageManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        private void packageManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string packagePath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
@@ -703,19 +703,44 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             if (frmManager.DialogResult == DialogResult.OK)
             {
+                tpbLoadingSpinner.Visible = true;
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
 
-                var assemblyList = await NugetPackageManager.LoadPackageAssemblies(configPath);
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 _container = _builder.Build();
                 
-                LoadCommands();
+                LoadCommands(this);
+                tpbLoadingSpinner.Visible = false;
             }
         }
 
         private void uiBtnPackageManager_Click(object sender, EventArgs e)
         {
             packageManagerToolStripMenuItem_Click(sender, e);
+        }
+
+        private async void installDefaultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(_packagesPath) && Directory.GetDirectories(_packagesPath).Length > 0)
+            {
+                MessageBox.Show("Close OpenBots and delete all packages first.", "Delete Packages");
+                return;
+            }
+
+            tpbLoadingSpinner.Visible = true;
+            string configPath = Path.Combine(ScriptProjectPath, "project.config");
+
+            Directory.CreateDirectory(_packagesPath);
+            foreach (var dep in ScriptProject.Dependencies)
+                await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>());
+
+            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+            _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+            _container = _builder.Build();
+
+            LoadCommands(this);
+            tpbLoadingSpinner.Visible = false;
         }
         #endregion
 

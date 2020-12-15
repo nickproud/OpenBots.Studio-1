@@ -292,6 +292,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ISequenceCommand sequence = currentCommand as ISequenceCommand;
                 frmScriptBuilder newBuilder = new frmScriptBuilder();
 
+                LoadCommands(newBuilder);
+
                 newBuilder.ScriptProject = ScriptProject;
                 newBuilder.ScriptProjectPath = ScriptProjectPath;
 

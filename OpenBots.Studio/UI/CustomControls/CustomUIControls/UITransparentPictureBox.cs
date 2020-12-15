@@ -10,7 +10,9 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
         public UITransparentPictureBox()
         {
             BackColor = Color.Transparent;
+            SizeMode = PictureBoxSizeMode.StretchImage;
         }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             if (Parent != null && BackColor == Color.Transparent)

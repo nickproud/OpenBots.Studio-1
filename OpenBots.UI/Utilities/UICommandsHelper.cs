@@ -10,6 +10,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Windows.Automation;
 
 namespace OpenBots.UI.Utilities
 {
@@ -148,7 +150,7 @@ namespace OpenBots.UI.Utilities
 			return element;
 		}
 
-		public static bool DetermineStatementTruth(IEngine engine, string ifActionType, DataTable IfActionParameterTable)
+		public static bool DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable)
 		{
 			bool ifResult = false;
 
@@ -523,13 +525,33 @@ namespace OpenBots.UI.Utilities
 												where rw.Field<string>("Parameter Name") == "True When"
 												select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
+				string timeout = (from rw in IfActionParameterTable.AsEnumerable()
+												where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
+												select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine);
+
 				//set up search parameter table
 				var uiASearchParameters = new DataTable();
 				uiASearchParameters.Columns.Add("Enabled");
 				uiASearchParameters.Columns.Add("Parameter Name");
 				uiASearchParameters.Columns.Add("Parameter Value");
 				uiASearchParameters.Rows.Add(true, elementSearchMethod, elementSearchParam);
-				var handle = CommandsHelper.SearchForGUIElement(engine, uiASearchParameters, windowName);
+
+				int vTimeout = int.Parse(timeout);
+				AutomationElement handle = null;
+				var timeToEnd = DateTime.Now.AddSeconds(vTimeout);
+				while (timeToEnd >= DateTime.Now)
+				{
+					try
+					{
+						handle = CommandsHelper.SearchForGUIElement(engine, uiASearchParameters, windowName);
+						break;
+					}
+					catch (Exception)
+					{
+						engine.ReportProgress("Element Not Yet Found... " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+						Thread.Sleep(500);
+					}
+				}
 
 				if (handle is null)
 					ifResult = false;

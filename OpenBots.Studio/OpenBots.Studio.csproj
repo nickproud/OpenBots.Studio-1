@@ -386,6 +386,12 @@
     <Compile Include="UI\Forms\Supplement Forms\frmPublishProject.Designer.cs">
       <DependentUpon>frmPublishProject.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Forms\Supplement Forms\frmUpdating.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\Supplement Forms\frmUpdating.Designer.cs">
+      <DependentUpon>frmUpdating.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Forms\Supplement Forms\frmWebElementRecorderSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -627,6 +633,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\CustomControls\CommandGroupControl.resx">
       <DependentUpon>CommandGroupControl.cs</DependentUpon>
@@ -669,6 +676,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmPublishProject.resx">
       <DependentUpon>frmPublishProject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\Supplement Forms\frmUpdating.resx">
+      <DependentUpon>frmUpdating.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmWebElementRecorderSettings.resx">
       <DependentUpon>frmWebElementRecorderSettings.cs</DependentUpon>
@@ -801,6 +811,7 @@
     <Content Include="OpenBots-ico.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Resources\" />
     <Folder Include="UI\DTOs\" />
     <Folder Include="UI\FormEventArgs\" />
   </ItemGroup>

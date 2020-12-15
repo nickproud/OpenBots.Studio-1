@@ -65,7 +65,7 @@ namespace OpenBots.Commands.If
 			{
 				var commandData = rw["CommandData"].ToString();
 				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
-				var statementResult = UICommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_IfActionParameterTable);
+				var statementResult = UICommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
 
 				if (!statementResult)
 				{

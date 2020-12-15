@@ -25,7 +25,7 @@ using System.Windows.Forms;
 
 namespace OpenBots.Engine
 {
-    public class AutomationEngineInstance : IEngine
+    public class AutomationEngineInstance : IAutomationEngineInstance
     {
         //engine variables
         public List<ScriptVariable> VariableList { get; set; }

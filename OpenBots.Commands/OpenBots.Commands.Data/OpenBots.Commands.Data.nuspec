@@ -16,7 +16,7 @@
     <copyright>(C) OpenBots Inc 2020-2021</copyright>
     <tags>OpenBots Studio Data Commands CreateDateTime DateCalculation FormatDate GetPDFText GetTextLength 
           GetWordCount MathCalculation ModifyString ParseJSONArray ParseJSONModel ReplaceText SplitText 
-          Substring TextExtraction</tags>
+          StringContains Substring TextExtraction</tags>
     <dependencies>
       <group targetFramework="net48">
       </group>      

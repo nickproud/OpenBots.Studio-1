@@ -22,7 +22,7 @@ namespace OpenBots.Commands.If
 	[Serializable]
 	[Category("If Commands")]
 	[Description("This command evaluates a logical statement to determine if the statement is 'true' or 'false' and subsequently performs action(s) based on either condition.")]
-	public class BeginIfCommand : ScriptCommand
+	public class BeginIfCommand : ScriptCommand, IConditionCommand
 	{
 		[Required]
 		[DisplayName("Condition Type")]
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.If
 		[SampleUsage("Param Value || {vParamValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		public DataTable v_IfActionParameterTable { get; set; }
+		public DataTable v_ActionParameterTable { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
@@ -76,12 +76,12 @@ namespace OpenBots.Commands.If
 			CommandEnabled = true;          
 
 			//define parameter table
-			v_IfActionParameterTable = new DataTable
+			v_ActionParameterTable = new DataTable
 			{
 				TableName = DateTime.Now.ToString("IfActionParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"))
 			};
-			v_IfActionParameterTable.Columns.Add("Parameter Name");
-			v_IfActionParameterTable.Columns.Add("Parameter Value");
+			v_ActionParameterTable.Columns.Add("Parameter Name");
+			v_ActionParameterTable.Columns.Add("Parameter Value");
 
 			_ifGridViewHelper = new DataGridView();
 			_ifGridViewHelper.AllowUserToAddRows = true;
@@ -89,7 +89,7 @@ namespace OpenBots.Commands.If
 			_ifGridViewHelper.Size = new Size(400, 250);
 			_ifGridViewHelper.ColumnHeadersHeight = 30;
 			_ifGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_ifGridViewHelper.DataBindings.Add("DataSource", this, "v_IfActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
+			_ifGridViewHelper.DataBindings.Add("DataSource", this, "v_ActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
 			_ifGridViewHelper.AllowUserToAddRows = false;
 			_ifGridViewHelper.AllowUserToDeleteRows = false;
 			_ifGridViewHelper.MouseEnter += IfGridViewHelper_MouseEnter;
@@ -107,7 +107,7 @@ namespace OpenBots.Commands.If
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (AutomationEngineInstance)sender;
-			var ifResult = UICommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_IfActionParameterTable);
+			var ifResult = UICommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
 
 			int startIndex, endIndex, elseIndex;
 			if (parentCommand.AdditionalScriptCommands.Any(item => item.ScriptCommand is ElseCommand))
@@ -156,11 +156,11 @@ namespace OpenBots.Commands.If
 			RenderedControls.Add(_actionDropdown);
 
 			_parameterControls = new List<Control>();
-			_parameterControls.Add(commandControls.CreateDefaultLabelFor("v_IfActionParameterTable", this));
+			_parameterControls.Add(commandControls.CreateDefaultLabelFor("v_ActionParameterTable", this));
 
 			_recorderControl.Click += (sender, e) => ShowIfElementRecorder(sender, e, editor, commandControls);
 			_parameterControls.Add(_recorderControl);
-			_parameterControls.AddRange(commandControls.CreateUIHelpersFor("v_IfActionParameterTable", this, new Control[] { _ifGridViewHelper }, editor));
+			_parameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ActionParameterTable", this, new Control[] { _ifGridViewHelper }, editor));
 			_parameterControls.Add(_ifGridViewHelper);
 			RenderedControls.AddRange(_parameterControls);
 
@@ -174,26 +174,26 @@ namespace OpenBots.Commands.If
 				case "Value Compare":
 				case "Date Compare":
 				case "Variable Compare":
-					string value1 = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string value1 = ((from rw in v_ActionParameterTable.AsEnumerable()
 									  where rw.Field<string>("Parameter Name") == "Value1"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string operand = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string operand = ((from rw in v_ActionParameterTable.AsEnumerable()
 									   where rw.Field<string>("Parameter Name") == "Operand"
 									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string value2 = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string value2 = ((from rw in v_ActionParameterTable.AsEnumerable()
 									  where rw.Field<string>("Parameter Name") == "Value2"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"If ('{value1}' {operand} '{value2}')";
 
 				case "Variable Has Value":
-					string variableName = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string variableName = ((from rw in v_ActionParameterTable.AsEnumerable()
 									  where rw.Field<string>("Parameter Name") == "Variable Name"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"If (Variable '{variableName}' Has Value)";
 				case "Variable Is Numeric":
-					string varName = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string varName = ((from rw in v_ActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Variable Name"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -201,14 +201,14 @@ namespace OpenBots.Commands.If
 
 				case "Error Occured":
 
-					string lineNumber = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string lineNumber = ((from rw in v_ActionParameterTable.AsEnumerable()
 										  where rw.Field<string>("Parameter Name") == "Line Number"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"If (Error Occured on Line Number '{lineNumber}')";
 				case "Error Did Not Occur":
 
-					string lineNum = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string lineNum = ((from rw in v_ActionParameterTable.AsEnumerable()
 										  where rw.Field<string>("Parameter Name") == "Line Number"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -216,18 +216,18 @@ namespace OpenBots.Commands.If
 				case "Window Name Exists":
 				case "Active Window Name Is":
 
-					string windowName = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string windowName = ((from rw in v_ActionParameterTable.AsEnumerable()
 										  where rw.Field<string>("Parameter Name") == "Window Name"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"If {v_IfActionType} [Window Name '{windowName}']";
 				case "File Exists":
 
-					string filePath = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string filePath = ((from rw in v_ActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "File Path"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string fileCompareType = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string fileCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
 											   where rw.Field<string>("Parameter Name") == "True When"
 											   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -238,11 +238,11 @@ namespace OpenBots.Commands.If
 
 				case "Folder Exists":
 
-					string folderPath = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string folderPath = ((from rw in v_ActionParameterTable.AsEnumerable()
 										  where rw.Field<string>("Parameter Name") == "Folder Path"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string folderCompareType = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string folderCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
 											   where rw.Field<string>("Parameter Name") == "True When"
 											   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -254,15 +254,15 @@ namespace OpenBots.Commands.If
 				case "Web Element Exists":
 
 
-					string parameterName = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string parameterName = ((from rw in v_ActionParameterTable.AsEnumerable()
 											 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
 											 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string searchMethod = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string searchMethod = ((from rw in v_ActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Element Search Method"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string webElementCompareType = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string webElementCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
 												 where rw.Field<string>("Parameter Name") == "True When"
 												 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -274,15 +274,15 @@ namespace OpenBots.Commands.If
 				case "GUI Element Exists":
 
 
-					string guiWindowName = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string guiWindowName = ((from rw in v_ActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Window Name"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string guiSearch = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string guiSearch = ((from rw in v_ActionParameterTable.AsEnumerable()
 											 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
 											 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string guiElementCompareType = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string guiElementCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
 													 where rw.Field<string>("Parameter Name") == "True When"
 													 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -292,7 +292,7 @@ namespace OpenBots.Commands.If
 						return $"If GUI Element Exists [Find '{guiSearch}' Element In '{guiWindowName}']";
 
 				case "Image Element Exists":
-					string imageCompareType = (from rw in v_IfActionParameterTable.AsEnumerable()
+					string imageCompareType = (from rw in v_ActionParameterTable.AsEnumerable()
 											   where rw.Field<string>("Parameter Name") == "True When"
 											   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
@@ -301,11 +301,11 @@ namespace OpenBots.Commands.If
 					else
 						return $"If Image Exists on Screen";
 				case "App Instance Exists":
-					string instanceName = ((from rw in v_IfActionParameterTable.AsEnumerable()
+					string instanceName = ((from rw in v_ActionParameterTable.AsEnumerable()
 											 where rw.Field<string>("Parameter Name") == "Instance Name"
 											 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string instanceCompareType = (from rw in v_IfActionParameterTable.AsEnumerable()
+					string instanceCompareType = (from rw in v_ActionParameterTable.AsEnumerable()
 											   where rw.Field<string>("Parameter Name") == "True When"
 											   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
@@ -323,7 +323,7 @@ namespace OpenBots.Commands.If
 			DataGridView ifActionParameterBox = _ifGridViewHelper;
 
 			BeginIfCommand cmd = this;
-			DataTable actionParameters = cmd.v_IfActionParameterTable;
+			DataTable actionParameters = cmd.v_ActionParameterTable;
 
 			//sender is null when command is updating
 			if (sender != null)
@@ -524,8 +524,9 @@ namespace OpenBots.Commands.If
 					if (sender != null)
 					{
 						actionParameters.Rows.Add("Window Name", "Current Window");
-						actionParameters.Rows.Add("Element Search Method", "");
+						actionParameters.Rows.Add("Element Search Method", "AutomationId");
 						actionParameters.Rows.Add("Element Search Parameter", "");
+						actionParameters.Rows.Add("Timeout (Seconds)", "30");
 						actionParameters.Rows.Add("True When", "It Does Exist");
 						ifActionParameterBox.DataSource = actionParameters;
 					}
@@ -535,7 +536,7 @@ namespace OpenBots.Commands.If
 					comparisonComboBox.Items.Add("It Does Not Exist");
 
 					//assign cell as a combobox
-					ifActionParameterBox.Rows[3].Cells[1] = comparisonComboBox;
+					ifActionParameterBox.Rows[4].Cells[1] = comparisonComboBox;
 
 					var parameterName = new DataGridViewComboBoxCell();
 					parameterName.Items.Add("AcceleratorKey");
@@ -619,7 +620,10 @@ namespace OpenBots.Commands.If
 
 		private void ShowIfElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
-			_ifGridViewHelper.Rows[0].Cells[1].Value = commandControls.ShowCommandsElementRecorder(sender, e, editor);
+			var result = commandControls.ShowConditionElementRecorder(sender, e, editor);
+
+			_ifGridViewHelper.Rows[0].Cells[1].Value = result.Item1;
+			_ifGridViewHelper.Rows[2].Cells[1].Value = result.Item2;
 		}
 	}
 }

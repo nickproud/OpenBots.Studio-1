@@ -20,14 +20,16 @@ namespace OpenBots.UI.Forms
 
         public enum ProjectAction
         {
+            None,
             CreateProject,
-            OpenProject
+            OpenProject           
         }
 
         public frmProjectBuilder()
         {
             InitializeComponent();
             txtNewProjectLocation.Text = Folders.GetFolder(FolderType.ScriptsFolder);
+            Action = ProjectAction.None;
         }
 
         private void btnCreateProject_Click(object sender, EventArgs e)
