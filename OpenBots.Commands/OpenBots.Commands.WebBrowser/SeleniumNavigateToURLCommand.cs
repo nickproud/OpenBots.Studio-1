@@ -3,7 +3,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using OpenQA.Selenium;
 using SHDocVw;
 using System;
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.WebBrowser
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var vURL = v_URL.ConvertUserVariableToString(engine);
 			var seleniumInstance = (IWebDriver)browserObject;

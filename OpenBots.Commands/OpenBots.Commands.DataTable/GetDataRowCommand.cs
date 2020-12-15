@@ -3,7 +3,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -54,7 +53,7 @@ namespace OpenBots.Commands.DataTable
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			Data.DataTable dataTable = (Data.DataTable)v_DataTable.ConvertUserVariableToObject(engine);
 
 			var rowIndex = v_DataRowIndex.ConvertUserVariableToString(engine);

@@ -10,6 +10,7 @@ using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommandUtilities;
+using OpenBots.Engine;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
@@ -1075,6 +1076,11 @@ namespace OpenBots.UI.CustomControls
 
             return new frmScriptEngine(pathToFile, projectPath, newBuilderForm, logger,
                 variables, null, appInstances, false, isDebugMode);
+        }
+
+        public IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger)
+        {
+            return new AutomationEngineInstance(logger);
         }
 
         public IfrmWebElementRecorder CreateWebElementRecorderForm(string startURL)

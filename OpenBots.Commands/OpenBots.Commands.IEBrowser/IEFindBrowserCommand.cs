@@ -4,7 +4,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Engine;
+
 using SHDocVw;
 using System;
 using System.Collections.Generic;
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.IEBrowser
 
         public override void RunCommand(object sender)
         {
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
 
             bool browserFound = false;
             var shellWindows = new ShellWindows();

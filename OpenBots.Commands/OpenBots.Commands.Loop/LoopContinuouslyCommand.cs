@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Loop
         public override void RunCommand(object sender, ScriptAction parentCommand)
         {
             LoopContinuouslyCommand loopCommand = (LoopContinuouslyCommand)parentCommand.ScriptCommand;
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
             engine.ReportProgress("Starting Continous Loop From Line " + loopCommand.LineNumber);
 
             while (true)

@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,7 +26,7 @@ namespace OpenBots.Commands.ErrorHandling
         public override void RunCommand(object sender, ScriptAction parentCommand)
         {
             //get engine
-            var engine = (AutomationEngineInstance) sender;
+            var engine = (IAutomationEngineInstance) sender;
 
             //get indexes of commands
             var startIndex = 0;
@@ -175,7 +175,7 @@ namespace OpenBots.Commands.ErrorHandling
         private void ExecuteTargetCatchBlock(object sender, ScriptAction parentCommand, int startCatchIndex, int endCatchIndex)
         {
             //get engine
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
 
             //reset exception flags
             engine.ChildScriptFailed = false;

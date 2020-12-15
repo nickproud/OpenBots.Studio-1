@@ -7,7 +7,7 @@ using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommandUtilities;
-using OpenBots.Engine;
+
 using OpenBots.UI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -60,7 +60,7 @@ namespace OpenBots.Commands.Loop
 
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			bool isTrueStatement = DetermineMultiStatementTruth(engine);
 			engine.ReportProgress("Starting Loop");
 

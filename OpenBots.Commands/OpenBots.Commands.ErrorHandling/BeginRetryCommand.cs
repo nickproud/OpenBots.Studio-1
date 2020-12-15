@@ -9,7 +9,6 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using OpenBots.UI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -82,7 +81,7 @@ namespace OpenBots.Commands.ErrorHandling
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			//get engine
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var retryCommand = (BeginRetryCommand)parentCommand.ScriptCommand;
 
 			int retryCount = int.Parse(retryCommand.v_RetryCount.ConvertUserVariableToString(engine));

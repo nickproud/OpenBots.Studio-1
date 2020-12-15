@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Misc
 
         public override void RunCommand(object sender, ScriptAction parentCommand)
         {
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
 
             foreach (var item in ScriptActions)
             {

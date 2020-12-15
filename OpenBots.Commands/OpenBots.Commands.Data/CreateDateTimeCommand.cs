@@ -4,19 +4,15 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
 {
-	[Serializable]
+    [Serializable]
 	[Category("Data Commands")]
 	[Description("This command creates a DateTime and saves the result in a variable.")]
 	public class CreateDateTimeCommand : ScriptCommand
@@ -78,7 +74,7 @@ namespace OpenBots.Commands.Data
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vYear = int.Parse(v_Year.ConvertUserVariableToString(engine));
 			var vMonth = v_Month.ConvertUserVariableToString(engine);
 			var vDay = int.Parse(v_Day.ConvertUserVariableToString(engine));

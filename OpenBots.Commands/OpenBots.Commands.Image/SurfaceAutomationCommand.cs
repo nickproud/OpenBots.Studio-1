@@ -9,7 +9,7 @@ using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Core.Utilities.FormsUtilities;
-using OpenBots.Engine;
+
 using OpenBots.UI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -115,7 +115,7 @@ namespace OpenBots.Commands.Image
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			bool testMode = TestMode;
 			//user image to bitmap
 			Bitmap userImage = new Bitmap(Common.Base64ToImage(v_ImageCapture));

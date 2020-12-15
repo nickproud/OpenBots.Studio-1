@@ -4,7 +4,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ using System.Windows.Forms;
 
 namespace OpenBots.Commands.API
 {
-	[Serializable]
+    [Serializable]
 	[Category("API Commands")]
 	[Description("This command calls a REST API with a specific HTTP method.")]
 
@@ -118,7 +117,7 @@ namespace OpenBots.Commands.API
 				string restContent;
 
 				//get engine instance
-				var engine = (AutomationEngineInstance)sender;
+				var engine = (IAutomationEngineInstance)sender;
 
 				//get parameters
 				var targetURL = v_BaseURL.ConvertUserVariableToString(engine);

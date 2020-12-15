@@ -6,7 +6,7 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Engine;
+
 using OpenBots.UI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -106,7 +106,7 @@ namespace OpenBots.Commands.If
 
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var ifResult = UICommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
 
 			int startIndex, endIndex, elseIndex;

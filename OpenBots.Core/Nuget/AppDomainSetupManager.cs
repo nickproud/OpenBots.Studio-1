@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace OpenBots.Core.Nuget
 {
@@ -40,6 +41,12 @@ namespace OpenBots.Core.Nuget
                     }
                     else if (name != "OpenBots.Engine" && name != "RestSharp" && name != "WebDriver")
                         existingAssemblies.Add(existingAssembly);
+                    if (name == "OpenBots.Engine")// && FileVersionInfo.GetVersionInfo(path).FileVersion != Application.ProductVersion)
+                    {
+                        var check = FileVersionInfo.GetVersionInfo(path).FileVersion;
+                        var check2 = Application.ProductVersion;
+                        //pause
+                    }
                 }
                 catch (Exception ex)
                 {

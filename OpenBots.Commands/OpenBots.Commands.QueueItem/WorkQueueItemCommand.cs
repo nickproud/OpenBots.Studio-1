@@ -7,7 +7,7 @@ using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Server.User;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -74,7 +74,7 @@ namespace OpenBots.Commands.QueueItem
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vQueueName = v_QueueName.ConvertUserVariableToString(engine);
 			var vAttachmentDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
 			Dictionary<string, object> queueItemDict = new Dictionary<string, object>();

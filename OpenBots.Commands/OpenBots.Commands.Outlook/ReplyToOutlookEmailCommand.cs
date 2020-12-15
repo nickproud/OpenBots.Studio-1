@@ -4,7 +4,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,7 +73,7 @@ namespace OpenBots.Commands.Outlook
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine);
 			var vBody = v_Body.ConvertUserVariableToString(engine);
 			var vAttachment = v_Attachments.ConvertUserVariableToString(engine);
