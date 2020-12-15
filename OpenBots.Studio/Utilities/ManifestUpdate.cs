@@ -24,12 +24,12 @@ namespace OpenBots.Utilities
         {
             //create web client
             WebClient webClient = new WebClient();
-            string manifestData = "";
+            string manifestData;
 
             //get manifest
             try
             {
-                manifestData = webClient.DownloadString("http://www.taskt.net/updates/latest.json");           
+                manifestData = webClient.DownloadString("https://gallery.openbots.io/products/studio/latest.json");           
             }
             catch (Exception)
             {

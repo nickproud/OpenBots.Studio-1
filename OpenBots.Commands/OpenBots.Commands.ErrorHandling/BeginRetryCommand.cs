@@ -63,6 +63,10 @@ namespace OpenBots.Commands.ErrorHandling
 		[Browsable(false)]
 		private List<ScriptElement> _scriptElements { get; set; }
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private Exception _exception { get; set; }
+
 		public BeginRetryCommand()
 		{
 			CommandName = "BeginRetryCommand";
@@ -87,29 +91,46 @@ namespace OpenBots.Commands.ErrorHandling
 
 			for(int startIndex = 0; startIndex < retryCount; startIndex++)
 			{
+				//reset error flags
+				engine.ChildScriptFailed = false;
+				engine.ChildScriptErrorCaught = false;
+
 				exceptionOccurred = false;
-				foreach(var cmd in parentCommand.AdditionalScriptCommands)
+				engine.ReportProgress($"Begin Retry [{startIndex + 1}/{retryCount}]");
+
+				foreach (var cmd in parentCommand.AdditionalScriptCommands)
 				{
 					try
 					{
-						cmd.IsExceptionIgnored = true;
+						cmd.IsExceptionIgnored = true;						
 						engine.ExecuteCommand(cmd);
+						if (cmd.ScriptCommand.CommandName == "RunTaskCommand" && engine.ChildScriptFailed && !engine.ChildScriptErrorCaught)
+							throw new Exception("Child Script Failed");
 					}
-					catch (Exception)
+					catch (Exception ex)
 					{
+						_exception = ex;
 						exceptionOccurred = true;
 						break;
 					}
 				}
-				// If no exception is thrown out and the Condition's satisfied
+				// If no exception is thrown out and the Condition's satisfied				
 				if (!exceptionOccurred && GetConditionResult(engine))
 				{
-					retryCount = 0;
 					engine.ErrorsOccured.Clear();
+					retryCount = 0;					
 				}
-				else if((startIndex+1) != retryCount)
+				else if((startIndex + 1) < retryCount)
 				{
+					engine.ErrorsOccured.Clear();
 					Thread.Sleep(retryInterval);
+				}
+                else
+                {
+					if(!(engine.LastExecutedCommand.CommandName == "RethrowCommand"))
+						engine.ErrorsOccured.Clear();	
+					
+					throw new Exception("Number of retries has expired! - " + _exception.Message);
 				}
 			}
 		}
@@ -225,7 +246,7 @@ namespace OpenBots.Commands.ErrorHandling
 			}
 		}
 
-		private bool GetConditionResult(IEngine engine)
+		private bool GetConditionResult(IAutomationEngineInstance engine)
 		{
 			bool isTrueStatement = true;
 			foreach (DataRow rw in v_IfConditionsTable.Rows)

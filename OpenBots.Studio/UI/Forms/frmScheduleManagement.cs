@@ -13,8 +13,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 using Microsoft.Win32.TaskScheduler;
-using OpenBots.Core.Enums;
-using OpenBots.Core.IO;
+using OpenBots.Core.Project;
 using OpenBots.Core.UI.Forms;
 using System;
 using System.Collections.Generic;
@@ -27,8 +26,6 @@ namespace OpenBots.UI.Forms
 {
     public partial class frmScheduleManagement : UIForm
     {
-        private string _rpaScriptsFolder;
-
         public frmScheduleManagement()
         {
             InitializeComponent();
@@ -41,17 +38,6 @@ namespace OpenBots.UI.Forms
             //get path to executing assembly
             txtAppPath.Text = Assembly.GetEntryAssembly().Location;
 
-            //get path to scripts folder
-            _rpaScriptsFolder = Folders.GetFolder(FolderType.ScriptsFolder);
-
-            var files = Directory.GetFiles(_rpaScriptsFolder);
-
-            foreach (var fil in files)
-            {
-                FileInfo newFileInfo = new FileInfo(fil);
-                cboSelectedScript.Items.Add(newFileInfo.Name);
-            }
-
             //set autosize mode
             colTaskName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
@@ -60,75 +46,95 @@ namespace OpenBots.UI.Forms
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
-        {
-            if (String.IsNullOrEmpty(txtRecurCount.Text))
+        {          
+            if (string.IsNullOrEmpty(txtProjectPath.Text))
+            {
+                MessageBox.Show("Please select a project!");
+                return;
+            }
+
+            string selectedFile = Path.Combine(txtProjectPath.Text, "project.config");
+            if (!File.Exists(selectedFile))
+            {
+                MessageBox.Show("'project.config' file not found!");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(txtRecurCount.Text))
             {
                 MessageBox.Show("Please indicate a recurrence value!");
                 return;
             }
 
-            if (String.IsNullOrEmpty(cboRecurType.Text))
+            if (string.IsNullOrEmpty(cboRecurType.Text))
             {
                 MessageBox.Show("Please select a recurrence frequency!");
                 return;
             }
 
-            if (String.IsNullOrEmpty(cboSelectedScript.Text))
-            {
-                MessageBox.Show("Please select a script!");
-                return;
-            }
-
-            var selectedFile = Path.Combine(_rpaScriptsFolder, cboSelectedScript.Text);
+            Project scriptProject = Project.OpenProject(Path.Combine(txtProjectPath.Text, "project.config"));          
 
             using (TaskService ts = new TaskService())
             {
-                // Create a new task definition and assign properties
-                TaskDefinition td = ts.NewTask();
-                td.RegistrationInfo.Description = "Scheduled task from OpenBots Studio - " + selectedFile;
-                var trigger = new TimeTrigger();
-                ////   // Add a trigger that will fire the task at this time every other day
-                //DailyTrigger dt = (DailyTrigger)td.Triggers.Add(new DailyTrigger(2));
-                //dt.Repetition.Duration = TimeSpan.FromHours(4);
-                //dt.Repetition.Interval = TimeSpan.FromHours()
-                // Create a trigger that will execute very 2 minutes.
-
-                trigger.StartBoundary = dtStartTime.Value;
-                if (rdoEndByDate.Checked)
+                try
                 {
-                    trigger.EndBoundary = dtEndTime.Value;
+                    // Create a new task definition and assign properties
+                    TaskDefinition td = ts.NewTask();
+                    td.RegistrationInfo.Description = "Scheduled task from OpenBots Studio - " + scriptProject.ProjectName;
+                    var trigger = new TimeTrigger();
+                    ////   // Add a trigger that will fire the task at this time every other day
+                    //DailyTrigger dt = (DailyTrigger)td.Triggers.Add(new DailyTrigger(2));
+                    //dt.Repetition.Duration = TimeSpan.FromHours(4);
+                    //dt.Repetition.Interval = TimeSpan.FromHours()
+                    // Create a trigger that will execute very 2 minutes.
+
+                    trigger.StartBoundary = dtStartTime.Value;
+                    if (rdoEndByDate.Checked)
+                    {
+                        trigger.EndBoundary = dtEndTime.Value;
+                    }
+
+                    double recurParsed;
+
+                    if (!double.TryParse(txtRecurCount.Text, out recurParsed))
+                    {
+                        MessageBox.Show("Recur value must be a number type (double)!");
+                        return;
+                    }
+
+                    switch (cboRecurType.Text)
+                    {
+                        case "Minute(s)":
+                            trigger.Repetition.Interval = TimeSpan.FromMinutes(recurParsed);
+                            break;
+
+                        case "Hour(s)":
+                            trigger.Repetition.Interval = TimeSpan.FromHours(recurParsed);
+                            break;
+
+                        case "Day(s)":
+                            trigger.Repetition.Interval = TimeSpan.FromDays(recurParsed);
+                            break;
+
+                        default:
+                            break;
+                    }               
+
+                    if (trigger.Repetition.Interval < new TimeSpan(0, 1, 0) || trigger.Repetition.Interval > new TimeSpan(31,0,0,0))
+                    {
+                        MessageBox.Show("Recurrence interval must be between 1 minute and 31 days");
+                        return;
+                    }
+
+                    td.Triggers.Add(trigger);
+
+                    td.Actions.Add(new ExecAction(@"" + txtAppPath.Text + "", "\"" + selectedFile + "\"", null));
+                    ts.RootFolder.RegisterTaskDefinition(@"OpenBots-" + scriptProject.ProjectName, td);
                 }
-
-                double recurParsed;
-
-                if (!double.TryParse(txtRecurCount.Text, out recurParsed))
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Recur value must be a number type (double)!");
-                    return;
+                    MessageBox.Show("Error: " + ex.Message);
                 }
-
-                switch (cboRecurType.Text)
-                {
-                    case "Minutes":
-                        trigger.Repetition.Interval = TimeSpan.FromMinutes(recurParsed);
-                        break;
-
-                    case "Hours":
-                        trigger.Repetition.Interval = TimeSpan.FromHours(recurParsed);
-                        break;
-
-                    case "Days":
-                        trigger.Repetition.Interval = TimeSpan.FromDays(recurParsed);
-                        break;
-
-                    default:
-                        break;
-                }
-
-                td.Triggers.Add(trigger);
-
-                td.Actions.Add(new ExecAction(@"" + txtAppPath.Text + "", "\"" + selectedFile + "\"", null));
-                ts.RootFolder.RegisterTaskDefinition(@"OpenBots-" + cboSelectedScript.Text, td);
             }
         }
 
@@ -140,18 +146,60 @@ namespace OpenBots.UI.Forms
 
         private void dgvScheduledTasks_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (dgvScheduledTasks.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+            try
             {
-                int row = this.dgvScheduledTasks.CurrentCell.RowIndex;
-                using (TaskService ts = new TaskService())
+                if (dgvScheduledTasks.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
                 {
-                    string taskName = (string)dgvScheduledTasks.Rows[row].Cells["colTaskName"].Value;
-                    var updateTask = ts.FindTask(taskName);
-                    updateTask.Enabled = !updateTask.Enabled;
-                }  
+                    var buttonColumn = (DataGridViewButtonColumn)dgvScheduledTasks.Columns[e.ColumnIndex];
+                    if (buttonColumn.HeaderText == "Update")
+                    {
+                        int row = dgvScheduledTasks.CurrentCell.RowIndex;
+                        using (TaskService ts = new TaskService())
+                        {
+                            string taskName = (string)dgvScheduledTasks.Rows[row].Cells["colTaskName"].Value;
+                            var updateTask = ts.FindTask(taskName);
+                            updateTask.Enabled = !updateTask.Enabled;
+                        }
+                    }
+                    else if (buttonColumn.HeaderText == "Delete")
+                    {
+                        int row = dgvScheduledTasks.CurrentCell.RowIndex;
+                        using (TaskService ts = new TaskService())
+                        {
+                            string taskName = (string)dgvScheduledTasks.Rows[row].Cells["colTaskName"].Value;
+                            ts.RootFolder.DeleteTask(taskName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
             }
         }
 
+        private void btnFolderManagerProject_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                txtProjectPath.Text = fbd.SelectedPath;
+                txtProjectPath.Focus();
+            }
+        }
+
+        private void btnFileManagerStudio_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = new DirectoryInfo(Assembly.GetEntryAssembly().Location).Parent.FullName;
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                txtAppPath.Text = ofd.FileName;
+                txtAppPath.Focus();
+            }
+        }
         #endregion Form and Control Events
 
         #region BackgroundWorker, Timer
@@ -170,42 +218,56 @@ namespace OpenBots.UI.Forms
 
         private void bgwGetSchedulingInfo_DoWork(object sender, DoWorkEventArgs e)
         {
-            List<Object[]> scheduledTaskList = new List<Object[]>();
-
-            using (TaskService ts = new TaskService())
+            try
             {
-                foreach (Task task in ts.RootFolder.Tasks)
-                {
-                    if (task.Name.Contains("OpenBots"))
-                    {
-                        string currentState = "enable";
-                        if (task.Enabled)
-                            currentState = "disable";
+                List<object[]> scheduledTaskList = new List<object[]>();
 
-                        var scheduleItem = new object[] 
-                        { 
-                            task.Name, 
-                            task.LastRunTime, 
-                            task.LastTaskResult, 
-                            task.NextRunTime, 
-                            task.IsActive, 
-                            currentState 
-                        };
-                        scheduledTaskList.Add(scheduleItem);
+                using (TaskService ts = new TaskService())
+                {
+                    foreach (Task task in ts.RootFolder.Tasks)
+                    {
+                        if (task.Name.Contains("OpenBots"))
+                        {
+                            string currentState = "enable";
+                            if (task.Enabled)
+                                currentState = "disable";
+
+                            var scheduleItem = new object[]
+                            {
+                            task.Name,
+                            task.LastRunTime,
+                            task.LastTaskResult,
+                            task.NextRunTime,
+                            task.IsActive,
+                            currentState,
+                            "delete"
+                            };
+                            scheduledTaskList.Add(scheduleItem);
+                        }
                     }
                 }
-            }
 
-            e.Result = scheduledTaskList;
+                e.Result = scheduledTaskList;
+            }           
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
 
         private void bgwGetSchedulingInfo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            dgvScheduledTasks.Rows.Clear();
-            List<object[]> datagridRows = (List<object[]>)e.Result;
-            datagridRows.ForEach(itm => dgvScheduledTasks.Rows.Add(itm[0], itm[1], itm[2], itm[3], itm[4], itm[5]));
+            try
+            {
+                dgvScheduledTasks.Rows.Clear();
+                List<object[]> datagridRows = (List<object[]>)e.Result;
+                datagridRows.ForEach(itm => dgvScheduledTasks.Rows.Add(itm[0], itm[1], itm[2], itm[3], itm[4], itm[5], itm[6]));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
-
-        #endregion BackgroundWorker, Timer
+        #endregion BackgroundWorker, Timer       
     }
 }

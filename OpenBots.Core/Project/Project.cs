@@ -83,16 +83,29 @@ namespace OpenBots.Core.Project
             catch (Exception)
             {
                 throw new Exception("Project Directory Not Found. File Saved Externally");
-            }                       
+            }
         }
 
         public static Project OpenProject(string configFilePath)
         {
             //Loads project from project.config
             if (File.Exists(configFilePath))
-            {               
+            {
                 string projectJSONString = File.ReadAllText(configFilePath);
-                return JsonConvert.DeserializeObject<Project>(projectJSONString);
+                var project = JsonConvert.DeserializeObject<Project>(projectJSONString);
+
+                if (!projectJSONString.Contains("Version"))
+                {
+                    var dialogResult = MessageBox.Show($"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.0.0" +
+                                                   $"Would you like to attempt to convert this config file to {Application.ProductVersion}? " +
+                                                   "\n\nWarning: Once a 'project.config' has been converted, it cannot be undone.",
+                                                   "Convert 'project.config'", MessageBoxButtons.YesNo);
+
+                    if (dialogResult == DialogResult.Yes)
+                        File.WriteAllText(configFilePath, JsonConvert.SerializeObject(project));
+                }
+                    
+                return project;
             }
             else
             {

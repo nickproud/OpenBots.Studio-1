@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -10,16 +11,28 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
         public UIListBoxItem ClickedItem { get; set; }
         public UIListBoxItem DoubleClickedItem { get; set; }
 
+        [Browsable(true)]
+        [Category("Action")]
+        [Description("Invoked when user clicks on an item")]
         public event ItemClickEventHandler ItemClick;
         public delegate void ItemClickEventHandler(object sender, int Index);
 
+        [Browsable(true)]
+        [Category("Action")]
+        [Description("Invoked when user double clicks on an item")]
         public event MouseEventHandler ItemDoubleClick;
         public delegate void MouseEventHandler(object sender, int Index);
+
+        [Browsable(true)]
+        [Category("Action")]
+        [Description("Invoked when user scrolls")]
+        public event ScrollEventHandler ListBoxScroll;
 
         public UIListBox()
         {
             InitializeComponent();
             flpListBox.Layout += flpListBox_Resize;
+            flpListBox.Scroll += UIListBox_ListBoxScroll;
         }
 
         public void Add(Control control)
@@ -147,6 +160,11 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
         {
             DoubleClickedItem = (UIListBoxItem)sender;
             ItemDoubleClick?.Invoke(this, flpListBox.Controls.IndexOfKey(((UIListBoxItem)sender).Name));           
+        }
+
+        protected void UIListBox_ListBoxScroll(object sender, ScrollEventArgs e)
+        {
+            ListBoxScroll?.Invoke(this, e);
         }
     }
 }

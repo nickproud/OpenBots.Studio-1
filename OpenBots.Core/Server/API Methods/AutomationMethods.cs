@@ -10,9 +10,11 @@ namespace OpenBots.Core.Server.API_Methods
     {
         public static Guid CreateAutomation(RestClient client, string name)
         {
+            string automationEngine = "OpenBots";
             var request = new RestRequest("api/v1/Automations", Method.POST);
             request.RequestFormat = DataFormat.Json;
-            request.AddJsonBody(new { name });
+            
+            request.AddJsonBody(new { name, automationEngine });
 
             var response = client.Execute(request);
 

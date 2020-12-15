@@ -176,6 +176,11 @@ namespace OpenBots.Commands.ErrorHandling
         {
             //get engine
             var engine = (AutomationEngineInstance)sender;
+
+            //reset exception flags
+            engine.ChildScriptFailed = false;
+            engine.ChildScriptErrorCaught = false;
+
             var catchIndices = FindAllCatchIndices(parentCommand.AdditionalScriptCommands);
 
             // Next Catch Index

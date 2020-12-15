@@ -13,7 +13,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using VBFileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
 
@@ -23,21 +22,23 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
     {
 
         #region Project Tool Strip, Buttons and Pane
-        private async void addProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        private void addProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            await AddProject();
+            tpbLoadingSpinner.Visible = true;
+            AddProject();
+            tpbLoadingSpinner.Visible = false;
         }
 
-        private async void uiBtnProject_Click(object sender, EventArgs e)
+        private void uiBtnProject_Click(object sender, EventArgs e)
         {
-            await AddProject();
+            addProjectToolStripMenuItem_Click(sender, e);
         }
 
-        public async Task<DialogResult> AddProject()
+        public DialogResult AddProject()
         {
             tvProject.Nodes.Clear();
             var projectBuilder = new frmProjectBuilder();
-            projectBuilder.ShowDialog();
+            projectBuilder.ShowDialog();            
 
             //Close OpenBots if add project form is closed at startup
             if (projectBuilder.DialogResult == DialogResult.Cancel && ScriptProject == null)
@@ -52,7 +53,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 DialogResult result = CheckForUnsavedScripts();
                 if (result == DialogResult.Cancel)
                     return DialogResult.Cancel;
-              
+
                 uiScriptTabControl.TabPages.Clear();
                 ScriptProjectPath = projectBuilder.NewProjectPath;
 
@@ -63,18 +64,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //create config file
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
 
-                //Uncomment to install all default packages //////////////////////////////////////////////////////////////////
-                //if (Directory.Exists(_packagesPath))
-                //    Directory.Delete(_packagesPath, true);
-                //Directory.CreateDirectory(_packagesPath);
-                //foreach (var dep in ScriptProject.Dependencies)
-                //    await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>());
-
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                var assemblyList = await NugetPackageManager.LoadPackageAssemblies(configPath);
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
-                _container = _builder.Build();
+                _container = _builder.Build();                
                         
                 string mainScriptPath = Path.Combine(ScriptProjectPath, "Main.json");
                 string mainScriptName = Path.GetFileNameWithoutExtension(mainScriptPath);
@@ -130,7 +122,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //Open project
                     ScriptProject = Project.OpenProject(projectBuilder.ExistingConfigPath);
 
-                    var assemblyList = await NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
+                    var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
                     _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                     _container = _builder.Build();
 
@@ -153,7 +145,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //show fail dialog
                     Notify("An Error Occured: " + ex.Message, Color.Red);
                     //Try adding project again
-                    await AddProject();
+                    AddProject();                    
                     return DialogResult.None;
                 }
             }
@@ -166,7 +158,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             projectNode.ContextMenuStrip = cmsProjectMainFolderActions;          
             tvProject.Nodes.Add(projectNode);
             projectNode.Expand();
-            LoadCommands();
+            LoadCommands(this);
             return DialogResult.OK;
         }
 

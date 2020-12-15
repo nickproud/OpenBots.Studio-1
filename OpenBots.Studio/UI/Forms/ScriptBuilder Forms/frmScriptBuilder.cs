@@ -17,6 +17,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
+using OpenBots.Core.Nuget;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
@@ -179,6 +180,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void frmScriptBuilder_Load(object sender, EventArgs e)
         {
+            if (Debugger.IsAttached)
+            {
+                //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
+                installDefaultToolStripMenuItem.Visible = true;
+            }
+            
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
             if (!Directory.Exists(_packagesPath))
@@ -273,13 +280,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private void LoadCommands()
+        private void LoadCommands(frmScriptBuilder scriptBuilder)
         {
             //load all commands           
-            _automationCommands = TypeMethods.GenerateCommands(_container);
+            scriptBuilder._automationCommands = TypeMethods.GenerateCommands(_container);
             var groupedCommands = _automationCommands.GroupBy(f => f.DisplayGroup);
 
-            tvCommands.Nodes.Clear();
+            scriptBuilder.tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)
             {
                 TreeNode newGroup = new TreeNode(cmd.Key);
@@ -291,16 +298,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newGroup.Nodes.Add(subNode);
                 }
 
-                tvCommands.Nodes.Add(newGroup);
+                scriptBuilder.tvCommands.Nodes.Add(newGroup);
             }
 
-            tvCommands.Sort();
-            //tvCommands.ImageList = uiImages;
+            scriptBuilder.tvCommands.Sort();
 
-            _tvCommandsCopy = new TreeView();
-            _tvCommandsCopy.ShowNodeToolTips = true;
-            CopyTreeView(tvCommands, _tvCommandsCopy);
-            txtCommandSearch.Text = _txtCommandWatermark;
+            scriptBuilder._tvCommandsCopy = new TreeView();
+            scriptBuilder._tvCommandsCopy.ShowNodeToolTips = true;
+            CopyTreeView(scriptBuilder.tvCommands, scriptBuilder._tvCommandsCopy);
+            scriptBuilder.txtCommandSearch.Text = _txtCommandWatermark;
         }
 
         private void frmScriptBuilder_FormClosing(object sender, FormClosingEventArgs e)
@@ -325,6 +331,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             result = CheckForUnsavedScripts();
             if (result == DialogResult.Cancel)
                 e.Cancel = true;
+        }
+
+        private void frmScriptBuilder_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            notifyTray.Dispose();
         }
 
         private void GenerateRecentFiles()
@@ -385,16 +396,20 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private async void frmScriptBuilder_Shown(object sender, EventArgs e)
+        private void frmScriptBuilder_Shown(object sender, EventArgs e)
         {
             Program.SplashForm.Close();
 
             if (_editMode)
                 return;
 
-            var result = await AddProject();
+            tpbLoadingSpinner.Visible = true;
+
+            var result = AddProject();
             if (result != DialogResult.Abort)
                 Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+
+            tpbLoadingSpinner.Visible = false;
         }
 
         private void pnlControlContainer_Paint(object sender, PaintEventArgs e)
@@ -703,6 +718,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void uiBtnClearCommandSearch_Click(object sender, EventArgs e)
         {
             txtCommandSearch.Clear();
+        }
+
+        private void uiBtnReloadCommands_Click(object sender, EventArgs e)
+        {
+            tpbLoadingSpinner.Visible = true;
+            string configPath = Path.Combine(ScriptProjectPath, "project.config");
+            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+            _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+            _container = _builder.Build();
+            LoadCommands(this);
+            tpbLoadingSpinner.Visible = false;
         }
         #endregion
 

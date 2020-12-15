@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Loop
 	[Category("Loop Commands")]
 	[Description("This command evaluates a specified logical statement and executes the contained commands repeatedly (in loop) " +
 		"until that logical statement becomes false.")]
-	public class BeginLoopCommand : ScriptCommand
+	public class BeginLoopCommand : ScriptCommand, IConditionCommand
 	{
 
 		[Required]
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("Param Value || {vParamValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		public DataTable v_LoopActionParameterTable { get; set; }
+		public DataTable v_ActionParameterTable { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
@@ -79,12 +79,12 @@ namespace OpenBots.Commands.Loop
 			CommandEnabled = true;         
 
 			//define parameter table
-			v_LoopActionParameterTable = new DataTable
+			v_ActionParameterTable = new DataTable
 			{
 				TableName = DateTime.Now.ToString("LoopActionParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"))
 			};
-			v_LoopActionParameterTable.Columns.Add("Parameter Name");
-			v_LoopActionParameterTable.Columns.Add("Parameter Value");
+			v_ActionParameterTable.Columns.Add("Parameter Name");
+			v_ActionParameterTable.Columns.Add("Parameter Value");
 
 			_loopGridViewHelper = new DataGridView();
 			_loopGridViewHelper.AllowUserToAddRows = true;
@@ -92,7 +92,7 @@ namespace OpenBots.Commands.Loop
 			_loopGridViewHelper.Size = new Size(400, 250);
 			_loopGridViewHelper.ColumnHeadersHeight = 30;
 			_loopGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_loopGridViewHelper.DataBindings.Add("DataSource", this, "v_LoopActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
+			_loopGridViewHelper.DataBindings.Add("DataSource", this, "v_ActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
 			_loopGridViewHelper.AllowUserToAddRows = false;
 			_loopGridViewHelper.AllowUserToDeleteRows = false;
 			_loopGridViewHelper.MouseEnter += LoopGridViewHelper_MouseEnter;
@@ -110,7 +110,7 @@ namespace OpenBots.Commands.Loop
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (AutomationEngineInstance)sender;
-			var loopResult = UICommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_LoopActionParameterTable);
+			var loopResult = UICommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
 			engine.ReportProgress("Starting Loop"); 
 
 			while (loopResult)
@@ -136,7 +136,7 @@ namespace OpenBots.Commands.Loop
 						break;
 					}
 				}
-				loopResult = UICommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_LoopActionParameterTable);
+				loopResult = UICommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
 			}
 		}
 
@@ -151,10 +151,10 @@ namespace OpenBots.Commands.Loop
 			RenderedControls.Add(_actionDropdown);
 
 			_parameterControls = new List<Control>();
-			_parameterControls.Add(commandControls.CreateDefaultLabelFor("v_LoopActionParameterTable", this));
+			_parameterControls.Add(commandControls.CreateDefaultLabelFor("v_ActionParameterTable", this));
 			_recorderControl.Click += (sender, e) => ShowLoopElementRecorder(sender, e, editor, commandControls);
 			_parameterControls.Add(_recorderControl);
-			_parameterControls.AddRange(commandControls.CreateUIHelpersFor("v_LoopActionParameterTable", this, new Control[] { _loopGridViewHelper }, editor));
+			_parameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ActionParameterTable", this, new Control[] { _loopGridViewHelper }, editor));
 			_parameterControls.Add(_loopGridViewHelper);
 			RenderedControls.AddRange(_parameterControls);
 
@@ -168,41 +168,41 @@ namespace OpenBots.Commands.Loop
 				case "Value Compare":
 				case "Date Compare":
 				case "Variable Compare":
-					string value1 = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string value1 = ((from rw in v_ActionParameterTable.AsEnumerable()
 									  where rw.Field<string>("Parameter Name") == "Value1"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string operand = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string operand = ((from rw in v_ActionParameterTable.AsEnumerable()
 									   where rw.Field<string>("Parameter Name") == "Operand"
 									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string value2 = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string value2 = ((from rw in v_ActionParameterTable.AsEnumerable()
 									  where rw.Field<string>("Parameter Name") == "Value2"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"Loop While ('{value1}' {operand} '{value2}')";
 
 				case "Variable Has Value":
-					string variableName = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string variableName = ((from rw in v_ActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Variable Name"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"Loop While (Variable '{variableName}' Has Value)";
 
 				case "Variable Is Numeric":
-					string varName = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string varName = ((from rw in v_ActionParameterTable.AsEnumerable()
 									   where rw.Field<string>("Parameter Name") == "Variable Name"
 									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"Loop While (Variable '{varName}' Is Numeric)";
 
 				case "Error Occured":
-					string lineNumber = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string lineNumber = ((from rw in v_ActionParameterTable.AsEnumerable()
 										  where rw.Field<string>("Parameter Name") == "Line Number"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"Loop While (Error Occured on Line Number '{lineNumber}')";
 
 				case "Error Did Not Occur":
-					string lineNum = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string lineNum = ((from rw in v_ActionParameterTable.AsEnumerable()
 									   where rw.Field<string>("Parameter Name") == "Line Number"
 									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -211,18 +211,18 @@ namespace OpenBots.Commands.Loop
 				case "Window Name Exists":
 				case "Active Window Name Is":
 
-					string windowName = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string windowName = ((from rw in v_ActionParameterTable.AsEnumerable()
 										  where rw.Field<string>("Parameter Name") == "Window Name"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"Loop While {v_LoopActionType} [Window Name '{windowName}']";
 
 				case "File Exists":
-					string filePath = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string filePath = ((from rw in v_ActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "File Path"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string fileCompareType = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string fileCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
 											   where rw.Field<string>("Parameter Name") == "True When"
 											   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -232,11 +232,11 @@ namespace OpenBots.Commands.Loop
 						return $"Loop While File Exists [File '{filePath}']";
 
 				case "Folder Exists":
-					string folderPath = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string folderPath = ((from rw in v_ActionParameterTable.AsEnumerable()
 										  where rw.Field<string>("Parameter Name") == "Folder Path"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string folderCompareType = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string folderCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
 												 where rw.Field<string>("Parameter Name") == "True When"
 												 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -246,15 +246,15 @@ namespace OpenBots.Commands.Loop
 						return $"Loop While Folder Exists [Folder '{folderPath}']";
 
 				case "Web Element Exists":
-					string parameterName = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string parameterName = ((from rw in v_ActionParameterTable.AsEnumerable()
 											 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
 											 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string searchMethod = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string searchMethod = ((from rw in v_ActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Element Search Method"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string webElementCompareType = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string webElementCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
 													 where rw.Field<string>("Parameter Name") == "True When"
 													 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -264,15 +264,15 @@ namespace OpenBots.Commands.Loop
 						return $"Loop While Web Element Exists [{searchMethod} '{parameterName}']";
 
 				case "GUI Element Exists":
-					string guiWindowName = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string guiWindowName = ((from rw in v_ActionParameterTable.AsEnumerable()
 											 where rw.Field<string>("Parameter Name") == "Window Name"
 											 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string guiSearch = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string guiSearch = ((from rw in v_ActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string guiElementCompareType = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string guiElementCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
 													 where rw.Field<string>("Parameter Name") == "True When"
 													 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
@@ -282,7 +282,7 @@ namespace OpenBots.Commands.Loop
 						return $"Loop While GUI Element Exists [Find '{guiSearch}' Element In '{guiWindowName}']";
 
 				case "Image Element Exists":
-					string imageCompareType = (from rw in v_LoopActionParameterTable.AsEnumerable()
+					string imageCompareType = (from rw in v_ActionParameterTable.AsEnumerable()
 											   where rw.Field<string>("Parameter Name") == "True When"
 											   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
@@ -291,11 +291,11 @@ namespace OpenBots.Commands.Loop
 					else
 						return $"Loop While Image Exists on Screen";
 				case "App Instance Exists":
-					string instanceName = ((from rw in v_LoopActionParameterTable.AsEnumerable()
+					string instanceName = ((from rw in v_ActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Instance Name"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					string instanceCompareType = (from rw in v_LoopActionParameterTable.AsEnumerable()
+					string instanceCompareType = (from rw in v_ActionParameterTable.AsEnumerable()
 												  where rw.Field<string>("Parameter Name") == "True When"
 												  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
@@ -314,7 +314,7 @@ namespace OpenBots.Commands.Loop
 			DataGridView loopActionParameterBox = _loopGridViewHelper;
 
 			BeginLoopCommand cmd = this;
-			DataTable actionParameters = cmd.v_LoopActionParameterTable;
+			DataTable actionParameters = cmd.v_ActionParameterTable;
 
 			//sender is null when command is updating
 			if (sender != null)
@@ -518,8 +518,9 @@ namespace OpenBots.Commands.Loop
 					if (sender != null)
 					{
 						actionParameters.Rows.Add("Window Name", "Current Window");
-						actionParameters.Rows.Add("Element Search Method", "");
+						actionParameters.Rows.Add("Element Search Method", "AutomationId");
 						actionParameters.Rows.Add("Element Search Parameter", "");
+						actionParameters.Rows.Add("Timeout (Seconds)", "30");
 						actionParameters.Rows.Add("True When", "It Does Exist");
 						loopActionParameterBox.DataSource = actionParameters;
 					}
@@ -529,7 +530,7 @@ namespace OpenBots.Commands.Loop
 					comparisonComboBox.Items.Add("It Does Not Exist");
 
 					//assign cell as a combobox
-					loopActionParameterBox.Rows[3].Cells[1] = comparisonComboBox;
+					loopActionParameterBox.Rows[4].Cells[1] = comparisonComboBox;
 
 					var parameterName = new DataGridViewComboBoxCell();
 					parameterName.Items.Add("AcceleratorKey");
@@ -612,7 +613,9 @@ namespace OpenBots.Commands.Loop
 
 		private void ShowLoopElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
-			_loopGridViewHelper.Rows[0].Cells[1].Value = commandControls.ShowCommandsElementRecorder(sender, e, editor);
+			var result = commandControls.ShowConditionElementRecorder(sender, e, editor);
+			_loopGridViewHelper.Rows[0].Cells[1].Value = result.Item1;
+			_loopGridViewHelper.Rows[2].Cells[1].Value = result.Item2;
 		}
 	}
 }

@@ -97,6 +97,27 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
+        private void tsmiReloadTab_Click(object sender, EventArgs e)
+        {
+            string tabFilePath = "";
+            for (int i = 0; i < uiScriptTabControl.TabCount; i++)
+            {
+                Rectangle tabRect = uiScriptTabControl.GetTabRect(i);
+                if (tabRect.Contains(uiScriptTabControl.PointToClient(_lastClickPosition)))
+                {
+
+                    TabPage tab = uiScriptTabControl.TabPages[i];
+                    tabFilePath = tab.ToolTipText;
+                    DialogResult result = CheckForUnsavedScript(tab);
+                    if (result == DialogResult.Cancel)
+                        return;
+                    uiScriptTabControl.TabPages.RemoveAt(i);
+                }
+            }
+
+            OpenFile(tabFilePath);
+        }
+
         private void tsmiCloseAllButThis_Click(object sender, EventArgs e)
         {
             //iterate through each tab, and check if it's the selected tab.

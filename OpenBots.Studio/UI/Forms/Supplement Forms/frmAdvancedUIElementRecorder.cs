@@ -320,8 +320,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void BuildElementClickActionCommand(string clickType)
         {
-            BuildWaitForElementActionCommand();
-
             dynamic clickElementActionCommand = TypeMethods.CreateTypeInstance(_container, "UIAutomationCommand");
             clickElementActionCommand.v_WindowName = _windowName;
             clickElementActionCommand.v_UIASearchParameters = SearchParameters;
@@ -336,22 +334,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             _sequenceCommandList.Add(clickElementActionCommand);
 
             _stopwatch.Restart();
-        }
-
-        private void BuildWaitForElementActionCommand()
-        {
-            dynamic waitElementActionCommand = TypeMethods.CreateTypeInstance(_container, "UIAutomationCommand");
-            waitElementActionCommand.v_WindowName = _windowName;
-            waitElementActionCommand.v_UIASearchParameters = SearchParameters;
-            waitElementActionCommand.v_AutomationType = "Wait For Element To Exist";
-            
-            DataTable webActionDT = waitElementActionCommand.v_UIAActionParameters;
-            DataRow timeoutRow = webActionDT.NewRow();
-            timeoutRow["Parameter Name"] = "Timeout (Seconds)";
-            timeoutRow["Parameter Value"] = "30";
-            webActionDT.Rows.Add(timeoutRow);
-
-            _sequenceCommandList.Add(waitElementActionCommand);
         }
 
         private void BuildElementSetTextActionCommand(Keys key)
@@ -406,8 +388,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             }
             else
             {
-                BuildWaitForElementActionCommand();
-
                 //build keyboard command
                 dynamic setTextElementActionCommand = TypeMethods.CreateTypeInstance(_container, "UIAutomationCommand");
                 setTextElementActionCommand.v_WindowName = _windowName;

@@ -16,6 +16,7 @@ using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.UI.SupplementForms;
 using OpenBots.UI.Utilities;
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -772,18 +773,34 @@ namespace OpenBots.UI.CustomControls
             ShowAllForms();
         }
 
-        public string ShowCommandsElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor)
+        public Tuple<string, string> ShowConditionElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor)
         {
-            IUIAutomationCommand cmd = (IUIAutomationCommand)editor.SelectedCommand;
-
+            IConditionCommand cmd = (IConditionCommand)editor.SelectedCommand;
             //create recorder
             frmAdvancedUIElementRecorder newElementRecorder = new frmAdvancedUIElementRecorder(_container);
-            newElementRecorder.SearchParameters = cmd.v_UIASearchParameters;
+            newElementRecorder.chkStopOnClick.Checked = true;
+
+            DataTable searchParameters = new DataTable();
+            searchParameters.Columns.Add("Enabled");
+            searchParameters.Columns.Add("Parameter Name");
+            searchParameters.Columns.Add("Parameter Value");
+            searchParameters.TableName = DateTime.Now.ToString("UIASearchParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
+
+            newElementRecorder.SearchParameters = searchParameters;
 
             //show form
             newElementRecorder.ShowDialog();
 
-            return newElementRecorder.cboWindowTitle.Text;
+            var requestedSearchParameter = cmd.v_ActionParameterTable.Rows[1][1].ToString();
+
+            var check = newElementRecorder.SearchParameters;
+            var parameterRow = newElementRecorder.SearchParameters.AsEnumerable().Where(x => x.Field<string>("Parameter Name") == requestedSearchParameter).FirstOrDefault();
+
+            string parameterValue = "";
+            if (parameterRow != null)
+                parameterValue = parameterRow.ItemArray[2].ToString();
+
+            return new Tuple<string,string>(newElementRecorder.cboWindowTitle.Text, parameterValue);
         }
 
         private void ShowElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor)
@@ -1045,12 +1062,18 @@ namespace OpenBots.UI.CustomControls
             return cbo;
         }
 
-        public IfrmScriptEngine CreateScriptEngineForm(string pathToFile, string projectPath, IfrmScriptBuilder builderForm, 
+        public IfrmScriptEngine CreateScriptEngineForm(string pathToFile, string projectPath, IfrmScriptBuilder builderForm, Logger logger,
             List<ScriptVariable> variables, List<ScriptElement> elements,
             Dictionary<string, object> appInstances, bool blnCloseWhenDone, bool isDebugMode)
         {
-            return new frmScriptEngine(pathToFile, projectPath, (frmScriptBuilder)builderForm, 
-                ((frmScriptBuilder)builderForm).EngineLogger,
+            frmScriptBuilder newBuilderForm;
+
+            if (builderForm != null)
+                newBuilderForm = (frmScriptBuilder)builderForm;
+            else
+                newBuilderForm = null;
+
+            return new frmScriptEngine(pathToFile, projectPath, newBuilderForm, logger,
                 variables, null, appInstances, false, isDebugMode);
         }
 

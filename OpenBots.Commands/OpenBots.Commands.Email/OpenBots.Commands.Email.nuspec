@@ -14,7 +14,7 @@
     <description>OpenBots commands for retrieving and manipulating MimeMessage email objects. Supports IMAP and SMTP.</description>
     <releaseNotes>https://openbots.ai/category/release-notes/</releaseNotes>
     <copyright>(C) OpenBots Inc 2020-2021</copyright>
-    <tags>OpenBots Studio Email Commands DeleteIMAPEmail ForwardSMTPEmail GetIMAPEmails MoveCopyIMAPEmail 
+    <tags>OpenBots Studio Email Commands DeleteIMAPEmail ForwardSMTPEmail GetIMAPEmails GetMimeMessageProperty MoveCopyIMAPEmail 
           ReplyToSMTPEmail SendSMTPEmail</tags>
     <dependencies>
       <group targetFramework="net48">

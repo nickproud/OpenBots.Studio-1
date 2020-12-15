@@ -10,8 +10,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         public frmUpdate(ManifestUpdate manifest)
         {
             InitializeComponent();
-            lblLocal.Text = "your version: " + manifest.LocalVersionProper.ToString();
-            lblRemote.Text = "latest version: " + manifest.RemoteVersionProper.ToString();
+            lblLocal.Text = "Your Version: " + manifest.LocalVersionProper.ToString();
+            lblRemote.Text = "Latest Version: " + manifest.RemoteVersionProper.ToString();
         }
 
         private void Update_Load(object sender, EventArgs e)

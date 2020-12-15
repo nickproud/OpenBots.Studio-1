@@ -97,7 +97,7 @@ namespace OpenBots.Core.Settings
             packageSourceDT.Columns.Add("Package Name");
             packageSourceDT.Columns.Add("Package Source");
             packageSourceDT.TableName = DateTime.Now.ToString("PackageSourceDT" + DateTime.Now.ToString("MMddyy.hhmmss"));
-            packageSourceDT.Rows.Add(true, "Gallery", "https://gallery.openbots.io/v3/index.json");
+            packageSourceDT.Rows.Add(true, "Gallery", "https://gallery.openbots.io/v3/command.json");
             packageSourceDT.Rows.Add(true, "Nuget", "https://api.nuget.org/v3/index.json");
 
             return packageSourceDT;

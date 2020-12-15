@@ -16,6 +16,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Security;
 using System.Threading;
 using System.Windows.Automation;
@@ -28,7 +29,6 @@ namespace OpenBots.Commands.Input
 	[Description("This Command automates an element in a targeted window.")]
 	public class UIAutomationCommand : ScriptCommand, IUIAutomationCommand
 	{
-
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to automate.")]
@@ -67,6 +67,14 @@ namespace OpenBots.Commands.Input
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		public DataTable v_UIAActionParameters { get; set; }
 
+		[Required]
+		[DisplayName("Timeout (Seconds)")]
+		[Description("Specify how many seconds to wait before throwing an exception.")]
+		[SampleUsage("30 || {vSeconds}")]
+		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		public string v_Timeout { get; set; }
+
 		[JsonIgnore]
 		[Browsable(false)]
 		private ComboBox _automationTypeControl;
@@ -102,21 +110,35 @@ namespace OpenBots.Commands.Input
 			v_UIAActionParameters.TableName = DateTime.Now.ToString("UIAActionParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 
 			v_WindowName = "Current Window";
+			v_Timeout = "30";
 		}
 
 		public override void RunCommand(object sender)
 		{
 			var engine = (AutomationEngineInstance)sender;
+			var vTimeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+
 			//create variable window name
 			var variableWindowName = v_WindowName.ConvertUserVariableToString(engine);
 			if (variableWindowName == "Current Window")
-				variableWindowName = User32Functions.GetActiveWindowTitle();
-			
-			User32Functions.ActivateWindow(variableWindowName);
+				variableWindowName = User32Functions.GetActiveWindowTitle();			
 
-			dynamic requiredHandle = null;
-			if (v_AutomationType != "Wait For Element To Exist")
-				requiredHandle =  CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
+			AutomationElement requiredHandle = null;
+
+			var timeToEnd = DateTime.Now.AddSeconds(vTimeout);
+			while (timeToEnd >= DateTime.Now)
+			{
+				try
+				{
+					requiredHandle = CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
+					break;
+				}
+				catch (Exception)
+				{
+					engine.ReportProgress("Element Not Yet Found... " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+					Thread.Sleep(500);
+				}
+			}
 
 			switch (v_AutomationType)
 			{
@@ -352,28 +374,7 @@ namespace OpenBots.Commands.Input
 					//store data
 					searchResult.StoreInUserVariable(engine, applyToVariable);
 					break;
-				case "Wait For Element To Exist":
-					var timeoutText = (from rw in v_UIAActionParameters.AsEnumerable()
-									   where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
-									   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-					timeoutText = timeoutText.ConvertUserVariableToString(engine);
-					int timeOut = Convert.ToInt32(timeoutText);
-
-					var timeToEnd = DateTime.Now.AddSeconds(timeOut);
-					while (timeToEnd >= DateTime.Now)
-					{
-						try
-						{
-							requiredHandle = CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
-							break;
-						}
-						catch (Exception)
-						{
-							engine.ReportProgress("Element Not Yet Found... " + (timeToEnd - DateTime.Now).Seconds + "s remain");
-							Thread.Sleep(1000);
-						}
-					}
+				case "Wait For Element To Exist":					
 					break;
 
 				case "Get Value From Element":
@@ -483,6 +484,8 @@ namespace OpenBots.Commands.Input
 			_actionParametersControls.Add(commandControls.CreateDefaultLabelFor("v_UIAActionParameters", this));
 			_actionParametersControls.Add(_actionParametersGridViewHelper);
 			RenderedControls.AddRange(_actionParametersControls);
+
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Timeout", this, editor));
 
 			return RenderedControls;
 		}
@@ -663,10 +666,8 @@ namespace OpenBots.Commands.Input
 					break;
 				case "Wait For Element To Exist":
 					foreach (var ctrl in _actionParametersControls)
-						ctrl.Show();
+						ctrl.Hide();
 
-					if (sender != null)
-						actionParameters.Rows.Add("Timeout (Seconds)");
 					break;
 				case "Get Value From Element":
 					foreach (var ctrl in _actionParametersControls)

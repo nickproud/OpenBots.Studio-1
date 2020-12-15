@@ -50,15 +50,15 @@ namespace OpenBots
             //if the exe was passed a filename argument then run the script
             if (args.Length > 0)
             {
-                string filePath = args[0];
+                string configPath = args[0];
 
-                if (!File.Exists(filePath))
+                if (!File.Exists(configPath))
                 {
                     using (EventLog eventLog = new EventLog("Application"))
                     {
                         eventLog.Source = "Application";
-                        eventLog.WriteEntry("An attempt was made to run an OpenBots script file from '" + filePath +
-                            "' but the file was not found.  Please verify that the file exists at the path indicated.",
+                        eventLog.WriteEntry($"An attempt was made to run an OpenBots project from '{new DirectoryInfo(configPath).Parent}'" +
+                            "but the 'project.config' file was not found. Please verify that the file exists at the path indicated.",
                             EventLogEntryType.Error, 101, 1);
                     }
 
@@ -69,18 +69,10 @@ namespace OpenBots
                 //initialize Logger
                 string engineLoggerFilePath = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
                 Logger engineLogger = new Logging().CreateFileLogger(engineLoggerFilePath, Serilog.RollingInterval.Day);
-                Application.Run(new frmScriptEngine(filePath, "", null, engineLogger));
+                Application.Run(new frmScriptEngine(configPath, engineLogger));
             }
             else
             {
-                //clean up updater
-                var updaterExecutableDestination = Application.StartupPath + "\\OpenBots.Updater.exe";
-
-                if (File.Exists(updaterExecutableDestination))
-                {
-                    File.Delete(updaterExecutableDestination);
-                }
-
                 SplashForm = new frmSplash();
                 SplashForm.Show();
 

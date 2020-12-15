@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -12,26 +13,32 @@ namespace OpenBots.Core.Nuget
     {       
         public static ContainerBuilder LoadBuilder(List<string> assemblyPaths)
         {
+            List<string> filteredPaths = new List<string>();
+            foreach (string path in assemblyPaths)
+            {
+                if (filteredPaths.Where(a => a.Contains(path.Split('/').Last()) && FileVersionInfo.GetVersionInfo(a).FileVersion ==
+                                        FileVersionInfo.GetVersionInfo(path).FileVersion).FirstOrDefault() == null)
+                    filteredPaths.Add(path);
+            }
+
             List<Assembly> existingAssemblies = new List<Assembly>();
-            foreach(var path in assemblyPaths)
+            foreach(var path in filteredPaths)
             {
                 try
                 {
-                    var assemblyinfo = AssemblyName.GetAssemblyName(path);
-                    var name = assemblyinfo.Name;
-                    var version = assemblyinfo.Version.ToString();
+                    var name = AssemblyName.GetAssemblyName(path).Name;
 
                     var assemblies = AppDomain.CurrentDomain.GetAssemblies();
                     var existingAssembly = assemblies.Where(x => x.GetName().Name == name &&
-                                                                 x.GetName().Version.ToString() == version)
+                                                                 x.GetName().Version.ToString() == AssemblyName.GetAssemblyName(path).Version.ToString())
                                                      .FirstOrDefault();
 
-                    if ((existingAssembly == null && name != "OpenBots.Engine" && name != "RestSharp"))
+                    if (existingAssembly == null && name != "OpenBots.Engine" && name != "RestSharp" && name != "WebDriver")
                     {
                         var assembly = Assembly.LoadFrom(path);
                         existingAssemblies.Add(assembly);
                     }
-                    else if (name != "OpenBots.Engine" && name != "RestSharp")
+                    else if (name != "OpenBots.Engine" && name != "RestSharp" && name != "WebDriver")
                         existingAssemblies.Add(existingAssembly);
                 }
                 catch (Exception ex)

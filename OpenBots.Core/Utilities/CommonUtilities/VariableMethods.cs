@@ -16,7 +16,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         /// Replaces variable placeholders ({variable}) with variable text.
         /// </summary>
         /// <param name="sender">The script engine instance (frmScriptEngine) which contains session variables.</param>
-        public static string ConvertUserVariableToString(this string userInputString, IEngine engine, bool requiresMarkers = true)
+        public static string ConvertUserVariableToString(this string userInputString, IAutomationEngineInstance engine, bool requiresMarkers = true)
         {
             if (string.IsNullOrEmpty(userInputString))
                 return string.Empty;
@@ -133,7 +133,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return userInputString.CalculateVariables(engine);
         }
 
-        public static object ConvertUserVariableToObject(this string variableName, IEngine engine)
+        public static object ConvertUserVariableToObject(this string variableName, IAutomationEngineInstance engine)
         {
             ScriptVariable requiredVariable;
 
@@ -152,7 +152,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 return null;
         }
 
-        private static string CalculateVariables(this string str, IEngine engine)
+        private static string CalculateVariables(this string str, IAutomationEngineInstance engine)
         {
             if (!engine.AutoCalculateVariables)
                 return str;
@@ -201,7 +201,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         /// </summary>
         /// <param name="sender">The script engine instance (frmScriptEngine) which contains session variables.</param>
         /// <param name="targetVariable">the name of the user-defined variable to override with new value</param>
-        public static void StoreInUserVariable(this object variableValue, IEngine engine, string variableName)
+        public static void StoreInUserVariable(this object variableValue, IAutomationEngineInstance engine, string variableName)
         {
             if (variableName.StartsWith("{") && variableName.EndsWith("}"))
                 variableName = variableName.Replace("{", "").Replace("}", "");           

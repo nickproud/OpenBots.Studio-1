@@ -273,9 +273,6 @@ namespace OpenBots.Commands.Image
 											  where rw.Field<string>("Parameter Name") == "Output Bool Variable Name"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-						//remove brackets from variable
-						outputVariable = outputVariable.Replace("{", "").Replace("}", "");
-
 						if (element != null)
 							"True".StoreInUserVariable(engine, outputVariable);
 						else

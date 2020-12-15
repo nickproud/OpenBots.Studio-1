@@ -477,29 +477,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void BuildElementClickActionCommand(string clickType)
         {
-            BuildWaitForElementActionCommand();
-
             dynamic clickElementActionCommand = TypeMethods.CreateTypeInstance(_container, "SeleniumElementActionCommand");
             clickElementActionCommand.v_InstanceName = _browserInstanceName;
             clickElementActionCommand.v_SeleniumSearchParameters = SearchParameters;
             clickElementActionCommand.v_SeleniumElementAction = clickType;
             _sequenceCommandList.Add(clickElementActionCommand);
-        }
-
-        private void BuildWaitForElementActionCommand()
-        {
-            dynamic waitElementActionCommand = TypeMethods.CreateTypeInstance(_container, "SeleniumElementActionCommand");
-            waitElementActionCommand.v_InstanceName = _browserInstanceName;
-            waitElementActionCommand.v_SeleniumSearchParameters = SearchParameters;
-            waitElementActionCommand.v_SeleniumElementAction = "Wait For Element To Exist";
-            
-            DataTable webActionDT = waitElementActionCommand.v_WebActionParameterTable;
-            DataRow timeoutRow = webActionDT.NewRow();
-            timeoutRow["Parameter Name"] = "Timeout (Seconds)";
-            timeoutRow["Parameter Value"] = "30";
-            webActionDT.Rows.Add(timeoutRow);
-
-            _sequenceCommandList.Add(waitElementActionCommand);
         }
 
         private void BuildElementSetTextActionCommand(uint key)
@@ -553,8 +535,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             }
             else
             {
-                BuildWaitForElementActionCommand();
-
                 dynamic setTextElementActionCommand = TypeMethods.CreateTypeInstance(_container, "SeleniumElementActionCommand");
                 setTextElementActionCommand.v_InstanceName = _browserInstanceName;
                 setTextElementActionCommand.v_SeleniumSearchParameters = SearchParameters;
