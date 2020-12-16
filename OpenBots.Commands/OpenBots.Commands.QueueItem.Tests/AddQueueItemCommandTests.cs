@@ -27,7 +27,7 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
-            _addQueueItem.v_QueueItemName = "QueueItemTest";
+            _addQueueItem.v_QueueItemName = "QueueItemTextTest";
             _addQueueItem.v_QueueItemType = "Text";
             _addQueueItem.v_JsonType = "Test Type";
             _addQueueItem.v_QueueItemTextValue = "Test Text";
@@ -115,7 +115,7 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
-            _addQueueItem.v_QueueItemName = "QueueItemAttachmentTest";
+            _addQueueItem.v_QueueItemName = "QueueItemAttachmentsTest";
             _addQueueItem.v_QueueItemType = "Text";
             _addQueueItem.v_JsonType = "Test Type";
             _addQueueItem.v_QueueItemTextValue = "Test Text";

@@ -75,6 +75,9 @@ namespace OpenBots.Commands.QueueItem
 
 			Guid transactionKey = (Guid)vQueueItem["LockTransactionKey"];
 
+			if (transactionKey == null || transactionKey == Guid.Empty)
+				throw new NullReferenceException($"Transaction key {transactionKey} is invalid or not found");
+
 			switch (v_QueueItemStatusType)
 			{
 				case "Successful":

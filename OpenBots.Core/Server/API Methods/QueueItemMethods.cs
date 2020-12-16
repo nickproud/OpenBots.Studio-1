@@ -113,7 +113,9 @@ namespace OpenBots.Core.Server.API_Methods
 
             var response = client.Execute(request);
 
-            if (!response.IsSuccessful)
+            if (response.Content.Contains("Queue item transaction FailedQueueItem has failed fatally"))
+                return;
+            else if (!response.IsSuccessful)
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
         }
 
