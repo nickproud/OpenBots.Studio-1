@@ -6,8 +6,7 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-
-using OpenBots.UI.Utilities;
+using OpenBots.Core.Utilities.CommandUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -110,7 +109,7 @@ namespace OpenBots.Commands.Loop
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var loopResult = UICommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
+			var loopResult = CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
 			engine.ReportProgress("Starting Loop"); 
 
 			while (loopResult)
@@ -136,7 +135,7 @@ namespace OpenBots.Commands.Loop
 						break;
 					}
 				}
-				loopResult = UICommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
+				loopResult = CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
 			}
 		}
 

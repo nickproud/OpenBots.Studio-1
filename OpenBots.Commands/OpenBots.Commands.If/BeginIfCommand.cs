@@ -6,8 +6,7 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-
-using OpenBots.UI.Utilities;
+using OpenBots.Core.Utilities.CommandUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -107,7 +106,7 @@ namespace OpenBots.Commands.If
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var ifResult = UICommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
+			var ifResult = CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
 
 			int startIndex, endIndex, elseIndex;
 			if (parentCommand.AdditionalScriptCommands.Any(item => item.ScriptCommand is ElseCommand))

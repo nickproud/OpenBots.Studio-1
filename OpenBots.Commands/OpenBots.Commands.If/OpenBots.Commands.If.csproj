@@ -61,11 +61,6 @@
       <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
       <Name>OpenBots.Core</Name>
     </ProjectReference>
-    
-    <ProjectReference Include="..\..\OpenBots.UI\OpenBots.UI.csproj">
-      <Project>{35FAA5DA-FE90-4398-A1ED-2D89F6F2F7B3}</Project>
-      <Name>OpenBots.UI</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Forms\" />

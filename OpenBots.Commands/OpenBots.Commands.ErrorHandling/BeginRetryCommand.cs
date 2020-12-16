@@ -9,7 +9,6 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.UI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -261,7 +260,7 @@ namespace OpenBots.Commands.ErrorHandling
                 foreach (var item in actionParamsArray)
                     ifActionParameterTable.Rows.Add(item["Parameter Name"].ToString(), item["Parameter Value"].ToString());
 
-                var statementResult = UICommandsHelper.DetermineStatementTruth(engine, ifActionType, ifActionParameterTable);
+                var statementResult = CommandsHelper.DetermineStatementTruth(engine, ifActionType, ifActionParameterTable);
 
 				if (!statementResult)
 				{
