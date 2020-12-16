@@ -41,6 +41,10 @@ namespace OpenBots.Commands.QueueItem
 			var client = AuthMethods.GetAuthToken();
 
 			Guid transactionKey = (Guid)vQueueItem["LockTransactionKey"];
+
+			if (transactionKey == null || transactionKey == Guid.Empty)
+				throw new NullReferenceException($"Transaction key {transactionKey} is invalid or not found");
+
 			QueueItemMethods.ExtendQueueItem(client, transactionKey);
 		}
 

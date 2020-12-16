@@ -11,8 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Windows.Forms;
-using QueueItemModel = OpenBots.Core.Server.Models.QueueItem;
 
 namespace OpenBots.Commands.QueueItem
 {
@@ -125,13 +125,13 @@ namespace OpenBots.Commands.QueueItem
 			Queue queue = QueueMethods.GetQueue(client, $"name eq '{vQueueName}'");
 
 			if (queue == null)
-				throw new Exception($"Queue with name '{vQueueName}' not found");
+				throw new DataException($"Queue with name '{vQueueName}' not found");
 
 			int priority = 0;
 			if (!string.IsNullOrEmpty(v_Priority))
 				priority = int.Parse(vPriority);
 
-			QueueItemModel queueItem = new QueueItemModel()
+			Core.Server.Models.QueueItem queueItem = new Core.Server.Models.QueueItem()
 			{
 				IsLocked = false,
 				QueueId = queue.Id,

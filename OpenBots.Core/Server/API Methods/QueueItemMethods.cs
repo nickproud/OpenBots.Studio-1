@@ -5,7 +5,6 @@ using RestSharp.Serialization.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 
 namespace OpenBots.Core.Server.API_Methods
@@ -18,6 +17,21 @@ namespace OpenBots.Core.Server.API_Methods
             request.RequestFormat = DataFormat.Json;
             request.AddUrlSegment("id", queueItemId.ToString());
             request.AddParameter("id", queueItemId.ToString());
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+
+            var item = response.Content;
+            return JsonConvert.DeserializeObject<QueueItem>(item);
+        }
+
+        public static QueueItem GetQueueItemByLockTransactionKey(RestClient client, string transactionKey)
+        {
+            var request = new RestRequest("api/v1/QueueItems", Method.GET);
+            request.RequestFormat = DataFormat.Json;
+            request.AddParameter("$filter", $"LockTransactionKey eq guid'{transactionKey}'");
 
             var response = client.Execute(request);
 

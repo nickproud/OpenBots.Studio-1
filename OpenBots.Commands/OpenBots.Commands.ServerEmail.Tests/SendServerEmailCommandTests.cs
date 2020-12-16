@@ -73,8 +73,8 @@ namespace OpenBots.Commands.ServerEmail.Test
             _sendServerEmail.v_BCCRecipients = "";
             _sendServerEmail.v_Subject = "Multiple Attachments";
             _sendServerEmail.v_Body = "Test Body";
-            _sendServerEmail.v_Attachments = Path.Combine(filePath, @"Upload\Attachments", fileName1)
-                + ";" + Path.Combine(filePath, @"Upload\Attachments", fileName2);
+            _sendServerEmail.v_Attachments = filePath + @"Upload\Attachments\" + fileName1
+                + ";" + filePath + @"Upload\Attachments\" + fileName2;
 
             _sendServerEmail.RunCommand(_engine);
 
