@@ -17,7 +17,6 @@ using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
-using OpenBots.UI.SupplementForms;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;

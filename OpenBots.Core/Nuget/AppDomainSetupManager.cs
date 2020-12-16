@@ -34,19 +34,13 @@ namespace OpenBots.Core.Nuget
                                                                  x.GetName().Version.ToString() == AssemblyName.GetAssemblyName(path).Version.ToString())
                                                      .FirstOrDefault();
 
-                    if (existingAssembly == null && name != "OpenBots.Engine" && name != "RestSharp" && name != "WebDriver")
+                    if (existingAssembly == null && name != "RestSharp" && name != "WebDriver")
                     {
                         var assembly = Assembly.LoadFrom(path);
                         existingAssemblies.Add(assembly);
                     }
-                    else if (name != "OpenBots.Engine" && name != "RestSharp" && name != "WebDriver")
+                    else if (name != "RestSharp" && name != "WebDriver")
                         existingAssemblies.Add(existingAssembly);
-                    if (name == "OpenBots.Engine")// && FileVersionInfo.GetVersionInfo(path).FileVersion != Application.ProductVersion)
-                    {
-                        var check = FileVersionInfo.GetVersionInfo(path).FileVersion;
-                        var check2 = Application.ProductVersion;
-                        //pause
-                    }
                 }
                 catch (Exception ex)
                 {
