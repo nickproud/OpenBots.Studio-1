@@ -55,7 +55,7 @@ namespace OpenBots.Core.Project
             Dependencies = new Dictionary<string, string>();
 
             foreach (string commandSet in DefaultCommands)
-                Dependencies.Add($"OpenBots.Commands.{commandSet}", "1.2.1");
+                Dependencies.Add($"OpenBots.Commands.{commandSet}", "1.2.0");
         }
 
         public void SaveProject(string scriptPath)
@@ -96,7 +96,7 @@ namespace OpenBots.Core.Project
 
                 if (!projectJSONString.Contains("Version"))
                 {
-                    var dialogResult = MessageBox.Show($"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.1.0" +
+                    var dialogResult = MessageBox.Show($"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.0.0" +
                                                    $"Would you like to attempt to convert this config file to {Application.ProductVersion}? " +
                                                    "\n\nWarning: Once a 'project.config' has been converted, it cannot be undone.",
                                                    "Convert 'project.config'", MessageBoxButtons.YesNo);
