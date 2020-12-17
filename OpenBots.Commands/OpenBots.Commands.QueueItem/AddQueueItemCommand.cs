@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -104,7 +105,8 @@ namespace OpenBots.Commands.QueueItem
 			CommandName = "AddQueueItemCommand";
 			SelectionName = "Add QueueItem";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_queueitem;
+
 			v_QueueItemType = "Text";
 			v_Priority = "10";
 		}

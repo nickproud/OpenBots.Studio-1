@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 
 using System;
@@ -20,7 +21,9 @@ namespace OpenBots.Commands.ErrorHandling
         {
             CommandName = "BeginTryCommand";
             SelectionName = "Try";
-            CommandEnabled = true;           
+            CommandEnabled = true;
+            CommandIcon = Resources.command_try;
+
         }
 
         public override void RunCommand(object sender, ScriptAction parentCommand)

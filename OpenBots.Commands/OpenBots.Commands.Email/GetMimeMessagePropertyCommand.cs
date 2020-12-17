@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using System.IO;
+using OpenBots.Core.Properties;
 
 namespace OpenBots.Commands.Email
 {
@@ -76,6 +77,8 @@ namespace OpenBots.Commands.Email
             CommandName = "GetMimeEmailProperty";
             SelectionName = "Get MimeMessage Property";
             CommandEnabled = true;
+            CommandIcon = Resources.command_smtp;
+
             v_Property = "Sender";
         }
 

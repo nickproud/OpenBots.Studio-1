@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using RestSharp;
 using System;
@@ -92,7 +93,8 @@ namespace OpenBots.Commands.API
 			CommandName = "ExecuteRESTAPICommand";
 			SelectionName = "Execute REST API";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_run_code;
+
 			v_RequestFormat = "Json";
 			v_RESTParameters = new DataTable();
 			v_RESTParameters.Columns.Add("Parameter Type");

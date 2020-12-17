@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -66,7 +67,8 @@ namespace OpenBots.Commands.Outlook
 			CommandName = "SendOutlookEmailCommand";
 			SelectionName = "Send Outlook Email";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_smtp;
+
 			v_BodyType = "Plain";
 		}
 

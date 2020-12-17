@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Server.User;
@@ -68,6 +69,7 @@ namespace OpenBots.Commands.QueueItem
 			CommandName = "WorkQueueItemCommand";
 			SelectionName = "Work QueueItem";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_queueitem;
 
 			v_SaveAttachments = "No";
 		}

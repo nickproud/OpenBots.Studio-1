@@ -4,6 +4,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
@@ -89,6 +90,7 @@ namespace OpenBots.Commands.Image
 			CommandName = "SurfaceAutomationCommand";
 			SelectionName = "Surface Automation";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_camera;
 
 			v_MatchAccuracy = "0.8";
 

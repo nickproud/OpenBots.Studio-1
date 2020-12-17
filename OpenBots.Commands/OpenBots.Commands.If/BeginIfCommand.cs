@@ -72,7 +72,8 @@ namespace OpenBots.Commands.If
 		{
 			CommandName = "BeginIfCommand";
 			SelectionName = "Begin If";
-			CommandEnabled = true;          
+			CommandEnabled = true;
+			CommandIcon = Resources.command_begin_if;
 
 			//define parameter table
 			v_ActionParameterTable = new DataTable

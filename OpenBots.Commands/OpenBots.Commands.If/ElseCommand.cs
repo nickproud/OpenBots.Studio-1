@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +17,9 @@ namespace OpenBots.Commands.If
         {
             CommandName = "ElseCommand";
             SelectionName = "Else";
-            CommandEnabled = true;            
+            CommandEnabled = true;
+            CommandIcon = Resources.command_else;
+
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +17,8 @@ namespace OpenBots.Commands.Misc
         {
             CommandName = "AddCodeCommentCommand";
             SelectionName = "Add Code Comment";
-            CommandEnabled = true;           
+            CommandEnabled = true;
+            CommandIcon = Resources.command_comment;
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -4,6 +4,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -90,7 +91,9 @@ namespace OpenBots.Commands.Email
 		{
 			CommandName = "SendSMTPEmailCommand";
 			SelectionName = "Send SMTP Email";
-			CommandEnabled = true;            
+			CommandEnabled = true;
+			CommandIcon = Resources.command_smtp;
+
 		}
 
 		public override void RunCommand(object sender)

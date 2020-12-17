@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +17,9 @@ namespace OpenBots.Commands.ErrorHandling
         {
             CommandName = "RethrowCommand";
             SelectionName = "Rethrow";
-            CommandEnabled = true;          
+            CommandEnabled = true;
+            CommandIcon = Resources.command_exception;
+
         }
 
         public override void RunCommand(object sender)

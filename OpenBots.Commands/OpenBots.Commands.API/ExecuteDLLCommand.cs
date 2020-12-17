@@ -70,6 +70,7 @@ namespace OpenBots.Commands.API
 		{
 			CommandName = "ExecuteDLLCommand";
 			SelectionName = "Execute DLL";
+			CommandIcon = Core.Properties.Resources.command_run_code;
 			CommandEnabled = true;
 
 			v_MethodParameters = new DataTable();

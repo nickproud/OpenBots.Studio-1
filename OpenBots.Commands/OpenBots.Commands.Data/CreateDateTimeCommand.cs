@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
@@ -69,6 +70,8 @@ namespace OpenBots.Commands.Data
 			CommandName = "CreateDateTimeCommand";
 			SelectionName = "Create DateTime";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_stopwatch;
+
 			v_AMorPM = "AM";
 		}
 

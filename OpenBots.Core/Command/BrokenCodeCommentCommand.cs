@@ -1,4 +1,5 @@
 ﻿using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,7 @@ namespace OpenBots.Core.Command
             CommandName = "BrokenCodeCommentCommand";
             SelectionName = "Broken Code Comment";
             CommandEnabled = false;
+            CommandIcon = Resources.command_broken;
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

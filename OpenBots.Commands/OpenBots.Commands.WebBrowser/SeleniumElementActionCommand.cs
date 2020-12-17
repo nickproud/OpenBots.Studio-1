@@ -130,7 +130,8 @@ namespace OpenBots.Commands.WebBrowser
 			SelectionName = "Element Action";
 			v_InstanceName = "DefaultBrowser";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_web;
+
 			v_SeleniumSearchOption = "Find Element";
 			v_Timeout = "30";
 

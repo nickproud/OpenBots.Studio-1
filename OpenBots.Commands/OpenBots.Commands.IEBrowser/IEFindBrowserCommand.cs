@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Core.Properties;
 
 namespace OpenBots.Commands.IEBrowser
 {
@@ -45,6 +46,7 @@ namespace OpenBots.Commands.IEBrowser
             CommandName = "IEFindBrowserCommand";
             SelectionName = "Find IE Browser";          
             CommandEnabled = false;
+            CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";
         }

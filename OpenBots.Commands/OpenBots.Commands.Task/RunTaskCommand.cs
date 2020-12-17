@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
 using Serilog;
@@ -74,7 +75,8 @@ namespace OpenBots.Commands.Task
 			CommandName = "RunTaskCommand";
 			SelectionName = "Run Task";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_start_process;
+
 			v_TaskPath = "{ProjectPath}";
 
 			v_VariableAssignments = new DataTable();

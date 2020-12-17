@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -68,7 +69,8 @@ namespace OpenBots.Commands.Folder
 			CommandName = "MoveCopyFolderCommand";
 			SelectionName = "Move/Copy Folder";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_files;
+
 			v_CreateDirectory = "Yes";
 			v_DeleteExisting = "Yes";
 		}

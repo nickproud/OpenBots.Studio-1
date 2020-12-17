@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using OpenQA.Selenium;
@@ -66,7 +67,8 @@ namespace OpenBots.Commands.WebBrowser
 			CommandName = "SeleniumSwitchBrowserWindowCommand";
 			SelectionName = "Switch Browser Window";  
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_web;
+
 			v_InstanceName = "DefaultBrowser";
 			v_WindowMatchType = "Window URL";
 			v_MatchSpecification = "Exact Match";

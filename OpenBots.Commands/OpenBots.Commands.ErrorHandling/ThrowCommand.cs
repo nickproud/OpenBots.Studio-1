@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,8 @@ namespace OpenBots.Commands.ErrorHandling
 			CommandName = "ThrowCommand";
 			SelectionName = "Throw";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_exception;
+
 			v_ExceptionType = "Exception";
 		}
 

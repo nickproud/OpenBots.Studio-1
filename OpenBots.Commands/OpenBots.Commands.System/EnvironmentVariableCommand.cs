@@ -2,6 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -46,7 +47,9 @@ namespace OpenBots.Commands.System
 		{
 			CommandName = "EnvironmentVariableCommand";
 			SelectionName = "Environment Variable";
-			CommandEnabled = true;          
+			CommandEnabled = true;
+			CommandIcon = Resources.command_system;
+
 		}
 
 		public override void RunCommand(object sender)

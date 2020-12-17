@@ -3,6 +3,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -44,6 +45,8 @@ namespace OpenBots.Commands.Image
 			CommandName = "CaptureImageCommand";
 			SelectionName = "Capture Image";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_camera;
+
 		}
 
 		public override void RunCommand(object sender)

@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using OpenQA.Selenium;
@@ -30,7 +31,9 @@ namespace OpenBots.Commands.WebBrowser
 			CommandName = "SeleniumCloseBrowserCommand";
 			SelectionName = "Close Browser";
 			v_InstanceName = "DefaultBrowser";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_web;
+
 		}
 
 		public override void RunCommand(object sender)
