@@ -1,12 +1,212 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
+using OpenBots.Core.Server.API_Methods;
+using OpenBots.Core.Server.User;
+using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Engine;
+using System;
+using System.Data;
+using System.IO;
+using Xunit;
 
 namespace OpenBots.Commands.QueueItem.Tests
 {
     public class WorkQueueItemCommandTests
     {
+        private AutomationEngineInstance _engine;
+        private AddQueueItemCommand _addQueueItem;
+        private WorkQueueItemCommand _workQueueItem;
+
+        [Fact]
+        public void WorkQueueItemNoAttachments()
+        {
+            _engine = new AutomationEngineInstance(null);
+            _addQueueItem = new AddQueueItemCommand();
+            _workQueueItem = new WorkQueueItemCommand();
+
+            //Add queue item
+            _addQueueItem.v_QueueName = "UnitTestQueue";
+            _addQueueItem.v_QueueItemName = "WorkQueueItemNoAttachmentTest";
+            _addQueueItem.v_QueueItemType = "Text";
+            _addQueueItem.v_JsonType = "Test Type";
+            _addQueueItem.v_QueueItemTextValue = "Test Text";
+            _addQueueItem.v_Priority = "10";
+
+            _addQueueItem.RunCommand(_engine);
+
+            //Get queue item (dequeue)
+            _workQueueItem.v_QueueName = "UnitTestQueue";
+            _workQueueItem.v_OutputUserVariableName = "{output}";
+            _workQueueItem.v_SaveAttachments = "No";
+            _workQueueItem.v_AttachmentDirectory = "";
+
+            _workQueueItem.RunCommand(_engine);
+
+            var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
+            string queueItemString = JsonConvert.SerializeObject(queueItemObject);
+            var vQueueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
+
+            var client = AuthMethods.GetAuthToken();
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());
+
+            //Check if values are the same
+            Assert.Equal("InProgress", queueItem.State);
+        }
+
+        [Fact]
+        public void WorkQueueItemOneAttachment()
+        {
+            _engine = new AutomationEngineInstance(null);
+            _addQueueItem = new AddQueueItemCommand();
+            _workQueueItem = new WorkQueueItemCommand();
+
+            string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
+            string filePath = Path.Combine(projectDirectory, @"Resources\");
+            string fileName = "testFile.txt";
+            string attachment = Path.Combine(filePath, @"Download\", fileName);
+
+            //Add queue item
+            _addQueueItem.v_QueueName = "UnitTestQueue";
+            _addQueueItem.v_QueueItemName = "WorkQueueItemAttachmentTest";
+            _addQueueItem.v_QueueItemType = "Text";
+            _addQueueItem.v_JsonType = "Test Type";
+            _addQueueItem.v_QueueItemTextValue = "Test Text";
+            _addQueueItem.v_Priority = "10";
+            _addQueueItem.v_Attachments = filePath + @"Upload\" + fileName;
+
+            _addQueueItem.RunCommand(_engine);
+
+            //Get queue item (dequeue)
+            _workQueueItem.v_QueueName = "UnitTestQueue";
+            _workQueueItem.v_OutputUserVariableName = "{output}";
+            _workQueueItem.v_SaveAttachments = "Yes";
+            _workQueueItem.v_AttachmentDirectory = filePath + @"Download\";
+
+            _workQueueItem.RunCommand(_engine);
+
+            var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
+            string queueItemString = JsonConvert.SerializeObject(queueItemObject);
+            var vQueueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
+
+            var client = AuthMethods.GetAuthToken();
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());
+
+            //Check if values are the same
+            Assert.Equal("InProgress", queueItem.State);
+            Assert.True(File.Exists(attachment));
+
+            File.Delete(attachment);
+        }
+
+        [Fact]
+        public void WorkQueueItemMultipleAttachments()
+        {
+            _engine = new AutomationEngineInstance(null);
+            _addQueueItem = new AddQueueItemCommand();
+            _workQueueItem = new WorkQueueItemCommand();
+
+            string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
+            string filePath = Path.Combine(projectDirectory, @"Resources\");
+            string fileName1 = "testFile.txt";
+            string fileName2 = "testFile2.txt";
+            string attachment1 = Path.Combine(filePath, @"Download\", fileName1);
+            string attachment2 = Path.Combine(filePath, @"Download\", fileName2);
+
+            //Add queue item
+            _addQueueItem.v_QueueName = "UnitTestQueue";
+            _addQueueItem.v_QueueItemName = "WorkQueueItemAttachmentsTest";
+            _addQueueItem.v_QueueItemType = "Text";
+            _addQueueItem.v_JsonType = "Test Type";
+            _addQueueItem.v_QueueItemTextValue = "Test Text";
+            _addQueueItem.v_Priority = "10";
+            _addQueueItem.v_Attachments = filePath + @"Upload\" + fileName1
+                + ";" + filePath + @"Upload\" + fileName2;
+
+            _addQueueItem.RunCommand(_engine);
+
+            //Get queue item (dequeue)
+            _workQueueItem.v_QueueName = "UnitTestQueue";
+            _workQueueItem.v_OutputUserVariableName = "{output}";
+            _workQueueItem.v_SaveAttachments = "Yes";
+            _workQueueItem.v_AttachmentDirectory = filePath + @"Download\";
+
+            _workQueueItem.RunCommand(_engine);
+
+            var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
+            string queueItemString = JsonConvert.SerializeObject(queueItemObject);
+            var vQueueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
+
+            var client = AuthMethods.GetAuthToken();
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());
+
+            //Check if values are the same
+            Assert.Equal("InProgress", queueItem.State);
+            Assert.True(File.Exists(attachment1));
+            Assert.True(File.Exists(attachment2));
+
+            File.Delete(attachment1);
+            File.Delete(attachment2);
+        }
+
+        [Fact]
+        public void HandlesNonExistentQueue()
+        {
+            _engine = new AutomationEngineInstance(null);
+            _addQueueItem = new AddQueueItemCommand();
+            _workQueueItem = new WorkQueueItemCommand();
+
+            //Add queue item
+            _addQueueItem.v_QueueName = "UnitTestQueue";
+            _addQueueItem.v_QueueItemName = "WorkQueueItemJsonTest";
+            _addQueueItem.v_QueueItemType = "Json";
+            _addQueueItem.v_JsonType = "Test Type";
+            _addQueueItem.v_QueueItemTextValue = "{'text':'testText'}";
+            _addQueueItem.v_Priority = "10";
+
+            _addQueueItem.RunCommand(_engine);
+
+            //Get queue item (dequeue)
+            _workQueueItem.v_QueueName = "NoQueue";
+            _workQueueItem.v_OutputUserVariableName = "{output}";
+            _workQueueItem.v_SaveAttachments = "No";
+            _workQueueItem.v_AttachmentDirectory = "";
+
+            Assert.Throws<DataException>(() => _workQueueItem.RunCommand(_engine));
+        }
+
+        //[Fact]
+        //public void HandlesNonExistentAgent()
+        //{
+        //    _engine = new AutomationEngineInstance(null);
+        //    _addQueueItem = new AddQueueItemCommand();
+        //    _workQueueItem = new WorkQueueItemCommand();
+
+        //    //Add queue item
+        //    _addQueueItem.v_QueueName = "UnitTestQueue";
+        //    _addQueueItem.v_QueueItemName = "WorkQueueItemJsonTest";
+        //    _addQueueItem.v_QueueItemType = "Json";
+        //    _addQueueItem.v_JsonType = "Test Type";
+        //    _addQueueItem.v_QueueItemTextValue = "{'text':'testText'}";
+        //    _addQueueItem.v_Priority = "10";
+
+        //    _addQueueItem.RunCommand(_engine);
+
+
+        //    //Change AgentId setting to null
+        //    var settings = EnvironmentSettings.GetAgentSettings();
+        //    var originalSettings = settings["AgentId"];
+        //    var newSettings = settings["AgentId"].Remove(0);
+        //    settings["AgentId"] = newSettings;
+
+        //    //Get queue item (dequeue)
+        //    _workQueueItem.v_QueueName = "UnitTestQueue";
+        //    _workQueueItem.v_OutputUserVariableName = "{output}";
+        //    _workQueueItem.v_SaveAttachments = "No";
+        //    _workQueueItem.v_AttachmentDirectory = "";
+
+        //    Assert.Throws<NullReferenceException>(() => _workQueueItem.RunCommand(_engine));
+
+        //    //Change AgentId setting back to original value
+        //    settings["AgentId"] = originalSettings;
+        //}
     }
 }

@@ -18,7 +18,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void SetSuccessfulStatus()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
@@ -44,7 +43,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void SetFailedShouldRetryStatus()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
@@ -70,7 +68,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void SetFailedFatallyStatus()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
@@ -96,7 +93,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void HandlesNonExistentTransactionKey()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 

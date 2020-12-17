@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
+using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Server.API_Methods;
@@ -107,6 +108,7 @@ namespace OpenBots.Commands.QueueItem
 			
 			v_QueueItemType = "Text";
 			v_Priority = "10";
+			Common.InitializeDefaultWebProtocol();
 		}
 
 		public override void RunCommand(object sender)

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using OpenBots.Core.Common;
 
 namespace OpenBots.Commands.Asset
 {
@@ -70,6 +71,7 @@ namespace OpenBots.Commands.Asset
 			SelectionName = "Update Asset";
 			CommandEnabled = true;           
 			v_AssetType = "Text";
+			Common.InitializeDefaultWebProtocol();
 		}
 
 		public override void RunCommand(object sender)

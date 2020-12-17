@@ -18,8 +18,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void ExtendQueueItem()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
@@ -61,7 +59,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void HandlesNonExistentTransactionKey()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             _engine = new AutomationEngineInstance(null);
             _extendQueueItem = new ExtendQueueItemCommand();
 

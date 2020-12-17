@@ -1,11 +1,9 @@
 ﻿using Newtonsoft.Json;
-using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
 using System.Data;
 using System.IO;
-using System.Net;
 using Xunit;
 
 namespace OpenBots.Commands.QueueItem.Tests
@@ -19,8 +17,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void AddTextQueueItem()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
@@ -55,8 +51,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void AddQueueItemOneAttachment()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
@@ -100,8 +94,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void AddQueueItemMultipleAttachments()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
@@ -150,8 +142,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void AddJsonQueueItem()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
@@ -186,13 +176,11 @@ namespace OpenBots.Commands.QueueItem.Tests
         [Fact]
         public void HandlesNonExistentQueue()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
 
             //Add queue item
-            _addQueueItem.v_QueueName = "noQueue";
+            _addQueueItem.v_QueueName = "NoQueue";
             _addQueueItem.v_QueueItemName = "QueueItemJsonTest";
             _addQueueItem.v_QueueItemType = "Json";
             _addQueueItem.v_JsonType = "Test Type";
