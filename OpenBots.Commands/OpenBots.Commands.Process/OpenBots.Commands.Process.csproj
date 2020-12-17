@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SharpSimpleNLG, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SharpSimpleNLG, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpSimpleNLG.1.2.1\lib\net462\SharpSimpleNLG.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -68,7 +68,6 @@
       <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
       <Name>OpenBots.Core</Name>
     </ProjectReference>
-    
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Forms\" />
