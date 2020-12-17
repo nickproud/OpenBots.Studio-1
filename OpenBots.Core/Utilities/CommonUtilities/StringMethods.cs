@@ -6,13 +6,80 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace OpenBots.Core.Utilities.CommonUtilities
 {
     public static class StringMethods
     {
+        #region Data Encryption
+        private const string SecurityKey = "Openb@ts_password_123";
+
+        /// <summary>
+        /// Encrypt the plain text to un-readable format.
+        /// </summary>
+        /// <param name="plainText">The plain text.</param>
+        /// <returns></returns>
+        public static string EncryptText(string plainText)
+        {
+            // Getting the bytes of Input String.
+            byte[] toEncryptedArray = UTF8Encoding.UTF8.GetBytes(plainText);
+
+            MD5CryptoServiceProvider objMD5CryptoService = new MD5CryptoServiceProvider();
+            //Gettting the bytes from the Security Key and Passing it to compute the Corresponding Hash Value.
+            byte[] securityKeyArray = objMD5CryptoService.ComputeHash(UTF8Encoding.UTF8.GetBytes(SecurityKey));
+            //De-allocatinng the memory after doing the Job.
+            objMD5CryptoService.Clear();
+
+            var objTripleDESCryptoService = new TripleDESCryptoServiceProvider();
+            //Assigning the Security key to the TripleDES Service Provider.
+            objTripleDESCryptoService.Key = securityKeyArray;
+            //Mode of the Crypto service is Electronic Code Book.
+            objTripleDESCryptoService.Mode = CipherMode.ECB;
+            //Padding Mode is PKCS7 if there is any extra byte is added.
+            objTripleDESCryptoService.Padding = PaddingMode.PKCS7;
+
+
+            var objCrytpoTransform = objTripleDESCryptoService.CreateEncryptor();
+            //Transform the bytes array to resultArray
+            byte[] resultArray = objCrytpoTransform.TransformFinalBlock(toEncryptedArray, 0, toEncryptedArray.Length);
+            objTripleDESCryptoService.Clear();
+            return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+        }
+
+        /// <summary>
+        /// Decrypt the encrypted/un-readable text back to the readable format.
+        /// </summary>
+        /// <param name="encryptedText">The encrypted text.</param>
+        /// <returns></returns>
+        public static string DecryptText(string encryptedText)
+        {
+            byte[] toEncryptArray = Convert.FromBase64String(encryptedText);
+            MD5CryptoServiceProvider objMD5CryptoService = new MD5CryptoServiceProvider();
+
+            //Gettting the bytes from the Security Key and Passing it to compute the Corresponding Hash Value.
+            byte[] securityKeyArray = objMD5CryptoService.ComputeHash(UTF8Encoding.UTF8.GetBytes(SecurityKey));
+            objMD5CryptoService.Clear();
+
+            var objTripleDESCryptoService = new TripleDESCryptoServiceProvider();
+            //Assigning the Security key to the TripleDES Service Provider.
+            objTripleDESCryptoService.Key = securityKeyArray;
+            //Mode of the Crypto service is Electronic Code Book.
+            objTripleDESCryptoService.Mode = CipherMode.ECB;
+            //Padding Mode is PKCS7 if there is any extra byte is added.
+            objTripleDESCryptoService.Padding = PaddingMode.PKCS7;
+
+            var objCrytpoTransform = objTripleDESCryptoService.CreateDecryptor();
+            //Transform the bytes array to resultArray
+            byte[] resultArray = objCrytpoTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+            objTripleDESCryptoService.Clear();
+
+            //Convert and return the decrypted data/byte into string format.
+            return UTF8Encoding.UTF8.GetString(resultArray);
+        }
+        #endregion Data Encryption
+
         public static string ToBase64(this string text)
         {
             return ToBase64(text, Encoding.UTF8);
