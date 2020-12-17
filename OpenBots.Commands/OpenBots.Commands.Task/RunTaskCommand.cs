@@ -239,7 +239,7 @@ namespace OpenBots.Commands.Task
 
 		private void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
-			var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null); //new AutomationEngineInstance(null);
+			var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null);
 			currentScriptEngine.VariableList.AddRange(editor.ScriptVariables);
 			currentScriptEngine.ElementList.AddRange(editor.ScriptElements);
 
@@ -292,7 +292,7 @@ namespace OpenBots.Commands.Task
 			//create variable list
 			InitializeVariableLists(parentAutomationEngineInstance);
 
-			var childAutomationEngineInstance = parentAutomationEngineInstance.CreateAutomationEngineInstance((Logger)Log.Logger); //new AutomationEngineInstance((Logger)Log.Logger);
+			var childAutomationEngineInstance = parentAutomationEngineInstance.CreateAutomationEngineInstance((Logger)Log.Logger);
 			childAutomationEngineInstance.VariableList = _variableList;
 			childAutomationEngineInstance.AppInstances = parentAutomationEngineInstance.AppInstances;
 			childAutomationEngineInstance.IsServerChildExecution = true;
