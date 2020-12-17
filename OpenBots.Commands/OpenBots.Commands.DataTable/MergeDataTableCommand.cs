@@ -3,7 +3,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -66,7 +65,7 @@ namespace OpenBots.Commands.DataTable
 			3. Source and Destination DataTable Varibales must not be the same          -->     (Same Variable Check)
 
 			 */
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			// Get Variable Objects
 			var v_SourceDTVariable = v_SourceDataTable.ConvertUserVariableToObject(engine);

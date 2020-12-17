@@ -6,7 +6,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -85,7 +84,7 @@ namespace OpenBots.Commands.Email
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			MimeMessage vMimeMessage = (MimeMessage)v_IMAPMimeMessage.ConvertUserVariableToObject(engine);
 			string vIMAPHost = v_IMAPHost.ConvertUserVariableToString(engine);
 			string vIMAPPort = v_IMAPPort.ConvertUserVariableToString(engine);

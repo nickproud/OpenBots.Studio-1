@@ -7,7 +7,6 @@ using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -78,7 +77,7 @@ namespace OpenBots.Commands.Database
 		public override void RunCommand(object sender)
 		{
 			//get engine and preference
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			//create connection
 			var oleDBConnection = CreateConnection(sender);
@@ -95,7 +94,7 @@ namespace OpenBots.Commands.Database
 
 		private OleDbConnection CreateConnection(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var connection = v_ConnectionString.ConvertUserVariableToString(engine);
 			var connectionPass = v_ConnectionStringPassword.ConvertUserVariableToString(engine);
 
@@ -196,7 +195,7 @@ namespace OpenBots.Commands.Database
 		{
 			try
 			{
-				var engine = (AutomationEngineInstance)sender;
+				var engine = (IAutomationEngineInstance)sender;
 				var oleDBConnection = CreateConnection(engine);
 				oleDBConnection.Open();
 				oleDBConnection.Close();

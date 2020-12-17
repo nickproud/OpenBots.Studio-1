@@ -368,6 +368,12 @@
     <Compile Include="UI\Forms\Supplement Forms\frmAddPackageSource.Designer.cs">
       <DependentUpon>frmAddPackageSource.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Forms\Supplement Forms\frmImageCapture.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\Supplement Forms\frmImageCapture.Designer.cs">
+      <DependentUpon>frmImageCapture.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Forms\Supplement Forms\frmShortcutMenu.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -668,6 +674,9 @@
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmAddPackageSource.resx">
       <DependentUpon>frmAddPackageSource.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\Supplement Forms\frmImageCapture.resx">
+      <DependentUpon>frmImageCapture.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmShortcutMenu.resx">
       <DependentUpon>frmShortcutMenu.cs</DependentUpon>
     </EmbeddedResource>
@@ -835,10 +844,6 @@
     <ProjectReference Include="..\OpenBots.Engine\OpenBots.Engine.csproj">
       <Project>{ed8f6540-c341-4b5f-8966-26a08e39af87}</Project>
       <Name>OpenBots.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenBots.UI\OpenBots.UI.csproj">
-      <Project>{35faa5da-fe90-4398-a1ed-2d89f6f2f7b3}</Project>
-      <Name>OpenBots.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

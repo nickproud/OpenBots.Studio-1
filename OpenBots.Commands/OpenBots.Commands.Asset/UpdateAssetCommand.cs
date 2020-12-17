@@ -5,7 +5,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Data;
 using System.Collections.Generic;
@@ -74,7 +73,7 @@ namespace OpenBots.Commands.Asset
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
 			var vAssetFilePath = v_AssetFilePath.ConvertUserVariableToString(engine);
 			var vAssetValue = v_AssetValue.ConvertUserVariableToString(engine);

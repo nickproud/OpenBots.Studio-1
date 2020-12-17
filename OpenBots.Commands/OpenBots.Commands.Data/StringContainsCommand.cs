@@ -3,7 +3,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,7 +48,7 @@ namespace OpenBots.Commands.Data
         }
         public override void RunCommand(object sender)
         {
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
             var fullText = v_FullText.ConvertUserVariableToString(engine);
             var comparisonText = v_ComparisonText.ConvertUserVariableToString(engine);
             string outputUserVar = fullText.Contains(comparisonText).ToString(); outputUserVar.StoreInUserVariable(engine, v_OutputUserVariableName);

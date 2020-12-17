@@ -7,7 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace OpenBots.UI.SupplementForms
+namespace OpenBots.UI.Forms.Supplement_Forms
 {
     public partial class frmImageCapture : Form
     {

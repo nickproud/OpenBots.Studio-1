@@ -7,7 +7,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -56,7 +55,7 @@ namespace OpenBots.Commands.List
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var itemIndex = v_ItemIndex.ConvertUserVariableToString(engine);
 			int index = int.Parse(itemIndex);
 			//get variable by regular name

@@ -7,7 +7,7 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using SHDocVw;
 using System;
 using System.Collections.Generic;
@@ -134,7 +134,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             object browserObject = null;
 
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
 
             browserObject = v_InstanceName.GetAppInstance(engine);
             var browserInstance = (InternetExplorer)browserObject;
@@ -390,7 +390,7 @@ namespace OpenBots.Commands.IEBrowser
 
         private void RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)
         {
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
             switch (v_WebAction)
             {
                 case "Fire onmousedown event":

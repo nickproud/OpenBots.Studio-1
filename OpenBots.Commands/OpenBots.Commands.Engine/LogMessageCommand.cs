@@ -3,7 +3,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using Serilog;
 using Serilog.Events;
 using System;
@@ -63,7 +62,7 @@ namespace OpenBots.Commands.Engine
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			//get text to log and log file name       
 			var textToLog = v_LogText.ConvertUserVariableToString(engine);

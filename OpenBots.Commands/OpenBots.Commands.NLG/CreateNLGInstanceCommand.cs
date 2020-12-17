@@ -2,7 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using SimpleNLG;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.NLG
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
   
 			Lexicon lexicon = Lexicon.getDefaultLexicon();
 			NLGFactory nlgFactory = new NLGFactory(lexicon);

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace OpenBots.Core.Nuget
 {
@@ -33,12 +34,12 @@ namespace OpenBots.Core.Nuget
                                                                  x.GetName().Version.ToString() == AssemblyName.GetAssemblyName(path).Version.ToString())
                                                      .FirstOrDefault();
 
-                    if (existingAssembly == null && name != "OpenBots.Engine" && name != "RestSharp" && name != "WebDriver")
+                    if (existingAssembly == null && name != "RestSharp" && name != "WebDriver")
                     {
                         var assembly = Assembly.LoadFrom(path);
                         existingAssemblies.Add(assembly);
                     }
-                    else if (name != "OpenBots.Engine" && name != "RestSharp" && name != "WebDriver")
+                    else if (name != "RestSharp" && name != "WebDriver")
                         existingAssemblies.Add(existingAssembly);
                 }
                 catch (Exception ex)

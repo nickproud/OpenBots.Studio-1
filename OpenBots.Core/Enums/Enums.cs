@@ -50,6 +50,7 @@ namespace OpenBots.Core.Enums
         ShowFileSelectionHelper,
         ShowFolderSelectionHelper,
         ShowImageCaptureHelper,
+        ShowImageRecognitionTestHelper,
         ShowCodeBuilder,
         ShowMouseCaptureHelper,
         ShowElementRecorder,

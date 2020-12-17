@@ -3,6 +3,7 @@ using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using RestSharp;
+using Serilog.Core;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
@@ -45,5 +46,8 @@ namespace OpenBots.Core.Infrastructure
         void ExecuteCommand(ScriptAction command);
         string GetEngineContext();
         void ReportProgress(string progress, LogEventLevel eventLevel = LogEventLevel.Information);
+        string GetProjectPath();
+        IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger);
+        void ExecuteScriptSync(string filePath, string projectPath);
     }
 }
