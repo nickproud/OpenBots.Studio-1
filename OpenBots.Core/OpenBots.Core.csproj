@@ -270,7 +270,6 @@
     <Compile Include="UI\Controls\UIPictureButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Utilities\CommonUtilities\TypeMethods.cs" />
     <Compile Include="Utilities\FormsUtilities\FormsHelper.cs" />
     <Compile Include="UI\DTOs\Class.cs" />
     <Compile Include="UI\DTOs\MachineConfiguration.cs" />
