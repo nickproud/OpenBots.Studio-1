@@ -105,7 +105,7 @@ namespace OpenBots.Commands.WebBrowser
 			if (engine.ScriptEngineUI != null && engine.ScriptEngineUI.IsScheduledTask)
 				driverDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "OpenBots Inc", "OpenBots Studio");
 			else
-				driverDirectory = Environment.CurrentDirectory;
+				driverDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
 			switch (v_EngineType)
 			{
