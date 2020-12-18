@@ -23,7 +23,6 @@ namespace OpenBots.Commands.QueueItem.Tests
             _workQueueItem = new WorkQueueItemCommand();
             _extendQueueItem = new ExtendQueueItemCommand();
 
-            //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "ExtendQueueItemTest";
             _addQueueItem.v_QueueItemType = "Text";
@@ -33,7 +32,6 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _addQueueItem.RunCommand(_engine);
 
-            //Get queue item (dequeue)
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
             _workQueueItem.v_SaveAttachments = "No";

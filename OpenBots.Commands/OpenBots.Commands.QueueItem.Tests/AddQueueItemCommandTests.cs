@@ -2,6 +2,7 @@
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using Xunit;
@@ -21,7 +22,6 @@ namespace OpenBots.Commands.QueueItem.Tests
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
-            //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "QueueItemTextTest";
             _addQueueItem.v_QueueItemType = "Text";
@@ -31,7 +31,6 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _addQueueItem.RunCommand(_engine);
 
-            //Get queue item (dequeue)
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
             _workQueueItem.v_SaveAttachments = "No";
@@ -39,13 +38,9 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
-            string queueItemString = JsonConvert.SerializeObject(queueItemObject);
-            var queueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
-            var queueItemData = queueItem.DataJson;
+            var queueItem = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine);
 
-            //Check if values are the same
-            Assert.Equal("Test Text", queueItemData);
+            Assert.Equal("Test Text", queueItem["DataJson"]);
         }
 
         [Fact]
@@ -60,7 +55,6 @@ namespace OpenBots.Commands.QueueItem.Tests
             string fileName = "testFile.txt";
             string attachment = Path.Combine(filePath, @"Download\", fileName);
 
-            //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "QueueItemAttachmentTest";
             _addQueueItem.v_QueueItemType = "Text";
@@ -71,7 +65,6 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _addQueueItem.RunCommand(_engine);
 
-            //Get queue item (dequeue)
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
             _workQueueItem.v_SaveAttachments = "Yes";
@@ -79,13 +72,9 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
-            string queueItemString = JsonConvert.SerializeObject(queueItemObject);
-            var queueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
-            var queueItemData = queueItem.DataJson;
+            var queueItem = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine);
 
-            //Check if values are the same
-            Assert.Equal("Test Text", queueItemData);
+            Assert.Equal("Test Text", queueItem["DataJson"]);
             Assert.True(File.Exists(attachment));
 
             File.Delete(attachment);
@@ -105,7 +94,6 @@ namespace OpenBots.Commands.QueueItem.Tests
             string attachment1 = Path.Combine(filePath, @"Download\", fileName1);
             string attachment2 = Path.Combine(filePath, @"Download\", fileName2);
 
-            //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "QueueItemAttachmentsTest";
             _addQueueItem.v_QueueItemType = "Text";
@@ -117,7 +105,6 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _addQueueItem.RunCommand(_engine);
 
-            //Get queue item (dequeue)
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
             _workQueueItem.v_SaveAttachments = "Yes";
@@ -125,13 +112,9 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
-            string queueItemString = JsonConvert.SerializeObject(queueItemObject);
-            var queueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
-            var queueItemData = queueItem.DataJson;
+            var queueItem = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine);
 
-            //Check if values are the same
-            Assert.Equal("Test Text", queueItemData);
+            Assert.Equal("Test Text", queueItem["DataJson"]);
             Assert.True(File.Exists(attachment1));
             Assert.True(File.Exists(attachment2));
 
@@ -146,7 +129,6 @@ namespace OpenBots.Commands.QueueItem.Tests
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
-            //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "QueueItemJsonTest";
             _addQueueItem.v_QueueItemType = "Json";
@@ -156,7 +138,6 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _addQueueItem.RunCommand(_engine);
 
-            //Get queue item (dequeue)
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
             _workQueueItem.v_SaveAttachments = "No";
@@ -164,13 +145,9 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
-            string queueItemString = JsonConvert.SerializeObject(queueItemObject);
-            var queueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
-            var queueItemData = queueItem.DataJson;
+            var queueItem = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine);
 
-            //Check if values are the same
-            Assert.Equal("{'text':'testText'}", queueItemData);
+            Assert.Equal("{'text':'testText'}", queueItem["DataJson"]);
         }
 
         [Fact]

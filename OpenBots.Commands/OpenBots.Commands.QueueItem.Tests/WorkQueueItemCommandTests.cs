@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Server.API_Methods;
-using OpenBots.Core.Server.User;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using Xunit;
@@ -23,7 +23,6 @@ namespace OpenBots.Commands.QueueItem.Tests
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
-            //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "WorkQueueItemNoAttachmentTest";
             _addQueueItem.v_QueueItemType = "Text";
@@ -33,7 +32,6 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _addQueueItem.RunCommand(_engine);
 
-            //Get queue item (dequeue)
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
             _workQueueItem.v_SaveAttachments = "No";
@@ -41,14 +39,10 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
-            string queueItemString = JsonConvert.SerializeObject(queueItemObject);
-            var vQueueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
-
+            var queueItemObject = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine);
             var client = AuthMethods.GetAuthToken();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, queueItemObject["LockTransactionKey"].ToString());
 
-            //Check if values are the same
             Assert.Equal("InProgress", queueItem.State);
         }
 
@@ -64,18 +58,16 @@ namespace OpenBots.Commands.QueueItem.Tests
             string fileName = "testFile.txt";
             string attachment = Path.Combine(filePath, @"Download\", fileName);
 
-            //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "WorkQueueItemAttachmentTest";
             _addQueueItem.v_QueueItemType = "Text";
             _addQueueItem.v_JsonType = "Test Type";
             _addQueueItem.v_QueueItemTextValue = "Test Text";
             _addQueueItem.v_Priority = "10";
-            _addQueueItem.v_Attachments = filePath + @"Upload\" + fileName;
+            _addQueueItem.v_Attachments = Path.Combine(filePath, @"Upload\", fileName);
 
             _addQueueItem.RunCommand(_engine);
 
-            //Get queue item (dequeue)
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
             _workQueueItem.v_SaveAttachments = "Yes";
@@ -90,7 +82,6 @@ namespace OpenBots.Commands.QueueItem.Tests
             var client = AuthMethods.GetAuthToken();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());
 
-            //Check if values are the same
             Assert.Equal("InProgress", queueItem.State);
             Assert.True(File.Exists(attachment));
 
@@ -111,7 +102,6 @@ namespace OpenBots.Commands.QueueItem.Tests
             string attachment1 = Path.Combine(filePath, @"Download\", fileName1);
             string attachment2 = Path.Combine(filePath, @"Download\", fileName2);
 
-            //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "WorkQueueItemAttachmentsTest";
             _addQueueItem.v_QueueItemType = "Text";
@@ -123,7 +113,6 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _addQueueItem.RunCommand(_engine);
 
-            //Get queue item (dequeue)
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
             _workQueueItem.v_SaveAttachments = "Yes";
@@ -138,7 +127,6 @@ namespace OpenBots.Commands.QueueItem.Tests
             var client = AuthMethods.GetAuthToken();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());
 
-            //Check if values are the same
             Assert.Equal("InProgress", queueItem.State);
             Assert.True(File.Exists(attachment1));
             Assert.True(File.Exists(attachment2));
@@ -154,7 +142,6 @@ namespace OpenBots.Commands.QueueItem.Tests
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
-            //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "WorkQueueItemJsonTest";
             _addQueueItem.v_QueueItemType = "Json";
@@ -164,7 +151,6 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             _addQueueItem.RunCommand(_engine);
 
-            //Get queue item (dequeue)
             _workQueueItem.v_QueueName = "NoQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
             _workQueueItem.v_SaveAttachments = "No";
@@ -189,7 +175,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         //    _addQueueItem.v_Priority = "10";
 
         //    _addQueueItem.RunCommand(_engine);
-
 
         //    //Change AgentId setting to null
         //    var settings = EnvironmentSettings.GetAgentSettings();

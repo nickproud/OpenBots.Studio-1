@@ -3,7 +3,6 @@ using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using Xunit;
 
 namespace OpenBots.Commands.QueueItem.Tests
@@ -98,7 +97,7 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             var queueItemDict = new Dictionary<string, object>()
             {
-                {  "LockTransactionKey", null },
+                { "LockTransactionKey", null },
                 { "Name", "ExtendQueueItemTest" },
                 { "Source", null },
                 { "Event", null },
@@ -120,7 +119,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         {
             _addQueueItem = new AddQueueItemCommand();
 
-            //Add queue item
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = name;
             _addQueueItem.v_QueueItemType = "Text";
@@ -135,7 +133,6 @@ namespace OpenBots.Commands.QueueItem.Tests
         {
             _workQueueItem = new WorkQueueItemCommand();
 
-            //Get queue item (dequeue)
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
             _workQueueItem.v_SaveAttachments = "No";
