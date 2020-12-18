@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -40,7 +41,9 @@ namespace OpenBots.Commands.Window
 			CommandName = "WaitForWindowToExistCommand";
 			SelectionName = "Wait For Window To Exist";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_window;
+
+
 			v_WindowName = "Current Window";
 			v_Timeout = "30";
 		}

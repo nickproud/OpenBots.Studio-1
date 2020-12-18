@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,8 @@ namespace OpenBots.Commands.ErrorHandling
         {
             CommandName = "EndRetryCommand";
             SelectionName = "End Retry";
+            CommandIcon = Resources.command_end_try;
+
             CommandEnabled = true;           
         }
 

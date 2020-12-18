@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using SHDocVw;
@@ -38,6 +39,7 @@ namespace OpenBots.Commands.IEBrowser
             CommandName = "IENavigateToURLCommand";
             SelectionName = "IE Navigate to URL";           
             CommandEnabled = false;
+            CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";
         }

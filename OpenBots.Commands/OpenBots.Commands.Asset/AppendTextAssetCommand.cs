@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using OpenBots.Core.Properties;
+using OpenBots.Core.Common;
 
 namespace OpenBots.Commands.Asset
 {
@@ -35,11 +37,15 @@ namespace OpenBots.Commands.Asset
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		public string v_AppendText { get; set; }
 
+
 		public AppendTextAssetCommand()
 		{
 			CommandName = "AppendTextAssetCommand";
 			SelectionName = "Append Text Asset";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_asset;
+
+			Common.InitializeDefaultWebProtocol();
 		}
 
 		public override void RunCommand(object sender)

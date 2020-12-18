@@ -50,7 +50,8 @@ namespace OpenBots.Commands.DataTable
 		{
 			CommandName = "AddDataRowCommand";
 			SelectionName = "Add DataRow";
-			CommandEnabled = true;         
+			CommandEnabled = true;
+			CommandIcon = Resources.command_spreadsheet;
 
 			//initialize data table
 			v_DataRowDataTable = new Data.DataTable

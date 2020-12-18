@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
@@ -46,7 +47,8 @@ namespace OpenBots.Commands.If
 		{
 			CommandName = "BeginMultiIfCommand";
 			SelectionName = "Begin Multi If";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_begin_multi_if;
 
 			v_IfConditionsTable = new DataTable();
 			v_IfConditionsTable.TableName = DateTime.Now.ToString("MultiIfConditionTable" + DateTime.Now.ToString("MMddyy.hhmmss"));

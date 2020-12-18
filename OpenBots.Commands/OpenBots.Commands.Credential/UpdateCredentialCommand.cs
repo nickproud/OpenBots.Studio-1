@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using OpenBots.Core.Properties;
 
 namespace OpenBots.Commands.Credential
 {
@@ -47,6 +48,8 @@ namespace OpenBots.Commands.Credential
 			CommandName = "UpdateCredentialCommand";
 			SelectionName = "Update Credential";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_asset;
+
 			Common.InitializeDefaultWebProtocol();
 		}
 

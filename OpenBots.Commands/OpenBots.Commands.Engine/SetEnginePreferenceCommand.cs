@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
-
+using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,7 +29,8 @@ namespace OpenBots.Commands.Engine
 			CommandName = "SetEnginePreferenceCommand";
 			SelectionName = "Set Engine Preference";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_window;
+
 			v_CalculationOption = "Enable Automatic Calculations";
 		}
 

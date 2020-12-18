@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -49,7 +50,9 @@ namespace OpenBots.Commands.Window
 			CommandName = "MoveWindowCommand";
 			SelectionName = "Move Window";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_window;
+
+
 			v_WindowName = "Current Window";
 			v_XMousePosition = "0";
 			v_YMousePosition = "0";

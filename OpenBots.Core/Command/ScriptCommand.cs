@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace OpenBots.Core.Command
@@ -44,6 +46,10 @@ namespace OpenBots.Core.Command
 		[SampleUsage("I am using this command to ...")]
 		[Remarks("Optional")]
 		public string v_Comment { get; set; }
+
+		[JsonIgnore]
+		[Browsable(false)]
+		public Image CommandIcon { get; set; } = Resources.command_function;
 
 		[JsonIgnore]
 		[Browsable(false)]

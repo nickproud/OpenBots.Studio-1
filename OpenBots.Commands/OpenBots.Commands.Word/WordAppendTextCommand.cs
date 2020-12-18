@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -92,7 +93,8 @@ namespace OpenBots.Commands.Word
 			CommandName = "WordAppendTextCommand";
 			SelectionName = "Append Text";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_files;
+
 			v_InstanceName = "DefaultWord";
 			v_FontName = "Calibri";
 			v_FontSize = "11";

@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using OpenQA.Selenium;
@@ -52,7 +53,8 @@ namespace OpenBots.Commands.WebBrowser
 			CommandName = "SeleniumGetBrowserInfoCommand";
 			SelectionName = "Get Browser Info";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_web;
+
 			v_InstanceName = "DefaultBrowser";
 		}
 

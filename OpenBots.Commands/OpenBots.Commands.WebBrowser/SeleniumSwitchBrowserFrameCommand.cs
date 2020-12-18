@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using OpenQA.Selenium;
@@ -50,7 +51,8 @@ namespace OpenBots.Commands.WebBrowser
 			CommandName = "SeleniumSwitchBrowserFrameCommand";
 			SelectionName = "Switch Browser Frame";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_web;
+
 			v_InstanceName = "DefaultBrowser";
 			v_SelectionType = "Index";
 			v_FrameParameter = "0";

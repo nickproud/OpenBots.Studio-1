@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -54,7 +55,8 @@ namespace OpenBots.Commands.Process
 			CommandName = "StartProcessCommand";
 			SelectionName = "Start Process";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_start_process;
+
 			v_WaitForExit = "No";
 		}
 

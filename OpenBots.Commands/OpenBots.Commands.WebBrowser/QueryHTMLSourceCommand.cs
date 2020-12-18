@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -46,7 +47,9 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			CommandName = "QueryHTMLSourceCommand";
 			SelectionName = "Query HTML Source";
-			CommandEnabled = true;          
+			CommandEnabled = true;
+			CommandIcon = Resources.command_web;
+
 		}
 
 		public override void RunCommand(object sender)

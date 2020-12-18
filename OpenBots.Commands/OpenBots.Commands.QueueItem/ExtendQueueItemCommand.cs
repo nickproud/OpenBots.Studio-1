@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -30,7 +31,9 @@ namespace OpenBots.Commands.QueueItem
 		{
 			CommandName = "ExtendQueueItemCommand";
 			SelectionName = "Extend QueueItem";
-			CommandEnabled = true;          
+			CommandEnabled = true;
+			CommandIcon = Resources.command_queueitem;
+
 		}
 
 		public override void RunCommand(object sender)

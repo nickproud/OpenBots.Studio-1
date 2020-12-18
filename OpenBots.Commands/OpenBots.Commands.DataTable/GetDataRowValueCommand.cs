@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -58,7 +59,8 @@ namespace OpenBots.Commands.DataTable
 			CommandName = "GetDataRowValueCommand";
 			SelectionName = "Get DataRow Value";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_spreadsheet;
+
 			v_Option = "Column Index";
 		}
 

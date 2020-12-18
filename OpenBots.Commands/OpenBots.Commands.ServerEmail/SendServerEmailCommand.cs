@@ -3,6 +3,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -80,6 +81,8 @@ namespace OpenBots.Commands.ServerEmail
             CommandName = "SendServerEmailCommand";
             SelectionName = "Send Server Email";
             CommandEnabled = true;
+            CommandIcon = Resources.command_smtp;
+
             v_AccountName = null;
             v_Attachments = null;
             Common.InitializeDefaultWebProtocol();

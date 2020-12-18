@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
-
+using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,7 +31,8 @@ namespace OpenBots.Commands.Engine
 			CommandName = "ErrorHandlingCommand";
 			SelectionName = "Error Handling";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_error;
+
 			v_ErrorHandlingAction = "Stop Processing";
 		}
 

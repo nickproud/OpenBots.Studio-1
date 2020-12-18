@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -29,7 +30,8 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelSaveWorkbookCommand";
 			SelectionName = "Save Workbook";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_spreadsheet;
+
 			v_InstanceName = "DefaultExcel";
 		}
 

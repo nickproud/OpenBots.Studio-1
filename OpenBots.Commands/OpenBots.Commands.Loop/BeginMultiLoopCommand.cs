@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
@@ -48,7 +49,8 @@ namespace OpenBots.Commands.Loop
 		{
 			CommandName = "BeginMultiLoopCommand";
 			SelectionName = "Begin Multi Loop";
-			CommandEnabled = true;            
+			CommandEnabled = true;
+			CommandIcon = Resources.command_startloop;
 
 			v_LoopConditionsTable = new DataTable();
 			v_LoopConditionsTable.TableName = DateTime.Now.ToString("MultiLoopConditionTable" + DateTime.Now.ToString("MMddyy.hhmmss"));

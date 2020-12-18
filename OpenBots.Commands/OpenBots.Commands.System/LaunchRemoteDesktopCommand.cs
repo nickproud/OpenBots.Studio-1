@@ -65,7 +65,8 @@ namespace OpenBots.Commands.System
 		{
 			CommandName = "LaunchRemoteDesktopCommand";
 			SelectionName = "Launch Remote Desktop";
-			CommandEnabled = true;        
+			CommandEnabled = true;
+			CommandIcon = Resources.command_system;
 
 			v_RDPWidth = SystemInformation.PrimaryMonitorSize.Width.ToString();
 			v_RDPHeight = SystemInformation.PrimaryMonitorSize.Height.ToString();

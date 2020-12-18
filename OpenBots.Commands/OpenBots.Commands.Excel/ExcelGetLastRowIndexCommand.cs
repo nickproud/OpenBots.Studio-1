@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -48,7 +49,8 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelGetLastRowIndexCommand";
 			SelectionName = "Get Last Row Index";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_spreadsheet;
+
 			v_InstanceName = "DefaultExcel";
 			v_ColumnLetter = "A";
 		}

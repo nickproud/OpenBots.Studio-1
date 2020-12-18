@@ -4,6 +4,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -56,6 +57,8 @@ namespace OpenBots.Commands.Asset
             CommandName = "CalculateNumberAssetCommand";
             SelectionName = "Calculate Number Asset";
             CommandEnabled = true;
+            CommandIcon = Resources.command_asset;
+
             v_AssetActionType = "Increment";
             Common.InitializeDefaultWebProtocol();
         }

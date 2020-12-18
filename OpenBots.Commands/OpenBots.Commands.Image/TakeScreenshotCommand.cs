@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -50,6 +51,7 @@ namespace OpenBots.Commands.Image
 			CommandName = "TakeScreenshotCommand";
 			SelectionName = "Take Screenshot";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_camera;
 
 			v_WindowName = "Current Window";
 		}
