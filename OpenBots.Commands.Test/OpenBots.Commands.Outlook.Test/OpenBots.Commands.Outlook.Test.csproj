@@ -6,11 +6,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D72F18C5-C8EF-4372-86FB-1E9AD49E3EFA}</ProjectGuid>
+    <ProjectGuid>{737674A7-8CE7-4264-B9E6-3B84E533C8BC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenBots.Commands.Email.Test</RootNamespace>
-    <AssemblyName>OpenBots.Commands.Email.Test</AssemblyName>
+    <RootNamespace>OpenBots.Commands.Outlook.Test</RootNamespace>
+    <AssemblyName>OpenBots.Commands.Outlook.Test</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Office.Interop.Outlook.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Outlook.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
     </Reference>
@@ -60,19 +64,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeleteIMAPEmailCommandTests.cs" />
+    <Compile Include="DeleteOutlookEmailCommandTests.cs" />
+    <Compile Include="GetOutlookEmailsCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.Email\OpenBots.Commands.Email.csproj">
-      <Project>{0b7b875d-2754-424e-8f4a-52df9573d8c5}</Project>
-      <Name>OpenBots.Commands.Email</Name>
+    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.Outlook\OpenBots.Commands.Outlook.csproj">
+      <Project>{6a4ad804-ff5d-44ed-9f49-a07d6d80da38}</Project>
+      <Name>OpenBots.Commands.Outlook</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\OpenBots.Core\OpenBots.Core.csproj">
       <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
