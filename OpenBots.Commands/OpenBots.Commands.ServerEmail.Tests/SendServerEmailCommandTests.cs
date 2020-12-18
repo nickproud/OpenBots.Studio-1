@@ -30,8 +30,7 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             //Send Server email with no account name (gets default email account)
             _sendServerEmail.v_AccountName = "";
-            //TODO: replace email with user's Outlook email
-            _sendServerEmail.v_ToRecipients = "nicole.carrero@openbots.ai";
+            _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
             _sendServerEmail.v_Subject = "One Attachment";
@@ -65,8 +64,7 @@ namespace OpenBots.Commands.ServerEmail.Test
             string email = filePath + @"Download\" + "Multiple Attachments.msg";
 
             _sendServerEmail.v_AccountName = "";
-            //TODO: replace email with test Outlook email
-            _sendServerEmail.v_ToRecipients = "nicole.carrero@openbots.ai";
+            _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
             _sendServerEmail.v_Subject = "Multiple Attachments";
@@ -99,8 +97,7 @@ namespace OpenBots.Commands.ServerEmail.Test
             string email = filePath + @"Download\" + "No Attachments.msg";
 
             _sendServerEmail.v_AccountName = "";
-            //TODO: replace email with test Outlook email
-            _sendServerEmail.v_ToRecipients = "nicole.carrero@openbots.ai";
+            _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
             _sendServerEmail.v_Subject = "No Attachments";
@@ -128,8 +125,7 @@ namespace OpenBots.Commands.ServerEmail.Test
             string email = filePath + @"Download\" + "Account Name.msg";
 
             _sendServerEmail.v_AccountName = "Nicole-Accounts";
-            //TODO: replace email with test Outlook email
-            _sendServerEmail.v_ToRecipients = "nicole.carrero@openbots.ai";
+            _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
             _sendServerEmail.v_Subject = "Account Name";
@@ -156,9 +152,8 @@ namespace OpenBots.Commands.ServerEmail.Test
             string email = filePath + @"Download\" + "One CC.msg";
 
             _sendServerEmail.v_AccountName = "";
-            //TODO: replace email with test Outlook email
-            _sendServerEmail.v_ToRecipients = "nicole.carrero@accelirate.com";
-            _sendServerEmail.v_CCRecipients = "nicole.carrero@openbots.ai";
+            _sendServerEmail.v_ToRecipients = "openbots.test@outlook.com";
+            _sendServerEmail.v_CCRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_BCCRecipients = "";
             _sendServerEmail.v_Subject = "One CC";
             _sendServerEmail.v_Body = "Test Body";
@@ -185,10 +180,9 @@ namespace OpenBots.Commands.ServerEmail.Test
             string email = filePath + @"Download\" + "One BCC.msg";
 
             _sendServerEmail.v_AccountName = "";
-            //TODO: replace email with test Outlook email
-            _sendServerEmail.v_ToRecipients = "nicole.carrero@accelirate.com";
+            _sendServerEmail.v_ToRecipients = "openbots.test@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
-            _sendServerEmail.v_BCCRecipients = "nicole.carrero@openbots.ai";
+            _sendServerEmail.v_BCCRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_Subject = "One BCC";
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = "";
@@ -214,9 +208,8 @@ namespace OpenBots.Commands.ServerEmail.Test
             string email = filePath + @"Download\" + "Multiple CC.msg";
 
             _sendServerEmail.v_AccountName = "";
-            //TODO: replace email with test Outlook email
-            _sendServerEmail.v_ToRecipients = "nicole.carrero@accelirate.com";
-            _sendServerEmail.v_CCRecipients = "ncarrero18@gmail.com;nicole.carrero@openbots.ai";
+            _sendServerEmail.v_ToRecipients = "openbots.test@outlook.com";
+            _sendServerEmail.v_CCRecipients = "openbots.test.2@outlook.com;openbots.test.1@outlook.com";
             _sendServerEmail.v_BCCRecipients = "";
             _sendServerEmail.v_Subject = "Multiple CC";
             _sendServerEmail.v_Body = "Test Body";
@@ -243,10 +236,9 @@ namespace OpenBots.Commands.ServerEmail.Test
             string email = filePath + @"Download\" + "Multiple BCC.msg";
 
             _sendServerEmail.v_AccountName = "";
-            //TODO: replace email with test Outlook email
-            _sendServerEmail.v_ToRecipients = "nicole.carrero@accelirate.com";
+            _sendServerEmail.v_ToRecipients = "openbots.test@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
-            _sendServerEmail.v_BCCRecipients = "ncarrero18@gmail.com;nicole.carrero@openbots.ai";
+            _sendServerEmail.v_BCCRecipients = "openbots.test.2@outlook.com;openbots.test.1@outlook.com";
             _sendServerEmail.v_Subject = "Multiple BCC";
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = "";
@@ -273,8 +265,7 @@ namespace OpenBots.Commands.ServerEmail.Test
             string email = filePath + @"Download\" + "(no subject).msg";
 
             _sendServerEmail.v_AccountName = "";
-            //TODO: replace email with test Outlook email
-            _sendServerEmail.v_ToRecipients = "nicole.carrero@openbots.ai";
+            _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
             _sendServerEmail.v_Subject = "";
@@ -285,7 +276,6 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             var emailMessage = GetEmail(filePath);
 
-            //Assert that email was sent successfully
             Assert.True(File.Exists(email));
 
             DeleteEmail(emailMessage);
@@ -304,8 +294,7 @@ namespace OpenBots.Commands.ServerEmail.Test
             string email = filePath + @"Download\" + "No Body.msg";
 
             _sendServerEmail.v_AccountName = "";
-            //TODO: replace email with test Outlook email
-            _sendServerEmail.v_ToRecipients = "nicole.carrero@openbots.ai";
+            _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
             _sendServerEmail.v_Subject = "No Body";
@@ -329,7 +318,6 @@ namespace OpenBots.Commands.ServerEmail.Test
             _sendServerEmail = new SendServerEmailCommand();
 
             _sendServerEmail.v_AccountName = "";
-            //TODO: replace email with test Outlook email
             _sendServerEmail.v_ToRecipients = "";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
@@ -344,7 +332,6 @@ namespace OpenBots.Commands.ServerEmail.Test
         {
             _getEmail = new GetOutlookEmailsCommand();
 
-            //Wait 30 seconds for email to be sent to user
             System.Threading.Thread.Sleep(30000);
 
             _getEmail.v_SourceFolder = "Inbox";
