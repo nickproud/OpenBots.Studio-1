@@ -259,8 +259,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 _scriptVariables = new List<ScriptVariable>();
                 _scriptElements = new List<ScriptElement>();
-            }
-            //pnlHeader.BackColor = Color.FromArgb(255, 214, 88);           
+            }         
 
             //set image list
             _selectedTabScriptActions.SmallImageList = _uiImages;
