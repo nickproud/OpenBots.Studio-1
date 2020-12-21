@@ -1,8 +1,9 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using SimpleNLG;
 using System;
 using System.Collections.Generic;
@@ -37,13 +38,14 @@ namespace OpenBots.Commands.NLG
 			CommandName = "GenerateNLGPhraseCommand";
 			SelectionName = "Generate NLG Phrase";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_nlg;
+
 			v_InstanceName = "DefaultNLG";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var p = (SPhraseSpec)v_InstanceName.GetAppInstance(engine);
 
 			Lexicon lexicon = Lexicon.getDefaultLexicon();

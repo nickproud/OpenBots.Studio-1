@@ -1,4 +1,4 @@
-﻿namespace OpenBots.UI.SupplementForms
+﻿namespace OpenBots.UI.Forms.Supplement_Forms
 {
     partial class frmImageCapture
     {

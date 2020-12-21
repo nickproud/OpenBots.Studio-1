@@ -6,7 +6,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -79,7 +78,8 @@ namespace OpenBots.Commands.Database
 			CommandName = "ExecuteDatabaseQueryCommand";
 			SelectionName = "Execute Database Query";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_database2;
+
 			v_InstanceName = "DefaultDatabase";
 
 			v_QueryParameters = new DataTable
@@ -97,7 +97,7 @@ namespace OpenBots.Commands.Database
 		public override void RunCommand(object sender)
 		{
 			//create engine, instance, query
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var query = v_Query.ConvertUserVariableToString(engine);
 
 			//define connection

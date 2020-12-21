@@ -4,8 +4,8 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -50,13 +50,15 @@ namespace OpenBots.Commands.List
 		{
 			CommandName = "UpdateListItemCommand";
 			SelectionName = "Update List Item";
-			CommandEnabled = true;         
+			CommandEnabled = true;
+			CommandIcon = Resources.command_function;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
 			//get sending instance
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			var vListVariable = v_ListName.ConvertUserVariableToObject(engine);
 			var vListIndex = int.Parse(v_ListIndex.ConvertUserVariableToString(engine));

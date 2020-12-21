@@ -95,6 +95,11 @@ namespace OpenBots.Engine
             ErrorHandlingAction = string.Empty;
         }
 
+        public IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger)
+        {
+            return new AutomationEngineInstance(logger);
+        }
+
         public void ExecuteScriptSync(string filePath, string projectPath)
         {
             Log.Information("Client requesting to execute script independently");

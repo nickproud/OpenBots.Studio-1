@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -58,13 +59,14 @@ namespace OpenBots.Commands.DataTable
 			CommandName = "GetDataRowValueCommand";
 			SelectionName = "Get DataRow Value";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_spreadsheet;
+
 			v_Option = "Column Index";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var dataRowVariable = v_DataRow.ConvertUserVariableToObject(engine);
 			DataRow dataRow = (DataRow)dataRowVariable;
 

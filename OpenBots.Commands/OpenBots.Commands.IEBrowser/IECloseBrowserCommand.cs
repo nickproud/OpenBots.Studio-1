@@ -1,8 +1,9 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using SHDocVw;
 using System;
 using System.Collections.Generic;
@@ -29,13 +30,14 @@ namespace OpenBots.Commands.IEBrowser
             CommandName = "IECloseBrowserCommand";
             SelectionName = "Close IE Browser";
             CommandEnabled = false;
+            CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";
         }
 
         public override void RunCommand(object sender)
         {
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
 
             var browserObject = v_InstanceName.GetAppInstance(engine);
             var browserInstance = (InternetExplorer)browserObject;

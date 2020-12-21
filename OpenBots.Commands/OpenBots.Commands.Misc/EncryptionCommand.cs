@@ -2,9 +2,10 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -57,13 +58,14 @@ namespace OpenBots.Commands.Misc
 			CommandName = "EncryptionCommand";
 			SelectionName = "Encryption Command";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_password;
+
 			v_EncryptionType = "Encrypt";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			var variableInput = v_InputValue.ConvertUserVariableToString(engine);
 			var passphrase = v_PassPhrase.ConvertUserVariableToString(engine);

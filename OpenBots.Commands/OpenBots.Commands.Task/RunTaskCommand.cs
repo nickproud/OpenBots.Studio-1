@@ -3,9 +3,9 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using Serilog;
 using Serilog.Core;
 using System;
@@ -75,7 +75,8 @@ namespace OpenBots.Commands.Task
 			CommandName = "RunTaskCommand";
 			SelectionName = "Run Task";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_start_process;
+
 			v_TaskPath = "{ProjectPath}";
 
 			v_VariableAssignments = new DataTable();
@@ -96,7 +97,7 @@ namespace OpenBots.Commands.Task
 
 		public override void RunCommand(object sender)
 		{
-			var parentAutomationEngineInstance = (AutomationEngineInstance)sender;
+			var parentAutomationEngineInstance = (IAutomationEngineInstance)sender;
 			if(parentAutomationEngineInstance.ScriptEngineUI == null)
 			{
 				RunServerTask(sender);
@@ -217,7 +218,7 @@ namespace OpenBots.Commands.Task
 			_passParameters.Font = new Font("Segoe UI Light", 12);
 			_passParameters.ForeColor = Color.White;
 			_passParameters.DataBindings.Add("Checked", this, "v_AssignVariables", false, DataSourceUpdateMode.OnPropertyChanged);
-			_passParameters.CheckedChanged += (sender, e) => PassParametersCheckbox_CheckedChanged(sender, e, editor);
+			_passParameters.CheckedChanged += (sender, e) => PassParametersCheckbox_CheckedChanged(sender, e, editor, commandControls);
 			commandControls.CreateDefaultToolTipFor("v_AssignVariables", this, _passParameters);
 			RenderedControls.Add(_passParameters);
 
@@ -238,9 +239,9 @@ namespace OpenBots.Commands.Task
 			_passParameters.Checked = false;
 		}
 
-		private void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor)
+		private void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
-			AutomationEngineInstance currentScriptEngine = new AutomationEngineInstance(null);
+			var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null);
 			currentScriptEngine.VariableList.AddRange(editor.ScriptVariables);
 			currentScriptEngine.ElementList.AddRange(editor.ScriptElements);
 
@@ -286,14 +287,14 @@ namespace OpenBots.Commands.Task
 
 		private void RunServerTask(object sender)
 		{
-			AutomationEngineInstance parentAutomationEngineInstance = (AutomationEngineInstance)sender;
+			var parentAutomationEngineInstance = (IAutomationEngineInstance)sender;
 			string childTaskPath = v_TaskPath.ConvertUserVariableToString(parentAutomationEngineInstance);
 			string parentTaskPath = parentAutomationEngineInstance.FileName;
 
 			//create variable list
 			InitializeVariableLists(parentAutomationEngineInstance);
 
-			var childAutomationEngineInstance = new AutomationEngineInstance((Logger)Log.Logger);
+			var childAutomationEngineInstance = parentAutomationEngineInstance.CreateAutomationEngineInstance((Logger)Log.Logger);
 			childAutomationEngineInstance.VariableList = _variableList;
 			childAutomationEngineInstance.AppInstances = parentAutomationEngineInstance.AppInstances;
 			childAutomationEngineInstance.IsServerChildExecution = true;

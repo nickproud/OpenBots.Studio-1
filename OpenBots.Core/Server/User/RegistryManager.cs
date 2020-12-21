@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 
 namespace OpenBots.Core.Server.User
@@ -28,11 +29,12 @@ namespace OpenBots.Core.Server.User
         {
             get
             {
-                return GetKeyValue(_registryKeys.PasswordKey);
+                string password = GetKeyValue(_registryKeys.PasswordKey);
+                return string.IsNullOrEmpty(password) ? "" : StringMethods.DecryptText(password);
             }
             set
             {
-                SetKeyValue(_registryKeys.PasswordKey, value);
+                SetKeyValue(_registryKeys.PasswordKey, StringMethods.EncryptText(value));
             }
         }
 

@@ -12,6 +12,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void frmSplash_Load(object sender, EventArgs e)
         {
+            lblAppVersion.Text = $"v{Application.ProductVersion}";
         }
     }
 }

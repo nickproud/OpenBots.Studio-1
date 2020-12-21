@@ -3,9 +3,10 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,11 +34,13 @@ namespace OpenBots.Commands.QueueItem
 			SelectionName = "Extend QueueItem";
 			CommandEnabled = true;
 			Common.InitializeDefaultWebProtocol();
+			CommandIcon = Resources.command_queueitem;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vQueueItem = (Dictionary<string, object>)v_QueueItem.ConvertUserVariableToObject(engine);
 
 			var client = AuthMethods.GetAuthToken();

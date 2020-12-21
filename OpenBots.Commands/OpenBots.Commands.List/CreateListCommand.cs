@@ -4,8 +4,8 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -55,14 +55,15 @@ namespace OpenBots.Commands.List
 			CommandName = "CreateListCommand";
 			SelectionName = "Create List";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_function;
+
 			v_ListType = "String";
 		}
 
 		public override void RunCommand(object sender)
 		{
 			//get sending instance
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			dynamic vNewList = null;
 			string[] splitListItems = null;
 

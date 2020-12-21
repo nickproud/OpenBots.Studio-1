@@ -2,9 +2,10 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,13 +32,15 @@ namespace OpenBots.Commands.Switch
 		{
 			CommandName = "BeginSwitchCommand";
 			SelectionName = "Switch";
-			CommandEnabled = true;        
+			CommandEnabled = true;
+			CommandIcon = Resources.command_begin_switch;
+
 		}
 
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			//get engine
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			var vSwitchValue = v_SwitchValue.ConvertUserVariableToString(engine);
 			if (vSwitchValue == v_SwitchValue || !v_SwitchValue.StartsWith("{") || !v_SwitchValue.EndsWith("}"))
@@ -146,7 +149,7 @@ namespace OpenBots.Commands.Switch
 		private void ExecuteTargetCaseBlock(object sender, ScriptAction parentCommand, int startCaseIndex, int endCaseIndex)
 		{
 			//get engine
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var caseIndices = FindAllCaseIndices(parentCommand.AdditionalScriptCommands);
 
 			// Next Case Index

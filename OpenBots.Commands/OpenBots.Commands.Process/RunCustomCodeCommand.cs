@@ -3,10 +3,10 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using SimpleNLG.Extensions;
 using System;
 using System.Collections.Generic;
@@ -56,12 +56,14 @@ namespace OpenBots.Commands.Process
 		{
 			CommandName = "RunCustomCodeCommand";
 			SelectionName = "Run Custom Code";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_script;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var customCode = v_Code.ConvertUserVariableToString(engine);
 
 			if (customCode.Contains("static void Main"))
@@ -141,7 +143,7 @@ namespace OpenBots.Commands.Process
 
 		private void CompileAndExecute(string customCode, object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			//compile custom code
 			var compilerSvc = new CompilerServices();
 			var result = compilerSvc.CompileInput(customCode);

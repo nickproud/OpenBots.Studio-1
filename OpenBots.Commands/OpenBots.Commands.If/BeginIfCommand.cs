@@ -6,8 +6,7 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Engine;
-using OpenBots.UI.Utilities;
+using OpenBots.Core.Utilities.CommandUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,7 +72,8 @@ namespace OpenBots.Commands.If
 		{
 			CommandName = "BeginIfCommand";
 			SelectionName = "Begin If";
-			CommandEnabled = true;          
+			CommandEnabled = true;
+			CommandIcon = Resources.command_begin_if;
 
 			//define parameter table
 			v_ActionParameterTable = new DataTable
@@ -106,8 +106,8 @@ namespace OpenBots.Commands.If
 
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
-			var engine = (AutomationEngineInstance)sender;
-			var ifResult = UICommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
+			var engine = (IAutomationEngineInstance)sender;
+			var ifResult = CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
 
 			int startIndex, endIndex, elseIndex;
 			if (parentCommand.AdditionalScriptCommands.Any(item => item.ScriptCommand is ElseCommand))

@@ -3,9 +3,10 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,11 +45,13 @@ namespace OpenBots.Commands.Image
 			CommandName = "CaptureImageCommand";
 			SelectionName = "Capture Image";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_camera;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			//user image to bitmap
 			Bitmap capturedBmp = new Bitmap(Common.Base64ToImage(v_ImageCapture));

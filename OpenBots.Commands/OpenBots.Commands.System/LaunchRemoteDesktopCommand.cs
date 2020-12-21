@@ -6,7 +6,7 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -65,7 +65,8 @@ namespace OpenBots.Commands.System
 		{
 			CommandName = "LaunchRemoteDesktopCommand";
 			SelectionName = "Launch Remote Desktop";
-			CommandEnabled = true;        
+			CommandEnabled = true;
+			CommandIcon = Resources.command_system;
 
 			v_RDPWidth = SystemInformation.PrimaryMonitorSize.Width.ToString();
 			v_RDPHeight = SystemInformation.PrimaryMonitorSize.Height.ToString();
@@ -73,7 +74,7 @@ namespace OpenBots.Commands.System
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var machineName = v_MachineName.ConvertUserVariableToString(engine);
 			var userName = v_UserName.ConvertUserVariableToString(engine);
 			var password = v_Password.ConvertUserVariableToString(engine);

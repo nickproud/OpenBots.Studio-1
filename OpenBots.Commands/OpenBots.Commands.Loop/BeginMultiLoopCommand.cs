@@ -3,12 +3,11 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommandUtilities;
-using OpenBots.Engine;
-using OpenBots.UI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -50,7 +49,8 @@ namespace OpenBots.Commands.Loop
 		{
 			CommandName = "BeginMultiLoopCommand";
 			SelectionName = "Begin Multi Loop";
-			CommandEnabled = true;            
+			CommandEnabled = true;
+			CommandIcon = Resources.command_startloop;
 
 			v_LoopConditionsTable = new DataTable();
 			v_LoopConditionsTable.TableName = DateTime.Now.ToString("MultiLoopConditionTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
@@ -60,7 +60,7 @@ namespace OpenBots.Commands.Loop
 
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			bool isTrueStatement = DetermineMultiStatementTruth(engine);
 			engine.ReportProgress("Starting Loop");
 
@@ -146,7 +146,7 @@ namespace OpenBots.Commands.Loop
 			{
 				var commandData = rw["CommandData"].ToString();
 				var loopCommand = JsonConvert.DeserializeObject<BeginLoopCommand>(commandData);
-				var statementResult = UICommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable);
+				var statementResult = CommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable);
 
 				if (!statementResult)
 				{

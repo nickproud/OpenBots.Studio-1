@@ -3,8 +3,9 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -74,7 +75,8 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelCreateApplicationCommand";
 			SelectionName = "Create Excel Application";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_spreadsheet;
+
 			v_InstanceName = "DefaultExcel";
 			v_NewOpenWorkbook = "New Workbook";
 			v_Visible = "No";
@@ -83,7 +85,7 @@ namespace OpenBots.Commands.Excel
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vFilePath = v_FilePath.ConvertUserVariableToString(engine);
 
 			if (v_CloseAllInstances == "Yes")

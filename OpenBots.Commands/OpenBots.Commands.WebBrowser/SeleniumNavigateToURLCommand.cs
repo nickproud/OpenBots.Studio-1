@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using OpenQA.Selenium;
 using SHDocVw;
 using System;
@@ -40,14 +41,15 @@ namespace OpenBots.Commands.WebBrowser
 			CommandName = "SeleniumNavigateToURLCommand";
 			SelectionName = "Navigate to URL";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_web;
+
 			v_InstanceName = "DefaultBrowser";
 			v_URL = "https://";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var vURL = v_URL.ConvertUserVariableToString(engine);
 			var seleniumInstance = (IWebDriver)browserObject;

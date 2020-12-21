@@ -2,8 +2,9 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,12 +49,14 @@ namespace OpenBots.Commands.System
 		{
 			CommandName = "OSVariableCommand";
 			SelectionName = "OS Variable";
-			CommandEnabled = true;          
+			CommandEnabled = true;
+			CommandIcon = Resources.command_system;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var systemVariable = v_OSVariableName.ConvertUserVariableToString(engine);
 
 			ObjectQuery wql = new ObjectQuery("SELECT * FROM Win32_OperatingSystem");

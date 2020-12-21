@@ -1,9 +1,10 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,12 +31,14 @@ namespace OpenBots.Commands.Misc
         {
             CommandName = "GetClipboardTextCommand";
             SelectionName = "Get Clipboard Text";
-            CommandEnabled = true;          
+            CommandEnabled = true;
+            CommandIcon = Resources.command_files;
+
         }
 
         public override void RunCommand(object sender)
         {
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
             User32Functions.GetClipboardText().StoreInUserVariable(engine, v_OutputUserVariableName);
         }
 

@@ -7,13 +7,13 @@ using OpenBots.Core.Common;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Data;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using OpenBots.Core.Properties;
 
 namespace OpenBots.Commands.Asset
 {
@@ -68,16 +68,19 @@ namespace OpenBots.Commands.Asset
 
 		public GetAssetCommand()
 		{
-			Common.InitializeDefaultWebProtocol();
 			CommandName = "GetAssetCommand";
 			SelectionName = "Get Asset";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_asset;
+
 			v_AssetType = "Text";
+			Common.InitializeDefaultWebProtocol();
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
 			var vOutputDirectoryPath = v_OutputDirectoryPath.ConvertUserVariableToString(engine);
 

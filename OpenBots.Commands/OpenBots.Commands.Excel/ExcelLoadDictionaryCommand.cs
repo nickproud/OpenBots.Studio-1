@@ -3,8 +3,9 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -68,13 +69,14 @@ namespace OpenBots.Commands.Excel
 			CommandName = "LoadDictionaryCommand";
 			SelectionName = "Load Dictionary";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_spreadsheet;
+
 			v_KeyColumn = "Name";
 			v_ValueColumn = "Value";
 		}
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vInstance = DateTime.Now.ToString();
 			var vFilePath = v_FilePath.ConvertUserVariableToString(engine);
 			var vSheetName = v_SheetName.ConvertUserVariableToString(engine);

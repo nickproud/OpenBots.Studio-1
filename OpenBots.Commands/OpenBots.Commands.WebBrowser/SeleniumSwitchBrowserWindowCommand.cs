@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -66,7 +67,8 @@ namespace OpenBots.Commands.WebBrowser
 			CommandName = "SeleniumSwitchBrowserWindowCommand";
 			SelectionName = "Switch Browser Window";  
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_web;
+
 			v_InstanceName = "DefaultBrowser";
 			v_WindowMatchType = "Window URL";
 			v_MatchSpecification = "Exact Match";
@@ -75,7 +77,7 @@ namespace OpenBots.Commands.WebBrowser
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
 			var matchParam = v_MatchParameter.ConvertUserVariableToString(engine);

@@ -86,7 +86,7 @@
       <Project>{ed8f6540-c341-4b5f-8966-26a08e39af87}</Project>
       <Name>OpenBots.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenBots.Commands.TextFile\OpenBots.Commands.TextFile.csproj">
+    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.TextFile\OpenBots.Commands.TextFile.csproj">
       <Project>{b3818a00-154d-4296-b6d1-e20663d47397}</Project>
       <Name>OpenBots.Commands.TextFile</Name>
     </ProjectReference>

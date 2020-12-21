@@ -3,12 +3,11 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommandUtilities;
-using OpenBots.Engine;
-using OpenBots.UI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,7 +47,8 @@ namespace OpenBots.Commands.If
 		{
 			CommandName = "BeginMultiIfCommand";
 			SelectionName = "Begin Multi If";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_begin_multi_if;
 
 			v_IfConditionsTable = new DataTable();
 			v_IfConditionsTable.TableName = DateTime.Now.ToString("MultiIfConditionTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
@@ -58,14 +58,14 @@ namespace OpenBots.Commands.If
 	   
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			bool isTrueStatement = true;
 			foreach (DataRow rw in v_IfConditionsTable.Rows)
 			{
 				var commandData = rw["CommandData"].ToString();
 				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
-				var statementResult = UICommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
+				var statementResult = CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
 
 				if (!statementResult)
 				{

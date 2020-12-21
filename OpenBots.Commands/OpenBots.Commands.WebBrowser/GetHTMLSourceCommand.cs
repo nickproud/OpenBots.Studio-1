@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,12 +50,14 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			CommandName = "GetHTMLSourceCommand";
 			SelectionName = "Get HTML Source";
-			CommandEnabled = true;            
+			CommandEnabled = true;
+			CommandIcon = Resources.command_web;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(v_WebRequestURL.ConvertUserVariableToString(engine));
 			request.Method = "GET";
 			request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121 Safari/535.2";

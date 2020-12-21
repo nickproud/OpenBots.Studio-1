@@ -2,9 +2,10 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,7 +50,9 @@ namespace OpenBots.Commands.Window
 			CommandName = "MoveWindowCommand";
 			SelectionName = "Move Window";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_window;
+
+
 			v_WindowName = "Current Window";
 			v_XMousePosition = "0";
 			v_YMousePosition = "0";
@@ -57,7 +60,7 @@ namespace OpenBots.Commands.Window
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			string windowName = v_WindowName.ConvertUserVariableToString(engine);
 			var variableXPosition = v_XMousePosition.ConvertUserVariableToString(engine);
 			var variableYPosition = v_YMousePosition.ConvertUserVariableToString(engine);

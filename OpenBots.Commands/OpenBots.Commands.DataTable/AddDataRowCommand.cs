@@ -7,7 +7,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -51,7 +50,8 @@ namespace OpenBots.Commands.DataTable
 		{
 			CommandName = "AddDataRowCommand";
 			SelectionName = "Add DataRow";
-			CommandEnabled = true;         
+			CommandEnabled = true;
+			CommandIcon = Resources.command_spreadsheet;
 
 			//initialize data table
 			v_DataRowDataTable = new Data.DataTable
@@ -65,7 +65,7 @@ namespace OpenBots.Commands.DataTable
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			Data.DataTable Dt = (Data.DataTable)v_DataTable.ConvertUserVariableToObject(engine);
 			var newRow = Dt.NewRow();

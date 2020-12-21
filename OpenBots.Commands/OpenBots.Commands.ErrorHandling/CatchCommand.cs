@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,7 +44,8 @@ namespace OpenBots.Commands.ErrorHandling
 			CommandName = "CatchCommand";
 			SelectionName = "Catch";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_catch;
+
 			v_ExceptionType = "Exception";
 		}
 

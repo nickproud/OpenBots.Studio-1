@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -68,14 +69,15 @@ namespace OpenBots.Commands.File
 			CommandName = "MoveCopyFileCommand";
 			SelectionName = "Move/Copy File";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_files;
+
 			v_CreateDirectory = "Yes";
 			v_OverwriteFile = "Yes";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
 			var sourceFile = v_SourceFilePath.ConvertUserVariableToString(engine);
 			var destinationFolder = v_DestinationDirectory.ConvertUserVariableToString(engine);

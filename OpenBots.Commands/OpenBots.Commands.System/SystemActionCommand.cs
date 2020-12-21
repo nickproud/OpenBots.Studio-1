@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,8 @@ namespace OpenBots.Commands.System
 			CommandName = "SystemActionCommand";
 			SelectionName = "System Action";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_system;
+
 			v_ActionName = "Shutdown";
 		}
 

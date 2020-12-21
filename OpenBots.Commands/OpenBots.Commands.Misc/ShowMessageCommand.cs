@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,14 +40,15 @@ namespace OpenBots.Commands.Misc
 		{
 			CommandName = "ShowMessageCommand";
 			SelectionName = "Show Message";
-			CommandEnabled = true;          
-			
+			CommandEnabled = true;
+			CommandIcon = Resources.command_message;
+
 			v_AutoCloseAfter = "0";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			int closeAfter = int.Parse(v_AutoCloseAfter.ConvertUserVariableToString(engine));
 

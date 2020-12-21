@@ -26,6 +26,7 @@ namespace OpenBots.Core.Infrastructure
         Tuple<string, string> ShowConditionElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor);
         IfrmScriptEngine CreateScriptEngineForm(string pathToFile, string projectPath, IfrmScriptBuilder builderForm, Logger logger, 
             List<ScriptVariable> variables, List<ScriptElement> elements, Dictionary<string, object> appInstances, bool blnCloseWhenDone, bool isDebugMode);
+        IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger);
         IfrmWebElementRecorder CreateWebElementRecorderForm(string startURL);
         IfrmAdvancedUIElementRecorder CreateAdvancedUIElementRecorderForm();
         IfrmCommandEditor CreateCommandEditorForm(List<AutomationCommand> commands, List<ScriptCommand> existingCommands);

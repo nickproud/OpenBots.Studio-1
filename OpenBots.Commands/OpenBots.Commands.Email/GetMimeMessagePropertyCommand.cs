@@ -4,13 +4,13 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using System.IO;
+using OpenBots.Core.Properties;
 
 namespace OpenBots.Commands.Email
 {
@@ -77,12 +77,14 @@ namespace OpenBots.Commands.Email
             CommandName = "GetMimeEmailProperty";
             SelectionName = "Get MimeMessage Property";
             CommandEnabled = true;
+            CommandIcon = Resources.command_smtp;
+
             v_Property = "Sender";
         }
 
         public override void RunCommand(object sender)
         {
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
 
             MimeMessage email = (MimeMessage)v_MimeMessage.ConvertUserVariableToObject(engine);
 

@@ -5,13 +5,13 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Common;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security;
 using System.Windows.Forms;
+using OpenBots.Core.Properties;
 
 namespace OpenBots.Commands.Credential
 {
@@ -49,12 +49,14 @@ namespace OpenBots.Commands.Credential
 			CommandName = "GetCredentialCommand";
 			SelectionName = "Get Credential";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_asset;
+
 			Common.InitializeDefaultWebProtocol();
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vCredentialName = v_CredentialName.ConvertUserVariableToString(engine);
 
 			var client = AuthMethods.GetAuthToken();

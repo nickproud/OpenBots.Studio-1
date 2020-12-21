@@ -4,13 +4,12 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Core.Utilities.FormsUtilities;
-using OpenBots.Engine;
-using OpenBots.UI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,6 +38,7 @@ namespace OpenBots.Commands.Image
 				 "For images that are primarily white space, tagging color to the top-left corner of the image and setting \n" +
 				 "the relative click position will produce faster results.")]
 		[Editor("ShowImageCaptureHelper", typeof(UIAdditionalHelperType))]
+		[Editor("ShowImageRecognitionTestHelper", typeof(UIAdditionalHelperType))]
 		public string v_ImageCapture { get; set; }
 
 		[Required]
@@ -90,6 +90,7 @@ namespace OpenBots.Commands.Image
 			CommandName = "SurfaceAutomationCommand";
 			SelectionName = "Surface Automation";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_camera;
 
 			v_MatchAccuracy = "0.8";
 
@@ -115,7 +116,7 @@ namespace OpenBots.Commands.Image
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			bool testMode = TestMode;
 			//user image to bitmap
 			Bitmap userImage = new Bitmap(Common.Base64ToImage(v_ImageCapture));
@@ -129,12 +130,6 @@ namespace OpenBots.Commands.Image
 			catch (Exception)
 			{
 				throw new InvalidDataException("Accuracy value is invalid");
-			}
-
-			if (testMode)
-			{
-				UICommandsHelper.FindImageElement(userImage, accuracy, TestMode);
-				return;
 			}
 
 			dynamic element = null;
@@ -152,7 +147,7 @@ namespace OpenBots.Commands.Image
 				{
 					try
 					{
-						element = UICommandsHelper.FindImageElement(userImage, accuracy, TestMode);
+						element = CommandsHelper.FindImageElement(userImage, accuracy);
 
 						if (element == null)
 							throw new Exception("Image Element Not Found");
@@ -172,7 +167,7 @@ namespace OpenBots.Commands.Image
 				return;
 			}
 			else
-				element = UICommandsHelper.FindImageElement(userImage, accuracy, TestMode);
+				element = CommandsHelper.FindImageElement(userImage, accuracy);
 
 			try
 			{

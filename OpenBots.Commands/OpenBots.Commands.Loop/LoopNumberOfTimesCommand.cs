@@ -2,9 +2,10 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,14 +41,15 @@ namespace OpenBots.Commands.Loop
 			CommandName = "LoopNumberOfTimesCommand";
 			SelectionName = "Loop Number Of Times";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_startloop;
+
 			v_LoopStart = "0";
 		}
 
 		public override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			LoopNumberOfTimesCommand loopCommand = (LoopNumberOfTimesCommand)parentCommand.ScriptCommand;
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			int loopTimes;
 

@@ -3,10 +3,11 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -80,6 +81,8 @@ namespace OpenBots.Commands.ServerEmail
             CommandName = "SendServerEmailCommand";
             SelectionName = "Send Server Email";
             CommandEnabled = true;
+            CommandIcon = Resources.command_smtp;
+
             v_AccountName = null;
             v_Attachments = null;
             Common.InitializeDefaultWebProtocol();
@@ -87,7 +90,7 @@ namespace OpenBots.Commands.ServerEmail
 
         public override void RunCommand(object sender)
         {
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
             var vAccountName = v_AccountName.ConvertUserVariableToString(engine);
             var vToRecipients = v_ToRecipients.ConvertUserVariableToString(engine);
             var vCCRecipients = v_CCRecipients.ConvertUserVariableToString(engine);

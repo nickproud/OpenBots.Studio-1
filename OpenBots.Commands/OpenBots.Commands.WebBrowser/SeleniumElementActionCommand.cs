@@ -9,7 +9,7 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
@@ -130,7 +130,8 @@ namespace OpenBots.Commands.WebBrowser
 			SelectionName = "Element Action";
 			v_InstanceName = "DefaultBrowser";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_web;
+
 			v_SeleniumSearchOption = "Find Element";
 			v_Timeout = "30";
 
@@ -190,7 +191,7 @@ namespace OpenBots.Commands.WebBrowser
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			var vTimeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
 			var seleniumSearchParamRows = (from rw in v_SeleniumSearchParameters.AsEnumerable()

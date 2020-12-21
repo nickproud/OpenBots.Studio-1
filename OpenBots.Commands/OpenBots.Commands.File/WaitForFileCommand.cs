@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,12 +41,14 @@ namespace OpenBots.Commands.File
 		{
 			CommandName = "WaitForFileCommand";
 			SelectionName = "Wait For File";
-			CommandEnabled = true;         
+			CommandEnabled = true;
+			CommandIcon = Resources.command_files;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			//convert items to variables
 			var fileName = v_FileName.ConvertUserVariableToString(engine);
 			var pauseTime = int.Parse(v_WaitTime.ConvertUserVariableToString(engine));

@@ -259,11 +259,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 _scriptVariables = new List<ScriptVariable>();
                 _scriptElements = new List<ScriptElement>();
-            }
-            //pnlHeader.BackColor = Color.FromArgb(255, 214, 88);
-
-            //instantiate and populate display icons for commands
-            _uiImages = UIImage.UIImageList();
+            }         
 
             //set image list
             _selectedTabScriptActions.SmallImageList = _uiImages;
@@ -284,6 +280,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             //load all commands           
             scriptBuilder._automationCommands = TypeMethods.GenerateCommands(_container);
+
+            //instantiate and populate display icons for commands
+            scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
+
             var groupedCommands = _automationCommands.GroupBy(f => f.DisplayGroup);
 
             scriptBuilder.tvCommands.Nodes.Clear();
@@ -306,7 +306,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             scriptBuilder._tvCommandsCopy = new TreeView();
             scriptBuilder._tvCommandsCopy.ShowNodeToolTips = true;
             CopyTreeView(scriptBuilder.tvCommands, scriptBuilder._tvCommandsCopy);
-            scriptBuilder.txtCommandSearch.Text = _txtCommandWatermark;
+            scriptBuilder.txtCommandSearch.Text = _txtCommandWatermark;                      
         }
 
         private void frmScriptBuilder_FormClosing(object sender, FormClosingEventArgs e)
