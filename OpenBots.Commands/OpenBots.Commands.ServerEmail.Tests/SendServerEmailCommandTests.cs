@@ -26,20 +26,21 @@ namespace OpenBots.Commands.ServerEmail.Test
             string filePath = Path.Combine(projectDirectory, @"Resources\");
             string fileName = "testFile.txt";
             string attachment = Path.Combine(filePath, @"Download", fileName);
-            string email = filePath + @"Download\" + "One Attachment.msg";
+            string subject = "One Attachment";
+            string email = filePath + @"Download\" + $"{subject}.msg";
 
             //Send Server email with no account name (gets default email account)
             _sendServerEmail.v_AccountName = "";
             _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
-            _sendServerEmail.v_Subject = "One Attachment";
+            _sendServerEmail.v_Subject = subject;
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = filePath + @"Upload\" + fileName;
 
             _sendServerEmail.RunCommand(_engine);
 
-            var emailMessage = GetEmail(filePath);
+            var emailMessage = GetEmail(filePath, subject);
 
             Assert.True(File.Exists(email));
             Assert.True(File.Exists(attachment));
@@ -61,20 +62,21 @@ namespace OpenBots.Commands.ServerEmail.Test
             string fileName2 = "testFile2.txt";
             string attachment1 = filePath + @"Download\" + fileName1;
             string attachment2 = filePath + @"Download\" + fileName2;
-            string email = filePath + @"Download\" + "Multiple Attachments.msg";
+            string subject = "Multiple Attachments";
+            string email = filePath + @"Download\" + $"{subject}.msg";
 
             _sendServerEmail.v_AccountName = "";
             _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
-            _sendServerEmail.v_Subject = "Multiple Attachments";
+            _sendServerEmail.v_Subject = subject;
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = filePath + @"Upload\" + fileName1
                 + ";" + filePath + @"Upload\" + fileName2;
 
             _sendServerEmail.RunCommand(_engine);
 
-            var emailMessage = GetEmail(filePath);
+            var emailMessage = GetEmail(filePath, subject);
 
             Assert.True(File.Exists(email));
             Assert.True(File.Exists(attachment1));
@@ -94,19 +96,20 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\");
-            string email = filePath + @"Download\" + "No Attachments.msg";
+            string subject = "No Attachments";
+            string email = filePath + @"Download\" + $"{subject}.msg";
 
             _sendServerEmail.v_AccountName = "";
             _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
-            _sendServerEmail.v_Subject = "No Attachments";
+            _sendServerEmail.v_Subject = subject;
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = "";
 
             _sendServerEmail.RunCommand(_engine);
 
-            var emailMessage = GetEmail(filePath);
+            var emailMessage = GetEmail(filePath, subject);
 
             Assert.True(File.Exists(email));
 
@@ -122,19 +125,20 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\");
-            string email = filePath + @"Download\" + "Account Name.msg";
+            string subject = "Account Name";
+            string email = filePath + @"Download\" + $"{subject}.msg";
 
             _sendServerEmail.v_AccountName = "Nicole-Accounts";
             _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
-            _sendServerEmail.v_Subject = "Account Name";
+            _sendServerEmail.v_Subject = subject;
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = "";
 
             _sendServerEmail.RunCommand(_engine);
 
-            var emailMessage = GetEmail(filePath);
+            var emailMessage = GetEmail(filePath, subject);
 
             Assert.True(File.Exists(email));
 
@@ -149,19 +153,20 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\");
-            string email = filePath + @"Download\" + "One CC.msg";
+            string subject = "One CC";
+            string email = filePath + @"Download\" + $"{subject}.msg";
 
             _sendServerEmail.v_AccountName = "";
-            _sendServerEmail.v_ToRecipients = "openbots.test@outlook.com";
+            _sendServerEmail.v_ToRecipients = "openbots.test.2@outlook.com";
             _sendServerEmail.v_CCRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_BCCRecipients = "";
-            _sendServerEmail.v_Subject = "One CC";
+            _sendServerEmail.v_Subject = subject;
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = "";
 
             _sendServerEmail.RunCommand(_engine);
 
-            var emailMessage = GetEmail(filePath);
+            var emailMessage = GetEmail(filePath, subject);
 
             Assert.True(File.Exists(email));
 
@@ -177,19 +182,20 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\");
-            string email = filePath + @"Download\" + "One BCC.msg";
+            string subject = "One BCC";
+            string email = filePath + @"Download\" + $"{subject}.msg";
 
             _sendServerEmail.v_AccountName = "";
-            _sendServerEmail.v_ToRecipients = "openbots.test@outlook.com";
+            _sendServerEmail.v_ToRecipients = "openbots.test.2@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "openbots.test.1@outlook.com";
-            _sendServerEmail.v_Subject = "One BCC";
+            _sendServerEmail.v_Subject = subject;
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = "";
 
             _sendServerEmail.RunCommand(_engine);
 
-            var emailMessage = GetEmail(filePath);
+            var emailMessage = GetEmail(filePath, subject);
 
             Assert.True(File.Exists(email));
 
@@ -205,19 +211,20 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\");
-            string email = filePath + @"Download\" + "Multiple CC.msg";
+            string subject = "Multiple CC";
+            string email = filePath + @"Download\" + $"{subject}.msg";
 
             _sendServerEmail.v_AccountName = "";
-            _sendServerEmail.v_ToRecipients = "openbots.test@outlook.com";
-            _sendServerEmail.v_CCRecipients = "openbots.test.2@outlook.com;openbots.test.1@outlook.com";
+            _sendServerEmail.v_ToRecipients = "openbots.test.2@outlook.com";
+            _sendServerEmail.v_CCRecipients = "openbots.test@outlook.com;openbots.test.1@outlook.com";
             _sendServerEmail.v_BCCRecipients = "";
-            _sendServerEmail.v_Subject = "Multiple CC";
+            _sendServerEmail.v_Subject = subject;
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = "";
 
             _sendServerEmail.RunCommand(_engine);
 
-            var emailMessage = GetEmail(filePath);
+            var emailMessage = GetEmail(filePath, subject);
 
             Assert.True(File.Exists(email));
 
@@ -233,19 +240,20 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\");
-            string email = filePath + @"Download\" + "Multiple BCC.msg";
+            string subject = "Multiple BCC";
+            string email = filePath + @"Download\" + $"{subject}.msg";
 
             _sendServerEmail.v_AccountName = "";
-            _sendServerEmail.v_ToRecipients = "openbots.test@outlook.com";
+            _sendServerEmail.v_ToRecipients = "openbots.test.2@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
-            _sendServerEmail.v_BCCRecipients = "openbots.test.2@outlook.com;openbots.test.1@outlook.com";
+            _sendServerEmail.v_BCCRecipients = "openbots.test@outlook.com;openbots.test.1@outlook.com";
             _sendServerEmail.v_Subject = "Multiple BCC";
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = "";
 
             _sendServerEmail.RunCommand(_engine);
 
-            var emailMessage = GetEmail(filePath);
+            var emailMessage = GetEmail(filePath, subject);
 
             Assert.True(File.Exists(email));
 
@@ -262,7 +270,8 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\");
-            string email = filePath + @"Download\" + "(no subject).msg";
+            string subject = "(no subject)";
+            string email = filePath + @"Download\" + $"{subject}.msg";
 
             _sendServerEmail.v_AccountName = "";
             _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
@@ -274,7 +283,7 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             _sendServerEmail.RunCommand(_engine);
 
-            var emailMessage = GetEmail(filePath);
+            var emailMessage = GetEmail(filePath, subject);
 
             Assert.True(File.Exists(email));
 
@@ -291,19 +300,20 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\");
-            string email = filePath + @"Download\" + "No Body.msg";
+            string subject = "No Body";
+            string email = filePath + @"Download\" + $"{subject}.msg";
 
             _sendServerEmail.v_AccountName = "";
             _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
             _sendServerEmail.v_CCRecipients = "";
             _sendServerEmail.v_BCCRecipients = "";
-            _sendServerEmail.v_Subject = "No Body";
+            _sendServerEmail.v_Subject = subject;
             _sendServerEmail.v_Body = "";
             _sendServerEmail.v_Attachments = "";
 
             _sendServerEmail.RunCommand(_engine);
 
-            var emailMessage = GetEmail(filePath);
+            var emailMessage = GetEmail(filePath, subject);
 
             Assert.True(File.Exists(email));
 
@@ -328,25 +338,34 @@ namespace OpenBots.Commands.ServerEmail.Test
             Assert.Throws<NullReferenceException>(() => _sendServerEmail.RunCommand(_engine));
         }
 
-        public MailItem GetEmail(string filePath)
+        public MailItem GetEmail(string filePath, string subject)
         {
             _getEmail = new GetOutlookEmailsCommand();
 
-            System.Threading.Thread.Sleep(30000);
-
-            _getEmail.v_SourceFolder = "Inbox";
-            _getEmail.v_Filter = "None";
-            _getEmail.v_GetUnreadOnly = "Yes";
-            _getEmail.v_MarkAsRead = "Yes";
-            _getEmail.v_SaveMessagesAndAttachments = "Yes";
-            _getEmail.v_MessageDirectory = filePath + @"Download\";
-            _getEmail.v_AttachmentDirectory = filePath + @"Download\";
-            _getEmail.v_OutputUserVariableName = "{vTestEmail}";
-
-            _getEmail.RunCommand(_engine);
-
-            var emailMessageList = (List<MailItem>)"{vTestEmail}".ConvertUserVariableToObject(_engine);
+            var emailMessageList = new List<MailItem>();
             var emailMessage = emailMessageList[0];
+            var retryCount = 0;
+
+            while (emailMessageList.Count == 0 && retryCount <= 5)
+            {
+                System.Threading.Thread.Sleep(10000);
+
+                _getEmail.v_SourceFolder = "Inbox";
+                _getEmail.v_Filter = $"[Subject] = '{subject}'";
+                _getEmail.v_GetUnreadOnly = "Yes";
+                _getEmail.v_MarkAsRead = "Yes";
+                _getEmail.v_SaveMessagesAndAttachments = "Yes";
+                _getEmail.v_MessageDirectory = filePath + @"Download\";
+                _getEmail.v_AttachmentDirectory = filePath + @"Download\";
+                _getEmail.v_OutputUserVariableName = "{vTestEmail}";
+
+                _getEmail.RunCommand(_engine);
+
+                emailMessageList = (List<MailItem>)"{vTestEmail}".ConvertUserVariableToObject(_engine);
+                emailMessage = emailMessageList[0];
+
+                retryCount++;
+            }
 
             return emailMessage;
         }
