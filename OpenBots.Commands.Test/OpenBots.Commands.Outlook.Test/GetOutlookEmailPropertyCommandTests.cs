@@ -6,22 +6,22 @@ using Xunit;
 
 namespace OpenBots.Commands.Outlook.Test
 {
-    public class GetOutlookEmailsCommandTests
+    public class GetOutlookEmailPropertyCommandTests
     {
         private AutomationEngineInstance _engine;
         private GetOutlookEmailsCommand _getOutlookEmails;
+        private GetOutlookEmailPropertyCommand _getOutlookEmailProperty;
 
-        /*
-         * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
-        */
-        [Fact]
-        public void GetsOutlookEmails()
+        [Theory]
+        [InlineData("Subject","subjectProp")]
+        public void GetsOutlookEmailProperty(string prop, string propValue)
         {
             _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
+            _getOutlookEmailProperty = new GetOutlookEmailPropertyCommand();
 
-            _getOutlookEmails.v_SourceFolder = "Inbox";
-            _getOutlookEmails.v_Filter = "[Subject] = 'toDelete'";
+            _getOutlookEmails.v_SourceFolder = "TestInput";
+            _getOutlookEmails.v_Filter = "[Subject] = 'subjectProp'";
             _getOutlookEmails.v_GetUnreadOnly = "No";
             _getOutlookEmails.v_MarkAsRead = "No";
             _getOutlookEmails.v_SaveMessagesAndAttachments = "No";
@@ -33,7 +33,15 @@ namespace OpenBots.Commands.Outlook.Test
 
             var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             MailItem email = emails[0];
-            Assert.Equal("testBody \r\n", email.Body);
+            email.StoreInUserVariable(_engine, "{email}");
+
+            _getOutlookEmailProperty.v_MailItem = "{email}";
+            _getOutlookEmailProperty.v_Property = prop;
+            _getOutlookEmailProperty.v_OutputUserVariableName = "{property}";
+
+            _getOutlookEmailProperty.RunCommand(_engine);
+
+            Assert.Equal(propValue, "{property}".ConvertUserVariableToString(_engine));
         }
     }
 }

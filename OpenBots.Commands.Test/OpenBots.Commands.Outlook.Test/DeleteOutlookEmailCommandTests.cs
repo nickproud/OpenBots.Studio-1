@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Office.Interop.Outlook;
-using Xunit;
-using OpenBots.Engine;
+﻿using Microsoft.Office.Interop.Outlook;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Engine;
+using System.Collections.Generic;
+using Xunit;
 
 namespace OpenBots.Commands.Outlook.Test
 {
@@ -15,7 +11,12 @@ namespace OpenBots.Commands.Outlook.Test
         private AutomationEngineInstance _engine;
         private DeleteOutlookEmailCommand _deleteOutlookEmail;
         private GetOutlookEmailsCommand _getOutlookEmails;
+        private SendOutlookEmailCommand _sendOutlookEmail;
 
+
+        /*
+         * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
+        */
         [Fact]
         public void DeletesOutlookEmail()
         {
@@ -53,7 +54,20 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
             List<MailItem> postEmails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+            resetEmail(_engine);
             Assert.Empty(postEmails);
+        }
+
+        public void resetEmail(AutomationEngineInstance _engine)
+        {
+            _sendOutlookEmail = new SendOutlookEmailCommand();
+
+            _sendOutlookEmail.v_Recipients = "openbots.test@outlook.com";
+            _sendOutlookEmail.v_Subject = "toDelete";
+            _sendOutlookEmail.v_Body = "testBody";
+            _sendOutlookEmail.v_BodyType = "Plain";
+
+            _sendOutlookEmail.RunCommand(_engine);
         }
     }
 }

@@ -65,7 +65,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeleteOutlookEmailCommandTests.cs" />
+    <Compile Include="ForwardOutlookEmailCommandTests.cs" />
+    <Compile Include="GetOutlookEmailPropertyCommandTests.cs" />
     <Compile Include="GetOutlookEmailsCommandTests.cs" />
+    <Compile Include="MoveCopyOutlookEmailCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
