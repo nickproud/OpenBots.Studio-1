@@ -158,40 +158,5 @@ namespace OpenBots.Commands.QueueItem.Tests
 
             Assert.Throws<DataException>(() => _workQueueItem.RunCommand(_engine));
         }
-
-        //[Fact]
-        //public void HandlesNonExistentAgent()
-        //{
-        //    _engine = new AutomationEngineInstance(null);
-        //    _addQueueItem = new AddQueueItemCommand();
-        //    _workQueueItem = new WorkQueueItemCommand();
-
-        //    //Add queue item
-        //    _addQueueItem.v_QueueName = "UnitTestQueue";
-        //    _addQueueItem.v_QueueItemName = "WorkQueueItemJsonTest";
-        //    _addQueueItem.v_QueueItemType = "Json";
-        //    _addQueueItem.v_JsonType = "Test Type";
-        //    _addQueueItem.v_QueueItemTextValue = "{'text':'testText'}";
-        //    _addQueueItem.v_Priority = "10";
-
-        //    _addQueueItem.RunCommand(_engine);
-
-        //    //Change AgentId setting to null
-        //    var settings = EnvironmentSettings.GetAgentSettings();
-        //    var originalSettings = settings["AgentId"];
-        //    var newSettings = settings["AgentId"].Remove(0);
-        //    settings["AgentId"] = newSettings;
-
-        //    //Get queue item (dequeue)
-        //    _workQueueItem.v_QueueName = "UnitTestQueue";
-        //    _workQueueItem.v_OutputUserVariableName = "{output}";
-        //    _workQueueItem.v_SaveAttachments = "No";
-        //    _workQueueItem.v_AttachmentDirectory = "";
-
-        //    Assert.Throws<NullReferenceException>(() => _workQueueItem.RunCommand(_engine));
-
-        //    //Change AgentId setting back to original value
-        //    settings["AgentId"] = originalSettings;
-        //}
     }
 }
