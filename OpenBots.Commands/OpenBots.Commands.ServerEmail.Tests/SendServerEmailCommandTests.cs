@@ -261,67 +261,6 @@ namespace OpenBots.Commands.ServerEmail.Test
             File.Delete(email);
         }
 
-        //[Fact]
-        //public void SendServerEmailWithNoSubject()
-        //{
-        //    _engine = new AutomationEngineInstance(null);
-        //    _sendServerEmail = new SendServerEmailCommand();
-        //    _getEmail = new GetOutlookEmailsCommand();
-
-        //    string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-        //    string filePath = Path.Combine(projectDirectory, @"Resources\");
-        //    string subject = "(no subject)";
-        //    string body = "No Subject Test Body";
-        //    string email = filePath + @"Download\" + $"{subject}.msg";
-
-        //    _sendServerEmail.v_AccountName = "";
-        //    _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
-        //    _sendServerEmail.v_CCRecipients = "";
-        //    _sendServerEmail.v_BCCRecipients = "";
-        //    _sendServerEmail.v_Subject = null;
-        //    _sendServerEmail.v_Body = body;
-        //    _sendServerEmail.v_Attachments = "";
-
-        //    _sendServerEmail.RunCommand(_engine);
-
-        //    var emailMessage = GetEmail(filePath, "");
-
-        //    Assert.True(File.Exists(email));
-
-        //    DeleteEmail(emailMessage);
-        //    File.Delete(email);
-        //}
-
-        //[Fact]
-        //public void SendServerEmailWithNoBody()
-        //{
-        //    _engine = new AutomationEngineInstance(null);
-        //    _sendServerEmail = new SendServerEmailCommand();
-        //    _getEmail = new GetOutlookEmailsCommand();
-
-        //    string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-        //    string filePath = Path.Combine(projectDirectory, @"Resources\");
-        //    string subject = "No Body";
-        //    string email = filePath + @"Download\" + $"{subject}.msg";
-
-        //    _sendServerEmail.v_AccountName = "";
-        //    _sendServerEmail.v_ToRecipients = "openbots.test.1@outlook.com";
-        //    _sendServerEmail.v_CCRecipients = "";
-        //    _sendServerEmail.v_BCCRecipients = "";
-        //    _sendServerEmail.v_Subject = subject;
-        //    _sendServerEmail.v_Body = "";
-        //    _sendServerEmail.v_Attachments = "";
-
-        //    _sendServerEmail.RunCommand(_engine);
-
-        //    var emailMessage = GetEmail(filePath, subject);
-
-        //    Assert.True(File.Exists(email));
-
-        //    DeleteEmail(emailMessage);
-        //    File.Delete(email);
-        //}
-
         [Fact]
         public void HandlesNonExistentRecipients()
         {
