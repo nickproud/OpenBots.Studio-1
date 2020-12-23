@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpenBots.Commands.QueueItem.Tests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("OpenBots.Commands.QueueItem.Test")]
+[assembly: AssemblyDescription("The project contains common queue item command tests.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("OpenBots.Commands.QueueItem.Tests")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
+[assembly: AssemblyCompany("OpenBots Inc")]
+[assembly: AssemblyProduct("OpenBots.Commands.QueueItem.Test")]
+[assembly: AssemblyCopyright("(C) OpenBots Inc 2020-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

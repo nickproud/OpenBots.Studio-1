@@ -33,9 +33,9 @@ namespace OpenBots.Commands.QueueItem
 			CommandName = "ExtendQueueItemCommand";
 			SelectionName = "Extend QueueItem";
 			CommandEnabled = true;
-			Common.InitializeDefaultWebProtocol();
 			CommandIcon = Resources.command_queueitem;
 
+			Common.InitializeDefaultWebProtocol();
 		}
 
 		public override void RunCommand(object sender)
