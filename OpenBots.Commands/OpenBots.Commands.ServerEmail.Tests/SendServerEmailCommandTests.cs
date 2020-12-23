@@ -16,6 +16,10 @@ namespace OpenBots.Commands.ServerEmail.Test
         private GetOutlookEmailsCommand _getEmail;
         private DeleteOutlookEmailCommand _deleteEmail;
 
+        /*
+        * Prerequisite: User is signed into openbots.test.1@outlook.com on local Microsoft Outlook.
+        */
+
         [Fact]
         public void SendServerEmailWithAttachment()
         {
