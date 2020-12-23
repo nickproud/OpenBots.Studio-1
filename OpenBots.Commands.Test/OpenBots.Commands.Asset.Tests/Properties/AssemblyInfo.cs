@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpenBots.Commands.Asset.Tests")]
+[assembly: AssemblyTitle("OpenBots.Commands.Asset.Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenBots Inc")]
-[assembly: AssemblyProduct("OpenBots.Commands.Asset.Tests")]
+[assembly: AssemblyProduct("OpenBots.Commands.Asset.Test")]
 [assembly: AssemblyCopyright("(C) OpenBots Inc 2020-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

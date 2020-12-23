@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpenBots.Commands.TextFile.Tests")]
+[assembly: AssemblyTitle("OpenBots.Commands.TextFile.Test")]
 [assembly: AssemblyDescription("The project contains common data command tests.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenBots Inc")]
