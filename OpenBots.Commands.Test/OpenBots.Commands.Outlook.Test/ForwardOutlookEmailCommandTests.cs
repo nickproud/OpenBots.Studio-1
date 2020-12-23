@@ -13,6 +13,9 @@ namespace OpenBots.Commands.Outlook.Test
         private ForwardOutlookEmailCommand _forwardOutlookEmail;
         private DeleteOutlookEmailCommand _deleteOutlookEmail;
 
+        /*
+         * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
+        */
         [Fact]
         public void ForwardsOutlookEmail()
         {
@@ -43,45 +46,37 @@ namespace OpenBots.Commands.Outlook.Test
 
             _forwardOutlookEmail.RunCommand(_engine);
 
-            System.Threading.Thread.Sleep(30000);
+            int attempts = 0;
+            do
+            {
+                System.Threading.Thread.Sleep(5000);
 
-            _getOutlookEmails.v_SourceFolder = "Inbox";
-            _getOutlookEmails.v_Filter = "[Subject] = 'toForward'";
-            _getOutlookEmails.v_GetUnreadOnly = "No";
-            _getOutlookEmails.v_MarkAsRead = "No";
-            _getOutlookEmails.v_SaveMessagesAndAttachments = "No";
-            _getOutlookEmails.v_MessageDirectory = "";
-            _getOutlookEmails.v_AttachmentDirectory = "";
-            _getOutlookEmails.v_OutputUserVariableName = "{emails}";
+                _getOutlookEmails.v_SourceFolder = "Inbox";
+                _getOutlookEmails.v_Filter = "[Subject] = 'toForward'";
+                _getOutlookEmails.v_GetUnreadOnly = "No";
+                _getOutlookEmails.v_MarkAsRead = "No";
+                _getOutlookEmails.v_SaveMessagesAndAttachments = "No";
+                _getOutlookEmails.v_MessageDirectory = "";
+                _getOutlookEmails.v_AttachmentDirectory = "";
+                _getOutlookEmails.v_OutputUserVariableName = "{emails}";
 
-            _getOutlookEmails.RunCommand(_engine);
+                _getOutlookEmails.RunCommand(_engine);
 
-            emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+                attempts++;
+            } while (emails.Count < 1 & attempts < 5);
             email = emails[0];
 
-            resetEmail(_engine);
-
             Assert.Equal("openbots.test@outlook.com", email.Sender.Address);
+            Assert.Equal("FW: toForward", email.Subject);
+
+            resetEmail(_engine, email);
         }
 
-        private void resetEmail(AutomationEngineInstance _engine)
+        private void resetEmail(AutomationEngineInstance _engine, MailItem email)
         {
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
-            _getOutlookEmails = new GetOutlookEmailsCommand();
 
-            _getOutlookEmails.v_SourceFolder = "Inbox";
-            _getOutlookEmails.v_Filter = "[Subject] = 'toForward'";
-            _getOutlookEmails.v_GetUnreadOnly = "No";
-            _getOutlookEmails.v_MarkAsRead = "No";
-            _getOutlookEmails.v_SaveMessagesAndAttachments = "No";
-            _getOutlookEmails.v_MessageDirectory = "";
-            _getOutlookEmails.v_AttachmentDirectory = "";
-            _getOutlookEmails.v_OutputUserVariableName = "{emails}";
-
-            _getOutlookEmails.RunCommand(_engine);
-
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
-            MailItem email = emails[0];
             email.StoreInUserVariable(_engine, "{email}");
 
             _deleteOutlookEmail.v_MailItem = "{email}";

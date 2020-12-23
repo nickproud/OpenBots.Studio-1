@@ -14,6 +14,9 @@ namespace OpenBots.Commands.Outlook.Test
         private DeleteOutlookEmailCommand _deleteOutlookEmail;
         private SendOutlookEmailCommand _sendOutlookEmail;
 
+        /*
+         * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
+        */
         [Fact]
         public void CopiesOutlookEmail()
         {
@@ -33,12 +36,12 @@ namespace OpenBots.Commands.Outlook.Test
             _getOutlookEmails.RunCommand(_engine);
 
             var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
-            MailItem email = emails[0];
-            email.StoreInUserVariable(_engine, "{email}");
+            MailItem originalEmail = emails[0];
+            originalEmail.StoreInUserVariable(_engine, "{originalEmail}");
             string destFolder = "MovedMail";
             destFolder.StoreInUserVariable(_engine, "{destFolder}");
 
-            _moveCopyOutlookEmail.v_MailItem = "{email}";
+            _moveCopyOutlookEmail.v_MailItem = "{originalEmail}";
             _moveCopyOutlookEmail.v_DestinationFolder = "{destFolder}";
             _moveCopyOutlookEmail.v_OperationType = "Copy MailItem";
             _moveCopyOutlookEmail.v_MoveCopyUnreadOnly = "No";
@@ -57,11 +60,12 @@ namespace OpenBots.Commands.Outlook.Test
             _getOutlookEmails.RunCommand(_engine);
 
             emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
-            email = emails[0];
+            MailItem copyEmail = emails[0];
+
+            Assert.Equal("toCopy", originalEmail.Subject);
+            Assert.Equal("toCopy", copyEmail.Subject);
 
             resetCopyEmail(_engine);
-            
-            Assert.Equal("toCopy", email.Subject);
         }
 
         [Fact]

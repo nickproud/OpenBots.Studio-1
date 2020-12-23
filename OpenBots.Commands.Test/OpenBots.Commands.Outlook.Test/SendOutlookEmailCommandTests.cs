@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using OpenBots.Engine;
+﻿using Microsoft.Office.Interop.Outlook;
 using OpenBots.Core.Utilities.CommonUtilities;
-using Microsoft.Office.Interop.Outlook;
+using OpenBots.Engine;
+using System.Collections.Generic;
+using Xunit;
 
 namespace OpenBots.Commands.Outlook.Test
 {
@@ -17,6 +13,9 @@ namespace OpenBots.Commands.Outlook.Test
         private GetOutlookEmailsCommand _getOutlookEmails;
         private DeleteOutlookEmailCommand _deleteOutlookEmail;
 
+        /*
+         * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
+        */
         [Fact]
         public void SendsOutlookEmail()
         {
@@ -31,20 +30,24 @@ namespace OpenBots.Commands.Outlook.Test
 
             _sendOutlookEmail.RunCommand(_engine);
 
-            System.Threading.Thread.Sleep(30000);
+            List<MailItem> emails;
+            int attempts = 0;
+            do {
+                System.Threading.Thread.Sleep(5000);
+                _getOutlookEmails.v_SourceFolder = "Inbox";
+                _getOutlookEmails.v_Filter = "[Subject] = 'testSend'";
+                _getOutlookEmails.v_GetUnreadOnly = "No";
+                _getOutlookEmails.v_MarkAsRead = "No";
+                _getOutlookEmails.v_SaveMessagesAndAttachments = "No";
+                _getOutlookEmails.v_MessageDirectory = "";
+                _getOutlookEmails.v_AttachmentDirectory = "";
+                _getOutlookEmails.v_OutputUserVariableName = "{emails}";
 
-            _getOutlookEmails.v_SourceFolder = "Inbox";
-            _getOutlookEmails.v_Filter = "[Subject] = 'testSend'";
-            _getOutlookEmails.v_GetUnreadOnly = "No";
-            _getOutlookEmails.v_MarkAsRead = "No";
-            _getOutlookEmails.v_SaveMessagesAndAttachments = "No";
-            _getOutlookEmails.v_MessageDirectory = "";
-            _getOutlookEmails.v_AttachmentDirectory = "";
-            _getOutlookEmails.v_OutputUserVariableName = "{emails}";
+                _getOutlookEmails.RunCommand(_engine);
 
-            _getOutlookEmails.RunCommand(_engine);
-
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+                attempts++;
+            } while (emails.Count < 1 && attempts < 5);
             MailItem email = emails[0];
 
             Assert.Equal("testSend", email.Subject);

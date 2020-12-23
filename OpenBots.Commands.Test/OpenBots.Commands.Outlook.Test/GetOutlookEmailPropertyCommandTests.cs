@@ -12,6 +12,9 @@ namespace OpenBots.Commands.Outlook.Test
         private GetOutlookEmailsCommand _getOutlookEmails;
         private GetOutlookEmailPropertyCommand _getOutlookEmailProperty;
 
+        /*
+         * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
+        */
         [Theory]
         [InlineData("Subject","subjectProp")]
         public void GetsOutlookEmailProperty(string prop, string propValue)

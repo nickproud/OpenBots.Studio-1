@@ -13,7 +13,6 @@ namespace OpenBots.Commands.Outlook.Test
         private GetOutlookEmailsCommand _getOutlookEmails;
         private SendOutlookEmailCommand _sendOutlookEmail;
 
-
         /*
          * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
         */
