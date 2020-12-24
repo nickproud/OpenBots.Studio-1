@@ -89,7 +89,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+            List<MailItem> emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             MailItem email = emails[0];
             email.StoreInUserVariable(_engine, "{email}");
 
@@ -125,18 +125,23 @@ namespace OpenBots.Commands.Outlook.Test
 
             _sendOutlookEmail.RunCommand(_engine);
 
-            _getOutlookEmails.v_SourceFolder = "Inbox";
-            _getOutlookEmails.v_Filter = "[Subject] = 'toReply'";
-            _getOutlookEmails.v_GetUnreadOnly = "No";
-            _getOutlookEmails.v_MarkAsRead = "No";
-            _getOutlookEmails.v_SaveMessagesAndAttachments = "No";
-            _getOutlookEmails.v_MessageDirectory = "";
-            _getOutlookEmails.v_AttachmentDirectory = "";
-            _getOutlookEmails.v_OutputUserVariableName = "{emails}";
+            int attempts = 0;
+            do {
+                System.Threading.Thread.Sleep(5000);
+                _getOutlookEmails.v_SourceFolder = "Inbox";
+                _getOutlookEmails.v_Filter = "[Subject] = 'toReply'";
+                _getOutlookEmails.v_GetUnreadOnly = "No";
+                _getOutlookEmails.v_MarkAsRead = "No";
+                _getOutlookEmails.v_SaveMessagesAndAttachments = "No";
+                _getOutlookEmails.v_MessageDirectory = "";
+                _getOutlookEmails.v_AttachmentDirectory = "";
+                _getOutlookEmails.v_OutputUserVariableName = "{emails}";
 
-            _getOutlookEmails.RunCommand(_engine);
+                _getOutlookEmails.RunCommand(_engine);
 
-            emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+                attempts++;
+            } while (attempts < 5 && emails.Count < 1);
             email = emails[0];
             email.StoreInUserVariable(_engine, "{email}");
 

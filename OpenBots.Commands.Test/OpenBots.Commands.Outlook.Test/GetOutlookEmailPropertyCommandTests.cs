@@ -17,6 +17,11 @@ namespace OpenBots.Commands.Outlook.Test
         */
         [Theory]
         [InlineData("Subject","subjectProp")]
+        [InlineData("Body", "bodyProp\r\n")]
+        [InlineData("SenderEmailAddress", "openbots.test@outlook.com")]
+        [InlineData("UnRead", "False")]
+        [InlineData("Recipients", "openbots.test@outlook.com")]
+        [InlineData("Size", "57813")]
         public void GetsOutlookEmailProperty(string prop, string propValue)
         {
             _engine = new AutomationEngineInstance(null);
