@@ -3,7 +3,7 @@ using OpenBots.Engine;
 using System.Data;
 using Xunit;
 
-namespace OpenBots.Commands.Asset.Tests
+namespace OpenBots.Commands.Asset.Test
 {
     public class CalculateNumberAssetCommandTests
     {

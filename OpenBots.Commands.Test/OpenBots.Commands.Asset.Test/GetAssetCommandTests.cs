@@ -7,7 +7,7 @@ using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace OpenBots.Commands.Asset.Tests
+namespace OpenBots.Commands.Asset.Test
 {
     public class GetAssetCommandTests
     {

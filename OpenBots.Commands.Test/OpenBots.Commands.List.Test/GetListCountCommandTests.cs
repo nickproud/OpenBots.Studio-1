@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace OpenBots.Commands.List.Tests
+namespace OpenBots.Commands.List.Test
 {
     public class GetListCountCommandTests
     {

@@ -6,7 +6,7 @@ using System.Data;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace OpenBots.Commands.List.Tests
+namespace OpenBots.Commands.List.Test
 {
     public class AddListItemCommandTests
     {

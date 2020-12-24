@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Xunit;
 using System.Data;
 
-namespace OpenBots.Commands.List.Tests
+namespace OpenBots.Commands.List.Test
 {
     public class RemoveListItemCommandTests
     {

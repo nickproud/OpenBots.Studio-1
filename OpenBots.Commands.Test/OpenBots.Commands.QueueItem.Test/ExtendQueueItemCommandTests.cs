@@ -3,10 +3,9 @@ using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using Xunit;
 
-namespace OpenBots.Commands.QueueItem.Tests
+namespace OpenBots.Commands.QueueItem.Test
 {
     public class ExtendQueueItemCommandTests
     {

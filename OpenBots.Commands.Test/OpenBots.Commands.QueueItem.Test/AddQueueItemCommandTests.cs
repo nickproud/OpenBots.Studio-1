@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using OpenBots.Core.Utilities.CommonUtilities;
+﻿using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Data;
 using System.IO;
 using Xunit;
 
-namespace OpenBots.Commands.QueueItem.Tests
+namespace OpenBots.Commands.QueueItem.Test
 {
     public class AddQueueItemCommandTests
     {

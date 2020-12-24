@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace OpenBots.Commands.QueueItem.Tests
+namespace OpenBots.Commands.QueueItem.Test
 {
     public class SetQueueItemStatusCommandTests
     {

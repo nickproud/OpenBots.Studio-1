@@ -8,7 +8,7 @@ using System.Data;
 using System.IO;
 using Xunit;
 
-namespace OpenBots.Commands.QueueItem.Tests
+namespace OpenBots.Commands.QueueItem.Test
 {
     public class WorkQueueItemCommandTests
     {

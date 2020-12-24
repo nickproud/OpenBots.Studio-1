@@ -2,7 +2,7 @@
 using OpenBots.Engine;
 using Xunit;
 
-namespace OpenBots.Commands.Credential.Tests
+namespace OpenBots.Commands.Credential.Test
 {
     public class UpdateCredentialCommandTests
     {

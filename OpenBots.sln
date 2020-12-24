@@ -82,9 +82,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.ServerEma
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenBots.Commands.Test", "OpenBots.Commands.Test", "{308117E2-99C7-4C85-9DC0-4005865D5FF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.Asset.Test", "OpenBots.Commands.Test\OpenBots.Commands.Asset.Tests\OpenBots.Commands.Asset.Test.csproj", "{94CDE267-6102-4B69-AF51-3C3A8457C951}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.Asset.Test", "OpenBots.Commands.Test\OpenBots.Commands.Asset.Test\OpenBots.Commands.Asset.Test.csproj", "{94CDE267-6102-4B69-AF51-3C3A8457C951}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.Credential.Test", "OpenBots.Commands.Test\OpenBots.Commands.Credential.Tests\OpenBots.Commands.Credential.Test.csproj", "{55CD8327-6255-4A57-B1D2-E5D3411475D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.Credential.Test", "OpenBots.Commands.Test\OpenBots.Commands.Credential.Test\OpenBots.Commands.Credential.Test.csproj", "{55CD8327-6255-4A57-B1D2-E5D3411475D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.Data.Test", "OpenBots.Commands.Test\OpenBots.Commands.Data.Test\OpenBots.Commands.Data.Test.csproj", "{E0861C10-62B7-4F43-987D-238A55B5C6D1}"
 EndProject
@@ -92,11 +92,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.DataTable
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.Dictionary.Test", "OpenBots.Commands.Test\OpenBots.Commands.Dictionary.Test\OpenBots.Commands.Dictionary.Test.csproj", "{A5766E61-556E-4A5A-ACA0-7FCE0F64BBAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.List.Test", "OpenBots.Commands.Test\OpenBots.Commands.List.Tests\OpenBots.Commands.List.Test.csproj", "{8FF511A1-F84D-4D95-B6C4-ADB3FB0BA79A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.List.Test", "OpenBots.Commands.Test\OpenBots.Commands.List.Test\OpenBots.Commands.List.Test.csproj", "{8FF511A1-F84D-4D95-B6C4-ADB3FB0BA79A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.ServerEmail.Test", "OpenBots.Commands.Test\OpenBots.Commands.ServerEmail.Tests\OpenBots.Commands.ServerEmail.Test.csproj", "{67E385E6-DC1F-43BF-A8D2-2DF54AAD5BCE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.ServerEmail.Test", "OpenBots.Commands.Test\OpenBots.Commands.ServerEmail.Test\OpenBots.Commands.ServerEmail.Test.csproj", "{67E385E6-DC1F-43BF-A8D2-2DF54AAD5BCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.QueueItem.Test", "OpenBots.Commands.Test\OpenBots.Commands.QueueItem.Tests\OpenBots.Commands.QueueItem.Test.csproj", "{39F36DBB-EC7E-4220-93CD-7464DF787025}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.QueueItem.Test", "OpenBots.Commands.Test\OpenBots.Commands.QueueItem.Test\OpenBots.Commands.QueueItem.Test.csproj", "{39F36DBB-EC7E-4220-93CD-7464DF787025}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.TextFile.Test", "OpenBots.Commands.Test\OpenBots.Commands.TextFile.Test\OpenBots.Commands.TextFile.Test.csproj", "{57F054F7-424E-456E-88C9-98B95DB31F82}"
 EndProject

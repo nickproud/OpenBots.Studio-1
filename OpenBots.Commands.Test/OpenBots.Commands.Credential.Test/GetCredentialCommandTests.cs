@@ -3,7 +3,7 @@ using OpenBots.Engine;
 using System.Security;
 using Xunit;
 
-namespace OpenBots.Commands.Credential.Tests
+namespace OpenBots.Commands.Credential.Test
 {
     public class GetCredentialCommandTests
     {
