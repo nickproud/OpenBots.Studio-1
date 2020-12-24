@@ -5,8 +5,8 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -50,15 +50,19 @@ namespace OpenBots.Commands.Data
 
 		public GetPDFTextCommand()
 		{
+			OpenBots.Core.Common.Common.InitializeDefaultWebProtocol();
 			CommandName = "GetPDFTextCommand";
 			SelectionName = "Get PDF Text";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_function;
+
 			v_FileSourceType = "File Path";
+			
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			//get variable path or URL to source file
 			var vSourceFilePath = v_FilePath.ConvertUserVariableToString(engine);

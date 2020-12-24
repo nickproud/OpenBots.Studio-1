@@ -8,7 +8,7 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -74,7 +74,7 @@ namespace OpenBots.Commands.Input
 			CommandName = "InputCommand";
 			SelectionName = "Prompt for Input";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_input;
 
 			v_UserInputConfig = new DataTable();
 			v_UserInputConfig.TableName = DateTime.Now.ToString("UserInputParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
@@ -90,7 +90,7 @@ namespace OpenBots.Commands.Input
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			if (engine.ScriptEngineUI == null)
 			{

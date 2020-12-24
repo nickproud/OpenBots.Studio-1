@@ -4,8 +4,8 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,7 +46,8 @@ namespace OpenBots.Commands.Data
 		{
 			CommandName = "ParseJSONModelCommand";
 			SelectionName = "Parse JSON Model";
-			CommandEnabled = true;          
+			CommandEnabled = true;
+			CommandIcon = Resources.command_parse;
 
 			v_ParseObjects = new DataTable();
 			v_ParseObjects.Columns.Add("Json Selector");
@@ -64,7 +65,7 @@ namespace OpenBots.Commands.Data
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			
 			//get variablized input
 			var variableInput = v_JsonObject.ConvertUserVariableToString(engine);
@@ -72,7 +73,7 @@ namespace OpenBots.Commands.Data
 			foreach (DataRow rw in v_ParseObjects.Rows)
 			{
 				var jsonSelector = rw.Field<string>("Json Selector").ConvertUserVariableToString(engine);
-				var targetVariableName = rw.Field<string>("Output Variable").ConvertUserVariableToString(engine);
+				var targetVariableName = rw.Field<string>("Output Variable");
 
 				//create objects
 				JObject o;

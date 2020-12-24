@@ -1,45 +1,48 @@
-﻿using MSHTML;
-using OpenBots.Core.Attributes.ClassAttributes;
+﻿using mshtml;
+using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using SHDocVw;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 
 namespace OpenBots.Commands.IEBrowser
 {
     [Serializable]
-    [Group("IE Browser Commands")]
+    [Category("IE Browser Commands")]
     [Description("This command provides a number of functionalities or actions to perform Automation on Web Elements through the IE Browser.")]
     public class IEElementActionCommand : ScriptCommand
     {
-        [XmlAttribute]
-        [PropertyDescription("IE Browser Instance Name")]
-        [InputSpecification("Enter the unique instance that was specified in the **IE Create Browser** command.")]
+        [Required]
+        [DisplayName("IE Browser Instance Name")]
+        [Description("Enter the unique instance that was specified in the **IE Create Browser** command.")]
         [SampleUsage("MyIEBrowserInstance")]
         [Remarks("Failure to enter the correct instance name or failure to first call the **IE Create Browser** command will cause an error.")]
         public string v_InstanceName { get; set; }
 
-        [XmlElement]
-        [PropertyDescription("Element Search Parameters")]
-        [InputSpecification("Select the element search parameters appropriately to target an element efficiently.")]
+        [Required]
+        [DisplayName("Element Search Parameters")]
+        [Description("Select the element search parameters appropriately to target an element efficiently.")]
         [SampleUsage("")]
         [Remarks("")]
+        [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         public DataTable v_WebSearchParameter { get; set; }
 
-        [XmlElement]
-        [PropertyDescription("IE Element Action")]
+        [Required]
+        [DisplayName("IE Element Action")]
         [PropertyUISelectionOption("Invoke Click")]
         [PropertyUISelectionOption("Left Click")]
         [PropertyUISelectionOption("Middle Click")]
@@ -50,54 +53,55 @@ namespace OpenBots.Commands.IEBrowser
         [PropertyUISelectionOption("Set Attribute")]
         [PropertyUISelectionOption("Fire onmousedown event")]
         [PropertyUISelectionOption("Fire onmouseover event")]
-        [InputSpecification("Select the appropriate action to perform on an element once it has been located.")]
+        [Description("Select the appropriate action to perform on an element once it has been located.")]
         [SampleUsage("")]
         [Remarks("Selecting this field changes the parameters that will be required in the next step.")]
         public string v_WebAction { get; set; }
 
-        [XmlElement]
-        [PropertyDescription("Action Parameters")]
-        [InputSpecification("Enter the action parameter values based on the selection of an Element Action.")]
+        [Required]
+        [DisplayName("Action Parameters")]
+        [Description("Enter the action parameter values based on the selection of an Element Action.")]
         [SampleUsage("{vParameterValue}")]
         [Remarks("")]
-        [PropertyUIHelper(UIAdditionalHelperType.ShowVariableHelper)]
+        [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         public DataTable v_WebActionParameterTable { get; set; }
 
-        [XmlIgnore]
-        [NonSerialized]
+        [JsonIgnore]
+        [Browsable(false)]
         private DataGridView _elementsGridViewHelper;
 
-        [XmlIgnore]
-        [NonSerialized]
+        [JsonIgnore]
+        [Browsable(false)]
         private ComboBox _elementActionDropdown;
 
-        [XmlIgnore]
-        [NonSerialized]
+        [JsonIgnore]
+        [Browsable(false)]
         private List<Control> _searchParameterControls;
 
-        [XmlIgnore]
-        [NonSerialized]
+        [JsonIgnore]
+        [Browsable(false)]
         private DataGridView _searchGridViewHelper;
 
-        [XmlIgnore]
-        [NonSerialized]
+        [JsonIgnore]
+        [Browsable(false)]
         private List<Control> _elementParameterControls;
 
-        [XmlIgnore]
-        [NonSerialized]
+        [JsonIgnore]
+        [Browsable(false)]
         private static IHTMLElementCollection _lastElementCollectionFound;
 
-        [XmlIgnore]
-        [NonSerialized]
+        [JsonIgnore]
+        [Browsable(false)]
         private static HTMLDocument _lastDocFound;
 
         public IEElementActionCommand()
         {
             CommandName = "IEElementActionCommand";
             SelectionName = "IE Element Action";
-            CommandEnabled = true;
+            CommandEnabled = false;
+            CommandIcon = Resources.command_web;
+
             v_InstanceName = "DefaultIEBrowser";
-            CustomRendering = true;
 
             v_WebSearchParameter = new DataTable();
             v_WebSearchParameter.TableName = DateTime.Now.ToString("WebSearchParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
@@ -132,7 +136,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             object browserObject = null;
 
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
 
             browserObject = v_InstanceName.GetAppInstance(engine);
             var browserInstance = (InternetExplorer)browserObject;
@@ -388,7 +392,7 @@ namespace OpenBots.Commands.IEBrowser
 
         private void RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)
         {
-            var engine = (AutomationEngineInstance)sender;
+            var engine = (IAutomationEngineInstance)sender;
             switch (v_WebAction)
             {
                 case "Fire onmousedown event":
@@ -496,7 +500,7 @@ namespace OpenBots.Commands.IEBrowser
             return curtop;
         }
 
-        private Boolean InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, SHDocVw.InternetExplorer browserInstance)
+        private Boolean InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, InternetExplorer browserInstance)
         {
             bool qualifyingElementFound = false;
             foreach (IHTMLElement element in elementCollection)

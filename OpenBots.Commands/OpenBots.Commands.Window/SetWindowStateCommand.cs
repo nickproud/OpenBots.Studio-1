@@ -2,9 +2,10 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,14 +42,16 @@ namespace OpenBots.Commands.Window
 			CommandName = "SetWindowStateCommand";
 			SelectionName = "Set Window State";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_window;
+
+
 			v_WindowName = "Current Window";
 			v_WindowState = "Maximize";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			//convert window name
 			string windowName = v_WindowName.ConvertUserVariableToString(engine);
 

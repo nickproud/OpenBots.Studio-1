@@ -1,41 +1,51 @@
-﻿using OpenBots.Commands;
-using OpenBots.Commands.API;
+﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
+using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
+using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommandUtilities;
-using OpenBots.UI.CustomControls.CustomUIControls;
+using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Core.Utilities.FormsUtilities;
+using OpenBots.Engine;
+using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms;
+using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using IContainer = Autofac.IContainer;
 
 namespace OpenBots.UI.CustomControls
 {
     public class CommandControls : ICommandControls
     {
         private frmCommandEditor _currentEditor;
+        private IContainer _container;
 
         public CommandControls()
         {
-
         }
-        public CommandControls(frmCommandEditor editor)
+
+        public CommandControls(frmCommandEditor editor, IContainer container)
         {
             _currentEditor = editor;
+            _container = container;
         }
 
         public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300)
@@ -43,7 +53,7 @@ namespace OpenBots.UI.CustomControls
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
             var input = CreateDefaultInputFor(parameterName, parent, height, width);
-            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { input }, (frmCommandEditor)editor);
+            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { input }, editor);
 
             controlList.Add(label);
             controlList.AddRange(helpers);
@@ -57,7 +67,7 @@ namespace OpenBots.UI.CustomControls
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
             var passwordInput = CreateDefaultInputFor(parameterName, parent);
-            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { passwordInput }, (frmCommandEditor)editor);
+            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { passwordInput }, editor);
 
             controlList.Add(label);
             controlList.AddRange(helpers);
@@ -86,7 +96,7 @@ namespace OpenBots.UI.CustomControls
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
             var input = CreateDropdownFor(parameterName, parent);
-            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { input }, (frmCommandEditor)editor);
+            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { input }, editor);
 
             controlList.Add(label);
             controlList.AddRange(helpers);
@@ -100,7 +110,7 @@ namespace OpenBots.UI.CustomControls
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
             var gridview = CreateDataGridView(parent, parameterName);
-            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { gridview }, (frmCommandEditor)editor);
+            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { gridview }, editor);
 
             controlList.Add(label);
             controlList.AddRange(helpers);
@@ -114,7 +124,7 @@ namespace OpenBots.UI.CustomControls
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
             var windowNameControl = AddWindowNames(CreateStandardComboboxFor(parameterName, parent));
-            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { windowNameControl }, (frmCommandEditor)editor);
+            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { windowNameControl }, editor);
 
             controlList.Add(label);
             controlList.AddRange(helpers);
@@ -203,6 +213,34 @@ namespace OpenBots.UI.CustomControls
             if (parameterName == "v_Comment")
                 inputBox.Margin = new Padding(0, 0, 0, 20);
             return inputBox;
+        }
+
+        private void DataGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            DataGridView dataGridView = (DataGridView)sender;
+            if (e.Control && e.KeyCode == Keys.K)
+            {
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables
+                {
+                    ScriptVariables = _currentEditor.ScriptVariables
+                };
+
+                if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
+                {
+                    _currentEditor.ScriptVariables = scriptVariableEditor.ScriptVariables;
+                    dataGridView.CurrentCell.Value = scriptVariableEditor.LastModifiedVariableName;
+                }
+            }
+            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
+                return;
+            else if (e.KeyCode == Keys.Enter)
+                _currentEditor.uiBtnAdd_Click(null, null);
+        }
+        private void DataGridView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //Control + K
+            if (e.KeyChar == '\v')
+                e.Handled = true;
         }
 
         private void InputBox_KeyDown(object sender, KeyEventArgs e)
@@ -347,8 +385,7 @@ namespace OpenBots.UI.CustomControls
             ((HandledMouseEventArgs)e).Handled = true;
         }
 
-        public List<Control> CreateUIHelpersFor(string parameterName, ScriptCommand parent, Control[] targetControls,
-            IfrmCommandEditor editor)
+        public List<Control> CreateUIHelpersFor(string parameterName, ScriptCommand parent, Control[] targetControls, IfrmCommandEditor editor)
         {
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
             var propertyUIHelpers = variableProperties.GetCustomAttributes(typeof(EditorAttribute), true);
@@ -389,14 +426,14 @@ namespace OpenBots.UI.CustomControls
                         //show file selector
                         helperControl.CommandImage = Resources.command_files;
                         helperControl.CommandDisplay = "Select a File";
-                        helperControl.Click += (sender, e) => ShowFileSelector(sender, e, (frmCommandEditor)editor);
+                        helperControl.Click += (sender, e) => ShowFileSelector(sender, e);
                         break;
 
                     case UIAdditionalHelperType.ShowFolderSelectionHelper:
                         //show file selector
                         helperControl.CommandImage = Resources.command_folders;
                         helperControl.CommandDisplay = "Select a Folder";
-                        helperControl.Click += (sender, e) => ShowFolderSelector(sender, e, (frmCommandEditor)editor);
+                        helperControl.Click += (sender, e) => ShowFolderSelector(sender, e);
                         break;
 
                     case UIAdditionalHelperType.ShowImageCaptureHelper:
@@ -404,25 +441,19 @@ namespace OpenBots.UI.CustomControls
                         helperControl.CommandImage = Resources.command_camera;
                         helperControl.CommandDisplay = "Capture Reference Image";
                         helperControl.Click += (sender, e) => ShowImageCapture(sender, e);
+                        break;
 
-                        CommandItemControl testRun = new CommandItemControl();
-                        testRun.Padding = new Padding(10, 0, 0, 0);
-                        testRun.ForeColor = Color.AliceBlue;
-
-                        testRun.CommandImage = Resources.command_camera;
-                        testRun.CommandDisplay = "Run Image Recognition Test";
-                        testRun.ForeColor = Color.AliceBlue;
-                        testRun.Font = new Font("Segoe UI Semilight", 10);
-                        testRun.Tag = targetControls.FirstOrDefault();
-                        testRun.Click += (sender, e) => RunImageCapture(sender, e);
-                        controlList.Add(testRun);
+                    case UIAdditionalHelperType.ShowImageRecognitionTestHelper:
+                        helperControl.CommandImage = Resources.command_camera;
+                        helperControl.CommandDisplay = "Run Image Recognition Test";
+                        helperControl.Click += (sender, e) => RunImageCapture(sender, e);
                         break;
 
                     case UIAdditionalHelperType.ShowCodeBuilder:
                         //show variable selector
                         helperControl.CommandImage = Resources.command_script;
                         helperControl.CommandDisplay = "Code Builder";
-                        helperControl.Click += (sender, e) => ShowCodeBuilder(sender, e, (frmCommandEditor)editor);
+                        helperControl.Click += (sender, e) => ShowCodeBuilder(sender, e);
                         break;
 
                     case UIAdditionalHelperType.ShowMouseCaptureHelper:
@@ -453,7 +484,7 @@ namespace OpenBots.UI.CustomControls
                         //show variable selector
                         helperControl.CommandImage = Resources.command_run_code;
                         helperControl.CommandDisplay = "Add Input Parameter";
-                        helperControl.Click += (sender, e) => AddInputParameter(sender, e, (frmCommandEditor)editor);
+                        helperControl.Click += (sender, e) => AddInputParameter(sender, e);
                         break;
                     case UIAdditionalHelperType.ShowHTMLBuilder:
                         helperControl.CommandImage = Resources.command_web;
@@ -485,6 +516,12 @@ namespace OpenBots.UI.CustomControls
                 controlList.Add(helperControl);
             }
 
+            if(targetControls.FirstOrDefault() is DataGridView)
+            {
+                targetControls.FirstOrDefault().KeyDown += DataGridView_KeyDown;
+                targetControls.FirstOrDefault().KeyPress += DataGridView_KeyPress;
+            }
+
             return controlList;
         }
 
@@ -501,7 +538,7 @@ namespace OpenBots.UI.CustomControls
             return gridView;
         }
 
-        private void ShowCodeBuilder(object sender, EventArgs e, IfrmCommandEditor editor)
+        private void ShowCodeBuilder(object sender, EventArgs e)
         {
             //get textbox text
             CommandItemControl commandItem = (CommandItemControl)sender;
@@ -635,7 +672,7 @@ namespace OpenBots.UI.CustomControls
                 }
             }
         }
-        private void ShowFileSelector(object sender, EventArgs e, IfrmCommandEditor editor)
+        private void ShowFileSelector(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
 
@@ -649,7 +686,7 @@ namespace OpenBots.UI.CustomControls
             }
         }
 
-        private void ShowFolderSelector(object sender, EventArgs e, IfrmCommandEditor editor)
+        private void ShowFolderSelector(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
 
@@ -722,11 +759,9 @@ namespace OpenBots.UI.CustomControls
 
             try
             {
-                //run image recognition
-                SurfaceAutomationCommand surfaceAutomationCommand = new SurfaceAutomationCommand();
-                surfaceAutomationCommand.v_ImageCapture = imageSource;
-                surfaceAutomationCommand.TestMode = true;
-                surfaceAutomationCommand.RunCommand(null);
+                ImageElement element = FindImageElementTest(new Bitmap(Common.Base64ToImage(imageSource)), 0.8);
+                if (element == null)
+                    MessageBox.Show("Image not found");
             }
             catch (Exception ex)
             {
@@ -736,13 +771,174 @@ namespace OpenBots.UI.CustomControls
             ShowAllForms();
         }
 
+        public ImageElement FindImageElementTest(Bitmap smallBmp, double accuracy)
+        {
+            FormsHelper.HideAllForms();
+
+            dynamic element = null;
+            double tolerance = 1.0 - accuracy;
+
+            Bitmap bigBmp = ImageMethods.Screenshot();
+
+            Bitmap smallTestBmp = new Bitmap(smallBmp);
+
+            Bitmap bigTestBmp = new Bitmap(bigBmp);
+            Graphics bigTestGraphics = Graphics.FromImage(bigTestBmp);
+
+            BitmapData smallData =
+              smallBmp.LockBits(new Rectangle(0, 0, smallBmp.Width, smallBmp.Height),
+                       ImageLockMode.ReadOnly,
+                       PixelFormat.Format24bppRgb);
+            BitmapData bigData =
+              bigBmp.LockBits(new Rectangle(0, 0, bigBmp.Width, bigBmp.Height),
+                       ImageLockMode.ReadOnly,
+                       PixelFormat.Format24bppRgb);
+
+            int smallStride = smallData.Stride;
+            int bigStride = bigData.Stride;
+
+            int bigWidth = bigBmp.Width;
+            int bigHeight = bigBmp.Height - smallBmp.Height + 1;
+            int smallWidth = smallBmp.Width * 3;
+            int smallHeight = smallBmp.Height;
+
+            int margin = Convert.ToInt32(255.0 * tolerance);
+
+            unsafe
+            {
+                byte* pSmall = (byte*)(void*)smallData.Scan0;
+                byte* pBig = (byte*)(void*)bigData.Scan0;
+
+                int smallOffset = smallStride - smallBmp.Width * 3;
+                int bigOffset = bigStride - bigBmp.Width * 3;
+
+                bool matchFound = true;
+
+                for (int y = 0; y < bigHeight; y++)
+                {
+                    for (int x = 0; x < bigWidth; x++)
+                    {
+                        byte* pBigBackup = pBig;
+                        byte* pSmallBackup = pSmall;
+
+                        //Look for the small picture.
+                        for (int i = 0; i < smallHeight; i++)
+                        {
+                            int j = 0;
+                            matchFound = true;
+                            for (j = 0; j < smallWidth; j++)
+                            {
+                                //With tolerance: pSmall value should be between margins.
+                                int inf = pBig[0] - margin;
+                                int sup = pBig[0] + margin;
+                                if (sup < pSmall[0] || inf > pSmall[0])
+                                {
+                                    matchFound = false;
+                                    break;
+                                }
+
+                                pBig++;
+                                pSmall++;
+                            }
+
+                            if (!matchFound)
+                                break;
+
+                            //We restore the pointers.
+                            pSmall = pSmallBackup;
+                            pBig = pBigBackup;
+
+                            //Next rows of the small and big pictures.
+                            pSmall += smallStride * (1 + i);
+                            pBig += bigStride * (1 + i);
+                        }
+
+                        //If match found, we return.
+                        if (matchFound)
+                        {
+                            element = new ImageElement
+                            {
+                                LeftX = x,
+                                MiddleX = x + smallBmp.Width / 2,
+                                RightX = x + smallBmp.Width,
+                                TopY = y,
+                                MiddleY = y + smallBmp.Height / 2,
+                                BottomY = y + smallBmp.Height
+                            };
+
+                            //draw on output to demonstrate finding
+                            var Rectangle = new Rectangle(x, y, smallBmp.Width - 1, smallBmp.Height - 1);
+                            Pen pen = new Pen(Color.Red);
+                            pen.Width = 5.0F;
+                            bigTestGraphics.DrawRectangle(pen, Rectangle);
+
+                            frmImageCapture captureOutput = new frmImageCapture();
+                            captureOutput.pbTaggedImage.Image = smallTestBmp;
+                            captureOutput.pbSearchResult.Image = bigTestBmp;
+                            captureOutput.TopMost = true;
+                            captureOutput.Show();
+                            
+                            break;
+                        }
+                        //If no match found, we restore the pointers and continue.
+                        else
+                        {
+                            pBig = pBigBackup;
+                            pSmall = pSmallBackup;
+                            pBig += 3;
+                        }
+                    }
+
+                    if (matchFound)
+                        break;
+
+                    pBig += bigOffset;
+                }
+            }
+
+            bigBmp.UnlockBits(bigData);
+            smallBmp.UnlockBits(smallData);
+            bigTestGraphics.Dispose();
+            return element;
+        }
+
+        public Tuple<string, string> ShowConditionElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor)
+        {
+            IConditionCommand cmd = (IConditionCommand)editor.SelectedCommand;
+            //create recorder
+            frmAdvancedUIElementRecorder newElementRecorder = new frmAdvancedUIElementRecorder(_container);
+            newElementRecorder.chkStopOnClick.Checked = true;
+
+            DataTable searchParameters = new DataTable();
+            searchParameters.Columns.Add("Enabled");
+            searchParameters.Columns.Add("Parameter Name");
+            searchParameters.Columns.Add("Parameter Value");
+            searchParameters.TableName = DateTime.Now.ToString("UIASearchParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
+
+            newElementRecorder.SearchParameters = searchParameters;
+
+            //show form
+            newElementRecorder.ShowDialog();
+
+            var requestedSearchParameter = cmd.v_ActionParameterTable.Rows[1][1].ToString();
+
+            var check = newElementRecorder.SearchParameters;
+            var parameterRow = newElementRecorder.SearchParameters.AsEnumerable().Where(x => x.Field<string>("Parameter Name") == requestedSearchParameter).FirstOrDefault();
+
+            string parameterValue = "";
+            if (parameterRow != null)
+                parameterValue = parameterRow.ItemArray[2].ToString();
+
+            return new Tuple<string,string>(newElementRecorder.cboWindowTitle.Text, parameterValue);
+        }
+
         private void ShowElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor)
         {
             //get command reference
-            UIAutomationCommand cmd = (UIAutomationCommand)((frmCommandEditor)editor).SelectedCommand;
+            IUIAutomationCommand cmd = (IUIAutomationCommand)editor.SelectedCommand;
 
             //create recorder
-            frmAdvancedUIElementRecorder newElementRecorder = new frmAdvancedUIElementRecorder();
+            frmAdvancedUIElementRecorder newElementRecorder = new frmAdvancedUIElementRecorder(_container);
             newElementRecorder.SearchParameters = cmd.v_UIASearchParameters;
 
             //show form
@@ -757,7 +953,7 @@ namespace OpenBots.UI.CustomControls
 
         private void GenerateDLLParameters(object sender, EventArgs e)
         {
-            ExecuteDLLCommand cmd = (ExecuteDLLCommand)_currentEditor.SelectedCommand;
+            IExecuteDLLCommand cmd = (IExecuteDLLCommand)_currentEditor.SelectedCommand;
 
             var filePath = _currentEditor.flw_InputVariables.Controls["v_FilePath"].Text;
             var className = _currentEditor.flw_InputVariables.Controls["v_ClassName"].Text;
@@ -828,7 +1024,7 @@ namespace OpenBots.UI.CustomControls
             {
                 //user accepted the selections
                 //declare command
-                ExecuteDLLCommand cmd = (ExecuteDLLCommand)_currentEditor.SelectedCommand;
+                IExecuteDLLCommand cmd = (IExecuteDLLCommand)_currentEditor.SelectedCommand;
 
                 //add file name
                 if (!string.IsNullOrEmpty(dllExplorer.FileName))
@@ -862,7 +1058,7 @@ namespace OpenBots.UI.CustomControls
             }
         }
 
-        private void AddInputParameter(object sender, EventArgs e, IfrmCommandEditor editor)
+        private void AddInputParameter(object sender, EventArgs e)
         {
             DataGridView inputControl = (DataGridView)_currentEditor.flw_InputVariables.Controls["v_UserInputConfig"];
             var inputTable = (DataTable)inputControl.DataSource;
@@ -993,6 +1189,65 @@ namespace OpenBots.UI.CustomControls
                     cbo.Items.Add("<" + element.ElementName + ">");
             }
             return cbo;
+        }
+
+        public IfrmScriptEngine CreateScriptEngineForm(string pathToFile, string projectPath, IfrmScriptBuilder builderForm, Logger logger,
+            List<ScriptVariable> variables, List<ScriptElement> elements,
+            Dictionary<string, object> appInstances, bool blnCloseWhenDone, bool isDebugMode)
+        {
+            frmScriptBuilder newBuilderForm;
+
+            if (builderForm != null)
+                newBuilderForm = (frmScriptBuilder)builderForm;
+            else
+                newBuilderForm = null;
+
+            return new frmScriptEngine(pathToFile, projectPath, newBuilderForm, logger,
+                variables, null, appInstances, false, isDebugMode);
+        }
+
+        public IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger)
+        {
+            return new AutomationEngineInstance(logger);
+        }
+
+        public IfrmWebElementRecorder CreateWebElementRecorderForm(string startURL)
+        {
+            return new frmWebElementRecorder(_container, startURL);
+        }
+
+        public IfrmAdvancedUIElementRecorder CreateAdvancedUIElementRecorderForm()
+        {
+            return new frmAdvancedUIElementRecorder(_container);
+        }
+
+        public IfrmCommandEditor CreateCommandEditorForm(List<AutomationCommand> commands, List<ScriptCommand> existingCommands)
+        {
+            return new frmCommandEditor(commands, existingCommands)
+            {
+                Container = _container
+            };
+        }
+
+        public ScriptCommand CreateBeginIfCommand(string commandData)
+        {
+            if(string.IsNullOrEmpty(commandData))
+                return (dynamic)TypeMethods.CreateTypeInstance(_container, "BeginIfCommand");
+            else
+            {
+                Type ifCommandType = TypeMethods.GetTypeByName(_container, "BeginIfCommand");
+                return (dynamic) JsonConvert.DeserializeObject(commandData, ifCommandType);
+                //return JsonConvert.DeserializeObject<typeof(ifCommand)> (commandData);
+            }
+        }
+
+        public Type GetCommandType(string commandName)
+        {
+            Type type = null;
+            if (commandName == "BeginIfCommand")
+                type = TypeMethods.GetTypeByName(_container, "BeginIfCommand");
+
+            return type;
         }
     }
 }

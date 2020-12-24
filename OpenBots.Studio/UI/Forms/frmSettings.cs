@@ -43,8 +43,7 @@ namespace OpenBots.UI.Forms
 
         private void frmSettings_Load(object sender, EventArgs e)
         {
-            newAppSettings = new ApplicationSettings();
-            newAppSettings = newAppSettings.GetOrCreateApplicationSettings();
+            newAppSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
 
             var engineSettings = newAppSettings.EngineSettings;
             chkShowDebug.DataBindings.Add("Checked", engineSettings, "ShowDebugWindow", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -128,25 +127,8 @@ namespace OpenBots.UI.Forms
                 frmUpdate frmUpdate = new frmUpdate(manifest);
                 if (frmUpdate.ShowDialog() == DialogResult.OK)
                 {
-                    //move update exe to root folder for execution
-                    var updaterExecutionResources = Application.StartupPath + "\\resources\\OpenBots.Updater.exe";
-                    var updaterExecutableDestination = Application.StartupPath + "\\OpenBots.Updater.exe";
-
-                    if (!File.Exists(updaterExecutionResources))
-                    {
-                        MessageBox.Show("OpenBots.Updater.exe not found in resources directory!");
-                        return;
-                    }
-                    else
-                    {
-                        File.Copy(updaterExecutionResources, updaterExecutableDestination);
-                    }
-
-                    var updateProcess = new Process();
-                    updateProcess.StartInfo.FileName = updaterExecutableDestination;
-                    updateProcess.StartInfo.Arguments = manifest.PackageURL;
-                    updateProcess.Start();
-                    Application.Exit();
+                    frmUpdating frmUpdating = new frmUpdating(manifest.PackageURL);
+                    frmUpdating.ShowDialog();
                 }
             }
             else

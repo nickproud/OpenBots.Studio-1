@@ -16,6 +16,8 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
 using OpenBots.Core.Model.EngineModel;
+using OpenBots.Core.Nuget;
+using OpenBots.Core.Project;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
@@ -23,6 +25,7 @@ using OpenBots.Core.UI.DTOs;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
+using OpenBots.UI.CustomControls;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.Utilities;
@@ -62,6 +65,10 @@ namespace OpenBots.UI.Forms
         public bool ClosingAllEngines { get; set; }
         public bool IsChildEngine { get; set; }
         public Logger ScriptEngineLogger { get; set; }
+        public ICommandControls CommandControls { get; set; }
+        public bool IsScheduledTask { get; set; }
+        private string _configPath;
+        private bool _isParentScheduledTask;
         #endregion
 
         private const int CP_NOCLOSE_BUTTON = 0x200;
@@ -113,6 +120,66 @@ namespace OpenBots.UI.Forms
                 _engineSettings.ShowDebugWindow = true;
                 _engineSettings.ShowAdvancedDebugOutput = true;
             }
+
+            //determine whether to show listbox or not
+            _advancedDebug = _engineSettings.ShowAdvancedDebugOutput;
+
+            //if listbox should be shown
+            if (_advancedDebug)
+            {
+                lstSteppingCommands.Show();
+                lblMainLogo.Show();
+                pbBotIcon.Hide();
+                lblAction.Hide();
+            }
+            else
+            {
+                lstSteppingCommands.Hide();
+                lblMainLogo.Hide();
+                pbBotIcon.Show();
+                lblAction.Show();
+            }
+
+            //apply debug window setting
+            if (!_engineSettings.ShowDebugWindow)
+            {
+                Visible = false;
+                Opacity = 0;
+            }
+
+            //add hooks for hot key cancellation
+            GlobalHook.HookStopped += new EventHandler(OnHookStopped);
+            GlobalHook.StartEngineCancellationHook(_engineSettings.CancellationKey);
+        }
+
+        //Used for Scheduled Tasks
+        public frmScriptEngine(string pathToConfig, Logger engineLogger)
+        {
+            InitializeComponent();
+            uiBtnScheduleManagement.Visible = true;
+
+            IsScheduledTask = true;
+            _configPath = pathToConfig;
+            _isParentScheduledTask = true;
+            
+            var scriptProject = Project.OpenProject(_configPath);
+            string mainFileName = scriptProject.Main;
+            ProjectPath = new DirectoryInfo(_configPath).Parent.FullName;
+            string mainFilePath = Directory.GetFiles(ProjectPath, mainFileName, SearchOption.AllDirectories).FirstOrDefault();
+            if (mainFilePath == null)
+                throw new FileNotFoundException("Main script not found");
+
+            ScriptEngineLogger = engineLogger;
+
+            IsDebugMode = false;
+
+            CloseWhenDone = true;
+
+            //set file
+            FilePath = mainFilePath;
+
+            //get engine settings
+            _engineSettings = new ApplicationSettings().GetOrCreateApplicationSettings().EngineSettings;
 
             //determine whether to show listbox or not
             _advancedDebug = _engineSettings.ShowAdvancedDebugOutput;
@@ -208,14 +275,22 @@ namespace OpenBots.UI.Forms
             GlobalHook.StartEngineCancellationHook(_engineSettings.CancellationKey);
         }
 
-        private void frmProcessingStatus_Load(object sender, EventArgs e)
+        private void frmProcessingStatus_LoadAsync(object sender, EventArgs e)
         {
+            if (_isParentScheduledTask)
+            {
+                List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, true);
+                AppDomainSetupManager.LoadBuilder(assemblyList);
+            }
+
             //move engine form to bottom right and bring to front
             if (_engineSettings.ShowDebugWindow)
             {
                 BringToFront();
                 MoveFormToBottomRight(this);
             }
+
+            CommandControls = new CommandControls();
 
             //start running
             EngineInstance = new AutomationEngineInstance(ScriptEngineLogger);
@@ -268,7 +343,7 @@ namespace OpenBots.UI.Forms
         }
         #endregion
 
-        //engine event handlers
+        //engine event handlers and methods
         #region Engine Event Handlers
         /// <summary>
         /// Handles Progress Updates raised by Automation Engine
@@ -287,24 +362,27 @@ namespace OpenBots.UI.Forms
         /// <param name="e"></param>
         private void Engine_ScriptFinishedEvent(object sender, ScriptFinishedEventArgs e)
         {
+            if (IsChildEngine)
+                CloseWhenDone = true;
+
             switch (e.Result)
             {
                 case ScriptFinishedResult.Successful:
                     AddStatus("Script Completed Successfully");
                     UpdateUI("debug info (success)");
-                    if (IsChildEngine)
-                        CloseWhenDone = true;
                     break;
                 case ScriptFinishedResult.Error:
                     AddStatus("Error: " + e.Error, Color.Red);
                     AddStatus("Script Completed With Errors!");
                     UpdateUI("debug info (error)");
+                    if (_isParentScheduledTask)
+                        CloseWhenDone = false;
                     break;
                 case ScriptFinishedResult.Cancelled:
                     AddStatus("Script Cancelled By User");
                     UpdateUI("debug info (cancelled)");
-                    if (IsChildEngine)
-                        CloseWhenDone = true;
+                    if (_isParentScheduledTask)
+                        CloseWhenDone = false;
                     break;
                 default:
                     break;
@@ -357,6 +435,45 @@ namespace OpenBots.UI.Forms
                                               e.Bounds);
                     }
                     e.DrawFocusRectangle();
+                }
+            }
+        }
+
+        public void UpdateCurrentEngineContext(IAutomationEngineInstance parentEngine, IfrmScriptEngine childfrmScriptEngine, List<ScriptVariable> variableReturnList)
+        {
+            //get new variable list from the new task engine after it finishes running
+            var childEngine = ((frmScriptEngine)childfrmScriptEngine).EngineInstance;
+            var newVariableList = childEngine.VariableList;
+            foreach (var variable in variableReturnList)
+            {
+                //check if the variables we wish to return are in the new variable list
+                if (newVariableList.Exists(x => x.VariableName == variable.VariableName))
+                {
+                    //if yes, get that variable from the new list
+                    ScriptVariable newTemp = newVariableList.Where(x => x.VariableName == variable.VariableName).FirstOrDefault();
+                    //check if that variable previously existed in the current engine
+                    if (parentEngine.VariableList.Exists(x => x.VariableName == newTemp.VariableName))
+                    {
+                        //if yes, overwrite it
+                        ScriptVariable currentTemp = parentEngine.VariableList.Where(x => x.VariableName == newTemp.VariableName).FirstOrDefault();
+                        parentEngine.VariableList.Remove(currentTemp);
+                    }
+                    //Add to current engine variable list
+                    parentEngine.VariableList.Add(newTemp);
+                }
+            }
+
+            //get updated app instance dictionary after the new engine finishes running
+            parentEngine.AppInstances = childEngine.AppInstances;
+
+            //get errors from new engine (if any)
+            var newEngineErrors = childEngine.ErrorsOccured;
+            if (newEngineErrors.Count > 0)
+            {
+                parentEngine.ChildScriptFailed = true;
+                foreach (var error in newEngineErrors)
+                {
+                    parentEngine.ErrorsOccured.Add(error);
                 }
             }
         }
@@ -551,9 +668,10 @@ namespace OpenBots.UI.Forms
                 {
                     TemplateHTML = htmlTemplate
                 };
-                var dialogResult = inputForm.ShowDialog();
+                
+                inputForm.ShowDialog();
 
-                if (inputForm.Result == DialogResult.OK)
+                if (inputForm.DialogResult == DialogResult.OK)
                 {
                     var variables = inputForm.GetVariablesFromHTML("input");
                     variables.AddRange(inputForm.GetVariablesFromHTML("select"));
@@ -747,6 +865,11 @@ namespace OpenBots.UI.Forms
             MessageBox.Show(((SteppingCommandsItem)lstSteppingCommands.SelectedItem).Text, "Item Status");
         }
 
+        private void uiBtnScheduleManagement_Click(object sender, EventArgs e)
+        {
+            frmScheduleManagement scheduleManager = new frmScheduleManagement();
+            scheduleManager.Show();
+        }
         #endregion UI Elements       
 
         private void frmScriptEngine_FormClosing(object sender, FormClosingEventArgs e)

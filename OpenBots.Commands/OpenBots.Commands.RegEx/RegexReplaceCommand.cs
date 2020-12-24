@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -55,12 +56,14 @@ namespace OpenBots.Commands.RegEx
 		{
 			CommandName = "RegexReplaceCommand";
 			SelectionName = "Regex Replace";
-			CommandEnabled = true;          
+			CommandEnabled = true;
+			CommandIcon = Resources.command_regex;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vInputData = v_InputText.ConvertUserVariableToString(engine);
 			string vRegex = v_Regex.ConvertUserVariableToString(engine);
 			string vReplaceData = v_ReplacementText.ConvertUserVariableToString(engine);

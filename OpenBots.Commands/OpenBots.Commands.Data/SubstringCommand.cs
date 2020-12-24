@@ -2,8 +2,8 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -54,11 +54,13 @@ namespace OpenBots.Commands.Data
 			CommandName = "SubstringCommand";
 			SelectionName = "Substring";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_string;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var inputText = v_InputText.ConvertUserVariableToString(engine);
 			var startIndex = int.Parse(v_StartIndex.ConvertUserVariableToString(engine));
 			var stringLength = v_StringLength.ConvertUserVariableToString(engine);

@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using SimpleNLG;
 using System;
 using System.Collections.Generic;
@@ -54,14 +55,15 @@ namespace OpenBots.Commands.NLG
 			CommandName = "SetNLGParameterCommand";
 			SelectionName = "Set NLG Parameter";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_nlg;
+
 			v_InstanceName = "DefaultNLG";
 			v_ParameterType = "Set Subject";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var p = (SPhraseSpec)v_InstanceName.GetAppInstance(engine);
 
 			var userInput = v_Parameter.ConvertUserVariableToString(engine);

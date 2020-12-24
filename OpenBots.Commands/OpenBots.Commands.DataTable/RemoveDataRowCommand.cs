@@ -2,8 +2,8 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -52,12 +52,14 @@ namespace OpenBots.Commands.DataTable
 			CommandName = "RemoveDataRowCommand";
 			SelectionName = "Remove DataRow";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_spreadsheet;
+
 			v_AndOr = "And";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vSearchItem = v_SearchItem.ConvertUserVariableToString(engine);
 
 			Data.DataTable Dt = (Data.DataTable)v_DataTable.ConvertUserVariableToObject(engine);

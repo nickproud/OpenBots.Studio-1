@@ -121,9 +121,6 @@
   <data name="command_camera" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\Commands\command-camera.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="robot-bouncing-transparent" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\Misc\robot-bouncing-transparent.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="command_begin_if" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\Commands\command-begin-if.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -184,9 +181,6 @@
   <data name="header_backing" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\Misc\header-backing.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="robot-error" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\Misc\robot-error.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="action_bar_variable" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\ActionBar\action-bar-variable.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -226,9 +220,6 @@
   <data name="action_bar_schedule" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\ActionBar\action-bar-schedule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="robot source" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\Misc\robot source.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="action_bar_options" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\ActionBar\action-bar-options.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -240,9 +231,6 @@
   </data>
   <data name="command_comment" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\Commands\command-comment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="OpenBots_splash" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\Logo\OpenBots-splash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="various_stop_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\Buttons\various-stop-button.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -288,9 +276,6 @@
   </data>
   <data name="command_system" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\Commands\command-system.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IEDriverServer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Dependencies\IEDriverServer.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="command_nlg" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\Commands\command-nlg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -421,9 +406,6 @@
   <data name="OpenBots_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\Logo\OpenBots-logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="OpenBots_Updater" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Dependencies\OpenBots.Updater.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="HTMLInputSample" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Samples\HTMLInputSample.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -459,5 +441,17 @@
   </data>
   <data name="about_background" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\Logo\about_background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="openbots_gallery_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Logo\openbots-gallery-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="loading_spinner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Logo\loading-spinner.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nuget_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Logo\nuget-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Buttons\settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

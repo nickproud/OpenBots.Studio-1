@@ -3,8 +3,9 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -57,12 +58,14 @@ namespace OpenBots.Commands.File
 		{
 			CommandName = "CompressFilesCommand";
 			SelectionName = "Compress Files";
-			CommandEnabled = true;        
+			CommandEnabled = true;
+			CommandIcon = Resources.command_files;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			//get variable path to source file
 			var vSourceDirectoryPathOrigin = v_DirectoryPathOrigin.ConvertUserVariableToString(engine);
 
@@ -72,7 +75,8 @@ namespace OpenBots.Commands.File
 			// get password to extract files
 			var vPassword = v_Password.ConvertUserVariableToString(engine);
 
-			string[] filenames = Directory.GetFiles(vSourceDirectoryPathOrigin);
+			string[] filenames = Directory.GetFiles(vSourceDirectoryPathOrigin, "*.*", SearchOption.AllDirectories);
+			string[] directorynames = Directory.GetDirectories(vSourceDirectoryPathOrigin, "*", SearchOption.AllDirectories);
 
 			string sourceDirectoryName = new DirectoryInfo(vSourceDirectoryPathOrigin).Name;
 			string compressedFileName = Path.Combine(vFilePathDestination, sourceDirectoryName + ".zip");
@@ -87,10 +91,17 @@ namespace OpenBots.Commands.File
 
 				byte[] buffer = new byte[4096];
 
+				foreach(string directory in directorynames)
+				{
+					ZipEntry dirEntry = new ZipEntry(directory.Replace(vSourceDirectoryPathOrigin + "\\", "") + "\\");
+					dirEntry.DateTime = DateTime.Now;
+					OutputStream.PutNextEntry(dirEntry);
+				}
+
 				foreach (string file in filenames)
 				{
 
-					ZipEntry entry = new ZipEntry(Path.GetFileName(file));
+					ZipEntry entry = new ZipEntry(file.Replace(vSourceDirectoryPathOrigin, ""));
 					entry.DateTime = DateTime.Now;
 					OutputStream.PutNextEntry(entry);
 

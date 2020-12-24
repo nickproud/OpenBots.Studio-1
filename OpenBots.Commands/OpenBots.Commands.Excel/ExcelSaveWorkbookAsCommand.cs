@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,13 +49,14 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelSaveWorkbookAsCommand";
 			SelectionName = "Save Workbook As";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_spreadsheet;
+
 			v_InstanceName = "DefaultExcel";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vFolderPath = v_FolderPath.ConvertUserVariableToString(engine);
 			var vFileName = v_FileName.ConvertUserVariableToString(engine);
 			var excelObject = v_InstanceName.GetAppInstance(engine);

@@ -1,10 +1,12 @@
 ﻿using Microsoft.VisualBasic;
 using Newtonsoft.Json;
-using OpenBots.Commands;
+using OpenBots.Core.Command;
+using OpenBots.Core.Nuget;
+using OpenBots.Core.Project;
 using OpenBots.Core.Script;
+using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
-using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,48 +24,69 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region Project Tool Strip, Buttons and Pane
         private void addProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            tpbLoadingSpinner.Visible = true;
             AddProject();
+            tpbLoadingSpinner.Visible = false;
         }
 
         private void uiBtnProject_Click(object sender, EventArgs e)
         {
-            AddProject();
+            addProjectToolStripMenuItem_Click(sender, e);
         }
 
-        public void AddProject()
+        public DialogResult AddProject()
         {
             tvProject.Nodes.Clear();
             var projectBuilder = new frmProjectBuilder();
-            projectBuilder.ShowDialog();
+            projectBuilder.ShowDialog();            
 
             //Close OpenBots if add project form is closed at startup
             if (projectBuilder.DialogResult == DialogResult.Cancel && ScriptProject == null)
             {
                 Application.Exit();
-                return;
+                return DialogResult.Abort;
             }
 
             //Create new OpenBots project
-            else if (projectBuilder.CreateProject == true)
+            else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.CreateProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
                 if (result == DialogResult.Cancel)
-                    return;
-              
+                    return DialogResult.Cancel;
+
                 uiScriptTabControl.TabPages.Clear();
                 ScriptProjectPath = projectBuilder.NewProjectPath;
 
+                //Create new project
+                ScriptProject = new Project(projectBuilder.NewProjectName);
                 string configPath = Path.Combine(ScriptProjectPath, "project.config");
+
+                //create config file
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
+
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                _container = _builder.Build();                
+                        
                 string mainScriptPath = Path.Combine(ScriptProjectPath, "Main.json");
                 string mainScriptName = Path.GetFileNameWithoutExtension(mainScriptPath);
                 UIListView mainScriptActions = NewLstScriptActions(mainScriptName);
                 List<ScriptVariable> mainScriptVariables = new List<ScriptVariable>();
                 List<ScriptElement> mainScriptElements = new List<ScriptElement>();
-                ShowMessageCommand helloWorldCommand = new ShowMessageCommand();
 
-                helloWorldCommand.v_Message = "Hello World";
-                mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
-
+                try
+                {
+                    dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(_container, "ShowMessageCommand");
+                    helloWorldCommand.v_Message = "Hello World";
+                    mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
+                }
+                catch (Exception)
+                {
+                    var brokenHelloWorldCommand = new BrokenCodeCommentCommand();
+                    brokenHelloWorldCommand.v_Comment = "Hello World";
+                    mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(brokenHelloWorldCommand));
+                }
+                
                 //Begin saving as main.xml
                 ClearSelectedListViewItems();
 
@@ -72,13 +95,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //Serialize main script
                     var mainScript = Script.SerializeScript(mainScriptActions.Items, mainScriptVariables, mainScriptElements,
                                                             mainScriptPath);
-                    //Create new project
-                    ScriptProject = new Project(projectBuilder.NewProjectName);
+                    
                     _mainFileName = ScriptProject.Main;
-
-                    //create config file
-                    File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
-
+                   
                     OpenFile(mainScriptPath);
                     ScriptFilePath = mainScriptPath;
 
@@ -92,16 +111,21 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //Open existing OpenBots project
-            else if (projectBuilder.OpenProject == true)
+            else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.OpenProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
                 if (result == DialogResult.Cancel)
-                    return;
+                    return DialogResult.Cancel;
 
                 try
                 {
                     //Open project
                     ScriptProject = Project.OpenProject(projectBuilder.ExistingConfigPath);
+
+                    var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
+                    _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                    _container = _builder.Build();
+
                     _mainFileName = ScriptProject.Main;
 
                     string mainFilePath = Directory.GetFiles(projectBuilder.ExistingProjectPath, _mainFileName, SearchOption.AllDirectories).FirstOrDefault();
@@ -121,8 +145,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //show fail dialog
                     Notify("An Error Occured: " + ex.Message, Color.Red);
                     //Try adding project again
-                    AddProject();
-                    return;
+                    AddProject();                    
+                    return DialogResult.None;
                 }
             }
 
@@ -134,6 +158,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             projectNode.ContextMenuStrip = cmsProjectMainFolderActions;          
             tvProject.Nodes.Add(projectNode);
             projectNode.Expand();
+            LoadCommands(this);
+            return DialogResult.OK;
         }
 
         private void LoadChildren(TreeNode parentNode, string directory)
@@ -490,7 +516,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 UIListView newScriptActions = NewLstScriptActions();
                 List<ScriptVariable> newScripVariables = new List<ScriptVariable>();
                 List<ScriptElement> newScriptElements = new List<ScriptElement>();
-                var helloWorldCommand = new ShowMessageCommand();
+                dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(_container, "ShowMessageCommand");
                 helloWorldCommand.v_Message = "Hello World";
                 newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
 

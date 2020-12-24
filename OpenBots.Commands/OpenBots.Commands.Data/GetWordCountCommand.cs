@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,13 +38,15 @@ namespace OpenBots.Commands.Data
 		{
 			CommandName = "GetWordCountCommand";
 			SelectionName = "Get Word Count";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_function;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
 			//get engine
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			//get input value
 			var stringRequiringCount = v_InputValue.ConvertUserVariableToString(engine);

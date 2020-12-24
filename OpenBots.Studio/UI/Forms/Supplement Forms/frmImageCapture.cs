@@ -195,7 +195,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 return;
             }
 
-            if (pnlMouseContainer.Location == new Point(12,12))
+            if (pnlMouseContainer.Location == new Point(12, 12))
             {
                 pnlMouseContainer.Location = new Point(12, Height - (48 + pnlMouseContainer.Height));
             }

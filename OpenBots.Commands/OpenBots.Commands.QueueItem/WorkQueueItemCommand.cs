@@ -3,15 +3,17 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Server.User;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -40,17 +42,43 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
 		public string v_OutputUserVariableName { get; set; }
 
+		[Required]
+		[DisplayName("Save Attachments")]
+		[PropertyUISelectionOption("Yes")]
+		[PropertyUISelectionOption("No")]
+		[Description("Specify whether to save the queue item attachments to a local directory.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_SaveAttachments { get; set; }
+
+		[Required]
+		[DisplayName("Output Attachment Directory")]
+		[Description("Enter or Select the path to the directory to store the attachments in.")]
+		[SampleUsage(@"C:\temp\myfolder\attachments || {vFolderPath} || {ProjectPath}\myFolder\attachments")]
+		[Remarks("This input is optional and will only be used if *Save Attachments* is set to **Yes**.")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		public string v_AttachmentDirectory { get; set; }
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private List<Control> _savingControls;
+
 		public WorkQueueItemCommand()
 		{
 			CommandName = "WorkQueueItemCommand";
 			SelectionName = "Work QueueItem";
-			CommandEnabled = true;          
+			CommandEnabled = true;
+			CommandIcon = Resources.command_queueitem;
+
+			v_SaveAttachments = "No";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vQueueName = v_QueueName.ConvertUserVariableToString(engine);
+			var vAttachmentDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
 			Dictionary<string, object> queueItemDict = new Dictionary<string, object>();
 
 			var client = AuthMethods.GetAuthToken();
@@ -74,7 +102,6 @@ namespace OpenBots.Commands.QueueItem
 				queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName);
 				return;
 			}
-				
 
 			queueItemDict = queueItem.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
 											   .ToDictionary(prop => prop.Name, prop => prop.GetValue(queueItem, null));
@@ -88,9 +115,24 @@ namespace OpenBots.Commands.QueueItem
 													   kvp.Key == "DataJson" ||
 													   kvp.Key == "Priority" ||
 													   kvp.Key == "LockedUntilUTC")
-										 .ToDictionary(i =>i.Key, i => i.Value);
+										 .ToDictionary(i => i.Key, i => i.Value);
 
 			queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName);
+
+			if (v_SaveAttachments == "Yes")
+			{
+				if (Directory.Exists(vAttachmentDirectory))
+				{
+					//get all queue item attachments
+					var binaryObjectFiles = BinaryObjectMethods.GetBinaryObjectsByCorrelationEntityId(client, queueItem.Id);
+					//save each attachment in the directory
+					foreach (BinaryObject file in binaryObjectFiles)
+					{
+						//export (save) in appropriate directory
+						BinaryObjectMethods.DownloadBinaryObject(client, file.Id, vAttachmentDirectory, file.Name);
+					}
+				}
+			}
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -99,13 +141,44 @@ namespace OpenBots.Commands.QueueItem
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueueName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_OutputUserVariableName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SaveAttachments", this, editor));
+			((ComboBox)RenderedControls[6]).SelectedIndexChanged += SaveQueueItemFilesComboBox_SelectedValueChanged;
+
+			_savingControls = new List<Control>();
+			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AttachmentDirectory", this, editor));
+
+			foreach (var ctrl in _savingControls)
+				ctrl.Visible = false;
+
+			RenderedControls.AddRange(_savingControls);
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [From Queue '{v_QueueName}' - Store QueueItem Dictionary in '{v_OutputUserVariableName}']";
+			if (v_SaveAttachments == "Yes")
+				return base.GetDisplayValue() + $" [From Queue '{v_QueueName}' - Store QueueItem Dictionary in '{v_OutputUserVariableName}' and File(s) in '{v_AttachmentDirectory}']";
+			else
+				return base.GetDisplayValue() + $" [From Queue '{v_QueueName}' - Store QueueItem Dictionary in '{v_OutputUserVariableName}']";
+		}
+
+		private void SaveQueueItemFilesComboBox_SelectedValueChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[6]).Text == "Yes")
+			{
+				foreach (var ctrl in _savingControls)
+					ctrl.Visible = true;
+			}
+			else
+			{
+				foreach (var ctrl in _savingControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is TextBox)
+						((TextBox)ctrl).Clear();
+				}
+			}
 		}
 	}
 }

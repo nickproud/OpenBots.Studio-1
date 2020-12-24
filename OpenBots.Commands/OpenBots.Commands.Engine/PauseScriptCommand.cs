@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,13 +32,14 @@ namespace OpenBots.Commands.Engine
 			CommandName = "PauseScriptCommand";
 			SelectionName = "Pause Script";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_pause;
 			
 			v_PauseLength = "1000";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var userPauseLength = v_PauseLength.ConvertUserVariableToString(engine);
 			var pauseLength = int.Parse(userPauseLength);
 			Thread.Sleep(pauseLength);

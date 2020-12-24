@@ -2,8 +2,9 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,13 +31,14 @@ namespace OpenBots.Commands.Engine
 			CommandName = "SetEngineDelayCommand";
 			SelectionName = "Set Engine Delay";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_pause;
+
 			v_EngineDelay = "250";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var engineDelay = v_EngineDelay.ConvertUserVariableToString(engine);
 			var delay = int.Parse(engineDelay);
 

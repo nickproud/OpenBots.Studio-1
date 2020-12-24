@@ -3,10 +3,11 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -87,6 +88,14 @@ namespace OpenBots.Commands.QueueItem
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		public string v_Priority { get; set; }
 
+		[DisplayName("Attachment File Path(s) (Optional)")]
+		[Description("Enter the file path(s) of the file(s) to attach.")]
+		[SampleUsage(@"C:\temp\myFile.xlsx || {vFile} || C:\temp\myFile1.xlsx;C:\temp\myFile2.xlsx || {vFile1};{vFile2} || {vFiles}")]
+		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		public string v_Attachments { get; set; }
+
 		[JsonIgnore]
 		[Browsable(false)]
 		private List<Control> _jsonTypeControls;
@@ -96,14 +105,15 @@ namespace OpenBots.Commands.QueueItem
 			CommandName = "AddQueueItemCommand";
 			SelectionName = "Add QueueItem";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_queueitem;
+
 			v_QueueItemType = "Text";
 			v_Priority = "10";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vQueueName = v_QueueName.ConvertUserVariableToString(engine);
 			var vQueueItemName = v_QueueItemName.ConvertUserVariableToString(engine);
 			var vSource = v_Source.ConvertUserVariableToString(engine);
@@ -111,6 +121,7 @@ namespace OpenBots.Commands.QueueItem
 			var vJsonType = v_JsonType.ConvertUserVariableToString(engine);            
 			var vPriority = v_Priority.ConvertUserVariableToString(engine);
 			var vQueueItemTextValue = v_QueueItemTextValue.ConvertUserVariableToString(engine);
+			var vAttachments = v_Attachments.ConvertUserVariableToString(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			Queue queue = QueueMethods.GetQueue(client, $"name eq '{vQueueName}'");
@@ -137,6 +148,9 @@ namespace OpenBots.Commands.QueueItem
 			};
 
 			QueueItemMethods.EnqueueQueueItem(client, queueItem);
+
+			if (!string.IsNullOrEmpty(vAttachments))
+				QueueItemMethods.AttachFiles(client, queueItem.Id, vAttachments);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -158,13 +172,18 @@ namespace OpenBots.Commands.QueueItem
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueueItemTextValue", this, editor, 100, 300));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Priority", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Attachments", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" ['{v_QueueItemName}' of Type '{v_QueueItemType}' to Queue '{v_QueueName}']";
+			var attachmentCount = v_Attachments?.Split(';').Length;
+			if (attachmentCount == null)
+				return base.GetDisplayValue() + $" ['{v_QueueItemName}' of Type '{v_QueueItemType}' to Queue '{v_QueueName}' With 0 File Attachment(s)]";
+			else
+				return base.GetDisplayValue() + $" ['{v_QueueItemName}' of Type '{v_QueueItemType}' to Queue '{v_QueueName}' With {attachmentCount} File Attachment(s)]";
 		}
 
 		private void QueueItemTypeComboBox_SelectedValueChanged(object sender, EventArgs e)

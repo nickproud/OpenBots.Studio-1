@@ -2,10 +2,11 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +19,7 @@ namespace OpenBots.Commands.Input
 	[Serializable]
 	[Category("Input Commands")]
 	[Description("This command sends keystrokes to a targeted window.")]
-	public class SendKeystrokesCommand : ScriptCommand
+	public class SendKeystrokesCommand : ScriptCommand, ISendKeystrokesCommand
 	{
 
 		[Required]
@@ -52,7 +53,7 @@ namespace OpenBots.Commands.Input
 			CommandName = "SendKeystrokesCommand";
 			SelectionName = "Send Keystrokes";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_input;
 
 			v_WindowName = "Current Window";
 			v_EncryptionOption = "Not Encrypted";
@@ -60,7 +61,7 @@ namespace OpenBots.Commands.Input
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var variableWindowName = v_WindowName.ConvertUserVariableToString(engine);
 
 			if (variableWindowName != "Current Window")

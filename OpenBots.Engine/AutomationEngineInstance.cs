@@ -25,7 +25,7 @@ using System.Windows.Forms;
 
 namespace OpenBots.Engine
 {
-    public class AutomationEngineInstance : IEngine
+    public class AutomationEngineInstance : IAutomationEngineInstance
     {
         //engine variables
         public List<ScriptVariable> VariableList { get; set; }
@@ -93,6 +93,11 @@ namespace OpenBots.Engine
             AutoCalculateVariables = EngineSettings.AutoCalcVariables;
 
             ErrorHandlingAction = string.Empty;
+        }
+
+        public IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger)
+        {
+            return new AutomationEngineInstance(logger);
         }
 
         public void ExecuteScriptSync(string filePath, string projectPath)
@@ -272,7 +277,7 @@ namespace OpenBots.Engine
             if (parentCommand == null)
                 return;
 
-            if (ScriptEngineUI != null && (parentCommand.CommandName == "RunTaskCommand" || parentCommand.CommandName == "MessageBoxCommand"))
+            if (ScriptEngineUI != null && (parentCommand.CommandName == "RunTaskCommand" || parentCommand.CommandName == "ShowMessageCommand"))
                 parentCommand.CurrentScriptBuilder = ScriptEngineUI.CallBackForm;
 
             //set LastCommandExecuted

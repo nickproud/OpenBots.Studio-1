@@ -4,7 +4,7 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,14 +41,15 @@ namespace OpenBots.Commands.Input
 			CommandName = "HTMLInputCommand";
 			SelectionName = "Prompt for HTML Input";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_input;
+
 			v_InputHTML = Resources.HTMLInputSample;
 			v_ErrorOnClose = "No";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			if (engine.ScriptEngineUI == null)
 			{

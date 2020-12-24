@@ -2,9 +2,10 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,12 +31,13 @@ namespace OpenBots.Commands.Window
 		{
 			CommandName = "ActivateWindowCommand";
 			SelectionName = "Activate Window";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_window;
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			string windowName = v_WindowName.ConvertUserVariableToString(engine);
 
 			User32Functions.ActivateWindow(windowName);

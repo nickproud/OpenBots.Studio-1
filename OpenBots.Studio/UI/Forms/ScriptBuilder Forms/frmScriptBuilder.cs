@@ -12,18 +12,20 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-using OpenBots.Commands.Input;
+using Autofac;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
+using OpenBots.Core.Nuget;
+using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
+using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.UI.CustomControls;
+using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
-using OpenBots.Utilities;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
@@ -151,6 +153,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private string _txtCommandWatermark = "Type Here to Search";   
         public string HTMLElementRecorderURL { get; set; }
         private bool _isSequence;
+
+        private IContainer _container;
+        private ContainerBuilder _builder;
+        private string _packagesPath;
         #endregion
 
         #region Form Events
@@ -174,9 +180,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void frmScriptBuilder_Load(object sender, EventArgs e)
         {
-            //load all commands
-            _automationCommands = UIControlsHelper.GenerateCommandsandControls();
+            if (Debugger.IsAttached)
+            {
+                //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
+                installDefaultToolStripMenuItem.Visible = true;
+            }
+            
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            if (!Directory.Exists(_packagesPath))
+                Directory.CreateDirectory(_packagesPath);
 
+            _builder = new ContainerBuilder();
+            
             //set controls double buffered
             foreach (Control control in Controls)
             {
@@ -243,20 +259,34 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 _scriptVariables = new List<ScriptVariable>();
                 _scriptElements = new List<ScriptElement>();
-            }
-            //pnlHeader.BackColor = Color.FromArgb(255, 214, 88);
-
-            //instantiate and populate display icons for commands
-            _uiImages = UIImage.UIImageList();
+            }         
 
             //set image list
             _selectedTabScriptActions.SmallImageList = _uiImages;
 
             //set listview column size
-            frmScriptBuilder_SizeChanged(null, null);
+            frmScriptBuilder_SizeChanged(null, null);        
+
+            //start attended mode if selected
+            if (_appSettings.ClientSettings.StartupMode == "Attended Task Mode")
+            {
+                WindowState = FormWindowState.Minimized;
+                var frmAttended = new frmAttendedMode(ScriptProjectPath);
+                frmAttended.Show();
+            }
+        }
+
+        private void LoadCommands(frmScriptBuilder scriptBuilder)
+        {
+            //load all commands           
+            scriptBuilder._automationCommands = TypeMethods.GenerateCommands(_container);
+
+            //instantiate and populate display icons for commands
+            scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
 
             var groupedCommands = _automationCommands.GroupBy(f => f.DisplayGroup);
 
+            scriptBuilder.tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)
             {
                 TreeNode newGroup = new TreeNode(cmd.Key);
@@ -268,25 +298,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newGroup.Nodes.Add(subNode);
                 }
 
-                tvCommands.Nodes.Add(newGroup);
+                scriptBuilder.tvCommands.Nodes.Add(newGroup);
             }
 
-            tvCommands.Sort();
-            //tvCommands.ImageList = uiImages;
+            scriptBuilder.tvCommands.Sort();
 
-            _tvCommandsCopy = new TreeView();
-            _tvCommandsCopy.ShowNodeToolTips = true;
-            CopyTreeView(tvCommands, _tvCommandsCopy);
-            txtCommandSearch.Text = _txtCommandWatermark;
-
-            //start attended mode if selected
-            if (_appSettings.ClientSettings.StartupMode == "Attended Task Mode")
-            {
-                WindowState = FormWindowState.Minimized;
-                var frmAttended = new frmAttendedMode(ScriptProjectPath);
-                frmAttended.Show();
-            }
-
+            scriptBuilder._tvCommandsCopy = new TreeView();
+            scriptBuilder._tvCommandsCopy.ShowNodeToolTips = true;
+            CopyTreeView(scriptBuilder.tvCommands, scriptBuilder._tvCommandsCopy);
+            scriptBuilder.txtCommandSearch.Text = _txtCommandWatermark;                      
         }
 
         private void frmScriptBuilder_FormClosing(object sender, FormClosingEventArgs e)
@@ -311,6 +331,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             result = CheckForUnsavedScripts();
             if (result == DialogResult.Cancel)
                 e.Cancel = true;
+        }
+
+        private void frmScriptBuilder_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            notifyTray.Dispose();
         }
 
         private void GenerateRecentFiles()
@@ -378,8 +403,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (_editMode)
                 return;
 
-            AddProject();
-            Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+            tpbLoadingSpinner.Visible = true;
+
+            var result = AddProject();
+            if (result != DialogResult.Abort)
+                Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+
+            tpbLoadingSpinner.Visible = false;
         }
 
         private void pnlControlContainer_Paint(object sender, PaintEventArgs e)
@@ -502,11 +532,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void PerformAntiIdle()
         {
             _lastAntiIdleEvent = DateTime.Now;
-            var mouseMove = new SendMouseMoveCommand
-            {
-                v_XMousePosition = (Cursor.Position.X + 1).ToString(),
-                v_YMousePosition = (Cursor.Position.Y + 1).ToString()
-            };
             Notify("Anti-Idle Triggered", Color.White);
         }
 
@@ -529,7 +554,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 CreationModeInstance = CreationMode.Add,
                 ScriptVariables = _scriptVariables,
-                ScriptElements = _scriptElements
+                ScriptElements = _scriptElements,
+                Container = _container
             };
 
             if (specificCommand != "")
@@ -693,6 +719,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             txtCommandSearch.Clear();
         }
+
+        private void uiBtnReloadCommands_Click(object sender, EventArgs e)
+        {
+            tpbLoadingSpinner.Visible = true;
+            string configPath = Path.Combine(ScriptProjectPath, "project.config");
+            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+            _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+            _container = _builder.Build();
+            LoadCommands(this);
+            tpbLoadingSpinner.Visible = false;
+        }
         #endregion
 
         #region Link Labels
@@ -717,7 +754,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LinkLabel senderLink = (LinkLabel)sender;
             OpenFile(Path.Combine(Folders.GetFolder(FolderType.ScriptsFolder), senderLink.Text));
         }
-        #endregion       
+        #endregion      
     }
 }
 

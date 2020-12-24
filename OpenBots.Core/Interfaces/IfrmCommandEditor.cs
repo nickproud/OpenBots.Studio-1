@@ -1,12 +1,15 @@
-﻿using OpenBots.Core.Command;
+﻿using Autofac;
+using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
+using OpenBots.Core.UI.Controls.CustomControls;
 using System.Collections.Generic;
 
 namespace OpenBots.Core.Infrastructure
 {
     public interface IfrmCommandEditor
     {
+        List<AutomationCommand> CommandList { get; set; }
         List<ScriptVariable> ScriptVariables { get; set; }
         List<ScriptElement> ScriptElements { get; set; }
         string ProjectPath { get; set; }
@@ -17,5 +20,6 @@ namespace OpenBots.Core.Infrastructure
         ScriptCommand EditingCommand { get; set; }
         List<ScriptCommand> ConfiguredCommands { get; set; }
         string HTMLElementRecorderURL { get; set; }
+        IContainer Container { get; set; }
     }
 }

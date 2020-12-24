@@ -32,6 +32,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmScriptBuilder));
+            OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.cmsProjectFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCopyFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDeleteFolder = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,6 +68,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnClose = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnSaveSequence = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.grpFileActions = new OpenBots.UI.CustomControls.CustomUIControls.UIGroupBox();
+            this.uiBtnPackageManager = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnSaveAll = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnPublishProject = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnProject = new OpenBots.Core.UI.Controls.UIPictureButton();
@@ -90,6 +92,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnAddVariable = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.pnlStatus = new System.Windows.Forms.Panel();
             this.splitContainerStudioControls = new OpenBots.UI.CustomControls.CustomUIControls.UISplitContainer();
+            this.pnlPaneTabs = new OpenBots.UI.CustomControls.CustomUIControls.UIPanel();
+            this.tpbLoadingSpinner = new OpenBots.UI.CustomControls.CustomUIControls.UITransparentPictureBox();
             this.uiPaneTabs = new System.Windows.Forms.TabControl();
             this.tpProject = new System.Windows.Forms.TabPage();
             this.tlpProject = new System.Windows.Forms.TableLayoutPanel();
@@ -104,6 +108,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tlpCommands = new System.Windows.Forms.TableLayoutPanel();
             this.tvCommands = new OpenBots.UI.CustomControls.CustomUIControls.UITreeView();
             this.pnlCommandSearch = new System.Windows.Forms.Panel();
+            this.uiBtnReloadCommands = new OpenBots.UI.CustomControls.CustomUIControls.UIIconButton();
             this.uiBtnClearCommandSearch = new OpenBots.UI.CustomControls.CustomUIControls.UIIconButton();
             this.txtCommandSearch = new System.Windows.Forms.TextBox();
             this.uiScriptTabControl = new OpenBots.UI.CustomControls.CustomUIControls.UITabControl();
@@ -153,9 +158,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.breakpointToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.packageManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.installDefaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsSearchBox = new System.Windows.Forms.ToolStripTextBox();
             this.tsSearchButton = new System.Windows.Forms.ToolStripMenuItem();
             this.tsSearchResult = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.tlpControls = new System.Windows.Forms.TableLayoutPanel();
             this.cmsProjectFileActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCopyFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -165,7 +173,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.cmsScriptTabActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCloseTab = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCloseAllButThis = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiReloadTab = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsProjectMainFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ttScriptBuilder = new System.Windows.Forms.ToolTip(this.components);
             this.cmsProjectFolderActions.SuspendLayout();
             this.cmsScriptActions.SuspendLayout();
             this.pnlControlContainer.SuspendLayout();
@@ -177,6 +187,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnClose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnSaveSequence)).BeginInit();
             this.grpFileActions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uiBtnPackageManager)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnSaveAll)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnPublishProject)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnProject)).BeginInit();
@@ -202,6 +213,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.splitContainerStudioControls.Panel1.SuspendLayout();
             this.splitContainerStudioControls.Panel2.SuspendLayout();
             this.splitContainerStudioControls.SuspendLayout();
+            this.pnlPaneTabs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tpbLoadingSpinner)).BeginInit();
             this.uiPaneTabs.SuspendLayout();
             this.tpProject.SuspendLayout();
             this.tlpProject.SuspendLayout();
@@ -213,6 +226,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tpCommands.SuspendLayout();
             this.tlpCommands.SuspendLayout();
             this.pnlCommandSearch.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uiBtnReloadCommands)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnClearCommandSearch)).BeginInit();
             this.pnlCommandHelper.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecentFiles)).BeginInit();
@@ -442,7 +456,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlControlContainer.Location = new System.Drawing.Point(0, 38);
             this.pnlControlContainer.Margin = new System.Windows.Forms.Padding(0);
             this.pnlControlContainer.Name = "pnlControlContainer";
-            this.pnlControlContainer.Size = new System.Drawing.Size(1652, 98);
+            this.pnlControlContainer.Size = new System.Drawing.Size(1745, 98);
             this.pnlControlContainer.TabIndex = 7;
             this.pnlControlContainer.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlControlContainer_Paint);
             // 
@@ -453,10 +467,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.grpSearch.Controls.Add(this.lblCurrentlyViewing);
             this.grpSearch.Controls.Add(this.lblTotalResults);
             this.grpSearch.Controls.Add(this.txtScriptSearch);
-            this.grpSearch.Location = new System.Drawing.Point(1219, 0);
-            this.grpSearch.Margin = new System.Windows.Forms.Padding(4);
+            this.grpSearch.Location = new System.Drawing.Point(1276, 0);
+            this.grpSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpSearch.Name = "grpSearch";
-            this.grpSearch.Padding = new System.Windows.Forms.Padding(4);
+            this.grpSearch.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpSearch.Size = new System.Drawing.Size(240, 89);
             this.grpSearch.TabIndex = 20;
             this.grpSearch.TabStop = false;
@@ -470,7 +484,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // 
             this.pbSearch.Image = ((System.Drawing.Image)(resources.GetObject("pbSearch.Image")));
             this.pbSearch.Location = new System.Drawing.Point(198, 26);
-            this.pbSearch.Margin = new System.Windows.Forms.Padding(4);
+            this.pbSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pbSearch.Name = "pbSearch";
             this.pbSearch.Size = new System.Drawing.Size(20, 20);
             this.pbSearch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -510,7 +524,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // 
             this.txtScriptSearch.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtScriptSearch.Location = new System.Drawing.Point(6, 24);
-            this.txtScriptSearch.Margin = new System.Windows.Forms.Padding(4);
+            this.txtScriptSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtScriptSearch.Name = "txtScriptSearch";
             this.txtScriptSearch.Size = new System.Drawing.Size(188, 27);
             this.txtScriptSearch.TabIndex = 0;
@@ -523,10 +537,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.grpSaveClose.Controls.Add(this.uiBtnRestart);
             this.grpSaveClose.Controls.Add(this.uiBtnClose);
             this.grpSaveClose.Controls.Add(this.uiBtnSaveSequence);
-            this.grpSaveClose.Location = new System.Drawing.Point(1462, 0);
-            this.grpSaveClose.Margin = new System.Windows.Forms.Padding(4);
+            this.grpSaveClose.Location = new System.Drawing.Point(1519, 0);
+            this.grpSaveClose.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpSaveClose.Name = "grpSaveClose";
-            this.grpSaveClose.Padding = new System.Windows.Forms.Padding(4);
+            this.grpSaveClose.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpSaveClose.Size = new System.Drawing.Size(204, 89);
             this.grpSaveClose.TabIndex = 19;
             this.grpSaveClose.TabStop = false;
@@ -546,7 +560,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnRenameSequence.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnRenameSequence.Image")));
             this.uiBtnRenameSequence.IsMouseOver = false;
             this.uiBtnRenameSequence.Location = new System.Drawing.Point(120, 24);
-            this.uiBtnRenameSequence.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnRenameSequence.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnRenameSequence.Name = "uiBtnRenameSequence";
             this.uiBtnRenameSequence.Size = new System.Drawing.Size(60, 62);
             this.uiBtnRenameSequence.TabIndex = 20;
@@ -565,7 +579,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnRestart.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnRestart.Image")));
             this.uiBtnRestart.IsMouseOver = false;
             this.uiBtnRestart.Location = new System.Drawing.Point(0, 24);
-            this.uiBtnRestart.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnRestart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnRestart.Name = "uiBtnRestart";
             this.uiBtnRestart.Size = new System.Drawing.Size(60, 62);
             this.uiBtnRestart.TabIndex = 19;
@@ -583,7 +597,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnClose.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnClose.Image")));
             this.uiBtnClose.IsMouseOver = false;
             this.uiBtnClose.Location = new System.Drawing.Point(60, 24);
-            this.uiBtnClose.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnClose.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnClose.Name = "uiBtnClose";
             this.uiBtnClose.Size = new System.Drawing.Size(60, 62);
             this.uiBtnClose.TabIndex = 13;
@@ -601,7 +615,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnSaveSequence.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnSaveSequence.Image")));
             this.uiBtnSaveSequence.IsMouseOver = false;
             this.uiBtnSaveSequence.Location = new System.Drawing.Point(2, 24);
-            this.uiBtnSaveSequence.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnSaveSequence.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnSaveSequence.Name = "uiBtnSaveSequence";
             this.uiBtnSaveSequence.Size = new System.Drawing.Size(60, 62);
             this.uiBtnSaveSequence.TabIndex = 16;
@@ -613,6 +627,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // grpFileActions
             // 
             this.grpFileActions.BackColor = System.Drawing.Color.Transparent;
+            this.grpFileActions.Controls.Add(this.uiBtnPackageManager);
             this.grpFileActions.Controls.Add(this.uiBtnSaveAll);
             this.grpFileActions.Controls.Add(this.uiBtnPublishProject);
             this.grpFileActions.Controls.Add(this.uiBtnProject);
@@ -622,10 +637,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.grpFileActions.Controls.Add(this.uiBtnNew);
             this.grpFileActions.Controls.Add(this.uiBtnOpen);
             this.grpFileActions.Location = new System.Drawing.Point(11, 0);
-            this.grpFileActions.Margin = new System.Windows.Forms.Padding(4);
+            this.grpFileActions.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpFileActions.Name = "grpFileActions";
-            this.grpFileActions.Padding = new System.Windows.Forms.Padding(4);
-            this.grpFileActions.Size = new System.Drawing.Size(484, 89);
+            this.grpFileActions.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpFileActions.Size = new System.Drawing.Size(552, 89);
             this.grpFileActions.TabIndex = 16;
             this.grpFileActions.TabStop = false;
             this.grpFileActions.Text = "File Actions";
@@ -633,6 +648,24 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.grpFileActions.TitleFont = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpFileActions.TitleForeColor = System.Drawing.Color.GhostWhite;
             this.grpFileActions.TitleHatchStyle = System.Drawing.Drawing2D.HatchStyle.Horizontal;
+            // 
+            // uiBtnPackageManager
+            // 
+            this.uiBtnPackageManager.BackColor = System.Drawing.Color.Transparent;
+            this.uiBtnPackageManager.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.uiBtnPackageManager.DisplayText = "Packages";
+            this.uiBtnPackageManager.DisplayTextBrush = System.Drawing.Color.AliceBlue;
+            this.uiBtnPackageManager.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.uiBtnPackageManager.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnPackageManager.Image")));
+            this.uiBtnPackageManager.IsMouseOver = false;
+            this.uiBtnPackageManager.Location = new System.Drawing.Point(480, 24);
+            this.uiBtnPackageManager.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.uiBtnPackageManager.Name = "uiBtnPackageManager";
+            this.uiBtnPackageManager.Size = new System.Drawing.Size(60, 62);
+            this.uiBtnPackageManager.TabIndex = 18;
+            this.uiBtnPackageManager.TabStop = false;
+            this.uiBtnPackageManager.Text = "Packages";
+            this.uiBtnPackageManager.Click += new System.EventHandler(this.uiBtnPackageManager_Click);
             // 
             // uiBtnSaveAll
             // 
@@ -644,7 +677,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnSaveAll.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnSaveAll.Image")));
             this.uiBtnSaveAll.IsMouseOver = false;
             this.uiBtnSaveAll.Location = new System.Drawing.Point(360, 24);
-            this.uiBtnSaveAll.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnSaveAll.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnSaveAll.Name = "uiBtnSaveAll";
             this.uiBtnSaveAll.Size = new System.Drawing.Size(60, 62);
             this.uiBtnSaveAll.TabIndex = 17;
@@ -662,13 +695,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnPublishProject.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnPublishProject.Image")));
             this.uiBtnPublishProject.IsMouseOver = false;
             this.uiBtnPublishProject.Location = new System.Drawing.Point(420, 24);
-            this.uiBtnPublishProject.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnPublishProject.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnPublishProject.Name = "uiBtnPublishProject";
             this.uiBtnPublishProject.Size = new System.Drawing.Size(60, 62);
             this.uiBtnPublishProject.TabIndex = 16;
             this.uiBtnPublishProject.TabStop = false;
             this.uiBtnPublishProject.Text = "Publish";
-            this.uiBtnPublishProject.Click += new System.EventHandler(this.uiBtnPublishProject_Click);
             // 
             // uiBtnProject
             // 
@@ -680,7 +712,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnProject.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnProject.Image")));
             this.uiBtnProject.IsMouseOver = false;
             this.uiBtnProject.Location = new System.Drawing.Point(0, 24);
-            this.uiBtnProject.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnProject.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnProject.Name = "uiBtnProject";
             this.uiBtnProject.Size = new System.Drawing.Size(60, 62);
             this.uiBtnProject.TabIndex = 15;
@@ -698,7 +730,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnImport.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnImport.Image")));
             this.uiBtnImport.IsMouseOver = false;
             this.uiBtnImport.Location = new System.Drawing.Point(180, 24);
-            this.uiBtnImport.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnImport.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnImport.Name = "uiBtnImport";
             this.uiBtnImport.Size = new System.Drawing.Size(60, 62);
             this.uiBtnImport.TabIndex = 14;
@@ -716,7 +748,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnSaveAs.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnSaveAs.Image")));
             this.uiBtnSaveAs.IsMouseOver = false;
             this.uiBtnSaveAs.Location = new System.Drawing.Point(300, 24);
-            this.uiBtnSaveAs.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnSaveAs.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnSaveAs.Name = "uiBtnSaveAs";
             this.uiBtnSaveAs.Size = new System.Drawing.Size(60, 62);
             this.uiBtnSaveAs.TabIndex = 13;
@@ -734,7 +766,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnSave.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnSave.Image")));
             this.uiBtnSave.IsMouseOver = false;
             this.uiBtnSave.Location = new System.Drawing.Point(240, 24);
-            this.uiBtnSave.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnSave.Name = "uiBtnSave";
             this.uiBtnSave.Size = new System.Drawing.Size(60, 62);
             this.uiBtnSave.TabIndex = 11;
@@ -752,7 +784,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnNew.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnNew.Image")));
             this.uiBtnNew.IsMouseOver = false;
             this.uiBtnNew.Location = new System.Drawing.Point(60, 24);
-            this.uiBtnNew.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnNew.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnNew.Name = "uiBtnNew";
             this.uiBtnNew.Size = new System.Drawing.Size(60, 62);
             this.uiBtnNew.TabIndex = 12;
@@ -770,7 +802,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnOpen.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOpen.Image")));
             this.uiBtnOpen.IsMouseOver = false;
             this.uiBtnOpen.Location = new System.Drawing.Point(120, 24);
-            this.uiBtnOpen.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnOpen.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnOpen.Name = "uiBtnOpen";
             this.uiBtnOpen.Size = new System.Drawing.Size(60, 62);
             this.uiBtnOpen.TabIndex = 10;
@@ -788,10 +820,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.grpRecordRun.Controls.Add(this.uiBtnRecordUISequence);
             this.grpRecordRun.Controls.Add(this.uiBtnDebugScript);
             this.grpRecordRun.Controls.Add(this.uiBtnScheduleManagement);
-            this.grpRecordRun.Location = new System.Drawing.Point(775, 0);
-            this.grpRecordRun.Margin = new System.Windows.Forms.Padding(4);
+            this.grpRecordRun.Location = new System.Drawing.Point(832, 0);
+            this.grpRecordRun.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpRecordRun.Name = "grpRecordRun";
-            this.grpRecordRun.Padding = new System.Windows.Forms.Padding(4);
+            this.grpRecordRun.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpRecordRun.Size = new System.Drawing.Size(446, 89);
             this.grpRecordRun.TabIndex = 18;
             this.grpRecordRun.TabStop = false;
@@ -811,7 +843,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnBreakpoint.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnBreakpoint.Image")));
             this.uiBtnBreakpoint.IsMouseOver = false;
             this.uiBtnBreakpoint.Location = new System.Drawing.Point(369, 24);
-            this.uiBtnBreakpoint.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnBreakpoint.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnBreakpoint.Name = "uiBtnBreakpoint";
             this.uiBtnBreakpoint.Size = new System.Drawing.Size(60, 62);
             this.uiBtnBreakpoint.TabIndex = 23;
@@ -829,7 +861,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnRecordAdvancedUISequence.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnRecordAdvancedUISequence.Image")));
             this.uiBtnRecordAdvancedUISequence.IsMouseOver = false;
             this.uiBtnRecordAdvancedUISequence.Location = new System.Drawing.Point(189, 24);
-            this.uiBtnRecordAdvancedUISequence.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnRecordAdvancedUISequence.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnRecordAdvancedUISequence.Name = "uiBtnRecordAdvancedUISequence";
             this.uiBtnRecordAdvancedUISequence.Size = new System.Drawing.Size(60, 62);
             this.uiBtnRecordAdvancedUISequence.TabIndex = 22;
@@ -847,7 +879,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnRecordElementSequence.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnRecordElementSequence.Image")));
             this.uiBtnRecordElementSequence.IsMouseOver = false;
             this.uiBtnRecordElementSequence.Location = new System.Drawing.Point(69, 24);
-            this.uiBtnRecordElementSequence.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnRecordElementSequence.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnRecordElementSequence.Name = "uiBtnRecordElementSequence";
             this.uiBtnRecordElementSequence.Size = new System.Drawing.Size(60, 62);
             this.uiBtnRecordElementSequence.TabIndex = 16;
@@ -865,7 +897,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnRunScript.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnRunScript.Image")));
             this.uiBtnRunScript.IsMouseOver = false;
             this.uiBtnRunScript.Location = new System.Drawing.Point(249, 24);
-            this.uiBtnRunScript.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnRunScript.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnRunScript.Name = "uiBtnRunScript";
             this.uiBtnRunScript.Size = new System.Drawing.Size(60, 62);
             this.uiBtnRunScript.TabIndex = 21;
@@ -883,7 +915,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnRecordUISequence.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnRecordUISequence.Image")));
             this.uiBtnRecordUISequence.IsMouseOver = false;
             this.uiBtnRecordUISequence.Location = new System.Drawing.Point(129, 24);
-            this.uiBtnRecordUISequence.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnRecordUISequence.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnRecordUISequence.Name = "uiBtnRecordUISequence";
             this.uiBtnRecordUISequence.Size = new System.Drawing.Size(60, 62);
             this.uiBtnRecordUISequence.TabIndex = 19;
@@ -901,7 +933,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnDebugScript.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnDebugScript.Image")));
             this.uiBtnDebugScript.IsMouseOver = false;
             this.uiBtnDebugScript.Location = new System.Drawing.Point(309, 24);
-            this.uiBtnDebugScript.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnDebugScript.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnDebugScript.Name = "uiBtnDebugScript";
             this.uiBtnDebugScript.Size = new System.Drawing.Size(60, 62);
             this.uiBtnDebugScript.TabIndex = 12;
@@ -919,7 +951,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnScheduleManagement.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnScheduleManagement.Image")));
             this.uiBtnScheduleManagement.IsMouseOver = false;
             this.uiBtnScheduleManagement.Location = new System.Drawing.Point(4, 24);
-            this.uiBtnScheduleManagement.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnScheduleManagement.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnScheduleManagement.Name = "uiBtnScheduleManagement";
             this.uiBtnScheduleManagement.Size = new System.Drawing.Size(65, 62);
             this.uiBtnScheduleManagement.TabIndex = 13;
@@ -934,10 +966,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.grpVariable.Controls.Add(this.uiBtnClearAll);
             this.grpVariable.Controls.Add(this.uiBtnSettings);
             this.grpVariable.Controls.Add(this.uiBtnAddVariable);
-            this.grpVariable.Location = new System.Drawing.Point(506, 0);
-            this.grpVariable.Margin = new System.Windows.Forms.Padding(4);
+            this.grpVariable.Location = new System.Drawing.Point(563, 0);
+            this.grpVariable.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpVariable.Name = "grpVariable";
-            this.grpVariable.Padding = new System.Windows.Forms.Padding(4);
+            this.grpVariable.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.grpVariable.Size = new System.Drawing.Size(261, 89);
             this.grpVariable.TabIndex = 17;
             this.grpVariable.TabStop = false;
@@ -957,7 +989,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnAddElement.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnAddElement.Image")));
             this.uiBtnAddElement.IsMouseOver = false;
             this.uiBtnAddElement.Location = new System.Drawing.Point(70, 24);
-            this.uiBtnAddElement.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnAddElement.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnAddElement.Name = "uiBtnAddElement";
             this.uiBtnAddElement.Size = new System.Drawing.Size(60, 62);
             this.uiBtnAddElement.TabIndex = 15;
@@ -975,7 +1007,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnClearAll.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnClearAll.Image")));
             this.uiBtnClearAll.IsMouseOver = false;
             this.uiBtnClearAll.Location = new System.Drawing.Point(190, 24);
-            this.uiBtnClearAll.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnClearAll.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnClearAll.Name = "uiBtnClearAll";
             this.uiBtnClearAll.Size = new System.Drawing.Size(60, 62);
             this.uiBtnClearAll.TabIndex = 14;
@@ -993,7 +1025,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnSettings.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnSettings.Image")));
             this.uiBtnSettings.IsMouseOver = false;
             this.uiBtnSettings.Location = new System.Drawing.Point(130, 24);
-            this.uiBtnSettings.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnSettings.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnSettings.Name = "uiBtnSettings";
             this.uiBtnSettings.Size = new System.Drawing.Size(60, 62);
             this.uiBtnSettings.TabIndex = 12;
@@ -1011,7 +1043,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnAddVariable.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnAddVariable.Image")));
             this.uiBtnAddVariable.IsMouseOver = false;
             this.uiBtnAddVariable.Location = new System.Drawing.Point(8, 24);
-            this.uiBtnAddVariable.Margin = new System.Windows.Forms.Padding(4);
+            this.uiBtnAddVariable.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiBtnAddVariable.Name = "uiBtnAddVariable";
             this.uiBtnAddVariable.Size = new System.Drawing.Size(62, 62);
             this.uiBtnAddVariable.TabIndex = 13;
@@ -1028,7 +1060,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlStatus.Location = new System.Drawing.Point(0, 823);
             this.pnlStatus.Margin = new System.Windows.Forms.Padding(0);
             this.pnlStatus.Name = "pnlStatus";
-            this.pnlStatus.Size = new System.Drawing.Size(1652, 39);
+            this.pnlStatus.Size = new System.Drawing.Size(1745, 39);
             this.pnlStatus.TabIndex = 3;
             this.pnlStatus.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlStatus_Paint);
             this.pnlStatus.DoubleClick += new System.EventHandler(this.pnlStatus_DoubleClick);
@@ -1039,22 +1071,49 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.splitContainerStudioControls.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerStudioControls.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainerStudioControls.Location = new System.Drawing.Point(4, 146);
-            this.splitContainerStudioControls.Margin = new System.Windows.Forms.Padding(4);
+            this.splitContainerStudioControls.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.splitContainerStudioControls.Name = "splitContainerStudioControls";
             // 
             // splitContainerStudioControls.Panel1
             // 
             this.splitContainerStudioControls.Panel1.BackColor = System.Drawing.Color.Transparent;
-            this.splitContainerStudioControls.Panel1.Controls.Add(this.uiPaneTabs);
+            this.splitContainerStudioControls.Panel1.Controls.Add(this.pnlPaneTabs);
             // 
             // splitContainerStudioControls.Panel2
             // 
             this.splitContainerStudioControls.Panel2.BackColor = System.Drawing.Color.Transparent;
             this.splitContainerStudioControls.Panel2.Controls.Add(this.uiScriptTabControl);
-            this.splitContainerStudioControls.Size = new System.Drawing.Size(1644, 673);
+            this.splitContainerStudioControls.Size = new System.Drawing.Size(1737, 673);
             this.splitContainerStudioControls.SplitterDistance = 328;
             this.splitContainerStudioControls.SplitterWidth = 5;
             this.splitContainerStudioControls.TabIndex = 4;
+            // 
+            // pnlPaneTabs
+            // 
+            this.pnlPaneTabs.Controls.Add(this.tpbLoadingSpinner);
+            this.pnlPaneTabs.Controls.Add(this.uiPaneTabs);
+            this.pnlPaneTabs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlPaneTabs.Location = new System.Drawing.Point(0, 0);
+            this.pnlPaneTabs.Name = "pnlPaneTabs";
+            this.pnlPaneTabs.Size = new System.Drawing.Size(328, 673);
+            this.pnlPaneTabs.TabIndex = 2;
+            theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.pnlPaneTabs.Theme = theme1;
+            // 
+            // tpbLoadingSpinner
+            // 
+            this.tpbLoadingSpinner.BackColor = System.Drawing.Color.Transparent;
+            this.tpbLoadingSpinner.ErrorImage = ((System.Drawing.Image)(resources.GetObject("tpbLoadingSpinner.ErrorImage")));
+            this.tpbLoadingSpinner.Image = ((System.Drawing.Image)(resources.GetObject("tpbLoadingSpinner.Image")));
+            this.tpbLoadingSpinner.InitialImage = ((System.Drawing.Image)(resources.GetObject("tpbLoadingSpinner.InitialImage")));
+            this.tpbLoadingSpinner.Location = new System.Drawing.Point(24, 242);
+            this.tpbLoadingSpinner.Name = "tpbLoadingSpinner";
+            this.tpbLoadingSpinner.Size = new System.Drawing.Size(230, 214);
+            this.tpbLoadingSpinner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.tpbLoadingSpinner.TabIndex = 44;
+            this.tpbLoadingSpinner.TabStop = false;
+            this.tpbLoadingSpinner.Visible = false;
             // 
             // uiPaneTabs
             // 
@@ -1063,7 +1122,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiPaneTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiPaneTabs.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.uiPaneTabs.Location = new System.Drawing.Point(0, 0);
-            this.uiPaneTabs.Margin = new System.Windows.Forms.Padding(4);
+            this.uiPaneTabs.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.uiPaneTabs.Name = "uiPaneTabs";
             this.uiPaneTabs.SelectedIndex = 0;
             this.uiPaneTabs.Size = new System.Drawing.Size(328, 673);
@@ -1153,13 +1212,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnCollapse.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnCollapse.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCollapse.Image")));
             this.uiBtnCollapse.IsMouseOver = false;
-            this.uiBtnCollapse.Location = new System.Drawing.Point(56, 2);
+            this.uiBtnCollapse.Location = new System.Drawing.Point(57, 2);
             this.uiBtnCollapse.Margin = new System.Windows.Forms.Padding(2);
             this.uiBtnCollapse.Name = "uiBtnCollapse";
             this.uiBtnCollapse.Size = new System.Drawing.Size(25, 25);
             this.uiBtnCollapse.TabIndex = 3;
             this.uiBtnCollapse.TabStop = false;
             this.uiBtnCollapse.Text = null;
+            this.ttScriptBuilder.SetToolTip(this.uiBtnCollapse, "Collapse");
             this.uiBtnCollapse.Click += new System.EventHandler(this.uiBtnCollapse_Click);
             // 
             // uiBtnOpenDirectory
@@ -1170,13 +1230,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnOpenDirectory.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnOpenDirectory.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOpenDirectory.Image")));
             this.uiBtnOpenDirectory.IsMouseOver = false;
-            this.uiBtnOpenDirectory.Location = new System.Drawing.Point(84, 2);
+            this.uiBtnOpenDirectory.Location = new System.Drawing.Point(85, 2);
             this.uiBtnOpenDirectory.Margin = new System.Windows.Forms.Padding(2);
             this.uiBtnOpenDirectory.Name = "uiBtnOpenDirectory";
             this.uiBtnOpenDirectory.Size = new System.Drawing.Size(25, 25);
             this.uiBtnOpenDirectory.TabIndex = 2;
             this.uiBtnOpenDirectory.TabStop = false;
             this.uiBtnOpenDirectory.Text = null;
+            this.ttScriptBuilder.SetToolTip(this.uiBtnOpenDirectory, "Open Project Directory in File Explorer");
             this.uiBtnOpenDirectory.Click += new System.EventHandler(this.uiBtnOpenDirectory_Click);
             // 
             // uiBtnExpand
@@ -1194,6 +1255,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnExpand.TabIndex = 1;
             this.uiBtnExpand.TabStop = false;
             this.uiBtnExpand.Text = null;
+            this.ttScriptBuilder.SetToolTip(this.uiBtnExpand, "Expand");
             this.uiBtnExpand.Click += new System.EventHandler(this.uiBtnExpand_Click);
             // 
             // uiBtnRefresh
@@ -1211,6 +1273,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnRefresh.TabIndex = 0;
             this.uiBtnRefresh.TabStop = false;
             this.uiBtnRefresh.Text = null;
+            this.ttScriptBuilder.SetToolTip(this.uiBtnRefresh, "Reload Project Directory");
             this.uiBtnRefresh.Click += new System.EventHandler(this.uiBtnRefresh_Click);
             // 
             // tpCommands
@@ -1222,7 +1285,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tpCommands.Margin = new System.Windows.Forms.Padding(2);
             this.tpCommands.Name = "tpCommands";
             this.tpCommands.Padding = new System.Windows.Forms.Padding(2);
-            this.tpCommands.Size = new System.Drawing.Size(320, 637);
+            this.tpCommands.Size = new System.Drawing.Size(265, 636);
             this.tpCommands.TabIndex = 4;
             this.tpCommands.Text = "Commands";
             this.tpCommands.UseVisualStyleBackColor = true;
@@ -1241,7 +1304,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tlpCommands.RowCount = 2;
             this.tlpCommands.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
             this.tlpCommands.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpCommands.Size = new System.Drawing.Size(316, 633);
+            this.tlpCommands.Size = new System.Drawing.Size(261, 632);
             this.tlpCommands.TabIndex = 10;
             // 
             // tvCommands
@@ -1253,11 +1316,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tvCommands.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
             this.tvCommands.ForeColor = System.Drawing.Color.White;
             this.tvCommands.Location = new System.Drawing.Point(4, 35);
-            this.tvCommands.Margin = new System.Windows.Forms.Padding(4);
+            this.tvCommands.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tvCommands.Name = "tvCommands";
             this.tvCommands.ShowLines = false;
             this.tvCommands.ShowNodeToolTips = true;
-            this.tvCommands.Size = new System.Drawing.Size(308, 594);
+            this.tvCommands.Size = new System.Drawing.Size(253, 593);
             this.tvCommands.TabIndex = 9;
             this.tvCommands.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tvCommands_ItemDrag);
             this.tvCommands.DoubleClick += new System.EventHandler(this.tvCommands_DoubleClick);
@@ -1265,14 +1328,34 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // 
             // pnlCommandSearch
             // 
+            this.pnlCommandSearch.Controls.Add(this.uiBtnReloadCommands);
             this.pnlCommandSearch.Controls.Add(this.uiBtnClearCommandSearch);
             this.pnlCommandSearch.Controls.Add(this.txtCommandSearch);
             this.pnlCommandSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlCommandSearch.Location = new System.Drawing.Point(2, 2);
             this.pnlCommandSearch.Margin = new System.Windows.Forms.Padding(2);
             this.pnlCommandSearch.Name = "pnlCommandSearch";
-            this.pnlCommandSearch.Size = new System.Drawing.Size(312, 27);
+            this.pnlCommandSearch.Size = new System.Drawing.Size(257, 27);
             this.pnlCommandSearch.TabIndex = 10;
+            // 
+            // uiBtnReloadCommands
+            // 
+            this.uiBtnReloadCommands.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.uiBtnReloadCommands.BackColor = System.Drawing.Color.Transparent;
+            this.uiBtnReloadCommands.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.uiBtnReloadCommands.DisplayText = null;
+            this.uiBtnReloadCommands.DisplayTextBrush = System.Drawing.Color.White;
+            this.uiBtnReloadCommands.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnReloadCommands.Image")));
+            this.uiBtnReloadCommands.IsMouseOver = false;
+            this.uiBtnReloadCommands.Location = new System.Drawing.Point(230, 1);
+            this.uiBtnReloadCommands.Margin = new System.Windows.Forms.Padding(2);
+            this.uiBtnReloadCommands.Name = "uiBtnReloadCommands";
+            this.uiBtnReloadCommands.Size = new System.Drawing.Size(25, 25);
+            this.uiBtnReloadCommands.TabIndex = 2;
+            this.uiBtnReloadCommands.TabStop = false;
+            this.uiBtnReloadCommands.Text = null;
+            this.ttScriptBuilder.SetToolTip(this.uiBtnReloadCommands, "Reload Command Assemblies");
+            this.uiBtnReloadCommands.Click += new System.EventHandler(this.uiBtnReloadCommands_Click);
             // 
             // uiBtnClearCommandSearch
             // 
@@ -1283,13 +1366,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnClearCommandSearch.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnClearCommandSearch.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnClearCommandSearch.Image")));
             this.uiBtnClearCommandSearch.IsMouseOver = false;
-            this.uiBtnClearCommandSearch.Location = new System.Drawing.Point(285, 2);
+            this.uiBtnClearCommandSearch.Location = new System.Drawing.Point(202, 1);
             this.uiBtnClearCommandSearch.Margin = new System.Windows.Forms.Padding(2);
             this.uiBtnClearCommandSearch.Name = "uiBtnClearCommandSearch";
             this.uiBtnClearCommandSearch.Size = new System.Drawing.Size(25, 25);
             this.uiBtnClearCommandSearch.TabIndex = 1;
             this.uiBtnClearCommandSearch.TabStop = false;
             this.uiBtnClearCommandSearch.Text = null;
+            this.ttScriptBuilder.SetToolTip(this.uiBtnClearCommandSearch, "Clear Search");
             this.uiBtnClearCommandSearch.Click += new System.EventHandler(this.uiBtnClearCommandSearch_Click);
             // 
             // txtCommandSearch
@@ -1300,7 +1384,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.txtCommandSearch.Location = new System.Drawing.Point(0, 0);
             this.txtCommandSearch.Margin = new System.Windows.Forms.Padding(2);
             this.txtCommandSearch.Name = "txtCommandSearch";
-            this.txtCommandSearch.Size = new System.Drawing.Size(283, 30);
+            this.txtCommandSearch.Size = new System.Drawing.Size(199, 30);
             this.txtCommandSearch.TabIndex = 0;
             this.txtCommandSearch.Text = "Type Here to Search";
             this.txtCommandSearch.TextChanged += new System.EventHandler(this.txtCommandSearch_TextChanged);
@@ -1317,7 +1401,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiScriptTabControl.Name = "uiScriptTabControl";
             this.uiScriptTabControl.SelectedIndex = 0;
             this.uiScriptTabControl.ShowToolTips = true;
-            this.uiScriptTabControl.Size = new System.Drawing.Size(1311, 673);
+            this.uiScriptTabControl.Size = new System.Drawing.Size(1404, 673);
             this.uiScriptTabControl.TabIndex = 3;
             this.uiScriptTabControl.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.uiScriptTabControl_DrawItem);
             this.uiScriptTabControl.SelectedIndexChanged += new System.EventHandler(this.uiScriptTabControl_SelectedIndexChanged);
@@ -1521,7 +1605,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlDivider.Location = new System.Drawing.Point(0, 136);
             this.pnlDivider.Margin = new System.Windows.Forms.Padding(0);
             this.pnlDivider.Name = "pnlDivider";
-            this.pnlDivider.Size = new System.Drawing.Size(1652, 6);
+            this.pnlDivider.Size = new System.Drawing.Size(1745, 6);
             this.pnlDivider.TabIndex = 13;
             // 
             // msOpenBotsMenu
@@ -1538,12 +1622,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.runToolStripMenuItem,
             this.debugToolStripMenuItem,
             this.breakpointToolStripMenuItem,
+            this.packageManagerToolStripMenuItem,
+            this.installDefaultToolStripMenuItem,
             this.tsSearchBox,
             this.tsSearchButton,
-            this.tsSearchResult});
+            this.tsSearchResult,
+            this.toolStripMenuItem1});
             this.msOpenBotsMenu.Location = new System.Drawing.Point(0, 0);
             this.msOpenBotsMenu.Name = "msOpenBotsMenu";
-            this.msOpenBotsMenu.Size = new System.Drawing.Size(1652, 38);
+            this.msOpenBotsMenu.Padding = new System.Windows.Forms.Padding(6, 2, 0, 2);
+            this.msOpenBotsMenu.Size = new System.Drawing.Size(1745, 38);
             this.msOpenBotsMenu.TabIndex = 1;
             this.msOpenBotsMenu.Text = "menuStrip1";
             // 
@@ -1821,6 +1909,25 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.breakpointToolStripMenuItem.Text = "Breakpoint";
             this.breakpointToolStripMenuItem.Click += new System.EventHandler(this.breakpointToolStripMenuItem_Click);
             // 
+            // packageManagerToolStripMenuItem
+            // 
+            this.packageManagerToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.packageManagerToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("packageManagerToolStripMenuItem.Image")));
+            this.packageManagerToolStripMenuItem.Name = "packageManagerToolStripMenuItem";
+            this.packageManagerToolStripMenuItem.Size = new System.Drawing.Size(160, 34);
+            this.packageManagerToolStripMenuItem.Text = "Package Manager";
+            this.packageManagerToolStripMenuItem.Click += new System.EventHandler(this.packageManagerToolStripMenuItem_Click);
+            // 
+            // installDefaultToolStripMenuItem
+            // 
+            this.installDefaultToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.installDefaultToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("installDefaultToolStripMenuItem.Image")));
+            this.installDefaultToolStripMenuItem.Name = "installDefaultToolStripMenuItem";
+            this.installDefaultToolStripMenuItem.Size = new System.Drawing.Size(214, 34);
+            this.installDefaultToolStripMenuItem.Text = "Install Default Commands";
+            this.installDefaultToolStripMenuItem.Visible = false;
+            this.installDefaultToolStripMenuItem.Click += new System.EventHandler(this.installDefaultToolStripMenuItem_Click);
+            // 
             // tsSearchBox
             // 
             this.tsSearchBox.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -1846,6 +1953,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsSearchResult.Size = new System.Drawing.Size(14, 34);
             this.tsSearchResult.Visible = false;
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(27, 34);
+            this.toolStripMenuItem1.Text = " ";
+            // 
             // tlpControls
             // 
             this.tlpControls.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
@@ -1869,7 +1982,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 39F));
             this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpControls.Size = new System.Drawing.Size(1652, 862);
+            this.tlpControls.Size = new System.Drawing.Size(1745, 862);
             this.tlpControls.TabIndex = 2;
             // 
             // cmsProjectFileActions
@@ -1921,9 +2034,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.cmsScriptTabActions.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsScriptTabActions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiCloseTab,
-            this.tsmiCloseAllButThis});
+            this.tsmiCloseAllButThis,
+            this.tsmiReloadTab});
             this.cmsScriptTabActions.Name = "cmsScriptTabActions";
-            this.cmsScriptTabActions.Size = new System.Drawing.Size(212, 60);
+            this.cmsScriptTabActions.Size = new System.Drawing.Size(212, 88);
             // 
             // tsmiCloseTab
             // 
@@ -1938,6 +2052,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsmiCloseAllButThis.Size = new System.Drawing.Size(211, 28);
             this.tsmiCloseAllButThis.Text = "Close All But This";
             this.tsmiCloseAllButThis.Click += new System.EventHandler(this.tsmiCloseAllButThis_Click);
+            // 
+            // tsmiReloadTab
+            // 
+            this.tsmiReloadTab.Name = "tsmiReloadTab";
+            this.tsmiReloadTab.Size = new System.Drawing.Size(211, 28);
+            this.tsmiReloadTab.Text = "Reload Tab";
+            this.tsmiReloadTab.Click += new System.EventHandler(this.tsmiReloadTab_Click);
             // 
             // cmsProjectMainFolderActions
             // 
@@ -1955,16 +2076,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1652, 862);
+            this.ClientSize = new System.Drawing.Size(1745, 862);
             this.Controls.Add(this.tlpControls);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.msOpenBotsMenu;
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "frmScriptBuilder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "OpenBots Studio";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmScriptBuilder_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmScriptBuilder_FormClosed);
             this.Load += new System.EventHandler(this.frmScriptBuilder_Load);
             this.Shown += new System.EventHandler(this.frmScriptBuilder_Shown);
             this.SizeChanged += new System.EventHandler(this.frmScriptBuilder_SizeChanged);
@@ -1981,6 +2103,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnClose)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnSaveSequence)).EndInit();
             this.grpFileActions.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.uiBtnPackageManager)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnSaveAll)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnPublishProject)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnProject)).EndInit();
@@ -2006,6 +2129,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.splitContainerStudioControls.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerStudioControls)).EndInit();
             this.splitContainerStudioControls.ResumeLayout(false);
+            this.pnlPaneTabs.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tpbLoadingSpinner)).EndInit();
             this.uiPaneTabs.ResumeLayout(false);
             this.tpProject.ResumeLayout(false);
             this.tlpProject.ResumeLayout(false);
@@ -2018,6 +2143,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tlpCommands.ResumeLayout(false);
             this.pnlCommandSearch.ResumeLayout(false);
             this.pnlCommandSearch.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uiBtnReloadCommands)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnClearCommandSearch)).EndInit();
             this.pnlCommandHelper.ResumeLayout(false);
             this.pnlCommandHelper.PerformLayout();
@@ -2170,6 +2296,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private ToolStripMenuItem openShortcutMenuToolStripMenuItem;
         private Core.UI.Controls.UIPictureButton uiBtnRenameSequence;
         private ToolStripMenuItem clearAllToolStripMenuItem;
+        private ToolStripMenuItem packageManagerToolStripMenuItem;
+        private Core.UI.Controls.UIPictureButton uiBtnPackageManager;
+        private ToolStripMenuItem toolStripMenuItem1;
+        private CustomControls.CustomUIControls.UIPanel pnlPaneTabs;
+        private CustomControls.CustomUIControls.UITransparentPictureBox tpbLoadingSpinner;
+        private CustomControls.CustomUIControls.UIIconButton uiBtnReloadCommands;
+        private ToolStripMenuItem tsmiReloadTab;
+        private ToolTip ttScriptBuilder;
+        private ToolStripMenuItem installDefaultToolStripMenuItem;
     }
 }
 

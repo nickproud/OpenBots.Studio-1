@@ -3,15 +3,17 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Common;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
+using System.Data;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using OpenBots.Core.Properties;
 
 namespace OpenBots.Commands.Asset
 {
@@ -68,13 +70,17 @@ namespace OpenBots.Commands.Asset
 		{
 			CommandName = "GetAssetCommand";
 			SelectionName = "Get Asset";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_asset;
+
 			v_AssetType = "Text";
+			Common.InitializeDefaultWebProtocol();
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
 			var vOutputDirectoryPath = v_OutputDirectoryPath.ConvertUserVariableToString(engine);
 
@@ -82,7 +88,7 @@ namespace OpenBots.Commands.Asset
 			var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq '{v_AssetType}'");
 
 			if (asset == null)
-				throw new Exception($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
+				throw new DataException($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
 
 			string assetValue = string.Empty;
 			switch (v_AssetType)

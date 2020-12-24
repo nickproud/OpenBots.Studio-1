@@ -2,8 +2,8 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -53,7 +53,8 @@ namespace OpenBots.Commands.DataTable
 			CommandName = "MergeDataTableCommand";
 			SelectionName = "Merge DataTable";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_spreadsheet;
+
 			v_MissingSchemaAction = "Add";
 		}
 
@@ -66,7 +67,7 @@ namespace OpenBots.Commands.DataTable
 			3. Source and Destination DataTable Varibales must not be the same          -->     (Same Variable Check)
 
 			 */
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 
 			// Get Variable Objects
 			var v_SourceDTVariable = v_SourceDataTable.ConvertUserVariableToObject(engine);
@@ -74,17 +75,17 @@ namespace OpenBots.Commands.DataTable
 
 			// (Null Check)
 			if (v_SourceDTVariable is null)
-				throw new Exception("Source DataTable Variable '" + v_SourceDataTable + "' is not initialized.");
+				throw new ArgumentNullException("Source DataTable Variable '" + v_SourceDataTable + "' is not initialized.");
 
 			if (v_DestinationDTVariable is null)
-				throw new Exception("Destination DataTable Variable '" + v_DestinationDataTable + "' is not initialized.");
+				throw new ArgumentNullException("Destination DataTable Variable '" + v_DestinationDataTable + "' is not initialized.");
 
 			// (Data Type Check)
 			if (!(v_SourceDTVariable is Data.DataTable))
-				throw new Exception("Type of Source DataTable Variable '" + v_SourceDataTable + "' is not DataTable.");
+				throw new ArgumentException("Type of Source DataTable Variable '" + v_SourceDataTable + "' is not DataTable.");
 
 			if (!(v_DestinationDTVariable is Data.DataTable))
-				throw new Exception("Type of Destination DataTable Variable '" + v_DestinationDataTable + "' is not DataTable.");
+				throw new ArgumentException("Type of Destination DataTable Variable '" + v_DestinationDataTable + "' is not DataTable.");
 
 			// Same Variable Check
 			if (v_SourceDataTable != v_DestinationDataTable)

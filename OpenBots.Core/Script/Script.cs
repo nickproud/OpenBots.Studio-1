@@ -191,7 +191,8 @@ namespace OpenBots.Core.Script
             if (deserializedScriptVersion.CompareTo(new Version(Application.ProductVersion)) < 0)
             {
                 var dialogResult = MessageBox.Show($"Attempting to open a Script file from OpenBots Studio {deserializedScriptVersion}. " +
-                                                   $"Would you like to attempt to convert this Script to {Application.ProductVersion}?", 
+                                                   $"Would you like to attempt to convert this Script to {Application.ProductVersion}? " + 
+                                                   "\n\nWarning: Once a Script has been converted, it cannot be undone.", 
                                                    "Convert Script", MessageBoxButtons.YesNo);
 
                 if (dialogResult == DialogResult.Yes || isDialogResultYes)

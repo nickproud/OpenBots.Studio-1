@@ -3,8 +3,9 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -66,13 +67,14 @@ namespace OpenBots.Commands.Outlook
 			CommandName = "SendOutlookEmailCommand";
 			SelectionName = "Send Outlook Email";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_smtp;
+
 			v_BodyType = "Plain";
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vRecipients = v_Recipients.ConvertUserVariableToString(engine);
 			var vAttachment = v_Attachments.ConvertUserVariableToString(engine);
 			var vSubject = v_Subject.ConvertUserVariableToString(engine);

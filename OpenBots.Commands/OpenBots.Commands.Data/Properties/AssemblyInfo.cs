@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("OpenBots.Commands.Data")]
-[assembly: AssemblyDescription("The project contains common data commands required for automation.")]
+[assembly: AssemblyDescription("OpenBots commands for manipulating different forms of data. Supports DateTime, Strings, Math Symbols, and JSON.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Accelirate Inc.")]
+[assembly: AssemblyCompany("OpenBots Inc")]
 [assembly: AssemblyProduct("OpenBots.Commands.Data")]
-[assembly: AssemblyCopyright("Copyright © 2020")]
+[assembly: AssemblyCopyright("(C) OpenBots Inc 2020-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,6 +32,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
 [assembly: NeutralResourcesLanguage("en-US")]

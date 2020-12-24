@@ -4,8 +4,9 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,12 +60,14 @@ namespace OpenBots.Commands.File
 		{
 			CommandName = "ExtractFilesCommand";
 			SelectionName = "Extract Files";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_files;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			//get variable path to source file
 			var vSourceFilePathOrigin = v_FilePathOrigin.ConvertUserVariableToString(engine);
 

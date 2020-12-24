@@ -4,8 +4,9 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -101,7 +102,8 @@ namespace OpenBots.Commands.Outlook
 			CommandName = "GetOutlookEmailsCommand";
 			SelectionName = "Get Outlook Emails";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_smtp;
+
 			v_SourceFolder = "Inbox";
 			v_GetUnreadOnly = "No";
 			v_MarkAsRead = "Yes";
@@ -110,7 +112,7 @@ namespace OpenBots.Commands.Outlook
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var vFolder = v_SourceFolder.ConvertUserVariableToString(engine);
 			var vFilter = v_Filter.ConvertUserVariableToString(engine);
 			var vAttachmentDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
@@ -184,7 +186,7 @@ namespace OpenBots.Commands.Outlook
 
 			_savingControls = new List<Control>();
 			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_MessageDirectory", this, editor));
-			_savingControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_AttachmentDirectory", this, editor));
+			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AttachmentDirectory", this, editor));
 
 			foreach (var ctrl in _savingControls)
 				ctrl.Visible = false;
@@ -219,7 +221,17 @@ namespace OpenBots.Commands.Outlook
 				{
 					foreach (Attachment attachment in mail.Attachments)
 					{
-						attachment.SaveAsFile(Path.Combine(attDirectory, attachment.FileName));
+						var flags = attachment.PropertyAccessor.GetProperty("http://schemas.microsoft.com/mapi/proptag/0x37140003");
+
+						//To ignore embedded attachments
+						if (flags.ToString() != "4")
+						{
+							//If an rtF mail attachment comes here and the embeded image is treated as attachment then Type value is 6 and ignore it
+							if ((int)attachment.Type != 6 && !string.IsNullOrEmpty(new FileInfo(attachment.FileName).Extension))
+							{
+								attachment.SaveAsFile(Path.Combine(attDirectory, attachment.FileName));
+							}
+						}					
 					}
 				}
 			}

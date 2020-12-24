@@ -12,12 +12,14 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\OpenBots.Studio\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\OpenBots.Studio\bin\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -74,10 +76,7 @@
       <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
       <Name>OpenBots.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\OpenBots.Engine\OpenBots.Engine.csproj">
-      <Project>{ed8f6540-c341-4b5f-8966-26a08e39af87}</Project>
-      <Name>OpenBots.Engine</Name>
-    </ProjectReference>
+    
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Library\" />
@@ -88,4 +87,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>nuget pack "$(ProjectPath)" -Properties Configuration=$(ConfigurationName) -IncludeReferencedProjects -OutputDirectory "$(ProjectDir)..\..\OpenBots.Packages"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -3,8 +3,8 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,10 +18,10 @@ using System.Windows.Forms;
 
 namespace OpenBots.Commands.API
 {
-	[Serializable]
+    [Serializable]
 	[Category("API Commands")]
 	[Description("This command invokes a method of a specific class from a DLL.")]
-	public class ExecuteDLLCommand : ScriptCommand
+	public class ExecuteDLLCommand : ScriptCommand, IExecuteDLLCommand
 	{
 		[Required]
 		[DisplayName("DLL File Path")]
@@ -71,6 +71,7 @@ namespace OpenBots.Commands.API
 		{
 			CommandName = "ExecuteDLLCommand";
 			SelectionName = "Execute DLL";
+			CommandIcon = Resources.command_run_code;
 			CommandEnabled = true;
 
 			v_MethodParameters = new DataTable();
@@ -89,7 +90,7 @@ namespace OpenBots.Commands.API
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			//get file path
 			var filePath = v_FilePath.ConvertUserVariableToString(engine);
 			var className = v_ClassName.ConvertUserVariableToString(engine);

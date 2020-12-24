@@ -6,8 +6,8 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -51,12 +51,14 @@ namespace OpenBots.Commands.List
 		{
 			CommandName = "GetListItemCommand";
 			SelectionName = "Get List Item";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_function;
+
 		}
 
 		public override void RunCommand(object sender)
 		{
-			var engine = (AutomationEngineInstance)sender;
+			var engine = (IAutomationEngineInstance)sender;
 			var itemIndex = v_ItemIndex.ConvertUserVariableToString(engine);
 			int index = int.Parse(itemIndex);
 			//get variable by regular name

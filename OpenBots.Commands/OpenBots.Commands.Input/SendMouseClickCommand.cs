@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,8 @@ namespace OpenBots.Commands.Input
 			CommandName = "SendMouseClickCommand";
 			SelectionName = "Send Mouse Click";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_input;
+
 			v_MouseClick = "Left Click";
 		}
 
