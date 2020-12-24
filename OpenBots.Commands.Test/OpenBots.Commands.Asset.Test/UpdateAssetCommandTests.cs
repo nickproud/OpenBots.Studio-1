@@ -6,7 +6,7 @@ using System.Data;
 using System.IO;
 using Xunit;
 
-namespace OpenBots.Commands.Asset.Tests
+namespace OpenBots.Commands.Asset.Test
 {
     public class UpdateAssetCommandTests
     {
