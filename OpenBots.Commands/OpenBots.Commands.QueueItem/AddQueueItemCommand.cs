@@ -135,7 +135,7 @@ namespace OpenBots.Commands.QueueItem
 			if (!string.IsNullOrEmpty(v_Priority))
 				priority = int.Parse(vPriority);
 
-			Core.Server.Models.QueueItem queueItem = new Core.Server.Models.QueueItem()
+			QueueItemModel queueItem = new QueueItemModel()
 			{
 				IsLocked = false,
 				QueueId = queue.Id,

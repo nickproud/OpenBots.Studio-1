@@ -11,7 +11,7 @@ namespace OpenBots.Core.Server.API_Methods
 {
     public class QueueItemMethods
     {
-        public static QueueItem GetQueueItemById(RestClient client, Guid? queueItemId)
+        public static QueueItemModel GetQueueItemById(RestClient client, Guid? queueItemId)
         {
             var request = new RestRequest("api/v1/QueueItems/{id}", Method.GET);
             request.RequestFormat = DataFormat.Json;
@@ -24,10 +24,10 @@ namespace OpenBots.Core.Server.API_Methods
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
 
             var item = response.Content;
-            return JsonConvert.DeserializeObject<QueueItem>(item);
+            return JsonConvert.DeserializeObject<QueueItemModel>(item);
         }
 
-        public static QueueItem GetQueueItemByLockTransactionKey(RestClient client, string transactionKey)
+        public static QueueItemModel GetQueueItemByLockTransactionKey(RestClient client, string transactionKey)
         {
             var request = new RestRequest("api/v1/QueueItems", Method.GET);
             request.RequestFormat = DataFormat.Json;
@@ -41,10 +41,10 @@ namespace OpenBots.Core.Server.API_Methods
             var deserializer = new JsonDeserializer();
             var output = deserializer.Deserialize<Dictionary<string, string>>(response);
             var items = output["items"];
-            return JsonConvert.DeserializeObject<List<QueueItem>>(items).FirstOrDefault();
+            return JsonConvert.DeserializeObject<List<QueueItemModel>>(items).FirstOrDefault();
         }
 
-        public static void EnqueueQueueItem(RestClient client, QueueItem queueItem)
+        public static void EnqueueQueueItem(RestClient client, QueueItemModel queueItem)
         {
             var request = new RestRequest("api/v1/QueueItems/Enqueue", Method.POST);
             request.RequestFormat = DataFormat.Json;
@@ -75,7 +75,7 @@ namespace OpenBots.Core.Server.API_Methods
                 throw new HttpRequestException($"Status code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
         }
 
-        public static QueueItem DequeueQueueItem(RestClient client, Guid? agentId, Guid? queueId)
+        public static QueueItemModel DequeueQueueItem(RestClient client, Guid? agentId, Guid? queueId)
         {
             var request = new RestRequest("api/v1/QueueItems/Dequeue", Method.GET);
             request.RequestFormat = DataFormat.Json;
@@ -87,7 +87,7 @@ namespace OpenBots.Core.Server.API_Methods
             if (!response.IsSuccessful)
                 return null;
 
-            return JsonConvert.DeserializeObject<QueueItem>(response.Content);
+            return JsonConvert.DeserializeObject<QueueItemModel>(response.Content);
         }
 
         public static void CommitQueueItem(RestClient client, Guid transactionKey)

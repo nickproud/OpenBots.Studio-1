@@ -2,7 +2,7 @@
 
 namespace OpenBots.Core.Server.Models
 {
-	public class QueueItem : NamedEntity
+	public class QueueItemModel : NamedEntity
 	{
 		public bool IsLocked { get; set; }
 		public DateTime? LockedOnUTC { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Server.API_Methods;
+using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
@@ -77,7 +78,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
             string queueItemString = JsonConvert.SerializeObject(queueItemObject);
-            var vQueueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
+            var vQueueItem = JsonConvert.DeserializeObject<QueueItemModel>(queueItemString);
 
             var client = AuthMethods.GetAuthToken();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());
@@ -122,7 +123,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
             string queueItemString = JsonConvert.SerializeObject(queueItemObject);
-            var vQueueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
+            var vQueueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItemModel>(queueItemString);
 
             var client = AuthMethods.GetAuthToken();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());

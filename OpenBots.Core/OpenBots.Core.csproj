@@ -248,7 +248,7 @@
     <Compile Include="Server\Models\Entity.cs" />
     <Compile Include="Server\Models\NamedEntity.cs" />
     <Compile Include="Server\Models\Queue.cs" />
-    <Compile Include="Server\Models\QueueItem.cs" />
+    <Compile Include="Server\Models\QueueItemModel.cs" />
     <Compile Include="Server\Models\QueueItemAttachment.cs" />
     <Compile Include="Server\User\EnvironmentSettings.cs" />
     <Compile Include="Server\User\MachineInfo.cs" />
