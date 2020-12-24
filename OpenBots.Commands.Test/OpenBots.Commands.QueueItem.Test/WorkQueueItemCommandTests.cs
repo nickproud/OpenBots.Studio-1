@@ -123,7 +123,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             var queueItemObject = "{output}".ConvertUserVariableToObject(_engine);
             string queueItemString = JsonConvert.SerializeObject(queueItemObject);
-            var vQueueItem = JsonConvert.DeserializeObject<Core.Server.Models.QueueItem>(queueItemString);
+            var vQueueItem = JsonConvert.DeserializeObject<QueueItemModel>(queueItemString);
 
             var client = AuthMethods.GetAuthToken();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());
