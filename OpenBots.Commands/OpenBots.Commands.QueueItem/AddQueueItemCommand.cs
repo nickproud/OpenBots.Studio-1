@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Windows.Forms;
+using QueueItemModel = OpenBots.Core.Server.Models.QueueItem;
 
 namespace OpenBots.Commands.QueueItem
 {
@@ -135,7 +136,7 @@ namespace OpenBots.Commands.QueueItem
 			if (!string.IsNullOrEmpty(v_Priority))
 				priority = int.Parse(vPriority);
 
-			QueueItemModel queueItem = new QueueItemModel()
+            QueueItemModel queueItem = new QueueItemModel()
 			{
 				IsLocked = false,
 				QueueId = queue.Id,
