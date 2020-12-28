@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
+using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -34,6 +35,7 @@ namespace OpenBots.Commands.QueueItem
 			CommandEnabled = true;
 			CommandIcon = Resources.command_queueitem;
 
+			Common.InitializeDefaultWebProtocol();
 		}
 
 		public override void RunCommand(object sender)
@@ -44,6 +46,10 @@ namespace OpenBots.Commands.QueueItem
 			var client = AuthMethods.GetAuthToken();
 
 			Guid transactionKey = (Guid)vQueueItem["LockTransactionKey"];
+
+			if (transactionKey == null || transactionKey == Guid.Empty)
+				throw new NullReferenceException($"Transaction key {transactionKey} is invalid or not found");
+
 			QueueItemMethods.ExtendQueueItem(client, transactionKey);
 		}
 

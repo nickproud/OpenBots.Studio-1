@@ -213,6 +213,8 @@ namespace OpenBots.Commands.Outlook
 			{
 				if (Directory.Exists(msgDirectory))
 				{
+					if (string.IsNullOrEmpty(mail.Subject))
+						mail.Subject = "(no subject)";
 					string mailFileName = string.Join("_", mail.Subject.Split(Path.GetInvalidFileNameChars()));
 					mail.SaveAs(Path.Combine(msgDirectory, mailFileName + ".msg"));
 				}

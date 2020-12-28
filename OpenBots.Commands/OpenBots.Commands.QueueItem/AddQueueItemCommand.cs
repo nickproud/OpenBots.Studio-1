@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
+using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Windows.Forms;
 using QueueItemModel = OpenBots.Core.Server.Models.QueueItem;
 
@@ -109,6 +111,7 @@ namespace OpenBots.Commands.QueueItem
 
 			v_QueueItemType = "Text";
 			v_Priority = "10";
+			Common.InitializeDefaultWebProtocol();
 		}
 
 		public override void RunCommand(object sender)
@@ -127,13 +130,13 @@ namespace OpenBots.Commands.QueueItem
 			Queue queue = QueueMethods.GetQueue(client, $"name eq '{vQueueName}'");
 
 			if (queue == null)
-				throw new Exception($"Queue with name '{vQueueName}' not found");
+				throw new DataException($"Queue with name '{vQueueName}' not found");
 
 			int priority = 0;
 			if (!string.IsNullOrEmpty(v_Priority))
 				priority = int.Parse(vPriority);
 
-			QueueItemModel queueItem = new QueueItemModel()
+            QueueItemModel queueItem = new QueueItemModel()
 			{
 				IsLocked = false,
 				QueueId = queue.Id,
