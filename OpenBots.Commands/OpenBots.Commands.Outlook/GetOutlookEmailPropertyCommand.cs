@@ -70,7 +70,6 @@ namespace OpenBots.Commands.Outlook
         [PropertyUISelectionOption("ReceivedByName")]
         [PropertyUISelectionOption("ReceivedOnBehalfOfEntryID")]
         [PropertyUISelectionOption("ReceivedOnBehalfOfName")]
-        [PropertyUISelectionOption("ReceivedTime")]
         [PropertyUISelectionOption("RecipientReassignmentProhibited")]
         [PropertyUISelectionOption("Recipients")]
         [PropertyUISelectionOption("ReminderSet")]
