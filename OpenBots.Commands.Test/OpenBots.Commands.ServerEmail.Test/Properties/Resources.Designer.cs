@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OpenBots.Commands.Asset.Test {
+namespace OpenBots.Commands.ServerEmail.Tests.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Asset.Test {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OpenBots.Commands.Asset.Test.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OpenBots.Commands.ServerEmail.Tests.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,18 +63,18 @@ namespace OpenBots.Commands.Asset.Test {
         /// <summary>
         ///   Looks up a localized string similar to Test Data.
         /// </summary>
-        internal static string newtest {
+        internal static string testFile {
             get {
-                return ResourceManager.GetString("newtest", resourceCulture);
+                return ResourceManager.GetString("testFile", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Test Data.
+        ///   Looks up a localized string similar to Test Data 2.
         /// </summary>
-        internal static string oldtest {
+        internal static string testFile2 {
             get {
-                return ResourceManager.GetString("oldtest", resourceCulture);
+                return ResourceManager.GetString("testFile2", resourceCulture);
             }
         }
     }
