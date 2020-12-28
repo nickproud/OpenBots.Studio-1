@@ -4,6 +4,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -55,7 +56,7 @@ namespace OpenBots.Commands.Input
 			CommandName = "SendAdvancedKeystrokesCommand";
 			SelectionName = "Send Advanced Keystrokes";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_input;
 
 			v_KeyActions = new DataTable();
 			v_KeyActions.Columns.Add("Key");

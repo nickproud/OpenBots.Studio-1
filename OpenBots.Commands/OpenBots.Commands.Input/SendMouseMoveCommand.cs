@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -59,7 +60,8 @@ namespace OpenBots.Commands.Input
 			CommandName = "SendMouseMoveCommand";
 			SelectionName = "Send Mouse Move";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_input;
+
 			v_XMousePosition = "0";
 			v_YMousePosition = "0";
 			v_MouseClick = "None";

@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
@@ -46,7 +47,8 @@ namespace OpenBots.Commands.Data
 			CommandName = "FormatDateCommand";
 			SelectionName = "Format Date";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_stopwatch;
+
 			v_InputData = "{DateTime.Now}";
 			v_ToStringFormat = "MM/dd/yyyy";
 		}

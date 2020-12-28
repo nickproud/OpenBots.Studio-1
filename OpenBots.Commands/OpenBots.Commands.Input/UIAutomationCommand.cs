@@ -95,7 +95,8 @@ namespace OpenBots.Commands.Input
 		{
 			CommandName = "UIAutomationCommand";
 			SelectionName = "UI Automation";
-			CommandEnabled = true;         
+			CommandEnabled = true;
+			CommandIcon = Resources.command_input;
 
 			//set up search parameter table
 			v_UIASearchParameters = new DataTable();

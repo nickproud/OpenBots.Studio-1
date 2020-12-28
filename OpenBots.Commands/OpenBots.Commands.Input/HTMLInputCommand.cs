@@ -41,7 +41,8 @@ namespace OpenBots.Commands.Input
 			CommandName = "HTMLInputCommand";
 			SelectionName = "Prompt for HTML Input";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_input;
+
 			v_InputHTML = Resources.HTMLInputSample;
 			v_ErrorOnClose = "No";
 		}

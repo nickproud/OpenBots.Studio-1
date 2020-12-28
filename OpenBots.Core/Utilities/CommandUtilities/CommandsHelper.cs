@@ -47,6 +47,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
                 newAutomationCommand.FullName = string.Join(" - ", groupAttribute, newCommand.SelectionName);
                 newAutomationCommand.ShortName = newCommand.SelectionName;
                 newAutomationCommand.Description = GetDescription(commandClass);
+				newAutomationCommand.CommandIcon = newCommand.CommandIcon;
 
                 //if (userPrefs.ClientSettings.PreloadBuilderCommands)
                 //{

@@ -4,6 +4,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenQA.Selenium;
 using System;
@@ -54,7 +55,8 @@ namespace OpenBots.Commands.List
 			CommandName = "CreateListCommand";
 			SelectionName = "Create List";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_function;
+
 			v_ListType = "String";
 		}
 

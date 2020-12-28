@@ -3,6 +3,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -55,7 +56,9 @@ namespace OpenBots.Commands.Process
 		{
 			CommandName = "RunCustomCodeCommand";
 			SelectionName = "Run Custom Code";
-			CommandEnabled = true;           
+			CommandEnabled = true;
+			CommandIcon = Resources.command_script;
+
 		}
 
 		public override void RunCommand(object sender)

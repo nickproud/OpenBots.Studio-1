@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -31,6 +32,7 @@ namespace OpenBots.Commands.Engine
 			CommandName = "PauseScriptCommand";
 			SelectionName = "Pause Script";
 			CommandEnabled = true;
+			CommandIcon = Resources.command_pause;
 			
 			v_PauseLength = "1000";
 		}

@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +17,9 @@ namespace OpenBots.Commands.Task
         {
             CommandName = "StopCurrentTaskCommand";
             SelectionName = "Stop Current Task";
-            CommandEnabled = true;           
+            CommandEnabled = true;
+            CommandIcon = Resources.command_stop_process;
+
         }
 
         public override void RunCommand(object sender)

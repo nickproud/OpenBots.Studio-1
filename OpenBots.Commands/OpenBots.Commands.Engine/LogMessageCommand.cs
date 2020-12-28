@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using Serilog;
 using Serilog.Events;
@@ -55,7 +56,8 @@ namespace OpenBots.Commands.Engine
 			CommandName = "LogMessageCommand";
 			SelectionName = "Log Message";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_files;
+
 			v_LogFile = "Engine Logs";
 			v_LogType = "Information";
 		}

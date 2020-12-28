@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using SimpleNLG;
@@ -54,7 +55,8 @@ namespace OpenBots.Commands.NLG
 			CommandName = "SetNLGParameterCommand";
 			SelectionName = "Set NLG Parameter";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_nlg;
+
 			v_InstanceName = "DefaultNLG";
 			v_ParameterType = "Set Subject";
 		}

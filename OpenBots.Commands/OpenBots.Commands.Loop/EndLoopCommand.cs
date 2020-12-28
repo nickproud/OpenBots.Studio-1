@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +18,9 @@ namespace OpenBots.Commands.Loop
         {
             CommandName = "EndLoopCommand";
             SelectionName = "End Loop";
-            CommandEnabled = true;          
+            CommandEnabled = true;
+            CommandIcon = Resources.command_endloop;
+
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

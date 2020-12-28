@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 
 using System;
@@ -22,7 +23,9 @@ namespace OpenBots.Commands.Misc
         {
             CommandName = "SequenceCommand";
             SelectionName = "Sequence Command";
-            CommandEnabled = true;            
+            CommandEnabled = true;
+            CommandIcon = Resources.command_sequence;
+
         }
 
         public override void RunCommand(object sender, ScriptAction parentCommand)

@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -30,7 +31,8 @@ namespace OpenBots.Commands.Engine
 			CommandName = "SetEngineDelayCommand";
 			SelectionName = "Set Engine Delay";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_pause;
+
 			v_EngineDelay = "250";
 		}
 

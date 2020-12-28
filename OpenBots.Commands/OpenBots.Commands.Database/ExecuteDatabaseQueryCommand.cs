@@ -78,7 +78,8 @@ namespace OpenBots.Commands.Database
 			CommandName = "ExecuteDatabaseQueryCommand";
 			SelectionName = "Execute Database Query";
 			CommandEnabled = true;
-			
+			CommandIcon = Resources.command_database2;
+
 			v_InstanceName = "DefaultDatabase";
 
 			v_QueryParameters = new DataTable
