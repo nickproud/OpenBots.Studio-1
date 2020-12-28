@@ -9,8 +9,8 @@
     <ProjectGuid>{94CDE267-6102-4B69-AF51-3C3A8457C951}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenBots.Commands.Asset.Tests</RootNamespace>
-    <AssemblyName>OpenBots.Commands.Asset.Tests</AssemblyName>
+    <RootNamespace>OpenBots.Commands.Asset.Test</RootNamespace>
+    <AssemblyName>OpenBots.Commands.Asset.Test</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
