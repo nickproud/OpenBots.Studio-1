@@ -5,6 +5,7 @@ using Xunit;
 using Xunit.Abstractions;
 using System.IO;
 using System;
+using OpenBots.Core.Properties;
 
 namespace OpenBots.Commands.Credential.Test
 {
@@ -21,7 +22,7 @@ namespace OpenBots.Commands.Credential.Test
 
         /*
          * Download the OpenBotsLocalTestData.zip file in OpenBots/COE_Documentation/Studio for credential data.
-         * Place the folder into your top level openbots studio directory. Ex. C:\Users\username\source\repos\OpenBots.Studio\
+         * Place the folder into your openbots core resources directory. Ex. OpenBots.Studio\OpenBots.Core\Resources\Credentials
         */
         [Fact]
         public void GetsCredential()
@@ -41,8 +42,8 @@ namespace OpenBots.Commands.Credential.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
 
-            string userFilepath = projectDirectory + @"\OpenBotsLocalTestData\testCredUsername.txt";
-            string passwordFilepath = projectDirectory + @"\OpenBotsLocalTestData\testCredPassword.txt";
+            string userFilepath = Resources.testCredUsername;
+            string passwordFilepath = Resources.testCredPassword;
 
             string plainPassword = File.ReadAllText(passwordFilepath);
             string username = File.ReadAllText(userFilepath);
