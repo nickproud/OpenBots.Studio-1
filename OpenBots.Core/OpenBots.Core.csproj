@@ -325,6 +325,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Credentials\testCredUsername.txt" />
+    <None Include="Resources\Credentials\testCredPassword.txt" />
     <Content Include="Resources\Icons\ActionBar\action-bar-add-command.png" />
     <Content Include="Resources\Icons\ActionBar\action-bar-clear.png" />
     <Content Include="Resources\Icons\ActionBar\action-bar-debug.png" />

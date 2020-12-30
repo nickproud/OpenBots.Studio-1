@@ -1161,6 +1161,24 @@ namespace OpenBots.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {test credential password}.
+        /// </summary>
+        public static string testCredPassword {
+            get {
+                return ResourceManager.GetString("testCredPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to testUser.
+        /// </summary>
+        public static string testCredUsername {
+            get {
+                return ResourceManager.GetString("testCredUsername", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap various_question {
