@@ -42,11 +42,8 @@ namespace OpenBots.Commands.Credential.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
 
-            string userFilepath = Resources.testCredUsername;
-            string passwordFilepath = Resources.testCredPassword;
-
-            string plainPassword = File.ReadAllText(passwordFilepath);
-            string username = File.ReadAllText(userFilepath);
+            string username = Resources.testCredUsername;
+            string plainPassword = Resources.testCredPassword;
 
             SecureString expectedPass = plainPassword.GetSecureString();
             Assert.Equal(username, "{username}".ConvertUserVariableToString(_engine));
