@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Data.Test
         public void PerformsCalculationCorrectly(string num1, string operation, string num2, string expectedOutput)
         {
             _mathCalculation = new MathCalculationCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             num1.StoreInUserVariable(_engine, "{num1}");
             num2.StoreInUserVariable(_engine, "{num2}");
@@ -34,7 +34,7 @@ namespace OpenBots.Commands.Data.Test
         public void HandlesThousandSeparator()
         {
             _mathCalculation = new MathCalculationCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             string num1 = "10.000";
             string num2 = "1.000";
             string thouSeparator = ".";
@@ -56,7 +56,7 @@ namespace OpenBots.Commands.Data.Test
         public void HandlesDecimalSeparator()
         {
             _mathCalculation = new MathCalculationCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             string num1 = "1:10";
             string num2 = "0:50";

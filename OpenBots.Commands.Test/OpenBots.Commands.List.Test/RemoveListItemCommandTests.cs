@@ -14,7 +14,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void RemovesStringListItem()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _removeListItem = new RemoveListItemCommand();
 
             List<string> inputList = new List<string>();
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void RemovesDataTableListItem()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _removeListItem = new RemoveListItemCommand();
 
             List<DataTable> inputList = new List<DataTable>();

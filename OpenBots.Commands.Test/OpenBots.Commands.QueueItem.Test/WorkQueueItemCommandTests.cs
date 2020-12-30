@@ -20,7 +20,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void WorkQueueItemNoAttachments()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
@@ -50,7 +50,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void WorkQueueItemOneAttachment()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
@@ -92,7 +92,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void WorkQueueItemMultipleAttachments()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
@@ -139,7 +139,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void HandlesNonExistentQueue()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 

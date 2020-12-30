@@ -20,7 +20,7 @@ namespace OpenBots.Commands.Outlook.Test
         [Fact]
         public void CopiesOutlookEmail()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
             _moveCopyOutlookEmail = new MoveCopyOutlookEmailCommand();
 
@@ -71,7 +71,7 @@ namespace OpenBots.Commands.Outlook.Test
         [Fact]
         public void MovesOutlookEmail()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
             _moveCopyOutlookEmail = new MoveCopyOutlookEmailCommand();
 

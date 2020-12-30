@@ -1,4 +1,4 @@
-﻿namespace OpenBots.Commands.Input.Forms
+﻿namespace OpenBots.UI.Forms.Supplement_Forms
 {
     partial class frmUserInput
     {
@@ -83,7 +83,7 @@
             // 
             // tlpInputs
             // 
-            this.tlpInputs.BackColor = System.Drawing.Color.DimGray;
+            this.tlpInputs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
             this.tlpInputs.ColumnCount = 1;
             this.tlpInputs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpInputs.Controls.Add(this.lblDirections, 0, 1);
@@ -104,7 +104,7 @@
             // 
             // pnlBottom
             // 
-            this.pnlBottom.BackColor = System.Drawing.Color.DimGray;
+            this.pnlBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
             this.pnlBottom.Controls.Add(this.uiBtnOk);
             this.pnlBottom.Controls.Add(this.uiBtnCancel);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -156,7 +156,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(712, 626);
             this.Controls.Add(this.tlpInputs);
-            this.Icon = OpenBots.Core.Properties.Resources.OpenBots_ico;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmUserInput";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -15,7 +15,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void IncrementsNumberAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _calculateAsset = new CalculateNumberAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void DecrementsNumberAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _calculateAsset = new CalculateNumberAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -75,7 +75,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void AddsNumberAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _calculateAsset = new CalculateNumberAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -105,7 +105,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void SubtractsNumberAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _calculateAsset = new CalculateNumberAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -135,7 +135,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void HandlesNonexistentAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _calculateAsset = new CalculateNumberAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -153,7 +153,7 @@ namespace OpenBots.Commands.Asset.Test
 
         private void resetAsset(string assetName, string assetValue, string type)
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _updateAsset = new UpdateAssetCommand();
 
             _updateAsset.v_AssetName = assetName;

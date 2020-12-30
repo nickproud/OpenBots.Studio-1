@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void GetsTextAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getAsset = new GetAssetCommand();
 
             _getAsset.v_AssetName = "testTextAsset";
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void GetsNumberAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getAsset = new GetAssetCommand();
 
             _getAsset.v_AssetName = "testNumberAsset";
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void GetsJSONAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getAsset = new GetAssetCommand();
 
             _getAsset.v_AssetName = "testJSONAsset";
@@ -75,7 +75,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void GetsFileAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getAsset = new GetAssetCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -96,7 +96,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void HandlesNonexistentAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getAsset = new GetAssetCommand();
 
             _getAsset.v_AssetName = "noAsset";

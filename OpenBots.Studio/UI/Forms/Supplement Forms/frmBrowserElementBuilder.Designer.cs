@@ -107,9 +107,9 @@
             this.uiBtnRefresh.BackColor = System.Drawing.Color.Transparent;
             this.uiBtnRefresh.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.uiBtnRefresh.DisplayText = "Refresh";
-            this.uiBtnRefresh.DisplayTextBrush = System.Drawing.Color.Black;
+            this.uiBtnRefresh.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.uiBtnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnRefresh.Image")));
+            this.uiBtnRefresh.Image = global::OpenBots.Properties.Resources.browser_refresh;
             this.uiBtnRefresh.IsMouseOver = false;
             this.uiBtnRefresh.Location = new System.Drawing.Point(555, 71);
             this.uiBtnRefresh.Margin = new System.Windows.Forms.Padding(4);

@@ -69,7 +69,7 @@ namespace OpenBots.Commands.Database
 			CommandName = "DefineDatabaseConnectionCommand";
 			SelectionName = "Define Database Connection";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_database2;
+			CommandIcon = Resources.command_database;
 
 			v_InstanceName = "DefaultDatabase";
 			v_TestConnection = "Yes";
@@ -120,7 +120,7 @@ namespace OpenBots.Commands.Database
 			helperControl.ForeColor = Color.AliceBlue;
 			helperControl.Font = new Font("Segoe UI Semilight", 10);
 			helperControl.Name = "connection_helper";
-			helperControl.CommandImage = Resources.command_database2;
+			helperControl.CommandImage = Resources.command_database;
 			helperControl.CommandDisplay = "Build Connection String";
 			helperControl.Click += (sender, e) => Button_Click(sender, e);
 
@@ -133,7 +133,7 @@ namespace OpenBots.Commands.Database
 			testConnectionControl.ForeColor = Color.AliceBlue;
 			testConnectionControl.Font = new Font("Segoe UI Semilight", 10);
 			testConnectionControl.Name = "connection_helper";
-			testConnectionControl.CommandImage = Resources.command_database2;
+			testConnectionControl.CommandImage = Resources.command_database;
 			testConnectionControl.CommandDisplay = "Test Connection";
 			testConnectionControl.Click += (sender, e) => TestConnection(sender, e);
 

@@ -1,14 +1,11 @@
 ﻿using Newtonsoft.Json;
-using OpenBots.Commands.Input.Forms;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +16,7 @@ using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
 {
-	[Serializable]
+    [Serializable]
 	[Category("Input Commands")]
 	[Description("This command provides the user with a form to input and store a collection of data.")]
 	public class InputCommand : ScriptCommand
@@ -44,7 +41,9 @@ namespace OpenBots.Commands.Input
 		[Required]
 		[DisplayName("Input Parameters")]
 		[Description("Define the required input parameters.")]
-		[SampleUsage("[TextBox | Name | 500,30 | John | {vName}]")]
+		[SampleUsage("[TextBox | Name | 500,100 | John | {vName}]\n" +
+					 "[CheckBox | Developer | 500,30 | True | {vDeveloper}]\n" +
+					 "[ComboBox | Gender | 500,30 | Male,Female,Other | {vGender}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		public DataTable v_UserInputConfig { get; set; }
@@ -99,15 +98,12 @@ namespace OpenBots.Commands.Input
 				return;
 			}
 
-			//create clone of original
-			dynamic clonedCommand = Common.Clone(this);
-
-			//translate variable
-			clonedCommand.v_InputHeader = ((string)clonedCommand.v_InputHeader).ConvertUserVariableToString(engine);
-			clonedCommand.v_InputDirections = ((string)clonedCommand.v_InputDirections).ConvertUserVariableToString(engine);
+			var header = v_InputHeader.ConvertUserVariableToString(engine);
+			var directions = v_InputDirections.ConvertUserVariableToString(engine);
+			
 
 			//translate variables for each label
-			foreach (DataRow rw in clonedCommand.v_UserInputConfig.Rows)
+			foreach (DataRow rw in v_UserInputConfig.Rows)
 			{
 				rw["DefaultValue"] = rw["DefaultValue"].ToString().ConvertUserVariableToString(engine);
 				var targetVariable = rw["StoreInVariable"] as string;
@@ -115,9 +111,9 @@ namespace OpenBots.Commands.Input
 				if (string.IsNullOrEmpty(targetVariable))
 				{
 					var message = "User Input question '" + rw["Label"] + "' is missing variables to apply results to! " +
-										   "Results for the item will not be tracked. To fix this, assign a variable in the designer!";
+								  "Results for the item will not be tracked. To fix this, assign a variable in the designer!";
 
-					MessageBox.Show("UserInput Supported With UI Only", "UserInput Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show(message, "Input Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 			}
 
@@ -125,7 +121,7 @@ namespace OpenBots.Commands.Input
 			var result = ((Form)engine.ScriptEngineUI).Invoke(new Action(() =>
 			{
 				//get input from user
-			  var userInputs = ShowInput(clonedCommand);
+			  var userInputs = engine.ScriptEngineUI.ShowInput(header, directions, v_UserInputConfig);
 
 				//check if user provided input
 				if (userInputs != null)
@@ -226,35 +222,7 @@ namespace OpenBots.Commands.Input
 		{
 			if (_userInputGridViewHelper.SelectedRows.Count > 0)
 				_userInputGridViewHelper.Rows.RemoveAt(_userInputGridViewHelper.SelectedCells[0].RowIndex);
-		}
-
-		private List<string> ShowInput(InputCommand inputs)
-		{
-
-			var inputForm = new frmUserInput
-			{
-				InputCommand = inputs
-			};
-			var dialogResult = inputForm.ShowDialog();
-
-			if (dialogResult == DialogResult.OK)
-			{
-				var responses = new List<string>();
-				foreach (var ctrl in inputForm.InputControls)
-				{
-					if (ctrl is CheckBox)
-					{
-						var checkboxCtrl = (CheckBox)ctrl;
-						responses.Add(checkboxCtrl.Checked.ToString());
-					}
-					else
-						responses.Add(ctrl.Text);
-				}
-				return responses;
-			}
-			else
-				return null;
-		}
+		}		
 
 		private void UserInputGridViewHelper_MouseDown(object sender, MouseEventArgs e)
 		{

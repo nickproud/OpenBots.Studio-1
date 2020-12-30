@@ -31,6 +31,7 @@ namespace OpenBots.UI.Supplement_Forms
             txtLocation.Text = Folders.GetFolder(FolderType.PublishedFolder);
             lblPublish.Text = $"publish {_projectName}";
             Text = $"publish {_projectName}";
+            cbxLocation.SelectedIndex = 0;
         }
 
         private void btnOkay_Click(object sender, EventArgs e)
@@ -113,6 +114,9 @@ namespace OpenBots.UI.Supplement_Forms
                     builder.Save(stream);
 
                 NotificationMessage = $"'{_projectName}' published successfully";
+
+                if (cbxLocation.Text == "Local Only")
+                    return true;
 
                 try {
                     lblError.Text = $"Publishing {_projectName} to the server...";

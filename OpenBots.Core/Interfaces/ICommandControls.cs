@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Command;
+﻿using Autofac;
+using OpenBots.Core.Command;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls.CustomControls;
 using Serilog.Core;
@@ -24,9 +25,9 @@ namespace OpenBots.Core.Infrastructure
         ComboBox CreateStandardComboboxFor(string parameterName, ScriptCommand parent);
         List<Control> CreateUIHelpersFor(string parameterName, ScriptCommand parent, Control[] targetControls, IfrmCommandEditor editor);
         Tuple<string, string> ShowConditionElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor);
-        IfrmScriptEngine CreateScriptEngineForm(string pathToFile, string projectPath, IfrmScriptBuilder builderForm, Logger logger, 
+        IfrmScriptEngine CreateScriptEngineForm(string pathToFile, string projectPath, IContainer container, IfrmScriptBuilder builderForm, Logger logger, 
             List<ScriptVariable> variables, List<ScriptElement> elements, Dictionary<string, object> appInstances, bool blnCloseWhenDone, bool isDebugMode);
-        IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger);
+        IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger, IContainer container);
         IfrmWebElementRecorder CreateWebElementRecorderForm(string startURL);
         IfrmAdvancedUIElementRecorder CreateAdvancedUIElementRecorderForm();
         IfrmCommandEditor CreateCommandEditorForm(List<AutomationCommand> commands, List<ScriptCommand> existingCommands);

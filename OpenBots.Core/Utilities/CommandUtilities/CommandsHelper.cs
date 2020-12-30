@@ -264,7 +264,8 @@ namespace OpenBots.Core.Utilities.CommandUtilities
                 }
                 catch (Exception)
                 {
-                    //element not found during wait period
+					//element not found during wait period
+					return null;
                 }
 
                 element = seleniumInstance.FindElement(byall);
@@ -292,7 +293,8 @@ namespace OpenBots.Core.Utilities.CommandUtilities
                 }
                 catch (Exception)
                 {
-                    //elements not found during wait period
+					//elements not found during wait period
+					return null;
                 }
 
                 element = seleniumInstance.FindElements(byall);

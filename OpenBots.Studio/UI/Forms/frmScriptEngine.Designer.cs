@@ -133,7 +133,7 @@
             this.uiBtnStepInto.DisplayText = "Step Into";
             this.uiBtnStepInto.DisplayTextBrush = System.Drawing.Color.AliceBlue;
             this.uiBtnStepInto.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnStepInto.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnStepInto.Image")));
+            this.uiBtnStepInto.Image = global::OpenBots.Properties.Resources.engine_step_into;
             this.uiBtnStepInto.IsMouseOver = false;
             this.uiBtnStepInto.Location = new System.Drawing.Point(723, 2);
             this.uiBtnStepInto.Margin = new System.Windows.Forms.Padding(4);
@@ -153,7 +153,7 @@
             this.uiBtnStepOver.DisplayText = "Step Over";
             this.uiBtnStepOver.DisplayTextBrush = System.Drawing.Color.AliceBlue;
             this.uiBtnStepOver.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnStepOver.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnStepOver.Image")));
+            this.uiBtnStepOver.Image = global::OpenBots.Properties.Resources.engine_step_over;
             this.uiBtnStepOver.IsMouseOver = false;
             this.uiBtnStepOver.Location = new System.Drawing.Point(659, 2);
             this.uiBtnStepOver.Margin = new System.Windows.Forms.Padding(4);
@@ -173,7 +173,7 @@
             this.uiBtnCancel.DisplayText = "Cancel";
             this.uiBtnCancel.DisplayTextBrush = System.Drawing.Color.AliceBlue;
             this.uiBtnCancel.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnCancel.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCancel.Image")));
+            this.uiBtnCancel.Image = global::OpenBots.Properties.Resources.engine_cancel;
             this.uiBtnCancel.IsMouseOver = false;
             this.uiBtnCancel.Location = new System.Drawing.Point(851, 2);
             this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(4);
@@ -192,7 +192,7 @@
             this.uiBtnPause.DisplayText = "Pause";
             this.uiBtnPause.DisplayTextBrush = System.Drawing.Color.AliceBlue;
             this.uiBtnPause.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnPause.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnPause.Image")));
+            this.uiBtnPause.Image = global::OpenBots.Properties.Resources.engine_pause;
             this.uiBtnPause.IsMouseOver = false;
             this.uiBtnPause.Location = new System.Drawing.Point(787, 2);
             this.uiBtnPause.Margin = new System.Windows.Forms.Padding(4);
@@ -206,7 +206,7 @@
             // pbBotIcon
             // 
             this.pbBotIcon.BackColor = System.Drawing.Color.Transparent;
-            this.pbBotIcon.Image = ((System.Drawing.Image)(resources.GetObject("pbBotIcon.Image")));
+            this.pbBotIcon.Image = global::OpenBots.Properties.Resources.executing;
             this.pbBotIcon.Location = new System.Drawing.Point(16, 69);
             this.pbBotIcon.Margin = new System.Windows.Forms.Padding(4);
             this.pbBotIcon.Name = "pbBotIcon";
@@ -223,7 +223,7 @@
             this.uiBtnScheduleManagement.DisplayText = "Schedule";
             this.uiBtnScheduleManagement.DisplayTextBrush = System.Drawing.Color.AliceBlue;
             this.uiBtnScheduleManagement.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnScheduleManagement.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnScheduleManagement.Image")));
+            this.uiBtnScheduleManagement.Image = global::OpenBots.Properties.Resources.action_bar_schedule;
             this.uiBtnScheduleManagement.IsMouseOver = false;
             this.uiBtnScheduleManagement.Location = new System.Drawing.Point(850, 227);
             this.uiBtnScheduleManagement.Margin = new System.Windows.Forms.Padding(4);

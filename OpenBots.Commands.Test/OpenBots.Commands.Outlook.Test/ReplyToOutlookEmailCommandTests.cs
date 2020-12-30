@@ -21,7 +21,7 @@ namespace OpenBots.Commands.Outlook.Test
         [Fact]
         public void RepliesToOutlookEmail()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _replyToOutlookEmail = new ReplyToOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
 

@@ -4,7 +4,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,12 +58,12 @@ namespace OpenBots.Commands.Input
 				return;
 			}
 
+			//sample for temp testing
+			var htmlInput = v_InputHTML.ConvertUserVariableToString(engine);
+
 			//invoke ui for data collection
 			var result = ((Form)engine.ScriptEngineUI).Invoke(new Action(() =>
-			{
-				//sample for temp testing
-				var htmlInput = v_InputHTML.ConvertUserVariableToString(engine);
-
+			{				
 				var variables = engine.ScriptEngineUI.ShowHTMLInput(htmlInput);
 
 				//if user selected Ok then process variables
@@ -76,9 +75,7 @@ namespace OpenBots.Commands.Input
 						variable.VariableValue.ToString().StoreInUserVariable(engine, variable.VariableName);
 				}
 				else if (v_ErrorOnClose == "Yes")
-				{
 					throw new Exception("Input Form was closed by the user");
-				}
 			}
 			));
 		}

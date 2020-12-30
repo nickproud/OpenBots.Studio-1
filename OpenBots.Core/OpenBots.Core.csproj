@@ -40,8 +40,8 @@
     <Reference Include="Autofac, Version=6.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.6.1.0\lib\netstandard2.0\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.8.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
-      <HintPath>..\packages\Portable.BouncyCastle.1.8.8\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.9\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.3.1.9, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.1.3.1\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -197,15 +197,13 @@
     <Compile Include="Interfaces\Commands\ISendMouseMoveCommand.cs" />
     <Compile Include="Interfaces\Commands\ISequenceCommand.cs" />
     <Compile Include="Interfaces\Commands\IUIAutomationCommand.cs" />
-    <Compile Include="Nuget\AppDomainSetupManager.cs" />
-    <Compile Include="Nuget\NugetPackageManager.cs" />
     <Compile Include="Interfaces\ICommandControls.cs" />
     <Compile Include="Interfaces\IfrmAdvancedUIElementRecorder.cs" />
     <Compile Include="Interfaces\IfrmCommandEditor.cs" />
     <Compile Include="Interfaces\IfrmDialog.cs" />
     <Compile Include="Interfaces\IfrmScriptBuilder.cs" />
-    <Compile Include="Interfaces\IfrmScriptEngine.cs" />
     <Compile Include="Interfaces\IAutomationEngineInstance.cs" />
+    <Compile Include="Interfaces\IfrmScriptEngine.cs" />
     <Compile Include="Interfaces\IfrmWebElementRecorder.cs" />
     <Compile Include="IO\Folders.cs" />
     <Compile Include="Metrics\ExecutionMetric.cs" />
@@ -223,6 +221,7 @@
     </Compile>
     <Compile Include="Script\Script.cs" />
     <Compile Include="Script\ScriptAction.cs" />
+    <Compile Include="Script\ScriptAutofacContractResolver.cs" />
     <Compile Include="Script\ScriptElement.cs" />
     <Compile Include="Script\ScriptObject.cs" />
     <Compile Include="Script\ScriptVariable.cs" />
@@ -327,49 +326,18 @@
   <ItemGroup>
     <None Include="Resources\Credentials\testCredUsername.txt" />
     <None Include="Resources\Credentials\testCredPassword.txt" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-add-command.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-clear.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-debug.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-element-recorder.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-element.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-import.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-new.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-open.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-options.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-project.png" />
-    <None Include="Resources\Icons\ActionBar\action-bar-publish.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-record.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-run.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-save.png" />
-    <None Include="Resources\Icons\ActionBar\action-bar-saveall.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-saveas.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-schedule.png" />
-    <None Include="Resources\Icons\ActionBar\action-bar-shortcut.png" />
-    <Content Include="Resources\Icons\ActionBar\action-bar-variable.png" />
-    <Content Include="Resources\Icons\ActionBar\action_bar_close.png" />
-    <Content Include="Resources\Icons\ActionBar\action_bar_restart.png" />
-    <Content Include="Resources\Icons\Browser\browser-back.png" />
-    <Content Include="Resources\Icons\Browser\browser-elements.png" />
-    <Content Include="Resources\Icons\Browser\browser-forward.png" />
-    <Content Include="Resources\Icons\Browser\browser-home.png" />
-    <Content Include="Resources\Icons\Browser\browser-refresh.png" />
-    <Content Include="Resources\Icons\Browser\browser-save.png" />
-    <Content Include="Resources\Icons\Buttons\close-button.png" />
     <None Include="Resources\Icons\Commands\command-asset.png" />
-    <None Include="Resources\Icons\Buttons\settings.png" />
     <Content Include="Resources\Icons\Commands\command-begin-if.png" />
     <Content Include="Resources\Icons\Commands\command-begin-multi-if.png" />
     <Content Include="Resources\Icons\Commands\command-begin-switch.png" />
     <Content Include="Resources\Icons\Commands\command-breakpoint.png" />
     <None Include="Resources\Icons\Commands\command-broken.png" />
     <Content Include="Resources\Icons\Commands\command-camera.png" />
-    <Content Include="Resources\Icons\Commands\command-cancel.png" />
     <Content Include="Resources\Icons\Commands\command-case.png" />
     <Content Include="Resources\Icons\Commands\command-catch.png" />
     <Content Include="Resources\Icons\Commands\command-comment.png" />
     <None Include="Resources\Icons\Commands\command-credential.png" />
     <Content Include="Resources\Icons\Commands\command-database.png" />
-    <Content Include="Resources\Icons\Commands\command-database2.png" />
     <Content Include="Resources\Icons\Commands\command-dictionary.png" />
     <Content Include="Resources\Icons\Commands\command-disabled.png" />
     <Content Include="Resources\Icons\Commands\command-element.png" />
@@ -382,9 +350,7 @@
     <Content Include="Resources\Icons\Commands\command-exception.png" />
     <Content Include="Resources\Icons\Commands\command-exitloop.png" />
     <Content Include="Resources\Icons\Commands\command-files.png" />
-    <Content Include="Resources\Icons\Commands\command-folders.png" />
     <Content Include="Resources\Icons\Commands\command-function.png" />
-    <Content Include="Resources\Icons\Commands\command-ignore.png" />
     <Content Include="Resources\Icons\Commands\command-input.png" />
     <Content Include="Resources\Icons\Commands\command-message.png" />
     <Content Include="Resources\Icons\Commands\command-nextloop.png" />
@@ -405,8 +371,6 @@
     <Content Include="Resources\Icons\Commands\command-spreadsheet.png" />
     <Content Include="Resources\Icons\Commands\command-start-process.png" />
     <Content Include="Resources\Icons\Commands\command-startloop.png" />
-    <Content Include="Resources\Icons\Commands\command-step-into.png" />
-    <Content Include="Resources\Icons\Commands\command-step-over.png" />
     <Content Include="Resources\Icons\Commands\command-stop-process.png" />
     <Content Include="Resources\Icons\Commands\command-stopwatch.png" />
     <Content Include="Resources\Icons\Commands\command-string.png" />
@@ -416,34 +380,9 @@
     <Content Include="Resources\Icons\Commands\command-window-close.png" />
     <Content Include="Resources\Icons\Commands\command-window.png" />
     <Content Include="Resources\Icons\Commands\command_folders.bmp" />
-    <Content Include="Resources\Icons\Buttons\copy.png" />
-    <Content Include="Resources\Icons\Buttons\create.png" />
-    <Content Include="Resources\Icons\Buttons\delete.png" />
-    <Content Include="Resources\Icons\Buttons\edit.png" />
-    <None Include="Resources\Icons\Logo\about_background.png" />
-    <None Include="Resources\Icons\Logo\openbots_splash2.png" />
-    <None Include="Resources\Icons\Logo\openbots-gallery-icon.png" />
-    <None Include="Resources\Icons\Logo\nuget-icon.png" />
-    <None Include="Resources\Icons\Logo\loading-spinner.gif" />
-    <Content Include="Resources\Icons\Misc\error.png" />
-    <Content Include="Resources\Icons\Misc\executing.png" />
-    <Content Include="Resources\Icons\Misc\header-backing.png" />
-    <Content Include="Resources\Icons\Misc\header_backing_dark.png" />
+    <None Include="Resources\Icons\Logo\openbots-ico.ico" />
+    <None Include="Resources\Icons\Logo\openbots-icon.png" />
     <Content Include="Resources\Samples\HTMLInputSample.html" />
-    <Content Include="Resources\Icons\Buttons\links-header - rotated.png" />
-    <Content Include="Resources\Icons\Buttons\links-header.png" />
-    <Content Include="Resources\Icons\FileIcons\microsoft-excel-icon.png" />
-    <Content Include="Resources\Icons\FileIcons\microsoft-word-icon.png" />
-    <Content Include="Resources\Icons\Logo\OpenBots-logo.png" />
-    <Content Include="Resources\Icons\Buttons\paste.png" />
-    <Content Include="Resources\Icons\FileIcons\pdf-icon.png" />
-    <Content Include="Resources\Icons\Buttons\project-collapse.png" />
-    <Content Include="Resources\Icons\Buttons\project-expand.png" />
-    <Content Include="Resources\Icons\Buttons\project-open-directory.png" />
-    <Content Include="Resources\Icons\Buttons\recent-files.png" />
-    <Content Include="Resources\Icons\Buttons\various-question.png" />
-    <Content Include="Resources\Icons\Buttons\various-record-button.png" />
-    <Content Include="Resources\Icons\Buttons\various-stop-button.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -17,7 +17,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void AddTextQueueItem()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void AddQueueItemOneAttachment()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
@@ -82,7 +82,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void AddQueueItemMultipleAttachments()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
@@ -124,7 +124,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void AddJsonQueueItem()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
@@ -152,7 +152,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void HandlesNonExistentQueue()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _addQueueItem = new AddQueueItemCommand();
 
             //Add queue item

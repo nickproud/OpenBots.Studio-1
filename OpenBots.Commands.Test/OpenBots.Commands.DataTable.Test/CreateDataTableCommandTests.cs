@@ -16,7 +16,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void CreatesDataTable()
         {
             _createDataTableCommand = new CreateDataTableCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             Data.DataTable columnNameDataTable = new Data.DataTable
             {

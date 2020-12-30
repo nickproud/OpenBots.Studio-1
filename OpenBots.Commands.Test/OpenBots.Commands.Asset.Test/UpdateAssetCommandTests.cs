@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void UpdatesTextAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void UpdatesNumberAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -79,7 +79,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void UpdatesJSONAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -110,7 +110,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void UpdatesFileAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -145,7 +145,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void HandlesNonexistentAsset()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -164,7 +164,7 @@ namespace OpenBots.Commands.Asset.Test
 
         private void resetAsset(string assetName, string assetVal, string type)
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _updateAsset = new UpdateAssetCommand();
 
             _updateAsset.v_AssetName = assetName;

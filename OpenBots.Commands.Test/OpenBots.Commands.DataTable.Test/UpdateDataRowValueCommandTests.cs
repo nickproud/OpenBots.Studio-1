@@ -17,7 +17,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void updatesDataRowValue(string option, string searchVal, string updateVal)
         {
             _updateDataRowValue = new UpdateDataRowValueCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             Data.DataTable inputTable = new Data.DataTable();
             inputTable.Columns.Add("firstname");

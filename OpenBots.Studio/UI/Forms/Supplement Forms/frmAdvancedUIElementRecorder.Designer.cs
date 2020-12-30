@@ -51,7 +51,7 @@
             this.tlpControls.Controls.Add(this.pnlHeader, 0, 0);
             this.tlpControls.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpControls.Location = new System.Drawing.Point(0, 0);
-            this.tlpControls.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tlpControls.Margin = new System.Windows.Forms.Padding(4);
             this.tlpControls.Name = "tlpControls";
             this.tlpControls.RowCount = 1;
             this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 234F));
@@ -78,9 +78,9 @@
             // 
             // pbRefresh
             // 
-            this.pbRefresh.Image = Core.Properties.Resources.browser_refresh;
+            this.pbRefresh.Image = global::OpenBots.Properties.Resources.browser_refresh;
             this.pbRefresh.Location = new System.Drawing.Point(19, 151);
-            this.pbRefresh.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pbRefresh.Margin = new System.Windows.Forms.Padding(4);
             this.pbRefresh.Name = "pbRefresh";
             this.pbRefresh.Size = new System.Drawing.Size(43, 39);
             this.pbRefresh.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -103,9 +103,9 @@
             // 
             // pbRecord
             // 
-            this.pbRecord.Image = ((System.Drawing.Image)(resources.GetObject("pbRecord.Image")));
+            this.pbRecord.Image = global::OpenBots.Properties.Resources.various_record_button;
             this.pbRecord.Location = new System.Drawing.Point(545, 151);
-            this.pbRecord.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pbRecord.Margin = new System.Windows.Forms.Padding(4);
             this.pbRecord.Name = "pbRecord";
             this.pbRecord.Size = new System.Drawing.Size(43, 39);
             this.pbRecord.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -132,7 +132,7 @@
             this.chkStopOnClick.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkStopOnClick.ForeColor = System.Drawing.Color.White;
             this.chkStopOnClick.Location = new System.Drawing.Point(24, 198);
-            this.chkStopOnClick.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkStopOnClick.Margin = new System.Windows.Forms.Padding(4);
             this.chkStopOnClick.Name = "chkStopOnClick";
             this.chkStopOnClick.Size = new System.Drawing.Size(249, 27);
             this.chkStopOnClick.TabIndex = 20;
@@ -147,7 +147,7 @@
             this.lblSubHeader.Location = new System.Drawing.Point(12, 53);
             this.lblSubHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSubHeader.Name = "lblSubHeader";
-            this.lblSubHeader.Size = new System.Drawing.Size(440, 35);
+            this.lblSubHeader.Size = new System.Drawing.Size(352, 28);
             this.lblSubHeader.TabIndex = 15;
             this.lblSubHeader.Text = "Capture UI Elements for UI Automation";
             // 
@@ -160,7 +160,7 @@
             this.lblHeader.Location = new System.Drawing.Point(13, 9);
             this.lblHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(655, 49);
+            this.lblHeader.Size = new System.Drawing.Size(524, 39);
             this.lblHeader.TabIndex = 14;
             this.lblHeader.Text = "Advanced UI Element Recorder";
             // 
@@ -173,7 +173,7 @@
             this.Controls.Add(this.tlpControls);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmAdvancedUIElementRecorder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "advanced ui element recorder";

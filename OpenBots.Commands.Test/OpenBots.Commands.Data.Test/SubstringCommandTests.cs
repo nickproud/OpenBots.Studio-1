@@ -12,7 +12,7 @@ namespace OpenBots.Commands.Data.Test
         [Fact]
         public void CreatesSubstring()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _substringCommand = new SubstringCommand();
 
             string input = "test text";

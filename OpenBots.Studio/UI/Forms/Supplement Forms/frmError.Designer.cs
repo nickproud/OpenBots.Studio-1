@@ -71,7 +71,7 @@
             this.uiBtnIgnore.DisplayText = "Ignore";
             this.uiBtnIgnore.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnIgnore.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnIgnore.Image = global::OpenBots.Core.Properties.Resources.command_ignore;
+            this.uiBtnIgnore.Image = global::OpenBots.Properties.Resources.engine_ignore;
             this.uiBtnIgnore.IsMouseOver = false;
             this.uiBtnIgnore.Location = new System.Drawing.Point(450, 178);
             this.uiBtnIgnore.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
@@ -89,7 +89,7 @@
             this.uiBtnContinue.DisplayText = "Continue";
             this.uiBtnContinue.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnContinue.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnContinue.Image = global::OpenBots.Core.Properties.Resources.command_resume;
+            this.uiBtnContinue.Image = global::OpenBots.Properties.Resources.engine_resume;
             this.uiBtnContinue.IsMouseOver = false;
             this.uiBtnContinue.Location = new System.Drawing.Point(510, 178);
             this.uiBtnContinue.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
@@ -107,7 +107,7 @@
             this.uiBtnCopyError.DisplayText = "Copy";
             this.uiBtnCopyError.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnCopyError.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnCopyError.Image = global::OpenBots.Core.Properties.Resources.copy;
+            this.uiBtnCopyError.Image = global::OpenBots.Properties.Resources.copy;
             this.uiBtnCopyError.IsMouseOver = false;
             this.uiBtnCopyError.Location = new System.Drawing.Point(10, 178);
             this.uiBtnCopyError.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
@@ -125,7 +125,7 @@
             this.uiBtnBreak.DisplayText = "Break";
             this.uiBtnBreak.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnBreak.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnBreak.Image = global::OpenBots.Core.Properties.Resources.command_pause;
+            this.uiBtnBreak.Image = global::OpenBots.Properties.Resources.engine_pause;
             this.uiBtnBreak.IsMouseOver = false;
             this.uiBtnBreak.Location = new System.Drawing.Point(390, 178);
             this.uiBtnBreak.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
@@ -148,7 +148,7 @@
             this.Controls.Add(this.uiBtnContinue);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = OpenBots.Core.Properties.Resources.OpenBots_ico;
+            this.Icon = OpenBots.Properties.Resources.OpenBots_ico;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmError";

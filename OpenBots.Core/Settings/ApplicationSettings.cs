@@ -2,6 +2,7 @@
 using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 
@@ -79,12 +80,14 @@ namespace OpenBots.Core.Settings
                 {
                     appSettings = new ApplicationSettings();
                     appSettings.ClientSettings.PackageSourceDT = DefaultPackageSourceDT();
+                    appSettings.ClientSettings.RecentProjects = new List<string>();
                 }
             }
             else
             {
                 appSettings = new ApplicationSettings();
                 appSettings.ClientSettings.PackageSourceDT = DefaultPackageSourceDT();
+                appSettings.ClientSettings.RecentProjects = new List<string>();
             }
 
             return appSettings;

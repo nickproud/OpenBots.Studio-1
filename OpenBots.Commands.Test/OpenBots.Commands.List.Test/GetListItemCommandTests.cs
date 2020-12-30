@@ -14,7 +14,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void GetsStringListItem()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getListItem = new GetListItemCommand();
 
             List<string> list = new List<string>();
@@ -34,7 +34,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void GetsDataTableListItem()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getListItem = new GetListItemCommand();
 
             List<DataTable> list = new List<DataTable>();

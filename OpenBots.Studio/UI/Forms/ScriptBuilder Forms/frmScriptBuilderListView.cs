@@ -3,7 +3,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Properties;
+using OpenBots.Properties;
 using OpenBots.Core.UI.DTOs;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
@@ -14,6 +14,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using CoreResources = OpenBots.Core.Properties.Resources;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -100,7 +101,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 var newCommandName = _automationCommands.Where(x => x.ShortName == commandName && x.DisplayGroup == commandGroupName)
                                                               .Select(x => x.Command).FirstOrDefault().GetType();
 
-                dynamic newCommandInstance = TypeMethods.CreateTypeInstance(_container, newCommandName.Name);
+                dynamic newCommandInstance = TypeMethods.CreateTypeInstance(AContainer, newCommandName.Name);
 
                 CreateUndoSnapshot();
                 if (dragToItem != null)
@@ -351,7 +352,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //create new command editor form
                 frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands());
 
-                editCommand.Container = _container;
+                editCommand.Container = AContainer;
 
                 //creation mode edit locks form to current command
                 editCommand.CreationModeInstance = CreationMode.Edit;
@@ -684,12 +685,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 case 1:
                     if (command.PauseBeforeExecution)
                     {
-                        var breakPointImg = new Bitmap(Resources.command_breakpoint, new Size(18, 18));
+                        var breakPointImg = new Bitmap(CoreResources.command_breakpoint, new Size(18, 18));
                         e.Graphics.DrawImage(breakPointImg, modifiedBounds.Left, modifiedBounds.Top + 3);
                     }
                     else if (command.IsCommented)
                     {
-                        var commentedImg = new Bitmap(Resources.command_disabled, new Size(18, 18));
+                        var commentedImg = new Bitmap(CoreResources.command_disabled, new Size(18, 18));
                         e.Graphics.DrawImage(commentedImg, modifiedBounds.Left, modifiedBounds.Top + 3);
                     }
                     else
@@ -1038,58 +1039,58 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 (selectedCommand.CommandName == "LoopNumberOfTimesCommand") || (selectedCommand.CommandName == "BeginLoopCommand") ||
                 (selectedCommand.CommandName == "BeginMultiLoopCommand"))
             {
-                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(_container, "AddCodeCommentCommand");
+                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Items in this section will run within the loop";
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
 
-                dynamic endLoopCommand = TypeMethods.CreateTypeInstance(_container, "EndLoopCommand");
+                dynamic endLoopCommand = TypeMethods.CreateTypeInstance(AContainer, "EndLoopCommand");
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(endLoopCommand));
             }
             else if ((selectedCommand.CommandName == "BeginIfCommand") || (selectedCommand.CommandName == "BeginMultiIfCommand"))
             {
-                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(_container, "AddCodeCommentCommand");
+                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Items in this section will run if the statement is true";
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
                 
-                dynamic endIfCommand = TypeMethods.CreateTypeInstance(_container, "EndIfCommand");
+                dynamic endIfCommand = TypeMethods.CreateTypeInstance(AContainer, "EndIfCommand");
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(endIfCommand));
             }
             else if (selectedCommand.CommandName == "BeginTryCommand")
             {
-                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(_container, "AddCodeCommentCommand");
+                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Items in this section will be handled if error occurs";
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
 
-                dynamic catchCommand = TypeMethods.CreateTypeInstance(_container, "CatchCommand");
+                dynamic catchCommand = TypeMethods.CreateTypeInstance(AContainer, "CatchCommand");
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(catchCommand));
 
-                dynamic codeCommentCommand = TypeMethods.CreateTypeInstance(_container, "AddCodeCommentCommand");
+                dynamic codeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 codeCommentCommand.v_Comment = "This section executes if error occurs above";
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 3, CreateScriptCommandListViewItem(codeCommentCommand));
 
-                dynamic endTryCommand = TypeMethods.CreateTypeInstance(_container, "EndTryCommand");
+                dynamic endTryCommand = TypeMethods.CreateTypeInstance(AContainer, "EndTryCommand");
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 4, CreateScriptCommandListViewItem(endTryCommand));
             }
             else if (selectedCommand.CommandName == "BeginRetryCommand")
             {
-                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(_container, "AddCodeCommentCommand");
+                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Items in this section will be retried as long as the condition is not met or an error is thrown";
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
                 
-                dynamic endRetryCommand = TypeMethods.CreateTypeInstance(_container, "EndRetryCommand");
+                dynamic endRetryCommand = TypeMethods.CreateTypeInstance(AContainer, "EndRetryCommand");
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(endRetryCommand));
             }
             else if (selectedCommand.CommandName == "BeginSwitchCommand")
             {
-                dynamic caseCommand = TypeMethods.CreateTypeInstance(_container, "CaseCommand");
+                dynamic caseCommand = TypeMethods.CreateTypeInstance(AContainer, "CaseCommand");
                 caseCommand.v_CaseValue = "Default";
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(caseCommand));
 
-                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(_container, "AddCodeCommentCommand");
+                dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Items in this section will run if no case statements match";
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(addCodeCommentCommand));
                 
-                dynamic endSwitchCommand = TypeMethods.CreateTypeInstance(_container, "EndSwitchCommand");
+                dynamic endSwitchCommand = TypeMethods.CreateTypeInstance(AContainer, "EndSwitchCommand");
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 3, CreateScriptCommandListViewItem(endSwitchCommand));
             }
 

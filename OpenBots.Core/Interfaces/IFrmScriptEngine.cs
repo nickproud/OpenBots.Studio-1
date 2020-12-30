@@ -3,6 +3,7 @@ using OpenBots.Core.Script;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 
 namespace OpenBots.Core.Infrastructure
@@ -14,7 +15,6 @@ namespace OpenBots.Core.Infrastructure
         string JsonData { get; set; }
         bool ServerExecution { get; set; }
         IfrmScriptBuilder CallBackForm { get; set; }
-        //AutomationEngineInstance EngineInstance { get; set; }
         string Result { get; set; }        
         bool IsNewTaskSteppedInto { get; set; }
         bool IsNewTaskResumed { get; set; }
@@ -27,13 +27,12 @@ namespace OpenBots.Core.Infrastructure
         bool IsChildEngine { get; set; }
         Logger ScriptEngineLogger { get; set; }
         ICommandControls CommandControls { get; set; }
-        bool IsScheduledTask { get; set; }
+        bool IsScheduledOrAttendedTask { get; set; }
 
         void ShowMessage(string message, string title, DialogType dialogType, int closeAfter);
         void ShowEngineContext(string context, int closeAfter);
-
-        //List<string> ShowInput(IInputCommand inputs);
         List<ScriptVariable> ShowHTMLInput(string htmlTemplate);
+        List<string> ShowInput(string header, string directions, DataTable inputTable);
         void AddStatus(string text, Color? statusColor = null);
         void uiBtnPause_Click(object sender, EventArgs e);
         void uiBtnCancel_Click(object sender, EventArgs e);

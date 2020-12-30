@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Outlook.Test
         [Fact]
         public void GetsOutlookEmails()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
 
             _getOutlookEmails.v_SourceFolder = "Inbox";

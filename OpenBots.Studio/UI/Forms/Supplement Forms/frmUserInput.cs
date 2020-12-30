@@ -5,16 +5,22 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace OpenBots.Commands.Input.Forms
+namespace OpenBots.UI.Forms.Supplement_Forms
 {
     public partial class frmUserInput : UIForm
     {
-        public InputCommand InputCommand { get; set; }
         public List<Control> InputControls;
+        private string _header;
+        private string _directions;
+        private DataTable _inputTable;
 
-        public frmUserInput()
+        public frmUserInput(string header, string directions, DataTable inputTable)
         {
             InitializeComponent();
+            _header = header;
+            _directions = directions;
+            _inputTable = inputTable;
+
         }
 
         private void frmUserInput_Load(object sender, EventArgs e)
@@ -22,11 +28,11 @@ namespace OpenBots.Commands.Input.Forms
             InputControls = new List<Control>();
 
             //get presentation data from command
-            lblHeader.Text = InputCommand.v_InputHeader;
-            lblDirections.Text = InputCommand.v_InputDirections;
+            lblHeader.Text = _header;
+            lblDirections.Text = _directions;
 
             //get input table
-            var inputTable = InputCommand.v_UserInputConfig;
+            var inputTable = _inputTable;
 
             //loop each data collection point
             foreach (DataRow rw in inputTable.Rows)
@@ -77,9 +83,12 @@ namespace OpenBots.Commands.Input.Forms
                         {
                             var items = defaultFieldValue.Split(',');
                             foreach (var comboItem in items)
-                            {
                                 combobox.Items.Add(comboItem.Trim());
-                            }
+
+                            if (combobox.Items.Count > 0)
+                                combobox.SelectedIndex = 0;
+                            else
+                                combobox.SelectedIndex = -1;
                         }
                         catch (Exception ex)
                         {
@@ -92,9 +101,9 @@ namespace OpenBots.Commands.Input.Forms
                         combobox.Height = fieldHeight;
                         combobox.Margin = new Padding(10, 5, 0, 0);
                         combobox.DropDownStyle = ComboBoxStyle.DropDownList;
-                        combobox.SelectedIndex = -1;
                         combobox.Font = labelingFont;
                         combobox.ForeColor = Color.SteelBlue;
+                        combobox.KeyDown += Combobox_KeyDown;
                         InputControls.Add(combobox);
                         flwInputControls.Controls.Add(combobox);
 
@@ -118,6 +127,7 @@ namespace OpenBots.Commands.Input.Forms
                         checkBox.Font = labelingFont;
                         checkBox.ForeColor = Color.SteelBlue;
                         checkBox.AutoSize = true;
+                        checkBox.KeyDown += CheckBox_KeyDown;
 
                         InputControls.Add(checkBox);
                         flwInputControls.Controls.Add(checkBox);
@@ -141,11 +151,32 @@ namespace OpenBots.Commands.Input.Forms
                         textBox.Text = defaultFieldValue;
                         textBox.Font = labelingFont;
                         textBox.ForeColor = Color.SteelBlue;
+                        textBox.KeyDown += TextBox_KeyDown;
                         InputControls.Add(textBox);
                         flwInputControls.Controls.Add(textBox);
                         break;
                 }
             }
+        }
+
+        private void CheckBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                uiBtnOk_Click(null, null);
+        }
+
+        private void Combobox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                uiBtnOk_Click(null, null);
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
+                return;
+            else if (e.KeyCode == Keys.Enter)
+                uiBtnOk_Click(null, null);
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)

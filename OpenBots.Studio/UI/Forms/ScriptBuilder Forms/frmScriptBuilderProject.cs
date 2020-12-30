@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using OpenBots.Core.Command;
-using OpenBots.Core.Nuget;
+using OpenBots.Nuget;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Studio.Utilities;
@@ -38,7 +38,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             tvProject.Nodes.Clear();
             var projectBuilder = new frmProjectBuilder();
-            projectBuilder.ShowDialog();            
+            projectBuilder.ShowDialog();
 
             //Close OpenBots if add project form is closed at startup
             if (projectBuilder.DialogResult == DialogResult.Cancel && ScriptProject == null)
@@ -66,7 +66,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
-                _container = _builder.Build();                
+                AContainer = _builder.Build();                
                         
                 string mainScriptPath = Path.Combine(ScriptProjectPath, "Main.json");
                 string mainScriptName = Path.GetFileNameWithoutExtension(mainScriptPath);
@@ -76,7 +76,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 try
                 {
-                    dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(_container, "ShowMessageCommand");
+                    dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
                     helloWorldCommand.v_Message = "Hello World";
                     mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
                 }
@@ -94,7 +94,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {                    
                     //Serialize main script
                     var mainScript = Script.SerializeScript(mainScriptActions.Items, mainScriptVariables, mainScriptElements,
-                                                            mainScriptPath);
+                                                            mainScriptPath, AContainer);
                     
                     _mainFileName = ScriptProject.Main;
                    
@@ -124,7 +124,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
                     _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
-                    _container = _builder.Build();
+                    AContainer = _builder.Build();
 
                     _mainFileName = ScriptProject.Main;
 
@@ -159,6 +159,21 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             tvProject.Nodes.Add(projectNode);
             projectNode.Expand();
             LoadCommands(this);
+
+            //Save to recent projects 
+            if (_appSettings.ClientSettings.RecentProjects == null)
+                _appSettings.ClientSettings.RecentProjects = new List<string>();
+
+            if (_appSettings.ClientSettings.RecentProjects.Contains(ScriptProjectPath))
+                _appSettings.ClientSettings.RecentProjects.Remove(ScriptProjectPath);
+
+            _appSettings.ClientSettings.RecentProjects.Insert(0, ScriptProjectPath);
+
+            if (_appSettings.ClientSettings.RecentProjects.Count > 10)
+                _appSettings.ClientSettings.RecentProjects.RemoveAt(10);
+
+            _appSettings.Save(_appSettings);
+
             return DialogResult.OK;
         }
 
@@ -364,7 +379,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 string newName = "";
                 var newNameForm = new frmInputBox("Enter the name of the new folder", "New Folder");
-                newNameForm.txtInput.Text = tvProject.SelectedNode.Name;
                 newNameForm.ShowDialog();
 
                 if (newNameForm.DialogResult == DialogResult.OK)
@@ -403,7 +417,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 Notify("An Error Occured: " + ex.Message, Color.Red);
             }
-        }
+        }        
 
         private void tsmiPasteFolder_Click(object sender, EventArgs e)
         {
@@ -459,41 +473,72 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {
                 string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
-                if (selectedNodePath != ScriptProjectPath)
+                
+                DirectoryInfo selectedNodeDirectoryInfo = new DirectoryInfo(selectedNodePath);
+
+                string newName = "";
+
+                string prompt;
+                string title;
+
+                if (selectedNodePath == ScriptProjectPath)
                 {
-                    DirectoryInfo selectedNodeDirectoryInfo = new DirectoryInfo(selectedNodePath);
+                    prompt = "Enter the new name of the project";
+                    title = "Rename Project";
+                }
+                else
+                {
+                    prompt = "Enter the new name of the folder";
+                    title = "Rename Folder";
+                }
 
-                    string newName = "";
-                    var newNameForm = new frmInputBox("Enter the new name of the folder", "Rename Folder");
-                    newNameForm.txtInput.Text = tvProject.SelectedNode.Name;
-                    newNameForm.ShowDialog();
+                var newNameForm = new frmInputBox(prompt, title);
+                newNameForm.txtInput.Text = tvProject.SelectedNode.Name;
+                newNameForm.ShowDialog();
 
-                    if (newNameForm.DialogResult == DialogResult.OK)
-                        newName = newNameForm.txtInput.Text;
-                    else if (newNameForm.DialogResult == DialogResult.Cancel)
-                        return;
+                if (newNameForm.DialogResult == DialogResult.OK)
+                    newName = newNameForm.txtInput.Text;
+                else if (newNameForm.DialogResult == DialogResult.Cancel)
+                    return;
 
-                    string newPath = Path.Combine(selectedNodeDirectoryInfo.Parent.FullName, newName);
-                    bool isInvalidProjectName = new[] { @"/", @"\" }.Any(c => newName.Contains(c));
+                string newPath = Path.Combine(selectedNodeDirectoryInfo.Parent.FullName, newName);
+                bool isInvalidProjectName = new[] { @"/", @"\" }.Any(c => newName.Contains(c));
 
-                    if (isInvalidProjectName)
-                        throw new Exception("Illegal characters in path");
+                if (isInvalidProjectName)
+                    throw new Exception("Illegal characters in path");
 
-                    if (Directory.Exists(newPath))
-                        throw new Exception("A folder with this name already exists");
+                if (Directory.Exists(newPath))
+                    throw new Exception("A folder with this name already exists");
 
+                if (CloseAllFiles())
+                {
                     FileSystem.Rename(selectedNodePath, newPath);
                     tvProject.SelectedNode.Name = newName;
                     tvProject.SelectedNode.Text = newName;
                     tvProject.SelectedNode.Tag = newPath;
-                }
+                    tvProject.SelectedNode.Collapse();
+                    tvProject.SelectedNode.Expand();
+
+                    if (selectedNodePath == ScriptProjectPath)
+                    {
+                        ScriptProject.ProjectName = newName;
+                        ScriptProjectPath = newPath;
+                        Project.RenameProject(ScriptProject, ScriptProjectPath);
+                        _appSettings.ClientSettings.RecentProjects.RemoveAt(0);
+                        _appSettings.ClientSettings.RecentProjects.Insert(0, ScriptProjectPath);
+                        _appSettings.Save(_appSettings);
+                    }
+
+                    string mainFilePath = Path.Combine(ScriptProjectPath, ScriptProject.Main);
+                    OpenFile(mainFilePath);
+                }               
             }
             catch (Exception ex)
             {
                 Notify("An Error Occured: " + ex.Message, Color.Red);
             }
-
         }
+
         private void tsmiNewScriptFile_Click(object sender, EventArgs e)
         {
             try
@@ -516,13 +561,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 UIListView newScriptActions = NewLstScriptActions();
                 List<ScriptVariable> newScripVariables = new List<ScriptVariable>();
                 List<ScriptElement> newScriptElements = new List<ScriptElement>();
-                dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(_container, "ShowMessageCommand");
+                dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
                 helloWorldCommand.v_Message = "Hello World";
                 newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
 
                 if (!File.Exists(newFilePath))
                 {
-                    Script.SerializeScript(newScriptActions.Items, newScripVariables, newScriptElements, newFilePath);
+                    Script.SerializeScript(newScriptActions.Items, newScripVariables, newScriptElements, newFilePath, AContainer);
                     NewNode(tvProject.SelectedNode, newFilePath, "file");
                     OpenFile(newFilePath);
                 }
@@ -537,7 +582,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         newerFilePath = Path.Combine(newDirectoryPath, $"{newFileNameWithoutExtension} ({count}).json");
                         count += 1;
                     }
-                    Script.SerializeScript(newScriptActions.Items, newScripVariables, newScriptElements, newerFilePath);
+                    Script.SerializeScript(newScriptActions.Items, newScripVariables, newScriptElements, newerFilePath, AContainer);
                     NewNode(tvProject.SelectedNode, newerFilePath, "file");
                     OpenFile(newerFilePath);
                 }

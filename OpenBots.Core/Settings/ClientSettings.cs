@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 
@@ -20,6 +21,7 @@ namespace OpenBots.Core.Settings
         public bool PreloadBuilderCommands { get; set; }
         public bool UseSlimActionBar { get; set; }
         public DataTable PackageSourceDT { get; set; }
+        public List<string> RecentProjects { get; set; }
 
         public ClientSettings()
         {

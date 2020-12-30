@@ -21,7 +21,7 @@ namespace OpenBots.Commands.Data.Test
         public void ParsesJSONArray()
         {
             _parseJSONArray = new ParseJSONArrayCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             string jsonArray = "[\"val1\",\"val2\",\"val3\"]";
             string[] expectedResult = {"val1","val2","val3"};

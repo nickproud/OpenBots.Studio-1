@@ -19,7 +19,7 @@ namespace OpenBots.Commands.DataTable.Test
         [ClassData(typeof(NullTestData))]
         public void HandlesNullDataTables(Data.DataTable dt1, Data.DataTable dt2)
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _mergeDataTable = new MergeDataTableCommand();
 
             dt1.StoreInUserVariable(_engine, "{dt1}");
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.DataTable.Test
         [ClassData(typeof(IncorrectTypeTestData))]
         public void HandlesIncorrectTypeInput(object dt1, object dt2)
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _mergeDataTable = new MergeDataTableCommand();
 
             dt1.StoreInUserVariable(_engine, "{dt1}");
@@ -53,7 +53,7 @@ namespace OpenBots.Commands.DataTable.Test
         [ClassData(typeof(TableTestData))]
         public void TableDataIsEqual(Data.DataTable dt1, Data.DataTable dt2, string schema)
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _mergeDataTable = new MergeDataTableCommand();
 
             dt1.StoreInUserVariable(_engine, "{dt1}");

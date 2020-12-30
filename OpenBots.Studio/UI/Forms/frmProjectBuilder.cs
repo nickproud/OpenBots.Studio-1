@@ -2,6 +2,7 @@
 using OpenBots.Core.IO;
 using OpenBots.Core.Project;
 using OpenBots.Core.UI.Forms;
+using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.IO;
 using System.Linq;
@@ -59,11 +60,13 @@ namespace OpenBots.UI.Forms
                     {
                         lblError.Text = "Error: " + ex.Message;
                         Directory.Delete(NewProjectPath, true);
+                        Action = ProjectAction.None;
                     }
                 }
                 else
                 {
                     Directory.Delete(NewProjectPath, true);
+                    Action = ProjectAction.None;
                 }
             }           
         }
@@ -169,6 +172,25 @@ namespace OpenBots.UI.Forms
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
-        }      
+        }
+
+        private void btnRecentProjects_Click(object sender, EventArgs e)
+        {
+            frmRecentProjects recent = new frmRecentProjects();
+            recent.ShowDialog();
+
+            if (recent.DialogResult == DialogResult.OK)
+            {
+                string configPath = Path.Combine(recent.RecentProjectPath, "project.config");
+                if (File.Exists(configPath))
+                {
+                    lblError.Text = "";
+                    txtExistingProjectLocation.Text = configPath;
+                    btnOpenProject_Click(null, null);
+                }
+                else
+                    lblError.Text = "Error: Unable to find 'project.config' for selected Project";
+            }
+        }
     }
 }

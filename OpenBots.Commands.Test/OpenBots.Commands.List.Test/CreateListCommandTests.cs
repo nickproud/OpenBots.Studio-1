@@ -30,7 +30,7 @@ namespace OpenBots.Commands.List.Test
         [InlineData("IWebElement")]
         public void CreatesList(string listType)
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _createList = new CreateListCommand();
 
             _createList.v_ListType = listType;
@@ -68,7 +68,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void RejectsIncorrectValue()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _createList = new CreateListCommand();
 
             int item1 = 1;

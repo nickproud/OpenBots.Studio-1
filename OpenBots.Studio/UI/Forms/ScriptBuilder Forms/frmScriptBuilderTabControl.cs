@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Script;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -118,6 +119,53 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             OpenFile(tabFilePath);
         }
 
+        private void reloadAllTabsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ReloadAllFiles();
+        }
+
+        private void ReloadAllFiles()
+        {
+            int currentTabIndex = uiScriptTabControl.SelectedIndex;
+            List<string> tabFilePaths = new List<string>();
+
+            foreach (TabPage openTab in uiScriptTabControl.TabPages)
+            {
+                uiScriptTabControl.SelectedTab = openTab;
+               
+                DialogResult result = CheckForUnsavedScript(openTab);
+                if (result == DialogResult.Cancel)
+                    return;
+
+                tabFilePaths.Add(openTab.ToolTipText);
+                uiScriptTabControl.TabPages.Remove(openTab);
+            }
+
+            foreach (string path in tabFilePaths)
+                OpenFile(path);
+
+            uiScriptTabControl.SelectedIndex = currentTabIndex;
+        }
+
+        private bool CloseAllFiles()
+        {
+            bool allTabsClosed = false;
+
+            foreach (TabPage openTab in uiScriptTabControl.TabPages)
+            {
+                uiScriptTabControl.SelectedTab = openTab;
+
+                DialogResult result = CheckForUnsavedScript(openTab);
+                if (result == DialogResult.Cancel)
+                    return allTabsClosed;
+
+                uiScriptTabControl.TabPages.Remove(openTab);
+            }
+
+            allTabsClosed = true;
+            return allTabsClosed;
+        }
+
         private void tsmiCloseAllButThis_Click(object sender, EventArgs e)
         {
             //iterate through each tab, and check if it's the selected tab.
@@ -177,7 +225,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     ClearSelectedListViewItems();
                     uiScriptTabControl.SelectedTab = tab;
-                    SaveToFile(false);
+
+                    if (!SaveToFile(false))
+                    {
+                        result = DialogResult.Cancel;
+                        return result;
+                    }
                 }
                 else if (result == DialogResult.Cancel)
                     return result;

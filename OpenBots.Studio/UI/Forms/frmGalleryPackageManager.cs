@@ -1,7 +1,7 @@
 ﻿using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
-using OpenBots.Core.Nuget;
-using OpenBots.Core.Properties;
+using OpenBots.Nuget;
+using OpenBots.Properties;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
@@ -422,7 +422,7 @@ namespace OpenBots.UI.Forms
                     else if (tvPackageFeeds.SelectedNode.Name == "Gallery")
                     {
                         lblPackageCategory.Text = "Gallery";
-                        pbxPackageCategory.Image = Resources.openbots_gallery_icon;
+                        pbxPackageCategory.Image = Resources.OpenBots_gallery_icon;
                         var sourceResults = await NugetPackageManager.SearchPackages("", tvPackageFeeds.SelectedNode.ToolTipText, _includePrerelease);
                         PopulateListBox(sourceResults);
                     }

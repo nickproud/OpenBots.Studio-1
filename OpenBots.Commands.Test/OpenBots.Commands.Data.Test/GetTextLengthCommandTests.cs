@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Data.Test
         public void GetsTextLength()
         {
             _getTextLength = new GetTextLengthCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             string textToMeasure = "testText";
             textToMeasure.StoreInUserVariable(_engine, "{inputText}");

@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Credential.Test
         [Fact]
         public void GetsCredential()
         {
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
             _getCredential = new GetCredentialCommand();
 
             string credentialName = "CommandTestCreds";

@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Dictionary.Test
         public void GetsDictionaryValue()
         {
             _getDictionaryValue = new GetDictionaryValueCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             Dictionary<string, string> inputDictionary = new Dictionary<string, string>();
             inputDictionary.Add("key1", "val1");

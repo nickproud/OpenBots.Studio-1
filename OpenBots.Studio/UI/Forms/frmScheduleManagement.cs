@@ -13,6 +13,8 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 using Microsoft.Win32.TaskScheduler;
+using OpenBots.Core.Enums;
+using OpenBots.Core.IO;
 using OpenBots.Core.Project;
 using OpenBots.Core.UI.Forms;
 using System;
@@ -26,6 +28,8 @@ namespace OpenBots.UI.Forms
 {
     public partial class frmScheduleManagement : UIForm
     {
+        private string _publishedProjectsPath;
+
         public frmScheduleManagement()
         {
             InitializeComponent();
@@ -41,38 +45,80 @@ namespace OpenBots.UI.Forms
             //set autosize mode
             colTaskName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
+            //setup file system watcher
+            _publishedProjectsPath = Folders.GetFolder(FolderType.PublishedFolder);
+            if (!Directory.Exists(_publishedProjectsPath))
+                Directory.CreateDirectory(_publishedProjectsPath);
+
+            scheduledProjectWatcher.Path = _publishedProjectsPath;
+            scheduledProjectWatcher.Filter = "*.*";
+
+            //load scripts to be used for scheduled automation
+            LoadPublishedProjects();
+
             //call bgw to pull schedule info
             RefreshTasks();
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
-        {          
-            if (string.IsNullOrEmpty(txtProjectPath.Text))
+        {
+            if (cboSelectedProject.Text == $"No published projects in '{_publishedProjectsPath}'")
             {
-                MessageBox.Show("Please select a project!");
-                return;
-            }
-
-            string selectedFile = Path.Combine(txtProjectPath.Text, "project.config");
-            if (!File.Exists(selectedFile))
-            {
-                MessageBox.Show("'project.config' file not found!");
+                MessageBox.Show("Please select a project!", "Error");
                 return;
             }
 
             if (string.IsNullOrEmpty(txtRecurCount.Text))
             {
-                MessageBox.Show("Please indicate a recurrence value!");
+                MessageBox.Show("Please indicate a recurrence value!", "Error");
                 return;
             }
 
             if (string.IsNullOrEmpty(cboRecurType.Text))
             {
-                MessageBox.Show("Please select a recurrence frequency!");
+                MessageBox.Show("Please select a recurrence frequency!", "Error");
                 return;
             }
 
-            Project scriptProject = Project.OpenProject(Path.Combine(txtProjectPath.Text, "project.config"));          
+            string projectPackagePath = Path.Combine(Folders.GetFolder(FolderType.PublishedFolder), cboSelectedProject.Text);
+
+            if (!File.Exists(projectPackagePath))
+            {
+                MessageBox.Show($"Unable to find '{projectPackagePath}' in Published directory", "Error");
+                return;
+            }
+
+            string newProjectPath = Path.Combine(Folders.GetFolder(FolderType.TempFolder), Path.GetFileNameWithoutExtension(cboSelectedProject.Text));
+
+            if (Directory.Exists(newProjectPath))
+                Directory.Delete(newProjectPath, true);
+
+            try
+            {
+                Directory.CreateDirectory(newProjectPath);
+                File.Copy(projectPackagePath, Path.Combine(Folders.GetFolder(FolderType.TempFolder), cboSelectedProject.Text), true);
+            }           
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+                return;
+            }
+
+            string configPath;
+            string projectPath;
+            Project project;
+            try
+            {
+                configPath = Project.ExtractGalleryProject(newProjectPath);
+                projectPath = Directory.GetParent(configPath).ToString();
+                project = Project.OpenProject(configPath);
+            }
+            catch (Exception ex)
+            {
+                Directory.Delete(newProjectPath, true);
+                MessageBox.Show(ex.Message, "Error");
+                return;
+            }
 
             using (TaskService ts = new TaskService())
             {
@@ -80,7 +126,7 @@ namespace OpenBots.UI.Forms
                 {
                     // Create a new task definition and assign properties
                     TaskDefinition td = ts.NewTask();
-                    td.RegistrationInfo.Description = "Scheduled task from OpenBots Studio - " + scriptProject.ProjectName;
+                    td.RegistrationInfo.Description = "Scheduled task from OpenBots Studio - " + project.ProjectName;
                     var trigger = new TimeTrigger();
                     ////   // Add a trigger that will fire the task at this time every other day
                     //DailyTrigger dt = (DailyTrigger)td.Triggers.Add(new DailyTrigger(2));
@@ -98,7 +144,7 @@ namespace OpenBots.UI.Forms
 
                     if (!double.TryParse(txtRecurCount.Text, out recurParsed))
                     {
-                        MessageBox.Show("Recur value must be a number type (double)!");
+                        MessageBox.Show("Recur value must be a number type (double)!", "Error");
                         return;
                     }
 
@@ -122,18 +168,18 @@ namespace OpenBots.UI.Forms
 
                     if (trigger.Repetition.Interval < new TimeSpan(0, 1, 0) || trigger.Repetition.Interval > new TimeSpan(31,0,0,0))
                     {
-                        MessageBox.Show("Recurrence interval must be between 1 minute and 31 days");
+                        MessageBox.Show("Recurrence interval must be between 1 minute and 31 days", "Error");
                         return;
                     }
 
                     td.Triggers.Add(trigger);
 
-                    td.Actions.Add(new ExecAction(@"" + txtAppPath.Text + "", "\"" + selectedFile + "\"", null));
-                    ts.RootFolder.RegisterTaskDefinition(@"OpenBots-" + scriptProject.ProjectName, td);
+                    td.Actions.Add(new ExecAction(@"" + txtAppPath.Text + "", "\"" + configPath + "\"", null));
+                    ts.RootFolder.RegisterTaskDefinition(@"OpenBots-" + project.ProjectName, td);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: " + ex.Message);
+                    MessageBox.Show(ex.Message, "Error");
                 }
             }
         }
@@ -174,18 +220,7 @@ namespace OpenBots.UI.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-        }
-
-        private void btnFolderManagerProject_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            
-            if (fbd.ShowDialog() == DialogResult.OK)
-            {
-                txtProjectPath.Text = fbd.SelectedPath;
-                txtProjectPath.Focus();
+                MessageBox.Show(ex.Message, "Error");
             }
         }
 
@@ -269,5 +304,56 @@ namespace OpenBots.UI.Forms
             }
         }
         #endregion BackgroundWorker, Timer       
+
+        private void scheduledProjectWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+            LoadPublishedProjects();
+        }
+
+        private void scheduledProjectWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            LoadPublishedProjects();
+        }
+
+        private void scheduledProjectWatcher_Deleted(object sender, FileSystemEventArgs e)
+        {
+            LoadPublishedProjects();
+        }
+
+        private void scheduledProjectWatcher_Renamed(object sender, RenamedEventArgs e)
+        {
+            LoadPublishedProjects();
+        }
+
+        private void LoadPublishedProjects()
+        {
+            //clear project list
+            cboSelectedProject.Items.Clear();
+
+            //get project files
+            var projectFiles = Directory.GetFiles(_publishedProjectsPath);
+
+            //loop each file and add to potential
+            foreach (var file in projectFiles)
+            {
+                var fileInfo = new FileInfo(file);
+                if (fileInfo.Extension == ".nupkg")
+                    cboSelectedProject.Items.Add(fileInfo.Name);
+            }
+
+            if (cboSelectedProject.Items.Count == 0)
+                cboSelectedProject.Items.Add($"No published projects in '{_publishedProjectsPath}'");
+
+            cboSelectedProject.Text = cboSelectedProject.Items[0].ToString();       
+        }
+
+        private void cboSelectedProject_MouseHover(object sender, EventArgs e)
+        {
+            var cboSelectedProject = (ComboBox)sender;
+            ToolTip toolTip = new ToolTip();
+            toolTip.ShowAlways = true;
+            toolTip.AutoPopDelay = 15000;
+            toolTip.SetToolTip(cboSelectedProject, cboSelectedProject.Text);
+        }
     }
 }

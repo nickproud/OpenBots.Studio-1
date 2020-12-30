@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Properties;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Studio.Utilities;
@@ -10,6 +9,7 @@ using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using OpenBots.Properties;
 
 namespace OpenBots.UI.Supplement_Forms
 {

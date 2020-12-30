@@ -10,16 +10,19 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
 using NuGet.Versioning;
+using OpenBots.Core.Project;
 using OpenBots.Core.Settings;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
-namespace OpenBots.Core.Nuget
+namespace OpenBots.Nuget
 {
     public class NugetPackageManager
     {
@@ -227,7 +230,7 @@ namespace OpenBots.Core.Nuget
         public static List<string> LoadPackageAssemblies(string configPath, bool throwException = false)
         {
             List<string> assemblyPaths = new List<string>();
-            var dependencies = JsonConvert.DeserializeObject<Project.Project>(File.ReadAllText(configPath)).Dependencies;
+            var dependencies = JsonConvert.DeserializeObject<Project>(File.ReadAllText(configPath)).Dependencies;
 
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string packagePath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
@@ -294,15 +297,29 @@ namespace OpenBots.Core.Nuget
                 }
                 catch (Exception ex)
                 {
+                    //Only true for scheduled and attended executions
                     if (throwException)
-                        throw new FileNotFoundException($"Unable to load {packagePath}\\{dependency.Key}.{dependency.Value}. " +
-                                                        "Please install this package using the OpenBots Studio Package Manager.");
+                    {
+                        MessageBox.Show($"Unable to load {packagePath}\\{dependency.Key}.{dependency.Value}. " +
+                                        "Please install this package using the OpenBots Studio Package Manager.", "Error");
+
+                        Application.Exit();
+                    }
+                                       
                     else
                         Console.WriteLine(ex);
                 }
             });
 
-            return assemblyPaths;
+            List<string> filteredPaths = new List<string>();
+            foreach (string path in assemblyPaths)
+            {
+                if (filteredPaths.Where(a => a.Contains(path.Split('/').Last()) && FileVersionInfo.GetVersionInfo(a).FileVersion ==
+                                        FileVersionInfo.GetVersionInfo(path).FileVersion).FirstOrDefault() == null)
+                    filteredPaths.Add(path);
+            }
+
+            return filteredPaths;
         }        
     }
 }

@@ -55,7 +55,7 @@ namespace OpenBots.Core.Project
             Dependencies = new Dictionary<string, string>();
 
             foreach (string commandSet in DefaultCommands)
-                Dependencies.Add($"OpenBots.Commands.{commandSet}", "1.2.0");
+                Dependencies.Add($"OpenBots.Commands.{commandSet}", "1.2.1");
         }
 
         public void SaveProject(string scriptPath)
@@ -84,6 +84,16 @@ namespace OpenBots.Core.Project
             {
                 throw new Exception("Project Directory Not Found. File Saved Externally");
             }
+        }
+
+        public static void RenameProject(Project newProject, string newProjectPath)
+        {
+            string configPath = Path.Combine(newProjectPath, "project.config");
+
+            if (File.Exists(configPath))
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(newProject));
+            else
+                throw new FileNotFoundException("project.config not found. Unable to save project.");
         }
 
         public static Project OpenProject(string configFilePath)
