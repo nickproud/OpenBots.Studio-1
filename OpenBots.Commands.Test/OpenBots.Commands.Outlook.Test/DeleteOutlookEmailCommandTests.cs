@@ -19,7 +19,7 @@ namespace OpenBots.Commands.Outlook.Test
         [Fact]
         public void DeletesOutlookEmail()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
 

@@ -29,9 +29,7 @@ namespace OpenBots.Engine
     public class AutomationEngineInstance : IAutomationEngineInstance
     {
         //engine variables
-        public List<ScriptVariable> VariableList { get; set; }
-        public List<ScriptElement> ElementList { get; set; }
-        public Dictionary<string, object> AppInstances { get; set; }
+        public EngineContext AutomationEngineContext { get; set; } = new EngineContext();        
         public List<ScriptError> ErrorsOccured { get; set; }
         public string ErrorHandlingAction { get; set; }
         public bool ChildScriptFailed { get; set; }
@@ -46,7 +44,6 @@ namespace OpenBots.Engine
         private bool _isScriptSteppedOverBeforeException { get; set; }
         private bool _isScriptSteppedIntoBeforeException { get; set; }
         [JsonIgnore]
-        public IfrmScriptEngine ScriptEngineUI { get; set; }
         private Stopwatch _stopWatch { get; set; }
         private EngineStatus _currentStatus { get; set; }
         public EngineSettings EngineSettings { get; set; }
@@ -58,22 +55,22 @@ namespace OpenBots.Engine
         public List<IRestResponse> ServiceResponses { get; set; }
         public bool AutoCalculateVariables { get; set; }
         public string TaskResult { get; set; } = "";
-        public IContainer Container { get; set; }
         //events
         public event EventHandler<ReportProgressEventArgs> ReportProgressEvent;
         public event EventHandler<ScriptFinishedEventArgs> ScriptFinishedEvent;
         public event EventHandler<LineNumberChangedEventArgs> LineNumberChangedEvent;
 
-        public AutomationEngineInstance(Logger engineLogger, IContainer container)
+        public AutomationEngineInstance(EngineContext engineContext)
         {
+            if (engineContext != null)
+                AutomationEngineContext = engineContext;
+
             //initialize logger
-            if (engineLogger != null)
+            if (AutomationEngineContext.EngineLogger != null)
             {
-                Log.Logger = engineLogger;
+                Log.Logger = AutomationEngineContext.EngineLogger;
                 Log.Information("Engine Class has been initialized");
             }
-
-            Container = container;
             
             _privateCommandLog = "Can't log display value as the command contains sensitive data";
 
@@ -87,11 +84,17 @@ namespace OpenBots.Engine
             var settings = new ApplicationSettings().GetOrCreateApplicationSettings();
             EngineSettings = settings.EngineSettings;
 
-            VariableList = new List<ScriptVariable>();
-            ElementList = new List<ScriptElement>();
-            AppInstances = new Dictionary<string, object>();
-            ServiceResponses = new List<IRestResponse>();
-            DataTables = new List<DataTable>();
+            if (AutomationEngineContext.Variables == null)
+                AutomationEngineContext.Variables = new List<ScriptVariable>();
+
+            if (AutomationEngineContext.Elements == null)
+                AutomationEngineContext.Elements = new List<ScriptElement>();
+
+            if (AutomationEngineContext.AppInstances == null)
+                AutomationEngineContext.AppInstances = new Dictionary<string, object>();
+
+                ServiceResponses = new List<IRestResponse>();
+                DataTables = new List<DataTable>();
 
             //this value can be later overriden by script
             AutoCalculateVariables = EngineSettings.AutoCalcVariables;
@@ -99,38 +102,28 @@ namespace OpenBots.Engine
             ErrorHandlingAction = string.Empty;
         }
 
-        public IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger, IContainer container)
+        public IAutomationEngineInstance CreateAutomationEngineInstance(EngineContext engineContext)
         {
-            return new AutomationEngineInstance(logger, container);
+            return new AutomationEngineInstance(engineContext);
         }
 
-        public void ExecuteScriptSync(string filePath, string projectPath)
+        public void ExecuteScriptSync()
         {
             Log.Information("Client requesting to execute script independently");
             IsServerExecution = true;
-            ExecuteScript(filePath, true, projectPath);
+            ExecuteScript(true);
         }
 
-        public void ExecuteScriptAsync(IfrmScriptEngine scriptEngine, string filePath, string projectPath, List<ScriptVariable> variables = null, 
-                                       List<ScriptElement> elements = null, Dictionary<string, object> appInstances = null)
+        public void ExecuteScriptAsync()
         {
             Log.Information("Client requesting to execute script using frmEngine");
 
-            ScriptEngineUI = scriptEngine;
-
-            if (variables != null)
-                VariableList = variables;
-
-            if (elements != null)
-                ElementList = elements;
-
-            if (appInstances != null)
-                AppInstances = appInstances;
+            AutomationEngineContext.ScriptEngine = AutomationEngineContext.ScriptEngine;
 
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                ExecuteScript(filePath, true , projectPath);
+                ExecuteScript(true);
             }).Start();
         }
 
@@ -141,22 +134,26 @@ namespace OpenBots.Engine
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                ExecuteScript(filePath, true, projectPath);
+
+                AutomationEngineContext.FilePath = filePath;
+                AutomationEngineContext.ProjectPath = projectPath;
+
+                ExecuteScript(true);
             }).Start();
         }
 
-        public void ExecuteScriptJson(string jsonData, string projectPath)
+        public void ExecuteScriptJson()
         {
             Log.Information("Client requesting to execute script independently");
 
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                ExecuteScript(jsonData, false, projectPath);
+                ExecuteScript(false);
             }).Start();
         }
 
-        private void ExecuteScript(string data, bool dataIsFile, string projectPath)
+        private void ExecuteScript(bool dataIsFile)
         {
             try
             {
@@ -174,23 +171,23 @@ namespace OpenBots.Engine
                 if (dataIsFile)
                 {
                     ReportProgress("Deserializing File");
-                    Log.Information("Script Path: " + data);
-                    FileName = data;
-                    automationScript = Script.DeserializeFile(data, Container);
+                    Log.Information("Script Path: " + AutomationEngineContext.FilePath);
+                    FileName = AutomationEngineContext.FilePath;
+                    automationScript = Script.DeserializeFile(AutomationEngineContext.FilePath, AutomationEngineContext.Container);
                 }
                 else
                 {
                     ReportProgress("Deserializing JSON");
-                    automationScript = Script.DeserializeJsonString(data);
+                    automationScript = Script.DeserializeJsonString(AutomationEngineContext.FilePath);
                 }
                 
                 //track variables and app instances
                 ReportProgress("Creating Variable List");
 
                 //set variables if they were passed in
-                if (VariableList != null)
+                if (AutomationEngineContext.Variables != null)
                 {
-                    foreach (var var in VariableList)
+                    foreach (var var in AutomationEngineContext.Variables)
                     {
                         var variableFound = automationScript.Variables.Where(f => f.VariableName == var.VariableName).FirstOrDefault();
 
@@ -201,29 +198,29 @@ namespace OpenBots.Engine
                     }
                 }
 
-                VariableList = automationScript.Variables;
+                AutomationEngineContext.Variables = automationScript.Variables;
 
                 //update ProjectPath variable
-                var projectPathVariable = VariableList.Where(v => v.VariableName == "ProjectPath").SingleOrDefault();
+                var projectPathVariable = AutomationEngineContext.Variables.Where(v => v.VariableName == "ProjectPath").SingleOrDefault();
                 if (projectPathVariable != null)
-                    projectPathVariable.VariableValue = projectPath;
+                    projectPathVariable.VariableValue = AutomationEngineContext.ProjectPath;
                 else
                 {
                     projectPathVariable = new ScriptVariable
                     {
                         VariableName = "ProjectPath",
-                        VariableValue = projectPath
+                        VariableValue = AutomationEngineContext.ProjectPath
                     };
-                    VariableList.Add(projectPathVariable);
+                    AutomationEngineContext.Variables.Add(projectPathVariable);
                 }
 
                 //track elements
                 ReportProgress("Creating Element List");
 
                 //set elements if they were passed in
-                if (ElementList != null)
+                if (AutomationEngineContext.Elements != null)
                 {
-                    foreach (var elem in ElementList)
+                    foreach (var elem in AutomationEngineContext.Elements)
                     {
                         var elementFound = automationScript.Elements.Where(f => f.ElementName == elem.ElementName).FirstOrDefault();
 
@@ -232,15 +229,15 @@ namespace OpenBots.Engine
                     }
                 }
 
-                ElementList = automationScript.Elements;
+                AutomationEngineContext.Elements = automationScript.Elements;
 
                 ReportProgress("Creating App Instance Tracking List");
                 //create app instances and merge in global instances
-                AppInstances = new Dictionary<string, object>();
+                AutomationEngineContext.AppInstances = new Dictionary<string, object>();
                 var GlobalInstances = GlobalAppInstances.GetInstances();
                 foreach (var instance in GlobalInstances)
                 {
-                    AppInstances.Add(instance.Key, instance.Value);
+                    AutomationEngineContext.AppInstances.Add(instance.Key, instance.Value);
                 }
 
                 //execute commands
@@ -281,8 +278,8 @@ namespace OpenBots.Engine
             if (parentCommand == null)
                 return;
 
-            if (ScriptEngineUI != null && (parentCommand.CommandName == "RunTaskCommand" || parentCommand.CommandName == "ShowMessageCommand"))
-                parentCommand.CurrentScriptBuilder = ScriptEngineUI.CallBackForm;
+            if (AutomationEngineContext.ScriptEngine != null && (parentCommand.CommandName == "RunTaskCommand" || parentCommand.CommandName == "ShowMessageCommand"))
+                parentCommand.CurrentScriptBuilder = AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder;
 
             //set LastCommandExecuted
             LastExecutedCommand = command.ScriptCommand;
@@ -291,11 +288,11 @@ namespace OpenBots.Engine
             LineNumberChanged(parentCommand.LineNumber);
 
             //handle pause request
-            if (ScriptEngineUI != null && parentCommand.PauseBeforeExecution && ScriptEngineUI.IsDebugMode && !ChildScriptFailed)
+            if (AutomationEngineContext.ScriptEngine != null && parentCommand.PauseBeforeExecution && AutomationEngineContext.ScriptEngine.IsDebugMode && !ChildScriptFailed)
             {
                 ReportProgress("Pausing Before Execution");
                 _isScriptPaused = true;
-                ScriptEngineUI.IsHiddenTaskEngine = false;
+                AutomationEngineContext.ScriptEngine.IsHiddenTaskEngine = false;
             }
 
             //handle pause
@@ -315,9 +312,9 @@ namespace OpenBots.Engine
                 if (_isScriptSteppedInto && parentCommand.CommandName == "RunTaskCommand")
                 {
                     parentCommand.IsSteppedInto = true;
-                    parentCommand.CurrentScriptBuilder = ScriptEngineUI.CallBackForm;
+                    parentCommand.CurrentScriptBuilder = AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder;
                     _isScriptSteppedInto = false;
-                    ScriptEngineUI.IsHiddenTaskEngine = true;
+                    AutomationEngineContext.ScriptEngine.IsHiddenTaskEngine = true;
                     
                     break;
                 }
@@ -328,7 +325,7 @@ namespace OpenBots.Engine
                     break;
                 }
 
-                if (((Form)ScriptEngineUI).IsDisposed)
+                if (((Form)AutomationEngineContext.ScriptEngine).IsDisposed)
                 {
                     IsCancellationPending = true;
                     break;
@@ -380,8 +377,8 @@ namespace OpenBots.Engine
                 }
                 else if (parentCommand.CommandName == "StopCurrentTaskCommand")
                 {
-                    if (ScriptEngineUI != null && ScriptEngineUI.CallBackForm != null)
-                        ScriptEngineUI.CallBackForm.IsScriptRunning = false;
+                    if (AutomationEngineContext.ScriptEngine != null && AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder != null)
+                        AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
 
                     IsCancellationPending = true;
                     return;
@@ -452,16 +449,16 @@ namespace OpenBots.Engine
                 }
                 else
                 {
-                    if (ScriptEngineUI != null && !command.IsExceptionIgnored && ScriptEngineUI.IsDebugMode)
+                    if (AutomationEngineContext.ScriptEngine != null && !command.IsExceptionIgnored && AutomationEngineContext.ScriptEngine.IsDebugMode)
                     {
                         //load error form if exception is not handled
-                        ScriptEngineUI.CallBackForm.IsUnhandledException = true;
-                        ScriptEngineUI.AddStatus("Pausing Before Exception");
+                        AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.IsUnhandledException = true;
+                        AutomationEngineContext.ScriptEngine.AddStatus("Pausing Before Exception");
 
-                        DialogResult result = ScriptEngineUI.CallBackForm.LoadErrorForm(errorMessage);
+                        DialogResult result = AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.LoadErrorForm(errorMessage);
                        
                         ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), LogEventLevel.Error);
-                        ScriptEngineUI.CallBackForm.IsUnhandledException = false;
+                        AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.IsUnhandledException = false;
 
                         if (result == DialogResult.OK)
                         {                           
@@ -470,22 +467,22 @@ namespace OpenBots.Engine
 
                             if (_isScriptSteppedIntoBeforeException)
                             {
-                                ScriptEngineUI.CallBackForm.IsScriptSteppedInto = true;
+                                AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptSteppedInto = true;
                                 _isScriptSteppedIntoBeforeException = false;
                             }
                             else if (_isScriptSteppedOverBeforeException)
                             {
-                                ScriptEngineUI.CallBackForm.IsScriptSteppedOver = true;
+                                AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptSteppedOver = true;
                                 _isScriptSteppedOverBeforeException = false;
                             }
 
-                            ScriptEngineUI.uiBtnPause_Click(null, null);
+                            AutomationEngineContext.ScriptEngine.uiBtnPause_Click(null, null);
                         }
                         else if (result == DialogResult.Abort || result == DialogResult.Cancel)
                         {
                             ReportProgress("Continuing Per User Choice");
-                            ScriptEngineUI.CallBackForm.RemoveDebugTab();
-                            ScriptEngineUI.uiBtnPause_Click(null, null);                           
+                            AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.RemoveDebugTab();
+                            AutomationEngineContext.ScriptEngine.uiBtnPause_Click(null, null);                           
                             throw ex;
                         }
                         //TODO: Add Break Option
@@ -578,7 +575,7 @@ namespace OpenBots.Engine
             }
 
             //add result variable if missing
-            var resultVar = VariableList.Where(f => f.VariableName == "OpenBots.Result").FirstOrDefault();
+            var resultVar = AutomationEngineContext.Variables.Where(f => f.VariableName == "OpenBots.Result").FirstOrDefault();
 
             //handle if variable is missing
             if (resultVar == null)
@@ -611,7 +608,7 @@ namespace OpenBots.Engine
                 TaskResult = error;
             }
 
-            if (ScriptEngineUI != null && !ScriptEngineUI.IsChildEngine)
+            if (AutomationEngineContext.ScriptEngine != null && !AutomationEngineContext.ScriptEngine.IsChildEngine)
                 Log.CloseAndFlush();
 
             if (IsServerExecution && !IsServerChildExecution)
@@ -636,7 +633,7 @@ namespace OpenBots.Engine
                 string summaryLoggerFilePath = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Execution Summary Logs.txt");
                 Logger summaryLogger = new Logging().CreateJsonFileLogger(summaryLoggerFilePath, Serilog.RollingInterval.Infinite);
                 summaryLogger.Information(serializedArguments);
-                if (ScriptEngineUI != null && !ScriptEngineUI.IsChildEngine)
+                if (AutomationEngineContext.ScriptEngine != null && !AutomationEngineContext.ScriptEngine.IsChildEngine)
                     summaryLogger.Dispose();
             }
 
@@ -670,7 +667,7 @@ namespace OpenBots.Engine
         public string GetProjectPath()
         {
             string projectPath = string.Empty;
-            var projectPathVariable = VariableList.Where(v => v.VariableName == "ProjectPath").SingleOrDefault();
+            var projectPathVariable = AutomationEngineContext.Variables.Where(v => v.VariableName == "ProjectPath").SingleOrDefault();
             if (projectPathVariable != null)
                 projectPath = projectPathVariable.VariableValue.ToString();
 

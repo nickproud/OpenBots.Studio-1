@@ -15,7 +15,7 @@ namespace OpenBots.Commands.Data.Test
         public void FormatsDate()
         {
             _formatDate = new FormatDateCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             DateTime inputDate = DateTime.Now;
             string dateFormat = "MM/dd/yy, hh:mm:ss";
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Data.Test
         public void HandlesInvalidInput()
         {
             _formatDate = new FormatDateCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             int inputDate = 1;
             string dateFormat = "MM/dd/yy, hh:mm:ss";

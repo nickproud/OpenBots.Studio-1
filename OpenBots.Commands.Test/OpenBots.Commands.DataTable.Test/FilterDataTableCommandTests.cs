@@ -22,7 +22,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void filtersDataTable()
         {
             _filterDataTable = new FilterDataTableCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             Data.DataTable tableToFilter = new Data.DataTable();
             tableToFilter.Columns.Add("col1");

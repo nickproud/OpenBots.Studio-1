@@ -208,6 +208,7 @@
     <Compile Include="IO\Folders.cs" />
     <Compile Include="Metrics\ExecutionMetric.cs" />
     <Compile Include="Metrics\Metric.cs" />
+    <Compile Include="Model\EngineModel\EngineContext.cs" />
     <Compile Include="Model\EngineModel\LineNumberChangedEventArgs.cs" />
     <Compile Include="Model\EngineModel\ReportProgressEventArgs.cs" />
     <Compile Include="Model\EngineModel\ScriptError.cs" />

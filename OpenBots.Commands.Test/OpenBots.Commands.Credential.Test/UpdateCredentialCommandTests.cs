@@ -13,7 +13,7 @@ namespace OpenBots.Commands.Credential.Test
         [Fact]
         public void UpdatesCredential()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateCredential = new UpdateCredentialCommand();
             _getCredential = new GetCredentialCommand();
 
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Credential.Test
 
         public string[] resetCredential()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateCredential = new UpdateCredentialCommand();
 
             string credentialName = "UpdateTestCreds";

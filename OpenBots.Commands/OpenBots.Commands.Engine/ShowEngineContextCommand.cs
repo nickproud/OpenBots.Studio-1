@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Engine
 			var engine = (IAutomationEngineInstance)sender;
 			int closeAfter = int.Parse(v_AutoCloseAfter.ConvertUserVariableToString(engine));
 
-			if (engine.ScriptEngineUI == null)
+			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{
 				MessageBox.Show(engine.GetEngineContext(), "Engine Context Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
@@ -52,9 +52,9 @@ namespace OpenBots.Commands.Engine
 			if (closeAfter < 0)
 				v_AutoCloseAfter = "10";
 
-			var result = ((Form)engine.ScriptEngineUI).Invoke(new Action(() =>
+			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
 				{
-					engine.ScriptEngineUI.ShowEngineContext(engine.GetEngineContext(), closeAfter);
+					engine.AutomationEngineContext.ScriptEngine.ShowEngineContext(engine.GetEngineContext(), closeAfter);
 				}
 			));
 		}

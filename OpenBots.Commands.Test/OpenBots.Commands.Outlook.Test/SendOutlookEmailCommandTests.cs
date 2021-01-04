@@ -19,7 +19,7 @@ namespace OpenBots.Commands.Outlook.Test
         [Fact]
         public void SendsOutlookEmail()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _sendOutlookEmail = new SendOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
 

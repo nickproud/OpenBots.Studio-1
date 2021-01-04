@@ -15,7 +15,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void getsDataRowCount()
         {
             _getDataRowCount = new GetDataRowCountCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             // Set up existing data table for the command
             Data.DataTable inputTable = new Data.DataTable();

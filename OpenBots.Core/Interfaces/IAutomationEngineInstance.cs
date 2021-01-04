@@ -14,9 +14,7 @@ namespace OpenBots.Core.Infrastructure
 {
     public interface IAutomationEngineInstance
     {
-        List<ScriptVariable> VariableList { get; set; }
-        List<ScriptElement> ElementList { get; set; }
-        Dictionary<string, object> AppInstances { get; set; }
+        EngineContext AutomationEngineContext { get; set; }
         //ErrorHandlingCommand ErrorHandler;
         List<ScriptError> ErrorsOccured { get; set; }
         string ErrorHandlingAction { get; set; }
@@ -26,7 +24,6 @@ namespace OpenBots.Core.Infrastructure
         bool IsCancellationPending { get; set; }
         bool CurrentLoopCancelled { get; set; }
         bool CurrentLoopContinuing { get; set; }
-        IfrmScriptEngine ScriptEngineUI { get; set; }
         EngineSettings EngineSettings { get; set; }
         List<DataTable> DataTables { get; set; }
         string FileName { get; set; }
@@ -35,21 +32,19 @@ namespace OpenBots.Core.Infrastructure
         List<IRestResponse> ServiceResponses { get; set; }
         bool AutoCalculateVariables { get; set; }
         string TaskResult { get; set; }
-        IContainer Container { get; set; }
 
         event EventHandler<ReportProgressEventArgs> ReportProgressEvent;
         event EventHandler<ScriptFinishedEventArgs> ScriptFinishedEvent;
         event EventHandler<LineNumberChangedEventArgs> LineNumberChangedEvent;
 
-        void ExecuteScriptAsync(IfrmScriptEngine scriptEngine, string filePath, string projectPath, List<ScriptVariable> variables = null,
-                                       List<ScriptElement> elements = null, Dictionary<string, object> appInstances = null);
+        void ExecuteScriptAsync();
         void ExecuteScriptAsync(string filePath, string projectPath);
-        void ExecuteScriptJson(string jsonData, string projectPath);
+        void ExecuteScriptJson();
         void ExecuteCommand(ScriptAction command);
         string GetEngineContext();
         void ReportProgress(string progress, LogEventLevel eventLevel = LogEventLevel.Information);
         string GetProjectPath();
-        IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger, IContainer container);
-        void ExecuteScriptSync(string filePath, string projectPath);
+        IAutomationEngineInstance CreateAutomationEngineInstance(EngineContext engineContext);
+        void ExecuteScriptSync();
     }
 }

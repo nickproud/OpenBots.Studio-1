@@ -67,7 +67,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     debugTab.Controls.RemoveAt(0);
                 debugTab.Controls.Add(variablesGridViewHelper);
 
-                List<ScriptVariable> engineVariables = ((frmScriptEngine)CurrentEngine).EngineInstance.VariableList;
+                List<ScriptVariable> engineVariables = ((frmScriptEngine)CurrentEngine).EngineInstance.AutomationEngineContext.Variables;
                 foreach (var variable in engineVariables)
                 {
                     DataRow[] foundVariables = variableValues.Select("Name = '" + variable.VariableName + "'");

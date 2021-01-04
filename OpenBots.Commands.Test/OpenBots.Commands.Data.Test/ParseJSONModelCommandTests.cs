@@ -15,7 +15,7 @@ namespace OpenBots.Commands.Data.Test
         public void ParsesJSONModel()
         {
             _parseJSONModel = new ParseJSONModelCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             string jsonObject = "{\"rect\":{\"length\":10, \"width\":5}}";
             jsonObject.StoreInUserVariable(_engine, "{input}");

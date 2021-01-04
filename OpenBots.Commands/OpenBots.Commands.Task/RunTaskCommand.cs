@@ -4,6 +4,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -18,7 +19,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using IContainer = Autofac.IContainer;
 
 namespace OpenBots.Commands.Task
 {
@@ -100,7 +100,7 @@ namespace OpenBots.Commands.Task
 		public override void RunCommand(object sender)
 		{
 			var parentAutomationEngineInstance = (IAutomationEngineInstance)sender;
-			if(parentAutomationEngineInstance.ScriptEngineUI == null)
+			if(parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine == null)
 			{
 				RunServerTask(sender);
 				return;
@@ -110,18 +110,21 @@ namespace OpenBots.Commands.Task
 			if (!File.Exists(childTaskPath))
 				throw new FileNotFoundException("Task file was not found");
 
-			IfrmScriptEngine parentfrmScriptEngine = parentAutomationEngineInstance.ScriptEngineUI;
-			string parentTaskPath = parentAutomationEngineInstance.ScriptEngineUI.FilePath;
-			int parentDebugLine = parentAutomationEngineInstance.ScriptEngineUI.DebugLineNumber;
+			IfrmScriptEngine parentfrmScriptEngine = parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine;
+			string parentTaskPath = parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.ScriptEngineContext.FilePath;
+			int parentDebugLine = parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.DebugLineNumber;
 
 			//create variable list
 			InitializeVariableLists(parentAutomationEngineInstance);
 
-			string projectPath = parentfrmScriptEngine.ProjectPath;
-			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childTaskPath, projectPath, parentAutomationEngineInstance.Container, CurrentScriptBuilder, 
-				parentfrmScriptEngine.ScriptEngineLogger, _variableList, null, parentAutomationEngineInstance.AppInstances, false, parentfrmScriptEngine.IsDebugMode);
+			string projectPath = parentfrmScriptEngine.ScriptEngineContext.ProjectPath;
 
-			if (parentAutomationEngineInstance.ScriptEngineUI.IsScheduledOrAttendedTask)
+			EngineContext childEngineContext = new EngineContext(childTaskPath, projectPath, parentAutomationEngineInstance.AutomationEngineContext.Container, CurrentScriptBuilder,
+				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, _variableList, null, parentAutomationEngineInstance.AutomationEngineContext.AppInstances, null);
+
+			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childEngineContext, false, parentfrmScriptEngine.IsDebugMode);
+
+			if (parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.IsScheduledOrAttendedTask)
 				_childfrmScriptEngine.IsScheduledOrAttendedTask = true;
 
 			_childfrmScriptEngine.IsChildEngine = true;
@@ -138,16 +141,16 @@ namespace OpenBots.Commands.Task
 			else
 				Log.Information("Executing Child Task: " + Path.GetFileName(childTaskPath));
 
-			((Form)parentAutomationEngineInstance.ScriptEngineUI).Invoke((Action)delegate()
+			((Form)parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine).Invoke((Action)delegate()
 			{
-				((Form)parentAutomationEngineInstance.ScriptEngineUI).TopMost = false;
+				((Form)parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine).TopMost = false;
 			});
 			Application.Run((Form)_childfrmScriptEngine);
 			
 			if (_childfrmScriptEngine.ClosingAllEngines)
 			{
-				parentAutomationEngineInstance.ScriptEngineUI.ClosingAllEngines = true;
-				parentAutomationEngineInstance.ScriptEngineUI.CloseWhenDone = true;
+				parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.ClosingAllEngines = true;
+				parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.CloseWhenDone = true;
 			}
 
 			// Update Current Engine Context Post Run Task
@@ -160,32 +163,32 @@ namespace OpenBots.Commands.Task
 
 			if (parentfrmScriptEngine.IsDebugMode)
 			{
-				((Form)parentAutomationEngineInstance.ScriptEngineUI).Invoke((Action)delegate()
+				((Form)parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine).Invoke((Action)delegate()
 				{
 					((Form)parentfrmScriptEngine).TopMost = true;
 					parentfrmScriptEngine.IsHiddenTaskEngine = true;
 
 					if ((IsSteppedInto || !_childfrmScriptEngine.IsHiddenTaskEngine) && !_childfrmScriptEngine.IsNewTaskResumed && !_childfrmScriptEngine.IsNewTaskCancelled)
 					{
-						parentfrmScriptEngine.CallBackForm.CurrentEngine = parentfrmScriptEngine;
-						parentfrmScriptEngine.CallBackForm.IsScriptSteppedInto = true;
+						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.CurrentEngine = parentfrmScriptEngine;
+						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptSteppedInto = true;
 						parentfrmScriptEngine.IsHiddenTaskEngine = false;
 
 						//toggle running flag to allow for tab selection
-						parentfrmScriptEngine.CallBackForm.IsScriptRunning = false;
-						parentfrmScriptEngine.CallBackForm.OpenScriptFile(parentTaskPath);
-						parentfrmScriptEngine.CallBackForm.IsScriptRunning = true;
+						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
+						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.OpenScriptFile(parentTaskPath);
+						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
 
 						parentfrmScriptEngine.UpdateLineNumber(parentDebugLine + 1);
 						parentfrmScriptEngine.AddStatus("Pausing Before Execution");
 					}
 					else if (_childfrmScriptEngine.IsNewTaskResumed)
 					{
-						parentfrmScriptEngine.CallBackForm.CurrentEngine = parentfrmScriptEngine;
+						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.CurrentEngine = parentfrmScriptEngine;
 						parentfrmScriptEngine.IsNewTaskResumed = true;
 						parentfrmScriptEngine.IsHiddenTaskEngine = true;
-						parentfrmScriptEngine.CallBackForm.IsScriptSteppedInto = false;
-						parentfrmScriptEngine.CallBackForm.IsScriptPaused = false;
+						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptSteppedInto = false;
+						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptPaused = false;
 						parentfrmScriptEngine.ResumeParentTask();
 					}
 					else if (_childfrmScriptEngine.IsNewTaskCancelled)
@@ -196,7 +199,7 @@ namespace OpenBots.Commands.Task
 			}
 			else
 			{
-				((Form)parentAutomationEngineInstance.ScriptEngineUI).Invoke((Action)delegate()
+				((Form)parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine).Invoke((Action)delegate()
 				{
 					((Form)parentfrmScriptEngine).TopMost = true;
 				});
@@ -243,9 +246,9 @@ namespace OpenBots.Commands.Task
 
 		private void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
-			var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null, null);
-			currentScriptEngine.VariableList.AddRange(editor.ScriptVariables);
-			currentScriptEngine.ElementList.AddRange(editor.ScriptElements);
+			var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null);
+			currentScriptEngine.AutomationEngineContext.Variables.AddRange(editor.ScriptVariables);
+			currentScriptEngine.AutomationEngineContext.Elements.AddRange(editor.ScriptElements);
 
 			var startFile = v_TaskPath;
 			if (startFile.Contains("{ProjectPath}"))
@@ -298,13 +301,21 @@ namespace OpenBots.Commands.Task
 			//create variable list
 			InitializeVariableLists(parentAutomationEngineInstance);
 
-			var childAutomationEngineInstance = parentAutomationEngineInstance.CreateAutomationEngineInstance((Logger)Log.Logger, parentAutomationEngineInstance.Container);
-			childAutomationEngineInstance.VariableList = _variableList;
-			childAutomationEngineInstance.AppInstances = parentAutomationEngineInstance.AppInstances;
+			EngineContext childEngineContext = new EngineContext
+			{
+				FilePath = childTaskPath,
+				ProjectPath = parentAutomationEngineInstance.GetProjectPath(),
+				EngineLogger = (Logger)Log.Logger,
+				Container = parentAutomationEngineInstance.AutomationEngineContext.Container,
+			};
+
+			var childAutomationEngineInstance = parentAutomationEngineInstance.CreateAutomationEngineInstance(childEngineContext);
+			childAutomationEngineInstance.AutomationEngineContext.Variables = _variableList;
+			childAutomationEngineInstance.AutomationEngineContext.AppInstances = parentAutomationEngineInstance.AutomationEngineContext.AppInstances;
 			childAutomationEngineInstance.IsServerChildExecution = true;
 
 			Log.Information("Executing Child Task: " + Path.GetFileName(childTaskPath));
-			childAutomationEngineInstance.ExecuteScriptSync(childTaskPath, parentAutomationEngineInstance.GetProjectPath());
+			childAutomationEngineInstance.ExecuteScriptSync();
 
 			UpdateCurrentEngineContext(parentAutomationEngineInstance, childAutomationEngineInstance);
 
@@ -349,7 +360,7 @@ namespace OpenBots.Commands.Task
 		private void UpdateCurrentEngineContext(IAutomationEngineInstance parentAutomationEngineIntance, IAutomationEngineInstance childAutomationEngineInstance)
 		{
 			//get new variable list from the new task engine after it finishes running
-			var childVariableList = childAutomationEngineInstance.VariableList;
+			var childVariableList = childAutomationEngineInstance.AutomationEngineContext.Variables;
 			foreach (var variable in _variableReturnList)
 			{
 				//check if the variables we wish to return are in the new variable list
@@ -358,19 +369,19 @@ namespace OpenBots.Commands.Task
 					//if yes, get that variable from the new list
 					ScriptVariable newTemp = childVariableList.Where(x => x.VariableName == variable.VariableName).FirstOrDefault();
 					//check if that variable previously existed in the current engine
-					if (parentAutomationEngineIntance.VariableList.Exists(x => x.VariableName == newTemp.VariableName))
+					if (parentAutomationEngineIntance.AutomationEngineContext.Variables.Exists(x => x.VariableName == newTemp.VariableName))
 					{
 						//if yes, overwrite it
-						ScriptVariable currentTemp = parentAutomationEngineIntance.VariableList.Where(x => x.VariableName == newTemp.VariableName).FirstOrDefault();
-						parentAutomationEngineIntance.VariableList.Remove(currentTemp);
+						ScriptVariable currentTemp = parentAutomationEngineIntance.AutomationEngineContext.Variables.Where(x => x.VariableName == newTemp.VariableName).FirstOrDefault();
+						parentAutomationEngineIntance.AutomationEngineContext.Variables.Remove(currentTemp);
 					}
 					//Add to current engine variable list
-					parentAutomationEngineIntance.VariableList.Add(newTemp);
+					parentAutomationEngineIntance.AutomationEngineContext.Variables.Add(newTemp);
 				}
 			}
 
 			//get updated app instance dictionary after the new engine finishes running
-			parentAutomationEngineIntance.AppInstances = childAutomationEngineInstance.AppInstances;
+			parentAutomationEngineIntance.AutomationEngineContext.AppInstances = childAutomationEngineInstance.AutomationEngineContext.AppInstances;
 
 			//get errors from new engine (if any)
 			var newEngineErrors = childAutomationEngineInstance.ErrorsOccured;

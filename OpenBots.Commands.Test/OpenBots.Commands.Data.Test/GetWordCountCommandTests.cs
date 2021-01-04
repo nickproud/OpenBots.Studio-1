@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Data.Test
         public void GetsWordCount()
         {
             _getWordCount = new GetWordCountCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             string input = "Test input sentence";
             input.StoreInUserVariable(_engine, "{input}");

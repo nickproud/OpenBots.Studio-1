@@ -15,7 +15,7 @@ namespace OpenBots.Commands.Dictionary.Test
         public void CreatesDictionary()
         {
             _createDictionary = new CreateDictionaryCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             DataTable inputDt = new DataTable();
             inputDt.Columns.Add("Keys");
             inputDt.Columns.Add("Values");

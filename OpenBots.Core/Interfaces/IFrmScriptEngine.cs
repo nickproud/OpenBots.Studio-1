@@ -1,4 +1,5 @@
 ﻿using OpenBots.Core.Enums;
+using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using Serilog.Core;
 using System;
@@ -10,11 +11,9 @@ namespace OpenBots.Core.Infrastructure
 {
     public interface IfrmScriptEngine
     {
-        string FilePath { get; set; }
-        string ProjectPath { get; set; }
+        EngineContext ScriptEngineContext { get; set; }
         string JsonData { get; set; }
         bool ServerExecution { get; set; }
-        IfrmScriptBuilder CallBackForm { get; set; }
         string Result { get; set; }        
         bool IsNewTaskSteppedInto { get; set; }
         bool IsNewTaskResumed { get; set; }
@@ -25,7 +24,6 @@ namespace OpenBots.Core.Infrastructure
         bool CloseWhenDone { get; set; }
         bool ClosingAllEngines { get; set; }
         bool IsChildEngine { get; set; }
-        Logger ScriptEngineLogger { get; set; }
         ICommandControls CommandControls { get; set; }
         bool IsScheduledOrAttendedTask { get; set; }
 

@@ -4,6 +4,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
@@ -1195,24 +1196,14 @@ namespace OpenBots.UI.CustomControls
             return cbo;
         }
 
-        public IfrmScriptEngine CreateScriptEngineForm(string pathToFile, string projectPath, IContainer container, IfrmScriptBuilder builderForm, Logger logger,
-            List<ScriptVariable> variables, List<ScriptElement> elements,
-            Dictionary<string, object> appInstances, bool blnCloseWhenDone, bool isDebugMode)
+        public IfrmScriptEngine CreateScriptEngineForm(EngineContext engineContext, bool blnCloseWhenDone, bool isDebugMode)
         {
-            frmScriptBuilder newBuilderForm;
-
-            if (builderForm != null)
-                newBuilderForm = (frmScriptBuilder)builderForm;
-            else
-                newBuilderForm = null;
-
-            return new frmScriptEngine(pathToFile, projectPath, container, newBuilderForm, logger,
-                variables, null, appInstances, false, isDebugMode);
+            return new frmScriptEngine(engineContext, blnCloseWhenDone, isDebugMode);
         }
 
-        public IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger, IContainer container)
+        public IAutomationEngineInstance CreateAutomationEngineInstance(EngineContext engineContext)
         {
-            return new AutomationEngineInstance(logger, container);
+            return new AutomationEngineInstance(engineContext);
         }
 
         public IfrmWebElementRecorder CreateWebElementRecorderForm(string startURL)

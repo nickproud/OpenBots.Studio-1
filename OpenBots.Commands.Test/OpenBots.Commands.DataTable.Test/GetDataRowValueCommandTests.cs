@@ -17,7 +17,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void getsDataRowValue(string option)
         {
             _getDataRowValue = new GetDataRowValueCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             Data.DataTable inputTable = new Data.DataTable();
             inputTable.Columns.Add("col1");

@@ -18,6 +18,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using OpenBots.Core.Model.EngineModel;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -837,14 +838,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     break;
             }
 
+            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null);
             //initialize Engine
-            CurrentEngine = new frmScriptEngine(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, false, _isDebugMode);
+            CurrentEngine = new frmScriptEngine(engineContext, false, _isDebugMode);
 
             //executionManager = new ScriptExectionManager();
             //executionManager.CurrentlyExecuting = true;
             //executionManager.ScriptName = new System.IO.FileInfo(ScriptFilePath).Name;
 
-            CurrentEngine.CallBackForm = this;
+            CurrentEngine.ScriptEngineContext.ScriptBuilder = this;
             ((frmScriptEngine)CurrentEngine).Show();
         }
 

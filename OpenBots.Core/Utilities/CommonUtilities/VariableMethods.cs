@@ -27,7 +27,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             if (userInputString.Length < 2)
                 return userInputString;
 
-            var variableList = engine.VariableList;
+            var variableList = engine.AutomationEngineContext.Variables;
             var systemVariables = Common.Common.GenerateSystemVariables();
 
             var variableSearchList = new List<ScriptVariable>();
@@ -141,7 +141,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             {
                 //reformat and attempt
                 var reformattedVariable = variableName.Replace("{", "").Replace("}", "");
-                requiredVariable = engine.VariableList.Where(var => var.VariableName == reformattedVariable).FirstOrDefault();
+                requiredVariable = engine.AutomationEngineContext.Variables.Where(var => var.VariableName == reformattedVariable).FirstOrDefault();
             }
             else
                 throw new Exception("Variable markers '{}' missing. Variable '" + variableName + "' could not be found.");
@@ -208,10 +208,10 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             else
                 throw new Exception("Variable markers '{}' missing. '" + variableName + "' is an invalid output variable name.");
 
-            if (engine.VariableList.Any(f => f.VariableName == variableName))
+            if (engine.AutomationEngineContext.Variables.Any(f => f.VariableName == variableName))
             {
                 //update existing variable
-                var existingVariable = engine.VariableList.FirstOrDefault(f => f.VariableName == variableName);
+                var existingVariable = engine.AutomationEngineContext.Variables.FirstOrDefault(f => f.VariableName == variableName);
                 existingVariable.VariableName = variableName;
                 existingVariable.VariableValue = variableValue;
             }
@@ -221,7 +221,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 var newVariable = new ScriptVariable();
                 newVariable.VariableName = variableName;
                 newVariable.VariableValue = variableValue;
-                engine.VariableList.Add(newVariable);
+                engine.AutomationEngineContext.Variables.Add(newVariable);
             }
         }       
 

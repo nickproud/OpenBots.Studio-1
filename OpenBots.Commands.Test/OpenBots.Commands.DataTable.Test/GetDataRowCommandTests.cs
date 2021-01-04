@@ -16,7 +16,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void getsDataRow()
         {
             _getDataRow = new GetDataRowCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             Data.DataTable inputTable = new Data.DataTable();
             DataColumn column1 = new DataColumn();
