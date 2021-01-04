@@ -178,6 +178,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.cmsProjectMainFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiMainRenameFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.ttScriptBuilder = new System.Windows.Forms.ToolTip(this.components);
+            this.argumentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsProjectFolderActions.SuspendLayout();
             this.cmsScriptActions.SuspendLayout();
             this.pnlControlContainer.SuspendLayout();
@@ -311,7 +312,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // 
             this.tsmiMainNewFolder.Image = global::OpenBots.Properties.Resources.ProjectFolderIcon;
             this.tsmiMainNewFolder.Name = "tsmiMainNewFolder";
-            this.tsmiMainNewFolder.Size = new System.Drawing.Size(214, 28);
+            this.tsmiMainNewFolder.Size = new System.Drawing.Size(205, 28);
             this.tsmiMainNewFolder.Text = "New Folder";
             this.tsmiMainNewFolder.Click += new System.EventHandler(this.tsmiNewFolder_Click);
             // 
@@ -319,7 +320,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // 
             this.tsmiMainNewScriptFile.Image = global::OpenBots.Properties.Resources.OpenBots_icon;
             this.tsmiMainNewScriptFile.Name = "tsmiMainNewScriptFile";
-            this.tsmiMainNewScriptFile.Size = new System.Drawing.Size(214, 28);
+            this.tsmiMainNewScriptFile.Size = new System.Drawing.Size(205, 28);
             this.tsmiMainNewScriptFile.Text = "New Script File";
             this.tsmiMainNewScriptFile.Click += new System.EventHandler(this.tsmiNewScriptFile_Click);
             // 
@@ -328,7 +329,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsmiMainPasteFolder.Image = global::OpenBots.Properties.Resources.paste;
             this.tsmiMainPasteFolder.Name = "tsmiMainPasteFolder";
             this.tsmiMainPasteFolder.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.tsmiMainPasteFolder.Size = new System.Drawing.Size(214, 28);
+            this.tsmiMainPasteFolder.Size = new System.Drawing.Size(205, 28);
             this.tsmiMainPasteFolder.Text = "Paste";
             this.tsmiMainPasteFolder.Click += new System.EventHandler(this.tsmiPasteFolder_Click);
             // 
@@ -1750,6 +1751,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.variablesToolStripMenuItem,
+            this.argumentsToolStripMenuItem,
             this.elementManagerToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.showSearchBarToolStripMenuItem,
@@ -2080,15 +2082,24 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsmiMainPasteFolder,
             this.tsmiMainRenameFolder});
             this.cmsProjectMainFolderActions.Name = "cmsProjectMainFolderActions";
-            this.cmsProjectMainFolderActions.Size = new System.Drawing.Size(215, 144);
+            this.cmsProjectMainFolderActions.Size = new System.Drawing.Size(206, 116);
             // 
             // tsmiMainRenameFolder
             // 
             this.tsmiMainRenameFolder.Image = global::OpenBots.Properties.Resources.create;
             this.tsmiMainRenameFolder.Name = "tsmiMainRenameFolder";
-            this.tsmiMainRenameFolder.Size = new System.Drawing.Size(214, 28);
+            this.tsmiMainRenameFolder.Size = new System.Drawing.Size(205, 28);
             this.tsmiMainRenameFolder.Text = "Rename Project";
             this.tsmiMainRenameFolder.Click += new System.EventHandler(this.tsmiRenameFolder_Click);
+            // 
+            // argumentsToolStripMenuItem
+            // 
+            this.argumentsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.argumentsToolStripMenuItem.Image = global::OpenBots.Properties.Resources.action_bar_variable;
+            this.argumentsToolStripMenuItem.Name = "argumentsToolStripMenuItem";
+            this.argumentsToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
+            this.argumentsToolStripMenuItem.Text = "Argument Manager";
+            this.argumentsToolStripMenuItem.Click += new System.EventHandler(this.argumentsToolStripMenuItem_Click);
             // 
             // frmScriptBuilder
             // 
@@ -2325,6 +2336,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private ToolStripMenuItem installDefaultToolStripMenuItem;
         private ToolStripMenuItem reloadAllTabsToolStripMenuItem;
         private ToolStripMenuItem tsmiMainRenameFolder;
+        private ToolStripMenuItem argumentsToolStripMenuItem;
     }
 }
 

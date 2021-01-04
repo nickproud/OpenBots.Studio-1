@@ -24,7 +24,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             TopMost = true;
         }
 
-        public List<ScriptVariable> GetVariablesFromHTML(string tagSearch)
+        public List< ScriptVariable> GetVariablesFromHTML(string tagSearch)
         {
             var varList = new List<ScriptVariable>();
 

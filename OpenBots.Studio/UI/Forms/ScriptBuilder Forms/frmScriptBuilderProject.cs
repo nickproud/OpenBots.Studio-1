@@ -72,6 +72,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 string mainScriptName = Path.GetFileNameWithoutExtension(mainScriptPath);
                 UIListView mainScriptActions = NewLstScriptActions(mainScriptName);
                 List<ScriptVariable> mainScriptVariables = new List<ScriptVariable>();
+                List<ScriptArgument> mainScriptArguments = new List<ScriptArgument>();
                 List<ScriptElement> mainScriptElements = new List<ScriptElement>();
 
                 try
@@ -93,8 +94,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 try
                 {                    
                     //Serialize main script
-                    var mainScript = Script.SerializeScript(mainScriptActions.Items, mainScriptVariables, mainScriptElements,
-                                                            mainScriptPath, AContainer);
+                    var mainScript = Script.SerializeScript(mainScriptActions.Items, mainScriptVariables, mainScriptArguments, 
+                                                            mainScriptElements, mainScriptPath, AContainer);
                     
                     _mainFileName = ScriptProject.Main;
                    
@@ -559,15 +560,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
                 string newFilePath = Path.Combine(selectedNodePath, newName + ".json");
                 UIListView newScriptActions = NewLstScriptActions();
-                List<ScriptVariable> newScripVariables = new List<ScriptVariable>();
+                List<ScriptVariable> newScriptVariables = new List<ScriptVariable>();
+                List<ScriptArgument> newScriptArguments = new List<ScriptArgument>();
                 List<ScriptElement> newScriptElements = new List<ScriptElement>();
+
                 dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
                 helloWorldCommand.v_Message = "Hello World";
                 newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
 
                 if (!File.Exists(newFilePath))
                 {
-                    Script.SerializeScript(newScriptActions.Items, newScripVariables, newScriptElements, newFilePath, AContainer);
+                    Script.SerializeScript(newScriptActions.Items, newScriptVariables, newScriptArguments, newScriptElements, newFilePath, AContainer);
                     NewNode(tvProject.SelectedNode, newFilePath, "file");
                     OpenFile(newFilePath);
                 }
@@ -582,7 +585,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         newerFilePath = Path.Combine(newDirectoryPath, $"{newFileNameWithoutExtension} ({count}).json");
                         count += 1;
                     }
-                    Script.SerializeScript(newScriptActions.Items, newScripVariables, newScriptElements, newerFilePath, AContainer);
+                    Script.SerializeScript(newScriptActions.Items, newScriptVariables, newScriptArguments, newScriptElements, newerFilePath, AContainer);
                     NewNode(tvProject.SelectedNode, newerFilePath, "file");
                     OpenFile(newerFilePath);
                 }

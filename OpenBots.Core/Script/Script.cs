@@ -36,6 +36,10 @@ namespace OpenBots.Core.Script
         /// </summary>
         public List<ScriptVariable> Variables { get; set; }
         /// <summary>
+        /// Contains user-defined arguments
+        /// </summary>
+        public List<ScriptArgument> Arguments { get; set; }
+        /// <summary>
         /// Contains user-defined elements
         /// </summary>
         public List<ScriptElement> Elements { get; set; }
@@ -48,6 +52,7 @@ namespace OpenBots.Core.Script
         public Script()
         {
             Variables = new List<ScriptVariable>();
+            Arguments = new List<ScriptArgument>();
             Elements = new List<ScriptElement>();
             Commands = new List<ScriptAction>();
         }
@@ -66,12 +71,15 @@ namespace OpenBots.Core.Script
         /// Converts and serializes the user-defined commands into an JSON file
         /// </summary>
         public static Script SerializeScript(ListView.ListViewItemCollection scriptCommands, List<ScriptVariable> scriptVariables,
-            List<ScriptElement> scriptElements, string scriptFilePath, IContainer container)
+            List<ScriptArgument> scriptArguments, List<ScriptElement> scriptElements, string scriptFilePath, IContainer container)
         {
             var script = new Script();
 
             //save variables to file
             script.Variables = scriptVariables;
+
+            //save variables to file
+            script.Arguments = scriptArguments;
 
             //save elements to file
             script.Elements = scriptElements;

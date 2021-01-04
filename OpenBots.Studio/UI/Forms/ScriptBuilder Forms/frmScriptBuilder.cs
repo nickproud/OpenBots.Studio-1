@@ -47,6 +47,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region Instance Variables
         private List<ListViewItem> _rowsSelectedForCopy;
         private List<ScriptVariable> _scriptVariables;
+        private List<ScriptArgument> _scriptArguments;
         private List<ScriptElement> _scriptElements;
         private List<AutomationCommand> _automationCommands;
         private bool _editMode;

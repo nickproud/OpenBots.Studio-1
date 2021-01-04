@@ -60,6 +60,10 @@ namespace OpenBots.Commands.ErrorHandling
 
 		[JsonIgnore]
 		[Browsable(false)]
+		private List<ScriptArgument> _scriptArguments { get; set; }
+
+		[JsonIgnore]
+		[Browsable(false)]
 		private List<ScriptElement> _scriptElements { get; set; }
 
 		[JsonIgnore]
@@ -144,6 +148,7 @@ namespace OpenBots.Commands.ErrorHandling
 
 			//get script variables for feeding into if builder form
 			_scriptVariables = editor.ScriptEngineContext.Variables;
+			_scriptArguments = editor.ScriptEngineContext.Arguments;
 			_scriptElements = editor.ScriptEngineContext.Elements;
 
 			//create controls
@@ -202,6 +207,7 @@ namespace OpenBots.Commands.ErrorHandling
 					editor.OriginalCommand = ifCommand;
 					editor.CreationModeInstance = CreationMode.Edit;
 					editor.ScriptEngineContext.Variables = _scriptVariables;
+					editor.ScriptEngineContext.Arguments = _scriptArguments;
 					editor.ScriptEngineContext.Elements = _scriptElements;
 
 					if (((Form)editor).ShowDialog() == DialogResult.OK)

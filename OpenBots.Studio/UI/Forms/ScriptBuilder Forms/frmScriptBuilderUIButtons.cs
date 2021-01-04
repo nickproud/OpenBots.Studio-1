@@ -44,7 +44,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             TabPage newTabPage = new TabPage(title)
             {
                 Name = title,
-                Tag = new ScriptObject(new List<ScriptVariable>(), new List<ScriptElement>()),
+                Tag = new ScriptObject(new List<ScriptVariable>(), new List<ScriptArgument>(), new List<ScriptElement>()),
                 ToolTipText = ""
             };
             uiScriptTabControl.Controls.Add(newTabPage);
@@ -65,6 +65,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 VariableValue = "Value Provided at Runtime"
             };
             _scriptVariables.Add(projectPathVariable);
+
+            _scriptArguments = new List<ScriptArgument>();
+
             GenerateRecentFiles();
             newTabPage.Controls[0].Hide();
             pnlCommandHelper.Show();
@@ -148,6 +151,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //reinitialize
                     _selectedTabScriptActions.Items.Clear();
                     _scriptVariables = new List<ScriptVariable>();
+                    _scriptArguments = new List<ScriptArgument>();
                     _scriptElements = new List<ScriptElement>();
 
                     if (deserializedScript.Commands.Count == 0)
@@ -164,7 +168,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //assign variables
                     _scriptVariables.AddRange(deserializedScript.Variables);
                     _scriptElements.AddRange(deserializedScript.Elements);
-                    uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptElements );                  
+                    uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements );                  
 
                     //populate commands
                     PopulateExecutionCommands(deserializedScript.Commands);
@@ -375,7 +379,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //serialize script
             try
             {
-                var exportedScript = Script.SerializeScript(_selectedTabScriptActions.Items, _scriptVariables, _scriptElements, ScriptFilePath, AContainer);
+                var exportedScript = Script.SerializeScript(_selectedTabScriptActions.Items, _scriptVariables, _scriptArguments,_scriptElements, ScriptFilePath, AContainer);
                 uiScriptTabControl.SelectedTab.Text = uiScriptTabControl.SelectedTab.Text.Replace(" *", "");
                 //show success dialog
                 Notify("File has been saved successfully!", Color.White);
@@ -510,6 +514,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     }
                 }
 
+                foreach (ScriptArgument arg in deserializedScript.Arguments)
+                {
+                    if (_scriptArguments.Find(alreadyExists => alreadyExists.ArgumentName == arg.ArgumentName) == null)
+                    {
+                        _scriptArguments.Add(arg);
+                    }
+                }
+
                 foreach (ScriptElement elem in deserializedScript.Elements)
                 {
                     if (_scriptElements.Find(alreadyExists => alreadyExists.ElementName == elem.ElementName) == null)
@@ -610,6 +622,27 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
             {
                 _scriptVariables = scriptVariableEditor.ScriptVariables;
+                if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
+                    uiScriptTabControl.SelectedTab.Text += " *";
+            }
+        }
+
+        private void argumentsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenArgumentManager();
+        }
+
+        private void OpenArgumentManager()
+        {
+            frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+            {
+                ScriptName = uiScriptTabControl.SelectedTab.Name,
+                ScriptArguments = _scriptArguments
+            };
+
+            if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
+            {
+                _scriptArguments = scriptArgumentEditor.ScriptArguments;
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
             }
@@ -838,7 +871,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     break;
             }
 
-            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null);
+            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null);
             //initialize Engine
             CurrentEngine = new frmScriptEngine(engineContext, false, _isDebugMode);
 

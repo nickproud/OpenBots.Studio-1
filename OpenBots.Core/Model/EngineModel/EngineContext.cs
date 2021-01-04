@@ -14,6 +14,7 @@ namespace OpenBots.Core.Model.EngineModel
         public IfrmScriptBuilder ScriptBuilder { get; set; }
         public Logger EngineLogger { get; set; }
         public List<ScriptVariable> Variables { get; set; }
+        public List<ScriptArgument> Arguments { get; set; }
         public List<ScriptElement> Elements { get; set; }
         public Dictionary<string, object> AppInstances { get; set; }
         public IfrmScriptEngine ScriptEngine { get; set; }
@@ -24,7 +25,7 @@ namespace OpenBots.Core.Model.EngineModel
         }
 
         public EngineContext(string filePath, string projectPath, IContainer container, IfrmScriptBuilder scriptBuilder, Logger engineLogger,
-            List<ScriptVariable> variables, List<ScriptElement> elements, Dictionary<string, object> appInstances, IfrmScriptEngine scriptEngine)
+            List<ScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, object> appInstances, IfrmScriptEngine scriptEngine)
         {
             FilePath = filePath;
             ProjectPath = projectPath;
@@ -32,6 +33,7 @@ namespace OpenBots.Core.Model.EngineModel
             ScriptBuilder = scriptBuilder;
             EngineLogger = engineLogger;
             Variables = variables;
+            Arguments = arguments;
             Elements = elements;
             AppInstances = appInstances;
             ScriptEngine = scriptEngine;

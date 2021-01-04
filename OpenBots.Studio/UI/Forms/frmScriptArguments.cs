@@ -1,0 +1,265 @@
+﻿//Copyright (c) 2019 Jason Bayldon
+//Modifications - Copyright (c) 2020 OpenBots Inc.
+//
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
+//limitations under the License.
+using OpenBots.Core.Common;
+using OpenBots.Core.Script;
+using OpenBots.Core.UI.Forms;
+using OpenBots.UI.Forms.Supplement_Forms;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+
+namespace OpenBots.UI.Forms
+{
+    public partial class frmScriptArguments : UIForm
+    {
+        public List<ScriptArgument> ScriptArguments { get; set; }
+        public string ScriptName { get; set; }
+        public string LastModifiedArgumentName { get; set; }
+        private TreeNode _userArgumentParentNode;
+        private string _leadingValue = "Default Value: ";
+        private string _emptyValue = "(no default value)";
+
+        private string _leadingDirection = "Direction: ";
+
+        #region Initialization and Form Load
+        public frmScriptArguments()
+        {
+            InitializeComponent();
+            LastModifiedArgumentName = string.Empty;
+        }
+        private void frmScriptArguments_Load(object sender, EventArgs e)
+        {
+           //initialize
+            _userArgumentParentNode = InitializeNodes("My Task Arguments", ScriptArguments);
+            lblMainLogo.Text = ScriptName + " arguments";
+            InitializeNodes("Default Task Arguments", Common.GenerateSystemArguments());
+        }
+
+        private TreeNode InitializeNodes(string parentName, List<ScriptArgument> arguments)
+        {
+            //create a root node (parent)
+            TreeNode parentNode = new TreeNode(parentName);
+
+            //add each item to parent
+            foreach (var item in arguments)
+            {
+                AddUserArgumentNode(parentNode, "{" + item.ArgumentName + "}", item.Direction, (string)item.ArgumentValue);
+            }
+
+            //add parent to treeview
+            tvScriptArguments.Nodes.Add(parentNode);
+
+            //return parent and utilize if needed
+            return parentNode;
+        }
+
+        #endregion
+
+        #region Add/Cancel Buttons
+        private void uiBtnOK_Click(object sender, EventArgs e)
+        {
+            //remove all arguments
+            ScriptArguments.Clear();
+
+            //loop each argument and add
+            for (int i = 0; i < _userArgumentParentNode.Nodes.Count; i++)
+            {
+                //get name and value
+                var argumentName = _userArgumentParentNode.Nodes[i].Text.Replace("{", "").Replace("}", "");
+                var argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), _userArgumentParentNode.Nodes[i].Nodes[1].Text.Replace(_leadingDirection, ""));
+                var argumentValue = _userArgumentParentNode.Nodes[i].Nodes[1].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+
+                //add to list
+                ScriptArguments.Add(new ScriptArgument() { ArgumentName = argumentName, Direction = argumentDirection, ArgumentValue = argumentValue });
+            }
+
+            //return success result
+            DialogResult = DialogResult.OK;
+        }
+
+        private void uiBtnCancel_Click(object sender, EventArgs e)
+        {
+            //cancel and close
+            DialogResult = DialogResult.Cancel;
+        }
+        #endregion
+
+        #region Add/Edit Arguments
+        private void uiBtnNew_Click(object sender, EventArgs e)
+        {
+            //create argument editing form
+            frmAddArgument addArgumentForm = new frmAddArgument();
+            addArgumentForm.ScriptArguments = ScriptArguments;
+
+            ExpandUserArgumentNode();
+
+            //validate if user added argument
+            if (addArgumentForm.ShowDialog() == DialogResult.OK)
+            {
+                //add newly edited node
+                AddUserArgumentNode(_userArgumentParentNode, addArgumentForm.txtArgumentName.Text, 
+                    (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), addArgumentForm.cbxDefaultDirection.Text),
+                    addArgumentForm.txtDefaultValue.Text);
+                LastModifiedArgumentName = addArgumentForm.txtArgumentName.Text;
+            }
+        }
+
+        private void tvScriptArguments_DoubleClick(object sender, EventArgs e)
+        {
+            //handle double clicks outside
+            if (tvScriptArguments.SelectedNode == null)
+            {
+                return;
+            }
+
+            //if parent was selected return
+            if (tvScriptArguments.SelectedNode.Parent == null)
+            {
+                //user selected top parent
+                return;
+            }
+
+            //top node check
+            var topNode = GetSelectedTopNode();
+
+            if (topNode.Text != "My Task Arguments")
+            {
+                return;
+            }
+
+            string argumentName, argumentValue;
+            ScriptArgumentDirection argumentDirection;
+            TreeNode parentNode;
+
+            if(tvScriptArguments.SelectedNode.Nodes.Count == 0)
+            {
+                parentNode = tvScriptArguments.SelectedNode.Parent;
+                argumentName = tvScriptArguments.SelectedNode.Parent.Text;
+                argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), tvScriptArguments.SelectedNode.Parent.Nodes[0].Text.Replace(_leadingDirection, ""));
+                argumentValue = tvScriptArguments.SelectedNode.Parent.Nodes[1].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+            }
+            else
+            {
+                parentNode = tvScriptArguments.SelectedNode;
+                argumentName = tvScriptArguments.SelectedNode.Text;
+                argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), tvScriptArguments.SelectedNode.Nodes[0].Text.Replace(_leadingDirection, ""));
+                argumentValue = tvScriptArguments.SelectedNode.Nodes[1].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+            }
+
+            if (argumentName.Replace("{", "").Replace("}", "") == "ProjectPath")
+                return;
+
+            //create argument editing form
+            frmAddArgument addArgumentForm = new frmAddArgument(argumentName, argumentDirection, argumentValue);
+            addArgumentForm.ScriptArguments = ScriptArguments;
+
+            ExpandUserArgumentNode();
+
+            //validate if user added argument
+            if (addArgumentForm.ShowDialog() == DialogResult.OK)
+            {
+                //remove parent
+                parentNode.Remove();
+
+                //add newly edited node
+                AddUserArgumentNode(_userArgumentParentNode, addArgumentForm.txtArgumentName.Text,
+                    (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), addArgumentForm.cbxDefaultDirection.Text),
+                    addArgumentForm.txtDefaultValue.Text);
+                LastModifiedArgumentName = addArgumentForm.txtArgumentName.Text;
+            }
+        }
+
+        private void AddUserArgumentNode(TreeNode parentNode, string argumentName, ScriptArgumentDirection argumentDirection, string argumentText)
+        {
+            //add new node and sort
+            var childNode = new TreeNode(argumentName);
+
+            if (argumentText == string.Empty)
+            {
+                argumentText = _emptyValue;
+            }
+
+            childNode.Nodes.Add(_leadingDirection + argumentDirection.ToString());
+            childNode.Nodes.Add(_leadingValue + argumentText);
+            parentNode.Nodes.Add(childNode);
+            tvScriptArguments.Sort();
+            ExpandUserArgumentNode();
+        }
+
+        private void ExpandUserArgumentNode()
+        {
+            if (_userArgumentParentNode != null)
+            {
+                _userArgumentParentNode.ExpandAll();
+            }
+        }
+
+        private void tvScriptArguments_KeyDown(object sender, KeyEventArgs e)
+        {
+            //handling outside
+            if (tvScriptArguments.SelectedNode == null)
+            {
+                return;
+            }
+
+            //if parent was selected return
+            if (tvScriptArguments.SelectedNode.Parent == null)
+            {
+                //user selected top parent
+                return;
+            }
+
+            //top node check
+            var topNode = GetSelectedTopNode();
+
+            if (topNode.Text != "My Task Arguments")
+            {
+                return;
+            }
+
+            //if user selected delete
+            if (e.KeyCode == Keys.Delete)
+            {
+                //determine which node is the parent
+                TreeNode parentNode;
+                if (tvScriptArguments.SelectedNode.Nodes.Count == 0)
+                {
+                    parentNode = tvScriptArguments.SelectedNode.Parent;
+                }
+                else
+                {
+                    parentNode = tvScriptArguments.SelectedNode;
+                }
+
+                if (parentNode.Text.Replace("{", "").Replace("}", "") == "ProjectPath")
+                    return;
+
+                //remove parent node
+                parentNode.Remove();
+            }
+        }
+
+        private TreeNode GetSelectedTopNode()
+        {
+            TreeNode node = tvScriptArguments.SelectedNode;
+            while (node.Parent != null)
+            {
+                node = node.Parent;
+            }
+            return node;
+        }
+        #endregion       
+    }
+}

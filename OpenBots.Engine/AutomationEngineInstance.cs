@@ -87,6 +87,9 @@ namespace OpenBots.Engine
             if (AutomationEngineContext.Variables == null)
                 AutomationEngineContext.Variables = new List<ScriptVariable>();
 
+            if (AutomationEngineContext.Arguments == null)
+                AutomationEngineContext.Arguments = new List<ScriptArgument>();
+
             if (AutomationEngineContext.Elements == null)
                 AutomationEngineContext.Elements = new List<ScriptElement>();
 

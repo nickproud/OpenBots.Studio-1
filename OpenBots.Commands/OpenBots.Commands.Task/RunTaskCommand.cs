@@ -66,6 +66,10 @@ namespace OpenBots.Commands.Task
 
 		[JsonIgnore]
 		[Browsable(false)]
+		private List<ScriptArgument> _argumentList;
+
+		[JsonIgnore]
+		[Browsable(false)]
 		private List<ScriptVariable> _variableReturnList;
 
 		[JsonIgnore]
@@ -120,7 +124,7 @@ namespace OpenBots.Commands.Task
 			string projectPath = parentfrmScriptEngine.ScriptEngineContext.ProjectPath;
 
 			EngineContext childEngineContext = new EngineContext(childTaskPath, projectPath, parentAutomationEngineInstance.AutomationEngineContext.Container, CurrentScriptBuilder,
-				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, _variableList, null, parentAutomationEngineInstance.AutomationEngineContext.AppInstances, null);
+				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, _variableList, _argumentList, null, parentAutomationEngineInstance.AutomationEngineContext.AppInstances, null);
 
 			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childEngineContext, false, parentfrmScriptEngine.IsDebugMode);
 

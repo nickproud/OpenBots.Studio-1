@@ -134,27 +134,27 @@ namespace OpenBots.UI.Forms
                 return;
             }
 
-            string VariableName, VariableValue;
+            string variableName, variableValue;
             TreeNode parentNode;
 
             if(tvScriptVariables.SelectedNode.Nodes.Count == 0)
             {
                 parentNode = tvScriptVariables.SelectedNode.Parent;
-                VariableName = tvScriptVariables.SelectedNode.Parent.Text;
-                VariableValue = tvScriptVariables.SelectedNode.Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                variableName = tvScriptVariables.SelectedNode.Parent.Text;
+                variableValue = tvScriptVariables.SelectedNode.Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
             }
             else
             {
                 parentNode = tvScriptVariables.SelectedNode;
-                VariableName = tvScriptVariables.SelectedNode.Text;
-                VariableValue = tvScriptVariables.SelectedNode.Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                variableName = tvScriptVariables.SelectedNode.Text;
+                variableValue = tvScriptVariables.SelectedNode.Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
             }
 
-            if (VariableName.Replace("{", "").Replace("}", "") == "ProjectPath")
+            if (variableName.Replace("{", "").Replace("}", "") == "ProjectPath")
                 return;
 
             //create variable editing form
-            frmAddVariable addVariableForm = new frmAddVariable(VariableName, VariableValue);
+            frmAddVariable addVariableForm = new frmAddVariable(variableName, variableValue);
             addVariableForm.ScriptVariables = ScriptVariables;
 
             ExpandUserVariableNode();
