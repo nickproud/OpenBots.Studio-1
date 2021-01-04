@@ -87,40 +87,6 @@ namespace OpenBots.Core.Common
             return systemVariableList;
         }
 
-        public static List<ScriptArgument> GenerateSystemArguments()
-        {
-            List<ScriptArgument> systemArgumentList = new List<ScriptArgument>
-            {
-                new ScriptArgument { ArgumentName = "Folder.Desktop", ArgumentValue = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) },
-                new ScriptArgument { ArgumentName = "Folder.Documents", ArgumentValue = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) },
-                new ScriptArgument { ArgumentName = "Folder.AppData", ArgumentValue = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) },
-                new ScriptArgument { ArgumentName = "Folder.ScriptPath", ArgumentValue = Folders.GetFolder(FolderType.ScriptsFolder) },
-                new ScriptArgument { ArgumentName = "Folder.RootPath", ArgumentValue = Folders.GetFolder(FolderType.RootFolder) },
-                new ScriptArgument { ArgumentName = "Folder.AttendedTasksPath", ArgumentValue = Folders.GetFolder(FolderType.AttendedTasksFolder) },
-                new ScriptArgument { ArgumentName = "DateTime.Now", ArgumentValue = DateTime.Now.ToString() },
-                new ScriptArgument { ArgumentName = "DateTime.Now.Month", ArgumentValue = DateTime.Now.ToString("MM") },
-                new ScriptArgument { ArgumentName = "DateTime.Now.Day", ArgumentValue = DateTime.Now.ToString("dd") },
-                new ScriptArgument { ArgumentName = "DateTime.Now.Year", ArgumentValue = DateTime.Now.ToString("yy") },
-                new ScriptArgument { ArgumentName = "DateTime.Now.YearLong", ArgumentValue = DateTime.Now.ToString("yyyy") },
-                new ScriptArgument { ArgumentName = "DateTime.Now.Hour", ArgumentValue = DateTime.Now.ToString("HH") },
-                new ScriptArgument { ArgumentName = "DateTime.Now.Minute", ArgumentValue = DateTime.Now.ToString("mm") },
-                new ScriptArgument { ArgumentName = "DateTime.Now.Second", ArgumentValue = DateTime.Now.ToString("ss") },
-                new ScriptArgument { ArgumentName = "DateTime.Now.FileSafe", ArgumentValue = DateTime.Now.ToString("MM-dd-yy hh.mm.ss") },
-                new ScriptArgument { ArgumentName = "System.InputLanguage", ArgumentValue = InputLanguage.CurrentInputLanguage.Culture.Name },
-                new ScriptArgument { ArgumentName = "System.KeyboardLayout", ArgumentValue = InputLanguage.CurrentInputLanguage.LayoutName },
-                new ScriptArgument { ArgumentName = "Error.Message", ArgumentValue = "An Error Occured!" },
-                new ScriptArgument { ArgumentName = "Error.Line", ArgumentValue = "1" },
-                new ScriptArgument { ArgumentName = "Error.StackTrace", ArgumentValue = "An Error Occured + StackTrace" },
-                new ScriptArgument { ArgumentName = "PC.MachineName", ArgumentValue = Environment.MachineName },
-                new ScriptArgument { ArgumentName = "PC.UserName", ArgumentValue = Environment.UserName },
-                new ScriptArgument { ArgumentName = "PC.DomainName", ArgumentValue = Environment.UserDomainName },
-                new ScriptArgument { ArgumentName = "Env.ActiveWindowTitle", ArgumentValue = User32Functions.GetActiveWindowTitle() },
-                new ScriptArgument { ArgumentName = "OpenBots.EngineContext", ArgumentValue = "{JsonContext}" },
-                new ScriptArgument { ArgumentName = "OpenBots.Location", ArgumentValue = Assembly.GetEntryAssembly()?.Location }
-            };
-            return systemArgumentList;
-        }
-
         public static string ImageToBase64(Image image)
         {
             using (MemoryStream m = new MemoryStream())

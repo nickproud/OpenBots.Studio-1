@@ -36,6 +36,6 @@ namespace OpenBots.Core.Infrastructure
         void uiBtnCancel_Click(object sender, EventArgs e);
         void UpdateLineNumber(int lineNumber);
         void ResumeParentTask();
-        void UpdateCurrentEngineContext(IAutomationEngineInstance parentEngine, IfrmScriptEngine childfrmScriptEngine, List<ScriptVariable> variableReturnList);
+        void UpdateCurrentEngineContext(IAutomationEngineInstance parentEngine, IfrmScriptEngine childfrmScriptEngine, List<ScriptArgument> argumentList);
     }
 }

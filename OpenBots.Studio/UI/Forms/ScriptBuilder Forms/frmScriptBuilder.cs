@@ -259,6 +259,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (!_editMode)
             {
                 _scriptVariables = new List<ScriptVariable>();
+                _scriptArguments = new List<ScriptArgument>();
                 _scriptElements = new List<ScriptElement>();
             }         
 
@@ -553,6 +554,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             newCommandForm.ScriptEngineContext.Variables = _scriptVariables;
             newCommandForm.ScriptEngineContext.Elements = _scriptElements;
+            newCommandForm.ScriptEngineContext.Arguments = _scriptArguments;
             newCommandForm.ScriptEngineContext.Container = AContainer;
 
             newCommandForm.ScriptEngineContext.ProjectPath = ScriptProjectPath;

@@ -301,6 +301,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //add variables/elements
                 newBuilder._scriptVariables = _scriptVariables;
                 newBuilder._scriptElements = _scriptElements;
+                newBuilder._scriptArguments = _scriptArguments;
 
                 TabPage newtabPage = new TabPage("Sequence");
                 newtabPage.Name = "Sequence";
@@ -345,6 +346,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //update variables/elements
                     _scriptVariables = newBuilder._scriptVariables;
                     _scriptElements = newBuilder._scriptElements;
+                    _scriptArguments = newBuilder._scriptArguments;
                 }
             }
             else
@@ -365,6 +367,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 //set variables
                 editCommand.ScriptEngineContext.Variables = _scriptVariables;
+
+                //set arguments 
+                editCommand.ScriptEngineContext.Arguments = _scriptArguments;
 
                 //set elements
                 editCommand.ScriptEngineContext.Elements = _scriptElements;

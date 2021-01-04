@@ -37,20 +37,20 @@ namespace OpenBots.Commands.Task
 		public string v_TaskPath { get; set; }
 
 		[Required]
-		[DisplayName("Assign Variables")]
-		[Description("Select to assign variables to the Task.")]
+		[DisplayName("Assign Arguments")]
+		[Description("Select to assign arguments to the Task.")]
 		[SampleUsage("")]
-		[Remarks("If selected, variables will be automatically generated from the Task's *Variable Manager*.")]
-		public bool v_AssignVariables { get; set; }
+		[Remarks("If selected, arguments will be automatically generated from the Task's *Argument Manager*.")]
+		public bool v_AssignArguments { get; set; }
 
 		[Required]
-		[DisplayName("Task Variables")]
-		[Description("Enter a VariableValue for each input variable.")]
-		[SampleUsage("Hello World || {vVariableValue}")]
-		[Remarks("For inputs, set VariableReturn to *No*. For outputs, set VariableReturn to *Yes*. " +
-				 "Failure to assign a VariableReturn value will result in an error.")]
+		[DisplayName("Task Arguments")]
+		[Description("Enter an ArgumentValue for each input argument.")]
+		[SampleUsage("Hello World || {vArgumentValue}")]
+		[Remarks("For inputs, set ArgumentDreiction to *In*. For outputs, set ArgumentDirection to *Out*. " +
+				 "Failure to assign an ArgumenDirection value will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		public DataTable v_VariableAssignments { get; set; }
+		public DataTable v_ArgumentAssignments { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
@@ -62,15 +62,7 @@ namespace OpenBots.Commands.Task
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private List<ScriptVariable> _variableList;
-
-		[JsonIgnore]
-		[Browsable(false)]
 		private List<ScriptArgument> _argumentList;
-
-		[JsonIgnore]
-		[Browsable(false)]
-		private List<ScriptVariable> _variableReturnList;
 
 		[JsonIgnore]
 		[Browsable(false)]
@@ -85,11 +77,11 @@ namespace OpenBots.Commands.Task
 
 			v_TaskPath = "{ProjectPath}";
 
-			v_VariableAssignments = new DataTable();
-			v_VariableAssignments.Columns.Add("VariableName");
-			v_VariableAssignments.Columns.Add("VariableValue");
-			v_VariableAssignments.Columns.Add("VariableReturn");
-			v_VariableAssignments.TableName = "RunTaskCommandInputParameters" + DateTime.Now.ToString("MMddyyhhmmss");
+			v_ArgumentAssignments = new DataTable();
+			v_ArgumentAssignments.Columns.Add("ArgumentName");
+			v_ArgumentAssignments.Columns.Add("ArgumentValue");
+			v_ArgumentAssignments.Columns.Add("ArgumentDirection");
+			v_ArgumentAssignments.TableName = "RunTaskCommandInputParameters" + DateTime.Now.ToString("MMddyyhhmmss");
 
 			_assignmentsGridViewHelper = new DataGridView();
 			_assignmentsGridViewHelper.AllowUserToAddRows = false;
@@ -97,7 +89,7 @@ namespace OpenBots.Commands.Task
 			_assignmentsGridViewHelper.Size = new Size(400, 250);
 			_assignmentsGridViewHelper.ColumnHeadersHeight = 30;
 			_assignmentsGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_assignmentsGridViewHelper.DataSource = v_VariableAssignments;
+			_assignmentsGridViewHelper.DataSource = v_ArgumentAssignments;
 			_assignmentsGridViewHelper.Hide();
 		}
 
@@ -118,13 +110,13 @@ namespace OpenBots.Commands.Task
 			string parentTaskPath = parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.ScriptEngineContext.FilePath;
 			int parentDebugLine = parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.DebugLineNumber;
 
-			//create variable list
-			InitializeVariableLists(parentAutomationEngineInstance);
+			//create argument list
+			InitializeArgumentLists(parentAutomationEngineInstance);
 
 			string projectPath = parentfrmScriptEngine.ScriptEngineContext.ProjectPath;
 
 			EngineContext childEngineContext = new EngineContext(childTaskPath, projectPath, parentAutomationEngineInstance.AutomationEngineContext.Container, CurrentScriptBuilder,
-				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, _variableList, _argumentList, null, parentAutomationEngineInstance.AutomationEngineContext.AppInstances, null);
+				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, null, _argumentList, null, parentAutomationEngineInstance.AutomationEngineContext.AppInstances, null);
 
 			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childEngineContext, false, parentfrmScriptEngine.IsDebugMode);
 
@@ -158,7 +150,7 @@ namespace OpenBots.Commands.Task
 			}
 
 			// Update Current Engine Context Post Run Task
-			_childfrmScriptEngine.UpdateCurrentEngineContext(parentAutomationEngineInstance, _childfrmScriptEngine, _variableReturnList);
+			_childfrmScriptEngine.UpdateCurrentEngineContext(parentAutomationEngineInstance, _childfrmScriptEngine, _argumentList);
 
 			if (CurrentScriptBuilder != null)
 				CurrentScriptBuilder.EngineLogger.Information("Resuming Parent Task: " + Path.GetFileName(parentTaskPath));
@@ -223,16 +215,16 @@ namespace OpenBots.Commands.Task
 
 			_passParameters = new CheckBox();
 			_passParameters.AutoSize = true;
-			_passParameters.Text = "Assign Variables";
+			_passParameters.Text = "Assign Arguments";
 			_passParameters.Font = new Font("Segoe UI Light", 12);
 			_passParameters.ForeColor = Color.White;
-			_passParameters.DataBindings.Add("Checked", this, "v_AssignVariables", false, DataSourceUpdateMode.OnPropertyChanged);
+			_passParameters.DataBindings.Add("Checked", this, "v_AssignArguments", false, DataSourceUpdateMode.OnPropertyChanged);
 			_passParameters.CheckedChanged += (sender, e) => PassParametersCheckbox_CheckedChanged(sender, e, editor, commandControls);
-			commandControls.CreateDefaultToolTipFor("v_AssignVariables", this, _passParameters);
+			commandControls.CreateDefaultToolTipFor("v_AssignArguments", this, _passParameters);
 			RenderedControls.Add(_passParameters);
 
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_VariableAssignments", this));
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_VariableAssignments", this, new Control[] { _assignmentsGridViewHelper }, editor));
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ArgumentAssignments", this));
+			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ArgumentAssignments", this, new Control[] { _assignmentsGridViewHelper }, editor));
 			RenderedControls.Add(_assignmentsGridViewHelper);
 
 			return RenderedControls;
@@ -251,8 +243,7 @@ namespace OpenBots.Commands.Task
 		private void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null);
-			currentScriptEngine.AutomationEngineContext.Variables.AddRange(editor.ScriptEngineContext.Variables);
-			currentScriptEngine.AutomationEngineContext.Elements.AddRange(editor.ScriptEngineContext.Elements);
+			currentScriptEngine.AutomationEngineContext.Arguments.AddRange(editor.ScriptEngineContext.Arguments);
 
 			var startFile = v_TaskPath;
 			if (startFile.Contains("{ProjectPath}"))
@@ -264,35 +255,36 @@ namespace OpenBots.Commands.Task
 
 			_assignmentsGridViewHelper.Visible = Sender.Checked;
 
-			//load variables if selected and file exists
+			//load arguments if selected and file exists
 			if (Sender.Checked && File.Exists(startFile))
 			{
-				_assignmentsGridViewHelper.DataSource = v_VariableAssignments;
+				_assignmentsGridViewHelper.DataSource = v_ArgumentAssignments;
 
 				JObject scriptObject = JObject.Parse(File.ReadAllText(startFile));
-				var variables = scriptObject["Variables"].ToObject<List<ScriptVariable>>();
+				var arguments = scriptObject["Arguments"].ToObject<List<ScriptArgument>>();
 
-				foreach (var variable in variables)
+				foreach (var argument in arguments)
 				{
-					if (variable.VariableName == "ProjectPath")
+					if (argument.ArgumentName == "ProjectPath")
 						continue;
 
-					DataRow[] foundVariables  = v_VariableAssignments.Select("VariableName = '" + "{" + variable.VariableName + "}" + "'");
-					if (foundVariables.Length == 0)
-						v_VariableAssignments.Rows.Add("{" + variable.VariableName + "}", variable.VariableValue, "No");                   
+					DataRow[] foundArguments  = v_ArgumentAssignments.Select("ArgumentName = '" + "{" + argument.ArgumentName + "}" + "'");
+					if (foundArguments.Length == 0)
+						v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentValue, argument.Direction.ToString());                   
 				}               
 
 				for (int i = 0; i < _assignmentsGridViewHelper.Rows.Count; i++)
 				{
 					DataGridViewComboBoxCell returnComboBox = new DataGridViewComboBoxCell();
-					returnComboBox.Items.Add("Yes");
-					returnComboBox.Items.Add("No");
+					returnComboBox.Items.Add("In");
+					returnComboBox.Items.Add("Out");
+					returnComboBox.Items.Add("InOut");
 					_assignmentsGridViewHelper.Rows[i].Cells[2] = returnComboBox;
 				}
 			}
 			else if (!Sender.Checked)
 			{
-				v_VariableAssignments.Clear();
+				v_ArgumentAssignments.Clear();
 			}
 		}       
 
@@ -302,8 +294,8 @@ namespace OpenBots.Commands.Task
 			string childTaskPath = v_TaskPath.ConvertUserVariableToString(parentAutomationEngineInstance);
 			string parentTaskPath = parentAutomationEngineInstance.FileName;
 
-			//create variable list
-			InitializeVariableLists(parentAutomationEngineInstance);
+			//create argument list
+			InitializeArgumentLists(parentAutomationEngineInstance);
 
 			EngineContext childEngineContext = new EngineContext
 			{
@@ -314,7 +306,7 @@ namespace OpenBots.Commands.Task
 			};
 
 			var childAutomationEngineInstance = parentAutomationEngineInstance.CreateAutomationEngineInstance(childEngineContext);
-			childAutomationEngineInstance.AutomationEngineContext.Variables = _variableList;
+			childAutomationEngineInstance.AutomationEngineContext.Arguments = _argumentList;
 			childAutomationEngineInstance.AutomationEngineContext.AppInstances = parentAutomationEngineInstance.AutomationEngineContext.AppInstances;
 			childAutomationEngineInstance.IsServerChildExecution = true;
 
@@ -326,63 +318,62 @@ namespace OpenBots.Commands.Task
 			Log.Information("Resuming Parent Task: " + Path.GetFileName(parentTaskPath));
 		}
 
-		private void InitializeVariableLists(IAutomationEngineInstance parentAutomationEngineInstance)
+		private void InitializeArgumentLists(IAutomationEngineInstance parentAutomationEngineInstance)
 		{
-			_variableList = new List<ScriptVariable>();
-			_variableReturnList = new List<ScriptVariable>();
+			var parentVariableList = parentAutomationEngineInstance.AutomationEngineContext.Variables;
+			_argumentList = new List<ScriptArgument>();
 
-			foreach (DataRow rw in v_VariableAssignments.Rows)
+			foreach (DataRow rw in v_ArgumentAssignments.Rows)
 			{
-				var variableName = (string)rw.ItemArray[0];
-				object variableValue = null;
+				var argumentName = (string)rw.ItemArray[0];
+				object argumentValue = null;
+				var argumentDirection = (string)rw.ItemArray[2];
 
-				if (((string)rw.ItemArray[1]).StartsWith("{") && ((string)rw.ItemArray[1]).EndsWith("}"))
-					variableValue = ((string)rw.ItemArray[1]).ConvertUserVariableToObject(parentAutomationEngineInstance);
+				if (argumentDirection == "In")
+                {
+					if (((string)rw.ItemArray[1]).StartsWith("{") && ((string)rw.ItemArray[1]).EndsWith("}"))
+						argumentValue = ((string)rw.ItemArray[1]).ConvertUserVariableToObject(parentAutomationEngineInstance);
 
-				if (variableValue is string || variableValue == null)
-					variableValue = ((string)rw.ItemArray[1]).ConvertUserVariableToString(parentAutomationEngineInstance);
+					if (argumentValue is string || argumentValue == null)
+						argumentValue = ((string)rw.ItemArray[1]).ConvertUserVariableToString(parentAutomationEngineInstance);
 
-				var variableReturn = (string)rw.ItemArray[2];
-
-				_variableList.Add(new ScriptVariable
-				{
-					VariableName = variableName.Replace("{", "").Replace("}", ""),
-					VariableValue = variableValue
-				});
-
-				if (variableReturn == "Yes")
-				{
-					_variableReturnList.Add(new ScriptVariable
+					_argumentList.Add(new ScriptArgument
 					{
-						VariableName = variableName.Replace("{", "").Replace("}", ""),
-						VariableValue = variableValue
+						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
+						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
+						ArgumentValue = argumentValue
 					});
 				}
-			}
+
+					
+                else if (argumentDirection == "Out")
+                {
+					_argumentList.Add(new ScriptArgument
+					{
+						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
+						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
+						AssignedVariable = ((string)rw.ItemArray[1]).Replace("{", "").Replace("}", "")
+					});
+                }
+            }
 		}
 
 		private void UpdateCurrentEngineContext(IAutomationEngineInstance parentAutomationEngineIntance, IAutomationEngineInstance childAutomationEngineInstance)
 		{
-			//get new variable list from the new task engine after it finishes running
-			var childVariableList = childAutomationEngineInstance.AutomationEngineContext.Variables;
-			foreach (var variable in _variableReturnList)
-			{
-				//check if the variables we wish to return are in the new variable list
-				if (childVariableList.Exists(x => x.VariableName == variable.VariableName))
-				{
-					//if yes, get that variable from the new list
-					ScriptVariable newTemp = childVariableList.Where(x => x.VariableName == variable.VariableName).FirstOrDefault();
-					//check if that variable previously existed in the current engine
-					if (parentAutomationEngineIntance.AutomationEngineContext.Variables.Exists(x => x.VariableName == newTemp.VariableName))
-					{
-						//if yes, overwrite it
-						ScriptVariable currentTemp = parentAutomationEngineIntance.AutomationEngineContext.Variables.Where(x => x.VariableName == newTemp.VariableName).FirstOrDefault();
-						parentAutomationEngineIntance.AutomationEngineContext.Variables.Remove(currentTemp);
-					}
-					//Add to current engine variable list
-					parentAutomationEngineIntance.AutomationEngineContext.Variables.Add(newTemp);
-				}
-			}
+			var parentVariableList = parentAutomationEngineIntance.AutomationEngineContext.Variables;
+			//get new argument list from the new task engine after it finishes running
+			var childArgumentList = childAutomationEngineInstance.AutomationEngineContext.Arguments;
+			foreach(var argument in _argumentList)
+            {
+				if (argument.Direction == ScriptArgumentDirection.Out)
+                {
+					var assignedParentVariable = parentVariableList.Where(v => v.VariableName == argument.AssignedVariable).FirstOrDefault();
+					if (assignedParentVariable != null)
+                    {
+						assignedParentVariable.VariableValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+					}					
+                }
+            }
 
 			//get updated app instance dictionary after the new engine finishes running
 			parentAutomationEngineIntance.AutomationEngineContext.AppInstances = childAutomationEngineInstance.AutomationEngineContext.AppInstances;

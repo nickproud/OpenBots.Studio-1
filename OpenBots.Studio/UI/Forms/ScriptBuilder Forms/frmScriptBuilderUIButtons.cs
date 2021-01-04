@@ -168,6 +168,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //assign variables
                     _scriptVariables.AddRange(deserializedScript.Variables);
                     _scriptElements.AddRange(deserializedScript.Elements);
+                    _scriptArguments.AddRange(deserializedScript.Arguments);
                     uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements );                  
 
                     //populate commands
@@ -616,7 +617,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             frmScriptVariables scriptVariableEditor = new frmScriptVariables
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
-                ScriptVariables = _scriptVariables
+                ScriptVariables = _scriptVariables,
+                ScriptArguments = _scriptArguments
             };
 
             if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
@@ -637,7 +639,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             frmScriptArguments scriptArgumentEditor = new frmScriptArguments
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
-                ScriptArguments = _scriptArguments
+                ScriptArguments = _scriptArguments,
+                ScriptVariables = _scriptVariables
             };
 
             if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)

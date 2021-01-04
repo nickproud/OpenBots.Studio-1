@@ -12,7 +12,6 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-using OpenBots.Core.Common;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
@@ -24,6 +23,7 @@ namespace OpenBots.UI.Forms
 {
     public partial class frmScriptArguments : UIForm
     {
+        public List<ScriptVariable> ScriptVariables { get; set; }
         public List<ScriptArgument> ScriptArguments { get; set; }
         public string ScriptName { get; set; }
         public string LastModifiedArgumentName { get; set; }
@@ -44,7 +44,7 @@ namespace OpenBots.UI.Forms
            //initialize
             _userArgumentParentNode = InitializeNodes("My Task Arguments", ScriptArguments);
             lblMainLogo.Text = ScriptName + " arguments";
-            InitializeNodes("Default Task Arguments", Common.GenerateSystemArguments());
+            ExpandUserArgumentNode();
         }
 
         private TreeNode InitializeNodes(string parentName, List<ScriptArgument> arguments)
@@ -79,7 +79,7 @@ namespace OpenBots.UI.Forms
                 //get name and value
                 var argumentName = _userArgumentParentNode.Nodes[i].Text.Replace("{", "").Replace("}", "");
                 var argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), _userArgumentParentNode.Nodes[i].Nodes[1].Text.Replace(_leadingDirection, ""));
-                var argumentValue = _userArgumentParentNode.Nodes[i].Nodes[1].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                var argumentValue = _userArgumentParentNode.Nodes[i].Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
 
                 //add to list
                 ScriptArguments.Add(new ScriptArgument() { ArgumentName = argumentName, Direction = argumentDirection, ArgumentValue = argumentValue });
@@ -102,6 +102,7 @@ namespace OpenBots.UI.Forms
             //create argument editing form
             frmAddArgument addArgumentForm = new frmAddArgument();
             addArgumentForm.ScriptArguments = ScriptArguments;
+            addArgumentForm.ScriptVariables = ScriptVariables;
 
             ExpandUserArgumentNode();
 
@@ -147,15 +148,15 @@ namespace OpenBots.UI.Forms
             {
                 parentNode = tvScriptArguments.SelectedNode.Parent;
                 argumentName = tvScriptArguments.SelectedNode.Parent.Text;
-                argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), tvScriptArguments.SelectedNode.Parent.Nodes[0].Text.Replace(_leadingDirection, ""));
-                argumentValue = tvScriptArguments.SelectedNode.Parent.Nodes[1].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                argumentValue = tvScriptArguments.SelectedNode.Parent.Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), tvScriptArguments.SelectedNode.Parent.Nodes[1].Text.Replace(_leadingDirection, ""));                
             }
             else
             {
                 parentNode = tvScriptArguments.SelectedNode;
                 argumentName = tvScriptArguments.SelectedNode.Text;
-                argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), tvScriptArguments.SelectedNode.Nodes[0].Text.Replace(_leadingDirection, ""));
-                argumentValue = tvScriptArguments.SelectedNode.Nodes[1].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                argumentValue = tvScriptArguments.SelectedNode.Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), tvScriptArguments.SelectedNode.Nodes[1].Text.Replace(_leadingDirection, ""));                
             }
 
             if (argumentName.Replace("{", "").Replace("}", "") == "ProjectPath")
@@ -164,6 +165,7 @@ namespace OpenBots.UI.Forms
             //create argument editing form
             frmAddArgument addArgumentForm = new frmAddArgument(argumentName, argumentDirection, argumentValue);
             addArgumentForm.ScriptArguments = ScriptArguments;
+            addArgumentForm.ScriptVariables = ScriptVariables;
 
             ExpandUserArgumentNode();
 
@@ -191,8 +193,9 @@ namespace OpenBots.UI.Forms
                 argumentText = _emptyValue;
             }
 
-            childNode.Nodes.Add(_leadingDirection + argumentDirection.ToString());
             childNode.Nodes.Add(_leadingValue + argumentText);
+            childNode.Nodes.Add(_leadingDirection + argumentDirection.ToString());
+            
             parentNode.Nodes.Add(childNode);
             tvScriptArguments.Sort();
             ExpandUserArgumentNode();

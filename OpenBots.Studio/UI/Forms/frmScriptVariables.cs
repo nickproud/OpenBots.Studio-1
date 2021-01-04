@@ -25,6 +25,7 @@ namespace OpenBots.UI.Forms
     public partial class frmScriptVariables : UIForm
     {
         public List<ScriptVariable> ScriptVariables { get; set; }
+        public List<ScriptArgument> ScriptArguments { get; set; }
         public string ScriptName { get; set; }
         public string LastModifiedVariableName { get; set; }
         private TreeNode _userVariableParentNode;
@@ -99,6 +100,7 @@ namespace OpenBots.UI.Forms
             //create variable editing form
             frmAddVariable addVariableForm = new frmAddVariable();
             addVariableForm.ScriptVariables = ScriptVariables;
+            addVariableForm.ScriptArguments = ScriptArguments;
 
             ExpandUserVariableNode();
 
@@ -156,6 +158,7 @@ namespace OpenBots.UI.Forms
             //create variable editing form
             frmAddVariable addVariableForm = new frmAddVariable(variableName, variableValue);
             addVariableForm.ScriptVariables = ScriptVariables;
+            addVariableForm.ScriptArguments = ScriptArguments;
 
             ExpandUserVariableNode();
 

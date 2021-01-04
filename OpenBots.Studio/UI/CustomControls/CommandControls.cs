@@ -6,7 +6,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
@@ -16,9 +15,7 @@ using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Engine;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms;
-using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
-using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -399,7 +396,7 @@ namespace OpenBots.UI.CustomControls
                     case UIAdditionalHelperType.ShowVariableHelper:
                         //show variable selector
                         helperControl.CommandImage = Resources.command_parse;
-                        helperControl.CommandDisplay = "Insert Variable";
+                        helperControl.CommandDisplay = "Insert Variable/Argument";
                         helperControl.Click += (sender, e) => ShowVariableSelector(sender, e);
                         break;
 
@@ -572,18 +569,22 @@ namespace OpenBots.UI.CustomControls
         public void ShowVariableSelector(object sender, EventArgs e)
         {
             //create variable selector form
-            frmVariableSelector newVariableSelector = new frmVariableSelector();
+            frmVariableArgumentSelector newVariableSelector = new frmVariableArgumentSelector();
 
-            //get copy of user variables and append system variables, then load to combobox
+            //get copy of user variables and append system variables, then load to listview
             var variableList = _currentEditor.ScriptEngineContext.Variables.Select(f => f.VariableName).ToList();
             variableList.AddRange(Common.GenerateSystemVariables().Select(f => f.VariableName));
             newVariableSelector.lstVariables.Items.AddRange(variableList.ToArray());
+
+            //get copy of user arguments, then load to listview
+            var argumentList = _currentEditor.ScriptEngineContext.Arguments.Select(f => f.ArgumentName).ToList();
+            newVariableSelector.lstArguments.Items.AddRange(argumentList.ToArray());
 
             //if user pressed "OK"
             if (newVariableSelector.ShowDialog() == DialogResult.OK)
             {
                 //ensure that a variable was actually selected
-                if (newVariableSelector.lstVariables.SelectedItem == null)
+                if (newVariableSelector.ReturnVariableArgument == null)
                 {
                     //return out as nothing was selected
                     MessageBox.Show("There were no variables selected!");
@@ -602,14 +603,14 @@ namespace OpenBots.UI.CustomControls
                     TextBox targetTextbox = (TextBox)inputBox.Tag;
                     //concat variable name with brackets [vVariable] as engine searches for the same
                     targetTextbox.Text = targetTextbox.Text.Insert(targetTextbox.SelectionStart, string.Concat("{",
-                        newVariableSelector.lstVariables.SelectedItem.ToString(), "}"));
+                        newVariableSelector.ReturnVariableArgument, "}"));
                 }
                 else if (inputBox.Tag is ComboBox)
                 {
                     ComboBox targetCombobox = (ComboBox)inputBox.Tag;
                     //concat variable name with brackets [vVariable] as engine searches for the same
                     targetCombobox.Text = targetCombobox.Text.Insert(targetCombobox.SelectionStart, string.Concat("{",
-                        newVariableSelector.lstVariables.SelectedItem.ToString(), "}"));
+                        newVariableSelector.ReturnVariableArgument, "}"));
                 }
                 else if (inputBox.Tag is DataGridView)
                 {
@@ -629,7 +630,7 @@ namespace OpenBots.UI.CustomControls
                     }
 
                     targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value +
-                        string.Concat("{", newVariableSelector.lstVariables.SelectedItem.ToString(), "}");
+                        string.Concat("{", newVariableSelector.ReturnVariableArgument, "}");
 
                     //TODO - Insert variables at cursor position instead of at the end of a cell
                     //targetDGV.CurrentCell = targetDGV.SelectedCells[0];

@@ -593,11 +593,11 @@
     <Compile Include="UI\Forms\Supplement Forms\frmElementSelector.Designer.cs">
       <DependentUpon>frmElementSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Forms\Supplement Forms\frmVariableSelector.cs">
+    <Compile Include="UI\Forms\Supplement Forms\frmVariableArgumentSelector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Forms\Supplement Forms\frmVariableSelector.Designer.cs">
-      <DependentUpon>frmVariableSelector.cs</DependentUpon>
+    <Compile Include="UI\Forms\Supplement Forms\frmVariableArgumentSelector.Designer.cs">
+      <DependentUpon>frmVariableArgumentSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Forms\Supplement Forms\frmUpdate.cs">
       <SubType>Form</SubType>
@@ -813,8 +813,8 @@
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmElementSelector.resx">
       <DependentUpon>frmElementSelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Forms\Supplement Forms\frmVariableSelector.resx">
-      <DependentUpon>frmVariableSelector.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Forms\Supplement Forms\frmVariableArgumentSelector.resx">
+      <DependentUpon>frmVariableArgumentSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmUpdate.resx">
       <DependentUpon>frmUpdate.cs</DependentUpon>

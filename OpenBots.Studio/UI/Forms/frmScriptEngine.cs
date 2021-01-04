@@ -421,41 +421,37 @@ namespace OpenBots.UI.Forms
             }
         }
 
-        public void UpdateCurrentEngineContext(IAutomationEngineInstance parentEngine, IfrmScriptEngine childfrmScriptEngine, List<ScriptVariable> variableReturnList)
+        public void UpdateCurrentEngineContext(IAutomationEngineInstance parentAutomationEngineIntance, IfrmScriptEngine childfrmScriptEngine, List<ScriptArgument> argumentList)
         {
             //get new variable list from the new task engine after it finishes running
             var childEngine = ((frmScriptEngine)childfrmScriptEngine).EngineInstance;
-            var newVariableList = childEngine.AutomationEngineContext.Variables;
-            foreach (var variable in variableReturnList)
+
+            var parentVariableList = parentAutomationEngineIntance.AutomationEngineContext.Variables;
+            //get new argument list from the new task engine after it finishes running
+            var childArgumentList = childfrmScriptEngine.ScriptEngineContext.Arguments;
+            foreach (var argument in argumentList)
             {
-                //check if the variables we wish to return are in the new variable list
-                if (newVariableList.Exists(x => x.VariableName == variable.VariableName))
+                if (argument.Direction == ScriptArgumentDirection.Out)
                 {
-                    //if yes, get that variable from the new list
-                    ScriptVariable newTemp = newVariableList.Where(x => x.VariableName == variable.VariableName).FirstOrDefault();
-                    //check if that variable previously existed in the current engine
-                    if (parentEngine.AutomationEngineContext.Variables.Exists(x => x.VariableName == newTemp.VariableName))
+                    var assignedParentVariable = parentVariableList.Where(v => v.VariableName == argument.AssignedVariable).FirstOrDefault();
+                    if (assignedParentVariable != null)
                     {
-                        //if yes, overwrite it
-                        ScriptVariable currentTemp = parentEngine.AutomationEngineContext.Variables.Where(x => x.VariableName == newTemp.VariableName).FirstOrDefault();
-                        parentEngine.AutomationEngineContext.Variables.Remove(currentTemp);
+                        assignedParentVariable.VariableValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
                     }
-                    //Add to current engine variable list
-                    parentEngine.AutomationEngineContext.Variables.Add(newTemp);
                 }
             }
 
             //get updated app instance dictionary after the new engine finishes running
-            parentEngine.AutomationEngineContext.AppInstances = childEngine.AutomationEngineContext.AppInstances;
+            parentAutomationEngineIntance.AutomationEngineContext.AppInstances = childEngine.AutomationEngineContext.AppInstances;
 
             //get errors from new engine (if any)
             var newEngineErrors = childEngine.ErrorsOccured;
             if (newEngineErrors.Count > 0)
             {
-                parentEngine.ChildScriptFailed = true;
+                parentAutomationEngineIntance.ChildScriptFailed = true;
                 foreach (var error in newEngineErrors)
                 {
-                    parentEngine.ErrorsOccured.Add(error);
+                    parentAutomationEngineIntance.ErrorsOccured.Add(error);
                 }
             }
         }

@@ -10,6 +10,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
     public partial class frmAddVariable : UIForm
     {
         public List<ScriptVariable> ScriptVariables { get; set; }
+        public List<ScriptArgument> ScriptArguments { get; set; }
         private bool _isEditMode;
         private string _editingVariableName;
         public frmAddVariable()
@@ -45,11 +46,12 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
             string newVariableName = txtVariableName.Text.Replace("{", "").Replace("}", "");
             var existingVariable = ScriptVariables.Where(var => var.VariableName == newVariableName).FirstOrDefault();
-            if (existingVariable != null)
+            var existingArgument = ScriptArguments.Where(arg => arg.ArgumentName == newVariableName).FirstOrDefault();
+            if (existingVariable != null || existingArgument != null)
             {
                 if (!_isEditMode || existingVariable.VariableName != _editingVariableName)
                 {
-                    lblVariableNameError.Text = "A Variable with this name already exists";
+                    lblVariableNameError.Text = "A Variable or Argument with this name already exists";
                     return;
                 }
             }

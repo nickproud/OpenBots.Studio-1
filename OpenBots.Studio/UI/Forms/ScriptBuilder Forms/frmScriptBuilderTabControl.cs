@@ -21,6 +21,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (scriptObject != null)
                 {
                     _scriptVariables = scriptObject.ScriptVariables;
+                    _scriptArguments = scriptObject.ScriptArguments;
                     _scriptElements = scriptObject.ScriptElements;
                 }               
             }

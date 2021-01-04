@@ -202,6 +202,7 @@
             // 
             this.cbxDefaultDirection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxDefaultDirection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxDefaultDirection.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbxDefaultDirection.ForeColor = System.Drawing.Color.SteelBlue;
             this.cbxDefaultDirection.Items.AddRange(new object[] {
@@ -213,7 +214,8 @@
             this.cbxDefaultDirection.Name = "cbxDefaultDirection";
             this.cbxDefaultDirection.Size = new System.Drawing.Size(566, 33);
             this.cbxDefaultDirection.TabIndex = 25;
-            this.cbxDefaultDirection.Text = "In";
+            this.cbxDefaultDirection.SelectedIndexChanged += new System.EventHandler(this.cbxDefaultDirection_SelectedIndexChanged);
+            this.cbxDefaultDirection.Click += new System.EventHandler(this.cbxDefaultDirection_Click);
             // 
             // lblDefineDefaultDirection
             // 
