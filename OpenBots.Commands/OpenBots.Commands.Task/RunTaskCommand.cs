@@ -247,12 +247,12 @@ namespace OpenBots.Commands.Task
 		private void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null);
-			currentScriptEngine.AutomationEngineContext.Variables.AddRange(editor.ScriptVariables);
-			currentScriptEngine.AutomationEngineContext.Elements.AddRange(editor.ScriptElements);
+			currentScriptEngine.AutomationEngineContext.Variables.AddRange(editor.ScriptEngineContext.Variables);
+			currentScriptEngine.AutomationEngineContext.Elements.AddRange(editor.ScriptEngineContext.Elements);
 
 			var startFile = v_TaskPath;
 			if (startFile.Contains("{ProjectPath}"))
-				startFile = startFile.Replace("{ProjectPath}", editor.ProjectPath);
+				startFile = startFile.Replace("{ProjectPath}", editor.ScriptEngineContext.ProjectPath);
 
 			startFile = startFile.ConvertUserVariableToString(currentScriptEngine);
 			

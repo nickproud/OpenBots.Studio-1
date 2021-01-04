@@ -124,8 +124,8 @@ namespace OpenBots.Commands.If
 			base.Render(editor, commandControls);
 
 			//get script variables for feeding into if builder form
-			_scriptVariables = editor.ScriptVariables;
-			_scriptElements = editor.ScriptElements;
+			_scriptVariables = editor.ScriptEngineContext.Variables;
+			_scriptElements = editor.ScriptEngineContext.Elements;
 
 			//create controls
 			var controls = commandControls.CreateDataGridViewGroupFor("v_IfConditionsTable", this, editor);
@@ -190,8 +190,8 @@ namespace OpenBots.Commands.If
 					editor.EditingCommand = ifCommand;
 					editor.OriginalCommand = ifCommand;
 					editor.CreationModeInstance = CreationMode.Edit;
-					editor.ScriptVariables = _scriptVariables;
-					editor.ScriptElements = _scriptElements;
+					editor.ScriptEngineContext.Variables = _scriptVariables;
+					editor.ScriptEngineContext.Elements = _scriptElements;
 
 					if (((Form)editor).ShowDialog() == DialogResult.OK)
 					{
@@ -220,7 +220,7 @@ namespace OpenBots.Commands.If
 			var automationCommands = new List<AutomationCommand>() { CommandsHelper.ConvertToAutomationCommand(typeof(BeginIfCommand)) };
 			IfrmCommandEditor editor = commandControls.CreateCommandEditorForm(automationCommands, null);
             editor.SelectedCommand = new BeginIfCommand();
-            editor.ScriptVariables = parentEditor.ScriptVariables;
+            editor.ScriptEngineContext.Variables = parentEditor.ScriptEngineContext.Variables;
 
 			if (((Form)editor).ShowDialog() == DialogResult.OK)
 			{
@@ -228,7 +228,7 @@ namespace OpenBots.Commands.If
 				var configuredCommand = editor.SelectedCommand as BeginIfCommand;
 				var displayText = configuredCommand.GetDisplayValue();
 				var serializedData = JsonConvert.SerializeObject(configuredCommand);
-				parentEditor.ScriptVariables = editor.ScriptVariables;
+				parentEditor.ScriptEngineContext.Variables = editor.ScriptEngineContext.Variables;
 
 				//add to list
 				v_IfConditionsTable.Rows.Add(displayText, serializedData);

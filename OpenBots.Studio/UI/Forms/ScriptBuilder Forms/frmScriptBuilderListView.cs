@@ -352,7 +352,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //create new command editor form
                 frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands());
 
-                editCommand.Container = AContainer;
+                editCommand.ScriptEngineContext.Container = AContainer;
 
                 //creation mode edit locks form to current command
                 editCommand.CreationModeInstance = CreationMode.Edit;
@@ -364,12 +364,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 editCommand.OriginalCommand = Common.Clone(currentCommand);
 
                 //set variables
-                editCommand.ScriptVariables = _scriptVariables;
+                editCommand.ScriptEngineContext.Variables = _scriptVariables;
 
                 //set elements
-                editCommand.ScriptElements = _scriptElements;
+                editCommand.ScriptEngineContext.Elements = _scriptElements;
 
-                editCommand.ProjectPath = ScriptProjectPath;
+                editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
 
                 if (currentCommand.CommandName == "SeleniumElementActionCommand")
                     editCommand.HTMLElementRecorderURL = HTMLElementRecorderURL;
@@ -386,7 +386,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
                 {
                     CreateUndoSnapshot();
-                    _scriptElements = editCommand.ScriptElements;
+                    _scriptElements = editCommand.ScriptEngineContext.Elements;
                     HTMLElementRecorderURL = editCommand.HTMLElementRecorderURL;
                 }
             }

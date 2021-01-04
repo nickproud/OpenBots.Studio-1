@@ -601,13 +601,13 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			//create recorder
 			IfrmWebElementRecorder newElementRecorder = commandControls.CreateWebElementRecorderForm(editor.HTMLElementRecorderURL);
-			newElementRecorder.ScriptElements = editor.ScriptElements;
+			newElementRecorder.ScriptElements = editor.ScriptEngineContext.Elements;
 			newElementRecorder.CheckBox_StopOnClick(true);
 			//show form
 			((Form)newElementRecorder).ShowDialog();
 
 			editor.HTMLElementRecorderURL = newElementRecorder.StartURL;
-			editor.ScriptElements = newElementRecorder.ScriptElements;
+			editor.ScriptEngineContext.Elements = newElementRecorder.ScriptElements;
 
 			try
 			{

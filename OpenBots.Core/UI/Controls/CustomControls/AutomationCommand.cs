@@ -100,10 +100,10 @@ namespace OpenBots.Core.UI.Controls.CustomControls
                     switch (control.HelperType)
                     {
                         case UIAdditionalHelperType.ShowVariableHelper:
-                            control.DataSource = editor.ScriptVariables;
+                            control.DataSource = editor.ScriptEngineContext.Variables;
                             break;
                         case UIAdditionalHelperType.ShowElementHelper:
-                            control.DataSource = editor.ScriptElements;
+                            control.DataSource = editor.ScriptEngineContext.Elements;
                             break;
                         default:
                             break;
@@ -120,7 +120,7 @@ namespace OpenBots.Core.UI.Controls.CustomControls
                 {
                     var variableCbo = (ComboBox)ctrl;
                     variableCbo.Items.Clear();
-                    foreach (var var in editor.ScriptVariables)
+                    foreach (var var in editor.ScriptEngineContext.Variables)
                     {
                         variableCbo.Items.Add(var.VariableName);
                     }

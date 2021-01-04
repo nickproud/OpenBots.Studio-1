@@ -223,12 +223,12 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptVariables scriptVariableEditor = new frmScriptVariables
                 {
-                    ScriptVariables = _currentEditor.ScriptVariables
+                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables
                 };
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptVariables = scriptVariableEditor.ScriptVariables;
+                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
                     inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptVariableEditor.LastModifiedVariableName);
                 }
 
@@ -328,12 +328,12 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptVariables scriptVariableEditor = new frmScriptVariables
                 {
-                    ScriptVariables = _currentEditor.ScriptVariables
+                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables
                 };
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptVariables = scriptVariableEditor.ScriptVariables;
+                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
                     ((ComboBox)sender).Text = scriptVariableEditor.LastModifiedVariableName;
                 }
             }
@@ -520,12 +520,12 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptVariables scriptVariableEditor = new frmScriptVariables
                 {
-                    ScriptVariables = _currentEditor.ScriptVariables
+                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables
                 };
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptVariables = scriptVariableEditor.ScriptVariables;
+                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
                     dataGridView.CurrentCell.Value = scriptVariableEditor.LastModifiedVariableName;
                 }
             }
@@ -575,7 +575,7 @@ namespace OpenBots.UI.CustomControls
             frmVariableSelector newVariableSelector = new frmVariableSelector();
 
             //get copy of user variables and append system variables, then load to combobox
-            var variableList = _currentEditor.ScriptVariables.Select(f => f.VariableName).ToList();
+            var variableList = _currentEditor.ScriptEngineContext.Variables.Select(f => f.VariableName).ToList();
             variableList.AddRange(Common.GenerateSystemVariables().Select(f => f.VariableName));
             newVariableSelector.lstVariables.Items.AddRange(variableList.ToArray());
 
@@ -648,7 +648,7 @@ namespace OpenBots.UI.CustomControls
             frmElementSelector newElementSelector = new frmElementSelector();
 
             //get copy of user element and append system elements, then load to combobox
-            var elementList = _currentEditor.ScriptElements.Select(f => f.ElementName).ToList();
+            var elementList = _currentEditor.ScriptEngineContext.Elements.Select(f => f.ElementName).ToList();
 
             newElementSelector.lstElements.Items.AddRange(elementList.ToArray());
 
@@ -670,7 +670,7 @@ namespace OpenBots.UI.CustomControls
                 {
                     DataGridView targetDGV = (DataGridView)inputBox.Tag;
 
-                    targetDGV.DataSource = _currentEditor.ScriptElements
+                    targetDGV.DataSource = _currentEditor.ScriptEngineContext.Elements
                         .Where(x => x.ElementName == newElementSelector.lstElements.SelectedItem.ToString().Replace("<", "").Replace(">", ""))
                         .FirstOrDefault().ElementValue;
                 }
@@ -1172,7 +1172,7 @@ namespace OpenBots.UI.CustomControls
             {
                 cbo.Items.Clear();
 
-                foreach (var variable in ((frmCommandEditor)editor).ScriptVariables)
+                foreach (var variable in ((frmCommandEditor)editor).ScriptEngineContext.Variables)
                 {
                     if (variable.VariableName != "ProjectPath")
                         cbo.Items.Add("{" + variable.VariableName + "}");
@@ -1190,7 +1190,7 @@ namespace OpenBots.UI.CustomControls
             {
                 cbo.Items.Clear();
 
-                foreach (var element in editor.ScriptElements)
+                foreach (var element in editor.ScriptEngineContext.Elements)
                     cbo.Items.Add("<" + element.ElementName + ">");
             }
             return cbo;
@@ -1218,10 +1218,10 @@ namespace OpenBots.UI.CustomControls
 
         public IfrmCommandEditor CreateCommandEditorForm(List<AutomationCommand> commands, List<ScriptCommand> existingCommands)
         {
-            return new frmCommandEditor(commands, existingCommands)
-            {
-                Container = _container
-            };
+            frmCommandEditor editor = new frmCommandEditor(commands, existingCommands);
+            editor.ScriptEngineContext.Container = _container;
+
+            return editor;
         }
 
         public ScriptCommand CreateBeginIfCommand(string commandData)

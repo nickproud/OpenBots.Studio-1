@@ -544,16 +544,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //bring up new command configuration form
             frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands())
             {
-                CreationModeInstance = CreationMode.Add,
-                ScriptVariables = _scriptVariables,
-                ScriptElements = _scriptElements,
-                Container = AContainer
+                CreationModeInstance = CreationMode.Add
             };
 
             if (specificCommand != "")
                 newCommandForm.DefaultStartupCommand = specificCommand;
 
-            newCommandForm.ProjectPath = ScriptProjectPath;
+            newCommandForm.ScriptEngineContext.Variables = _scriptVariables;
+            newCommandForm.ScriptEngineContext.Elements = _scriptElements;
+            newCommandForm.ScriptEngineContext.Container = AContainer;
+
+            newCommandForm.ScriptEngineContext.ProjectPath = ScriptProjectPath;
             newCommandForm.HTMLElementRecorderURL = HTMLElementRecorderURL;
 
             //if a command was selected
@@ -567,7 +568,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
             {
                 CreateUndoSnapshot();
-                _scriptElements = newCommandForm.ScriptElements;
+                _scriptElements = newCommandForm.ScriptEngineContext.Elements;
                 HTMLElementRecorderURL = newCommandForm.HTMLElementRecorderURL;
             }
         }

@@ -96,8 +96,8 @@ namespace OpenBots.Commands.Loop
 			base.Render(editor, commandControls);
 
 			//get script variables for feeding into loop builder form
-			_scriptVariables = editor.ScriptVariables;
-			_scriptElements = editor.ScriptElements;
+			_scriptVariables = editor.ScriptEngineContext.Variables;
+			_scriptElements = editor.ScriptEngineContext.Elements;
 
 			//create controls
 			var controls = commandControls.CreateDataGridViewGroupFor("v_LoopConditionsTable", this, editor);
@@ -180,8 +180,8 @@ namespace OpenBots.Commands.Loop
 					editor.EditingCommand = loopCommand;
 					editor.OriginalCommand = loopCommand;
 					editor.CreationModeInstance = CreationMode.Edit;
-					editor.ScriptVariables = _scriptVariables;
-					editor.ScriptElements = _scriptElements;
+					editor.ScriptEngineContext.Variables = _scriptVariables;
+					editor.ScriptEngineContext.Elements = _scriptElements;
 
 					if (((Form)editor).ShowDialog() == DialogResult.OK)
 					{
@@ -210,7 +210,7 @@ namespace OpenBots.Commands.Loop
 			var automationCommands = new List<AutomationCommand>() { CommandsHelper.ConvertToAutomationCommand(typeof(BeginLoopCommand)) };
 			IfrmCommandEditor editor = commandControls.CreateCommandEditorForm(automationCommands, null);
 			editor.SelectedCommand = new BeginLoopCommand();
-			editor.ScriptVariables = parentEditor.ScriptVariables;
+			editor.ScriptEngineContext.Variables = parentEditor.ScriptEngineContext.Variables;
 
 			if (((Form)editor).ShowDialog() == DialogResult.OK)
 			{
@@ -218,7 +218,7 @@ namespace OpenBots.Commands.Loop
 				var configuredCommand = editor.SelectedCommand as BeginLoopCommand;
 				var displayText = configuredCommand.GetDisplayValue();
 				var serializedData = JsonConvert.SerializeObject(configuredCommand);
-				parentEditor.ScriptVariables = editor.ScriptVariables;
+				parentEditor.ScriptEngineContext.Variables = editor.ScriptEngineContext.Variables;
 
 				//add to list
 				v_LoopConditionsTable.Rows.Add(displayText, serializedData);
