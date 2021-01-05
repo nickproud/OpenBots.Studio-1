@@ -4,7 +4,7 @@ using System.Net.NetworkInformation;
 
 namespace OpenBots.Core.Server.User
 {
-    public class MachineInfo
+    public class SystemInfo
     {
         public static string MachineName = Dns.GetHostName();
         public static string IPAddress = new WebClient().DownloadString("https://ipv4.icanhazip.com/").Trim();

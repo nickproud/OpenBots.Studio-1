@@ -35,9 +35,9 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
             lblAppVersion.Text = $"Version: {Application.ProductVersion}";
             lblBuildDate.Text = $"Build Date: {buildDate:MM-dd-yyyy}";
-            lblMachineName.Text = $"Machine Name: {MachineInfo.MachineName}";
-            lblIPAddress.Text = $"IP Address: {MachineInfo.IPAddress}";
-            lblMacAddress.Text = $"Mac Address: {MachineInfo.GetMacAddress()}";
+            lblMachineName.Text = $"Machine Name: {SystemInfo.MachineName}";
+            lblIPAddress.Text = $"IP Address: {SystemInfo.IPAddress}";
+            lblMacAddress.Text = $"Mac Address: {SystemInfo.GetMacAddress()}";
 
             if (EnvironmentSettings.GetEnvironmentVariable() == null)
                 lblServer.Text = "Server: Agent environment variable not found";
