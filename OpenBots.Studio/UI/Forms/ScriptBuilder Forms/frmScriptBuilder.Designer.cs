@@ -34,7 +34,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmScriptBuilder));
-            OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            OpenBots.Core.Utilities.FormsUtilities.Theme theme2 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.cmsProjectFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCopyFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDeleteFolder = new System.Windows.Forms.ToolStripMenuItem();
@@ -1122,9 +1122,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlPaneTabs.Name = "pnlPaneTabs";
             this.pnlPaneTabs.Size = new System.Drawing.Size(328, 673);
             this.pnlPaneTabs.TabIndex = 2;
-            theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.pnlPaneTabs.Theme = theme1;
+            theme2.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            theme2.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.pnlPaneTabs.Theme = theme2;
             // 
             // tpbLoadingSpinner
             // 
@@ -1431,7 +1431,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // 
             this.splitContainerScript.Panel2.Controls.Add(this.uiVariableArgumentTabs);
             this.splitContainerScript.Size = new System.Drawing.Size(1404, 673);
-            this.splitContainerScript.SplitterDistance = 525;
+            this.splitContainerScript.SplitterDistance = 481;
             this.splitContainerScript.TabIndex = 4;
             // 
             // uiScriptTabControl
@@ -1444,7 +1444,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiScriptTabControl.Name = "uiScriptTabControl";
             this.uiScriptTabControl.SelectedIndex = 0;
             this.uiScriptTabControl.ShowToolTips = true;
-            this.uiScriptTabControl.Size = new System.Drawing.Size(1404, 525);
+            this.uiScriptTabControl.Size = new System.Drawing.Size(1404, 481);
             this.uiScriptTabControl.TabIndex = 3;
             this.uiScriptTabControl.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.uiScriptTabControl_DrawItem);
             this.uiScriptTabControl.SelectedIndexChanged += new System.EventHandler(this.uiScriptTabControl_SelectedIndexChanged);
@@ -1453,24 +1453,27 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // 
             // uiVariableArgumentTabs
             // 
+            this.uiVariableArgumentTabs.Alignment = System.Windows.Forms.TabAlignment.Bottom;
             this.uiVariableArgumentTabs.AllowDrop = true;
             this.uiVariableArgumentTabs.Controls.Add(this.variables);
             this.uiVariableArgumentTabs.Controls.Add(this.arguments);
             this.uiVariableArgumentTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiVariableArgumentTabs.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.uiVariableArgumentTabs.Location = new System.Drawing.Point(0, 0);
+            this.uiVariableArgumentTabs.Multiline = true;
             this.uiVariableArgumentTabs.Name = "uiVariableArgumentTabs";
             this.uiVariableArgumentTabs.SelectedIndex = 0;
-            this.uiVariableArgumentTabs.Size = new System.Drawing.Size(1404, 144);
+            this.uiVariableArgumentTabs.Size = new System.Drawing.Size(1404, 188);
+            this.uiVariableArgumentTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.uiVariableArgumentTabs.TabIndex = 0;
             // 
             // variables
             // 
             this.variables.Controls.Add(this.dgvVariables);
-            this.variables.Location = new System.Drawing.Point(4, 32);
+            this.variables.Location = new System.Drawing.Point(4, 4);
             this.variables.Name = "variables";
             this.variables.Padding = new System.Windows.Forms.Padding(3);
-            this.variables.Size = new System.Drawing.Size(1396, 108);
+            this.variables.Size = new System.Drawing.Size(1396, 152);
             this.variables.TabIndex = 0;
             this.variables.Text = "Variables";
             this.variables.UseVisualStyleBackColor = true;
@@ -1487,7 +1490,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvVariables.Name = "dgvVariables";
             this.dgvVariables.RowHeadersWidth = 51;
             this.dgvVariables.RowTemplate.Height = 24;
-            this.dgvVariables.Size = new System.Drawing.Size(1390, 102);
+            this.dgvVariables.Size = new System.Drawing.Size(1390, 146);
             this.dgvVariables.TabIndex = 0;
             // 
             // variableName
@@ -1507,10 +1510,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // arguments
             // 
             this.arguments.Controls.Add(this.dgvArguments);
-            this.arguments.Location = new System.Drawing.Point(4, 32);
+            this.arguments.Location = new System.Drawing.Point(4, 4);
             this.arguments.Name = "arguments";
             this.arguments.Padding = new System.Windows.Forms.Padding(3);
-            this.arguments.Size = new System.Drawing.Size(1396, 108);
+            this.arguments.Size = new System.Drawing.Size(1396, 281);
             this.arguments.TabIndex = 1;
             this.arguments.Text = "Arguments";
             this.arguments.UseVisualStyleBackColor = true;
@@ -1528,7 +1531,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.Name = "dgvArguments";
             this.dgvArguments.RowHeadersWidth = 51;
             this.dgvArguments.RowTemplate.Height = 24;
-            this.dgvArguments.Size = new System.Drawing.Size(1390, 102);
+            this.dgvArguments.Size = new System.Drawing.Size(1390, 275);
             this.dgvArguments.TabIndex = 2;
             this.dgvArguments.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvArguments_DefaultValuesNeeded);
             // 
