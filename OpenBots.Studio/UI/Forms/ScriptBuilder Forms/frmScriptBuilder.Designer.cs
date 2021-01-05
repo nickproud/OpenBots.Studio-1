@@ -32,7 +32,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmScriptBuilder));
-            OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            OpenBots.Core.Utilities.FormsUtilities.Theme theme2 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.cmsProjectFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCopyFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDeleteFolder = new System.Windows.Forms.ToolStripMenuItem();
@@ -111,7 +111,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnReloadCommands = new OpenBots.UI.CustomControls.CustomUIControls.UIIconButton();
             this.uiBtnClearCommandSearch = new OpenBots.UI.CustomControls.CustomUIControls.UIIconButton();
             this.txtCommandSearch = new System.Windows.Forms.TextBox();
+            this.splitContainerScript = new OpenBots.UI.CustomControls.CustomUIControls.UISplitContainer();
             this.uiScriptTabControl = new OpenBots.UI.CustomControls.CustomUIControls.UITabControl();
+            this.uiVariableArgumentTabs = new OpenBots.UI.CustomControls.CustomUIControls.UITabControl();
+            this.variables = new System.Windows.Forms.TabPage();
+            this.dgvVariables = new System.Windows.Forms.DataGridView();
+            this.variableName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.variableValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.arguments = new System.Windows.Forms.TabPage();
+            this.dgvArguments = new System.Windows.Forms.DataGridView();
+            this.argumentName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.argumentValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.direction = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.pnlCommandHelper = new System.Windows.Forms.Panel();
             this.flwRecentFiles = new OpenBots.UI.CustomControls.CustomUIControls.UIFlowLayoutPanel();
             this.lblFilesMissing = new System.Windows.Forms.Label();
@@ -143,6 +154,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.closeApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.variablesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.argumentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.elementManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showSearchBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -178,7 +190,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.cmsProjectMainFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiMainRenameFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.ttScriptBuilder = new System.Windows.Forms.ToolTip(this.components);
-            this.argumentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsProjectFolderActions.SuspendLayout();
             this.cmsScriptActions.SuspendLayout();
             this.pnlControlContainer.SuspendLayout();
@@ -231,6 +242,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlCommandSearch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnReloadCommands)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnClearCommandSearch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerScript)).BeginInit();
+            this.splitContainerScript.Panel1.SuspendLayout();
+            this.splitContainerScript.Panel2.SuspendLayout();
+            this.splitContainerScript.SuspendLayout();
+            this.uiVariableArgumentTabs.SuspendLayout();
+            this.variables.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvVariables)).BeginInit();
+            this.arguments.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvArguments)).BeginInit();
             this.pnlCommandHelper.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecentFiles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLinks)).BeginInit();
@@ -1085,7 +1105,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // splitContainerStudioControls.Panel2
             // 
             this.splitContainerStudioControls.Panel2.BackColor = System.Drawing.Color.Transparent;
-            this.splitContainerStudioControls.Panel2.Controls.Add(this.uiScriptTabControl);
+            this.splitContainerStudioControls.Panel2.Controls.Add(this.splitContainerScript);
             this.splitContainerStudioControls.Size = new System.Drawing.Size(1737, 673);
             this.splitContainerStudioControls.SplitterDistance = 328;
             this.splitContainerStudioControls.SplitterWidth = 5;
@@ -1100,9 +1120,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlPaneTabs.Name = "pnlPaneTabs";
             this.pnlPaneTabs.Size = new System.Drawing.Size(328, 673);
             this.pnlPaneTabs.TabIndex = 2;
-            theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.pnlPaneTabs.Theme = theme1;
+            theme2.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            theme2.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.pnlPaneTabs.Theme = theme2;
             // 
             // tpbLoadingSpinner
             // 
@@ -1110,7 +1130,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tpbLoadingSpinner.ErrorImage = null;
             this.tpbLoadingSpinner.Image = global::OpenBots.Properties.Resources.loading_spinner;
             this.tpbLoadingSpinner.InitialImage = null;
-            this.tpbLoadingSpinner.Location = new System.Drawing.Point(29, 242);
+            this.tpbLoadingSpinner.Location = new System.Drawing.Point(34, 242);
             this.tpbLoadingSpinner.Name = "tpbLoadingSpinner";
             this.tpbLoadingSpinner.Size = new System.Drawing.Size(230, 214);
             this.tpbLoadingSpinner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1394,6 +1414,24 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.txtCommandSearch.Enter += new System.EventHandler(this.txtCommandSearch_Enter);
             this.txtCommandSearch.Leave += new System.EventHandler(this.txtCommandSearch_Leave);
             // 
+            // splitContainerScript
+            // 
+            this.splitContainerScript.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerScript.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerScript.Name = "splitContainerScript";
+            this.splitContainerScript.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerScript.Panel1
+            // 
+            this.splitContainerScript.Panel1.Controls.Add(this.uiScriptTabControl);
+            // 
+            // splitContainerScript.Panel2
+            // 
+            this.splitContainerScript.Panel2.Controls.Add(this.uiVariableArgumentTabs);
+            this.splitContainerScript.Size = new System.Drawing.Size(1404, 673);
+            this.splitContainerScript.SplitterDistance = 525;
+            this.splitContainerScript.TabIndex = 4;
+            // 
             // uiScriptTabControl
             // 
             this.uiScriptTabControl.AllowDrop = true;
@@ -1404,12 +1442,111 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiScriptTabControl.Name = "uiScriptTabControl";
             this.uiScriptTabControl.SelectedIndex = 0;
             this.uiScriptTabControl.ShowToolTips = true;
-            this.uiScriptTabControl.Size = new System.Drawing.Size(1404, 673);
+            this.uiScriptTabControl.Size = new System.Drawing.Size(1404, 525);
             this.uiScriptTabControl.TabIndex = 3;
             this.uiScriptTabControl.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.uiScriptTabControl_DrawItem);
             this.uiScriptTabControl.SelectedIndexChanged += new System.EventHandler(this.uiScriptTabControl_SelectedIndexChanged);
             this.uiScriptTabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.uiScriptTabControl_Selecting);
             this.uiScriptTabControl.MouseClick += new System.Windows.Forms.MouseEventHandler(this.uiScriptTabControl_MouseClick);
+            // 
+            // uiVariableArgumentTabs
+            // 
+            this.uiVariableArgumentTabs.AllowDrop = true;
+            this.uiVariableArgumentTabs.Controls.Add(this.variables);
+            this.uiVariableArgumentTabs.Controls.Add(this.arguments);
+            this.uiVariableArgumentTabs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiVariableArgumentTabs.Location = new System.Drawing.Point(0, 0);
+            this.uiVariableArgumentTabs.Name = "uiVariableArgumentTabs";
+            this.uiVariableArgumentTabs.SelectedIndex = 0;
+            this.uiVariableArgumentTabs.Size = new System.Drawing.Size(1404, 144);
+            this.uiVariableArgumentTabs.TabIndex = 0;
+            // 
+            // variables
+            // 
+            this.variables.Controls.Add(this.dgvVariables);
+            this.variables.Location = new System.Drawing.Point(4, 25);
+            this.variables.Name = "variables";
+            this.variables.Padding = new System.Windows.Forms.Padding(3);
+            this.variables.Size = new System.Drawing.Size(1396, 115);
+            this.variables.TabIndex = 0;
+            this.variables.Text = "Variables";
+            this.variables.UseVisualStyleBackColor = true;
+            // 
+            // dgvVariables
+            // 
+            this.dgvVariables.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvVariables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvVariables.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.variableName,
+            this.variableValue});
+            this.dgvVariables.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvVariables.Location = new System.Drawing.Point(3, 3);
+            this.dgvVariables.Name = "dgvVariables";
+            this.dgvVariables.RowHeadersWidth = 51;
+            this.dgvVariables.RowTemplate.Height = 24;
+            this.dgvVariables.Size = new System.Drawing.Size(1390, 109);
+            this.dgvVariables.TabIndex = 0;
+            // 
+            // variableName
+            // 
+            this.variableName.HeaderText = "Variable Name";
+            this.variableName.MinimumWidth = 6;
+            this.variableName.Name = "variableName";
+            // 
+            // variableValue
+            // 
+            this.variableValue.HeaderText = "Variable Value";
+            this.variableValue.MinimumWidth = 6;
+            this.variableValue.Name = "variableValue";
+            // 
+            // arguments
+            // 
+            this.arguments.Controls.Add(this.dgvArguments);
+            this.arguments.Location = new System.Drawing.Point(4, 25);
+            this.arguments.Name = "arguments";
+            this.arguments.Padding = new System.Windows.Forms.Padding(3);
+            this.arguments.Size = new System.Drawing.Size(1396, 115);
+            this.arguments.TabIndex = 1;
+            this.arguments.Text = "Arguments";
+            this.arguments.UseVisualStyleBackColor = true;
+            // 
+            // dgvArguments
+            // 
+            this.dgvArguments.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvArguments.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvArguments.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.argumentName,
+            this.argumentValue,
+            this.direction});
+            this.dgvArguments.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvArguments.Location = new System.Drawing.Point(3, 3);
+            this.dgvArguments.Name = "dgvArguments";
+            this.dgvArguments.RowHeadersWidth = 51;
+            this.dgvArguments.RowTemplate.Height = 24;
+            this.dgvArguments.Size = new System.Drawing.Size(1390, 109);
+            this.dgvArguments.TabIndex = 2;
+            // 
+            // argumentName
+            // 
+            this.argumentName.HeaderText = "Argument Name";
+            this.argumentName.MinimumWidth = 6;
+            this.argumentName.Name = "argumentName";
+            // 
+            // argumentValue
+            // 
+            this.argumentValue.HeaderText = "Argument Value";
+            this.argumentValue.MinimumWidth = 6;
+            this.argumentValue.Name = "argumentValue";
+            // 
+            // direction
+            // 
+            this.direction.HeaderText = "Direction";
+            this.direction.Items.AddRange(new object[] {
+            "In",
+            "Out",
+            "InOut"});
+            this.direction.MinimumWidth = 6;
+            this.direction.Name = "direction";
             // 
             // pnlCommandHelper
             // 
@@ -1771,6 +1908,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.variablesToolStripMenuItem.Text = "Variable Manager";
             this.variablesToolStripMenuItem.Click += new System.EventHandler(this.variablesToolStripMenuItem_Click);
             // 
+            // argumentsToolStripMenuItem
+            // 
+            this.argumentsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.argumentsToolStripMenuItem.Image = global::OpenBots.Properties.Resources.action_bar_variable;
+            this.argumentsToolStripMenuItem.Name = "argumentsToolStripMenuItem";
+            this.argumentsToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
+            this.argumentsToolStripMenuItem.Text = "Argument Manager";
+            this.argumentsToolStripMenuItem.Click += new System.EventHandler(this.argumentsToolStripMenuItem_Click);
+            // 
             // elementManagerToolStripMenuItem
             // 
             this.elementManagerToolStripMenuItem.ForeColor = System.Drawing.Color.White;
@@ -2092,15 +2238,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsmiMainRenameFolder.Text = "Rename Project";
             this.tsmiMainRenameFolder.Click += new System.EventHandler(this.tsmiRenameFolder_Click);
             // 
-            // argumentsToolStripMenuItem
-            // 
-            this.argumentsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.argumentsToolStripMenuItem.Image = global::OpenBots.Properties.Resources.action_bar_variable;
-            this.argumentsToolStripMenuItem.Name = "argumentsToolStripMenuItem";
-            this.argumentsToolStripMenuItem.Size = new System.Drawing.Size(249, 26);
-            this.argumentsToolStripMenuItem.Text = "Argument Manager";
-            this.argumentsToolStripMenuItem.Click += new System.EventHandler(this.argumentsToolStripMenuItem_Click);
-            // 
             // frmScriptBuilder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
@@ -2174,6 +2311,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlCommandSearch.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnReloadCommands)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnClearCommandSearch)).EndInit();
+            this.splitContainerScript.Panel1.ResumeLayout(false);
+            this.splitContainerScript.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerScript)).EndInit();
+            this.splitContainerScript.ResumeLayout(false);
+            this.uiVariableArgumentTabs.ResumeLayout(false);
+            this.variables.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvVariables)).EndInit();
+            this.arguments.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvArguments)).EndInit();
             this.pnlCommandHelper.ResumeLayout(false);
             this.pnlCommandHelper.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecentFiles)).EndInit();
@@ -2337,6 +2483,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private ToolStripMenuItem reloadAllTabsToolStripMenuItem;
         private ToolStripMenuItem tsmiMainRenameFolder;
         private ToolStripMenuItem argumentsToolStripMenuItem;
+        private CustomControls.CustomUIControls.UISplitContainer splitContainerScript;
+        private CustomControls.CustomUIControls.UITabControl uiVariableArgumentTabs;
+        private TabPage variables;
+        private TabPage arguments;
+        private DataGridView dgvVariables;
+        private DataGridViewTextBoxColumn variableName;
+        private DataGridViewTextBoxColumn variableValue;
+        private DataGridView dgvArguments;
+        private DataGridViewTextBoxColumn argumentName;
+        private DataGridViewTextBoxColumn argumentValue;
+        private DataGridViewComboBoxColumn direction;
     }
 }
 
