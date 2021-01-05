@@ -231,11 +231,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             }
             else
             {
-                //add new variable
-                var newVariable = new ScriptVariable();
-                newVariable.VariableName = variableName;
-                newVariable.VariableValue = variableValue;
-                engine.AutomationEngineContext.Variables.Add(newVariable);
+                throw new ArgumentException($"No variable/argument with the name '{variableName}' was found");
             }
         }       
 

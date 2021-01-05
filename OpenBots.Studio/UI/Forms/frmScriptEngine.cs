@@ -427,16 +427,28 @@ namespace OpenBots.UI.Forms
             var childEngine = ((frmScriptEngine)childfrmScriptEngine).EngineInstance;
 
             var parentVariableList = parentAutomationEngineIntance.AutomationEngineContext.Variables;
+            var parentArgumentList = parentAutomationEngineIntance.AutomationEngineContext.Arguments;
+
             //get new argument list from the new task engine after it finishes running
             var childArgumentList = childfrmScriptEngine.ScriptEngineContext.Arguments;
             foreach (var argument in argumentList)
             {
-                if (argument.Direction == ScriptArgumentDirection.Out)
+                if (argument.Direction == ScriptArgumentDirection.Out && argument.AssignedVariable != null)
                 {
                     var assignedParentVariable = parentVariableList.Where(v => v.VariableName == argument.AssignedVariable).FirstOrDefault();
+                    var assignedParentArgument = parentArgumentList.Where(a => a.ArgumentName == argument.AssignedVariable).FirstOrDefault();
                     if (assignedParentVariable != null)
                     {
                         assignedParentVariable.VariableValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+                    }
+                    else if (assignedParentArgument != null)
+                    {
+                        assignedParentArgument.ArgumentValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"Unable to assign the value of '{argument.ArgumentName}' to '{argument.AssignedVariable}' " +
+                                                     "because no variable/argument with this name exists.");
                     }
                 }
             }

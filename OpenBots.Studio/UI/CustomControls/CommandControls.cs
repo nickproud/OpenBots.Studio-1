@@ -230,6 +230,20 @@ namespace OpenBots.UI.CustomControls
                 }
 
             }
+            else if (e.Control && e.KeyCode == Keys.J)
+            {
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+                {
+                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
+                };
+
+                if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
+                {
+                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
+                    inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptArgumentEditor.LastModifiedArgumentName);
+                }
+
+            }
             else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
                 return;
             else if (e.KeyCode == Keys.Enter)
@@ -238,8 +252,8 @@ namespace OpenBots.UI.CustomControls
 
         private void InputBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            //Control + K
-            if (e.KeyChar == '\v')
+            //Control + K or Control + J
+            if (e.KeyChar == '\v' || e.KeyChar == '\n')
                 e.Handled = true;
         }
 
@@ -334,14 +348,27 @@ namespace OpenBots.UI.CustomControls
                     ((ComboBox)sender).Text = scriptVariableEditor.LastModifiedVariableName;
                 }
             }
+            else if (e.Control && e.KeyCode == Keys.J)
+            {
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+                {
+                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
+                };
+
+                if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
+                {
+                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
+                    ((ComboBox)sender).Text = scriptArgumentEditor.LastModifiedArgumentName;
+                }
+            }
             else if (e.KeyCode == Keys.Enter)
                 _currentEditor.uiBtnAdd_Click(null, null);
         }
 
         private void StandardComboBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            //Control + K
-            if (e.KeyChar == '\v')
+            //Control + K or Control + J
+            if (e.KeyChar == '\v' || e.KeyChar == '\n')
                 e.Handled = true;
         }
 
@@ -415,87 +442,86 @@ namespace OpenBots.UI.CustomControls
                         break;
 
                     case UIAdditionalHelperType.ShowFolderSelectionHelper:
-                        //show file selector
+                        //show folder selector
                         helperControl.CommandImage = Resources.command_folders;
                         helperControl.CommandDisplay = "Select a Folder";
                         helperControl.Click += (sender, e) => ShowFolderSelector(sender, e);
                         break;
 
                     case UIAdditionalHelperType.ShowImageCaptureHelper:
-                        //show file selector
+                        //show image capture
                         helperControl.CommandImage = Resources.command_camera;
                         helperControl.CommandDisplay = "Capture Reference Image";
                         helperControl.Click += (sender, e) => ShowImageCapture(sender, e);
                         break;
 
                     case UIAdditionalHelperType.ShowImageRecognitionTestHelper:
+                        //show image recognition test
                         helperControl.CommandImage = Resources.command_camera;
                         helperControl.CommandDisplay = "Run Image Recognition Test";
                         helperControl.Click += (sender, e) => RunImageCapture(sender, e);
                         break;
 
                     case UIAdditionalHelperType.ShowCodeBuilder:
-                        //show variable selector
+                        //show code builder
                         helperControl.CommandImage = Resources.command_script;
                         helperControl.CommandDisplay = "Code Builder";
                         helperControl.Click += (sender, e) => ShowCodeBuilder(sender, e);
                         break;
 
                     case UIAdditionalHelperType.ShowMouseCaptureHelper:
+                        //show mouse capture
                         helperControl.CommandImage = Resources.command_input;
                         helperControl.CommandDisplay = "Capture Mouse Position";
                         helperControl.ForeColor = Color.AliceBlue;
                         helperControl.Click += (sender, e) => ShowMouseCaptureForm(sender, e, (frmCommandEditor)editor);
                         break;
                     case UIAdditionalHelperType.ShowElementRecorder:
-                        //show variable selector
+                        //show element recorder
                         helperControl.CommandImage = Resources.command_camera;
                         helperControl.CommandDisplay = "Element Recorder";
                         helperControl.Click += (sender, e) => ShowElementRecorder(sender, e, (frmCommandEditor)editor);
                         break;
                     case UIAdditionalHelperType.GenerateDLLParameters:
-                        //show variable selector
+                        //show dll parameters
                         helperControl.CommandImage = Resources.command_run_code;
                         helperControl.CommandDisplay = "Generate Parameters";
                         helperControl.Click += (sender, e) => GenerateDLLParameters(sender, e);
                         break;
                     case UIAdditionalHelperType.ShowDLLExplorer:
-                        //show variable selector
+                        //show dll explorer
                         helperControl.CommandImage = Resources.command_run_code;
                         helperControl.CommandDisplay = "Launch DLL Explorer";
                         helperControl.Click += (sender, e) => ShowDLLExplorer(sender, e);
                         break;
                     case UIAdditionalHelperType.AddInputParameter:
-                        //show variable selector
+                        //show new input parameter
                         helperControl.CommandImage = Resources.command_run_code;
                         helperControl.CommandDisplay = "Add Input Parameter";
                         helperControl.Click += (sender, e) => AddInputParameter(sender, e);
                         break;
                     case UIAdditionalHelperType.ShowHTMLBuilder:
+                        //show html builder
                         helperControl.CommandImage = Resources.command_web;
                         helperControl.CommandDisplay = "Launch HTML Builder";
                         helperControl.Click += (sender, e) => ShowHTMLBuilder(sender, e, (frmCommandEditor)editor);
                         break;
                     case UIAdditionalHelperType.ShowIfBuilder:
-                        //show variable selector
+                        //show if builder
                         helperControl.CommandImage = Resources.command_begin_if;
                         helperControl.CommandDisplay = "Add New If Statement";
                         break;
                     case UIAdditionalHelperType.ShowLoopBuilder:
-                        //show variable selector
+                        //show loop builder
                         helperControl.CommandImage = Resources.command_startloop;
                         helperControl.CommandDisplay = "Add New Loop Statement";
                         break;
                     case UIAdditionalHelperType.ShowEncryptionHelper:
-                        //show variable selector
+                        //show encryption helper
                         helperControl.CommandImage = Resources.command_password;
                         helperControl.CommandDisplay = "Encrypt Text";
                         helperControl.Click += (sender, e) => EncryptText(sender, e, (frmCommandEditor)editor);
                         break;
-
-                        //default:
-                        //    MessageBox.Show("Command Helper does not exist for: " + attrib.additionalHelper.ToString());
-                        //    break;
                 }
 
                 controlList.Add(helperControl);
@@ -526,6 +552,19 @@ namespace OpenBots.UI.CustomControls
                     dataGridView.CurrentCell.Value = scriptVariableEditor.LastModifiedVariableName;
                 }
             }
+            else if (e.Control && e.KeyCode == Keys.J)
+            {
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+                {
+                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
+                };
+
+                if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
+                {
+                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
+                    dataGridView.CurrentCell.Value = scriptArgumentEditor.LastModifiedArgumentName;
+                }
+            }
             else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
                 return;
             else if (e.KeyCode == Keys.Enter)
@@ -534,8 +573,8 @@ namespace OpenBots.UI.CustomControls
 
         private void DataGridView_KeyPress(object sender, KeyPressEventArgs e)
         {
-            //Control + K
-            if (e.KeyChar == '\v')
+            //Control + K or Control + J
+            if (e.KeyChar == '\v' || e.KeyChar == '\n')
                 e.Handled = true;
         }
 
@@ -1177,7 +1216,12 @@ namespace OpenBots.UI.CustomControls
                 {
                     if (variable.VariableName != "ProjectPath")
                         cbo.Items.Add("{" + variable.VariableName + "}");
-                }                    
+                }
+
+                foreach (var argument in ((frmCommandEditor)editor).ScriptEngineContext.Arguments)
+                {
+                    cbo.Items.Add("{" + argument.ArgumentName + "}");
+                }
             }
             return cbo;
         }

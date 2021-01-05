@@ -37,15 +37,15 @@ namespace OpenBots.Commands.If
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private List<ScriptVariable> _scriptVariables { get; set; }
+		private List<ScriptVariable> _scriptVariables;
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private List<ScriptArgument> _scriptArguments { get; set; }
+		private List<ScriptArgument> _scriptArguments;
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private List<ScriptElement> _scriptElements { get; set; }
+		private List<ScriptElement> _scriptElements;
 
 		public BeginMultiIfCommand()
 		{

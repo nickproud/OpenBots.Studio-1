@@ -184,7 +184,6 @@ namespace OpenBots.Engine
                     automationScript = Script.DeserializeJsonString(AutomationEngineContext.FilePath);
                 }
                 
-                //track variables and app instances
                 ReportProgress("Creating Variable List");
 
                 //set variables if they were passed in
@@ -217,7 +216,24 @@ namespace OpenBots.Engine
                     AutomationEngineContext.Variables.Add(projectPathVariable);
                 }
 
-                //track elements
+                ReportProgress("Creating Argument List");
+
+                //set arguments if they were passed in
+                if (AutomationEngineContext.Arguments != null)
+                {
+                    foreach (var arg in AutomationEngineContext.Arguments)
+                    {
+                        var argumentFound = automationScript.Arguments.Where(f => f.ArgumentName == arg.ArgumentName).FirstOrDefault();
+
+                        if (argumentFound != null)
+                        {
+                            argumentFound.ArgumentValue = arg.ArgumentValue;
+                        }
+                    }
+                }
+
+                AutomationEngineContext.Arguments = automationScript.Arguments;
+
                 ReportProgress("Creating Element List");
 
                 //set elements if they were passed in

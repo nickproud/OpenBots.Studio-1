@@ -249,6 +249,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         case Keys.B:
                             AddRemoveBreakpoint();
                             break;
+                        case Keys.J:
+                            OpenArgumentManager();
+                            break;
                         case Keys.K:
                             OpenVariableManager();
                             break;
@@ -298,7 +301,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 newBuilder.ScriptProject = ScriptProject;
                 newBuilder.ScriptProjectPath = ScriptProjectPath;
 
-                //add variables/elements
+                //add variables/elements/arguments
                 newBuilder._scriptVariables = _scriptVariables;
                 newBuilder._scriptElements = _scriptElements;
                 newBuilder._scriptArguments = _scriptArguments;
@@ -343,7 +346,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //update label
                     selectedCommandItem.Text = sequence.GetDisplayValue();
 
-                    //update variables/elements
+                    //update variables/elements/arguments
                     _scriptVariables = newBuilder._scriptVariables;
                     _scriptElements = newBuilder._scriptElements;
                     _scriptArguments = newBuilder._scriptArguments;
@@ -384,7 +387,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     CreateUndoSnapshot();
                     selectedCommandItem.Tag = editCommand.SelectedCommand;
-                    selectedCommandItem.Text = editCommand.SelectedCommand.GetDisplayValue(); //+ "(" + cmdDetails.SelectedVariables() + ")";
+                    selectedCommandItem.Text = editCommand.SelectedCommand.GetDisplayValue();
                     selectedCommandItem.SubItems.Add(editCommand.SelectedCommand.GetDisplayValue());                    
                 }
 

@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Loop
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private List<ScriptArgument> _scriptArguments { get; set; }
+		private List<ScriptArgument> _scriptArguments;
 
 		[JsonIgnore]
 		[Browsable(false)]

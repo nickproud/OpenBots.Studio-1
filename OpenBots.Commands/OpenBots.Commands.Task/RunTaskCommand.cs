@@ -320,7 +320,6 @@ namespace OpenBots.Commands.Task
 
 		private void InitializeArgumentLists(IAutomationEngineInstance parentAutomationEngineInstance)
 		{
-			var parentVariableList = parentAutomationEngineInstance.AutomationEngineContext.Variables;
 			_argumentList = new List<ScriptArgument>();
 
 			foreach (DataRow rw in v_ArgumentAssignments.Rows)
@@ -361,17 +360,29 @@ namespace OpenBots.Commands.Task
 		private void UpdateCurrentEngineContext(IAutomationEngineInstance parentAutomationEngineIntance, IAutomationEngineInstance childAutomationEngineInstance)
 		{
 			var parentVariableList = parentAutomationEngineIntance.AutomationEngineContext.Variables;
+			var parentArgumentList = parentAutomationEngineIntance.AutomationEngineContext.Arguments;
+
 			//get new argument list from the new task engine after it finishes running
 			var childArgumentList = childAutomationEngineInstance.AutomationEngineContext.Arguments;
 			foreach(var argument in _argumentList)
             {
-				if (argument.Direction == ScriptArgumentDirection.Out)
+				if (argument.Direction == ScriptArgumentDirection.Out && !string.IsNullOrEmpty(argument.AssignedVariable))
                 {
 					var assignedParentVariable = parentVariableList.Where(v => v.VariableName == argument.AssignedVariable).FirstOrDefault();
+					var assignedParentArgument = parentArgumentList.Where(a => a.ArgumentName == argument.AssignedVariable).FirstOrDefault();
 					if (assignedParentVariable != null)
                     {
 						assignedParentVariable.VariableValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
-					}					
+					}	
+					else if (assignedParentArgument != null)
+                    {
+						assignedParentArgument.ArgumentValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+					}
+                    else
+                    {
+						throw new ArgumentException($"Unable to assign the value of '{argument.ArgumentName}' to '{argument.AssignedVariable}' " +
+													 "because no variable/argument with this name exists.");
+                    }
                 }
             }
 
