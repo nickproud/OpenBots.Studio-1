@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using OpenBots.Core.Script;
+using System;
+using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -32,7 +34,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmScriptBuilder));
-            OpenBots.Core.Utilities.FormsUtilities.Theme theme2 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.cmsProjectFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCopyFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDeleteFolder = new System.Windows.Forms.ToolStripMenuItem();
@@ -1120,9 +1122,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlPaneTabs.Name = "pnlPaneTabs";
             this.pnlPaneTabs.Size = new System.Drawing.Size(328, 673);
             this.pnlPaneTabs.TabIndex = 2;
-            theme2.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            theme2.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.pnlPaneTabs.Theme = theme2;
+            theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.pnlPaneTabs.Theme = theme1;
             // 
             // tpbLoadingSpinner
             // 
@@ -1455,6 +1457,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiVariableArgumentTabs.Controls.Add(this.variables);
             this.uiVariableArgumentTabs.Controls.Add(this.arguments);
             this.uiVariableArgumentTabs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiVariableArgumentTabs.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.uiVariableArgumentTabs.Location = new System.Drawing.Point(0, 0);
             this.uiVariableArgumentTabs.Name = "uiVariableArgumentTabs";
             this.uiVariableArgumentTabs.SelectedIndex = 0;
@@ -1464,10 +1467,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // variables
             // 
             this.variables.Controls.Add(this.dgvVariables);
-            this.variables.Location = new System.Drawing.Point(4, 25);
+            this.variables.Location = new System.Drawing.Point(4, 32);
             this.variables.Name = "variables";
             this.variables.Padding = new System.Windows.Forms.Padding(3);
-            this.variables.Size = new System.Drawing.Size(1396, 115);
+            this.variables.Size = new System.Drawing.Size(1396, 108);
             this.variables.TabIndex = 0;
             this.variables.Text = "Variables";
             this.variables.UseVisualStyleBackColor = true;
@@ -1484,17 +1487,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvVariables.Name = "dgvVariables";
             this.dgvVariables.RowHeadersWidth = 51;
             this.dgvVariables.RowTemplate.Height = 24;
-            this.dgvVariables.Size = new System.Drawing.Size(1390, 109);
+            this.dgvVariables.Size = new System.Drawing.Size(1390, 102);
             this.dgvVariables.TabIndex = 0;
             // 
             // variableName
             // 
+            this.variableName.DataPropertyName = "VariableName";
             this.variableName.HeaderText = "Variable Name";
             this.variableName.MinimumWidth = 6;
             this.variableName.Name = "variableName";
             // 
             // variableValue
             // 
+            this.variableValue.DataPropertyName = "VariableValue";
             this.variableValue.HeaderText = "Variable Value";
             this.variableValue.MinimumWidth = 6;
             this.variableValue.Name = "variableValue";
@@ -1502,10 +1507,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // arguments
             // 
             this.arguments.Controls.Add(this.dgvArguments);
-            this.arguments.Location = new System.Drawing.Point(4, 25);
+            this.arguments.Location = new System.Drawing.Point(4, 32);
             this.arguments.Name = "arguments";
             this.arguments.Padding = new System.Windows.Forms.Padding(3);
-            this.arguments.Size = new System.Drawing.Size(1396, 115);
+            this.arguments.Size = new System.Drawing.Size(1396, 108);
             this.arguments.TabIndex = 1;
             this.arguments.Text = "Arguments";
             this.arguments.UseVisualStyleBackColor = true;
@@ -1523,28 +1528,28 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.Name = "dgvArguments";
             this.dgvArguments.RowHeadersWidth = 51;
             this.dgvArguments.RowTemplate.Height = 24;
-            this.dgvArguments.Size = new System.Drawing.Size(1390, 109);
+            this.dgvArguments.Size = new System.Drawing.Size(1390, 102);
             this.dgvArguments.TabIndex = 2;
+            this.dgvArguments.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvArguments_DefaultValuesNeeded);
             // 
             // argumentName
             // 
+            this.argumentName.DataPropertyName = "ArgumentName";
             this.argumentName.HeaderText = "Argument Name";
             this.argumentName.MinimumWidth = 6;
             this.argumentName.Name = "argumentName";
             // 
             // argumentValue
             // 
+            this.argumentValue.DataPropertyName = "ArgumentValue";
             this.argumentValue.HeaderText = "Argument Value";
             this.argumentValue.MinimumWidth = 6;
             this.argumentValue.Name = "argumentValue";
             // 
             // direction
             // 
+            this.direction.DataPropertyName = "Direction";
             this.direction.HeaderText = "Direction";
-            this.direction.Items.AddRange(new object[] {
-            "In",
-            "Out",
-            "InOut"});
             this.direction.MinimumWidth = 6;
             this.direction.Name = "direction";
             // 

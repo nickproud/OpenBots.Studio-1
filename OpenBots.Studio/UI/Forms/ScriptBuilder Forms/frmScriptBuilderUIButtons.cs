@@ -19,6 +19,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using OpenBots.Core.Model.EngineModel;
+using System.ComponentModel;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -67,6 +68,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _scriptVariables.Add(projectPathVariable);
 
             _scriptArguments = new List<ScriptArgument>();
+
+            dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+            dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
 
             GenerateRecentFiles();
             newTabPage.Controls[0].Hide();
@@ -176,6 +180,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     FileInfo scriptFileInfo = new FileInfo(_scriptFilePath);
                     uiScriptTabControl.SelectedTab.Text = scriptFileInfo.Name.Replace(".json", "");
+
+                    dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                    dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
 
                     //notify
                     Notify("Script Loaded Successfully!", Color.White);
@@ -626,6 +633,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptVariables = scriptVariableEditor.ScriptVariables;
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
+
+                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
             }
         }
 
@@ -648,6 +657,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptArguments = scriptArgumentEditor.ScriptArguments;
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
+
+                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
             }
         }
 

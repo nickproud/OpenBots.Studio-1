@@ -17,18 +17,19 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
-using OpenBots.Nuget;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -36,6 +37,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using IContainer = Autofac.IContainer;
 using Point = System.Drawing.Point;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
@@ -164,7 +166,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public frmScriptBuilder()
         {
             _selectedTabScriptActions = NewLstScriptActions();
-            InitializeComponent();           
+            InitializeComponent();
+
+            //rendering for variable/argument tabs
+            dgvVariables.AutoGenerateColumns = false;
+            dgvArguments.AutoGenerateColumns = false;
+            direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
         }
 
         private void UpdateWindowTitle()
@@ -261,8 +268,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptVariables = new List<ScriptVariable>();
                 _scriptArguments = new List<ScriptArgument>();
                 _scriptElements = new List<ScriptElement>();
-            }         
 
+                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+            }
+           
             //set image list
             _selectedTabScriptActions.SmallImageList = _uiImages;
 
@@ -753,7 +763,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LinkLabel senderLink = (LinkLabel)sender;
             OpenFile(Path.Combine(Folders.GetFolder(FolderType.ScriptsFolder), senderLink.Text));
         }
-        #endregion        
+        #endregion
+
+        #region Variable/Argument Events
+        private void dgvArguments_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
+        {
+            // Prevent System.ArgumentException: DataGridViewComboBoxCell value is not valid
+            e.Row.Cells["Direction"].Value = ScriptArgumentDirection.In;
+        }
+        #endregion
     }
 }
 

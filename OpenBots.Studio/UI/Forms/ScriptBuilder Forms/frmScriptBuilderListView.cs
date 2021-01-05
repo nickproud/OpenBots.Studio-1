@@ -15,6 +15,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CoreResources = OpenBots.Core.Properties.Resources;
+using System.ComponentModel;
+using OpenBots.Core.Script;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -350,6 +352,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _scriptVariables = newBuilder._scriptVariables;
                     _scriptElements = newBuilder._scriptElements;
                     _scriptArguments = newBuilder._scriptArguments;
+
+                    newBuilder.dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                    newBuilder.dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
                 }
             }
             else
