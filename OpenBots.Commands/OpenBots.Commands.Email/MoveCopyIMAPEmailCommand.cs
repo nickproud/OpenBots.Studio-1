@@ -119,11 +119,11 @@ namespace OpenBots.Commands.Email
 				{
 					try
 					{
-						client.Connect(v_IMAPHost, int.Parse(v_IMAPPort), true, cancel.Token); //SSL
+						client.Connect(vIMAPHost, int.Parse(vIMAPPort), true, cancel.Token); //SSL
 					}
 					catch (Exception)
 					{
-						client.Connect(v_IMAPHost, int.Parse(v_IMAPPort)); //TLS
+						client.Connect(vIMAPHost, int.Parse(vIMAPPort)); //TLS
 					}
 
 					client.AuthenticationMechanisms.Remove("XOAUTH2");
