@@ -52,6 +52,11 @@ namespace OpenBots.Commands.File
 			//apply variable logic
 			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
 
+			if (!Directory.Exists(sourceFolder))
+			{
+				throw new DirectoryNotFoundException($"{sourceFolder} is not a valid directory");
+			}
+
 			//Get File Paths from the folder
 			var filesList = Directory.GetFiles(sourceFolder, ".", SearchOption.AllDirectories).ToList();
 
