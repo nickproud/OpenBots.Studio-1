@@ -373,6 +373,9 @@
     <Compile Include="UI\Forms\frmScriptArguments.Designer.cs">
       <DependentUpon>frmScriptArguments.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Forms\ScriptBuilder Forms\frmScriptBuilderVariableArgument.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Forms\Supplement Forms\frmAddArgument.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -47,21 +47,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
     //Features ability to add, drag/drop reorder commands
     {
         #region Instance Variables
+        //engine context variables
         private List<ListViewItem> _rowsSelectedForCopy;
         private List<ScriptVariable> _scriptVariables;
         private List<ScriptArgument> _scriptArguments;
         private List<ScriptElement> _scriptElements;
-        private List<AutomationCommand> _automationCommands;
-        private bool _editMode;
-        private ImageList _uiImages;
-        private ApplicationSettings _appSettings;
-        private DateTime _lastAntiIdleEvent;
-        private int _reqdIndex;
-        private int _selectedIndex = -1;
-        private List<int> _matchingSearchIndex = new List<int>();
-        private int _currentIndex = -1;
-        private frmScriptBuilder _parentBuilder;
-        private UIListView _selectedTabScriptActions;
         private string _scriptFilePath;
         public string ScriptFilePath
         {
@@ -78,7 +68,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public Project ScriptProject { get; set; }
         public string ScriptProjectPath { get; private set; }
         private string _mainFileName;
-        private Point _lastClickPosition;
+        public Logger EngineLogger { get; set; }
+        public IfrmScriptEngine CurrentEngine { get; set; }
+        private frmScriptBuilder _parentBuilder;        
+
+        //notification variables
+        private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
+        private DateTime _notificationExpires;
+        private bool _isDisplaying;
+        private string _notificationText;
+        private Color _notificationColor;
+        private string _notificationPaintedText;      
+
+        //debug variables
         private int _debugLine;
         public int DebugLine
         {
@@ -116,13 +118,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     CreateDebugTab();
             }
         }
-        private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
-        private DateTime _notificationExpires;
-        private bool _isDisplaying;
-        private string _notificationText;
-        private Color _notificationColor;
-        private string _notificationPaintedText;
-        public IfrmScriptEngine CurrentEngine { get; set; }
         private bool _isScriptRunning;
         public bool IsScriptRunning
         {
@@ -149,17 +144,36 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public bool IsScriptPaused { get; set; }
         public bool IsScriptSteppedOver { get; set; }
         public bool IsScriptSteppedInto { get; set; }
-        public bool IsUnhandledException { get; set; }
-        public Logger EngineLogger { get; set; }
+        public bool IsUnhandledException { get; set; }       
         private bool _isDebugMode;
-        private TreeView _tvCommandsCopy;
-        private string _txtCommandWatermark = "Type Here to Search";   
-        public string HTMLElementRecorderURL { get; set; }
-        private bool _isSequence;
 
+        //command search variables
+        private TreeView _tvCommandsCopy;
+        private string _txtCommandWatermark = "Type Here to Search";       
+
+        //package manager variables
         public IContainer AContainer { get; private set; }
         private ContainerBuilder _builder;
         private string _packagesPath;
+
+        //variable/argument tab variables
+        private List<string> _existingVarArgSearchList;
+        private string _preEditVarArgName;
+
+        //other scriptbuilder form variables 
+        public string HTMLElementRecorderURL { get; set; }
+        private List<AutomationCommand> _automationCommands;
+        private bool _editMode;
+        private ImageList _uiImages;
+        private ApplicationSettings _appSettings;
+        private DateTime _lastAntiIdleEvent;
+        private int _reqdIndex;
+        private int _selectedIndex = -1;
+        private List<int> _matchingSearchIndex = new List<int>();
+        private int _currentIndex = -1;
+        private UIListView _selectedTabScriptActions;
+        private Point _lastClickPosition;
+        private bool _isSequence;
         #endregion
 
         #region Form Events
@@ -193,14 +207,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
                 installDefaultToolStripMenuItem.Visible = true;
             }
-            
+
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
             if (!Directory.Exists(_packagesPath))
                 Directory.CreateDirectory(_packagesPath);
 
             _builder = new ContainerBuilder();
-            
+
             //set controls double buffered
             foreach (Control control in Controls)
             {
@@ -211,7 +225,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //get app settings
             _appSettings = new ApplicationSettings();
-            _appSettings = _appSettings.GetOrCreateApplicationSettings();      
+            _appSettings = _appSettings.GetOrCreateApplicationSettings();
 
             string clientLoggerFilePath = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Automation Client Logs.txt");
             Logger automationClientLogger = new Logging().CreateFileLogger(clientLoggerFilePath, Serilog.RollingInterval.Day);
@@ -272,12 +286,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                 dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
             }
-           
+
             //set image list
             _selectedTabScriptActions.SmallImageList = _uiImages;
 
             //set listview column size
-            frmScriptBuilder_SizeChanged(null, null);        
+            frmScriptBuilder_SizeChanged(null, null);
         }
 
         private void LoadCommands(frmScriptBuilder scriptBuilder)
@@ -310,7 +324,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             scriptBuilder._tvCommandsCopy = new TreeView();
             scriptBuilder._tvCommandsCopy.ShowNodeToolTips = true;
             CopyTreeView(scriptBuilder.tvCommands, scriptBuilder._tvCommandsCopy);
-            scriptBuilder.txtCommandSearch.Text = _txtCommandWatermark;           
+            scriptBuilder.txtCommandSearch.Text = _txtCommandWatermark;
         }
 
         private void frmScriptBuilder_FormClosing(object sender, FormClosingEventArgs e)
@@ -457,14 +471,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
         #endregion
-        
+
         #region Bottom Notification Panel
         private void tmrNotify_Tick(object sender, EventArgs e)
         {
             if (CurrentEngine == null)
                 IsScriptRunning = false;
 
-            if (_appSettings ==  null)
+            if (_appSettings == null)
             {
                 return;
             }
@@ -491,7 +505,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         public void Notify(string notificationText, Color notificationColor)
         {
-            _notificationList.Add(new Tuple<string,Color>(notificationText, notificationColor));
+            _notificationList.Add(new Tuple<string, Color>(notificationText, notificationColor));
         }
 
         private void ShowNotification(string textToDisplay, Color textColor)
@@ -575,7 +589,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 //add to listview
                 CreateUndoSnapshot();
-                AddCommandToListView(newCommandForm.SelectedCommand);              
+                AddCommandToListView(newCommandForm.SelectedCommand);
             }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
@@ -700,7 +714,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 tvCommands.CollapseAll();
             }
             //enables redrawing tree after all controls have been added
-            tvCommands.EndUpdate();           
+            tvCommands.EndUpdate();
         }
 
         private void txtCommandSearch_Enter(object sender, EventArgs e)
@@ -709,7 +723,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 txtCommandSearch.Text = "";
                 txtCommandSearch.ForeColor = Color.Black;
-            }           
+            }
         }
 
         private void txtCommandSearch_Leave(object sender, EventArgs e)
@@ -763,15 +777,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LinkLabel senderLink = (LinkLabel)sender;
             OpenFile(Path.Combine(Folders.GetFolder(FolderType.ScriptsFolder), senderLink.Text));
         }
-        #endregion
-
-        #region Variable/Argument Events
-        private void dgvArguments_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
-        {
-            // Prevent System.ArgumentException: DataGridViewComboBoxCell value is not valid
-            e.Row.Cells["Direction"].Value = ScriptArgumentDirection.In;
-        }
-        #endregion
+        #endregion        
     }
 }
 
