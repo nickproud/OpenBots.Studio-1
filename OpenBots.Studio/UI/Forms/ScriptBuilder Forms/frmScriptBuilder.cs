@@ -129,16 +129,26 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 _isScriptRunning = value;
                 if (_isScriptRunning)
+                {
+                    uiVariableArgumentTabs.Enabled = false;
+                    dgvArguments.Enabled = false;
+                    dgvVariables.Enabled = false;
                     uiScriptTabControl.AllowDrop = false;
+                }
                 else
+                {
                     try
                     {
+                        uiVariableArgumentTabs.Enabled = true;
+                        dgvArguments.Enabled = true;
+                        dgvVariables.Enabled = true;
                         uiScriptTabControl.AllowDrop = true;
                     }
                     catch (Exception)
                     {
                         //DragDrop registration did not succeed
                     }
+                }                    
             }
         }
         public bool IsScriptPaused { get; set; }
