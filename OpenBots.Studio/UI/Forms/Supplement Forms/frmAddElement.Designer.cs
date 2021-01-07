@@ -55,10 +55,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.lblDefineName.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineName.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineName.ForeColor = System.Drawing.Color.White;
-            this.lblDefineName.Location = new System.Drawing.Point(18, 72);
+            this.lblDefineName.Location = new System.Drawing.Point(16, 58);
             this.lblDefineName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineName.Name = "lblDefineName";
-            this.lblDefineName.Size = new System.Drawing.Size(253, 32);
+            this.lblDefineName.Size = new System.Drawing.Size(212, 28);
             this.lblDefineName.TabIndex = 15;
             this.lblDefineName.Text = "Define Element Name";
             // 
@@ -68,10 +68,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.lblHeader.BackColor = System.Drawing.Color.Transparent;
             this.lblHeader.Font = new System.Drawing.Font("Segoe UI Semilight", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblHeader.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblHeader.Location = new System.Drawing.Point(9, 5);
+            this.lblHeader.Location = new System.Drawing.Point(8, 4);
             this.lblHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(288, 65);
+            this.lblHeader.Size = new System.Drawing.Size(241, 54);
             this.lblHeader.TabIndex = 14;
             this.lblHeader.Text = "add element";
             // 
@@ -81,24 +81,23 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtElementName.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtElementName.ForeColor = System.Drawing.Color.SteelBlue;
-            this.txtElementName.Location = new System.Drawing.Point(24, 209);
-            this.txtElementName.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.txtElementName.Location = new System.Drawing.Point(21, 167);
+            this.txtElementName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtElementName.Name = "txtElementName";
-            this.txtElementName.Size = new System.Drawing.Size(633, 37);
+            this.txtElementName.Size = new System.Drawing.Size(563, 32);
             this.txtElementName.TabIndex = 16;
-            this.txtElementName.Text = "<>";
             // 
             // lblDefineNameDescription
             // 
             this.lblDefineNameDescription.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineNameDescription.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineNameDescription.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDefineNameDescription.Location = new System.Drawing.Point(18, 106);
+            this.lblDefineNameDescription.Location = new System.Drawing.Point(16, 85);
             this.lblDefineNameDescription.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineNameDescription.Name = "lblDefineNameDescription";
-            this.lblDefineNameDescription.Size = new System.Drawing.Size(649, 99);
+            this.lblDefineNameDescription.Size = new System.Drawing.Size(577, 79);
             this.lblDefineNameDescription.TabIndex = 17;
-            this.lblDefineNameDescription.Text = "Define a name for your element, such as 'eNumber'.  Remember to enclose the name " +
+            this.lblDefineNameDescription.Text = "Define a name for your element, such as \'eNumber\'.  Remember to enclose the name " +
     "within brackets in order to use the element in commands.";
             // 
             // lblDefineDefaultValueDescriptor
@@ -106,14 +105,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.lblDefineDefaultValueDescriptor.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineDefaultValueDescriptor.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineDefaultValueDescriptor.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDefineDefaultValueDescriptor.Location = new System.Drawing.Point(18, 332);
+            this.lblDefineDefaultValueDescriptor.Location = new System.Drawing.Point(16, 266);
             this.lblDefineDefaultValueDescriptor.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineDefaultValueDescriptor.Name = "lblDefineDefaultValueDescriptor";
-            this.lblDefineDefaultValueDescriptor.Size = new System.Drawing.Size(649, 100);
+            this.lblDefineDefaultValueDescriptor.Size = new System.Drawing.Size(577, 80);
             this.lblDefineDefaultValueDescriptor.TabIndex = 20;
-            this.lblDefineDefaultValueDescriptor.Text = "Define a default value for the element. The enabled search parameters can be use" +
-    "d in web action commands to locate web elements, provided that they contain a va" +
-    "lue.";
+            this.lblDefineDefaultValueDescriptor.Text = "Define a default value for the element. The enabled search parameters can be used" +
+    " in web action commands to locate web elements, provided that they contain a val" +
+    "ue.";
             // 
             // lblDefineDefaultValue
             // 
@@ -121,10 +120,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.lblDefineDefaultValue.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineDefaultValue.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineDefaultValue.ForeColor = System.Drawing.Color.White;
-            this.lblDefineDefaultValue.Location = new System.Drawing.Point(18, 300);
+            this.lblDefineDefaultValue.Location = new System.Drawing.Point(16, 240);
             this.lblDefineDefaultValue.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineDefaultValue.Name = "lblDefineDefaultValue";
-            this.lblDefineDefaultValue.Size = new System.Drawing.Size(334, 32);
+            this.lblDefineDefaultValue.Size = new System.Drawing.Size(280, 28);
             this.lblDefineDefaultValue.TabIndex = 18;
             this.lblDefineDefaultValue.Text = "Define Element Default Value";
             // 
@@ -138,10 +137,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.uiBtnOk.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnOk.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOk.Image")));
             this.uiBtnOk.IsMouseOver = false;
-            this.uiBtnOk.Location = new System.Drawing.Point(22, 800);
-            this.uiBtnOk.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
+            this.uiBtnOk.Location = new System.Drawing.Point(20, 646);
+            this.uiBtnOk.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnOk.Name = "uiBtnOk";
-            this.uiBtnOk.Size = new System.Drawing.Size(68, 75);
+            this.uiBtnOk.Size = new System.Drawing.Size(60, 60);
             this.uiBtnOk.TabIndex = 21;
             this.uiBtnOk.TabStop = false;
             this.uiBtnOk.Text = "Ok";
@@ -157,10 +156,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.uiBtnCancel.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnCancel.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCancel.Image")));
             this.uiBtnCancel.IsMouseOver = false;
-            this.uiBtnCancel.Location = new System.Drawing.Point(90, 800);
-            this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
+            this.uiBtnCancel.Location = new System.Drawing.Point(80, 646);
+            this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnCancel.Name = "uiBtnCancel";
-            this.uiBtnCancel.Size = new System.Drawing.Size(68, 75);
+            this.uiBtnCancel.Size = new System.Drawing.Size(60, 60);
             this.uiBtnCancel.TabIndex = 22;
             this.uiBtnCancel.TabStop = false;
             this.uiBtnCancel.Text = "Cancel";
@@ -171,10 +170,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.lblElementNameError.BackColor = System.Drawing.Color.Transparent;
             this.lblElementNameError.Font = new System.Drawing.Font("Segoe UI Light", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblElementNameError.ForeColor = System.Drawing.Color.Red;
-            this.lblElementNameError.Location = new System.Drawing.Point(18, 255);
+            this.lblElementNameError.Location = new System.Drawing.Point(16, 204);
             this.lblElementNameError.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblElementNameError.Name = "lblElementNameError";
-            this.lblElementNameError.Size = new System.Drawing.Size(638, 45);
+            this.lblElementNameError.Size = new System.Drawing.Size(567, 36);
             this.lblElementNameError.TabIndex = 26;
             // 
             // dgvDefaultValue
@@ -188,12 +187,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.parameterName,
             this.parameterValue});
             this.dgvDefaultValue.DataBindings.Add(new System.Windows.Forms.Binding("DataSource", this, "ElementValueDT", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.dgvDefaultValue.Location = new System.Drawing.Point(24, 431);
-            this.dgvDefaultValue.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.dgvDefaultValue.Location = new System.Drawing.Point(21, 345);
             this.dgvDefaultValue.Name = "dgvDefaultValue";
             this.dgvDefaultValue.RowHeadersWidth = 51;
             this.dgvDefaultValue.RowTemplate.Height = 24;
-            this.dgvDefaultValue.Size = new System.Drawing.Size(633, 354);
+            this.dgvDefaultValue.Size = new System.Drawing.Size(563, 283);
             this.dgvDefaultValue.TabIndex = 28;
             // 
             // enabled
@@ -225,9 +223,9 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             // 
             // frmAddElement
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(685, 895);
+            this.ClientSize = new System.Drawing.Size(609, 722);
             this.Controls.Add(this.dgvDefaultValue);
             this.Controls.Add(this.lblElementNameError);
             this.Controls.Add(this.uiBtnOk);
@@ -239,8 +237,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.Controls.Add(this.lblDefineName);
             this.Controls.Add(this.lblHeader);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.MinimumSize = new System.Drawing.Size(703, 774);
+            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.MinimumSize = new System.Drawing.Size(627, 629);
             this.Name = "frmAddElement";
             this.Text = "Add Element";
             this.TopMost = true;
