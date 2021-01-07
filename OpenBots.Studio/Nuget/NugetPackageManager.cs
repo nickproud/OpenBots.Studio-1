@@ -311,6 +311,19 @@ namespace OpenBots.Nuget
                 }
             });
 
+            try
+            {
+                return FilterAssemblies(assemblyPaths);
+            }
+            catch (Exception)
+            {
+                //try again
+                return FilterAssemblies(assemblyPaths);
+            }
+        }
+
+        private static List<string> FilterAssemblies(List<string> assemblyPaths)
+        {
             List<string> filteredPaths = new List<string>();
             foreach (string path in assemblyPaths)
             {
@@ -320,6 +333,6 @@ namespace OpenBots.Nuget
             }
 
             return filteredPaths;
-        }        
+        }
     }
 }
