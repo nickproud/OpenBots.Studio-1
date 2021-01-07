@@ -13,6 +13,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         public List<ScriptArgument> ScriptArguments { get; set; }
         private bool _isEditMode;
         private string _editingArgumentName;
+
         public frmAddArgument()
         {
             InitializeComponent();
@@ -29,7 +30,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             txtDefaultValue.Text = argumentValue;
 
             _isEditMode = true;
-            _editingArgumentName = argumentName.Replace("{", "").Replace("}", "");
+            _editingArgumentName = argumentName;
         }
 
         private void frmAddArgument_Load(object sender, EventArgs e)
@@ -46,7 +47,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 return;
             }
 
-            string newArgumentName = txtArgumentName.Text.Replace("{", "").Replace("}", "");
+            string newArgumentName = txtArgumentName.Text;
             var existingVariable = ScriptVariables.Where(var => var.VariableName == newArgumentName).FirstOrDefault();
             var existingArgument = ScriptArguments.Where(var => var.ArgumentName == newArgumentName).FirstOrDefault();
             if (existingArgument != null || existingVariable != null)
@@ -58,9 +59,9 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 }
             }
 
-            if (!txtArgumentName.Text.StartsWith("{") || !txtArgumentName.Text.EndsWith("}"))
+            if (txtArgumentName.Text.StartsWith("{") || txtArgumentName.Text.EndsWith("}"))
             {
-                lblArgumentNameError.Text = "Argument markers '{' and '}' must be included";
+                lblArgumentNameError.Text = "Argument markers '{' and '}' should not be included";
                 return;
             }
 

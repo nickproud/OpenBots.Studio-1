@@ -80,7 +80,6 @@
             this.txtVariableName.Name = "txtVariableName";
             this.txtVariableName.Size = new System.Drawing.Size(566, 32);
             this.txtVariableName.TabIndex = 16;
-            this.txtVariableName.Text = "{}";
             // 
             // lblDefineNameDescription
             // 
@@ -92,7 +91,7 @@
             this.lblDefineNameDescription.Name = "lblDefineNameDescription";
             this.lblDefineNameDescription.Size = new System.Drawing.Size(571, 79);
             this.lblDefineNameDescription.TabIndex = 17;
-            this.lblDefineNameDescription.Text = "Define a name for your variable, such as {vNumber}.  Remember to enclose the name" +
+            this.lblDefineNameDescription.Text = "Define a name for your variable, such as \'vNumber\'.  Remember to enclose the name" +
     " within brackets in order to use the variable in commands.";
             // 
             // lblDefineDefaultValueDescriptor
@@ -105,8 +104,8 @@
             this.lblDefineDefaultValueDescriptor.Name = "lblDefineDefaultValueDescriptor";
             this.lblDefineDefaultValueDescriptor.Size = new System.Drawing.Size(571, 53);
             this.lblDefineDefaultValueDescriptor.TabIndex = 20;
-            this.lblDefineDefaultValueDescriptor.Text = "Optionally, define a default value for the variable. The variable will represent" +
-    " this value until changed during the task by a task command.";
+            this.lblDefineDefaultValueDescriptor.Text = "Optionally, define a default value for the variable. The variable will represent " +
+    "this value until changed during the task by a task command.";
             // 
             // txtDefaultValue
             // 
@@ -197,7 +196,7 @@
             this.Controls.Add(this.txtVariableName);
             this.Controls.Add(this.lblDefineName);
             this.Controls.Add(this.lblHeader);
-            this.Icon = OpenBots.Properties.Resources.OpenBots_ico;
+            this.Icon = global::OpenBots.Properties.Resources.OpenBots_ico;
             this.Margin = new System.Windows.Forms.Padding(5);
             this.MinimumSize = new System.Drawing.Size(627, 491);
             this.Name = "frmAddVariable";

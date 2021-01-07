@@ -98,7 +98,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.lblDefineNameDescription.Name = "lblDefineNameDescription";
             this.lblDefineNameDescription.Size = new System.Drawing.Size(649, 99);
             this.lblDefineNameDescription.TabIndex = 17;
-            this.lblDefineNameDescription.Text = "Define a name for your element, such as <eNumber>.  Remember to enclose the name " +
+            this.lblDefineNameDescription.Text = "Define a name for your element, such as 'eNumber'.  Remember to enclose the name " +
     "within brackets in order to use the element in commands.";
             // 
             // lblDefineDefaultValueDescriptor
@@ -111,7 +111,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.lblDefineDefaultValueDescriptor.Name = "lblDefineDefaultValueDescriptor";
             this.lblDefineDefaultValueDescriptor.Size = new System.Drawing.Size(649, 100);
             this.lblDefineDefaultValueDescriptor.TabIndex = 20;
-            this.lblDefineDefaultValueDescriptor.Text = "Define a default value for the element.  The enabled search parameters can be use" +
+            this.lblDefineDefaultValueDescriptor.Text = "Define a default value for the element. The enabled search parameters can be use" +
     "d in web action commands to locate web elements, provided that they contain a va" +
     "lue.";
             // 

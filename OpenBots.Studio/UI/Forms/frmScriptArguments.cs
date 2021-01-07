@@ -55,7 +55,7 @@ namespace OpenBots.UI.Forms
             //add each item to parent
             foreach (var item in arguments)
             {
-                AddUserArgumentNode(parentNode, "{" + item.ArgumentName + "}", item.Direction, (string)item.ArgumentValue);
+                AddUserArgumentNode(parentNode, item.ArgumentName, item.Direction, (string)item.ArgumentValue);
             }
 
             //add parent to treeview
@@ -70,20 +70,7 @@ namespace OpenBots.UI.Forms
         #region Add/Cancel Buttons
         private void uiBtnOK_Click(object sender, EventArgs e)
         {
-            //remove all arguments
-            ScriptArguments.Clear();
-
-            //loop each argument and add
-            for (int i = 0; i < _userArgumentParentNode.Nodes.Count; i++)
-            {
-                //get name and value
-                var argumentName = _userArgumentParentNode.Nodes[i].Text.Replace("{", "").Replace("}", "");
-                var argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), _userArgumentParentNode.Nodes[i].Nodes[1].Text.Replace(_leadingDirection, ""));
-                var argumentValue = _userArgumentParentNode.Nodes[i].Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
-
-                //add to list
-                ScriptArguments.Add(new ScriptArgument() { ArgumentName = argumentName, Direction = argumentDirection, ArgumentValue = argumentValue });
-            }
+            ResetArguments();
 
             //return success result
             DialogResult = DialogResult.OK;
@@ -114,6 +101,7 @@ namespace OpenBots.UI.Forms
                     (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), addArgumentForm.cbxDefaultDirection.Text),
                     addArgumentForm.txtDefaultValue.Text);
                 LastModifiedArgumentName = addArgumentForm.txtArgumentName.Text;
+                ResetArguments();
             }
         }
 
@@ -159,7 +147,7 @@ namespace OpenBots.UI.Forms
                 argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), tvScriptArguments.SelectedNode.Nodes[1].Text.Replace(_leadingDirection, ""));                
             }
 
-            if (argumentName.Replace("{", "").Replace("}", "") == "ProjectPath")
+            if (argumentName == "ProjectPath")
                 return;
 
             //create argument editing form
@@ -180,6 +168,7 @@ namespace OpenBots.UI.Forms
                     (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), addArgumentForm.cbxDefaultDirection.Text),
                     addArgumentForm.txtDefaultValue.Text);
                 LastModifiedArgumentName = addArgumentForm.txtArgumentName.Text;
+                ResetArguments();
             }
         }
 
@@ -246,11 +235,12 @@ namespace OpenBots.UI.Forms
                     parentNode = tvScriptArguments.SelectedNode;
                 }
 
-                if (parentNode.Text.Replace("{", "").Replace("}", "") == "ProjectPath")
+                if (parentNode.Text == "ProjectPath")
                     return;
 
                 //remove parent node
                 parentNode.Remove();
+                ResetArguments();
             }
         }
 
@@ -263,6 +253,24 @@ namespace OpenBots.UI.Forms
             }
             return node;
         }
-        #endregion       
+        #endregion
+
+        private void ResetArguments()
+        {
+            //remove all variables
+            ScriptArguments.Clear();
+
+            //loop each variable and add
+            for (int i = 0; i < _userArgumentParentNode.Nodes.Count; i++)
+            {
+                //get name and value
+                var argumentName = _userArgumentParentNode.Nodes[i].Text;
+                var argumentDirection = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), _userArgumentParentNode.Nodes[i].Nodes[1].Text.Replace(_leadingDirection, ""));
+                var argumentValue = _userArgumentParentNode.Nodes[i].Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+
+                //add to list
+                ScriptArguments.Add(new ScriptArgument() { ArgumentName = argumentName, Direction = argumentDirection, ArgumentValue = argumentValue });
+            }
+        }
     }
 }
