@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using VBFileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
+using OpenBots.Core.Model.EngineModel;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -92,10 +93,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ClearSelectedListViewItems();
 
                 try
-                {                    
+                {
                     //Serialize main script
-                    var mainScript = Script.SerializeScript(mainScriptActions.Items, mainScriptVariables, mainScriptArguments, 
-                                                            mainScriptElements, mainScriptPath, AContainer);
+                    EngineContext engineContext = new EngineContext
+                    {
+                        Variables = mainScriptVariables,
+                        Arguments = mainScriptArguments,
+                        Elements = mainScriptElements,
+                        FilePath = mainScriptPath,
+                        Container = AContainer
+                    };
+
+                    var mainScript = Script.SerializeScript(mainScriptActions.Items, engineContext);
                     
                     _mainFileName = ScriptProject.Main;
                    
@@ -568,9 +577,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 helloWorldCommand.v_Message = "Hello World";
                 newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
 
+                EngineContext engineContext = new EngineContext
+                {
+                    Variables = newScriptVariables,
+                    Arguments = newScriptArguments,
+                    Elements = newScriptElements,
+                    FilePath = newFilePath,
+                    Container = AContainer
+                };
+
                 if (!File.Exists(newFilePath))
                 {
-                    Script.SerializeScript(newScriptActions.Items, newScriptVariables, newScriptArguments, newScriptElements, newFilePath, AContainer);
+                    Script.SerializeScript(newScriptActions.Items, engineContext);
                     NewNode(tvProject.SelectedNode, newFilePath, "file");
                     OpenFile(newFilePath);
                 }
@@ -585,7 +603,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         newerFilePath = Path.Combine(newDirectoryPath, $"{newFileNameWithoutExtension} ({count}).json");
                         count += 1;
                     }
-                    Script.SerializeScript(newScriptActions.Items, newScriptVariables, newScriptArguments, newScriptElements, newerFilePath, AContainer);
+
+                    engineContext.FilePath = newerFilePath;
+                    Script.SerializeScript(newScriptActions.Items, engineContext);
                     NewNode(tvProject.SelectedNode, newerFilePath, "file");
                     OpenFile(newerFilePath);
                 }

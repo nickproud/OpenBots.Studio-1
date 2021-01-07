@@ -387,7 +387,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //serialize script
             try
             {
-                var exportedScript = Script.SerializeScript(_selectedTabScriptActions.Items, _scriptVariables, _scriptArguments,_scriptElements, ScriptFilePath, AContainer);
+                EngineContext engineContext = new EngineContext
+                {
+                    Variables = _scriptVariables,
+                    Arguments = _scriptArguments,
+                    Elements = _scriptElements,
+                    FilePath = ScriptFilePath,
+                    Container = AContainer
+                };
+
+                var exportedScript = Script.SerializeScript(_selectedTabScriptActions.Items, engineContext);
                 uiScriptTabControl.SelectedTab.Text = uiScriptTabControl.SelectedTab.Text.Replace(" *", "");
                 //show success dialog
                 Notify("File has been saved successfully!", Color.White);
