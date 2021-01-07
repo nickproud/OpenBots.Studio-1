@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Engine;
+using System;
 using System.IO;
 using Xunit;
-using OpenBots.Engine;
-using OpenBots.Core.Utilities.CommonUtilities;
 
 namespace OpenBots.Commands.Folder.Test
 {
