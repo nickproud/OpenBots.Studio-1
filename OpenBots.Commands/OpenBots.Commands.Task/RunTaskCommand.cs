@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
@@ -17,6 +18,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using IContainer = Autofac.IContainer;
 
 namespace OpenBots.Commands.Task
 {
@@ -116,11 +118,11 @@ namespace OpenBots.Commands.Task
 			InitializeVariableLists(parentAutomationEngineInstance);
 
 			string projectPath = parentfrmScriptEngine.ProjectPath;
-			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childTaskPath, projectPath, CurrentScriptBuilder, 
+			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childTaskPath, projectPath, parentAutomationEngineInstance.Container, CurrentScriptBuilder, 
 				parentfrmScriptEngine.ScriptEngineLogger, _variableList, null, parentAutomationEngineInstance.AppInstances, false, parentfrmScriptEngine.IsDebugMode);
 
-			if (parentAutomationEngineInstance.ScriptEngineUI.IsScheduledTask)
-				_childfrmScriptEngine.IsScheduledTask = true;
+			if (parentAutomationEngineInstance.ScriptEngineUI.IsScheduledOrAttendedTask)
+				_childfrmScriptEngine.IsScheduledOrAttendedTask = true;
 
 			_childfrmScriptEngine.IsChildEngine = true;
 			_childfrmScriptEngine.IsHiddenTaskEngine = true;
@@ -241,7 +243,7 @@ namespace OpenBots.Commands.Task
 
 		private void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
-			var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null);
+			var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null, null);
 			currentScriptEngine.VariableList.AddRange(editor.ScriptVariables);
 			currentScriptEngine.ElementList.AddRange(editor.ScriptElements);
 
@@ -259,9 +261,11 @@ namespace OpenBots.Commands.Task
 			if (Sender.Checked && File.Exists(startFile))
 			{
 				_assignmentsGridViewHelper.DataSource = v_VariableAssignments;
-				Script deserializedScript = Script.DeserializeFile(startFile);
 
-				foreach (var variable in deserializedScript.Variables)
+				JObject scriptObject = JObject.Parse(File.ReadAllText(startFile));
+				var variables = scriptObject["Variables"].ToObject<List<ScriptVariable>>();
+
+				foreach (var variable in variables)
 				{
 					if (variable.VariableName == "ProjectPath")
 						continue;
@@ -294,7 +298,7 @@ namespace OpenBots.Commands.Task
 			//create variable list
 			InitializeVariableLists(parentAutomationEngineInstance);
 
-			var childAutomationEngineInstance = parentAutomationEngineInstance.CreateAutomationEngineInstance((Logger)Log.Logger);
+			var childAutomationEngineInstance = parentAutomationEngineInstance.CreateAutomationEngineInstance((Logger)Log.Logger, parentAutomationEngineInstance.Container);
 			childAutomationEngineInstance.VariableList = _variableList;
 			childAutomationEngineInstance.AppInstances = parentAutomationEngineInstance.AppInstances;
 			childAutomationEngineInstance.IsServerChildExecution = true;

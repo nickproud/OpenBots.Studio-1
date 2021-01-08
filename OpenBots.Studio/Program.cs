@@ -14,6 +14,7 @@
 //limitations under the License.
 using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
+using OpenBots.Core.Settings;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.Forms;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
@@ -47,6 +48,10 @@ namespace OpenBots
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
+            //get app settings
+            var appSettings = new ApplicationSettings();
+            appSettings = appSettings.GetOrCreateApplicationSettings();
+
             //if the exe was passed a filename argument then run the script
             if (args.Length > 0)
             {
@@ -71,13 +76,21 @@ namespace OpenBots
                 Logger engineLogger = new Logging().CreateFileLogger(engineLoggerFilePath, Serilog.RollingInterval.Day);
                 Application.Run(new frmScriptEngine(configPath, engineLogger));
             }
-            else
+            else if (appSettings.ClientSettings.StartupMode == "Builder Mode")
             {
                 SplashForm = new frmSplash();
                 SplashForm.Show();
 
                 Application.DoEvents();
                 Application.Run(new frmScriptBuilder());
+            }
+            else
+            {
+                SplashForm = new frmSplash();
+                SplashForm.Show();
+
+                Application.DoEvents();
+                Application.Run(new frmAttendedMode());
             }
         }
 

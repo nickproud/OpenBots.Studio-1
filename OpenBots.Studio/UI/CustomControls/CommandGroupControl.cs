@@ -24,7 +24,7 @@ namespace OpenBots.UI.CustomControls
         public CommandGroupControl()
         {
             InitializeComponent();
-            this.GroupName = "Category";
+            GroupName = "Category";
         }
 
         private void CommandSelectionControl_Load(object sender, EventArgs e)
@@ -40,24 +40,24 @@ namespace OpenBots.UI.CustomControls
             set
             {
                 groupName = value;
-                this.Invalidate();
+                Invalidate();
             }
         }
 
         private void CommandSelectionControl_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawImage(Resources.command_files, 5, 0, 32, 32);
-            e.Graphics.DrawString(this.GroupName, this.Font, new SolidBrush(this.ForeColor), 39, 10);
+            e.Graphics.DrawString(GroupName, Font, new SolidBrush(ForeColor), 39, 10);
         }
 
         private void CommandSelectionControl_MouseEnter(object sender, EventArgs e)
         {
-            this.Cursor = Cursors.Hand;
+            Cursor = Cursors.Hand;
         }
 
         private void CommandSelectionControl_MouseLeave(object sender, EventArgs e)
         {
-            this.Cursor = Cursors.Arrow;
+            Cursor = Cursors.Arrow;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void addsDataRow()
         {
             _addDataRow = new AddDataRowCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             Data.DataTable inputTable = new Data.DataTable();
             inputTable.Columns.Add("firstname");

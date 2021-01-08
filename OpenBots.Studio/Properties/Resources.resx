@@ -117,4 +117,215 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="about_background" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo\about_background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_add_command" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-add-command.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_breakpoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-breakpoint.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_clear" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-clear.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_close" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action_bar_close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_debug" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-debug.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_element" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-element.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_element_recorder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-element-recorder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_import" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-import.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-new.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_open" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_options" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-options.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_project" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-project.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_publish" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-publish.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_record" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-record.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_restart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action_bar_restart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_run" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-run.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_saveall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-saveall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_saveas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-saveas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_schedule" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-schedule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_search" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-search.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_shortcut" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-shortcut.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="action_bar_variable" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ActionBar\action-bar-variable.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="browser_back" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Browser\browser-back.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="browser_elements" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Browser\browser-elements.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="browser_forward" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Browser\browser-forward.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="browser_home" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Browser\browser-home.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="browser_refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Browser\browser-refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="browser_save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Browser\browser-save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="close_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\close-button.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="commandsearch_clear" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\commandsearch-clear.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="create" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\create.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\edit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="engine_cancel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Engine\engine-cancel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="engine_ignore" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Engine\engine-ignore.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="engine_pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Engine\engine-pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="engine_resume" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Engine\engine-resume.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="engine_step_into" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Engine\engine-step-into.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="engine_step_over" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Engine\engine-step-over.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="error" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Misc\error.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="executing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Misc\executing.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="header_backing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Misc\header-backing.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="header_backing_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Misc\header_backing_dark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="links_header" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\links-header.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="links_header___rotated" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\links-header - rotated.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="loading_spinner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo\loading-spinner.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="microsoft_excel_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FileIcons\microsoft-excel-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="microsoft_word_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FileIcons\microsoft-word-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nuget_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo\nuget-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OpenBots_gallery_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo\openbots-gallery-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OpenBots_ico" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo\openbots-ico.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OpenBots_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo\openbots-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OpenBots_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo\openbots-logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OpenBots_splash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo\openbots_splash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="paste" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\paste.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pdf_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FileIcons\pdf-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProjectFolderIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FileIcons\ProjectFolderIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProjectGenericFileIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FileIcons\ProjectGenericFileIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="project_collapse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\project-collapse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="project_expand" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\project-expand.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="project_open_directory" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\project-open-directory.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="recent_files" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\recent-files.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="robot_bouncing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Misc\robot-bouncing.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="various_question" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\various-question.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="various_record_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\various-record-button.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="various_stop_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Buttons\various-stop-button.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

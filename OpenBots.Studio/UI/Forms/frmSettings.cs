@@ -18,7 +18,6 @@ using OpenBots.Core.Metrics;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Studio.Utilities.Documentation;
-using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.Utilities;
 using Serilog.Events;
@@ -34,10 +33,8 @@ namespace OpenBots.UI.Forms
     public partial class frmSettings : UIForm
     {
         ApplicationSettings newAppSettings;
-        public frmScriptBuilder scriptBuilderForm;
-        public frmSettings(frmScriptBuilder sender)
+        public frmSettings()
         {
-            scriptBuilderForm = sender;
             InitializeComponent();
         }
 
@@ -275,7 +272,7 @@ namespace OpenBots.UI.Forms
 
         private void btnLaunchAttendedMode_Click(object sender, EventArgs e)
         {
-            var frmAttended = new frmAttendedMode(scriptBuilderForm.ScriptProjectPath);
+            var frmAttended = new frmAttendedMode();
             frmAttended.Show();
             Close();
         }

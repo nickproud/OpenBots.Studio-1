@@ -87,6 +87,7 @@
             // 
             // pbHome
             // 
+            this.pbHome.Image = global::OpenBots.Properties.Resources.browser_home;
             resources.ApplyResources(this.pbHome, "pbHome");
             this.pbHome.Name = "pbHome";
             this.pbHome.TabStop = false;
@@ -105,6 +106,7 @@
             // pbElements
             // 
             resources.ApplyResources(this.pbElements, "pbElements");
+            this.pbElements.Image = global::OpenBots.Properties.Resources.browser_elements;
             this.pbElements.Name = "pbElements";
             this.pbElements.TabStop = false;
             this.ttElementRecorder.SetToolTip(this.pbElements, resources.GetString("pbElements.ToolTip"));
@@ -113,6 +115,7 @@
             // pbSave
             // 
             resources.ApplyResources(this.pbSave, "pbSave");
+            this.pbSave.Image = global::OpenBots.Properties.Resources.browser_save;
             this.pbSave.Name = "pbSave";
             this.pbSave.TabStop = false;
             this.ttElementRecorder.SetToolTip(this.pbSave, resources.GetString("pbSave.ToolTip"));
@@ -121,6 +124,7 @@
             // pbBack
             // 
             resources.ApplyResources(this.pbBack, "pbBack");
+            this.pbBack.Image = global::OpenBots.Properties.Resources.browser_back;
             this.pbBack.Name = "pbBack";
             this.pbBack.TabStop = false;
             this.ttElementRecorder.SetToolTip(this.pbBack, resources.GetString("pbBack.ToolTip"));
@@ -129,6 +133,7 @@
             // pbForward
             // 
             resources.ApplyResources(this.pbForward, "pbForward");
+            this.pbForward.Image = global::OpenBots.Properties.Resources.browser_forward;
             this.pbForward.Name = "pbForward";
             this.pbForward.TabStop = false;
             this.ttElementRecorder.SetToolTip(this.pbForward, resources.GetString("pbForward.ToolTip"));
@@ -137,6 +142,7 @@
             // pgGo
             // 
             resources.ApplyResources(this.pgGo, "pgGo");
+            this.pgGo.Image = global::OpenBots.Properties.Resources.engine_resume;
             this.pgGo.Name = "pgGo";
             this.pgGo.TabStop = false;
             this.ttElementRecorder.SetToolTip(this.pgGo, resources.GetString("pgGo.ToolTip"));
@@ -151,6 +157,7 @@
             // pbRefresh
             // 
             resources.ApplyResources(this.pbRefresh, "pbRefresh");
+            this.pbRefresh.Image = global::OpenBots.Properties.Resources.browser_refresh;
             this.pbRefresh.Name = "pbRefresh";
             this.pbRefresh.TabStop = false;
             this.ttElementRecorder.SetToolTip(this.pbRefresh, resources.GetString("pbRefresh.ToolTip"));
@@ -159,6 +166,7 @@
             // pbRecord
             // 
             resources.ApplyResources(this.pbRecord, "pbRecord");
+            this.pbRecord.Image = global::OpenBots.Properties.Resources.various_record_button;
             this.pbRecord.Name = "pbRecord";
             this.pbRecord.TabStop = false;
             this.ttElementRecorder.SetToolTip(this.pbRecord, resources.GetString("pbRecord.ToolTip"));

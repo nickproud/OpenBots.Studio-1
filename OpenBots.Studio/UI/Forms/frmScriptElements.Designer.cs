@@ -165,7 +165,7 @@
             this.uiBtnNew.DisplayText = "Add";
             this.uiBtnNew.DisplayTextBrush = System.Drawing.Color.AliceBlue;
             this.uiBtnNew.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.uiBtnNew.Image = global::OpenBots.Core.Properties.Resources.action_bar_new;
+            this.uiBtnNew.Image = global::OpenBots.Properties.Resources.action_bar_new;
             this.uiBtnNew.IsMouseOver = false;
             this.uiBtnNew.Location = new System.Drawing.Point(10, 55);
             this.uiBtnNew.Margin = new System.Windows.Forms.Padding(4);
@@ -195,7 +195,7 @@
             this.BackColor = System.Drawing.Color.SteelBlue;
             this.ClientSize = new System.Drawing.Size(861, 638);
             this.Controls.Add(this.tlpElements);
-            this.Icon = OpenBots.Core.Properties.Resources.OpenBots_ico;
+            this.Icon = OpenBots.Properties.Resources.OpenBots_ico;
             this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "frmScriptElements";
             this.Text = "Elements";

@@ -63,296 +63,6 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap about_background {
-            get {
-                object obj = ResourceManager.GetObject("about_background", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_add_command {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_add_command", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_breakpoint {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_breakpoint", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_clear {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_clear", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_close {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_close", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_debug {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_debug", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_element {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_element", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_element_recorder {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_element_recorder", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_import {
-            get {
-                object obj = ResourceManager.GetObject("action-bar-import", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_new {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_new", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_open {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_open", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_options {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_options", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_project {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_project", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_publish {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_publish", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_record {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_record", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_restart {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_restart", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_run {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_run", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_save {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_save", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_saveall {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_saveall", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_saveas {
-            get {
-                object obj = ResourceManager.GetObject("action-bar-saveas", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_schedule {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_schedule", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_shortcut {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_shortcut", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap action_bar_variable {
-            get {
-                object obj = ResourceManager.GetObject("action_bar_variable", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap browser_back {
-            get {
-                object obj = ResourceManager.GetObject("browser_back", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap browser_elements {
-            get {
-                object obj = ResourceManager.GetObject("browser_elements", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap browser_forward {
-            get {
-                object obj = ResourceManager.GetObject("browser_forward", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap browser_home {
-            get {
-                object obj = ResourceManager.GetObject("browser_home", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap browser_refresh {
-            get {
-                object obj = ResourceManager.GetObject("browser_refresh", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap browser_save {
-            get {
-                object obj = ResourceManager.GetObject("browser_save", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap command_asset {
             get {
                 object obj = ResourceManager.GetObject("command_asset", resourceCulture);
@@ -423,16 +133,6 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap command_cancel {
-            get {
-                object obj = ResourceManager.GetObject("command_cancel", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap command_case {
             get {
                 object obj = ResourceManager.GetObject("command_case", resourceCulture);
@@ -476,16 +176,6 @@ namespace OpenBots.Core.Properties {
         public static System.Drawing.Bitmap command_database {
             get {
                 object obj = ResourceManager.GetObject("command_database", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap command_database2 {
-            get {
-                object obj = ResourceManager.GetObject("command_database2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -643,16 +333,6 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap command_ignore {
-            get {
-                object obj = ResourceManager.GetObject("command_ignore", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap command_input {
             get {
                 object obj = ResourceManager.GetObject("command_input", resourceCulture);
@@ -753,16 +433,6 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap command_resume {
-            get {
-                object obj = ResourceManager.GetObject("command_resume", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap command_run_code {
             get {
                 object obj = ResourceManager.GetObject("command_run_code", resourceCulture);
@@ -853,26 +523,6 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap command_step_into {
-            get {
-                object obj = ResourceManager.GetObject("command_step_into", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap command_step_over {
-            get {
-                object obj = ResourceManager.GetObject("command_step_over", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap command_stop_process {
             get {
                 object obj = ResourceManager.GetObject("command_stop_process", resourceCulture);
@@ -951,66 +601,6 @@ namespace OpenBots.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap commandsearch_clear {
-            get {
-                object obj = ResourceManager.GetObject("commandsearch_clear", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap copy {
-            get {
-                object obj = ResourceManager.GetObject("copy", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap error {
-            get {
-                object obj = ResourceManager.GetObject("error", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap executing {
-            get {
-                object obj = ResourceManager.GetObject("executing", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap header_backing {
-            get {
-                object obj = ResourceManager.GetObject("header_backing", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap header_backing_dark {
-            get {
-                object obj = ResourceManager.GetObject("header_backing_dark", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
         ///&lt;html lang=&quot;en&quot;&gt;
         ///&lt;head&gt;
@@ -1027,46 +617,6 @@ namespace OpenBots.Core.Properties {
         public static string HTMLInputSample {
             get {
                 return ResourceManager.GetString("HTMLInputSample", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap links_header {
-            get {
-                object obj = ResourceManager.GetObject("links_header", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap loading_spinner {
-            get {
-                object obj = ResourceManager.GetObject("loading_spinner", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap nuget_icon {
-            get {
-                object obj = ResourceManager.GetObject("nuget_icon", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap openbots_gallery_icon {
-            get {
-                object obj = ResourceManager.GetObject("openbots_gallery_icon", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -1089,104 +639,21 @@ namespace OpenBots.Core.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to {test credential password}.
         /// </summary>
-        public static System.Drawing.Bitmap OpenBots_logo {
+        public static string testCredPassword {
             get {
-                object obj = ResourceManager.GetObject("OpenBots_logo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("testCredPassword", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to testUser.
         /// </summary>
-        public static System.Drawing.Bitmap openbots_splash2 {
+        public static string testCredUsername {
             get {
-                object obj = ResourceManager.GetObject("openbots_splash2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap project_collapse {
-            get {
-                object obj = ResourceManager.GetObject("project_collapse", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap project_expand {
-            get {
-                object obj = ResourceManager.GetObject("project_expand", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap project_open_directory {
-            get {
-                object obj = ResourceManager.GetObject("project_open_directory", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap recent_files {
-            get {
-                object obj = ResourceManager.GetObject("recent-files", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap settings {
-            get {
-                object obj = ResourceManager.GetObject("settings", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap various_question {
-            get {
-                object obj = ResourceManager.GetObject("various-question", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap various_record_button {
-            get {
-                object obj = ResourceManager.GetObject("various_record_button", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap various_stop_button {
-            get {
-                object obj = ResourceManager.GetObject("various_stop_button", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("testCredUsername", resourceCulture);
             }
         }
     }

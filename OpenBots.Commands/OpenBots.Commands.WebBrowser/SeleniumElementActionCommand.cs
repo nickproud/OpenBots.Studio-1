@@ -84,6 +84,7 @@ namespace OpenBots.Commands.WebBrowser
 		[PropertyUISelectionOption("Get Matching Element(s)")]
 		[PropertyUISelectionOption("Clear Element")]
 		[PropertyUISelectionOption("Wait For Element To Exist")]
+		[PropertyUISelectionOption("Element Exists")]
 		[PropertyUISelectionOption("Switch to frame")]
 		[PropertyUISelectionOption("Select Option")]
 		[Description("Select the appropriate corresponding action to take once the element has been located.")]
@@ -201,7 +202,10 @@ namespace OpenBots.Commands.WebBrowser
 
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			dynamic element = CommandsHelper.FindElement(engine, seleniumInstance, seleniumSearchParamRows, v_SeleniumSearchOption, vTimeout);                                     
+			dynamic element = CommandsHelper.FindElement(engine, seleniumInstance, seleniumSearchParamRows, v_SeleniumSearchOption, vTimeout);
+
+			if (element == null && v_SeleniumElementAction != "Element Exists")
+				throw new ElementNotVisibleException("Unable to find element within the provided time limit");
 
 			if (v_SeleniumElementAction.Contains("Click"))
 			{
@@ -217,8 +221,7 @@ namespace OpenBots.Commands.WebBrowser
 			Actions actions = new Actions(seleniumInstance);
 
 			switch (v_SeleniumElementAction)
-			{
-				
+			{				
 				case "Invoke Click":
 					((IWebElement)element).Click();                   
 					break;
@@ -506,7 +509,18 @@ namespace OpenBots.Commands.WebBrowser
 						seleniumInstance.SwitchTo().Frame((IWebElement)element);
 					break;
 				case "Wait For Element To Exist":
-					return;
+					break;
+				case "Element Exists":
+					string existsBoolVariableName = (from rw in v_WebActionParameterTable.AsEnumerable()
+													where rw.Field<string>("Parameter Name") == "Variable Name"
+													select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+					if (element == null)
+						"False".StoreInUserVariable(engine, existsBoolVariableName);
+					else
+						"True".StoreInUserVariable(engine, existsBoolVariableName);
+
+					break;
 				default:
 					throw new Exception("Element Action was not found");
 			}
@@ -752,6 +766,14 @@ namespace OpenBots.Commands.WebBrowser
 				case "Wait For Element To Exist":
 					foreach (var ctrl in _actionParametersControls)
 						ctrl.Hide();
+					break;
+
+				case "Element Exists":
+					foreach (var ctrl in _actionParametersControls)
+						ctrl.Show();
+
+					if (sender != null)
+						actionParameters.Rows.Add("Variable Name");
 					break;
 
 				case "Switch to frame":

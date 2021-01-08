@@ -61,6 +61,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 variablesGridViewHelper.AllowUserToAddRows = false;
                 variablesGridViewHelper.AllowUserToDeleteRows = false;
                 variablesGridViewHelper.ReadOnly = true;
+                variablesGridViewHelper.CellContentDoubleClick += VariablesGridViewHelper_CellContentDoubleClick;
 
                 if (debugTab.Controls.Count != 0)
                     debugTab.Controls.RemoveAt(0);
@@ -82,6 +83,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 variablesGridViewHelper.DataSource = variableValues;
                 uiPaneTabs.SelectedTab = debugTab;
             }           
+        }
+
+        private void VariablesGridViewHelper_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            //if the column is 'Value'
+            if (e.ColumnIndex == 2)
+            {
+                string variableName = ((DataGridView)sender).Rows[e.RowIndex].Cells[0].Value.ToString();
+                string variableValue = ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+                MessageBox.Show(variableValue, variableName);
+            }
         }
 
         public delegate void RemoveDebugTabDelegate();

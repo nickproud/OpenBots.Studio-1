@@ -28,7 +28,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             InitializeComponent();
 
-            txtMessage.Text = message;
+            lblMessage.Text = message;
             Text = title;
             switch (dialogType)
             {
@@ -53,8 +53,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 autoCloseTimer.Interval = 1000;
                 autoCloseTimer.Enabled = true;
             }
-            txtMessage.SelectionStart = txtMessage.Text.Length;
-            txtMessage.ReadOnly = true;
         }
 
         private void CalculateCloseTime()
@@ -75,9 +73,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void autoCloseTimer_Tick(object sender, EventArgs e)
         {
             if (CloseTicks == TicksPassed)
-            {
                 Close();
-            }
             else
             {
                 TicksPassed++;
@@ -93,17 +89,18 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void frmDialog_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-            {
                 Close();
-            }
         }      
 
         private void txtMessage_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
-            {
                 Close();
-            }
+        }
+
+        private void uiBtnCopyError_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(lblMessage.Text);
         }
     }
 }

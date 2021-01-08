@@ -17,7 +17,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
-using OpenBots.Core.Nuget;
+using OpenBots.Nuget;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
@@ -37,6 +37,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Point = System.Drawing.Point;
+using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -154,7 +155,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public string HTMLElementRecorderURL { get; set; }
         private bool _isSequence;
 
-        private IContainer _container;
+        public IContainer AContainer { get; private set; }
         private ContainerBuilder _builder;
         private string _packagesPath;
         #endregion
@@ -186,8 +187,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 installDefaultToolStripMenuItem.Visible = true;
             }
             
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
+            _packagesPath = Path.Combine(appDataPath, "packages");
             if (!Directory.Exists(_packagesPath))
                 Directory.CreateDirectory(_packagesPath);
 
@@ -266,20 +267,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //set listview column size
             frmScriptBuilder_SizeChanged(null, null);        
-
-            //start attended mode if selected
-            if (_appSettings.ClientSettings.StartupMode == "Attended Task Mode")
-            {
-                WindowState = FormWindowState.Minimized;
-                var frmAttended = new frmAttendedMode(ScriptProjectPath);
-                frmAttended.Show();
-            }
         }
 
         private void LoadCommands(frmScriptBuilder scriptBuilder)
         {
             //load all commands           
-            scriptBuilder._automationCommands = TypeMethods.GenerateCommands(_container);
+            scriptBuilder._automationCommands = TypeMethods.GenerateCommands(AContainer);
 
             //instantiate and populate display icons for commands
             scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
@@ -306,7 +299,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             scriptBuilder._tvCommandsCopy = new TreeView();
             scriptBuilder._tvCommandsCopy.ShowNodeToolTips = true;
             CopyTreeView(scriptBuilder.tvCommands, scriptBuilder._tvCommandsCopy);
-            scriptBuilder.txtCommandSearch.Text = _txtCommandWatermark;                      
+            scriptBuilder.txtCommandSearch.Text = _txtCommandWatermark;           
         }
 
         private void frmScriptBuilder_FormClosing(object sender, FormClosingEventArgs e)
@@ -555,7 +548,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 CreationModeInstance = CreationMode.Add,
                 ScriptVariables = _scriptVariables,
                 ScriptElements = _scriptElements,
-                Container = _container
+                Container = AContainer
             };
 
             if (specificCommand != "")
@@ -723,11 +716,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void uiBtnReloadCommands_Click(object sender, EventArgs e)
         {
             tpbLoadingSpinner.Visible = true;
+
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
             _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
-            _container = _builder.Build();
+            AContainer = _builder.Build();
             LoadCommands(this);
+            ReloadAllFiles();
+
             tpbLoadingSpinner.Visible = false;
         }
         #endregion
@@ -754,7 +750,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LinkLabel senderLink = (LinkLabel)sender;
             OpenFile(Path.Combine(Folders.GetFolder(FolderType.ScriptsFolder), senderLink.Text));
         }
-        #endregion      
+        #endregion        
     }
 }
 

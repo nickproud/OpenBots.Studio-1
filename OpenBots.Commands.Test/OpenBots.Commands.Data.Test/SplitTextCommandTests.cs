@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Data.Test
         public void SplitsText()
         {
             _splitText = new SplitTextCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             string inputText = "test text";
             string splitCharacter = " ";
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Data.Test
         public void SplitsTextWithMultipleDelimiters()
         {
             _splitText = new SplitTextCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             string inputText = "test text:with!multiple;delimiters";
             List<string> splitCharacters = new List<string>();

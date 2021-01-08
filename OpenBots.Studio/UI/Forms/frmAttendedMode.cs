@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
+using OpenBots.Core.Project;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -16,18 +17,15 @@ namespace OpenBots.UI.Forms
     {
         #region Variables
         private ApplicationSettings _appSettings;
-        private int _flashCount = 0;
         private bool _dragging = false;
         private Point _dragCursorPoint;
         private Point _dragFormPoint;
-        private string _projectPath;
-
+        private string _publishedProjectsPath;
         #endregion
 
         #region Form Events
-        public frmAttendedMode(string projectPath)
+        public frmAttendedMode()
         {
-            _projectPath = projectPath;
             InitializeComponent();
         }
 
@@ -37,13 +35,23 @@ namespace OpenBots.UI.Forms
             _appSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
 
             //setup file system watcher
-            attendedScriptWatcher.Path = _projectPath;
+            _publishedProjectsPath = Folders.GetFolder(FolderType.PublishedFolder);
+            if (!Directory.Exists(_publishedProjectsPath))
+                Directory.CreateDirectory(_publishedProjectsPath);
+
+            attendedScriptWatcher.Path = _publishedProjectsPath;
+            attendedScriptWatcher.Filter = "*.*";
 
             //move form to default location
             MoveToDefaultFormLocation();
 
             //load scripts to be used for attended automation
-            LoadAttendedScripts();
+            LoadPublishedProjects();
+        }
+
+        private void frmAttendedMode_Shown(object sender, EventArgs e)
+        {
+            Program.SplashForm.Close();
         }
 
         private void frmAttendedMode_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -69,9 +77,49 @@ namespace OpenBots.UI.Forms
 
         private void uiBtnRun_Click(object sender, EventArgs e)
         {
-            //build script path and execute
-            var scriptFilePath = Path.Combine(_projectPath, cboSelectedScript.Text);
-            var projectName = new DirectoryInfo(_projectPath).Name;
+            if (cboSelectedProject.Text == $"No published projects in '{_publishedProjectsPath}'")
+                return;
+
+            string projectPackagePath = Path.Combine(Folders.GetFolder(FolderType.PublishedFolder), cboSelectedProject.Text);
+
+            if (!File.Exists(projectPackagePath))
+            {
+                MessageBox.Show($"Unable to find '{projectPackagePath}' in Published directory", "Error");
+                return;
+            }
+                
+            string newProjectPath = Path.Combine(Folders.GetFolder(FolderType.TempFolder), Path.GetFileNameWithoutExtension(cboSelectedProject.Text));
+            
+            if (Directory.Exists(newProjectPath))
+                Directory.Delete(newProjectPath, true);
+
+            try
+            {               
+                Directory.CreateDirectory(newProjectPath);
+                File.Copy(projectPackagePath, Path.Combine(Folders.GetFolder(FolderType.TempFolder), cboSelectedProject.Text), true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+                return;
+            }
+
+            string configPath;
+            string projectPath;
+
+            try
+            {                
+                configPath = Project.ExtractGalleryProject(newProjectPath);
+                projectPath = Directory.GetParent(configPath).ToString();
+            }
+            catch (Exception ex)
+            {
+                Directory.Delete(newProjectPath, true);
+                MessageBox.Show(ex.Message, "Error");
+                return;
+            }
+
+            var projectName = new DirectoryInfo(projectPath).Name;
             //initialize Logger
             Logger engineLogger = null;
             switch (_appSettings.EngineSettings.LoggingSinkType)
@@ -95,62 +143,53 @@ namespace OpenBots.UI.Forms
                     break;
             }
             
-            frmScriptEngine newEngine = new frmScriptEngine(scriptFilePath, _projectPath, null, engineLogger);
-            newEngine.Show();
+            frmScriptEngine newEngine = new frmScriptEngine(configPath, engineLogger);
+            newEngine.ShowDialog();
+
+            if (Directory.Exists(newProjectPath))
+                Directory.Delete(newProjectPath, true);
         }
 
         private void attendedScriptWatcher_Created(object sender, FileSystemEventArgs e)
         {
-            LoadAttendedScripts();
+            LoadPublishedProjects();
         }
 
-        private void LoadAttendedScripts()
+        private void attendedScriptWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            //clear script list
-            cboSelectedScript.Items.Clear();
-        
-            //get script files
-            var files = Directory.GetFiles(_projectPath);
+            LoadPublishedProjects();
+        }
+
+        private void attendedScriptWatcher_Deleted(object sender, FileSystemEventArgs e)
+        {
+            LoadPublishedProjects();
+        }
+
+        private void attendedScriptWatcher_Renamed(object sender, RenamedEventArgs e)
+        {
+            LoadPublishedProjects();
+        }
+
+        private void LoadPublishedProjects()
+        {
+            //clear project list
+            cboSelectedProject.Items.Clear();
+
+            //get project files
+            var projectFiles = Directory.GetFiles(_publishedProjectsPath);
 
             //loop each file and add to potential
-            foreach (var file in files)
+            foreach (var file in projectFiles)
             {
                 var fileInfo = new FileInfo(file);
-                if (fileInfo.Extension == ".json")
-                    cboSelectedScript.Items.Add(fileInfo.Name);
+                if (fileInfo.Extension == ".nupkg")
+                    cboSelectedProject.Items.Add(fileInfo.Name);
             }
 
-            cboSelectedScript.Text = cboSelectedScript.Items[0].ToString();
-        }
-        #endregion
+            if (cboSelectedProject.Items.Count == 0)
+                cboSelectedProject.Items.Add($"No published projects in '{_publishedProjectsPath}'");
 
-        #region Flashing Animation
-        private void frmAttendedMode_Shown(object sender, EventArgs e)
-        {
-            tmrBackColorFlash.Enabled = true;
-        }
-
-        private void tmrBackColorFlash_Tick(object sender, EventArgs e)
-        {
-            if (BackColor == Color.FromArgb(59, 59, 59))
-            {
-                BackColor = Color.LightYellow;
-                uiBtnClose.DisplayTextBrush = Color.Black;
-                uiBtnRun.DisplayTextBrush = Color.Black;
-            }
-            else
-            {
-                BackColor = Color.FromArgb(59, 59, 59);
-                uiBtnClose.DisplayTextBrush = Color.White;
-                uiBtnRun.DisplayTextBrush = Color.White;
-            }
-
-            _flashCount++;
-
-            if (_flashCount == 6)
-            {
-                tmrBackColorFlash.Enabled = false;
-            }
+            cboSelectedProject.Text = cboSelectedProject.Items[0].ToString();
         }
         #endregion
 
@@ -175,6 +214,27 @@ namespace OpenBots.UI.Forms
         {
             _dragging = false;
         }
+
         #endregion
+
+        private void uiBtnSettings_Click(object sender, EventArgs e)
+        {
+            //show settings dialog
+            frmSettings newSettings = new frmSettings();
+            newSettings.ShowDialog();
+
+            //reload app settings
+            _appSettings = new ApplicationSettings();
+            _appSettings = _appSettings.GetOrCreateApplicationSettings();
+        }
+
+        private void cboSelectedProject_MouseHover(object sender, EventArgs e)
+        {
+            var cboSelectedProject = (ComboBox)sender;
+            ToolTip toolTip = new ToolTip();
+            toolTip.ShowAlways = true;
+            toolTip.AutoPopDelay = 15000;
+            toolTip.SetToolTip(cboSelectedProject, cboSelectedProject.Text);
+        }
     }
 }

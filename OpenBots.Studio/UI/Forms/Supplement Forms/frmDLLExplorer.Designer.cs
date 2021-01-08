@@ -48,7 +48,7 @@
             this.lstClasses.FormattingEnabled = true;
             this.lstClasses.ItemHeight = 28;
             this.lstClasses.Location = new System.Drawing.Point(16, 143);
-            this.lstClasses.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstClasses.Margin = new System.Windows.Forms.Padding(4);
             this.lstClasses.Name = "lstClasses";
             this.lstClasses.Size = new System.Drawing.Size(688, 88);
             this.lstClasses.TabIndex = 0;
@@ -60,7 +60,7 @@
             this.lstMethods.FormattingEnabled = true;
             this.lstMethods.ItemHeight = 28;
             this.lstMethods.Location = new System.Drawing.Point(16, 298);
-            this.lstMethods.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstMethods.Margin = new System.Windows.Forms.Padding(4);
             this.lstMethods.Name = "lstMethods";
             this.lstMethods.Size = new System.Drawing.Size(688, 88);
             this.lstMethods.TabIndex = 1;
@@ -72,7 +72,7 @@
             this.lstParameters.FormattingEnabled = true;
             this.lstParameters.ItemHeight = 28;
             this.lstParameters.Location = new System.Drawing.Point(16, 453);
-            this.lstParameters.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstParameters.Margin = new System.Windows.Forms.Padding(4);
             this.lstParameters.Name = "lstParameters";
             this.lstParameters.Size = new System.Drawing.Size(688, 88);
             this.lstParameters.TabIndex = 2;
@@ -136,10 +136,10 @@
             this.upbLoadDLL.DisplayText = "Load DLL";
             this.upbLoadDLL.DisplayTextBrush = System.Drawing.Color.White;
             this.upbLoadDLL.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
-            this.upbLoadDLL.Image = global::OpenBots.Core.Properties.Resources.command_run_code;
+            this.upbLoadDLL.Image = global::OpenBots.Properties.Resources.OpenBots_icon;
             this.upbLoadDLL.IsMouseOver = false;
             this.upbLoadDLL.Location = new System.Drawing.Point(15, 46);
-            this.upbLoadDLL.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.upbLoadDLL.Margin = new System.Windows.Forms.Padding(4);
             this.upbLoadDLL.Name = "upbLoadDLL";
             this.upbLoadDLL.Size = new System.Drawing.Size(59, 60);
             this.upbLoadDLL.TabIndex = 8;
@@ -179,11 +179,10 @@
             this.Controls.Add(this.lstParameters);
             this.Controls.Add(this.lstMethods);
             this.Controls.Add(this.lstClasses);
-            this.Icon = OpenBots.Core.Properties.Resources.OpenBots_ico;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Icon = global::OpenBots.Properties.Resources.OpenBots_ico;
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmDLLExplorer";
             this.Text = "DLL Explorer";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             ((System.ComponentModel.ISupportInitialize)(this.upbLoadDLL)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnOk)).EndInit();
             this.ResumeLayout(false);

@@ -57,12 +57,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\frmUserInput.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmUserInput.Designer.cs">
-      <DependentUpon>frmUserInput.cs</DependentUpon>
-    </Compile>
     <Compile Include="HTMLInputCommand.cs" />
     <Compile Include="InputCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,20 +71,15 @@
       <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
       <Name>OpenBots.Core</Name>
     </ProjectReference>
-    
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Forms\" />
     <Folder Include="Library\" />
     <Folder Include="Resources\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Forms\frmUserInput.resx">
-      <DependentUpon>frmUserInput.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

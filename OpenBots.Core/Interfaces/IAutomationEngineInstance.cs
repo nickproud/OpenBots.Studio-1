@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Command;
+﻿using Autofac;
+using OpenBots.Core.Command;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
@@ -34,6 +35,7 @@ namespace OpenBots.Core.Infrastructure
         List<IRestResponse> ServiceResponses { get; set; }
         bool AutoCalculateVariables { get; set; }
         string TaskResult { get; set; }
+        IContainer Container { get; set; }
 
         event EventHandler<ReportProgressEventArgs> ReportProgressEvent;
         event EventHandler<ScriptFinishedEventArgs> ScriptFinishedEvent;
@@ -47,7 +49,7 @@ namespace OpenBots.Core.Infrastructure
         string GetEngineContext();
         void ReportProgress(string progress, LogEventLevel eventLevel = LogEventLevel.Information);
         string GetProjectPath();
-        IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger);
+        IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger, IContainer container);
         void ExecuteScriptSync(string filePath, string projectPath);
     }
 }

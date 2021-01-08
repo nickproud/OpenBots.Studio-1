@@ -16,9 +16,9 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
 using OpenBots.Core.Model.EngineModel;
-using OpenBots.Core.Nuget;
+using OpenBots.Nuget;
 using OpenBots.Core.Project;
-using OpenBots.Core.Properties;
+using OpenBots.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.DTOs;
@@ -36,6 +36,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Autofac;
+using System.Data;
 
 namespace OpenBots.UI.Forms
 {
@@ -66,9 +68,10 @@ namespace OpenBots.UI.Forms
         public bool IsChildEngine { get; set; }
         public Logger ScriptEngineLogger { get; set; }
         public ICommandControls CommandControls { get; set; }
-        public bool IsScheduledTask { get; set; }
+        public bool IsScheduledOrAttendedTask { get; set; }
         private string _configPath;
         private bool _isParentScheduledTask;
+        public IContainer AContainer { get; set; }
         #endregion
 
         private const int CP_NOCLOSE_BUTTON = 0x200;
@@ -84,10 +87,12 @@ namespace OpenBots.UI.Forms
 
         //events and methods
         #region Form Events/Methods
-        public frmScriptEngine(string pathToFile, string projectPath, frmScriptBuilder builderForm, Logger engineLogger, List<ScriptVariable> variables = null, 
+        public frmScriptEngine(string pathToFile, string projectPath, IContainer container, frmScriptBuilder builderForm, Logger engineLogger, List<ScriptVariable> variables = null, 
             List<ScriptElement> elements = null, Dictionary<string, object> appInstances = null, bool blnCloseWhenDone = false, bool isDebugMode = false)
         {
             InitializeComponent();
+
+            AContainer = container;
 
             ScriptEngineLogger = engineLogger;
 
@@ -152,13 +157,13 @@ namespace OpenBots.UI.Forms
             GlobalHook.StartEngineCancellationHook(_engineSettings.CancellationKey);
         }
 
-        //Used for Scheduled Tasks
+        //Used for Scheduled/Attended Tasks
         public frmScriptEngine(string pathToConfig, Logger engineLogger)
         {
             InitializeComponent();
             uiBtnScheduleManagement.Visible = true;
 
-            IsScheduledTask = true;
+            IsScheduledOrAttendedTask = true;
             _configPath = pathToConfig;
             _isParentScheduledTask = true;
             
@@ -280,7 +285,8 @@ namespace OpenBots.UI.Forms
             if (_isParentScheduledTask)
             {
                 List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, true);
-                AppDomainSetupManager.LoadBuilder(assemblyList);
+                var builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                AContainer = builder.Build();
             }
 
             //move engine form to bottom right and bring to front
@@ -293,12 +299,12 @@ namespace OpenBots.UI.Forms
             CommandControls = new CommandControls();
 
             //start running
-            EngineInstance = new AutomationEngineInstance(ScriptEngineLogger);
+            EngineInstance = new AutomationEngineInstance(ScriptEngineLogger, AContainer);
 
             if (IsNewTaskSteppedInto)
             {
                 EngineInstance.PauseScript();
-                uiBtnPause.Image = Resources.command_resume;
+                uiBtnPause.Image = Resources.engine_resume;
                 uiBtnPause.DisplayText = "Resume";
                 uiBtnStepOver.Visible = true;
                 uiBtnStepInto.Visible = true;
@@ -682,6 +688,42 @@ namespace OpenBots.UI.Forms
             }
         }
 
+
+        public delegate List<string> ShowInputDelegate(string header, string directions, DataTable inputTable);
+        public List<string> ShowInput(string header, string directions, DataTable inputTable)
+        {
+            if (InvokeRequired)
+            {
+                var d = new ShowInputDelegate(ShowInput);
+                Invoke(d, new object[] { header, directions, inputTable });
+                return null;
+            }
+            else
+            {
+                var inputForm = new frmUserInput(header, directions, inputTable);
+
+                var dialogResult = inputForm.ShowDialog();
+
+                if (dialogResult == DialogResult.OK)
+                {
+                    var responses = new List<string>();
+                    foreach (var ctrl in inputForm.InputControls)
+                    {
+                        if (ctrl is CheckBox)
+                        {
+                            var checkboxCtrl = (CheckBox)ctrl;
+                            responses.Add(checkboxCtrl.Checked.ToString());
+                        }
+                        else
+                            responses.Add(ctrl.Text);
+                    }
+                    return responses;
+                }
+                else
+                    return null;
+            }
+        }
+
         public delegate void UpdateLineNumberDelegate(int lineNumber);
         public void UpdateLineNumber(int lineNumber)
         {
@@ -780,7 +822,7 @@ namespace OpenBots.UI.Forms
                         Color = Color.Red
                     };
                     lstSteppingCommands.Items.Add(commandsItem);
-                    uiBtnPause.Image = Resources.command_resume;
+                    uiBtnPause.Image = Resources.engine_resume;
                     uiBtnPause.DisplayText = "Resume";
                     EngineInstance.PauseScript();
                 }
@@ -792,7 +834,7 @@ namespace OpenBots.UI.Forms
                         Color = Color.Green
                     };
                     lstSteppingCommands.Items.Add(commandsItem);
-                    uiBtnPause.Image = Resources.command_pause;
+                    uiBtnPause.Image = Resources.engine_pause;
                     uiBtnPause.DisplayText = "Pause";
                     uiBtnStepOver.Visible = false;
                     uiBtnStepInto.Visible = false;
@@ -820,7 +862,7 @@ namespace OpenBots.UI.Forms
             }
             else
             {
-                uiBtnPause.Image = Resources.command_pause;
+                uiBtnPause.Image = Resources.engine_pause;
                 uiBtnPause.DisplayText = "Pause";
                 uiBtnStepOver.Visible = false;
                 uiBtnStepInto.Visible = false;

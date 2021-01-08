@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
+using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -13,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -72,6 +74,7 @@ namespace OpenBots.Commands.QueueItem
 			CommandIcon = Resources.command_queueitem;
 
 			v_SaveAttachments = "No";
+			Common.InitializeDefaultWebProtocol();
 		}
 
 		public override void RunCommand(object sender)
@@ -87,12 +90,12 @@ namespace OpenBots.Commands.QueueItem
 			string agentId = settings["AgentId"];
 
 			if (string.IsNullOrEmpty(agentId))
-				throw new Exception("Agent is not connected");
+				throw new NullReferenceException("Agent is not connected");
 
 			Queue queue = QueueMethods.GetQueue(client, $"name eq '{vQueueName}'");
 
 			if (queue == null)
-				throw new Exception($"Queue with name '{vQueueName}' not found");
+				throw new DataException($"Queue with name '{vQueueName}' not found");
 
 			var queueItem = QueueItemMethods.DequeueQueueItem(client, Guid.Parse(agentId), queue.Id);
 

@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Image
 		[PropertyUISelectionOption("Click Image")]
 		[PropertyUISelectionOption("Set Text")]
 		[PropertyUISelectionOption("Set Secure Text")]
-		[PropertyUISelectionOption("Check If Image Exists")]
+		[PropertyUISelectionOption("Image Exists")]
 		[PropertyUISelectionOption("Wait For Image To Exist")]
 		[Description("Select the appropriate corresponding action to take once the image has been located.")]
 		[SampleUsage("")]
@@ -263,7 +263,7 @@ namespace OpenBots.Commands.Image
 						Thread.Sleep(100);
 						break;
 
-					case "Check If Image Exists":
+					case "Image Exists":
 						var outputVariable = (from rw in v_ImageActionParameterTable.AsEnumerable()
 											  where rw.Field<string>("Parameter Name") == "Output Bool Variable Name"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
@@ -417,7 +417,7 @@ namespace OpenBots.Commands.Image
 
 					break;
 
-				case "Check If Image Exists":
+				case "Image Exists":
 					foreach (var ctrl in _imageParameterControls)
 						ctrl.Show();
 

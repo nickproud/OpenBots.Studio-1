@@ -75,6 +75,15 @@ namespace OpenBots.Commands.File
 			// get password to extract files
 			var vPassword = v_Password.ConvertUserVariableToString(engine);
 
+            if (IO.File.Exists(vSourceDirectoryPathOrigin))
+            {
+				throw new ArgumentException($"{vSourceDirectoryPathOrigin} is a file when it should be a directory");
+            }
+			else if (!Directory.Exists(vSourceDirectoryPathOrigin))
+            {
+				throw new DirectoryNotFoundException($"{vSourceDirectoryPathOrigin} is not a valid directory");
+            }
+
 			string[] filenames = Directory.GetFiles(vSourceDirectoryPathOrigin, "*.*", SearchOption.AllDirectories);
 			string[] directorynames = Directory.GetDirectories(vSourceDirectoryPathOrigin, "*", SearchOption.AllDirectories);
 

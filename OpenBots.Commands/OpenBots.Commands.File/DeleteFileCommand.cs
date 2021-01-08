@@ -43,6 +43,11 @@ namespace OpenBots.Commands.File
 			//apply variable logic
 			var sourceFile = v_SourceFilePath.ConvertUserVariableToString(engine);
 
+			if (!IO.File.Exists(sourceFile))
+			{
+				throw new IO.FileNotFoundException($"{sourceFile} is not a valid file path");
+            }
+
 			//delete file
 			IO.File.Delete(sourceFile);
 		}

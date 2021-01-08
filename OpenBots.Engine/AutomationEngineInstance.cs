@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Autofac;
+using Newtonsoft.Json;
 using OpenBots.Core.App;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
@@ -57,12 +58,13 @@ namespace OpenBots.Engine
         public List<IRestResponse> ServiceResponses { get; set; }
         public bool AutoCalculateVariables { get; set; }
         public string TaskResult { get; set; } = "";
+        public IContainer Container { get; set; }
         //events
         public event EventHandler<ReportProgressEventArgs> ReportProgressEvent;
         public event EventHandler<ScriptFinishedEventArgs> ScriptFinishedEvent;
         public event EventHandler<LineNumberChangedEventArgs> LineNumberChangedEvent;
 
-        public AutomationEngineInstance(Logger engineLogger)
+        public AutomationEngineInstance(Logger engineLogger, IContainer container)
         {
             //initialize logger
             if (engineLogger != null)
@@ -70,6 +72,8 @@ namespace OpenBots.Engine
                 Log.Logger = engineLogger;
                 Log.Information("Engine Class has been initialized");
             }
+
+            Container = container;
             
             _privateCommandLog = "Can't log display value as the command contains sensitive data";
 
@@ -95,9 +99,9 @@ namespace OpenBots.Engine
             ErrorHandlingAction = string.Empty;
         }
 
-        public IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger)
+        public IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger, IContainer container)
         {
-            return new AutomationEngineInstance(logger);
+            return new AutomationEngineInstance(logger, container);
         }
 
         public void ExecuteScriptSync(string filePath, string projectPath)
@@ -172,7 +176,7 @@ namespace OpenBots.Engine
                     ReportProgress("Deserializing File");
                     Log.Information("Script Path: " + data);
                     FileName = data;
-                    automationScript = Script.DeserializeFile(data);
+                    automationScript = Script.DeserializeFile(data, Container);
                 }
                 else
                 {

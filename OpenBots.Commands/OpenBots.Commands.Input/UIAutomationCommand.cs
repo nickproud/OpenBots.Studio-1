@@ -45,8 +45,8 @@ namespace OpenBots.Commands.Input
 		[PropertyUISelectionOption("Get Text")]
 		[PropertyUISelectionOption("Clear Element")]
 		[PropertyUISelectionOption("Get Value From Element")]
-		[PropertyUISelectionOption("Check If Element Exists")]
 		[PropertyUISelectionOption("Wait For Element To Exist")]
+		[PropertyUISelectionOption("Element Exists")]
 		[Description("Select the appropriate corresponding action to take once the element has been located.")]
 		[SampleUsage("")]
 		[Remarks("Selecting this field changes the parameters required in the following step.")]
@@ -343,7 +343,7 @@ namespace OpenBots.Commands.Input
 					break;
 				case "Get Text":
 				//if element exists type
-				case "Check If Element Exists":
+				case "Element Exists":
 					//Variable Name
 					var applyToVariable = (from rw in v_UIAActionParameters.AsEnumerable()
 										   where rw.Field<string>("Parameter Name") == "Variable Name"
@@ -364,7 +364,7 @@ namespace OpenBots.Commands.Input
 							searchResult = requiredHandle.Current.Name.ToString();
 					}
 
-					else if (v_AutomationType == "Check If Element Exists")
+					else if (v_AutomationType == "Element Exists")
 					{
 						//determine search result
 						if (requiredHandle == null)
@@ -515,7 +515,7 @@ namespace OpenBots.Commands.Input
 					return base.GetDisplayValue() + $" [{v_AutomationType} '{textToSet}' in Element in Window '{v_WindowName}']";
 				  
 				case "Get Text":
-				case "Check If Element Exists":          
+				case "Element Exists":          
 					return base.GetDisplayValue() + $" ['{v_AutomationType}' in Window '{v_WindowName}' - Store Result in '{applyToVariable}']";
 			   
 				case "Get Value From Element":          
@@ -653,7 +653,7 @@ namespace OpenBots.Commands.Input
 						_actionParametersGridViewHelper.Rows[1].Cells[1] = _comparisonComboBox;
 					break;
 				case "Get Text":
-				case "Check If Element Exists":
+				case "Element Exists":
 					foreach (var ctrl in _actionParametersControls)
 						ctrl.Show();
 

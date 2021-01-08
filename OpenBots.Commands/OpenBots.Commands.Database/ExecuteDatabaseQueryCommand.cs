@@ -78,7 +78,7 @@ namespace OpenBots.Commands.Database
 			CommandName = "ExecuteDatabaseQueryCommand";
 			SelectionName = "Execute Database Query";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_database2;
+			CommandIcon = Resources.command_database;
 
 			v_InstanceName = "DefaultDatabase";
 
@@ -244,7 +244,7 @@ namespace OpenBots.Commands.Database
 			helperControl.ForeColor = Color.AliceBlue;
 			helperControl.Font = new Font("Segoe UI Semilight", 10);
 			helperControl.Name = "add_param_helper";
-			helperControl.CommandImage = Resources.command_database2;
+			helperControl.CommandImage = Resources.command_database;
 			helperControl.CommandDisplay = "Add Parameter";
 			helperControl.Click += (sender, e) => AddParameter(sender, e);
 

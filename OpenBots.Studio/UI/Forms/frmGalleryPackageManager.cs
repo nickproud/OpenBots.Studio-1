@@ -1,7 +1,7 @@
 ﻿using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
-using OpenBots.Core.Nuget;
-using OpenBots.Core.Properties;
+using OpenBots.Nuget;
+using OpenBots.Properties;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms
 {
@@ -40,8 +41,8 @@ namespace OpenBots.UI.Forms
         {
             InitializeComponent();
 
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            _appDataPackagePath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName; ;
+            _appDataPackagePath = Path.Combine(appDataPath, "packages");
 
             _settings = new ApplicationSettings().GetOrCreateApplicationSettings();
             _packageSourceDT = _settings.ClientSettings.PackageSourceDT;
@@ -422,7 +423,7 @@ namespace OpenBots.UI.Forms
                     else if (tvPackageFeeds.SelectedNode.Name == "Gallery")
                     {
                         lblPackageCategory.Text = "Gallery";
-                        pbxPackageCategory.Image = Resources.openbots_gallery_icon;
+                        pbxPackageCategory.Image = Resources.OpenBots_gallery_icon;
                         var sourceResults = await NugetPackageManager.SearchPackages("", tvPackageFeeds.SelectedNode.ToolTipText, _includePrerelease);
                         PopulateListBox(sourceResults);
                     }

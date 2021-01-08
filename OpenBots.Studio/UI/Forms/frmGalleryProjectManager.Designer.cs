@@ -31,15 +31,20 @@ namespace OpenBots.UI.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmGalleryProjectManager));
             OpenBots.Core.Utilities.FormsUtilities.Theme theme2 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             OpenBots.Core.Utilities.FormsUtilities.Theme theme4 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             OpenBots.Core.Utilities.FormsUtilities.Theme theme3 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             OpenBots.Core.Utilities.FormsUtilities.Theme theme5 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmGalleryProjectManager));
             OpenBots.Core.Utilities.FormsUtilities.Theme theme6 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Automations");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Samples");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Templates");
             this.tlpProjectLayout = new System.Windows.Forms.TableLayoutPanel();
             this.lblError = new System.Windows.Forms.Label();
+            this.imlNodes = new System.Windows.Forms.ImageList(this.components);
             this.pnlProjectVersion = new OpenBots.UI.CustomControls.CustomUIControls.UIPanel();
             this.pbxOBStudio = new System.Windows.Forms.PictureBox();
             this.cbxVersion = new System.Windows.Forms.ComboBox();
@@ -77,6 +82,7 @@ namespace OpenBots.UI.Forms
             this.pnlGalleryProjects = new OpenBots.UI.CustomControls.CustomUIControls.UIPanel();
             this.tpbLoadingSpinner = new OpenBots.UI.CustomControls.CustomUIControls.UITransparentPictureBox();
             this.lbxGalleryProjects = new OpenBots.UI.CustomControls.CustomUIControls.UIListBox();
+            this.tvProjectFeeds = new OpenBots.UI.CustomControls.CustomUIControls.UITreeView();
             this.tlpProjectLayout.SuspendLayout();
             this.pnlProjectVersion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbxOBStudio)).BeginInit();
@@ -95,37 +101,43 @@ namespace OpenBots.UI.Forms
             // tlpProjectLayout
             // 
             this.tlpProjectLayout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.tlpProjectLayout.ColumnCount = 2;
+            this.tlpProjectLayout.ColumnCount = 3;
+            this.tlpProjectLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 300F));
             this.tlpProjectLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpProjectLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpProjectLayout.Controls.Add(this.lblError, 0, 2);
-            this.tlpProjectLayout.Controls.Add(this.pnlProjectVersion, 1, 0);
-            this.tlpProjectLayout.Controls.Add(this.pnlProjectSearch, 0, 0);
-            this.tlpProjectLayout.Controls.Add(this.pnlProjectDetails, 1, 1);
-            this.tlpProjectLayout.Controls.Add(this.pnlFinishButtons, 1, 2);
-            this.tlpProjectLayout.Controls.Add(this.pnlGalleryProjects, 0, 1);
+            this.tlpProjectLayout.Controls.Add(this.lblError, 1, 2);
+            this.tlpProjectLayout.Controls.Add(this.pnlProjectVersion, 2, 0);
+            this.tlpProjectLayout.Controls.Add(this.pnlProjectSearch, 1, 0);
+            this.tlpProjectLayout.Controls.Add(this.pnlProjectDetails, 2, 1);
+            this.tlpProjectLayout.Controls.Add(this.pnlFinishButtons, 2, 2);
+            this.tlpProjectLayout.Controls.Add(this.pnlGalleryProjects, 1, 1);
+            this.tlpProjectLayout.Controls.Add(this.tvProjectFeeds, 0, 1);
             this.tlpProjectLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpProjectLayout.Location = new System.Drawing.Point(0, 0);
-            this.tlpProjectLayout.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tlpProjectLayout.Name = "tlpProjectLayout";
             this.tlpProjectLayout.RowCount = 3;
-            this.tlpProjectLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 138F));
+            this.tlpProjectLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 110F));
             this.tlpProjectLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpProjectLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 102F));
-            this.tlpProjectLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpProjectLayout.Size = new System.Drawing.Size(1390, 1178);
-            this.tlpProjectLayout.TabIndex = 36;
+            this.tlpProjectLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 82F));
+            this.tlpProjectLayout.Size = new System.Drawing.Size(1466, 942);
+            this.tlpProjectLayout.TabIndex = 0;
             // 
             // lblError
             // 
             this.lblError.BackColor = System.Drawing.Color.Transparent;
             this.lblError.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblError.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblError.Location = new System.Drawing.Point(4, 1076);
+            this.lblError.Location = new System.Drawing.Point(304, 860);
             this.lblError.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblError.Name = "lblError";
-            this.lblError.Size = new System.Drawing.Size(585, 35);
+            this.lblError.Size = new System.Drawing.Size(520, 28);
             this.lblError.TabIndex = 39;
+            // 
+            // imlNodes
+            // 
+            this.imlNodes.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imlNodes.ImageStream")));
+            this.imlNodes.TransparentColor = System.Drawing.Color.Transparent;
+            this.imlNodes.Images.SetKeyName(0, "openbots-gallery-icon.png");
             // 
             // pnlProjectVersion
             // 
@@ -134,10 +146,9 @@ namespace OpenBots.UI.Forms
             this.pnlProjectVersion.Controls.Add(this.lblVersionTitleLabel);
             this.pnlProjectVersion.Controls.Add(this.lblTitle);
             this.pnlProjectVersion.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlProjectVersion.Location = new System.Drawing.Point(698, 4);
-            this.pnlProjectVersion.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.pnlProjectVersion.Location = new System.Drawing.Point(886, 3);
             this.pnlProjectVersion.Name = "pnlProjectVersion";
-            this.pnlProjectVersion.Size = new System.Drawing.Size(689, 130);
+            this.pnlProjectVersion.Size = new System.Drawing.Size(577, 104);
             this.pnlProjectVersion.TabIndex = 2;
             theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
@@ -145,11 +156,10 @@ namespace OpenBots.UI.Forms
             // 
             // pbxOBStudio
             // 
-            this.pbxOBStudio.Image = ((System.Drawing.Image)(resources.GetObject("pbxOBStudio.Image")));
-            this.pbxOBStudio.Location = new System.Drawing.Point(16, 16);
-            this.pbxOBStudio.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.pbxOBStudio.Image = global::OpenBots.Properties.Resources.OpenBots_icon;
+            this.pbxOBStudio.Location = new System.Drawing.Point(14, 13);
             this.pbxOBStudio.Name = "pbxOBStudio";
-            this.pbxOBStudio.Size = new System.Drawing.Size(56, 62);
+            this.pbxOBStudio.Size = new System.Drawing.Size(50, 50);
             this.pbxOBStudio.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbxOBStudio.TabIndex = 43;
             this.pbxOBStudio.TabStop = false;
@@ -162,10 +172,10 @@ namespace OpenBots.UI.Forms
             this.cbxVersion.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.cbxVersion.ForeColor = System.Drawing.Color.SteelBlue;
             this.cbxVersion.FormattingEnabled = true;
-            this.cbxVersion.Location = new System.Drawing.Point(125, 86);
-            this.cbxVersion.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.cbxVersion.Location = new System.Drawing.Point(111, 69);
+            this.cbxVersion.Margin = new System.Windows.Forms.Padding(4);
             this.cbxVersion.Name = "cbxVersion";
-            this.cbxVersion.Size = new System.Drawing.Size(554, 40);
+            this.cbxVersion.Size = new System.Drawing.Size(458, 36);
             this.cbxVersion.TabIndex = 42;
             this.cbxVersion.SelectedIndexChanged += new System.EventHandler(this.cbxVersion_SelectedIndexChanged);
             // 
@@ -174,9 +184,9 @@ namespace OpenBots.UI.Forms
             this.lblVersionTitleLabel.AutoSize = true;
             this.lblVersionTitleLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 14F);
             this.lblVersionTitleLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblVersionTitleLabel.Location = new System.Drawing.Point(9, 86);
+            this.lblVersionTitleLabel.Location = new System.Drawing.Point(8, 69);
             this.lblVersionTitleLabel.Name = "lblVersionTitleLabel";
-            this.lblVersionTitleLabel.Size = new System.Drawing.Size(117, 38);
+            this.lblVersionTitleLabel.Size = new System.Drawing.Size(100, 32);
             this.lblVersionTitleLabel.TabIndex = 2;
             this.lblVersionTitleLabel.Text = "Version:";
             // 
@@ -187,9 +197,9 @@ namespace OpenBots.UI.Forms
             this.lblTitle.AutoEllipsis = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI Semilight", 20F);
             this.lblTitle.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblTitle.Location = new System.Drawing.Point(78, 20);
+            this.lblTitle.Location = new System.Drawing.Point(69, 16);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(601, 54);
+            this.lblTitle.Size = new System.Drawing.Size(499, 43);
             this.lblTitle.TabIndex = 1;
             this.lblTitle.Text = "title";
             // 
@@ -200,10 +210,9 @@ namespace OpenBots.UI.Forms
             this.pnlProjectSearch.Controls.Add(this.lblGalleryProjects);
             this.pnlProjectSearch.Controls.Add(this.txtSampleSearch);
             this.pnlProjectSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlProjectSearch.Location = new System.Drawing.Point(3, 4);
-            this.pnlProjectSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.pnlProjectSearch.Location = new System.Drawing.Point(303, 3);
             this.pnlProjectSearch.Name = "pnlProjectSearch";
-            this.pnlProjectSearch.Size = new System.Drawing.Size(689, 130);
+            this.pnlProjectSearch.Size = new System.Drawing.Size(577, 104);
             this.pnlProjectSearch.TabIndex = 0;
             theme2.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             theme2.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
@@ -211,11 +220,10 @@ namespace OpenBots.UI.Forms
             // 
             // pbxOBGallery
             // 
-            this.pbxOBGallery.Image = ((System.Drawing.Image)(resources.GetObject("pbxOBGallery.Image")));
-            this.pbxOBGallery.Location = new System.Drawing.Point(15, 16);
-            this.pbxOBGallery.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.pbxOBGallery.Image = global::OpenBots.Properties.Resources.OpenBots_gallery_icon;
+            this.pbxOBGallery.Location = new System.Drawing.Point(13, 13);
             this.pbxOBGallery.Name = "pbxOBGallery";
-            this.pbxOBGallery.Size = new System.Drawing.Size(56, 62);
+            this.pbxOBGallery.Size = new System.Drawing.Size(50, 50);
             this.pbxOBGallery.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbxOBGallery.TabIndex = 44;
             this.pbxOBGallery.TabStop = false;
@@ -225,9 +233,9 @@ namespace OpenBots.UI.Forms
             this.lblSearch.AutoSize = true;
             this.lblSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 14F);
             this.lblSearch.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblSearch.Location = new System.Drawing.Point(8, 89);
+            this.lblSearch.Location = new System.Drawing.Point(7, 71);
             this.lblSearch.Name = "lblSearch";
-            this.lblSearch.Size = new System.Drawing.Size(108, 38);
+            this.lblSearch.Size = new System.Drawing.Size(94, 32);
             this.lblSearch.TabIndex = 35;
             this.lblSearch.Text = "Search:";
             // 
@@ -237,12 +245,12 @@ namespace OpenBots.UI.Forms
             this.lblGalleryProjects.BackColor = System.Drawing.Color.Transparent;
             this.lblGalleryProjects.Font = new System.Drawing.Font("Segoe UI Semilight", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblGalleryProjects.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblGalleryProjects.Location = new System.Drawing.Point(79, 11);
+            this.lblGalleryProjects.Location = new System.Drawing.Point(70, 9);
             this.lblGalleryProjects.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblGalleryProjects.Name = "lblGalleryProjects";
-            this.lblGalleryProjects.Size = new System.Drawing.Size(344, 65);
+            this.lblGalleryProjects.Size = new System.Drawing.Size(375, 54);
             this.lblGalleryProjects.TabIndex = 33;
-            this.lblGalleryProjects.Text = "gallery projects";
+            this.lblGalleryProjects.Text = "Gallery Automations";
             // 
             // txtSampleSearch
             // 
@@ -250,21 +258,21 @@ namespace OpenBots.UI.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSampleSearch.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.txtSampleSearch.ForeColor = System.Drawing.Color.SteelBlue;
-            this.txtSampleSearch.Location = new System.Drawing.Point(114, 86);
-            this.txtSampleSearch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.txtSampleSearch.Location = new System.Drawing.Point(101, 69);
+            this.txtSampleSearch.Margin = new System.Windows.Forms.Padding(4);
             this.txtSampleSearch.Name = "txtSampleSearch";
-            this.txtSampleSearch.Size = new System.Drawing.Size(571, 39);
+            this.txtSampleSearch.Size = new System.Drawing.Size(473, 34);
             this.txtSampleSearch.TabIndex = 34;
-            this.txtSampleSearch.TextChanged += new System.EventHandler(this.txtSampleSearch_TextChanged);
+            this.txtSampleSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSampleSearch_KeyDown);
+            this.txtSampleSearch.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSampleSearch_KeyPress);
             // 
             // pnlProjectDetails
             // 
             this.pnlProjectDetails.Controls.Add(this.tlpMetadata);
             this.pnlProjectDetails.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlProjectDetails.Location = new System.Drawing.Point(698, 142);
-            this.pnlProjectDetails.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.pnlProjectDetails.Location = new System.Drawing.Point(886, 113);
             this.pnlProjectDetails.Name = "pnlProjectDetails";
-            this.pnlProjectDetails.Size = new System.Drawing.Size(689, 930);
+            this.pnlProjectDetails.Size = new System.Drawing.Size(577, 744);
             this.pnlProjectDetails.TabIndex = 37;
             theme4.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             theme4.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
@@ -274,16 +282,17 @@ namespace OpenBots.UI.Forms
             // 
             this.tlpMetadata.ColumnCount = 1;
             this.tlpMetadata.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpMetadata.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpMetadata.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 18F));
             this.tlpMetadata.Controls.Add(this.pnlMetadata, 0, 0);
             this.tlpMetadata.Controls.Add(this.lvDependencies, 0, 1);
             this.tlpMetadata.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMetadata.Location = new System.Drawing.Point(0, 0);
+            this.tlpMetadata.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tlpMetadata.Name = "tlpMetadata";
             this.tlpMetadata.RowCount = 2;
             this.tlpMetadata.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpMetadata.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpMetadata.Size = new System.Drawing.Size(689, 930);
+            this.tlpMetadata.Size = new System.Drawing.Size(577, 744);
             this.tlpMetadata.TabIndex = 63;
             // 
             // pnlMetadata
@@ -304,9 +313,10 @@ namespace OpenBots.UI.Forms
             this.pnlMetadata.Controls.Add(this.llblProjectURL);
             this.pnlMetadata.Controls.Add(this.llblLicenseURL);
             this.pnlMetadata.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMetadata.Location = new System.Drawing.Point(3, 3);
+            this.pnlMetadata.Location = new System.Drawing.Point(3, 2);
+            this.pnlMetadata.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pnlMetadata.Name = "pnlMetadata";
-            this.pnlMetadata.Size = new System.Drawing.Size(683, 459);
+            this.pnlMetadata.Size = new System.Drawing.Size(571, 368);
             this.pnlMetadata.TabIndex = 61;
             theme3.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             theme3.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
@@ -317,9 +327,9 @@ namespace OpenBots.UI.Forms
             this.lblDescription.AutoEllipsis = true;
             this.lblDescription.Font = new System.Drawing.Font("Segoe UI Semilight", 12F);
             this.lblDescription.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDescription.Location = new System.Drawing.Point(9, 45);
+            this.lblDescription.Location = new System.Drawing.Point(8, 36);
             this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(621, 169);
+            this.lblDescription.Size = new System.Drawing.Size(552, 135);
             this.lblDescription.TabIndex = 53;
             this.lblDescription.Text = "description";
             // 
@@ -328,9 +338,9 @@ namespace OpenBots.UI.Forms
             this.lblPublishDate.AutoSize = true;
             this.lblPublishDate.Font = new System.Drawing.Font("Segoe UI Semilight", 12F);
             this.lblPublishDate.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblPublishDate.Location = new System.Drawing.Point(180, 388);
+            this.lblPublishDate.Location = new System.Drawing.Point(160, 310);
             this.lblPublishDate.Name = "lblPublishDate";
-            this.lblPublishDate.Size = new System.Drawing.Size(142, 32);
+            this.lblPublishDate.Size = new System.Drawing.Size(114, 28);
             this.lblPublishDate.TabIndex = 60;
             this.lblPublishDate.Text = "publish date";
             // 
@@ -339,9 +349,9 @@ namespace OpenBots.UI.Forms
             this.lblDownloadsLabel.AutoSize = true;
             this.lblDownloadsLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
             this.lblDownloadsLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDownloadsLabel.Location = new System.Drawing.Point(9, 353);
+            this.lblDownloadsLabel.Location = new System.Drawing.Point(8, 282);
             this.lblDownloadsLabel.Name = "lblDownloadsLabel";
-            this.lblDownloadsLabel.Size = new System.Drawing.Size(141, 32);
+            this.lblDownloadsLabel.Size = new System.Drawing.Size(118, 28);
             this.lblDownloadsLabel.TabIndex = 45;
             this.lblDownloadsLabel.Text = "Downloads:";
             // 
@@ -350,9 +360,9 @@ namespace OpenBots.UI.Forms
             this.lblPublishDateLabel.AutoSize = true;
             this.lblPublishDateLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
             this.lblPublishDateLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblPublishDateLabel.Location = new System.Drawing.Point(9, 388);
+            this.lblPublishDateLabel.Location = new System.Drawing.Point(8, 310);
             this.lblPublishDateLabel.Name = "lblPublishDateLabel";
-            this.lblPublishDateLabel.Size = new System.Drawing.Size(158, 32);
+            this.lblPublishDateLabel.Size = new System.Drawing.Size(132, 28);
             this.lblPublishDateLabel.TabIndex = 59;
             this.lblPublishDateLabel.Text = "Publish Date:";
             // 
@@ -361,9 +371,9 @@ namespace OpenBots.UI.Forms
             this.lblVersionLabel.AutoSize = true;
             this.lblVersionLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
             this.lblVersionLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblVersionLabel.Location = new System.Drawing.Point(9, 213);
+            this.lblVersionLabel.Location = new System.Drawing.Point(8, 170);
             this.lblVersionLabel.Name = "lblVersionLabel";
-            this.lblVersionLabel.Size = new System.Drawing.Size(100, 32);
+            this.lblVersionLabel.Size = new System.Drawing.Size(85, 28);
             this.lblVersionLabel.TabIndex = 44;
             this.lblVersionLabel.Text = "Version:";
             // 
@@ -372,9 +382,9 @@ namespace OpenBots.UI.Forms
             this.lblAuthorsLabel.AutoSize = true;
             this.lblAuthorsLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
             this.lblAuthorsLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblAuthorsLabel.Location = new System.Drawing.Point(9, 248);
+            this.lblAuthorsLabel.Location = new System.Drawing.Point(8, 198);
             this.lblAuthorsLabel.Name = "lblAuthorsLabel";
-            this.lblAuthorsLabel.Size = new System.Drawing.Size(123, 32);
+            this.lblAuthorsLabel.Size = new System.Drawing.Size(103, 28);
             this.lblAuthorsLabel.TabIndex = 47;
             this.lblAuthorsLabel.Text = "Author(s):";
             // 
@@ -383,9 +393,9 @@ namespace OpenBots.UI.Forms
             this.lblVersion.AutoSize = true;
             this.lblVersion.Font = new System.Drawing.Font("Segoe UI Semilight", 12F);
             this.lblVersion.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblVersion.Location = new System.Drawing.Point(180, 213);
+            this.lblVersion.Location = new System.Drawing.Point(160, 170);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(88, 32);
+            this.lblVersion.Size = new System.Drawing.Size(72, 28);
             this.lblVersion.TabIndex = 57;
             this.lblVersion.Text = "version";
             // 
@@ -394,9 +404,9 @@ namespace OpenBots.UI.Forms
             this.lblDescriptionLabel.AutoSize = true;
             this.lblDescriptionLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
             this.lblDescriptionLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDescriptionLabel.Location = new System.Drawing.Point(9, 9);
+            this.lblDescriptionLabel.Location = new System.Drawing.Point(8, 7);
             this.lblDescriptionLabel.Name = "lblDescriptionLabel";
-            this.lblDescriptionLabel.Size = new System.Drawing.Size(144, 32);
+            this.lblDescriptionLabel.Size = new System.Drawing.Size(120, 28);
             this.lblDescriptionLabel.TabIndex = 46;
             this.lblDescriptionLabel.Text = "Description:";
             // 
@@ -405,9 +415,9 @@ namespace OpenBots.UI.Forms
             this.lblAuthors.AutoEllipsis = true;
             this.lblAuthors.Font = new System.Drawing.Font("Segoe UI Semilight", 12F);
             this.lblAuthors.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblAuthors.Location = new System.Drawing.Point(180, 248);
+            this.lblAuthors.Location = new System.Drawing.Point(160, 198);
             this.lblAuthors.Name = "lblAuthors";
-            this.lblAuthors.Size = new System.Drawing.Size(450, 35);
+            this.lblAuthors.Size = new System.Drawing.Size(400, 28);
             this.lblAuthors.TabIndex = 56;
             this.lblAuthors.Text = "authors";
             // 
@@ -416,9 +426,9 @@ namespace OpenBots.UI.Forms
             this.lblDependenciesLabel.AutoSize = true;
             this.lblDependenciesLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
             this.lblDependenciesLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDependenciesLabel.Location = new System.Drawing.Point(9, 423);
+            this.lblDependenciesLabel.Location = new System.Drawing.Point(8, 338);
             this.lblDependenciesLabel.Name = "lblDependenciesLabel";
-            this.lblDependenciesLabel.Size = new System.Drawing.Size(173, 32);
+            this.lblDependenciesLabel.Size = new System.Drawing.Size(146, 28);
             this.lblDependenciesLabel.TabIndex = 48;
             this.lblDependenciesLabel.Text = "Dependencies:";
             // 
@@ -427,9 +437,9 @@ namespace OpenBots.UI.Forms
             this.lblDownloads.AutoSize = true;
             this.lblDownloads.Font = new System.Drawing.Font("Segoe UI Semilight", 12F);
             this.lblDownloads.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDownloads.Location = new System.Drawing.Point(180, 353);
+            this.lblDownloads.Location = new System.Drawing.Point(160, 282);
             this.lblDownloads.Name = "lblDownloads";
-            this.lblDownloads.Size = new System.Drawing.Size(128, 32);
+            this.lblDownloads.Size = new System.Drawing.Size(103, 28);
             this.lblDownloads.TabIndex = 55;
             this.lblDownloads.Text = "downloads";
             // 
@@ -438,9 +448,9 @@ namespace OpenBots.UI.Forms
             this.lblLicenseURLLabel.AutoSize = true;
             this.lblLicenseURLLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
             this.lblLicenseURLLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblLicenseURLLabel.Location = new System.Drawing.Point(9, 283);
+            this.lblLicenseURLLabel.Location = new System.Drawing.Point(8, 226);
             this.lblLicenseURLLabel.Name = "lblLicenseURLLabel";
-            this.lblLicenseURLLabel.Size = new System.Drawing.Size(151, 32);
+            this.lblLicenseURLLabel.Size = new System.Drawing.Size(126, 28);
             this.lblLicenseURLLabel.TabIndex = 49;
             this.lblLicenseURLLabel.Text = "License URL:";
             // 
@@ -449,9 +459,9 @@ namespace OpenBots.UI.Forms
             this.lblProjectURLLabel.AutoSize = true;
             this.lblProjectURLLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
             this.lblProjectURLLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblProjectURLLabel.Location = new System.Drawing.Point(9, 318);
+            this.lblProjectURLLabel.Location = new System.Drawing.Point(8, 254);
             this.lblProjectURLLabel.Name = "lblProjectURLLabel";
-            this.lblProjectURLLabel.Size = new System.Drawing.Size(148, 32);
+            this.lblProjectURLLabel.Size = new System.Drawing.Size(122, 28);
             this.lblProjectURLLabel.TabIndex = 50;
             this.lblProjectURLLabel.Text = "Project URL:";
             // 
@@ -461,9 +471,9 @@ namespace OpenBots.UI.Forms
             this.llblProjectURL.AutoSize = true;
             this.llblProjectURL.Font = new System.Drawing.Font("Segoe UI Semilight", 12F);
             this.llblProjectURL.LinkColor = System.Drawing.Color.SteelBlue;
-            this.llblProjectURL.Location = new System.Drawing.Point(180, 318);
+            this.llblProjectURL.Location = new System.Drawing.Point(160, 254);
             this.llblProjectURL.Name = "llblProjectURL";
-            this.llblProjectURL.Size = new System.Drawing.Size(269, 32);
+            this.llblProjectURL.Size = new System.Drawing.Size(219, 28);
             this.llblProjectURL.TabIndex = 52;
             this.llblProjectURL.TabStop = true;
             this.llblProjectURL.Text = "View Project Information";
@@ -475,9 +485,9 @@ namespace OpenBots.UI.Forms
             this.llblLicenseURL.AutoSize = true;
             this.llblLicenseURL.Font = new System.Drawing.Font("Segoe UI Semilight", 12F);
             this.llblLicenseURL.LinkColor = System.Drawing.Color.SteelBlue;
-            this.llblLicenseURL.Location = new System.Drawing.Point(180, 283);
+            this.llblLicenseURL.Location = new System.Drawing.Point(160, 226);
             this.llblLicenseURL.Name = "llblLicenseURL";
-            this.llblLicenseURL.Size = new System.Drawing.Size(272, 32);
+            this.llblLicenseURL.Size = new System.Drawing.Size(222, 28);
             this.llblLicenseURL.TabIndex = 51;
             this.llblLicenseURL.TabStop = true;
             this.llblLicenseURL.Text = "View License Information";
@@ -496,10 +506,9 @@ namespace OpenBots.UI.Forms
             this.lvDependencies.FullRowSelect = true;
             this.lvDependencies.GridLines = true;
             this.lvDependencies.HideSelection = false;
-            this.lvDependencies.Location = new System.Drawing.Point(3, 469);
-            this.lvDependencies.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.lvDependencies.Location = new System.Drawing.Point(3, 375);
             this.lvDependencies.Name = "lvDependencies";
-            this.lvDependencies.Size = new System.Drawing.Size(683, 457);
+            this.lvDependencies.Size = new System.Drawing.Size(571, 366);
             this.lvDependencies.TabIndex = 58;
             this.lvDependencies.UseCompatibleStateImageBehavior = false;
             this.lvDependencies.View = System.Windows.Forms.View.Details;
@@ -519,10 +528,9 @@ namespace OpenBots.UI.Forms
             this.pnlFinishButtons.Controls.Add(this.uiBtnOpen);
             this.pnlFinishButtons.Controls.Add(this.uiBtnCancel);
             this.pnlFinishButtons.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlFinishButtons.Location = new System.Drawing.Point(698, 1080);
-            this.pnlFinishButtons.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.pnlFinishButtons.Location = new System.Drawing.Point(886, 863);
             this.pnlFinishButtons.Name = "pnlFinishButtons";
-            this.pnlFinishButtons.Size = new System.Drawing.Size(689, 94);
+            this.pnlFinishButtons.Size = new System.Drawing.Size(577, 76);
             this.pnlFinishButtons.TabIndex = 38;
             theme5.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             theme5.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
@@ -538,10 +546,10 @@ namespace OpenBots.UI.Forms
             this.uiBtnOpen.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnOpen.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOpen.Image")));
             this.uiBtnOpen.IsMouseOver = false;
-            this.uiBtnOpen.Location = new System.Drawing.Point(545, 15);
-            this.uiBtnOpen.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
+            this.uiBtnOpen.Location = new System.Drawing.Point(449, 13);
+            this.uiBtnOpen.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnOpen.Name = "uiBtnOpen";
-            this.uiBtnOpen.Size = new System.Drawing.Size(68, 72);
+            this.uiBtnOpen.Size = new System.Drawing.Size(60, 58);
             this.uiBtnOpen.TabIndex = 39;
             this.uiBtnOpen.TabStop = false;
             this.uiBtnOpen.Text = "Open";
@@ -557,10 +565,10 @@ namespace OpenBots.UI.Forms
             this.uiBtnCancel.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnCancel.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCancel.Image")));
             this.uiBtnCancel.IsMouseOver = false;
-            this.uiBtnCancel.Location = new System.Drawing.Point(613, 15);
-            this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
+            this.uiBtnCancel.Location = new System.Drawing.Point(510, 13);
+            this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnCancel.Name = "uiBtnCancel";
-            this.uiBtnCancel.Size = new System.Drawing.Size(68, 72);
+            this.uiBtnCancel.Size = new System.Drawing.Size(60, 58);
             this.uiBtnCancel.TabIndex = 40;
             this.uiBtnCancel.TabStop = false;
             this.uiBtnCancel.Text = "Cancel";
@@ -571,10 +579,9 @@ namespace OpenBots.UI.Forms
             this.pnlGalleryProjects.Controls.Add(this.tpbLoadingSpinner);
             this.pnlGalleryProjects.Controls.Add(this.lbxGalleryProjects);
             this.pnlGalleryProjects.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlGalleryProjects.Location = new System.Drawing.Point(3, 142);
-            this.pnlGalleryProjects.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.pnlGalleryProjects.Location = new System.Drawing.Point(303, 113);
             this.pnlGalleryProjects.Name = "pnlGalleryProjects";
-            this.pnlGalleryProjects.Size = new System.Drawing.Size(689, 930);
+            this.pnlGalleryProjects.Size = new System.Drawing.Size(577, 744);
             this.pnlGalleryProjects.TabIndex = 40;
             theme6.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             theme6.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
@@ -583,13 +590,12 @@ namespace OpenBots.UI.Forms
             // tpbLoadingSpinner
             // 
             this.tpbLoadingSpinner.BackColor = System.Drawing.Color.Transparent;
-            this.tpbLoadingSpinner.ErrorImage = ((System.Drawing.Image)(resources.GetObject("tpbLoadingSpinner.ErrorImage")));
-            this.tpbLoadingSpinner.Image = ((System.Drawing.Image)(resources.GetObject("tpbLoadingSpinner.Image")));
-            this.tpbLoadingSpinner.InitialImage = ((System.Drawing.Image)(resources.GetObject("tpbLoadingSpinner.InitialImage")));
-            this.tpbLoadingSpinner.Location = new System.Drawing.Point(105, 251);
-            this.tpbLoadingSpinner.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.tpbLoadingSpinner.ErrorImage = null;
+            this.tpbLoadingSpinner.Image = global::OpenBots.Properties.Resources.loading_spinner;
+            this.tpbLoadingSpinner.InitialImage = null;
+            this.tpbLoadingSpinner.Location = new System.Drawing.Point(93, 201);
             this.tpbLoadingSpinner.Name = "tpbLoadingSpinner";
-            this.tpbLoadingSpinner.Size = new System.Drawing.Size(455, 437);
+            this.tpbLoadingSpinner.Size = new System.Drawing.Size(404, 350);
             this.tpbLoadingSpinner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.tpbLoadingSpinner.TabIndex = 43;
             this.tpbLoadingSpinner.TabStop = false;
@@ -603,22 +609,49 @@ namespace OpenBots.UI.Forms
             this.lbxGalleryProjects.DoubleClickedItem = null;
             this.lbxGalleryProjects.LastSelectedItem = null;
             this.lbxGalleryProjects.Location = new System.Drawing.Point(0, 0);
-            this.lbxGalleryProjects.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.lbxGalleryProjects.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.lbxGalleryProjects.Name = "lbxGalleryProjects";
-            this.lbxGalleryProjects.Size = new System.Drawing.Size(689, 930);
+            this.lbxGalleryProjects.Size = new System.Drawing.Size(577, 744);
             this.lbxGalleryProjects.TabIndex = 41;
             this.lbxGalleryProjects.ItemClick += new OpenBots.UI.CustomControls.CustomUIControls.UIListBox.ItemClickEventHandler(this.lbxGalleryProjects_ItemClick);
             // 
+            // tvProjectFeeds
+            // 
+            this.tvProjectFeeds.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.tvProjectFeeds.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvProjectFeeds.Font = new System.Drawing.Font("Segoe UI Semilight", 12F);
+            this.tvProjectFeeds.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.tvProjectFeeds.ImageIndex = 0;
+            this.tvProjectFeeds.ImageList = this.imlNodes;
+            this.tvProjectFeeds.Location = new System.Drawing.Point(3, 113);
+            this.tvProjectFeeds.Name = "tvProjectFeeds";
+            treeNode1.Name = "Automations";
+            treeNode1.Text = "Automations";
+            treeNode2.Name = "Samples";
+            treeNode2.Text = "Samples";
+            treeNode3.Name = "Templates";
+            treeNode3.Text = "Templates";
+            this.tvProjectFeeds.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode2,
+            treeNode3});
+            this.tvProjectFeeds.SelectedImageIndex = 0;
+            this.tvProjectFeeds.ShowNodeToolTips = true;
+            this.tvProjectFeeds.Size = new System.Drawing.Size(294, 744);
+            this.tvProjectFeeds.TabIndex = 41;
+            this.tvProjectFeeds.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvProjectFeeds_BeforeCollapse);
+            this.tvProjectFeeds.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvProjectFeeds_NodeMouseDoubleClick);
+            // 
             // frmGalleryProjectManager
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
-            this.ClientSize = new System.Drawing.Size(1390, 1178);
+            this.ClientSize = new System.Drawing.Size(1466, 942);
             this.Controls.Add(this.tlpProjectLayout);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(6);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "frmGalleryProjectManager";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Gallery Project Manager";
@@ -683,5 +716,7 @@ namespace OpenBots.UI.Forms
         private System.Windows.Forms.ListView lvDependencies;
         private System.Windows.Forms.ColumnHeader DependencyName;
         private System.Windows.Forms.ColumnHeader Range;
+        private UITreeView tvProjectFeeds;
+        private System.Windows.Forms.ImageList imlNodes;
     }
 }

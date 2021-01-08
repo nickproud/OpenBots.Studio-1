@@ -68,7 +68,7 @@ namespace OpenBots.Commands.File
 
 				//test if we should exit and throw exception
 				if (DateTime.Now > stopWaiting)
-					throw new Exception("File was not found in time!");
+					throw new IO.FileNotFoundException("File was not found in time!");
 
 				//put thread to sleep before iterating
 				Thread.Sleep(100);

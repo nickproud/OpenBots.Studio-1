@@ -71,8 +71,18 @@ namespace OpenBots.Commands.File
 			//get variable path to source file
 			var vSourceFilePathOrigin = v_FilePathOrigin.ConvertUserVariableToString(engine);
 
+			if (!(IO.File.Exists(vSourceFilePathOrigin) && vSourceFilePathOrigin.Contains(".zip")))
+            {
+				throw new FileNotFoundException($"{vSourceFilePathOrigin} is not a valid zip file");
+            }
+
 			// get file path to destination files
 			var vFilePathDestination = v_PathDestination.ConvertUserVariableToString(engine);
+
+			if (!Directory.Exists(vFilePathDestination))
+            {
+				throw new DirectoryNotFoundException($"{vFilePathDestination} is not a valid directory");
+            }
 
 			vFilePathDestination = Path.Combine(vFilePathDestination, Path.GetFileNameWithoutExtension(vSourceFilePathOrigin));
 

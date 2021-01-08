@@ -24,7 +24,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void removesDataRow(string search, string andOr, int expectedIndex, string expectedName)
         {
             _removeDataRow = new RemoveDataRowCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             Data.DataTable inputTable = new Data.DataTable();
             inputTable.Columns.Add("firstname");

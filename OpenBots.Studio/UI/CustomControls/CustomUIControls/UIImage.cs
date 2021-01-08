@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.UI.Controls.CustomControls;
+﻿using OpenBots.Core.Properties;
+using OpenBots.Core.UI.Controls.CustomControls;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -16,6 +17,7 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
 
             ImageList uiImages = new ImageList();
             uiImages.ImageSize = new Size(18, 18);
+            uiImages.Images.Add("BrokenCodeCommentCommand", Resources.command_broken);
 
             foreach (var icon in commandIcons)
             {

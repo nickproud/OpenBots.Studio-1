@@ -215,34 +215,6 @@ namespace OpenBots.UI.CustomControls
             return inputBox;
         }
 
-        private void DataGridView_KeyDown(object sender, KeyEventArgs e)
-        {
-            DataGridView dataGridView = (DataGridView)sender;
-            if (e.Control && e.KeyCode == Keys.K)
-            {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables
-                {
-                    ScriptVariables = _currentEditor.ScriptVariables
-                };
-
-                if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
-                {
-                    _currentEditor.ScriptVariables = scriptVariableEditor.ScriptVariables;
-                    dataGridView.CurrentCell.Value = scriptVariableEditor.LastModifiedVariableName;
-                }
-            }
-            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
-                return;
-            else if (e.KeyCode == Keys.Enter)
-                _currentEditor.uiBtnAdd_Click(null, null);
-        }
-        private void DataGridView_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //Control + K
-            if (e.KeyChar == '\v')
-                e.Handled = true;
-        }
-
         private void InputBox_KeyDown(object sender, KeyEventArgs e)
         {
             TextBox inputBox = (TextBox)sender;
@@ -259,11 +231,11 @@ namespace OpenBots.UI.CustomControls
                     inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptVariableEditor.LastModifiedVariableName);
                 }
 
-            } 
+            }
             else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
                 return;
             else if (e.KeyCode == Keys.Enter)
-                _currentEditor.uiBtnAdd_Click(null, null);          
+                _currentEditor.uiBtnAdd_Click(null, null);
         }
 
         private void InputBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -327,6 +299,7 @@ namespace OpenBots.UI.CustomControls
             ComboBox clickedDropdownBox = (ComboBox)sender;
             clickedDropdownBox.DroppedDown = true;
         }
+
         private void DropdownBox_MouseWheel(object sender, MouseEventArgs e)
         {
             ((HandledMouseEventArgs)e).Handled = true;
@@ -384,6 +357,20 @@ namespace OpenBots.UI.CustomControls
         {
             ((HandledMouseEventArgs)e).Handled = true;
         }
+
+        public DataGridView CreateDataGridView(object sourceCommand, string dataSourceName)
+        {
+            var gridView = new DataGridView();
+            gridView.AllowUserToAddRows = true;
+            gridView.AllowUserToDeleteRows = true;
+            gridView.Size = new Size(400, 250);
+            gridView.ColumnHeadersHeight = 30;
+            gridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            gridView.DataBindings.Add("DataSource", sourceCommand, dataSourceName, false, DataSourceUpdateMode.OnPropertyChanged);
+            gridView.AllowUserToResizeRows = false;
+            return gridView;
+        }
+
 
         public List<Control> CreateUIHelpersFor(string parameterName, ScriptCommand parent, Control[] targetControls, IfrmCommandEditor editor)
         {
@@ -525,17 +512,33 @@ namespace OpenBots.UI.CustomControls
             return controlList;
         }
 
-        public DataGridView CreateDataGridView(object sourceCommand, string dataSourceName)
+        private void DataGridView_KeyDown(object sender, KeyEventArgs e)
         {
-            var gridView = new DataGridView();
-            gridView.AllowUserToAddRows = true;
-            gridView.AllowUserToDeleteRows = true;
-            gridView.Size = new Size(400, 250);
-            gridView.ColumnHeadersHeight = 30;
-            gridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            gridView.DataBindings.Add("DataSource", sourceCommand, dataSourceName, false, DataSourceUpdateMode.OnPropertyChanged);
-            gridView.AllowUserToResizeRows = false;
-            return gridView;
+            DataGridView dataGridView = (DataGridView)sender;
+            if (e.Control && e.KeyCode == Keys.K)
+            {
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables
+                {
+                    ScriptVariables = _currentEditor.ScriptVariables
+                };
+
+                if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
+                {
+                    _currentEditor.ScriptVariables = scriptVariableEditor.ScriptVariables;
+                    dataGridView.CurrentCell.Value = scriptVariableEditor.LastModifiedVariableName;
+                }
+            }
+            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
+                return;
+            else if (e.KeyCode == Keys.Enter)
+                _currentEditor.uiBtnAdd_Click(null, null);
+        }
+
+        private void DataGridView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //Control + K
+            if (e.KeyChar == '\v')
+                e.Handled = true;
         }
 
         private void ShowCodeBuilder(object sender, EventArgs e)
@@ -672,6 +675,7 @@ namespace OpenBots.UI.CustomControls
                 }
             }
         }
+
         private void ShowFileSelector(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -1191,7 +1195,7 @@ namespace OpenBots.UI.CustomControls
             return cbo;
         }
 
-        public IfrmScriptEngine CreateScriptEngineForm(string pathToFile, string projectPath, IfrmScriptBuilder builderForm, Logger logger,
+        public IfrmScriptEngine CreateScriptEngineForm(string pathToFile, string projectPath, IContainer container, IfrmScriptBuilder builderForm, Logger logger,
             List<ScriptVariable> variables, List<ScriptElement> elements,
             Dictionary<string, object> appInstances, bool blnCloseWhenDone, bool isDebugMode)
         {
@@ -1202,13 +1206,13 @@ namespace OpenBots.UI.CustomControls
             else
                 newBuilderForm = null;
 
-            return new frmScriptEngine(pathToFile, projectPath, newBuilderForm, logger,
+            return new frmScriptEngine(pathToFile, projectPath, container, newBuilderForm, logger,
                 variables, null, appInstances, false, isDebugMode);
         }
 
-        public IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger)
+        public IAutomationEngineInstance CreateAutomationEngineInstance(Logger logger, IContainer container)
         {
-            return new AutomationEngineInstance(logger);
+            return new AutomationEngineInstance(logger, container);
         }
 
         public IfrmWebElementRecorder CreateWebElementRecorderForm(string startURL)

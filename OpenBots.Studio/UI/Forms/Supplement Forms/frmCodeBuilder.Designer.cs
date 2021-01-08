@@ -85,7 +85,7 @@
             this.uiBtnSample.DisplayText = "Sample";
             this.uiBtnSample.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnSample.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
-            this.uiBtnSample.Image = global::OpenBots.Core.Properties.Resources.action_bar_new;
+            this.uiBtnSample.Image = global::OpenBots.Properties.Resources.action_bar_new;
             this.uiBtnSample.IsMouseOver = false;
             this.uiBtnSample.Location = new System.Drawing.Point(290, 4);
             this.uiBtnSample.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
@@ -103,7 +103,7 @@
             this.uiBtnSave.DisplayText = "Save";
             this.uiBtnSave.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnSave.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
-            this.uiBtnSave.Image = global::OpenBots.Core.Properties.Resources.action_bar_save;
+            this.uiBtnSave.Image = global::OpenBots.Properties.Resources.action_bar_save;
             this.uiBtnSave.IsMouseOver = false;
             this.uiBtnSave.Location = new System.Drawing.Point(410, 4);
             this.uiBtnSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
@@ -147,7 +147,7 @@
             this.uiBtnCompile.DisplayText = "Compile";
             this.uiBtnCompile.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnCompile.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
-            this.uiBtnCompile.Image = global::OpenBots.Core.Properties.Resources.action_bar_run;
+            this.uiBtnCompile.Image = global::OpenBots.Properties.Resources.action_bar_run;
             this.uiBtnCompile.IsMouseOver = false;
             this.uiBtnCompile.Location = new System.Drawing.Point(350, 4);
             this.uiBtnCompile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
@@ -188,7 +188,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1103, 555);
             this.Controls.Add(this.tlpBuilder);
-            this.Icon = OpenBots.Core.Properties.Resources.OpenBots_ico;
+            this.Icon = OpenBots.Properties.Resources.OpenBots_ico;
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "frmCodeBuilder";
             this.Text = "Code Builder";

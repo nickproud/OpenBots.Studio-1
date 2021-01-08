@@ -18,7 +18,7 @@ namespace OpenBots.Commands.TextFile.Test
         public void WritesToFile(string writeType)
         {
             _writeCreateTextFile = new WriteCreateTextFileCommand();
-            _engine = new AutomationEngineInstance(null);
+            _engine = new AutomationEngineInstance(null, null);
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\writetest.txt");
