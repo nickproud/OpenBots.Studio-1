@@ -10,25 +10,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
     public partial class frmScriptBuilder : Form
     {
-        #region Variable/Argument Events
-        private void dgvArguments_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
-        {
-            try
-            {
-                e.Row.Cells["Direction"].Value = ScriptArgumentDirection.In;
-            }
-            catch (Exception ex)
-            {
-                //datagridview event failure
-                Console.WriteLine(ex);
-            }
-        }
-
+        #region Variable/Argument Tab Events
         private void dgvVariablesArguments_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
-                //creates a list of all existing variable/argument names prior to creating a new one
+                //creates a list of all existing variable/argument names to check against, prior to creating a new one
                 DataGridView dgv = (DataGridView)sender;
 
                 _preEditVarArgName = dgv.Rows[e.RowIndex].Cells[0].Value?.ToString();
@@ -54,6 +41,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (e.ColumnIndex == 0)
                 {
                     var cellValue = dgv.Rows[e.RowIndex].Cells[0].Value;
+
                     //deletes an empty row if it's created without assigning values
                     if ((cellValue == null && _preEditVarArgName != null) ||
                         (cellValue != null && string.IsNullOrEmpty(cellValue.ToString().Trim())))
@@ -61,11 +49,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         dgv.Rows.RemoveAt(e.RowIndex);
                         return;
                     }
+                    //removes an empty uncommitted row
                     else if (dgv.Rows[e.RowIndex].Cells[0].Value == null)
-                    {
                         return;
-                    }
 
+                    //trims any space characters before reassigning the value to the cell
                     string variableName = dgv.Rows[e.RowIndex].Cells[0].Value.ToString().Trim();
                     dgv.Rows[e.RowIndex].Cells[0].Value = variableName;
 
@@ -79,12 +67,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     else
                     {
                         foreach (DataGridViewCell cell in dgv.Rows[e.RowIndex].Cells)
-                        {
                             cell.ReadOnly = false;                          
-                        }
 
                         dgv.Rows[e.RowIndex].Cells[0].Value = variableName.Trim();
 
+                        //marks the script as unsaved with changes
                         if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                             uiScriptTabControl.SelectedTab.Text += " *";
                     }
@@ -129,6 +116,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     e.Cancel = true;
                 else
                 {
+                    //marks the script as unsaved with changes
                     if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                         uiScriptTabControl.SelectedTab.Text += " *";
                 }
@@ -145,18 +133,31 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {
                 DataGridView dgv = (DataGridView)sender;
-
-                //sets the entire ProjectPath row as readonly
+               
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
+                    //sets the entire ProjectPath row as readonly
                     if (row.Cells[0].Value?.ToString() == "ProjectPath")
                         row.ReadOnly = true;
 
+                    //Sets Value cell to readonly if the Direction is Out
                     if (row.Cells.Count == 3 && (ScriptArgumentDirection)row.Cells[2].Value == ScriptArgumentDirection.Out)
-                    {
                         row.Cells[1].ReadOnly = true;
-                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                //datagridview event failure
+                Console.WriteLine(ex);
+            }
+        }
+
+        private void dgvArguments_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
+        {
+            try
+            {
+                //sets Direction to In by default when a new row is added. Prevents cell from ever being null.
+                e.Row.Cells["Direction"].Value = ScriptArgumentDirection.In;
             }
             catch (Exception ex)
             {
@@ -208,6 +209,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void dgvVariablesArguments_KeyDown(object sender, KeyEventArgs e)
         {
+            //various advanced keystroke shortcuts for saving, creating new var/arg/elem, shortcut menu, etc.
             if (e.Control)
             {
                 if (e.Shift)
