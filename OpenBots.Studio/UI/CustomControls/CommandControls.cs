@@ -583,7 +583,6 @@ namespace OpenBots.UI.CustomControls
                 {
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments,
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
-
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
