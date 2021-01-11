@@ -141,7 +141,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         row.ReadOnly = true;
 
                     //Sets Value cell to readonly if the Direction is Out
-                    if (row.Cells.Count == 3 && (ScriptArgumentDirection)row.Cells[2].Value == ScriptArgumentDirection.Out)
+                    if (row.Cells.Count == 3 && row.Cells[2].Value != null && (ScriptArgumentDirection)row.Cells[2].Value == ScriptArgumentDirection.Out)
                         row.Cells[1].ReadOnly = true;
                 }
             }
@@ -177,7 +177,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     //Sets value cell to read only if the argument direction is set to Out
                     if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.Out)
+                    {
+                        dgv.Rows[e.RowIndex].Cells[1].Value = null;
                         dgv.Rows[e.RowIndex].Cells[1].ReadOnly = true;
+                    }
+                        
                     else if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.In)
                         dgv.Rows[e.RowIndex].Cells[1].ReadOnly = false;
                 }
