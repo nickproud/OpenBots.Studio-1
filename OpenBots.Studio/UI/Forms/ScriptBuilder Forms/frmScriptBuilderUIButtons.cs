@@ -658,6 +658,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             OpenArgumentManager();
         }
 
+        private void uiBtnAddArgument_Click(object sender, EventArgs e)
+        {
+            OpenArgumentManager();
+        }
+
         private void OpenArgumentManager()
         {
             frmScriptArguments scriptArgumentEditor = new frmScriptArguments
