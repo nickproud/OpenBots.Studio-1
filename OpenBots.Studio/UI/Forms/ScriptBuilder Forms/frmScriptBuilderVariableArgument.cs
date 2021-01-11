@@ -140,7 +140,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private void dgvVariables_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        private void dgvVariablesArguments_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             try
             {
@@ -151,6 +151,52 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     if (row.Cells[0].Value?.ToString() == "ProjectPath")
                         row.ReadOnly = true;
+
+                    if (row.Cells.Count == 3 && (ScriptArgumentDirection)row.Cells[2].Value == ScriptArgumentDirection.Out)
+                    {
+                        row.Cells[1].ReadOnly = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //datagridview event failure
+                Console.WriteLine(ex);
+            }
+        }
+
+        private void dgvArguments_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                if (e.RowIndex != -1)
+                {
+                    DataGridView dgv = (DataGridView)sender;
+                    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells[2];
+
+                    //Sets value cell to read only if the argument direction is set to Out
+                    if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.Out)
+                        dgv.Rows[e.RowIndex].Cells[1].ReadOnly = true;
+                    else if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.In)
+                        dgv.Rows[e.RowIndex].Cells[1].ReadOnly = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                //datagridview event failure
+                Console.WriteLine(ex);
+            }                       
+        }
+
+        private void dgvArguments_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                DataGridView dgv = (DataGridView)sender;
+                if (dgv.IsCurrentCellDirty)
+                {
+                    // This fires the cell value changed handler above
+                    dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
                 }
             }
             catch (Exception ex)
