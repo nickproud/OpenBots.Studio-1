@@ -206,8 +206,7 @@
             this.cbxDefaultDirection.ForeColor = System.Drawing.Color.SteelBlue;
             this.cbxDefaultDirection.Items.AddRange(new object[] {
             "In",
-            "Out",
-            "InOut"});
+            "Out"});
             this.cbxDefaultDirection.Location = new System.Drawing.Point(21, 323);
             this.cbxDefaultDirection.Margin = new System.Windows.Forms.Padding(4);
             this.cbxDefaultDirection.Name = "cbxDefaultDirection";

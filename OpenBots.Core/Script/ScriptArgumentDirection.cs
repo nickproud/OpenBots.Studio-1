@@ -3,7 +3,6 @@
     public enum ScriptArgumentDirection
     {
         In,
-        Out,
-        InOut,
+        Out
     }
 }

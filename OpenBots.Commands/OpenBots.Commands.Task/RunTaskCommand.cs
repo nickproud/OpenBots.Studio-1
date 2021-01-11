@@ -278,7 +278,6 @@ namespace OpenBots.Commands.Task
 					DataGridViewComboBoxCell returnComboBox = new DataGridViewComboBoxCell();
 					returnComboBox.Items.Add("In");
 					returnComboBox.Items.Add("Out");
-					returnComboBox.Items.Add("InOut");
 					_assignmentsGridViewHelper.Rows[i].Cells[2] = returnComboBox;
 				}
 			}
