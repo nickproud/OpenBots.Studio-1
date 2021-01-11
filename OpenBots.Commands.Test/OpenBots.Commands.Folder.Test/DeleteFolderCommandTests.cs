@@ -28,6 +28,7 @@ namespace OpenBots.Commands.Folder.Test
             Assert.False(Directory.Exists(inputPath));
 
             Directory.CreateDirectory(inputPath);
+            File.Create(Path.Combine(inputPath + @"toDelete.txt"));
         }
     }
 }
