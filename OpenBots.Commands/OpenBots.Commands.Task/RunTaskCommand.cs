@@ -279,6 +279,8 @@ namespace OpenBots.Commands.Task
 					returnComboBox.Items.Add("In");
 					returnComboBox.Items.Add("Out");
 					_assignmentsGridViewHelper.Rows[i].Cells[2] = returnComboBox;
+					//make read only until theres a way to cleanly synchronize changes made 
+					_assignmentsGridViewHelper.Rows[i].Cells[2].ReadOnly = true;
 				}
 			}
 			else if (!Sender.Checked)
