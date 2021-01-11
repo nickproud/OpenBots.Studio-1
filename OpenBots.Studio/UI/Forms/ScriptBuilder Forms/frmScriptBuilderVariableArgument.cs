@@ -198,11 +198,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {
                 DataGridView dgv = (DataGridView)sender;
+
+                //This fires the cell value changed handler above
                 if (dgv.IsCurrentCellDirty)
-                {
-                    // This fires the cell value changed handler above
                     dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
-                }
             }
             catch (Exception ex)
             {
