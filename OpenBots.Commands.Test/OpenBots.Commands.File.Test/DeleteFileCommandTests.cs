@@ -15,7 +15,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void DeletesFile()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _deleteFile = new DeleteFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -34,7 +34,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesBadFilepath()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _deleteFile = new DeleteFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;

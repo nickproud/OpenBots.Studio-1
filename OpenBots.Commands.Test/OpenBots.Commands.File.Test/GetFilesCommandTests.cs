@@ -22,7 +22,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void GetsFiles()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getFiles = new GetFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesInvalidFilepath()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getFiles = new GetFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;

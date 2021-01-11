@@ -15,7 +15,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void ExtractsFiles()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _extractFiles = new ExtractFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void ExtractsFilesWithPassword()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _extractFiles = new ExtractFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesNonDirectoryOutputTarget()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _extractFiles = new ExtractFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -100,7 +100,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesNonZipInput()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _extractFiles = new ExtractFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
