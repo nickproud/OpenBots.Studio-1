@@ -237,7 +237,9 @@ namespace OpenBots.UI.CustomControls
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-                    inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptVariableEditor.LastModifiedVariableName);
+
+                    if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
+                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptVariableEditor.LastModifiedVariableName + "}");
                 }
 
             }
@@ -252,7 +254,9 @@ namespace OpenBots.UI.CustomControls
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
                 {
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-                    inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptArgumentEditor.LastModifiedArgumentName);
+
+                    if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
+                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptArgumentEditor.LastModifiedArgumentName + "}");
                 }
 
             }
@@ -568,7 +572,9 @@ namespace OpenBots.UI.CustomControls
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-                    dataGridView.CurrentCell.Value = scriptVariableEditor.LastModifiedVariableName;
+
+                    if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
+                        dataGridView.CurrentCell.Value = "{" + scriptVariableEditor.LastModifiedVariableName + "}";                   
                 }
             }
             else if (e.Control && e.KeyCode == Keys.J)
@@ -583,7 +589,9 @@ namespace OpenBots.UI.CustomControls
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
                 {
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-                    dataGridView.CurrentCell.Value = scriptArgumentEditor.LastModifiedArgumentName;
+
+                    if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
+                        dataGridView.CurrentCell.Value = "{" + scriptArgumentEditor.LastModifiedArgumentName + "}";
                 }
             }
             else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
