@@ -393,7 +393,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     CreateUndoSnapshot();
                     selectedCommandItem.Tag = editCommand.SelectedCommand;
                     selectedCommandItem.Text = editCommand.SelectedCommand.GetDisplayValue();
-                    selectedCommandItem.SubItems.Add(editCommand.SelectedCommand.GetDisplayValue());                    
+                    selectedCommandItem.SubItems.Add(editCommand.SelectedCommand.GetDisplayValue());
+
+                    _scriptVariables = editCommand.ScriptEngineContext.Variables;
+                    _scriptArguments = editCommand.ScriptEngineContext.Arguments;
+                    dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                    dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
                 }
 
                 if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")

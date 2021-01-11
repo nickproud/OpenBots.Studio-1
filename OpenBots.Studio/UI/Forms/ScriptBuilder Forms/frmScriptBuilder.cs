@@ -500,12 +500,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             if (CurrentEngine == null)
             {
-                //Set data just once. Right after the engine has been set to null and before IsScriptRunning is set to false;
-                if (IsScriptRunning)
-                {
-                    //dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                    //dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-                }
                 IsScriptRunning = false;
             }
 
@@ -621,6 +615,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //add to listview
                 CreateUndoSnapshot();
                 AddCommandToListView(newCommandForm.SelectedCommand);
+
+                _scriptVariables = newCommandForm.ScriptEngineContext.Variables;
+                _scriptArguments = newCommandForm.ScriptEngineContext.Arguments;
+                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
             }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
