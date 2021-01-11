@@ -120,7 +120,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private void dgvVariables_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        private void dgvVariablesArguments_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
             try
             {
@@ -157,6 +157,52 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 //datagridview event failure
                 Console.WriteLine(ex);
+            }
+        }
+
+        private void dgvVariablesArguments_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                if (e.Shift)
+                {
+                    switch (e.KeyCode)
+                    {
+                        case Keys.S:
+                            SaveAllFiles();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (e.KeyCode)
+                    {
+                        case Keys.S:
+                            if (_isSequence)
+                                uiBtnSaveSequence_Click(null, null);
+                            else
+                            {
+                                ClearSelectedListViewItems();
+                                SaveToFile(false);
+                            }
+                            break;
+                        case Keys.J:
+                            OpenArgumentManager();
+                            break;
+                        case Keys.K:
+                            OpenVariableManager();
+                            break;
+                        case Keys.L:
+                            OpenElementManager();
+                            break;
+                        case Keys.M:
+                            shortcutMenuToolStripMenuItem_Click(null, null);
+                            break;
+                        case Keys.O:
+                            aboutOpenBotsToolStripMenuItem_Click(null, null);
+                            break;
+                    }
+                }
             }
         }
         #endregion             

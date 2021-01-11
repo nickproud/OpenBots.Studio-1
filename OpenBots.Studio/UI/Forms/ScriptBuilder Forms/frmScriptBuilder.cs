@@ -807,7 +807,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LinkLabel senderLink = (LinkLabel)sender;
             OpenFile(Path.Combine(Folders.GetFolder(FolderType.ScriptsFolder), senderLink.Text));
         }
-        #endregion       
+        #endregion
+
+        
     }
 }
 
