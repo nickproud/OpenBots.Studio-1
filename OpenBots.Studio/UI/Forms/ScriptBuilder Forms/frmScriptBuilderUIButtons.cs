@@ -20,6 +20,7 @@ using System.Linq;
 using System.Windows.Forms;
 using OpenBots.Core.Model.EngineModel;
 using System.ComponentModel;
+using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -770,8 +771,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 return;
             }
 
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string packagePath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
+            string packagePath = Path.Combine(appDataPath, "packages");
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
             frmGalleryPackageManager frmManager = new frmGalleryPackageManager(ScriptProject.Dependencies, packagePath);
             frmManager.ShowDialog();

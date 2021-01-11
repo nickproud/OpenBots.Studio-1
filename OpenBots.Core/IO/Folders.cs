@@ -1,4 +1,5 @@
 ﻿using OpenBots.Core.Enums;
+using OpenBots.Core.Server.User;
 using OpenBots.Core.Settings;
 using System;
 using System.IO;
@@ -23,7 +24,7 @@ namespace OpenBots.Core.IO
                     return attentedTasksFolder;
                 case FolderType.SettingsFolder:
                     //return app data OpenBots folder
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc");
+                    return Path.Combine(new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName);
                 case FolderType.ScriptsFolder:
                     //return scripts folder
                     return Path.Combine(GetFolder(FolderType.RootFolder), "My Scripts");

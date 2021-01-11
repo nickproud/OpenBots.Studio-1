@@ -52,6 +52,11 @@ namespace OpenBots.Commands.File
 			var sourceFile = v_SourceFilePath.ConvertUserVariableToString(engine);
 			var newFileName = v_NewName.ConvertUserVariableToString(engine);
 
+			if (!IO.File.Exists(sourceFile))
+            {
+				throw new IO.FileNotFoundException($"File {sourceFile} does not exist");
+            }
+
 			//get source file name and info
 			IO.FileInfo sourceFileInfo = new IO.FileInfo(sourceFile);
 

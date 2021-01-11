@@ -11,6 +11,7 @@ using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
 using NuGet.Versioning;
 using OpenBots.Core.Project;
+using OpenBots.Core.Server.User;
 using OpenBots.Core.Settings;
 using System;
 using System.Collections.Generic;
@@ -153,8 +154,8 @@ namespace OpenBots.Nuget
                 var resolver = new PackageResolver();
                 var packagesToInstall = resolver.Resolve(resolverContext, CancellationToken.None)
                     .Select(p => availablePackages.Single(x => PackageIdentityComparer.Default.Equals(x, p)));
-                string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                var packagePathResolver = new PackagePathResolver(Path.Combine(appDataPath, "OpenBots Inc", "packages"));
+                string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
+                var packagePathResolver = new PackagePathResolver(Path.Combine(appDataPath, "packages"));
                 var packageExtractionContext = new PackageExtractionContext(
                     PackageSaveMode.Defaultv3,
                     XmlDocFileSaveMode.None,
@@ -232,8 +233,8 @@ namespace OpenBots.Nuget
             List<string> assemblyPaths = new List<string>();
             var dependencies = JsonConvert.DeserializeObject<Project>(File.ReadAllText(configPath)).Dependencies;
 
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string packagePath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
+            string packagePath = Path.Combine(appDataPath, "packages");
             var packagePathResolver = new PackagePathResolver(packagePath);
 
             var nuGetFramework = NuGetFramework.ParseFolder("net48");

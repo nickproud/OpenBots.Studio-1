@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms
 {
@@ -40,8 +41,8 @@ namespace OpenBots.UI.Forms
         {
             InitializeComponent();
 
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            _appDataPackagePath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName; ;
+            _appDataPackagePath = Path.Combine(appDataPath, "packages");
 
             _settings = new ApplicationSettings().GetOrCreateApplicationSettings();
             _packageSourceDT = _settings.ClientSettings.PackageSourceDT;

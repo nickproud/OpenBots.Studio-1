@@ -39,6 +39,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using IContainer = Autofac.IContainer;
 using Point = System.Drawing.Point;
+using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -229,9 +230,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
                 installDefaultToolStripMenuItem.Visible = true;
             }
-
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            
+            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
+            _packagesPath = Path.Combine(appDataPath, "packages");
             if (!Directory.Exists(_packagesPath))
                 Directory.CreateDirectory(_packagesPath);
 

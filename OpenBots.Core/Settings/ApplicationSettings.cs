@@ -23,10 +23,11 @@ namespace OpenBots.Core.Settings
             ClientSettings = new ClientSettings();
         }
 
-        public void Save(ApplicationSettings appSettings)
+        public void Save(ApplicationSettings appSettings, string settingsDir = "")
         {
-            //create settings directory
-            var settingsDir = Folders.GetFolder(FolderType.SettingsFolder);
+            //create settings directory if not provided
+            if (string.IsNullOrEmpty(settingsDir))
+                settingsDir = Folders.GetFolder(FolderType.SettingsFolder);
 
             if (!Directory.Exists(settingsDir))
             {
@@ -63,10 +64,11 @@ namespace OpenBots.Core.Settings
             }           
         }
 
-        public ApplicationSettings GetOrCreateApplicationSettings()
+        public ApplicationSettings GetOrCreateApplicationSettings(string settingsDir = "")
         {
-            //create settings directory
-            var settingsDir = Folders.GetFolder(FolderType.SettingsFolder);
+            //create settings directory if not provided
+            if(string.IsNullOrEmpty(settingsDir))
+                settingsDir = Folders.GetFolder(FolderType.SettingsFolder);
 
             //create file path
             var filePath = Path.Combine(settingsDir, "AppSettings.json");

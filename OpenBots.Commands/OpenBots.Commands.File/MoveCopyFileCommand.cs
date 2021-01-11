@@ -82,10 +82,19 @@ namespace OpenBots.Commands.File
 			var sourceFile = v_SourceFilePath.ConvertUserVariableToString(engine);
 			var destinationFolder = v_DestinationDirectory.ConvertUserVariableToString(engine);
 
+            if (!IO.File.Exists(sourceFile))
+            {
+				throw new IO.FileNotFoundException($"File {sourceFile} does not exist");
+            }
+
 			if ((v_CreateDirectory == "Yes") && (!IO.Directory.Exists(destinationFolder)))
 			{
 				IO.Directory.CreateDirectory(destinationFolder);
 			}
+			else if ((v_CreateDirectory == "No") && (!IO.Directory.Exists(destinationFolder)))
+            {
+				throw new IO.DirectoryNotFoundException($"Directory {destinationFolder} does not exist");
+            }
 
 			//get source file name and info
 			IO.FileInfo sourceFileInfo = new IO.FileInfo(sourceFile);
