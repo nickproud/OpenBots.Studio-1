@@ -22,6 +22,8 @@ namespace OpenBots.Commands.Folder.Test
             string inputPath = Path.Combine(projectDirectory, @"Resources");
             inputPath.StoreInUserVariable(_engine, "{inputPath}");
 
+            Directory.CreateDirectory(Path.Combine(inputPath, @"toGet"));
+
             _getFolders.v_SourceFolderPath = "{inputPath}";
             _getFolders.v_OutputUserVariableName = "{output}";
 
@@ -29,7 +31,7 @@ namespace OpenBots.Commands.Folder.Test
 
             List<string> folderList = (List<string>)"{output}".ConvertUserVariableToObject(_engine);
 
-            Assert.Contains(Path.Combine(inputPath, @"toDelete"), folderList);
+            Assert.Contains(Path.Combine(inputPath, @"toGet"), folderList);
         }
 
         [Fact]

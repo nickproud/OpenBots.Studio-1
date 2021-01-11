@@ -19,9 +19,21 @@ namespace OpenBots.Commands.Folder.Test
             _engine = new AutomationEngineInstance(null, null);
             _moveCopyFolder = new MoveCopyFolderCommand();
 
+            string folder = "";
+            if(operation.Equals("Move Folder"))
+            {
+                folder = "toMove";
+            }
+            else
+            {
+                folder = "toCopy";
+            }
+
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-            string inputPath = Path.Combine(projectDirectory, @"Resources\toMoveCopy");
+            string inputPath = Path.Combine(projectDirectory, @"Resources\" + folder);
             inputPath.StoreInUserVariable(_engine, "{inputPath}");
+
+            Directory.CreateDirectory(inputPath);
 
             string destinationPath = Path.Combine(projectDirectory, @"Resources\moveCopyDestination");
             destinationPath.StoreInUserVariable(_engine, "{destinationPath}");
@@ -34,7 +46,7 @@ namespace OpenBots.Commands.Folder.Test
 
             _moveCopyFolder.RunCommand(_engine);
 
-            Assert.True(Directory.Exists(Path.Combine(destinationPath, @"toMoveCopy")));
+            Assert.True(Directory.Exists(Path.Combine(destinationPath, folder)));
             if (operation.Equals("Move Folder"))
             {
                 Assert.False(Directory.Exists(inputPath));
@@ -45,7 +57,7 @@ namespace OpenBots.Commands.Folder.Test
                 Assert.True(Directory.Exists(inputPath));
             }
 
-            Directory.Delete(Path.Combine(destinationPath, @"toMoveCopy"));
+            Directory.Delete(Path.Combine(destinationPath, folder));
         }
 
         [Fact]

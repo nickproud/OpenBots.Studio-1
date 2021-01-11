@@ -21,14 +21,14 @@ namespace OpenBots.Commands.Folder.Test
             string inputPath = Path.Combine(projectDirectory, @"Resources\toDelete");
             inputPath.StoreInUserVariable(_engine, "{inputPath}");
 
+            Directory.CreateDirectory(inputPath);
+            File.Create(Path.Combine(inputPath + @"toDelete.txt"));
+
             _deleteFolder.v_SourceFolderPath = "{inputPath}";
 
             _deleteFolder.RunCommand(_engine);
 
             Assert.False(Directory.Exists(inputPath));
-
-            Directory.CreateDirectory(inputPath);
-            File.Create(Path.Combine(inputPath + @"toDelete.txt"));
         }
     }
 }

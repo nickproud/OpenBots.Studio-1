@@ -18,8 +18,10 @@ namespace OpenBots.Commands.Folder.Test
             _renameFolder = new RenameFolderCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-            string inputPath = Path.Combine(projectDirectory, @"Resources\toDelete");
+            string inputPath = Path.Combine(projectDirectory, @"Resources\toRename");
             inputPath.StoreInUserVariable(_engine, "{inputPath}");
+
+            Directory.CreateDirectory(inputPath);
 
             "newName".StoreInUserVariable(_engine, "{newName}");
 
