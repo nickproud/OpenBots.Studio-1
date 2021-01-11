@@ -58,15 +58,15 @@ namespace OpenBots.Core.Server.API_Methods
 
         public static void AttachFiles(RestClient client, Guid? queueItemId, string attachments)
         {
-            var request = new RestRequest("api/v1/QueueItems/{id}/attach", Method.POST);
+            var request = new RestRequest("api/v1/QueueItems/{queueItemId}/QueueItemAttachments", Method.POST);
             request.RequestFormat = DataFormat.Json;
-            request.AddUrlSegment("id", queueItemId.ToString());
+            request.AddUrlSegment("queueItemId", queueItemId.ToString());
 
             if (!string.IsNullOrEmpty(attachments))
             {
                 var splitAttachments = attachments.Split(';');
                 foreach (var vAttachment in splitAttachments)
-                    request.AddFile("Files", vAttachment);
+                    request.AddFile("files", vAttachment);
             }
 
             var response = client.Execute(request);
