@@ -237,7 +237,7 @@ namespace OpenBots.Nuget
             var packagePathResolver = new PackagePathResolver(packagePath);
 
             var nuGetFramework = NuGetFramework.ParseFolder("net48");
-            var settings = NuGet.Configuration.Settings.LoadDefaultSettings(root: null);
+            var settings = Settings.LoadDefaultSettings(root: null);
 
             var sourceRepositoryProvider = new SourceRepositoryProvider(new PackageSourceProvider(settings), Repository.Provider.GetCoreV3());
             var localRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(packagePath, "Local OpenBots Repo", true));
@@ -318,7 +318,7 @@ namespace OpenBots.Nuget
             catch (Exception)
             {
                 //try again
-                return FilterAssemblies(assemblyPaths);
+                return LoadPackageAssemblies(configPath, throwException);
             }
         }
 

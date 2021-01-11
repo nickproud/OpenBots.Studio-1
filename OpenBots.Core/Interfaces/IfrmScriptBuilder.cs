@@ -17,7 +17,7 @@ namespace OpenBots.Core.Infrastructure
         bool IsUnhandledException { get; set; }
         Logger EngineLogger { get; set; }
         string HTMLElementRecorderURL { get; set; }
-        void OpenScriptFile(string scriptFilePath);
+        void OpenScriptFile(string scriptFilePath, bool isRunTaskCommand = true);
         void Notify(string notificationText, Color notificationColor);
         void RemoveDebugTab();
         DialogResult LoadErrorForm(string errorMessage);

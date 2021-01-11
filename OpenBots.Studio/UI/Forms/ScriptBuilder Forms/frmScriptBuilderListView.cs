@@ -696,23 +696,32 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         _selectedTabScriptActions.Font, Brushes.LightSlateGray, modifiedBounds);
                     break;
                 case 1:
-                    if (command.PauseBeforeExecution)
+                    try
                     {
-                        var breakPointImg = new Bitmap(CoreResources.command_breakpoint, new Size(18, 18));
-                        e.Graphics.DrawImage(breakPointImg, modifiedBounds.Left, modifiedBounds.Top + 3);
+                        if (command.PauseBeforeExecution)
+                        {
+                            var breakPointImg = new Bitmap(CoreResources.command_breakpoint, new Size(18, 18));
+                            e.Graphics.DrawImage(breakPointImg, modifiedBounds.Left, modifiedBounds.Top + 3);
+                        }
+                        else if (command.IsCommented)
+                        {
+                            var commentedImg = new Bitmap(CoreResources.command_disabled, new Size(18, 18));
+                            e.Graphics.DrawImage(commentedImg, modifiedBounds.Left, modifiedBounds.Top + 3);
+                        }
+                        else
+                        {
+                            //draw command icon
+                            var img = _uiImages.Images[command.GetType().Name];
+                            if (img != null)
+                                e.Graphics.DrawImage(img, modifiedBounds.Left, modifiedBounds.Top + 3);
+                        }
+                        
                     }
-                    else if (command.IsCommented)
+                    catch (Exception ex)
                     {
-                        var commentedImg = new Bitmap(CoreResources.command_disabled, new Size(18, 18));
-                        e.Graphics.DrawImage(commentedImg, modifiedBounds.Left, modifiedBounds.Top + 3);
+                        //icon draw failure
+                        Console.WriteLine(ex);
                     }
-                    else
-                    {
-                        //draw command icon
-                        var img = _uiImages.Images[command.GetType().Name];
-                        if (img != null)
-                            e.Graphics.DrawImage(img, modifiedBounds.Left, modifiedBounds.Top + 3);
-                    }                   
                     break;
                 case 2:
                     //write command text

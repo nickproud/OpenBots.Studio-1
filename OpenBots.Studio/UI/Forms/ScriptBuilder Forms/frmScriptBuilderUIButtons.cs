@@ -113,18 +113,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        public delegate void OpenFileDelegate(string filepath);
-        public void OpenFile(string filePath)
+        public delegate void OpenFileDelegate(string filepath, bool isRunTaskCommand);
+        public void OpenFile(string filePath, bool isRunTaskCommand = false)
         {
             if (InvokeRequired)
             {
                 var d = new OpenFileDelegate(OpenFile);
-                Invoke(d, new object[] { filePath });
+                Invoke(d, new object[] { filePath, isRunTaskCommand });
             }
             else
             {
                 try
                 {
+                    _isRunTaskCommand = isRunTaskCommand;
                     //create or switch to TabPage
                     string fileName = Path.GetFileNameWithoutExtension(filePath);
                     var foundTab = uiScriptTabControl.TabPages.Cast<TabPage>().Where(t => t.ToolTipText == filePath)
@@ -140,10 +141,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         uiScriptTabControl.TabPages.Add(newtabPage);
                         newtabPage.Controls.Add(NewLstScriptActions(fileName));
                         uiScriptTabControl.SelectedTab = newtabPage;
+                        _isRunTaskCommand = false;      
                     }
                     else
                     {
                         uiScriptTabControl.SelectedTab = foundTab;
+                        _isRunTaskCommand = false;
                         return;
                     }
 
@@ -180,12 +183,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     FileInfo scriptFileInfo = new FileInfo(_scriptFilePath);
                     uiScriptTabControl.SelectedTab.Text = scriptFileInfo.Name.Replace(".json", "");
-
-                    dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                    dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-
-                    //notify
-                    Notify("Script Loaded Successfully!", Color.White);
+                                          
+                    if (!isRunTaskCommand)
+                    {
+                        dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                        dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                        //notify
+                        Notify("Script Loaded Successfully!", Color.White);
+                    }                   
                 }
                 catch (Exception ex)
                 {
@@ -195,10 +200,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }           
         }
 
-        //Helper Method
-        public void OpenScriptFile(string scriptFilePath)
+        //Helper method for RunTaskCommand
+        public void OpenScriptFile(string scriptFilePath, bool isRunTaskCommand = true)
         {
-            OpenFile(scriptFilePath);
+            OpenFile(scriptFilePath, isRunTaskCommand);
         }
 
         private void uiBtnSave_Click(object sender, EventArgs e)
@@ -869,8 +874,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             Notify("Running Script..", Color.White);
 
-            if (CurrentEngine != null)
-                ((Form)CurrentEngine).Close();
+            try
+            {
+                if (CurrentEngine != null)
+                    ((Form)CurrentEngine).Close();
+            }
+            catch(Exception ex)
+            {
+                //failed to close engine form
+                Console.WriteLine(ex);
+            }
+            
 
             //initialize Logger
             switch (_appSettings.EngineSettings.LoggingSinkType)

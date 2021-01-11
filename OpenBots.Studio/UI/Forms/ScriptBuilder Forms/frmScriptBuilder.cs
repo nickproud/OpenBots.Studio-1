@@ -130,18 +130,29 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _isScriptRunning = value;
                 if (_isScriptRunning)
                 {
-                    uiVariableArgumentTabs.Enabled = false;
-                    dgvArguments.Enabled = false;
-                    dgvVariables.Enabled = false;
-                    uiScriptTabControl.AllowDrop = false;
+                    try
+                    {
+                        uiVariableArgumentTabs.Visible = false;
+                        splitContainerScript.Panel2Collapsed = true;
+                        uiScriptTabControl.AllowDrop = false;
+                    }
+                    catch (Exception)
+                    {
+                        //DragDrop registration did not succeed
+                    }
                 }
                 else
                 {
                     try
                     {
-                        uiVariableArgumentTabs.Enabled = true;
-                        dgvArguments.Enabled = true;
-                        dgvVariables.Enabled = true;
+                        //do after execution stops and right before the variable/argument tabs are made visible
+                        if (!uiVariableArgumentTabs.Visible)
+                        {
+                            dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                            dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                            splitContainerScript.Panel2Collapsed = false;
+                        }
+                        uiVariableArgumentTabs.Visible = true;
                         uiScriptTabControl.AllowDrop = true;
                     }
                     catch (Exception)
@@ -156,6 +167,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public bool IsScriptSteppedInto { get; set; }
         public bool IsUnhandledException { get; set; }       
         private bool _isDebugMode;
+        private bool _isRunTaskCommand;
 
         //command search variables
         private TreeView _tvCommandsCopy;
@@ -486,7 +498,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void tmrNotify_Tick(object sender, EventArgs e)
         {
             if (CurrentEngine == null)
+            {
+                //Set data just once. Right after the engine has been set to null and before IsScriptRunning is set to false;
+                if (IsScriptRunning)
+                {
+                    //dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                    //dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                }
                 IsScriptRunning = false;
+            }
 
             if (_appSettings == null)
             {
@@ -787,7 +807,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LinkLabel senderLink = (LinkLabel)sender;
             OpenFile(Path.Combine(Folders.GetFolder(FolderType.ScriptsFolder), senderLink.Text));
         }
-        #endregion        
+        #endregion       
     }
 }
 

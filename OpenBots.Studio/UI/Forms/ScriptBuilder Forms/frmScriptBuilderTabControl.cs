@@ -25,11 +25,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _scriptArguments = scriptObject.ScriptArguments;
                     _scriptElements = scriptObject.ScriptElements;
 
-                    if (!_isScriptRunning)
+                    if (!_isRunTaskCommand)
                     {
                         dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                         dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-                    }                   
+                    }                             
                 }               
             }
         }

@@ -172,7 +172,7 @@ namespace OpenBots.Commands.Task
 
 						//toggle running flag to allow for tab selection
 						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.OpenScriptFile(parentTaskPath);
+						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.OpenScriptFile(parentTaskPath, true);
 						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
 
 						parentfrmScriptEngine.UpdateLineNumber(parentDebugLine + 1);
