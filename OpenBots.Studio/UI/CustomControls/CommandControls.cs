@@ -83,6 +83,7 @@ namespace OpenBots.UI.CustomControls
             var variableNameControl = AddVariableNames(CreateStandardComboboxFor(parameterName, parent), editor);
             var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { variableNameControl }, editor);
 
+            variableNameControl.Click += (sender, e) => VariableNameControl_Click(sender, e, editor);
             variableNameControl.KeyPress += DropdownBox_KeyPress;
             variableNameControl.KeyDown += DropdownBox_KeyDown;
 
@@ -90,6 +91,12 @@ namespace OpenBots.UI.CustomControls
             controlList.AddRange(helpers);
             controlList.Add(variableNameControl);
             return controlList;
+        }
+
+        private void VariableNameControl_Click(object sender, EventArgs e, IfrmCommandEditor editor)
+        {
+            ComboBox outputBox = (ComboBox)sender;
+            AddVariableNames(outputBox, editor);
         }
 
         public List<Control> CreateDefaultDropdownGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor)
@@ -351,7 +358,9 @@ namespace OpenBots.UI.CustomControls
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-                    ((ComboBox)sender).Text = scriptVariableEditor.LastModifiedVariableName;
+
+                    if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
+                        ((ComboBox)sender).Text = "{" + scriptVariableEditor.LastModifiedVariableName + "}";
                 }
             }
             else if (e.Control && e.KeyCode == Keys.J)
@@ -365,7 +374,9 @@ namespace OpenBots.UI.CustomControls
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
                 {
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-                    ((ComboBox)sender).Text = scriptArgumentEditor.LastModifiedArgumentName;
+
+                    if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
+                        ((ComboBox)sender).Text = "{" + scriptArgumentEditor.LastModifiedArgumentName + "}";
                 }
             }
             else if (e.KeyCode == Keys.Enter)
@@ -1222,16 +1233,18 @@ namespace OpenBots.UI.CustomControls
             {
                 cbo.Items.Clear();
 
+                List<string> varArgNames = new List<string>();
+
                 foreach (var variable in ((frmCommandEditor)editor).ScriptEngineContext.Variables)
                 {
                     if (variable.VariableName != "ProjectPath")
-                        cbo.Items.Add("{" + variable.VariableName + "}");
+                        varArgNames.Add("{" + variable.VariableName + "}");
                 }
 
                 foreach (var argument in ((frmCommandEditor)editor).ScriptEngineContext.Arguments)
-                {
-                    cbo.Items.Add("{" + argument.ArgumentName + "}");
-                }
+                    varArgNames.Add("{" + argument.ArgumentName + "}");
+
+                cbo.Items.AddRange(varArgNames.OrderBy(x => x).ToArray());               
             }
             return cbo;
         }
