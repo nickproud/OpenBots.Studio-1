@@ -100,6 +100,8 @@ namespace OpenBots.UI.Forms
                 LastModifiedVariableName = addVariableForm.txtVariableName.Text;
                 ResetVariables();
             }
+
+            addVariableForm.Dispose();
         }
 
         private void tvScriptVariables_DoubleClick(object sender, EventArgs e)
@@ -162,6 +164,8 @@ namespace OpenBots.UI.Forms
                 LastModifiedVariableName = addVariableForm.txtVariableName.Text;
                 ResetVariables();
             }
+
+            addVariableForm.Dispose();
         }
 
         private void AddUserVariableNode(TreeNode parentNode, string variableName, string variableText)

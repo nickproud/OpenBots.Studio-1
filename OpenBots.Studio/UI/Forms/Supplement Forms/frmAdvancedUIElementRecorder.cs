@@ -92,6 +92,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     if (settingsForm.DialogResult == DialogResult.OK)
                     {
                         _parameterSettings = settingsForm.ParameterSettingsDT;
+                        settingsForm.Dispose();
                     }
                     else
                     {
@@ -107,6 +108,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                         GlobalHook.KeyDownEvent -= GlobalHook_KeyDownEvent;
                         GlobalHook.HookStopped -= GlobalHook_HookStopped;
 
+                        settingsForm.Dispose();
                         return;
                     }
 

@@ -132,6 +132,8 @@ namespace OpenBots.Commands.DataTable
 					v_DataRowDataTable.Rows.Add(rw.Field<string>("Column Name"), "");
 				}
 			}
+
+			selectionForm.Dispose();
 		}
 	}
 }

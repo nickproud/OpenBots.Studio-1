@@ -154,6 +154,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
                 catch (Exception ex)
                 {
+                    projectBuilder.Dispose();
                     //show fail dialog
                     Notify("An Error Occured: " + ex.Message, Color.Red);
                     //Try adding project again
@@ -161,6 +162,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return DialogResult.None;
                 }
             }
+
+            projectBuilder.Dispose();
 
             DirectoryInfo projectDirectoryInfo = new DirectoryInfo(ScriptProjectPath);
             TreeNode projectNode = new TreeNode(projectDirectoryInfo.Name);
@@ -459,9 +462,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 newNameForm.ShowDialog();
 
                 if (newNameForm.DialogResult == DialogResult.OK)
+                {
                     newName = newNameForm.txtInput.Text;
+                    newNameForm.Dispose();
+                }
                 else if (newNameForm.DialogResult == DialogResult.Cancel)
+                {
+                    newNameForm.Dispose();
                     return;
+                }
 
                 if (newName.EndsWith(".json"))
                     throw new Exception("Invalid folder name");
@@ -574,9 +583,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 newNameForm.ShowDialog();
 
                 if (newNameForm.DialogResult == DialogResult.OK)
+                {
                     newName = newNameForm.txtInput.Text;
+                    newNameForm.Dispose();
+                }
                 else if (newNameForm.DialogResult == DialogResult.Cancel)
+                {
+                    newNameForm.Dispose();
                     return;
+                }
 
                 string newPath = Path.Combine(selectedNodeDirectoryInfo.Parent.FullName, newName);
                 bool isInvalidProjectName = new[] { @"/", @"\" }.Any(c => newName.Contains(c));
@@ -626,9 +641,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 newNameForm.ShowDialog();
 
                 if (newNameForm.DialogResult == DialogResult.OK)
+                {
                     newName = newNameForm.txtInput.Text;
+                    newNameForm.Dispose();
+                }
                 else if (newNameForm.DialogResult == DialogResult.Cancel)
+                {
+                    newNameForm.Dispose();
                     return;
+                }
 
                 if (newName.EndsWith(".json"))
                     throw new Exception("Invalid file name");
@@ -747,9 +768,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newNameForm.ShowDialog();
 
                     if (newNameForm.DialogResult == DialogResult.OK)
+                    {
                         newNameWithoutExtension = newNameForm.txtInput.Text;
+                        newNameForm.Dispose();
+                    }
                     else if (newNameForm.DialogResult == DialogResult.Cancel)
+                    {
+                        newNameForm.Dispose();
                         return;
+                    }
 
                     string newName = newNameWithoutExtension + selectedNodeFileExtension;
                     string newPath = Path.Combine(selectedNodeDirectoryInfo.DirectoryName, newName);

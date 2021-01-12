@@ -68,6 +68,8 @@ namespace OpenBots.UI.Forms
                     Directory.Delete(NewProjectPath, true);
                     Action = ProjectAction.None;
                 }
+
+                gallery.Dispose();
             }           
         }
 
@@ -191,6 +193,8 @@ namespace OpenBots.UI.Forms
                 else
                     lblError.Text = "Error: Unable to find 'project.config' for selected Project";
             }
+
+            recent.Dispose();
         }
     }
 }

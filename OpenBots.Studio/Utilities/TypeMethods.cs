@@ -82,6 +82,7 @@ namespace OpenBots.Studio.Utilities
         {
             var confirmationForm = new frmDialog(message, "MessageBox", DialogType.OkOnly, 10);
             confirmationForm.ShowDialog();
+            confirmationForm.Dispose();
         }
 
         private static string GetPackageName(string typeName)

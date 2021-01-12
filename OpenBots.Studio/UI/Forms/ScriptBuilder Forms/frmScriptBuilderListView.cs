@@ -422,6 +422,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _scriptElements = editCommand.ScriptEngineContext.Elements;
                     HTMLElementRecorderURL = editCommand.HTMLElementRecorderURL;
                 }
+
+                editCommand.Dispose();
             }
         }
 
@@ -1014,6 +1016,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             });
             var dialog = new frmDialog(jsonText, "Command Code", DialogType.OkOnly, 0);
             dialog.ShowDialog();
+            dialog.Dispose();
         }
 
         private void moveToParentToolStripMenuItem_Click(object sender, EventArgs e)

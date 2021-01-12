@@ -242,6 +242,7 @@ namespace OpenBots.UI.CustomControls
                         inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptVariableEditor.LastModifiedVariableName + "}");
                 }
 
+                scriptVariableEditor.Dispose();
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
@@ -258,6 +259,8 @@ namespace OpenBots.UI.CustomControls
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
                         inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptArgumentEditor.LastModifiedArgumentName + "}");
                 }
+
+                scriptArgumentEditor.Dispose();
 
             }
             else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
@@ -366,6 +369,8 @@ namespace OpenBots.UI.CustomControls
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
                         ((ComboBox)sender).Text = "{" + scriptVariableEditor.LastModifiedVariableName + "}";
                 }
+
+                scriptVariableEditor.Dispose();
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
@@ -382,6 +387,8 @@ namespace OpenBots.UI.CustomControls
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
                         ((ComboBox)sender).Text = "{" + scriptArgumentEditor.LastModifiedArgumentName + "}";
                 }
+
+                scriptArgumentEditor.Dispose();
             }
             else if (e.KeyCode == Keys.Enter)
                 _currentEditor.uiBtnAdd_Click(null, null);
@@ -576,6 +583,8 @@ namespace OpenBots.UI.CustomControls
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
                         dataGridView.CurrentCell.Value = "{" + scriptVariableEditor.LastModifiedVariableName + "}";                   
                 }
+
+                scriptVariableEditor.Dispose();
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
@@ -593,6 +602,8 @@ namespace OpenBots.UI.CustomControls
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
                         dataGridView.CurrentCell.Value = "{" + scriptArgumentEditor.LastModifiedArgumentName + "}";
                 }
+
+                scriptArgumentEditor.Dispose();
             }
             else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
                 return;
@@ -619,6 +630,8 @@ namespace OpenBots.UI.CustomControls
             {
                 targetTextbox.Text = codeBuilder.rtbCode.Text;
             }
+
+            codeBuilder.Dispose();
         }
 
         private void ShowMouseCaptureForm(object sender, EventArgs e, IfrmCommandEditor editor)
@@ -632,6 +645,8 @@ namespace OpenBots.UI.CustomControls
                 ((frmCommandEditor)editor).flw_InputVariables.Controls["v_XMousePosition"].Text = frmShowCursorPos.XPosition.ToString();
                 ((frmCommandEditor)editor).flw_InputVariables.Controls["v_YMousePosition"].Text = frmShowCursorPos.YPosition.ToString();
             }
+
+            frmShowCursorPos.Dispose();
         }
 
         public void ShowVariableSelector(object sender, EventArgs e)
@@ -709,6 +724,8 @@ namespace OpenBots.UI.CustomControls
 
                 }
             }
+
+            newVariableSelector.Dispose();
         }
 
         public void ShowElementSelector(object sender, EventArgs e)
@@ -744,6 +761,8 @@ namespace OpenBots.UI.CustomControls
                         .FirstOrDefault().ElementValue;
                 }
             }
+
+            newElementSelector.Dispose();
         }
 
         private void ShowFileSelector(object sender, EventArgs e)
@@ -801,9 +820,10 @@ namespace OpenBots.UI.CustomControls
                     UIPictureBox targetPictureBox = (UIPictureBox)inputBox.Tag;
                     targetPictureBox.Image = imageCaptureForm.UserSelectedBitmap;
                     var convertedImage = Common.ImageToBase64(imageCaptureForm.UserSelectedBitmap);
-                    targetPictureBox.EncodedImage = convertedImage;
-                    imageCaptureForm.Close();
+                    targetPictureBox.EncodedImage = convertedImage;                   
                 }
+
+                imageCaptureForm.Dispose();
             }
 
             ShowAllForms();
@@ -1003,7 +1023,11 @@ namespace OpenBots.UI.CustomControls
             if (parameterRow != null)
                 parameterValue = parameterRow.ItemArray[2].ToString();
 
-            return new Tuple<string,string>(newElementRecorder.cboWindowTitle.Text, parameterValue);
+            var elementParameters = new Tuple<string, string>(newElementRecorder.cboWindowTitle.Text, parameterValue);
+
+            newElementRecorder.Dispose();
+
+            return elementParameters;
         }
 
         private void ShowElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor)
@@ -1130,6 +1154,8 @@ namespace OpenBots.UI.CustomControls
                     }
                 }
             }
+
+            dllExplorer.Dispose();
         }
 
         private void AddInputParameter(object sender, EventArgs e)
@@ -1152,6 +1178,8 @@ namespace OpenBots.UI.CustomControls
             {
                 inputControl.Text = htmlForm.rtbHTML.Text;
             }
+
+            htmlForm.Dispose();
         }
 
         private void EncryptText(object sender, EventArgs e, IfrmCommandEditor editor)

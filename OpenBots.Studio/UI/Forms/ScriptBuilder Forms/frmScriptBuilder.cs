@@ -284,6 +284,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     Directory.CreateDirectory(rpaScriptsFolder);
                 }
+
+                userDialog.Dispose();
             }
 
             //get latest files for recent files list on load
@@ -597,6 +599,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptElements = newCommandForm.ScriptEngineContext.Elements;
                 HTMLElementRecorderURL = newCommandForm.HTMLElementRecorderURL;
             }
+
+            newCommandForm.Dispose();
         }
 
         private List<ScriptCommand> GetConfiguredCommands()
