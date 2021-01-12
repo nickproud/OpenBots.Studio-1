@@ -62,19 +62,22 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
 
         private void SwapTabPages(TabPage src, TabPage dst)
         {
-            int srci = TabPages.IndexOf(src);
-            int dsti = TabPages.IndexOf(dst);
+            if (src != null)
+            {
+                int srci = TabPages.IndexOf(src);
+                int dsti = TabPages.IndexOf(dst);
 
-            TabPages[dsti] = src;
-            TabPages[srci] = dst;
+                TabPages[dsti] = src;
+                TabPages[srci] = dst;
 
-            if (SelectedIndex == srci)
-                SelectedIndex = dsti;
+                if (SelectedIndex == srci)
+                    SelectedIndex = dsti;
 
-            else if (SelectedIndex == dsti)
-                SelectedIndex = srci;
+                else if (SelectedIndex == dsti)
+                    SelectedIndex = srci;
 
-            Refresh();
+                Refresh();
+            }           
         }
 
         //protected override void OnPaint(PaintEventArgs e)

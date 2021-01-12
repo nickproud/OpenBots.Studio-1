@@ -126,18 +126,27 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return;
                 }
 
-                //drag and drop for sequence
-                if ((dragToItem.Tag.GetType().Name == "SequenceCommand") && (_appSettings.ClientSettings.EnableSequenceDragDrop))
+                bool hasSequenceCommand = false;
+                List<ScriptCommand> commandsToMove = new List<ScriptCommand>();
+
+                for (int i = 0; i <= _selectedTabScriptActions.SelectedItems.Count - 1; i++)
+                {
+                    var command = (ScriptCommand)_selectedTabScriptActions.SelectedItems[i].Tag;
+
+                    if (command.CommandName == "SequenceCommand")
+                        hasSequenceCommand = true;
+
+                    commandsToMove.Add(command);
+                }
+
+                    //drag and drop for sequence
+                if ((dragToItem.Tag.GetType().Name == "SequenceCommand") && (_appSettings.ClientSettings.EnableSequenceDragDrop) && !hasSequenceCommand)
                 {
                     //sequence command for drag drop
                     var sequence = (ISequenceCommand)dragToItem.Tag;
-
+                   
                     //add command to script actions
-                    for (int i = 0; i <= _selectedTabScriptActions.SelectedItems.Count - 1; i++)
-                    {
-                        var command = (ScriptCommand)_selectedTabScriptActions.SelectedItems[i].Tag;
-                        sequence.ScriptActions.Add(command);
-                    }
+                    sequence.ScriptActions.AddRange(commandsToMove);
 
                     //remove originals
                     for (int i = _selectedTabScriptActions.SelectedItems.Count - 1; i >= 0; i--)
@@ -431,7 +440,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             grpVariable.Hide();           
             grpSearch.Hide();
             moveToParentToolStripMenuItem.Visible = true;
-            uiPaneTabs.TabPages.Remove(tpProject);    
+            uiPaneTabs.TabPages.Remove(tpProject);
+            cmsProjectFileActions.Dispose();
+            cmsProjectFolderActions.Dispose();
+            cmsProjectMainFolderActions.Dispose();
         }
 
         private void CutRows()
