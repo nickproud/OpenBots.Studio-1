@@ -250,14 +250,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _appSettings = new ApplicationSettings();
             _appSettings = _appSettings.GetOrCreateApplicationSettings();
 
-            string clientLoggerFilePath = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Automation Client Logs.txt");
-            Logger automationClientLogger = new Logging().CreateFileLogger(clientLoggerFilePath, Serilog.RollingInterval.Day);
-            //Core.Sockets.SocketClient.Initialize();
-            //Core.Sockets.SocketClient.associatedBuilder = this;
-
             //handle action bar preference
-            //hide action panel
-
             if (_editMode)
             {
                 tlpControls.RowStyles[0].SizeType = SizeType.Absolute;
@@ -294,7 +287,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //get latest files for recent files list on load
-            GenerateRecentFiles();
+            GenerateRecentProjects();
 
             //no height for status bar
             HideNotificationRow();
@@ -309,9 +302,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                 dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
             }
-
-            //set image list
-            _selectedTabScriptActions.SmallImageList = _uiImages;
 
             //set listview column size
             frmScriptBuilder_SizeChanged(null, null);
@@ -379,64 +369,40 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             notifyTray.Dispose();
         }
 
-        private void GenerateRecentFiles()
+        private void GenerateRecentProjects()
         {
+
             flwRecentFiles.Controls.Clear();
 
-            var scriptPath = Folders.GetFolder(FolderType.ScriptsFolder);
+            List<string> recentlyOpenedProjectPaths = _appSettings.ClientSettings.RecentProjects;
 
-            if (!Directory.Exists(scriptPath))
+            if (recentlyOpenedProjectPaths == null || recentlyOpenedProjectPaths.Count() == 0)
             {
-                lblRecentFiles.Text = "Script Folder does not exist";
-                lblFilesMissing.Text = "Directory Not Found: " + scriptPath;
-                lblRecentFiles.ForeColor = Color.White;
-                lblFilesMissing.ForeColor = Color.White;
-                lblFilesMissing.Show();
-                flwRecentFiles.Hide();
-                return;
-            }
-
-            var directory = new DirectoryInfo(scriptPath);
-            var recentFiles = directory.GetFiles()
-                                       .OrderByDescending(file => file.LastWriteTime)
-                                       .Select(f => f.Name);
-
-            if (recentFiles.Count() == 0)
-            {
-                //Label noFilesLabel = new Label();
-                //noFilesLabel.Text = "No Recent Files Found";
-                //noFilesLabel.AutoSize = true;
-                //noFilesLabel.ForeColor = Color.SteelBlue;
-                //noFilesLabel.Font = lnkGitIssue.Font;
-                //noFilesLabel.Margin = new Padding(0, 0, 0, 0);
-                //flwRecentFiles.Controls.Add(noFilesLabel);
-                lblRecentFiles.Text = "No Recent Files Found";
-                lblRecentFiles.ForeColor = Color.White;
+                lblRecentProjects.Text = "No Recent Projects Found";
+                lblRecentProjects.ForeColor = Color.White;
                 lblFilesMissing.ForeColor = Color.White;
                 lblFilesMissing.Show();
                 flwRecentFiles.Hide();
             }
             else
             {
-                foreach (var fil in recentFiles)
+                foreach (string projectPath in recentlyOpenedProjectPaths)
                 {
-                    if (flwRecentFiles.Controls.Count == 7)
-                        return;
-
-                    LinkLabel newFileLink = new LinkLabel
+                    LinkLabel newProjectLink = new LinkLabel
                     {
-                        Text = fil,
+                        Text = new DirectoryInfo(projectPath).Name,
+                        Tag = projectPath,
                         AutoSize = true,
                         LinkColor = Color.AliceBlue,
                         Font = lnkGitIssue.Font,
                         Margin = new Padding(0, 0, 0, 0)
                     };
-                    newFileLink.LinkClicked += NewFileLink_LinkClicked;
-                    flwRecentFiles.Controls.Add(newFileLink);
+                    newProjectLink.LinkClicked += NewProjectLink_LinkClicked;
+                    flwRecentFiles.Controls.Add(newProjectLink);
+                    flwRecentFiles.Show();
                 }
             }
         }
-
         private void frmScriptBuilder_Shown(object sender, EventArgs e)
         {
             Program.SplashForm.Close();
@@ -620,7 +586,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptArguments = newCommandForm.ScriptEngineContext.Arguments;
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                 dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-            }
+             }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
             {
@@ -802,10 +768,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             Process.Start("https://openbots.ai/api/execute-dll/");
         }
-        private void NewFileLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void NewProjectLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             LinkLabel senderLink = (LinkLabel)sender;
-            OpenFile(Path.Combine(Folders.GetFolder(FolderType.ScriptsFolder), senderLink.Text));
+            if (File.Exists(Path.Combine(senderLink.Tag.ToString(), "project.config")))
+                OpenProject(senderLink.Tag.ToString());
+            else
+                Notify($"Could not find 'project.config' for {senderLink.Tag}", Color.Red);
         }
 
         #endregion

@@ -73,7 +73,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
             dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
 
-            GenerateRecentFiles();
+            GenerateRecentProjects();
             newTabPage.Controls[0].Hide();
             pnlCommandHelper.Show();
         }

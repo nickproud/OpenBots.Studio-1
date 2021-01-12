@@ -132,7 +132,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pbRecentFiles = new System.Windows.Forms.PictureBox();
             this.pbLinks = new System.Windows.Forms.PictureBox();
             this.pbOpenBotsIcon = new System.Windows.Forms.PictureBox();
-            this.lblRecentFiles = new System.Windows.Forms.Label();
+            this.lblRecentProjects = new System.Windows.Forms.Label();
             this.lnkGitWiki = new System.Windows.Forms.LinkLabel();
             this.lnkGitIssue = new System.Windows.Forms.LinkLabel();
             this.lnkGitLatestReleases = new System.Windows.Forms.LinkLabel();
@@ -1599,7 +1599,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlCommandHelper.Controls.Add(this.pbRecentFiles);
             this.pnlCommandHelper.Controls.Add(this.pbLinks);
             this.pnlCommandHelper.Controls.Add(this.pbOpenBotsIcon);
-            this.pnlCommandHelper.Controls.Add(this.lblRecentFiles);
+            this.pnlCommandHelper.Controls.Add(this.lblRecentProjects);
             this.pnlCommandHelper.Controls.Add(this.lnkGitWiki);
             this.pnlCommandHelper.Controls.Add(this.lnkGitIssue);
             this.pnlCommandHelper.Controls.Add(this.lnkGitLatestReleases);
@@ -1671,17 +1671,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pbOpenBotsIcon.TabIndex = 13;
             this.pbOpenBotsIcon.TabStop = false;
             // 
-            // lblRecentFiles
+            // lblRecentProjects
             // 
-            this.lblRecentFiles.AutoSize = true;
-            this.lblRecentFiles.Font = new System.Drawing.Font("Segoe UI Semilight", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRecentFiles.ForeColor = System.Drawing.Color.AliceBlue;
-            this.lblRecentFiles.Location = new System.Drawing.Point(138, 251);
-            this.lblRecentFiles.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblRecentFiles.Name = "lblRecentFiles";
-            this.lblRecentFiles.Size = new System.Drawing.Size(153, 37);
-            this.lblRecentFiles.TabIndex = 8;
-            this.lblRecentFiles.Text = "Recent Files";
+            this.lblRecentProjects.AutoSize = true;
+            this.lblRecentProjects.Font = new System.Drawing.Font("Segoe UI Semilight", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRecentProjects.ForeColor = System.Drawing.Color.AliceBlue;
+            this.lblRecentProjects.Location = new System.Drawing.Point(138, 251);
+            this.lblRecentProjects.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblRecentProjects.Name = "lblRecentProjects";
+            this.lblRecentProjects.Size = new System.Drawing.Size(153, 37);
+            this.lblRecentProjects.TabIndex = 8;
+            this.lblRecentProjects.Text = "Recent Projects";
             // 
             // lnkGitWiki
             // 
@@ -2468,7 +2468,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private PictureBox pbRecentFiles;
         private PictureBox pbLinks;
         private PictureBox pbOpenBotsIcon;
-        private Label lblRecentFiles;
+        private Label lblRecentProjects;
         private LinkLabel lnkGitWiki;
         private LinkLabel lnkGitIssue;
         private LinkLabel lnkGitLatestReleases;

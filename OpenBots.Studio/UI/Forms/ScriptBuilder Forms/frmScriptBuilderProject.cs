@@ -72,6 +72,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 string mainScriptPath = Path.Combine(ScriptProjectPath, "Main.json");
                 string mainScriptName = Path.GetFileNameWithoutExtension(mainScriptPath);
                 UIListView mainScriptActions = NewLstScriptActions(mainScriptName);
+
                 List<ScriptVariable> mainScriptVariables = new List<ScriptVariable>();
                 List<ScriptArgument> mainScriptArguments = new List<ScriptArgument>();
                 List<ScriptElement> mainScriptElements = new List<ScriptElement>();
@@ -130,18 +131,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 try
                 {
                     //Open project
-                    ScriptProject = Project.OpenProject(projectBuilder.ExistingConfigPath);
+                    Project project = Project.OpenProject(projectBuilder.ExistingConfigPath);
+                    string mainFileName = project.Main;
+
+                    string mainFilePath = Directory.GetFiles(projectBuilder.ExistingProjectPath, mainFileName, SearchOption.AllDirectories).FirstOrDefault();
+                    if (mainFilePath == null)
+                        throw new Exception("Main script not found");
 
                     var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
                     _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                     AContainer = _builder.Build();
 
-                    _mainFileName = ScriptProject.Main;
-
-                    string mainFilePath = Directory.GetFiles(projectBuilder.ExistingProjectPath, _mainFileName, SearchOption.AllDirectories).FirstOrDefault();
-                    if (mainFilePath == null)
-                        throw new Exception("Main script not found");
-
+                    ScriptProject = project;
+                    _mainFileName = mainFileName;                 
                     ScriptProjectPath = projectBuilder.ExistingProjectPath;
                     uiScriptTabControl.TabPages.Clear();
 
@@ -185,6 +187,71 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _appSettings.Save(_appSettings);
 
             return DialogResult.OK;
+        }
+
+        private void OpenProject(string projectPath)
+        {
+            tvProject.Nodes.Clear();
+
+            DialogResult result = CheckForUnsavedScripts();
+            if (result == DialogResult.Cancel)
+                return;
+
+            try
+            {
+                string configPath = Path.Combine(projectPath, "project.config");
+                //Open project
+                Project project = Project.OpenProject(configPath);
+                string mainFileName = project.Main;
+
+                string mainFilePath = Directory.GetFiles(projectPath, mainFileName, SearchOption.AllDirectories).FirstOrDefault();
+                if (mainFilePath == null)
+                    throw new Exception("Main script not found");
+
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                AContainer = _builder.Build();
+
+                _mainFileName = mainFileName;
+                ScriptProject = project;
+                ScriptProjectPath = projectPath;
+                uiScriptTabControl.TabPages.Clear();
+
+                //Open Main
+                OpenFile(mainFilePath);
+                //show success dialog
+                Notify("Project has been opened successfully!", Color.White);
+            }
+            catch (Exception ex)
+            {
+                //show fail dialog
+                Notify("An Error Occured: " + ex.Message, Color.Red);
+            }
+        
+
+            DirectoryInfo projectDirectoryInfo = new DirectoryInfo(ScriptProjectPath);
+            TreeNode projectNode = new TreeNode(projectDirectoryInfo.Name);
+            projectNode.Text = projectDirectoryInfo.Name;
+            projectNode.Tag = projectDirectoryInfo.FullName;
+            projectNode.Nodes.Add("Empty");
+            projectNode.ContextMenuStrip = cmsProjectMainFolderActions;          
+            tvProject.Nodes.Add(projectNode);
+            projectNode.Expand();
+            LoadCommands(this);
+
+            //Save to recent projects 
+            if (_appSettings.ClientSettings.RecentProjects == null)
+                _appSettings.ClientSettings.RecentProjects = new List<string>();
+
+            if (_appSettings.ClientSettings.RecentProjects.Contains(ScriptProjectPath))
+                _appSettings.ClientSettings.RecentProjects.Remove(ScriptProjectPath);
+
+            _appSettings.ClientSettings.RecentProjects.Insert(0, ScriptProjectPath);
+
+            if (_appSettings.ClientSettings.RecentProjects.Count > 10)
+                _appSettings.ClientSettings.RecentProjects.RemoveAt(10);
+
+            _appSettings.Save(_appSettings);
         }
 
         private void LoadChildren(TreeNode parentNode, string directory)

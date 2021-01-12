@@ -308,6 +308,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 newBuilder._scriptElements = _scriptElements;
                 newBuilder._scriptArguments = _scriptArguments;
 
+                newBuilder.dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                newBuilder.dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+
                 TabPage newtabPage = new TabPage("Sequence");
                 newtabPage.Name = "Sequence";
                 newtabPage.ToolTipText = "Sequence";
@@ -353,8 +356,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _scriptElements = newBuilder._scriptElements;
                     _scriptArguments = newBuilder._scriptArguments;
 
-                    newBuilder.dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                    newBuilder.dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                    dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                    dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
                 }
             }
             else
