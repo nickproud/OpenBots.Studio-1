@@ -310,12 +310,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void LoadCommands(frmScriptBuilder scriptBuilder)
         {
             //load all commands           
-            scriptBuilder._automationCommands = TypeMethods.GenerateCommands(AContainer);
+            if (scriptBuilder._isSequence)
+                scriptBuilder._automationCommands = TypeMethods.GenerateCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
+            else
+                scriptBuilder._automationCommands = TypeMethods.GenerateCommands(AContainer);
 
             //instantiate and populate display icons for commands
             scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
 
-            var groupedCommands = _automationCommands.GroupBy(f => f.DisplayGroup);
+            var groupedCommands = scriptBuilder._automationCommands.GroupBy(f => f.DisplayGroup);
 
             scriptBuilder.tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)

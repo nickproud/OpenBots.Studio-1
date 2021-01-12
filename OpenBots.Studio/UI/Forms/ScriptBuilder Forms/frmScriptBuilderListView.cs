@@ -307,10 +307,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ISequenceCommand sequence = currentCommand as ISequenceCommand;
                 frmScriptBuilder newBuilder = new frmScriptBuilder();
 
+                //apply editor style format
+                newBuilder.ApplyEditorFormat(sequence.v_Comment);
+
                 LoadCommands(newBuilder);
 
                 newBuilder.ScriptProject = ScriptProject;
                 newBuilder.ScriptProjectPath = ScriptProjectPath;
+                newBuilder.AContainer = AContainer;
 
                 //add variables/elements/arguments
                 newBuilder._scriptVariables = _scriptVariables;
@@ -333,9 +337,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     newBuilder._selectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(cmd));
                 }
-
-                //apply editor style format
-                newBuilder.ApplyEditorFormat(sequence.v_Comment);
 
                 newBuilder._parentBuilder = this;
 
