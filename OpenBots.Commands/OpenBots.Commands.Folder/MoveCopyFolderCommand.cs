@@ -81,6 +81,11 @@ namespace OpenBots.Commands.Folder
 			//apply variable logic
 			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
 			var destinationFolder = v_DestinationDirectory.ConvertUserVariableToString(engine);
+			
+			if (!Directory.Exists(sourceFolder))
+            {
+				throw new DirectoryNotFoundException($"Directory {sourceFolder} does not exist");
+            }
 
 			if ((v_CreateDirectory == "Yes") && (!Directory.Exists(destinationFolder)))
 			{

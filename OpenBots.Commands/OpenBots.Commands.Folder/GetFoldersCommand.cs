@@ -52,6 +52,11 @@ namespace OpenBots.Commands.Folder
 			//apply variable logic
 			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
 
+            if (!Directory.Exists(sourceFolder))
+            {
+				throw new DirectoryNotFoundException($"Directory {sourceFolder} does not exist");
+            }
+
 			//Get Subdirectories List
 			var directoriesList = Directory.GetDirectories(sourceFolder).ToList();
 
