@@ -667,12 +667,15 @@ namespace OpenBots.UI.Forms
                 {
                     var variables = inputForm.GetVariablesFromHTML("input");
                     variables.AddRange(inputForm.GetVariablesFromHTML("select"));
+
+                    inputForm.Dispose();
                     return variables;
                 }
                 else
+                {
+                    inputForm.Dispose();
                     return null;
-
-                inputForm.Dispose();
+                }                                  
             }
         }
 
@@ -705,12 +708,14 @@ namespace OpenBots.UI.Forms
                         else
                             responses.Add(ctrl.Text);
                     }
+                    inputForm.Dispose();
                     return responses;
                 }
                 else
+                {
+                    inputForm.Dispose();
                     return null;
-
-                inputForm.Dispose();
+                }
             }
         }
 

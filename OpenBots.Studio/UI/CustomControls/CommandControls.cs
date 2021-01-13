@@ -9,13 +9,14 @@ using OpenBots.Core.Properties;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Engine;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
+using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -551,6 +552,12 @@ namespace OpenBots.UI.CustomControls
                         helperControl.CommandDisplay = "Encrypt Text";
                         helperControl.Click += (sender, e) => EncryptText(sender, e, (frmCommandEditor)editor);
                         break;
+                    case UIAdditionalHelperType.GetWindowNameHelper:
+                        //show window name helper
+                        helperControl.CommandImage = Resources.command_window;
+                        helperControl.CommandDisplay = "Get Window Name";
+                        helperControl.Click += (sender, e) => GetWindowName(sender, e);
+                        break;
                 }
 
                 controlList.Add(helperControl);
@@ -867,7 +874,7 @@ namespace OpenBots.UI.CustomControls
 
         public ImageElement FindImageElementTest(Bitmap smallBmp, double accuracy)
         {
-            FormsHelper.HideAllForms();
+            HideAllForms();
 
             dynamic element = null;
             double tolerance = 1.0 - accuracy;
@@ -1197,6 +1204,77 @@ namespace OpenBots.UI.CustomControls
             comboBoxControl.Text = "Encrypted";
         }
 
+        private void GetWindowName(object sender, EventArgs e)
+        {
+            ApplicationSettings settings = new ApplicationSettings().GetOrCreateApplicationSettings();
+            var minimizePreference = settings.ClientSettings.MinimizeToTray;
+
+            if (minimizePreference)
+            {
+                settings.ClientSettings.MinimizeToTray = false;
+                settings.Save(settings);
+            }
+
+            
+
+            GlobalHook.StartElementCaptureHook(true);
+            GlobalHook.MouseEvent += (se, ev) => GlobalHook_MouseEvent(se, ev, (CommandItemControl)sender, settings, minimizePreference);
+
+            HideAllForms();
+            //ShowAllForms();
+        }
+
+        private void GlobalHook_MouseEvent(object sender, MouseCoordinateEventArgs e, CommandItemControl inputBox = null, 
+            ApplicationSettings settings = null, bool minimizePreference = false)
+        {
+            //mouse down has occured
+            if (e != null)
+            {
+                try
+                {
+                    Point point = new Point((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
+                    var window = User32Functions.WindowFromPoint(point);
+
+                    User32Functions.GetWindowThreadProcessId(window, out uint processId);
+                    Process process = Process.GetProcessById((int)processId);
+
+                    var windowName = process.MainWindowTitle;
+
+                    ShowAllForms();
+
+                    if (inputBox.Tag is ComboBox)
+                    {
+                        ComboBox targetComboBox = (ComboBox)inputBox.Tag;
+                        targetComboBox.Text = windowName;
+                    }
+                  
+                    if (minimizePreference)
+                    {
+                        settings.ClientSettings.MinimizeToTray = true;
+                        settings.Save(settings);
+                    }
+
+                    GlobalHook.MouseEvent -= (se, ev) => GlobalHook_MouseEvent(se, ev);
+
+                }
+                catch (Exception)
+                {
+                    
+
+                    ShowAllForms();
+                    if (minimizePreference)
+                    {
+                        settings.ClientSettings.MinimizeToTray = true;
+                        settings.Save(settings);
+                    }
+
+                    GlobalHook.MouseEvent -= (se, ev) => GlobalHook_MouseEvent(se, ev);
+
+                    MessageBox.Show("Could not find Window", "Error");
+                }
+            } 
+        }
+
         public void ShowAllForms()
         {
             foreach (Form form in Application.OpenForms)
@@ -1250,7 +1328,7 @@ namespace OpenBots.UI.CustomControls
             //pull the main window title for each
             foreach (Process process in processlist)
             {
-                if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                if (!string.IsNullOrEmpty(process.MainWindowTitle))
                 {
                     //add to the control list of available windows
                     cbo.Items.Add(process.MainWindowTitle);

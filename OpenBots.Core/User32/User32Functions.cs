@@ -76,6 +76,12 @@ namespace OpenBots.Core.User32
         public static extern bool GetWindowRect(IntPtr hWnd, out Rect lpRect);
 
         [DllImport("user32.dll")]
+        public static extern IntPtr WindowFromPoint(Point Point);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+
+        [DllImport("user32.dll")]
         private static extern IntPtr GetClipboardData(uint uFormat);
 
         [DllImport("user32.dll")]

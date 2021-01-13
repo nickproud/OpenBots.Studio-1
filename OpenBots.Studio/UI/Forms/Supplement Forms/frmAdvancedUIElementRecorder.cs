@@ -16,9 +16,11 @@ using System.Data;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Forms;
+using DPoint = System.Drawing.Point;
 
 namespace OpenBots.UI.Forms.Supplement_Forms
 {
@@ -163,12 +165,29 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 //invoke UIA
                 try
                 {
+                    DPoint point = new DPoint((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
+                    var window = User32Functions.WindowFromPoint(point);
+
+                    User32Functions.GetWindowThreadProcessId(window, out uint processId);
+                    Process process = Process.GetProcessById((int)processId);
+
+                    var windowName = process.MainWindowTitle;
+                    Console.WriteLine(windowName);
+
+                    if (_windowName != windowName)
+                    {
+                        _windowName = windowName;
+
+                        if (IsRecordingSequence)
+                            BuildActivateWindowCommand();
+                    }
+
                     if (_isRecording)
                     {
                         LoadSearchParameters(e.MouseCoordinates);
                         lblDescription.Text = _recordingMessage;
                     }
-
+                   
                     string clickType;
                     switch (e.MouseMessage)
                     {
@@ -247,7 +266,18 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void LoadSearchParameters(Point point)
         {
-            AutomationElement element = AutomationElement.FromPoint(point);
+            AutomationElement element;
+
+            try
+            {
+                element = AutomationElement.FromPoint(point);
+            }
+            catch (Exception)
+            {
+                Thread.Sleep(500);
+                element = AutomationElement.FromPoint(point);
+            }
+          
             AutomationElement.AutomationElementInformation elementProperties = element.Current;
 
             LastItemClicked = $"[Automation ID:{elementProperties.AutomationId}].[Name:{elementProperties.Name}].[Class:{elementProperties.ClassName}]";
@@ -318,6 +348,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void uiBtnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+        }
+
+        private void BuildActivateWindowCommand()
+        {
+            dynamic activateWindowCommand = TypeMethods.CreateTypeInstance(_container, "ActivateWindowCommand");
+            activateWindowCommand.v_WindowName = _windowName;
+
+            _sequenceCommandList.Add(activateWindowCommand);
         }
 
         private void BuildElementClickActionCommand(string clickType)
