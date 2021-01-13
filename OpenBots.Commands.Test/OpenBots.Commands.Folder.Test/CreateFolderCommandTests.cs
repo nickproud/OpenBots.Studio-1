@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Folder.Test
         [Fact]
         public void CreatesFolder()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _createFolder = new CreateFolderCommand();
 
             string folderName = "newFolder";
@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Folder.Test
         [Fact]
         public void HandlesInvalidFilepathInput()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _createFolder = new CreateFolderCommand();
 
             string folderName = "newFolder";

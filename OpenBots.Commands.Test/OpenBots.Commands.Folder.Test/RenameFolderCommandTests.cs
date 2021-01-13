@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Folder.Test
         [Fact]
         public void RenamesFolder()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _renameFolder = new RenameFolderCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Folder.Test
         [Fact]
         public void HandlesInvalidSourceFolderInput()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _renameFolder = new RenameFolderCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Folder.Test
 
         private void resetFolderName()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _renameFolder = new RenameFolderCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;

@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Variable.Test
         [Fact]
         public void SetsVariable()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setVariable = new SetVariableCommand();
 
             "valueToSet".StoreInUserVariable(_engine, "{testValue}");
@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Variable.Test
         [Fact]
         public void SetsVariableWithMath()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setVariable = new SetVariableCommand();
 
             "1".StoreInUserVariable(_engine, "{testValue}");

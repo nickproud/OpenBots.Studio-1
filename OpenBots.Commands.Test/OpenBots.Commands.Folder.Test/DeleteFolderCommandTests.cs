@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Folder.Test
         [Fact]
         public void DeletesFolder()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _deleteFolder = new DeleteFolderCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;

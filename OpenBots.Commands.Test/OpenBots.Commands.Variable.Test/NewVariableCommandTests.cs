@@ -13,7 +13,7 @@ namespace OpenBots.Commands.Variable.Test
         [Fact]
         public void CreatesNewVariable()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _newVariable = new NewVariableCommand();
 
             "testValue".StoreInUserVariable(_engine, "{testValue}");
@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Variable.Test
         [Fact]
         public void ErrorIfVariableExists()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _newVariable = new NewVariableCommand();
 
             "testValue".StoreInUserVariable(_engine, "{testValue}");
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Variable.Test
         [Fact]
         public void ReplaceIfVariableExists()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _newVariable = new NewVariableCommand();
 
             "testValue".StoreInUserVariable(_engine, "{testValue}");
