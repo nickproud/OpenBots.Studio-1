@@ -174,7 +174,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     var windowName = process.MainWindowTitle;
                     Console.WriteLine(windowName);
 
-                    if (_windowName != windowName)
+                    if (_windowName != windowName && !string.IsNullOrEmpty(windowName))
                     {
                         _windowName = windowName;
 

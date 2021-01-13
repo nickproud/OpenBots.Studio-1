@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Window
 		[SampleUsage("Untitled - Notepad || {vWindow}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[Editor("GetWindowNameHelper", typeof(UIAdditionalHelperType))]
+		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
 		public string v_WindowName { get; set; }
 
 		public ActivateWindowCommand()

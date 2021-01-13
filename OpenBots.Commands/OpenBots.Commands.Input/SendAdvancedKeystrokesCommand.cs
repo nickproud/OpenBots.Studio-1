@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("Untitled - Notepad || Current Window || {vWindow}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
 		public string v_WindowName { get; set; }
 
 		[Required]

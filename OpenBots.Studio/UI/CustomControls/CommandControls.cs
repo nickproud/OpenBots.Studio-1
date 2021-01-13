@@ -552,10 +552,10 @@ namespace OpenBots.UI.CustomControls
                         helperControl.CommandDisplay = "Encrypt Text";
                         helperControl.Click += (sender, e) => EncryptText(sender, e, (frmCommandEditor)editor);
                         break;
-                    case UIAdditionalHelperType.GetWindowNameHelper:
+                    case UIAdditionalHelperType.CaptureWindowHelper:
                         //show window name helper
                         helperControl.CommandImage = Resources.command_window;
-                        helperControl.CommandDisplay = "Get Window Name";
+                        helperControl.CommandDisplay = "Capture Window Name";
                         helperControl.Click += (sender, e) => GetWindowName(sender, e);
                         break;
                 }
@@ -1214,13 +1214,9 @@ namespace OpenBots.UI.CustomControls
                 settings.Save(settings);
             }
 
-            
-
+            SendAllFormsToBack();
             GlobalHook.StartElementCaptureHook(true);
             GlobalHook.MouseEvent += (se, ev) => GlobalHook_MouseEvent(se, ev, (CommandItemControl)sender, settings, minimizePreference);
-
-            HideAllForms();
-            //ShowAllForms();
         }
 
         private void GlobalHook_MouseEvent(object sender, MouseCoordinateEventArgs e, CommandItemControl inputBox = null, 
@@ -1239,8 +1235,6 @@ namespace OpenBots.UI.CustomControls
 
                     var windowName = process.MainWindowTitle;
 
-                    ShowAllForms();
-
                     if (inputBox.Tag is ComboBox)
                     {
                         ComboBox targetComboBox = (ComboBox)inputBox.Tag;
@@ -1257,10 +1251,7 @@ namespace OpenBots.UI.CustomControls
 
                 }
                 catch (Exception)
-                {
-                    
-
-                    ShowAllForms();
+                {                  
                     if (minimizePreference)
                     {
                         settings.ClientSettings.MinimizeToTray = true;
@@ -1272,6 +1263,29 @@ namespace OpenBots.UI.CustomControls
                     MessageBox.Show("Could not find Window", "Error");
                 }
             } 
+        }
+
+        public void SendAllFormsToBack()
+        {
+            foreach (Form form in Application.OpenForms)
+                SendFormToBack(form);
+
+            Thread.Sleep(1000);
+        }
+
+        public delegate void MoveFormToBackDelegate(Form form);
+        public void SendFormToBack(Form form)
+        {
+            if (form.InvokeRequired)
+            {
+                var d = new MoveFormToBackDelegate(SendFormToBack);
+                form.Invoke(d, new object[] { form });
+            }
+            else
+            {
+                form.TopMost = false;
+                form.SendToBack();
+            }              
         }
 
         public void ShowAllForms()
