@@ -52,6 +52,11 @@ namespace OpenBots.Commands.Folder
 			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
 			var newFolderName = v_NewName.ConvertUserVariableToString(engine);
 
+			if (!Directory.Exists(sourceFolder))
+            {
+				throw new DirectoryNotFoundException($"Directory {sourceFolder} does not exist");
+            }
+
 			//get source folder name and info
 			DirectoryInfo sourceFolderInfo = new DirectoryInfo(sourceFolder);
 

@@ -61,6 +61,11 @@ namespace OpenBots.Commands.Folder
 			var destinationDirectory = v_DestinationDirectory.ConvertUserVariableToString(engine);
 			var newFolder = v_NewFolderName.ConvertUserVariableToString(engine);
 
+            if (!Directory.Exists(destinationDirectory))
+            {
+				throw new DirectoryNotFoundException($"Directory {destinationDirectory} is not a valid directory");
+            }
+
 			var finalPath = Path.Combine(destinationDirectory, newFolder);
 			//delete folder if it exists AND the delete option is selected 
 			if (v_DeleteExisting == "Yes" && Directory.Exists(finalPath))
