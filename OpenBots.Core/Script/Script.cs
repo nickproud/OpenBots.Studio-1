@@ -78,7 +78,7 @@ namespace OpenBots.Core.Script
             //save variables to file
             script.Variables = engineContext.Variables;
 
-            //save variables to file
+            //save arguments to file
             script.Arguments = engineContext.Arguments;
 
             //save elements to file
