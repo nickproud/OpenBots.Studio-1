@@ -1,0 +1,76 @@
+{
+  "$type": "OpenBots.Core.Script.Script, OpenBots.Core",
+  "Commands": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Task.RunTaskCommand, OpenBots.Commands.Task",
+        "v_TaskPath": "{ProjectPath}\\test.json",
+        "v_AssignArguments": true,
+        "v_ArgumentAssignments": [
+          {
+            "ArgumentName": "{in_newArg}",
+            "ArgumentValue": "{start}",
+            "ArgumentDirection": "In"
+          },
+          {
+            "ArgumentName": "{out_arg}",
+            "ArgumentValue": "{received}",
+            "ArgumentDirection": "Out"
+          }
+        ],
+        "CommandID": "91c95b13-fcb9-4f3b-9bdf-e85fca9aab2a",
+        "CommandName": "RunTaskCommand",
+        "SelectionName": "Run Task",
+        "LineNumber": 1,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "v_IsPrivate": false,
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.ShowMessageCommand, OpenBots.Commands.Misc",
+        "v_Message": "{received}",
+        "v_AutoCloseAfter": "0",
+        "CommandID": "967d705c-40a6-4e20-b7f9-f80881b549e7",
+        "CommandName": "ShowMessageCommand",
+        "SelectionName": "Show Message",
+        "LineNumber": 2,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "v_IsPrivate": false,
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    }
+  ],
+  "Variables": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "received",
+      "VariableValue": null,
+      "IsSecureString": false
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "start",
+      "VariableValue": "hello",
+      "IsSecureString": false
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "ProjectPath",
+      "VariableValue": "Value Provided at Runtime",
+      "IsSecureString": false
+    }
+  ],
+  "Arguments": [],
+  "Elements": [],
+  "Version": "1.2.1.0"
+}

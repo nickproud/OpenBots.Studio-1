@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Task
 		[DisplayName("Task Arguments")]
 		[Description("Enter an ArgumentValue for each input argument.")]
 		[SampleUsage("Hello World || {vArgumentValue}")]
-		[Remarks("For inputs, set ArgumentDreiction to *In*. For outputs, set ArgumentDirection to *Out*. " +
+		[Remarks("For inputs, set ArgumentDirection to *In*. For outputs, set ArgumentDirection to *Out*. " +
 				 "Failure to assign an ArgumenDirection value will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		public DataTable v_ArgumentAssignments { get; set; }
