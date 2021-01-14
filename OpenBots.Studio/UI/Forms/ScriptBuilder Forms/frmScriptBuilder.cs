@@ -19,9 +19,9 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
+using OpenBots.Core.Server.User;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls.CustomControls;
-using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
@@ -30,7 +30,6 @@ using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -39,7 +38,6 @@ using System.Reflection;
 using System.Windows.Forms;
 using IContainer = Autofac.IContainer;
 using Point = System.Drawing.Point;
-using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -189,7 +187,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private ApplicationSettings _appSettings;
         private DateTime _lastAntiIdleEvent;
         private int _reqdIndex;
-        private int _selectedIndex = -1;
         private List<int> _matchingSearchIndex = new List<int>();
         private int _currentIndex = -1;
         private UIListView _selectedTabScriptActions;
@@ -381,27 +378,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             tpbLoadingSpinner.Visible = false;
         }
 
-        private void pnlControlContainer_Paint(object sender, PaintEventArgs e)
-        {
-            //Rectangle rect = new Rectangle(0, 0, pnlControlContainer.Width, pnlControlContainer.Height);
-            //using (LinearGradientBrush brush = new LinearGradientBrush(rect, Color.White, Color.WhiteSmoke, LinearGradientMode.Vertical))
-            //{
-            //    e.Graphics.FillRectangle(brush, rect);
-            //}
-
-            //Pen steelBluePen = new Pen(Color.SteelBlue, 2);
-            //Pen lightSteelBluePen = new Pen(Color.LightSteelBlue, 1);
-            ////e.Graphics.DrawLine(steelBluePen, 0, 0, pnlControlContainer.Width, 0);
-            //e.Graphics.DrawLine(lightSteelBluePen, 0, 0, pnlControlContainer.Width, 0);
-            //e.Graphics.DrawLine(lightSteelBluePen, 0, pnlControlContainer.Height - 1, pnlControlContainer.Width, pnlControlContainer.Height - 1);
-        }
-
-        private void pbMainLogo_Click(object sender, EventArgs e)
-        {
-            frmAbout aboutForm = new frmAbout();
-            aboutForm.Show();
-        }
-
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)
         {
             _selectedTabScriptActions.Columns[2].Width = Width - 340;
@@ -465,14 +441,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             _notificationText = textToDisplay;
             _notificationColor = textColor;
-            //lblStatus.Left = 20;
-            //lblStatus.Text = textToDisplay;
 
             pnlStatus.SuspendLayout();
-            //for (int i = 0; i < 30; i++)
-            //{
-            //    tlpControls.RowStyles[1].Height = i;
-            //}
+
             ShowNotificationRow();
             pnlStatus.ResumeLayout();
             _isDisplaying = true;
@@ -481,10 +452,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void HideNotification()
         {
             pnlStatus.SuspendLayout();
-            //for (int i = 30; i > 0; i--)
-            //{
-            //    tlpControls.RowStyles[1].Height = i;
-            //}
+
             HideNotificationRow();
             pnlStatus.ResumeLayout();
             _isDisplaying = false;
@@ -741,9 +709,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 Notify($"Could not find 'project.config' for {senderLink.Tag}", Color.Red);
         }
 
-        #endregion
-
-        
+        #endregion        
     }
 }
 

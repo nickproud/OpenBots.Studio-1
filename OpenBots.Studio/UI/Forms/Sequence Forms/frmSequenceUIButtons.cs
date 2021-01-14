@@ -1,26 +1,11 @@
-﻿using Autofac;
-using Newtonsoft.Json;
-using OpenBots.Core.Command;
-using OpenBots.Core.Enums;
-using OpenBots.Nuget;
-using OpenBots.Core.IO;
+﻿using OpenBots.Core.Command;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
-using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Studio.Utilities;
-using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
-using OpenBots.UI.Supplement_Forms;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
-using OpenBots.Core.Model.EngineModel;
 using System.ComponentModel;
-using OpenBots.Core.Server.User;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.Sequence_Forms
 {
@@ -31,7 +16,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void ClearSelectedListViewItems()
         {
             SelectedTabScriptActions.SelectedItems.Clear();
-            _selectedIndex = -1;
             SelectedTabScriptActions.Invalidate();
         }
 

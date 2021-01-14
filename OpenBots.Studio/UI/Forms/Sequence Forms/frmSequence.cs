@@ -1,38 +1,26 @@
 ﻿using Autofac;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
-using OpenBots.Core.IO;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls.CustomControls;
-using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
-using OpenBots.UI.Forms.Supplement_Forms;
-using Serilog.Core;
+using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using IContainer = Autofac.IContainer;
-using Point = System.Drawing.Point;
-using OpenBots.Core.Server.User;
-using OpenBots.UI.Forms.ScriptBuilder_Forms;
 
 namespace OpenBots.UI.Forms.Sequence_Forms
 {
     public partial class frmSequence : Form
-    //Form tracks the overall configuration and enables script editing, saving, and running
-    //Features ability to add, drag/drop reorder commands
     {
         #region Instance Variables
         //engine context variables
@@ -50,11 +38,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private bool _isDisplaying;
         private string _notificationText;
         private Color _notificationColor;
-        private string _notificationPaintedText;      
-
-        //debug variables        
-
-        public bool IsUnhandledException { get; set; }       
+        private string _notificationPaintedText;             
 
         //command search variables
         private TreeView _tvCommandsCopy;
@@ -73,9 +57,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private ImageList _uiImages;
         private ApplicationSettings _appSettings;
         private DateTime _lastAntiIdleEvent;
-        private int _selectedIndex = -1;
-        private List<int> _matchingSearchIndex = new List<int>();
-        private int _currentIndex = -1;
         public UIListView SelectedTabScriptActions { get; set; }
         #endregion
 
@@ -170,28 +151,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             notifyTray.Dispose();
         }
 
-
-        private void pnlControlContainer_Paint(object sender, PaintEventArgs e)
-        {
-            //Rectangle rect = new Rectangle(0, 0, pnlControlContainer.Width, pnlControlContainer.Height);
-            //using (LinearGradientBrush brush = new LinearGradientBrush(rect, Color.White, Color.WhiteSmoke, LinearGradientMode.Vertical))
-            //{
-            //    e.Graphics.FillRectangle(brush, rect);
-            //}
-
-            //Pen steelBluePen = new Pen(Color.SteelBlue, 2);
-            //Pen lightSteelBluePen = new Pen(Color.LightSteelBlue, 1);
-            ////e.Graphics.DrawLine(steelBluePen, 0, 0, pnlControlContainer.Width, 0);
-            //e.Graphics.DrawLine(lightSteelBluePen, 0, 0, pnlControlContainer.Width, 0);
-            //e.Graphics.DrawLine(lightSteelBluePen, 0, pnlControlContainer.Height - 1, pnlControlContainer.Width, pnlControlContainer.Height - 1);
-        }
-
-        private void pbMainLogo_Click(object sender, EventArgs e)
-        {
-            frmAbout aboutForm = new frmAbout();
-            aboutForm.Show();
-        }
-
         private void frmSequence_SizeChanged(object sender, EventArgs e)
         {
             SelectedTabScriptActions.Columns[2].Width = Width - 340;
@@ -250,14 +209,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             _notificationText = textToDisplay;
             _notificationColor = textColor;
-            //lblStatus.Left = 20;
-            //lblStatus.Text = textToDisplay;
 
             pnlStatus.SuspendLayout();
-            //for (int i = 0; i < 30; i++)
-            //{
-            //    tlpControls.RowStyles[1].Height = i;
-            //}
+
             ShowNotificationRow();
             pnlStatus.ResumeLayout();
             _isDisplaying = true;
@@ -266,10 +220,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void HideNotification()
         {
             pnlStatus.SuspendLayout();
-            //for (int i = 30; i > 0; i--)
-            //{
-            //    tlpControls.RowStyles[1].Height = i;
-            //}
+
             HideNotificationRow();
             pnlStatus.ResumeLayout();
             _isDisplaying = false;
@@ -484,7 +435,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             txtCommandSearch.Clear();
         }
-
         #endregion      
     }
 }

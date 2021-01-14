@@ -49,7 +49,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newLstScriptActions.View = View.Details;
             newLstScriptActions.DrawSubItem += new DrawListViewSubItemEventHandler(lstScriptActions_DrawSubItem);
             newLstScriptActions.ItemDrag += new ItemDragEventHandler(lstScriptActions_ItemDrag);
-            newLstScriptActions.SelectedIndexChanged += new EventHandler(lstScriptActions_SelectedIndexChanged);
             newLstScriptActions.DragDrop += new DragEventHandler(lstScriptActions_DragDrop);
             newLstScriptActions.DragEnter += new DragEventHandler(lstScriptActions_DragEnter);
             newLstScriptActions.DoubleClick += new EventHandler(lstScriptActions_DoubleClick);
@@ -849,24 +848,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     cmsScriptActions.Show(Cursor.Position);
                 }
-            }
-        }
-
-        private void lstScriptActions_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!_appSettings.ClientSettings.InsertCommandsInline)
-                return;
-
-            //check to see if an item has been selected last
-            if (_selectedTabScriptActions.SelectedItems.Count > 0)
-            {
-                _selectedIndex = _selectedTabScriptActions.SelectedItems[0].Index;
-                //FormatCommandListView();
-            }
-            else
-            {
-                //nothing is selected
-                _selectedIndex = -1;
             }
         }
 

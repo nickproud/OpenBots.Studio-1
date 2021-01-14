@@ -1,6 +1,5 @@
 ﻿using OpenBots.Core.Common;
 using OpenBots.Core.Script;
-using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -216,36 +215,29 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             //various advanced keystroke shortcuts for saving, creating new var/arg/elem, shortcut menu, etc.
             if (e.Control)
             {
-                    switch (e.KeyCode)
-                    {
-                        case Keys.S:
-                            uiBtnSaveSequence_Click(null, null);
-                            break;
-                        case Keys.J:
-                            OpenArgumentManager();
-                            break;
-                        case Keys.K:
-                            OpenVariableManager();
-                            break;
-                        case Keys.L:
-                            OpenElementManager();
-                            break;
-                        case Keys.M:
-                            shortcutMenuToolStripMenuItem_Click(null, null);
-                            break;
-                        case Keys.O:
-                            About();
-                            break;
-                    }
-                
+                switch (e.KeyCode)
+                {
+                    case Keys.S:
+                        uiBtnSaveSequence_Click(null, null);
+                        break;
+                    case Keys.J:
+                        OpenArgumentManager();
+                        break;
+                    case Keys.K:
+                        OpenVariableManager();
+                        break;
+                    case Keys.L:
+                        OpenElementManager();
+                        break;
+                    case Keys.M:
+                        shortcutMenuToolStripMenuItem_Click(null, null);
+                        break;
+                    case Keys.O:
+                        aboutOpenBotsToolStripMenuItem_Click(null, null);
+                        break;
+                }               
             }
         }
         #endregion       
-        
-        private void About()
-        {
-            frmAbout frmAboutForm = new frmAbout();
-            frmAboutForm.Show();
-        }
     }
 }

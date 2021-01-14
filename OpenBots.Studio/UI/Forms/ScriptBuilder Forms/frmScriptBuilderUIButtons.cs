@@ -455,7 +455,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void ClearSelectedListViewItems()
         {
             _selectedTabScriptActions.SelectedItems.Clear();
-            _selectedIndex = -1;
             _selectedTabScriptActions.Invalidate();
         }
 

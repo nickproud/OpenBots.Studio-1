@@ -246,7 +246,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.pnlControlContainer.Name = "pnlControlContainer";
             this.pnlControlContainer.Size = new System.Drawing.Size(1776, 98);
             this.pnlControlContainer.TabIndex = 7;
-            this.pnlControlContainer.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlControlContainer_Paint);
             // 
             // grpSaveClose
             // 
