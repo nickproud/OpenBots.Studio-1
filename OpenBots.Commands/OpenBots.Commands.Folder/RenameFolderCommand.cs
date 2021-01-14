@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Folder
 			CommandName = "RenameFolderCommand";
 			SelectionName = "Rename Folder";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_folders;
 
 		}
 

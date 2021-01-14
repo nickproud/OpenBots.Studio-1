@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Folder
 			CommandName = "GetFoldersCommand";
 			SelectionName = "Get Folders";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_folders;
 
 		}
 
