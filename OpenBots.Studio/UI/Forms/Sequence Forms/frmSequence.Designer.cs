@@ -34,7 +34,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSequence));
-            OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            OpenBots.Core.Utilities.FormsUtilities.Theme theme2 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.tmrNotify = new System.Windows.Forms.Timer(this.components);
             this.cmsScriptActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.enableSelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -206,7 +206,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.moveToParentToolStripMenuItem.Name = "moveToParentToolStripMenuItem";
             this.moveToParentToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
             this.moveToParentToolStripMenuItem.Text = "Move Out To Parent";
-            this.moveToParentToolStripMenuItem.Visible = true;
             this.moveToParentToolStripMenuItem.Click += new System.EventHandler(this.moveToParentToolStripMenuItem_Click);
             // 
             // viewCodeToolStripMenuItem
@@ -476,9 +475,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.pnlPaneTabs.Name = "pnlPaneTabs";
             this.pnlPaneTabs.Size = new System.Drawing.Size(328, 711);
             this.pnlPaneTabs.TabIndex = 2;
-            theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.pnlPaneTabs.Theme = theme1;
+            theme2.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            theme2.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.pnlPaneTabs.Theme = theme2;
             // 
             // uiPaneTabs
             // 
@@ -792,7 +791,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmSequence";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OpenBots Studio";
+            this.Text = "Sequence";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSequence_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmSequence_FormClosed);
             this.Load += new System.EventHandler(this.frmSequence_Load);
