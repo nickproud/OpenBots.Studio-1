@@ -34,7 +34,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmScriptBuilder));
-            OpenBots.Core.Utilities.FormsUtilities.Theme theme2 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.cmsProjectFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCopyFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDeleteFolder = new System.Windows.Forms.ToolStripMenuItem();
@@ -1143,9 +1143,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlPaneTabs.Name = "pnlPaneTabs";
             this.pnlPaneTabs.Size = new System.Drawing.Size(328, 673);
             this.pnlPaneTabs.TabIndex = 2;
-            theme2.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            theme2.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.pnlPaneTabs.Theme = theme2;
+            theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.pnlPaneTabs.Theme = theme1;
             // 
             // tpbLoadingSpinner
             // 
@@ -1564,11 +1564,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEnter);
             this.dgvArguments.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvArguments_CellValueChanged);
             this.dgvArguments.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvArguments_CurrentCellDirtyStateChanged);
+            this.dgvArguments.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvVariablesArguments_DataBindingComplete);
             this.dgvArguments.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvArguments_DefaultValuesNeeded);
             this.dgvArguments.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvArguments.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
             this.dgvArguments.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
-            this.dgvArguments.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvVariablesArguments_DataBindingComplete);
             // 
             // argumentName
             // 
@@ -1679,7 +1679,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.lblRecentProjects.Location = new System.Drawing.Point(138, 251);
             this.lblRecentProjects.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblRecentProjects.Name = "lblRecentProjects";
-            this.lblRecentProjects.Size = new System.Drawing.Size(153, 37);
+            this.lblRecentProjects.Size = new System.Drawing.Size(194, 37);
             this.lblRecentProjects.TabIndex = 8;
             this.lblRecentProjects.Text = "Recent Projects";
             // 

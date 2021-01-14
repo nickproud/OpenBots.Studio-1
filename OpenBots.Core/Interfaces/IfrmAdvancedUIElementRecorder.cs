@@ -8,7 +8,6 @@ namespace OpenBots.Core.Infrastructure
         string LastItemClicked { get; set; }
         bool IsRecordingSequence { get; set; }
         bool IsCommandItemSelected { get; set; }
-        void SetWindowTitle(string title);
-        string GetWindowTitle();
+        string WindowName { get; set; }
     }
 }

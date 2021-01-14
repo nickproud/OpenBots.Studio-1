@@ -1029,7 +1029,7 @@ namespace OpenBots.UI.CustomControls
             if (parameterRow != null)
                 parameterValue = parameterRow.ItemArray[2].ToString();
 
-            var elementParameters = new Tuple<string, string>(newElementRecorder.cboWindowTitle.Text, parameterValue);
+            var elementParameters = new Tuple<string, string>(newElementRecorder.WindowName, parameterValue);
 
             newElementRecorder.Dispose();
 

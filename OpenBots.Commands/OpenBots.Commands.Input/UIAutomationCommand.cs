@@ -542,14 +542,14 @@ namespace OpenBots.Commands.Input
 			//get command reference
 			//create recorder
 			IfrmAdvancedUIElementRecorder newElementRecorder = commandControls.CreateAdvancedUIElementRecorderForm();
-			newElementRecorder.SetWindowTitle(RenderedControls[2].Text);
+			newElementRecorder.WindowName = RenderedControls[3].Text;
 			newElementRecorder.SearchParameters = v_UIASearchParameters;
 
 			//show form
 			((Form)newElementRecorder).ShowDialog();
 
 			//window name combobox
-			RenderedControls[2].Text = newElementRecorder.GetWindowTitle();
+			RenderedControls[3].Text = newElementRecorder.WindowName;
 
 			v_UIASearchParameters.Rows.Clear();
 

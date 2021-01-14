@@ -30,12 +30,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         public string LastItemClicked { get; set; }
         public bool IsRecordingSequence { get; set; }
         public bool IsCommandItemSelected { get; set; }
+        public string WindowName { get; set; }
         public frmScriptBuilder CallBackForm { get; set; }
         private List<ScriptCommand> _sequenceCommandList;
 
-        private DataTable _parameterSettings;
-
-        private string _windowName;
+        private DataTable _parameterSettings;      
         private bool _isFirstRecordClick;
         private bool _isRecording;
         private bool _isHookStopped;
@@ -65,6 +64,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             //create data source from windows
             cboWindowTitle.DataSource = Common.GetAvailableWindowNames();
+            if (!string.IsNullOrEmpty(WindowName))
+                cboWindowTitle.SelectedItem = WindowName;
         }
 
         private void pbRecord_Click(object sender, EventArgs e)
@@ -80,8 +81,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 SearchParameters.Rows.Clear();
 
                 //get window name and find window
-                _windowName = cboWindowTitle.Text;
-                IntPtr hWnd = User32Functions.FindWindow(_windowName);
+                WindowName = cboWindowTitle.Text;
+                IntPtr hWnd = User32Functions.FindWindow(WindowName);
 
                 if (IsRecordingSequence && _isFirstRecordClick)
                 {
@@ -115,7 +116,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     }
 
                     dynamic activateWindowCommand = TypeMethods.CreateTypeInstance(_container, "ActivateWindowCommand");
-                    activateWindowCommand.v_WindowName = _windowName;
+                    activateWindowCommand.v_WindowName = WindowName;
                     _sequenceCommandList.Add(activateWindowCommand);
                 }
 
@@ -123,7 +124,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 if (hWnd != IntPtr.Zero)
                 {
                     //set window state and move to 0,0
-                    User32Functions.ActivateWindow(_windowName);
+                    User32Functions.ActivateWindow(WindowName);
                     User32Functions.SetWindowPosition(hWnd, 0, 0);
 
                     //start global hook and wait for left mouse down event
@@ -164,26 +165,26 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             {
                 //invoke UIA
                 try
-                {
-                    DPoint point = new DPoint((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
-                    var window = User32Functions.WindowFromPoint(point);
-
-                    User32Functions.GetWindowThreadProcessId(window, out uint processId);
-                    Process process = Process.GetProcessById((int)processId);
-
-                    var windowName = process.MainWindowTitle;
-                    Console.WriteLine(windowName);
-
-                    if (_windowName != windowName && !string.IsNullOrEmpty(windowName))
-                    {
-                        _windowName = windowName;
-
-                        if (IsRecordingSequence)
-                            BuildActivateWindowCommand();
-                    }
-
+                {                    
                     if (_isRecording)
                     {
+                        DPoint point = new DPoint((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
+                        var window = User32Functions.WindowFromPoint(point);
+
+                        User32Functions.GetWindowThreadProcessId(window, out uint processId);
+                        Process process = Process.GetProcessById((int)processId);
+
+                        var windowName = process.MainWindowTitle;
+
+                        if (WindowName != windowName && !string.IsNullOrEmpty(windowName))
+                        {
+                            WindowName = windowName;
+                            cboWindowTitle.SelectedItem = WindowName;
+
+                            if (IsRecordingSequence)
+                                BuildActivateWindowCommand();
+                        }
+
                         LoadSearchParameters(e.MouseCoordinates);
                         lblDescription.Text = _recordingMessage;
                     }
@@ -353,7 +354,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void BuildActivateWindowCommand()
         {
             dynamic activateWindowCommand = TypeMethods.CreateTypeInstance(_container, "ActivateWindowCommand");
-            activateWindowCommand.v_WindowName = _windowName;
+            activateWindowCommand.v_WindowName = WindowName;
 
             _sequenceCommandList.Add(activateWindowCommand);
         }
@@ -361,7 +362,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void BuildElementClickActionCommand(string clickType)
         {
             dynamic clickElementActionCommand = TypeMethods.CreateTypeInstance(_container, "UIAutomationCommand");
-            clickElementActionCommand.v_WindowName = _windowName;
+            clickElementActionCommand.v_WindowName = WindowName;
             clickElementActionCommand.v_UIASearchParameters = SearchParameters;
             clickElementActionCommand.v_AutomationType = "Click Element";
 
@@ -411,7 +412,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             }
             else
             {
-                bool result = GlobalHook.BuildSendAdvancedKeystrokesCommand(key, _sequenceCommandList, _windowName);
+                bool result = GlobalHook.BuildSendAdvancedKeystrokesCommand(key, _sequenceCommandList, WindowName);
                 if (result) return;
             }
 
@@ -430,7 +431,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             {
                 //build keyboard command
                 dynamic setTextElementActionCommand = TypeMethods.CreateTypeInstance(_container, "UIAutomationCommand");
-                setTextElementActionCommand.v_WindowName = _windowName;
+                setTextElementActionCommand.v_WindowName = WindowName;
                 setTextElementActionCommand.v_UIASearchParameters = SearchParameters;
                 setTextElementActionCommand.v_AutomationType = "Set Text";
                 
@@ -463,10 +464,12 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             if (IsRecordingSequence && _isHookStopped)
             {
-                GlobalHook.HookStopped -= GlobalHook_HookStopped;
+                GlobalHook.HookStopped -= GlobalHook_HookStopped;               
                 FinalizeRecording();
             }
 
+            GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
+            GlobalHook.KeyDownEvent -= GlobalHook_KeyDownEvent;
             DialogResult = DialogResult.Cancel;
         }
 
@@ -478,16 +481,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             searchParameters.Columns.Add("Parameter Value");
             searchParameters.TableName = DateTime.Now.ToString("UIASearchParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
             return searchParameters;
-        }
-
-        public void SetWindowTitle(string title)
-        {
-            cboWindowTitle.Text = title;
-        }
-
-        public string GetWindowTitle()
-        {
-            return cboWindowTitle.Text;
         }
     }
 }
