@@ -290,7 +290,11 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             renameSequence.ShowDialog();
 
             if (renameSequence.DialogResult == DialogResult.OK)
+            {
                 Text = renameSequence.txtInput.Text;
+                if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
+                    uiScriptTabControl.SelectedTab.Text += " *";
+            }
 
             renameSequence.Dispose();
         }

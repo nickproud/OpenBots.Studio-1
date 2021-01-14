@@ -852,11 +852,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 SelectedTabScriptActions.Items.Remove(SelectedTabScriptActions.SelectedItems[i]);
             }
 
-            //reverse commands only if not inserting inline
-            if (!_appSettings.ClientSettings.InsertCommandsInline)
-            {
-                commandList.Reverse();
-            }
+            commandList.Reverse();
 
             //add to parent
             commandList.ForEach(x => ParentBuilder.AddCommandToListView(x));
