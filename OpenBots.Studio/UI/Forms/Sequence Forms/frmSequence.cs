@@ -40,24 +40,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         public List<ScriptVariable> ScriptVariables { get; set; }
         public List<ScriptArgument> SriptArguments { get; set; }
         public List<ScriptElement> ScriptElements { get; set; }
-        private string _scriptFilePath;
-        public string ScriptFilePath
-        {
-            get
-            {
-                return _scriptFilePath;
-            }
-            set
-            {
-                _scriptFilePath = value;
-                UpdateWindowTitle();
-            }
-        }
         public Project ScriptProject { get; set; }
         public string ScriptProjectPath { get; set; }
-        private string _mainFileName;
-        public Logger EngineLogger { get; set; }
-        public IfrmScriptEngine CurrentEngine { get; set; }
         public frmScriptBuilder ParentBuilder { get; set; }        
 
         //notification variables
@@ -68,90 +52,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private Color _notificationColor;
         private string _notificationPaintedText;      
 
-        //debug variables
-        private int _debugLine;
-        public int DebugLine
-        {
-            get
-            {
-                return _debugLine;
-            }
-            set
-            {
-                _debugLine = value;
-                if (_debugLine > 0)
-                {
-                    try
-                    {
-                        IsScriptRunning = true;
-                        SelectedTabScriptActions.EnsureVisible(_debugLine - 1);
-                    }
-                    catch (Exception)
-                    {
-                        //log exception?
-                    }
-                }
-                else if (_debugLine == 0)
-                {
-                    IsScriptRunning = false;
-                    IsScriptSteppedOver = false;
-                    IsScriptSteppedInto = false;
-                }
+        //debug variables        
 
-                SelectedTabScriptActions.Invalidate();
-                //FormatCommandListView();
-            }
-        }
-        private bool _isScriptRunning;
-        public bool IsScriptRunning
-        {
-            get
-            {
-                return _isScriptRunning;
-            }
-            set
-            {
-                _isScriptRunning = value;
-                if (_isScriptRunning)
-                {
-                    try
-                    {
-                        uiVariableArgumentTabs.Visible = false;
-                        splitContainerScript.Panel2Collapsed = true;
-                        uiScriptTabControl.AllowDrop = false;
-                    }
-                    catch (Exception)
-                    {
-                        //DragDrop registration did not succeed
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        //do after execution stops and right before the variable/argument tabs are made visible
-                        if (!uiVariableArgumentTabs.Visible)
-                        {
-                            dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
-                            dgvArguments.DataSource = new BindingList<ScriptArgument>(SriptArguments);
-                            splitContainerScript.Panel2Collapsed = false;
-                        }
-                        uiVariableArgumentTabs.Visible = true;
-                        uiScriptTabControl.AllowDrop = true;
-                    }
-                    catch (Exception)
-                    {
-                        //DragDrop registration did not succeed
-                    }
-                }                    
-            }
-        }
-        public bool IsScriptPaused { get; set; }
-        public bool IsScriptSteppedOver { get; set; }
-        public bool IsScriptSteppedInto { get; set; }
         public bool IsUnhandledException { get; set; }       
-        private bool _isDebugMode;
-        private bool _isRunTaskCommand;
 
         //command search variables
         private TreeView _tvCommandsCopy;
@@ -159,8 +62,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         //package manager variables
         public IContainer AContainer { get; set; }
-        private ContainerBuilder _builder;
-        private string _packagesPath;
 
         //variable/argument tab variables
         private List<string> _existingVarArgSearchList;
@@ -169,17 +70,13 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
         private List<AutomationCommand> _automationCommands;
-        private bool _editMode;
         private ImageList _uiImages;
         private ApplicationSettings _appSettings;
         private DateTime _lastAntiIdleEvent;
-        private int _reqdIndex;
         private int _selectedIndex = -1;
         private List<int> _matchingSearchIndex = new List<int>();
         private int _currentIndex = -1;
         public UIListView SelectedTabScriptActions { get; set; }
-        private Point _lastClickPosition;
-        private bool _isSequence;
         #endregion
 
         #region Form Events
@@ -194,27 +91,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
         }
 
-        private void UpdateWindowTitle()
-        {
-            if (ScriptProject.ProjectName != null)
-            {
-                Text = "OpenBots Studio - " + ScriptProject.ProjectName;
-            }
-            else
-            {
-                Text = "OpenBots Studio";
-            }
-        }
-
         private void frmSequence_Load(object sender, EventArgs e)
         {           
-            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
-            _packagesPath = Path.Combine(appDataPath, "packages");
-            if (!Directory.Exists(_packagesPath))
-                Directory.CreateDirectory(_packagesPath);
-
-            _builder = new ContainerBuilder();
-
             //set controls double buffered
             foreach (Control control in Controls)
             {
@@ -225,40 +103,10 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
             //get app settings
             _appSettings = new ApplicationSettings();
-            _appSettings = _appSettings.GetOrCreateApplicationSettings();
-
-            //get scripts folder
-            var rpaScriptsFolder = Folders.GetFolder(FolderType.ScriptsFolder);
-
-            if (!Directory.Exists(rpaScriptsFolder))
-            {
-                frmDialog userDialog = new frmDialog("Would you like to create a folder to save your scripts in now? " +
-                    "A script folder is required to save scripts generated with this application. " +
-                    "The new script folder path would be '" + rpaScriptsFolder + "'.", "Unable to locate Script Folder!",
-                    DialogType.YesNo, 0);
-
-                if (userDialog.ShowDialog() == DialogResult.OK)
-                {
-                    Directory.CreateDirectory(rpaScriptsFolder);
-                }
-
-                userDialog.Dispose();
-            }
-
+            _appSettings = _appSettings.GetOrCreateApplicationSettings();           
 
             //no height for status bar
             HideNotificationRow();
-
-            //instantiate for script variables
-            if (!_editMode)
-            {
-                ScriptVariables = new List<ScriptVariable>();
-                SriptArguments = new List<ScriptArgument>();
-                ScriptElements = new List<ScriptElement>();
-
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(SriptArguments);
-            }
 
             //set listview column size
             frmSequence_SizeChanged(null, null);
@@ -267,10 +115,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         public void LoadCommands()
         {
             //load all commands           
-            if (_isSequence)
-                _automationCommands = TypeMethods.GenerateCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
-            else
-                _automationCommands = TypeMethods.GenerateCommands(AContainer);
+            _automationCommands = TypeMethods.GenerateCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
 
             //instantiate and populate display icons for commands
             _uiImages = UIImage.UIImageList(_automationCommands);
@@ -304,7 +149,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             DialogResult result;
 
-            if (_isSequence && uiScriptTabControl.TabPages[0].Text.Contains(" *") && DialogResult == DialogResult.Cancel)
+            if (uiScriptTabControl.TabPages[0].Text.Contains(" *") && DialogResult == DialogResult.Cancel)
             {
                 result = MessageBox.Show($"Would you like to save the sequence before closing?",
                                          $"Save Sequence", MessageBoxButtons.YesNoCancel);
@@ -316,7 +161,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
                 return;
             }
-            else if (_isSequence && DialogResult == DialogResult.OK)
+            else if (DialogResult == DialogResult.OK)
                 return;
         }
 
@@ -325,12 +170,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             notifyTray.Dispose();
         }
 
-        
-        private void frmSequence_Shown(object sender, EventArgs e)
-        {
-            if (_editMode)
-                return;
-        }
 
         private void pnlControlContainer_Paint(object sender, PaintEventArgs e)
         {
@@ -377,11 +216,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         #region Bottom Notification Panel
         private void tmrNotify_Tick(object sender, EventArgs e)
         {
-            if (CurrentEngine == null)
-            {
-                IsScriptRunning = false;
-            }
-
             if (_appSettings == null)
             {
                 return;
@@ -651,26 +485,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             txtCommandSearch.Clear();
         }
 
-        #endregion
-
-        #region Link Labels
-        private void lnkGitProject_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("https://github.com/OpenBotsAI/OpenBots.Studio");
-        }
-        private void lnkGitLatestReleases_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("https://github.com/OpenBotsAI/OpenBots.Studio/releases");
-        }
-        private void lnkGitIssue_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("https://github.com/OpenBotsAI/OpenBots.Studio/issues/new");
-        }
-        private void lnkGitWiki_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("https://openbots.ai/api/execute-dll/");
-        }
-        #endregion       
+        #endregion      
     }
 }
 

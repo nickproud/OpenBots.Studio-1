@@ -51,7 +51,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.pnlControlContainer = new System.Windows.Forms.Panel();
             this.grpSaveClose = new OpenBots.UI.CustomControls.CustomUIControls.UIGroupBox();
             this.uiBtnRenameSequence = new OpenBots.Core.UI.Controls.UIPictureButton();
-            this.uiBtnRestart = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnClose = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnSaveSequence = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.grpVariable = new OpenBots.UI.CustomControls.CustomUIControls.UIGroupBox();
@@ -63,6 +62,13 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.pnlStatus = new System.Windows.Forms.Panel();
             this.splitContainerStudioControls = new OpenBots.UI.CustomControls.CustomUIControls.UISplitContainer();
             this.pnlPaneTabs = new OpenBots.UI.CustomControls.CustomUIControls.UIPanel();
+            this.uiPaneTabs = new System.Windows.Forms.TabControl();
+            this.tpCommands = new System.Windows.Forms.TabPage();
+            this.tlpCommands = new System.Windows.Forms.TableLayoutPanel();
+            this.tvCommands = new OpenBots.UI.CustomControls.CustomUIControls.UITreeView();
+            this.pnlCommandSearch = new System.Windows.Forms.Panel();
+            this.uiBtnClearCommandSearch = new OpenBots.UI.CustomControls.CustomUIControls.UIIconButton();
+            this.txtCommandSearch = new System.Windows.Forms.TextBox();
             this.splitContainerScript = new OpenBots.UI.CustomControls.CustomUIControls.UISplitContainer();
             this.uiScriptTabControl = new OpenBots.UI.CustomControls.CustomUIControls.UITabControl();
             this.uiVariableArgumentTabs = new OpenBots.UI.CustomControls.CustomUIControls.UITabControl();
@@ -75,37 +81,16 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.argumentName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.argumentValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.direction = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.pnlCommandHelper = new System.Windows.Forms.Panel();
-            this.flwRecentFiles = new OpenBots.UI.CustomControls.CustomUIControls.UIFlowLayoutPanel();
-            this.lblFilesMissing = new System.Windows.Forms.Label();
-            this.pbRecentFiles = new System.Windows.Forms.PictureBox();
-            this.pbLinks = new System.Windows.Forms.PictureBox();
-            this.pbOpenBotsIcon = new System.Windows.Forms.PictureBox();
-            this.lblRecentProjects = new System.Windows.Forms.Label();
-            this.lnkGitWiki = new System.Windows.Forms.LinkLabel();
-            this.lnkGitIssue = new System.Windows.Forms.LinkLabel();
-            this.lnkGitLatestReleases = new System.Windows.Forms.LinkLabel();
-            this.lnkGitProject = new System.Windows.Forms.LinkLabel();
-            this.lblWelcomeToOpenBots = new System.Windows.Forms.Label();
-            this.lblWelcomeDescription = new System.Windows.Forms.Label();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clmCommand = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pnlDivider = new System.Windows.Forms.Panel();
             this.tlpControls = new System.Windows.Forms.TableLayoutPanel();
             this.ttScriptBuilder = new System.Windows.Forms.ToolTip(this.components);
-            this.tpCommands = new System.Windows.Forms.TabPage();
-            this.tlpCommands = new System.Windows.Forms.TableLayoutPanel();
-            this.pnlCommandSearch = new System.Windows.Forms.Panel();
-            this.txtCommandSearch = new System.Windows.Forms.TextBox();
-            this.uiBtnClearCommandSearch = new OpenBots.UI.CustomControls.CustomUIControls.UIIconButton();
-            this.tvCommands = new OpenBots.UI.CustomControls.CustomUIControls.UITreeView();
-            this.uiPaneTabs = new System.Windows.Forms.TabControl();
             this.cmsScriptActions.SuspendLayout();
             this.pnlControlContainer.SuspendLayout();
             this.grpSaveClose.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnRenameSequence)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.uiBtnRestart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnClose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnSaveSequence)).BeginInit();
             this.grpVariable.SuspendLayout();
@@ -119,6 +104,11 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.splitContainerStudioControls.Panel2.SuspendLayout();
             this.splitContainerStudioControls.SuspendLayout();
             this.pnlPaneTabs.SuspendLayout();
+            this.uiPaneTabs.SuspendLayout();
+            this.tpCommands.SuspendLayout();
+            this.tlpCommands.SuspendLayout();
+            this.pnlCommandSearch.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uiBtnClearCommandSearch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerScript)).BeginInit();
             this.splitContainerScript.Panel1.SuspendLayout();
             this.splitContainerScript.Panel2.SuspendLayout();
@@ -128,16 +118,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             ((System.ComponentModel.ISupportInitialize)(this.dgvVariables)).BeginInit();
             this.arguments.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvArguments)).BeginInit();
-            this.pnlCommandHelper.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecentFiles)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLinks)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbOpenBotsIcon)).BeginInit();
             this.tlpControls.SuspendLayout();
-            this.tpCommands.SuspendLayout();
-            this.tlpCommands.SuspendLayout();
-            this.pnlCommandSearch.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.uiBtnClearCommandSearch)).BeginInit();
-            this.uiPaneTabs.SuspendLayout();
             this.SuspendLayout();
             // 
             // tmrNotify
@@ -225,7 +206,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.moveToParentToolStripMenuItem.Name = "moveToParentToolStripMenuItem";
             this.moveToParentToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
             this.moveToParentToolStripMenuItem.Text = "Move Out To Parent";
-            this.moveToParentToolStripMenuItem.Visible = false;
+            this.moveToParentToolStripMenuItem.Visible = true;
             this.moveToParentToolStripMenuItem.Click += new System.EventHandler(this.moveToParentToolStripMenuItem_Click);
             // 
             // viewCodeToolStripMenuItem
@@ -271,7 +252,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             // 
             this.grpSaveClose.BackColor = System.Drawing.Color.Transparent;
             this.grpSaveClose.Controls.Add(this.uiBtnRenameSequence);
-            this.grpSaveClose.Controls.Add(this.uiBtnRestart);
             this.grpSaveClose.Controls.Add(this.uiBtnClose);
             this.grpSaveClose.Controls.Add(this.uiBtnSaveSequence);
             this.grpSaveClose.Location = new System.Drawing.Point(339, 0);
@@ -303,25 +283,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.uiBtnRenameSequence.TabIndex = 20;
             this.uiBtnRenameSequence.TabStop = false;
             this.uiBtnRenameSequence.Text = "Rename";
-            this.uiBtnRenameSequence.Visible = false;
             this.uiBtnRenameSequence.Click += new System.EventHandler(this.uiBtnRenameSequence_Click);
-            // 
-            // uiBtnRestart
-            // 
-            this.uiBtnRestart.BackColor = System.Drawing.Color.Transparent;
-            this.uiBtnRestart.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.uiBtnRestart.DisplayText = "Restart";
-            this.uiBtnRestart.DisplayTextBrush = System.Drawing.Color.AliceBlue;
-            this.uiBtnRestart.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnRestart.Image = global::OpenBots.Properties.Resources.action_bar_restart;
-            this.uiBtnRestart.IsMouseOver = false;
-            this.uiBtnRestart.Location = new System.Drawing.Point(0, 24);
-            this.uiBtnRestart.Margin = new System.Windows.Forms.Padding(4);
-            this.uiBtnRestart.Name = "uiBtnRestart";
-            this.uiBtnRestart.Size = new System.Drawing.Size(60, 62);
-            this.uiBtnRestart.TabIndex = 19;
-            this.uiBtnRestart.TabStop = false;
-            this.uiBtnRestart.Text = "Restart";
             // 
             // uiBtnClose
             // 
@@ -357,7 +319,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.uiBtnSaveSequence.TabIndex = 16;
             this.uiBtnSaveSequence.TabStop = false;
             this.uiBtnSaveSequence.Text = "Save";
-            this.uiBtnSaveSequence.Visible = false;
             this.uiBtnSaveSequence.Click += new System.EventHandler(this.uiBtnSaveSequence_Click);
             // 
             // grpVariable
@@ -520,6 +481,113 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             this.pnlPaneTabs.Theme = theme1;
             // 
+            // uiPaneTabs
+            // 
+            this.uiPaneTabs.Controls.Add(this.tpCommands);
+            this.uiPaneTabs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPaneTabs.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
+            this.uiPaneTabs.Location = new System.Drawing.Point(0, 0);
+            this.uiPaneTabs.Margin = new System.Windows.Forms.Padding(4);
+            this.uiPaneTabs.Name = "uiPaneTabs";
+            this.uiPaneTabs.SelectedIndex = 0;
+            this.uiPaneTabs.Size = new System.Drawing.Size(328, 711);
+            this.uiPaneTabs.TabIndex = 26;
+            // 
+            // tpCommands
+            // 
+            this.tpCommands.Controls.Add(this.tlpCommands);
+            this.tpCommands.Font = new System.Drawing.Font("Segoe UI Semibold", 10F);
+            this.tpCommands.ForeColor = System.Drawing.Color.SteelBlue;
+            this.tpCommands.Location = new System.Drawing.Point(4, 32);
+            this.tpCommands.Margin = new System.Windows.Forms.Padding(2);
+            this.tpCommands.Name = "tpCommands";
+            this.tpCommands.Padding = new System.Windows.Forms.Padding(2);
+            this.tpCommands.Size = new System.Drawing.Size(320, 675);
+            this.tpCommands.TabIndex = 4;
+            this.tpCommands.Text = "Commands";
+            this.tpCommands.UseVisualStyleBackColor = true;
+            // 
+            // tlpCommands
+            // 
+            this.tlpCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(136)))), ((int)(((byte)(204)))));
+            this.tlpCommands.ColumnCount = 1;
+            this.tlpCommands.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpCommands.Controls.Add(this.tvCommands, 0, 1);
+            this.tlpCommands.Controls.Add(this.pnlCommandSearch, 0, 0);
+            this.tlpCommands.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpCommands.Location = new System.Drawing.Point(2, 2);
+            this.tlpCommands.Margin = new System.Windows.Forms.Padding(2);
+            this.tlpCommands.Name = "tlpCommands";
+            this.tlpCommands.RowCount = 2;
+            this.tlpCommands.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
+            this.tlpCommands.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpCommands.Size = new System.Drawing.Size(316, 671);
+            this.tlpCommands.TabIndex = 10;
+            // 
+            // tvCommands
+            // 
+            this.tvCommands.AllowDrop = true;
+            this.tvCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
+            this.tvCommands.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.tvCommands.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvCommands.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
+            this.tvCommands.ForeColor = System.Drawing.Color.White;
+            this.tvCommands.Location = new System.Drawing.Point(4, 35);
+            this.tvCommands.Margin = new System.Windows.Forms.Padding(4);
+            this.tvCommands.Name = "tvCommands";
+            this.tvCommands.ShowLines = false;
+            this.tvCommands.ShowNodeToolTips = true;
+            this.tvCommands.Size = new System.Drawing.Size(308, 632);
+            this.tvCommands.TabIndex = 9;
+            this.tvCommands.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tvCommands_ItemDrag);
+            this.tvCommands.DoubleClick += new System.EventHandler(this.tvCommands_DoubleClick);
+            this.tvCommands.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tvCommands_KeyPress);
+            // 
+            // pnlCommandSearch
+            // 
+            this.pnlCommandSearch.Controls.Add(this.uiBtnClearCommandSearch);
+            this.pnlCommandSearch.Controls.Add(this.txtCommandSearch);
+            this.pnlCommandSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlCommandSearch.Location = new System.Drawing.Point(2, 2);
+            this.pnlCommandSearch.Margin = new System.Windows.Forms.Padding(2);
+            this.pnlCommandSearch.Name = "pnlCommandSearch";
+            this.pnlCommandSearch.Size = new System.Drawing.Size(312, 27);
+            this.pnlCommandSearch.TabIndex = 10;
+            // 
+            // uiBtnClearCommandSearch
+            // 
+            this.uiBtnClearCommandSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.uiBtnClearCommandSearch.BackColor = System.Drawing.Color.Transparent;
+            this.uiBtnClearCommandSearch.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.uiBtnClearCommandSearch.DisplayText = null;
+            this.uiBtnClearCommandSearch.DisplayTextBrush = System.Drawing.Color.White;
+            this.uiBtnClearCommandSearch.Image = global::OpenBots.Properties.Resources.commandsearch_clear;
+            this.uiBtnClearCommandSearch.IsMouseOver = false;
+            this.uiBtnClearCommandSearch.Location = new System.Drawing.Point(284, 1);
+            this.uiBtnClearCommandSearch.Margin = new System.Windows.Forms.Padding(2);
+            this.uiBtnClearCommandSearch.Name = "uiBtnClearCommandSearch";
+            this.uiBtnClearCommandSearch.Size = new System.Drawing.Size(25, 25);
+            this.uiBtnClearCommandSearch.TabIndex = 1;
+            this.uiBtnClearCommandSearch.TabStop = false;
+            this.uiBtnClearCommandSearch.Text = null;
+            this.ttScriptBuilder.SetToolTip(this.uiBtnClearCommandSearch, "Clear Search");
+            this.uiBtnClearCommandSearch.Click += new System.EventHandler(this.uiBtnClearCommandSearch_Click);
+            // 
+            // txtCommandSearch
+            // 
+            this.txtCommandSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCommandSearch.ForeColor = System.Drawing.Color.LightGray;
+            this.txtCommandSearch.Location = new System.Drawing.Point(0, 0);
+            this.txtCommandSearch.Margin = new System.Windows.Forms.Padding(2);
+            this.txtCommandSearch.Name = "txtCommandSearch";
+            this.txtCommandSearch.Size = new System.Drawing.Size(280, 30);
+            this.txtCommandSearch.TabIndex = 0;
+            this.txtCommandSearch.Text = "Type Here to Search";
+            this.txtCommandSearch.TextChanged += new System.EventHandler(this.txtCommandSearch_TextChanged);
+            this.txtCommandSearch.Enter += new System.EventHandler(this.txtCommandSearch_Enter);
+            this.txtCommandSearch.Leave += new System.EventHandler(this.txtCommandSearch_Leave);
+            // 
             // splitContainerScript
             // 
             this.splitContainerScript.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -619,7 +687,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.arguments.Location = new System.Drawing.Point(4, 4);
             this.arguments.Name = "arguments";
             this.arguments.Padding = new System.Windows.Forms.Padding(3);
-            this.arguments.Size = new System.Drawing.Size(1427, 134);
+            this.arguments.Size = new System.Drawing.Size(1427, 144);
             this.arguments.TabIndex = 1;
             this.arguments.Text = "Arguments";
             this.arguments.UseVisualStyleBackColor = true;
@@ -637,7 +705,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.dgvArguments.Name = "dgvArguments";
             this.dgvArguments.RowHeadersWidth = 51;
             this.dgvArguments.RowTemplate.Height = 24;
-            this.dgvArguments.Size = new System.Drawing.Size(1421, 128);
+            this.dgvArguments.Size = new System.Drawing.Size(1421, 138);
             this.dgvArguments.TabIndex = 2;
             this.dgvArguments.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEndEdit);
             this.dgvArguments.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEnter);
@@ -669,186 +737,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.direction.HeaderText = "Direction";
             this.direction.MinimumWidth = 6;
             this.direction.Name = "direction";
-            // 
-            // pnlCommandHelper
-            // 
-            this.pnlCommandHelper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
-            this.pnlCommandHelper.Controls.Add(this.flwRecentFiles);
-            this.pnlCommandHelper.Controls.Add(this.lblFilesMissing);
-            this.pnlCommandHelper.Controls.Add(this.pbRecentFiles);
-            this.pnlCommandHelper.Controls.Add(this.pbLinks);
-            this.pnlCommandHelper.Controls.Add(this.pbOpenBotsIcon);
-            this.pnlCommandHelper.Controls.Add(this.lblRecentProjects);
-            this.pnlCommandHelper.Controls.Add(this.lnkGitWiki);
-            this.pnlCommandHelper.Controls.Add(this.lnkGitIssue);
-            this.pnlCommandHelper.Controls.Add(this.lnkGitLatestReleases);
-            this.pnlCommandHelper.Controls.Add(this.lnkGitProject);
-            this.pnlCommandHelper.Controls.Add(this.lblWelcomeToOpenBots);
-            this.pnlCommandHelper.Controls.Add(this.lblWelcomeDescription);
-            this.pnlCommandHelper.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlCommandHelper.Location = new System.Drawing.Point(3, 3);
-            this.pnlCommandHelper.Margin = new System.Windows.Forms.Padding(4);
-            this.pnlCommandHelper.Name = "pnlCommandHelper";
-            this.pnlCommandHelper.Size = new System.Drawing.Size(1063, 411);
-            this.pnlCommandHelper.TabIndex = 7;
-            // 
-            // flwRecentFiles
-            // 
-            this.flwRecentFiles.AutoScroll = true;
-            this.flwRecentFiles.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flwRecentFiles.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.flwRecentFiles.ForeColor = System.Drawing.Color.LightSteelBlue;
-            this.flwRecentFiles.Location = new System.Drawing.Point(145, 291);
-            this.flwRecentFiles.Margin = new System.Windows.Forms.Padding(4);
-            this.flwRecentFiles.Name = "flwRecentFiles";
-            this.flwRecentFiles.Size = new System.Drawing.Size(496, 180);
-            this.flwRecentFiles.TabIndex = 12;
-            this.flwRecentFiles.WrapContents = false;
-            // 
-            // lblFilesMissing
-            // 
-            this.lblFilesMissing.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFilesMissing.ForeColor = System.Drawing.Color.SteelBlue;
-            this.lblFilesMissing.Location = new System.Drawing.Point(144, 289);
-            this.lblFilesMissing.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblFilesMissing.Name = "lblFilesMissing";
-            this.lblFilesMissing.Size = new System.Drawing.Size(448, 80);
-            this.lblFilesMissing.TabIndex = 16;
-            this.lblFilesMissing.Text = "there were no script files found in your script directory.";
-            this.lblFilesMissing.Visible = false;
-            // 
-            // pbRecentFiles
-            // 
-            this.pbRecentFiles.Image = ((System.Drawing.Image)(resources.GetObject("pbRecentFiles.Image")));
-            this.pbRecentFiles.Location = new System.Drawing.Point(15, 262);
-            this.pbRecentFiles.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecentFiles.Name = "pbRecentFiles";
-            this.pbRecentFiles.Size = new System.Drawing.Size(105, 105);
-            this.pbRecentFiles.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbRecentFiles.TabIndex = 15;
-            this.pbRecentFiles.TabStop = false;
-            // 
-            // pbLinks
-            // 
-            this.pbLinks.Image = ((System.Drawing.Image)(resources.GetObject("pbLinks.Image")));
-            this.pbLinks.Location = new System.Drawing.Point(15, 135);
-            this.pbLinks.Margin = new System.Windows.Forms.Padding(4);
-            this.pbLinks.Name = "pbLinks";
-            this.pbLinks.Size = new System.Drawing.Size(105, 105);
-            this.pbLinks.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbLinks.TabIndex = 14;
-            this.pbLinks.TabStop = false;
-            // 
-            // pbOpenBotsIcon
-            // 
-            this.pbOpenBotsIcon.Image = ((System.Drawing.Image)(resources.GetObject("pbOpenBotsIcon.Image")));
-            this.pbOpenBotsIcon.Location = new System.Drawing.Point(15, 10);
-            this.pbOpenBotsIcon.Margin = new System.Windows.Forms.Padding(4);
-            this.pbOpenBotsIcon.Name = "pbOpenBotsIcon";
-            this.pbOpenBotsIcon.Size = new System.Drawing.Size(105, 105);
-            this.pbOpenBotsIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbOpenBotsIcon.TabIndex = 13;
-            this.pbOpenBotsIcon.TabStop = false;
-            // 
-            // lblRecentProjects
-            // 
-            this.lblRecentProjects.AutoSize = true;
-            this.lblRecentProjects.Font = new System.Drawing.Font("Segoe UI Semilight", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRecentProjects.ForeColor = System.Drawing.Color.AliceBlue;
-            this.lblRecentProjects.Location = new System.Drawing.Point(138, 251);
-            this.lblRecentProjects.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblRecentProjects.Name = "lblRecentProjects";
-            this.lblRecentProjects.Size = new System.Drawing.Size(194, 37);
-            this.lblRecentProjects.TabIndex = 8;
-            this.lblRecentProjects.Text = "Recent Projects";
-            // 
-            // lnkGitWiki
-            // 
-            this.lnkGitWiki.AutoSize = true;
-            this.lnkGitWiki.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lnkGitWiki.ForeColor = System.Drawing.Color.White;
-            this.lnkGitWiki.LinkColor = System.Drawing.Color.AliceBlue;
-            this.lnkGitWiki.Location = new System.Drawing.Point(145, 211);
-            this.lnkGitWiki.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lnkGitWiki.Name = "lnkGitWiki";
-            this.lnkGitWiki.Size = new System.Drawing.Size(219, 25);
-            this.lnkGitWiki.TabIndex = 6;
-            this.lnkGitWiki.TabStop = true;
-            this.lnkGitWiki.Text = "View Documentation/Wiki";
-            this.lnkGitWiki.VisitedLinkColor = System.Drawing.Color.LightSteelBlue;
-            this.lnkGitWiki.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkGitWiki_LinkClicked);
-            // 
-            // lnkGitIssue
-            // 
-            this.lnkGitIssue.AutoSize = true;
-            this.lnkGitIssue.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lnkGitIssue.ForeColor = System.Drawing.Color.White;
-            this.lnkGitIssue.LinkColor = System.Drawing.Color.AliceBlue;
-            this.lnkGitIssue.Location = new System.Drawing.Point(145, 186);
-            this.lnkGitIssue.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lnkGitIssue.Name = "lnkGitIssue";
-            this.lnkGitIssue.Size = new System.Drawing.Size(325, 25);
-            this.lnkGitIssue.TabIndex = 5;
-            this.lnkGitIssue.TabStop = true;
-            this.lnkGitIssue.Text = "Request Enhancement or Report a bug";
-            this.lnkGitIssue.VisitedLinkColor = System.Drawing.Color.LightSteelBlue;
-            this.lnkGitIssue.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkGitIssue_LinkClicked);
-            // 
-            // lnkGitLatestReleases
-            // 
-            this.lnkGitLatestReleases.AutoSize = true;
-            this.lnkGitLatestReleases.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lnkGitLatestReleases.ForeColor = System.Drawing.Color.White;
-            this.lnkGitLatestReleases.LinkColor = System.Drawing.Color.AliceBlue;
-            this.lnkGitLatestReleases.Location = new System.Drawing.Point(145, 161);
-            this.lnkGitLatestReleases.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lnkGitLatestReleases.Name = "lnkGitLatestReleases";
-            this.lnkGitLatestReleases.Size = new System.Drawing.Size(175, 25);
-            this.lnkGitLatestReleases.TabIndex = 4;
-            this.lnkGitLatestReleases.TabStop = true;
-            this.lnkGitLatestReleases.Text = "View Latest Releases";
-            this.lnkGitLatestReleases.VisitedLinkColor = System.Drawing.Color.LightSteelBlue;
-            this.lnkGitLatestReleases.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkGitLatestReleases_LinkClicked);
-            // 
-            // lnkGitProject
-            // 
-            this.lnkGitProject.AutoSize = true;
-            this.lnkGitProject.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lnkGitProject.ForeColor = System.Drawing.Color.White;
-            this.lnkGitProject.LinkColor = System.Drawing.Color.AliceBlue;
-            this.lnkGitProject.Location = new System.Drawing.Point(145, 136);
-            this.lnkGitProject.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lnkGitProject.Name = "lnkGitProject";
-            this.lnkGitProject.Size = new System.Drawing.Size(198, 25);
-            this.lnkGitProject.TabIndex = 3;
-            this.lnkGitProject.TabStop = true;
-            this.lnkGitProject.Text = "View Project on GitHub";
-            this.lnkGitProject.VisitedLinkColor = System.Drawing.Color.LightSteelBlue;
-            this.lnkGitProject.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkGitProject_LinkClicked);
-            // 
-            // lblWelcomeToOpenBots
-            // 
-            this.lblWelcomeToOpenBots.AutoSize = true;
-            this.lblWelcomeToOpenBots.Font = new System.Drawing.Font("Segoe UI Semilight", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblWelcomeToOpenBots.ForeColor = System.Drawing.Color.AliceBlue;
-            this.lblWelcomeToOpenBots.Location = new System.Drawing.Point(139, 5);
-            this.lblWelcomeToOpenBots.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblWelcomeToOpenBots.Name = "lblWelcomeToOpenBots";
-            this.lblWelcomeToOpenBots.Size = new System.Drawing.Size(366, 37);
-            this.lblWelcomeToOpenBots.TabIndex = 2;
-            this.lblWelcomeToOpenBots.Text = "Welcome to OpenBots Studio!";
-            // 
-            // lblWelcomeDescription
-            // 
-            this.lblWelcomeDescription.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblWelcomeDescription.ForeColor = System.Drawing.Color.White;
-            this.lblWelcomeDescription.Location = new System.Drawing.Point(142, 40);
-            this.lblWelcomeDescription.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblWelcomeDescription.Name = "lblWelcomeDescription";
-            this.lblWelcomeDescription.Size = new System.Drawing.Size(350, 94);
-            this.lblWelcomeDescription.TabIndex = 1;
-            this.lblWelcomeDescription.Text = "Start building automation by double-clicking a command from the list to the left." +
-    "";
             // 
             // columnHeader2
             // 
@@ -894,113 +782,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.tlpControls.Size = new System.Drawing.Size(1776, 862);
             this.tlpControls.TabIndex = 2;
             // 
-            // tpCommands
-            // 
-            this.tpCommands.Controls.Add(this.tlpCommands);
-            this.tpCommands.Font = new System.Drawing.Font("Segoe UI Semibold", 10F);
-            this.tpCommands.ForeColor = System.Drawing.Color.SteelBlue;
-            this.tpCommands.Location = new System.Drawing.Point(4, 32);
-            this.tpCommands.Margin = new System.Windows.Forms.Padding(2);
-            this.tpCommands.Name = "tpCommands";
-            this.tpCommands.Padding = new System.Windows.Forms.Padding(2);
-            this.tpCommands.Size = new System.Drawing.Size(320, 675);
-            this.tpCommands.TabIndex = 4;
-            this.tpCommands.Text = "Commands";
-            this.tpCommands.UseVisualStyleBackColor = true;
-            // 
-            // tlpCommands
-            // 
-            this.tlpCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(136)))), ((int)(((byte)(204)))));
-            this.tlpCommands.ColumnCount = 1;
-            this.tlpCommands.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpCommands.Controls.Add(this.tvCommands, 0, 1);
-            this.tlpCommands.Controls.Add(this.pnlCommandSearch, 0, 0);
-            this.tlpCommands.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpCommands.Location = new System.Drawing.Point(2, 2);
-            this.tlpCommands.Margin = new System.Windows.Forms.Padding(2);
-            this.tlpCommands.Name = "tlpCommands";
-            this.tlpCommands.RowCount = 2;
-            this.tlpCommands.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
-            this.tlpCommands.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpCommands.Size = new System.Drawing.Size(316, 671);
-            this.tlpCommands.TabIndex = 10;
-            // 
-            // pnlCommandSearch
-            // 
-            this.pnlCommandSearch.Controls.Add(this.uiBtnClearCommandSearch);
-            this.pnlCommandSearch.Controls.Add(this.txtCommandSearch);
-            this.pnlCommandSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlCommandSearch.Location = new System.Drawing.Point(2, 2);
-            this.pnlCommandSearch.Margin = new System.Windows.Forms.Padding(2);
-            this.pnlCommandSearch.Name = "pnlCommandSearch";
-            this.pnlCommandSearch.Size = new System.Drawing.Size(312, 27);
-            this.pnlCommandSearch.TabIndex = 10;
-            // 
-            // txtCommandSearch
-            // 
-            this.txtCommandSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCommandSearch.ForeColor = System.Drawing.Color.LightGray;
-            this.txtCommandSearch.Location = new System.Drawing.Point(0, 0);
-            this.txtCommandSearch.Margin = new System.Windows.Forms.Padding(2);
-            this.txtCommandSearch.Name = "txtCommandSearch";
-            this.txtCommandSearch.Size = new System.Drawing.Size(280, 30);
-            this.txtCommandSearch.TabIndex = 0;
-            this.txtCommandSearch.Text = "Type Here to Search";
-            this.txtCommandSearch.TextChanged += new System.EventHandler(this.txtCommandSearch_TextChanged);
-            this.txtCommandSearch.Enter += new System.EventHandler(this.txtCommandSearch_Enter);
-            this.txtCommandSearch.Leave += new System.EventHandler(this.txtCommandSearch_Leave);
-            // 
-            // uiBtnClearCommandSearch
-            // 
-            this.uiBtnClearCommandSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.uiBtnClearCommandSearch.BackColor = System.Drawing.Color.Transparent;
-            this.uiBtnClearCommandSearch.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.uiBtnClearCommandSearch.DisplayText = null;
-            this.uiBtnClearCommandSearch.DisplayTextBrush = System.Drawing.Color.White;
-            this.uiBtnClearCommandSearch.Image = global::OpenBots.Properties.Resources.commandsearch_clear;
-            this.uiBtnClearCommandSearch.IsMouseOver = false;
-            this.uiBtnClearCommandSearch.Location = new System.Drawing.Point(284, 1);
-            this.uiBtnClearCommandSearch.Margin = new System.Windows.Forms.Padding(2);
-            this.uiBtnClearCommandSearch.Name = "uiBtnClearCommandSearch";
-            this.uiBtnClearCommandSearch.Size = new System.Drawing.Size(25, 25);
-            this.uiBtnClearCommandSearch.TabIndex = 1;
-            this.uiBtnClearCommandSearch.TabStop = false;
-            this.uiBtnClearCommandSearch.Text = null;
-            this.ttScriptBuilder.SetToolTip(this.uiBtnClearCommandSearch, "Clear Search");
-            this.uiBtnClearCommandSearch.Click += new System.EventHandler(this.uiBtnClearCommandSearch_Click);
-            // 
-            // tvCommands
-            // 
-            this.tvCommands.AllowDrop = true;
-            this.tvCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
-            this.tvCommands.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.tvCommands.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tvCommands.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
-            this.tvCommands.ForeColor = System.Drawing.Color.White;
-            this.tvCommands.Location = new System.Drawing.Point(4, 35);
-            this.tvCommands.Margin = new System.Windows.Forms.Padding(4);
-            this.tvCommands.Name = "tvCommands";
-            this.tvCommands.ShowLines = false;
-            this.tvCommands.ShowNodeToolTips = true;
-            this.tvCommands.Size = new System.Drawing.Size(308, 632);
-            this.tvCommands.TabIndex = 9;
-            this.tvCommands.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tvCommands_ItemDrag);
-            this.tvCommands.DoubleClick += new System.EventHandler(this.tvCommands_DoubleClick);
-            this.tvCommands.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tvCommands_KeyPress);
-            // 
-            // uiPaneTabs
-            // 
-            this.uiPaneTabs.Controls.Add(this.tpCommands);
-            this.uiPaneTabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPaneTabs.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
-            this.uiPaneTabs.Location = new System.Drawing.Point(0, 0);
-            this.uiPaneTabs.Margin = new System.Windows.Forms.Padding(4);
-            this.uiPaneTabs.Name = "uiPaneTabs";
-            this.uiPaneTabs.SelectedIndex = 0;
-            this.uiPaneTabs.Size = new System.Drawing.Size(328, 711);
-            this.uiPaneTabs.TabIndex = 26;
-            // 
             // frmSequence
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
@@ -1016,14 +797,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSequence_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmSequence_FormClosed);
             this.Load += new System.EventHandler(this.frmSequence_Load);
-            this.Shown += new System.EventHandler(this.frmSequence_Shown);
             this.SizeChanged += new System.EventHandler(this.frmSequence_SizeChanged);
             this.Resize += new System.EventHandler(this.frmSequence_Resize);
             this.cmsScriptActions.ResumeLayout(false);
             this.pnlControlContainer.ResumeLayout(false);
             this.grpSaveClose.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnRenameSequence)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.uiBtnRestart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnClose)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnSaveSequence)).EndInit();
             this.grpVariable.ResumeLayout(false);
@@ -1037,6 +816,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerStudioControls)).EndInit();
             this.splitContainerStudioControls.ResumeLayout(false);
             this.pnlPaneTabs.ResumeLayout(false);
+            this.uiPaneTabs.ResumeLayout(false);
+            this.tpCommands.ResumeLayout(false);
+            this.tlpCommands.ResumeLayout(false);
+            this.pnlCommandSearch.ResumeLayout(false);
+            this.pnlCommandSearch.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uiBtnClearCommandSearch)).EndInit();
             this.splitContainerScript.Panel1.ResumeLayout(false);
             this.splitContainerScript.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerScript)).EndInit();
@@ -1046,18 +831,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             ((System.ComponentModel.ISupportInitialize)(this.dgvVariables)).EndInit();
             this.arguments.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvArguments)).EndInit();
-            this.pnlCommandHelper.ResumeLayout(false);
-            this.pnlCommandHelper.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecentFiles)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLinks)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbOpenBotsIcon)).EndInit();
             this.tlpControls.ResumeLayout(false);
-            this.tpCommands.ResumeLayout(false);
-            this.tlpCommands.ResumeLayout(false);
-            this.pnlCommandSearch.ResumeLayout(false);
-            this.pnlCommandSearch.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.uiBtnClearCommandSearch)).EndInit();
-            this.uiPaneTabs.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1080,26 +854,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private CustomControls.CustomUIControls.UISplitContainer splitContainerStudioControls;
         private Panel pnlStatus;
         private CustomControls.CustomUIControls.UIGroupBox grpSaveClose;
-        private OpenBots.Core.UI.Controls.UIPictureButton uiBtnRestart;
         private OpenBots.Core.UI.Controls.UIPictureButton uiBtnClose;
         private CustomControls.CustomUIControls.UIGroupBox grpVariable;
         private OpenBots.Core.UI.Controls.UIPictureButton uiBtnClearAll;
         private OpenBots.Core.UI.Controls.UIPictureButton uiBtnSettings;
         private OpenBots.Core.UI.Controls.UIPictureButton uiBtnAddVariable;
         public CustomControls.CustomUIControls.UITabControl uiScriptTabControl;
-        private Panel pnlCommandHelper;
-        private CustomControls.CustomUIControls.UIFlowLayoutPanel flwRecentFiles;
-        private Label lblFilesMissing;
-        private PictureBox pbRecentFiles;
-        private PictureBox pbLinks;
-        private PictureBox pbOpenBotsIcon;
-        private Label lblRecentProjects;
-        private LinkLabel lnkGitWiki;
-        private LinkLabel lnkGitIssue;
-        private LinkLabel lnkGitLatestReleases;
-        private LinkLabel lnkGitProject;
-        private Label lblWelcomeToOpenBots;
-        private Label lblWelcomeDescription;
         private ColumnHeader columnHeader1;
         private ColumnHeader columnHeader2;
         private ColumnHeader clmCommand;

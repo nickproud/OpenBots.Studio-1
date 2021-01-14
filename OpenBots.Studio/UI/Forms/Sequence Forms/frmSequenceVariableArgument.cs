@@ -219,13 +219,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     switch (e.KeyCode)
                     {
                         case Keys.S:
-                            if (_isSequence)
-                                uiBtnSaveSequence_Click(null, null);
-                            else
-                            {
-                                ClearSelectedListViewItems();
-                                SaveToFile(false);
-                            }
+                            uiBtnSaveSequence_Click(null, null);
                             break;
                         case Keys.J:
                             OpenArgumentManager();

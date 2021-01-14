@@ -614,12 +614,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void uiBtnClose_Click(object sender, EventArgs e)
         {
-            if (_isSequence)
-            {
-                DialogResult = DialogResult.Cancel;
-                return;
-            }
-
             Application.Exit();
         }
         #endregion

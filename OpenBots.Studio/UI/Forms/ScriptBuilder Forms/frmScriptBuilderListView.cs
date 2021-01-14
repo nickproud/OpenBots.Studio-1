@@ -244,13 +244,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                                 item.Selected = true;
                             break;
                         case Keys.S:
-                            if (_isSequence)
-                                uiBtnSaveSequence_Click(null, null);
-                            else
-                            {
-                                ClearSelectedListViewItems();
-                                SaveToFile(false);
-                            }
+                            ClearSelectedListViewItems();
+                            SaveToFile(false);
                             break;
                         case Keys.E:
                             SetSelectedCodeToCommented(false);
@@ -364,19 +359,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void LoadSequenceCommand(ListViewItem selectedCommandItem, ScriptCommand currentCommand)
         {
-            if (_editMode)
-            {
-                MessageBox.Show("Embedding Sequence Commands within Sequence Commands not yet supported.");
-                return;
-            }
-
             //get sequence events
             ISequenceCommand sequence = currentCommand as ISequenceCommand;
             frmSequence newSequence = new frmSequence();
             //newBuilder._isSequence = true;
 
             //apply editor style format
-            newSequence.ApplyEditorFormat(sequence.v_Comment);
+            newSequence.Text = sequence.v_Comment;
 
             newSequence.ScriptProject = ScriptProject;
             newSequence.ScriptProjectPath = ScriptProjectPath;
@@ -451,29 +440,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             newSequence.Dispose();            
-        }
-
-        private void ApplyEditorFormat(string formText)
-        {
-            _editMode = true;            
-            Text = formText;
-            _selectedTabScriptActions.Invalidate();
-            pnlCommandHelper.Hide();
-            grpSaveClose.Location = new Point(5, grpFileActions.Location.Y - 10);
-            uiBtnRestart.Hide();
-            uiBtnRenameSequence.Show();
-            uiBtnSaveSequence.Show();
-            grpSaveClose.Show();
-            grpSaveClose.Text = string.Empty;
-            grpRecordRun.Hide();
-            grpFileActions.Hide();
-            grpVariable.Hide();           
-            grpSearch.Hide();
-            moveToParentToolStripMenuItem.Visible = true;
-            uiPaneTabs.TabPages.Remove(tpProject);
-            cmsProjectFileActions.Dispose();
-            cmsProjectFolderActions.Dispose();
-            cmsProjectMainFolderActions.Dispose();
         }
 
         private void CutRows()
@@ -1042,29 +1008,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             var dialog = new frmDialog(jsonText, "Command Code", DialogType.OkOnly, 0);
             dialog.ShowDialog();
             dialog.Dispose();
-        }
-
-        private void moveToParentToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //create command list
-            var commandList = new List<ScriptCommand>();
-
-            //loop each
-            for (int i = _selectedTabScriptActions.SelectedItems.Count - 1; i >= 0; i--)
-            {
-                //add to list and remove existing
-                commandList.Add((ScriptCommand)_selectedTabScriptActions.SelectedItems[i].Tag);
-                _selectedTabScriptActions.Items.Remove(_selectedTabScriptActions.SelectedItems[i]);
-            }
-
-            //reverse commands only if not inserting inline
-            if (!_appSettings.ClientSettings.InsertCommandsInline)
-            {
-                commandList.Reverse();
-            }
-
-            //add to parent
-            commandList.ForEach(x => _parentBuilder.AddCommandToListView(x));
         }
 
         public void AddCommandToListView(ScriptCommand selectedCommand, int index = -1)

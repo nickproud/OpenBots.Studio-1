@@ -70,8 +70,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public string ScriptProjectPath { get; private set; }
         private string _mainFileName;
         public Logger EngineLogger { get; set; }
-        public IfrmScriptEngine CurrentEngine { get; set; }
-        private frmScriptBuilder _parentBuilder;        
+        public IfrmScriptEngine CurrentEngine { get; set; }      
 
         //notification variables
         private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
@@ -186,7 +185,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
         private List<AutomationCommand> _automationCommands;
-        private bool _editMode;
         private ImageList _uiImages;
         private ApplicationSettings _appSettings;
         private DateTime _lastAntiIdleEvent;
@@ -196,7 +194,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private int _currentIndex = -1;
         private UIListView _selectedTabScriptActions;
         private Point _lastClickPosition;
-        private bool _isSequence;
         #endregion
 
         #region Form Events
@@ -251,15 +248,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _appSettings = _appSettings.GetOrCreateApplicationSettings();
 
             //handle action bar preference
-            if (_editMode)
-            {
-                tlpControls.RowStyles[0].SizeType = SizeType.Absolute;
-                tlpControls.RowStyles[0].Height = 0;
-
-                tlpControls.RowStyles[1].SizeType = SizeType.Absolute;
-                tlpControls.RowStyles[1].Height = 81;
-            }
-            else if (_appSettings.ClientSettings.UseSlimActionBar)
+            if (_appSettings.ClientSettings.UseSlimActionBar)
             {
                 tlpControls.RowStyles[1].SizeType = SizeType.Absolute;
                 tlpControls.RowStyles[1].Height = 0;
@@ -294,17 +283,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //no height for status bar
             HideNotificationRow();
 
-            //instantiate for script variables
-            if (!_editMode)
-            {
-                _scriptVariables = new List<ScriptVariable>();
-                _scriptArguments = new List<ScriptArgument>();
-                _scriptElements = new List<ScriptElement>();
-
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-            }
-
             //set listview column size
             frmScriptBuilder_SizeChanged(null, null);
         }
@@ -312,10 +290,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void LoadCommands(frmScriptBuilder scriptBuilder)
         {
             //load all commands           
-            if (scriptBuilder._isSequence)
-                scriptBuilder._automationCommands = TypeMethods.GenerateCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
-            else
-                scriptBuilder._automationCommands = TypeMethods.GenerateCommands(AContainer);
+            scriptBuilder._automationCommands = TypeMethods.GenerateCommands(AContainer);
 
             //instantiate and populate display icons for commands
             scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
@@ -348,21 +323,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void frmScriptBuilder_FormClosing(object sender, FormClosingEventArgs e)
         {
             DialogResult result;
-
-            if (_isSequence && uiScriptTabControl.TabPages[0].Text.Contains(" *") && DialogResult == DialogResult.Cancel)
-            {
-                result = MessageBox.Show($"Would you like to save the sequence before closing?",
-                                         $"Save Sequence", MessageBoxButtons.YesNoCancel);
-
-                if (result == DialogResult.Yes)
-                    DialogResult = DialogResult.OK;
-                else if (result == DialogResult.Cancel)
-                    e.Cancel = true;
-
-                return;
-            }
-            else if (_isSequence && DialogResult == DialogResult.OK)
-                return;
 
             result = CheckForUnsavedScripts();
             if (result == DialogResult.Cancel)
@@ -410,9 +370,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         }
         private void frmScriptBuilder_Shown(object sender, EventArgs e)
         {
-            if (_editMode)
-                return;
-
             Program.SplashForm.Close();
 
             tpbLoadingSpinner.Visible = true;

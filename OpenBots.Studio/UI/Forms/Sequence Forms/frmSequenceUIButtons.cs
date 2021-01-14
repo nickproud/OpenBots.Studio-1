@@ -28,140 +28,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
     {
         #region UI Buttons
         #region File Actions Tool Strip and Buttons
-        //Helper method for RunTaskCommand
-        private bool SaveToFile(bool saveAs)
-        {
-            bool isSuccessfulSave = false;
-            if (SelectedTabScriptActions.Items.Count == 0)
-            {
-                Notify("You must have at least 1 automation command to save.", Color.Yellow);
-                return isSuccessfulSave;
-            }
-
-            int beginLoopValidationCount = 0;
-            int beginIfValidationCount = 0;
-            int tryCatchValidationCount = 0;
-            int retryValidationCount = 0;
-            int beginSwitchValidationCount = 0;
-
-            foreach (ListViewItem item in SelectedTabScriptActions.Items)
-            {
-                if(item.Tag is BrokenCodeCommentCommand)
-                {
-                    Notify("Please verify that all broken code has been removed or replaced.", Color.Yellow);
-                    return isSuccessfulSave;
-                }
-                else if ((item.Tag.GetType().Name == "LoopCollectionCommand") || (item.Tag.GetType().Name == "LoopContinuouslyCommand") ||
-                    (item.Tag.GetType().Name == "LoopNumberOfTimesCommand") || (item.Tag.GetType().Name == "BeginLoopCommand") ||
-                    (item.Tag.GetType().Name == "BeginMultiLoopCommand"))
-                {
-                    beginLoopValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndLoopCommand")
-                {
-                    beginLoopValidationCount--;
-                }
-                else if ((item.Tag.GetType().Name == "BeginIfCommand") || (item.Tag.GetType().Name == "BeginMultiIfCommand"))
-                {
-                    beginIfValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndIfCommand")
-                {
-                    beginIfValidationCount--;
-                }
-                else if (item.Tag.GetType().Name == "BeginTryCommand")
-                {
-                    tryCatchValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndTryCommand")
-                {
-                    tryCatchValidationCount--;
-                }
-                else if (item.Tag.GetType().Name == "BeginRetryCommand")
-                {
-                    retryValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndRetryCommand")
-                {
-                    retryValidationCount--;
-                }
-                else if(item.Tag.GetType().Name == "BeginSwitchCommand")
-                {
-                    beginSwitchValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndSwitchCommand")
-                {
-                    beginSwitchValidationCount--;
-                }
-
-                //end loop was found first
-                if (beginLoopValidationCount < 0)
-                {
-                    Notify("Please verify the ordering of your loops.", Color.Yellow);
-                    return isSuccessfulSave;
-                }
-
-                //end if was found first
-                if (beginIfValidationCount < 0)
-                {
-                    Notify("Please verify the ordering of your ifs.", Color.Yellow);
-                    return isSuccessfulSave;
-                }
-
-                if (tryCatchValidationCount < 0)
-                {
-                    Notify("Please verify the ordering of your try/catch blocks.", Color.Yellow);
-                    return isSuccessfulSave;
-                }
-
-                if (retryValidationCount < 0)
-                {
-                    Notify("Please verify the ordering of your retry blocks.", Color.Yellow);
-                    return isSuccessfulSave;
-                }
-
-                if (beginSwitchValidationCount < 0)
-                {
-                    Notify("Please verify the ordering of your switch/case blocks.", Color.Yellow);
-                    return isSuccessfulSave;
-                }
-            }
-
-            //extras were found
-            if (beginLoopValidationCount != 0)
-            {
-                Notify("Please verify the ordering of your loops.", Color.Yellow);
-                return isSuccessfulSave;
-            }
-
-            //extras were found
-            if (beginIfValidationCount != 0)
-            {
-                Notify("Please verify the ordering of your ifs.", Color.Yellow);
-                return isSuccessfulSave;
-            }
-
-            if (tryCatchValidationCount != 0)
-            {
-                Notify("Please verify the ordering of your try/catch blocks.", Color.Yellow);
-                return isSuccessfulSave;
-            }
-
-            if (retryValidationCount != 0)
-            {
-                Notify("Please verify the ordering of your retry blocks.", Color.Yellow);
-                return isSuccessfulSave;
-            }
-
-            if (beginSwitchValidationCount != 0)
-            {
-                Notify("Please verify the ordering of your switch/case blocks.", Color.Yellow);
-                return isSuccessfulSave;
-            }
-            isSuccessfulSave = true;
-            return isSuccessfulSave;
-        }
-
         private void ClearSelectedListViewItems()
         {
             SelectedTabScriptActions.SelectedItems.Clear();
@@ -169,42 +35,10 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             SelectedTabScriptActions.Invalidate();
         }
 
-        public void PopulateExecutionCommands(List<ScriptAction> commandDetails)
-        {
-
-            foreach (ScriptAction item in commandDetails)
-            {
-                if (item.ScriptCommand != null)
-                    SelectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(item.ScriptCommand));
-                else
-                {
-                    var brokenCodeCommentCommand = new BrokenCodeCommentCommand();
-                    brokenCodeCommentCommand.v_Comment = item.SerializationError;
-                    SelectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(brokenCodeCommentCommand));
-                }
-                if (item.AdditionalScriptCommands?.Count > 0)
-                    PopulateExecutionCommands(item.AdditionalScriptCommands);
-            }
-
-            if (pnlCommandHelper.Visible)
-            {
-                uiScriptTabControl.SelectedTab.Controls.Remove(pnlCommandHelper);
-                uiScriptTabControl.SelectedTab.Controls[0].Show();
-            }
-            else if (!uiScriptTabControl.SelectedTab.Controls[0].Visible)
-                uiScriptTabControl.SelectedTab.Controls[0].Show();
-        }
-
         #region Restart And Close Buttons
         private void uiBtnClose_Click(object sender, EventArgs e)
         {
-            if (_isSequence)
-            {
-                DialogResult = DialogResult.Cancel;
-                return;
-            }
-
-            Application.Exit();
+            DialogResult = DialogResult.Cancel;
         }
         #endregion
         #endregion
@@ -334,6 +168,133 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         #region Recorder Buttons
         private void uiBtnSaveSequence_Click(object sender, EventArgs e)
         {
+            if (SelectedTabScriptActions.Items.Count == 0)
+            {
+                Notify("You must have at least 1 automation command to save.", Color.Yellow);
+                return;
+            }
+
+            int beginLoopValidationCount = 0;
+            int beginIfValidationCount = 0;
+            int tryCatchValidationCount = 0;
+            int retryValidationCount = 0;
+            int beginSwitchValidationCount = 0;
+
+            foreach (ListViewItem item in SelectedTabScriptActions.Items)
+            {
+                if (item.Tag is BrokenCodeCommentCommand)
+                {
+                    Notify("Please verify that all broken code has been removed or replaced.", Color.Yellow);
+                    return;
+                }
+                else if ((item.Tag.GetType().Name == "LoopCollectionCommand") || (item.Tag.GetType().Name == "LoopContinuouslyCommand") ||
+                    (item.Tag.GetType().Name == "LoopNumberOfTimesCommand") || (item.Tag.GetType().Name == "BeginLoopCommand") ||
+                    (item.Tag.GetType().Name == "BeginMultiLoopCommand"))
+                {
+                    beginLoopValidationCount++;
+                }
+                else if (item.Tag.GetType().Name == "EndLoopCommand")
+                {
+                    beginLoopValidationCount--;
+                }
+                else if ((item.Tag.GetType().Name == "BeginIfCommand") || (item.Tag.GetType().Name == "BeginMultiIfCommand"))
+                {
+                    beginIfValidationCount++;
+                }
+                else if (item.Tag.GetType().Name == "EndIfCommand")
+                {
+                    beginIfValidationCount--;
+                }
+                else if (item.Tag.GetType().Name == "BeginTryCommand")
+                {
+                    tryCatchValidationCount++;
+                }
+                else if (item.Tag.GetType().Name == "EndTryCommand")
+                {
+                    tryCatchValidationCount--;
+                }
+                else if (item.Tag.GetType().Name == "BeginRetryCommand")
+                {
+                    retryValidationCount++;
+                }
+                else if (item.Tag.GetType().Name == "EndRetryCommand")
+                {
+                    retryValidationCount--;
+                }
+                else if (item.Tag.GetType().Name == "BeginSwitchCommand")
+                {
+                    beginSwitchValidationCount++;
+                }
+                else if (item.Tag.GetType().Name == "EndSwitchCommand")
+                {
+                    beginSwitchValidationCount--;
+                }
+
+                //end loop was found first
+                if (beginLoopValidationCount < 0)
+                {
+                    Notify("Please verify the ordering of your loops.", Color.Yellow);
+                    return;
+                }
+
+                //end if was found first
+                if (beginIfValidationCount < 0)
+                {
+                    Notify("Please verify the ordering of your ifs.", Color.Yellow);
+                    return;
+                }
+
+                if (tryCatchValidationCount < 0)
+                {
+                    Notify("Please verify the ordering of your try/catch blocks.", Color.Yellow);
+                    return;
+                }
+
+                if (retryValidationCount < 0)
+                {
+                    Notify("Please verify the ordering of your retry blocks.", Color.Yellow);
+                    return;
+                }
+
+                if (beginSwitchValidationCount < 0)
+                {
+                    Notify("Please verify the ordering of your switch/case blocks.", Color.Yellow);
+                    return;
+                }
+            }
+
+            //extras were found
+            if (beginLoopValidationCount != 0)
+            {
+                Notify("Please verify the ordering of your loops.", Color.Yellow);
+                return;
+            }
+
+            //extras were found
+            if (beginIfValidationCount != 0)
+            {
+                Notify("Please verify the ordering of your ifs.", Color.Yellow);
+                return;
+            }
+
+            if (tryCatchValidationCount != 0)
+            {
+                Notify("Please verify the ordering of your try/catch blocks.", Color.Yellow);
+                return;
+            }
+
+            if (retryValidationCount != 0)
+            {
+                Notify("Please verify the ordering of your retry blocks.", Color.Yellow);
+                return;
+            }
+
+            if (beginSwitchValidationCount != 0)
+            {
+                Notify("Please verify the ordering of your switch/case blocks.", Color.Yellow);
+                return;
+            }
+
             DialogResult = DialogResult.OK;
             Close();
         }

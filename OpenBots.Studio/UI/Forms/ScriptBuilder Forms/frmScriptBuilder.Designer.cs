@@ -54,7 +54,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.copySelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteSelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteSelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.moveToParentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openShortcutMenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyTray = new System.Windows.Forms.NotifyIcon(this.components);
@@ -375,7 +374,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.copySelectedCodeToolStripMenuItem,
             this.pasteSelectedCodeToolStripMenuItem,
             this.deleteSelectedCodeToolStripMenuItem,
-            this.moveToParentToolStripMenuItem,
             this.viewCodeToolStripMenuItem,
             this.openShortcutMenuToolStripMenuItem});
             this.cmsScriptActions.Name = "cmsScriptActions";
@@ -436,14 +434,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.deleteSelectedCodeToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
             this.deleteSelectedCodeToolStripMenuItem.Text = "Delete Selected Code";
             this.deleteSelectedCodeToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedCodeToolStripMenuItem_Click);
-            // 
-            // moveToParentToolStripMenuItem
-            // 
-            this.moveToParentToolStripMenuItem.Name = "moveToParentToolStripMenuItem";
-            this.moveToParentToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
-            this.moveToParentToolStripMenuItem.Text = "Move Out To Parent";
-            this.moveToParentToolStripMenuItem.Visible = false;
-            this.moveToParentToolStripMenuItem.Click += new System.EventHandler(this.moveToParentToolStripMenuItem_Click);
             // 
             // viewCodeToolStripMenuItem
             // 
@@ -2389,7 +2379,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private System.Windows.Forms.ToolStripMenuItem copySelectedCodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteSelectedCodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cutSelectedCodeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem moveToParentToolStripMenuItem;
         private System.Windows.Forms.NotifyIcon notifyTray;
         private System.Windows.Forms.ToolStripMenuItem viewCodeToolStripMenuItem;
         private ContextMenuStrip cmsProjectFolderActions;

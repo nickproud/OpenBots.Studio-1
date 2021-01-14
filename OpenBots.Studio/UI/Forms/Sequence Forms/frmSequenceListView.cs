@@ -210,64 +210,58 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             }
             else if (e.Control)
             {
-                    switch (e.KeyCode)
-                    {
-                        case Keys.X:
-                            CutRows();
-                            break;
-                        case Keys.C:
-                            CopyRows();
-                            break;
-                        case Keys.V:
-                            PasteRows();
-                            break;
-                        case Keys.Z:
-                            UndoChange();
-                            break;
-                        case Keys.R:
-                            RedoChange();
-                            break;
-                        case Keys.A:
-                            foreach (ListViewItem item in SelectedTabScriptActions.Items)
-                                item.Selected = true;
-                            break;
-                        case Keys.S:
-                            if (_isSequence)
-                                uiBtnSaveSequence_Click(null, null);
-                            else
-                            {
-                                ClearSelectedListViewItems();
-                                SaveToFile(false);
-                            }
-                            break;
-                        case Keys.E:
-                            SetSelectedCodeToCommented(false);
-                            break;
-                        case Keys.D:
-                            SetSelectedCodeToCommented(true);
-                            break;
-                        case Keys.B:
-                            AddRemoveBreakpoint();
-                            break;
-                        case Keys.J:
-                            OpenArgumentManager();
-                            break;
-                        case Keys.K:
-                            OpenVariableManager();
-                            break;
-                        case Keys.L:
-                            OpenElementManager();
-                            break;
-                        case Keys.M:
-                            shortcutMenuToolStripMenuItem_Click(null, null);
-                            break;
-                        case Keys.O:
-                            aboutOpenBotsToolStripMenuItem_Click(null, null);
-                            break;
-                        case Keys.Back:
-                            clearAllToolStripMenuItem_Click(null, null);
-                            break;
-                    }                             
+                switch (e.KeyCode)
+                {
+                    case Keys.X:
+                        CutRows();
+                        break;
+                    case Keys.C:
+                        CopyRows();
+                        break;
+                    case Keys.V:
+                        PasteRows();
+                        break;
+                    case Keys.Z:
+                        UndoChange();
+                        break;
+                    case Keys.R:
+                        RedoChange();
+                        break;
+                    case Keys.A:
+                        foreach (ListViewItem item in SelectedTabScriptActions.Items)
+                            item.Selected = true;
+                        break;
+                    case Keys.S:
+                        uiBtnSaveSequence_Click(null, null);
+                        break;
+                    case Keys.E:
+                        SetSelectedCodeToCommented(false);
+                        break;
+                    case Keys.D:
+                        SetSelectedCodeToCommented(true);
+                        break;
+                    case Keys.B:
+                        AddRemoveBreakpoint();
+                        break;
+                    case Keys.J:
+                        OpenArgumentManager();
+                        break;
+                    case Keys.K:
+                        OpenVariableManager();
+                        break;
+                    case Keys.L:
+                        OpenElementManager();
+                        break;
+                    case Keys.M:
+                        shortcutMenuToolStripMenuItem_Click(null, null);
+                        break;
+                    case Keys.O:
+                        aboutOpenBotsToolStripMenuItem_Click(null, null);
+                        break;
+                    case Keys.Back:
+                        clearAllToolStripMenuItem_Click(null, null);
+                        break;
+                }                             
             }
         }
 
@@ -341,21 +335,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             {
                 Notify($"Error: {ex.Message}", Color.Red);
             }
-        }
-
-        public void ApplyEditorFormat(string formText)
-        {
-            _isSequence = true;
-            _editMode = true;            
-            Text = formText;
-            SelectedTabScriptActions.Invalidate();
-            pnlCommandHelper.Hide();
-            uiBtnRestart.Hide();
-            uiBtnRenameSequence.Show();
-            uiBtnSaveSequence.Show();
-            grpSaveClose.Show();
-            grpSaveClose.Text = string.Empty;
-            moveToParentToolStripMenuItem.Visible = true;
         }
 
         private void CutRows()
@@ -658,25 +637,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 case 2:
                     //write command text
                     Brush commandNameBrush, commandBackgroundBrush;
-                    if ((_debugLine > 0) && (e.ItemIndex == _debugLine - 1) && !command.PauseBeforeExecution && !IsUnhandledException)
-                    {
-                        //debugging coloring
-                        commandNameBrush = Brushes.White;
-                        commandBackgroundBrush = Brushes.LimeGreen;
-                        IsScriptPaused = false;
-                    }
-                    else if((_debugLine > 0) && (e.ItemIndex == _debugLine - 1) && IsUnhandledException)
-                    {
-                        commandNameBrush = Brushes.Red;
-                        commandBackgroundBrush = Brushes.Black;
-                       
-                    }
-                    else if ((_debugLine > 0) && (e.ItemIndex == _debugLine - 1) && command.PauseBeforeExecution && !IsUnhandledException)
-                    {
-                        commandNameBrush = Brushes.White;
-                        commandBackgroundBrush = Brushes.Red;
-                    }
-                    else if ((_currentIndex >= 0) && (e.ItemIndex == _currentIndex))
+                    if ((_currentIndex >= 0) && (e.ItemIndex == _currentIndex))
                     {
                         //search primary item coloring
                         commandNameBrush = Brushes.Black;
@@ -934,12 +895,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         public void AddCommandToListView(ScriptCommand selectedCommand, int index = -1)
         {
-            if (pnlCommandHelper.Visible)
-            {
-                uiScriptTabControl.SelectedTab.Controls.Remove(pnlCommandHelper);
-                uiScriptTabControl.SelectedTab.Controls[0].Show();
-            }
-            else if(!uiScriptTabControl.SelectedTab.Controls[0].Visible)
+            if(!uiScriptTabControl.SelectedTab.Controls[0].Visible)
                 uiScriptTabControl.SelectedTab.Controls[0].Show();
 
             ListViewItem command;
