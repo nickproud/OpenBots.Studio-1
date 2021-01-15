@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Switch.Test
             _setVariableDefaultCase = new Variable.SetVariableCommand();
 
             ScriptVariable caseInput = new ScriptVariable();
-            caseInput.VariableName = "case";
+            caseInput.VariableName = "caseInput";
             caseInput.VariableValue = caseString;
             _engine.AutomationEngineContext.Variables.Add(caseInput);
             ScriptVariable switchOutput = new ScriptVariable();
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Switch.Test
             switchOutput.VariableValue = "unassigned";
             _engine.AutomationEngineContext.Variables.Add(switchOutput);
 
-            _beginSwitch.v_SwitchValue = "{case}";
+            _beginSwitch.v_SwitchValue = "{caseInput}";
 
             _case1.v_CaseValue = "case1";
             _defaultCase.v_CaseValue = "Default";
