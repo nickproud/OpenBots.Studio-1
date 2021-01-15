@@ -37,14 +37,14 @@ namespace OpenBots.Commands.Switch.Test
             _setVariableCase1 = new Variable.SetVariableCommand();
             _setVariableDefaultCase = new Variable.SetVariableCommand();
 
-            ScriptVariable caseVal = new ScriptVariable();
-            caseVal.VariableName = "case";
-            caseVal.VariableValue = caseString;
-            _engine.AutomationEngineContext.Variables.Add(caseVal);
-            ScriptVariable case1 = new ScriptVariable();
-            case1.VariableName = "caseOutput";
-            case1.VariableValue = "unassigned";
-            _engine.AutomationEngineContext.Variables.Add(case1);
+            ScriptVariable caseInput = new ScriptVariable();
+            caseInput.VariableName = "case";
+            caseInput.VariableValue = caseString;
+            _engine.AutomationEngineContext.Variables.Add(caseInput);
+            ScriptVariable switchOutput = new ScriptVariable();
+            switchOutput.VariableName = "switchOutput";
+            switchOutput.VariableValue = "unassigned";
+            _engine.AutomationEngineContext.Variables.Add(switchOutput);
 
             _beginSwitch.v_SwitchValue = "{case}";
 
@@ -52,10 +52,10 @@ namespace OpenBots.Commands.Switch.Test
             _defaultCase.v_CaseValue = "Default";
 
             _setVariableCase1.v_Input = "case1Set";
-            _setVariableCase1.v_OutputUserVariableName = "{caseOutput}";
+            _setVariableCase1.v_OutputUserVariableName = "{switchOutput}";
 
             _setVariableDefaultCase.v_Input = "defaultCaseSet";
-            _setVariableDefaultCase.v_OutputUserVariableName = "{caseOutput}";
+            _setVariableDefaultCase.v_OutputUserVariableName = "{switchOutput}";
 
             _parentAction.ScriptCommand = _beginSwitch;
             _parentAction.AddAdditionalAction(_case1);
@@ -68,11 +68,11 @@ namespace OpenBots.Commands.Switch.Test
 
             if (caseString.Equals("case1"))
             {
-                Assert.Equal("case1Set", "{caseOutput}".ConvertUserVariableToString(_engine));
+                Assert.Equal("case1Set", "{switchOutput}".ConvertUserVariableToString(_engine));
             }
             else if (caseString.Equals("noCase"))
             {
-                Assert.Equal("defaultCaseSet", "{caseOutput}".ConvertUserVariableToString(_engine));
+                Assert.Equal("defaultCaseSet", "{switchOutput}".ConvertUserVariableToString(_engine));
             }
         }
     }
