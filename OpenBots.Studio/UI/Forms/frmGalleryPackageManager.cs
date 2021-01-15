@@ -21,7 +21,6 @@ namespace OpenBots.UI.Forms
 {
     public partial class frmGalleryPackageManager : UIForm
     {
-        private string _packageLocation;
         private List<IPackageSearchMetadata> _allResults;
         private List<IPackageSearchMetadata> _projectDependencies;
         private Dictionary<string, string> _projectDependenciesDict;
@@ -32,7 +31,7 @@ namespace OpenBots.UI.Forms
         private string _installedVersion;
         private bool _includePrerelease;
         private DataTable _packageSourceDT { get; set; }
-        private string _appDataPackagePath;
+        private string _packagesPath;
 
         private ApplicationSettings _settings;
 
@@ -41,14 +40,12 @@ namespace OpenBots.UI.Forms
         {
             InitializeComponent();
 
-            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName; ;
-            _appDataPackagePath = Path.Combine(appDataPath, "packages");
+            _packagesPath = packageLocation;
 
             _settings = new ApplicationSettings().GetOrCreateApplicationSettings();
             _packageSourceDT = _settings.ClientSettings.PackageSourceDT;
 
             _projectDependenciesDict = projectDependenciesDict;
-            _packageLocation = packageLocation;
             _allResults = new List<IPackageSearchMetadata>();
             _projectDependencies = new List<IPackageSearchMetadata>();
             _projectVersions = new List<NuGetVersion>();
@@ -127,7 +124,7 @@ namespace OpenBots.UI.Forms
 
                 if (lblPackageCategory.Text == "Project Dependencies")
                 {
-                    metadata.AddRange(await NugetPackageManager.GetPackageMetadata(projectId, _appDataPackagePath, _includePrerelease));
+                    metadata.AddRange(await NugetPackageManager.GetPackageMetadata(projectId, _packagesPath, _includePrerelease));
                 }
                 else if (lblPackageCategory.Text == "All Packages")
                 {
@@ -321,7 +318,7 @@ namespace OpenBots.UI.Forms
                 Cursor.Current = Cursors.WaitCursor;
                 lblError.Text = $"Installing {packageName}";
 
-                await NugetPackageManager.InstallPackage(packageId, version, _projectDependenciesDict);                   
+                await NugetPackageManager.InstallPackage(packageId, version, _projectDependenciesDict, _packagesPath);                   
 
                 lblError.Text = string.Empty;
                 DialogResult = DialogResult.OK;
@@ -447,12 +444,12 @@ namespace OpenBots.UI.Forms
 
         private async Task GetCurrentDepencies()
         {
-            List<string> nugetDirectoryList = Directory.GetDirectories(_packageLocation).ToList();
+            List<string> nugetDirectoryList = Directory.GetDirectories(_packagesPath).ToList();
             
             _projectDependencies.Clear();
             foreach(var pair in _projectDependenciesDict)
             {
-                var dependency = (await NugetPackageManager.GetPackageMetadata(pair.Key, _appDataPackagePath, _includePrerelease))
+                var dependency = (await NugetPackageManager.GetPackageMetadata(pair.Key, _packagesPath, _includePrerelease))
                     .Where(x => x.Identity.Version.ToString() == pair.Value).FirstOrDefault();
                 if (dependency != null && nugetDirectoryList.Where(x => x.EndsWith($"{pair.Key}.{pair.Value}")).FirstOrDefault() != null)
                     _projectDependencies.Add(dependency);

@@ -24,7 +24,7 @@ namespace OpenBots.Core.IO
                     return attentedTasksFolder;
                 case FolderType.SettingsFolder:
                     //return app data OpenBots folder
-                    return Path.Combine(new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName);
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc");
                 case FolderType.ScriptsFolder:
                     //return scripts folder
                     return Path.Combine(GetFolder(FolderType.RootFolder), "My Scripts");

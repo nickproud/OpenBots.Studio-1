@@ -65,7 +65,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //create config file
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
 
-                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath, _packagesPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();                
                         
@@ -138,7 +138,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     if (mainFilePath == null)
                         throw new Exception("Main script not found");
 
-                    var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
+                    var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath, _packagesPath);
                     _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                     AContainer = _builder.Build();
 
@@ -211,7 +211,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (mainFilePath == null)
                     throw new Exception("Main script not found");
 
-                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath, _packagesPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();
 

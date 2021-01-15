@@ -224,9 +224,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
                 installDefaultToolStripMenuItem.Visible = true;
             }
-            
-            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
-            _packagesPath = Path.Combine(appDataPath, "packages");
+
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+
             if (!Directory.Exists(_packagesPath))
                 Directory.CreateDirectory(_packagesPath);
 
@@ -673,7 +674,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             tpbLoadingSpinner.Visible = true;
 
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
-            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath, _packagesPath);
             _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
             AContainer = _builder.Build();
             LoadCommands(this);

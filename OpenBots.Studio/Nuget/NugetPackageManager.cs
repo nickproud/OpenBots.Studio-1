@@ -116,12 +116,12 @@ namespace OpenBots.Nuget
             }
         }
 
-        public static async Task InstallPackage(string packageId, string version, Dictionary<string, string> projectDependenciesDict)
+        public static async Task InstallPackage(string packageId, string version, Dictionary<string, string> projectDependenciesDict, string packagesPath)
         {
             var packageSources = new ApplicationSettings().GetOrCreateApplicationSettings().ClientSettings.PackageSourceDT;
             var packageVersion = NuGetVersion.Parse(version);
             var nuGetFramework = NuGetFramework.ParseFolder("net48");
-            var settings = NuGet.Configuration.Settings.LoadDefaultSettings(root: null);
+            var settings = Settings.LoadDefaultSettings(root: null);
             var sourceRepositoryProvider = new SourceRepositoryProvider(new PackageSourceProvider(settings), Repository.Provider.GetCoreV3());
 
             using (var cacheContext = new SourceCacheContext())
@@ -154,8 +154,7 @@ namespace OpenBots.Nuget
                 var resolver = new PackageResolver();
                 var packagesToInstall = resolver.Resolve(resolverContext, CancellationToken.None)
                     .Select(p => availablePackages.Single(x => PackageIdentityComparer.Default.Equals(x, p)));
-                string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
-                var packagePathResolver = new PackagePathResolver(Path.Combine(appDataPath, "packages"));
+                var packagePathResolver = new PackagePathResolver(packagesPath);
                 var packageExtractionContext = new PackageExtractionContext(
                     PackageSaveMode.Defaultv3,
                     XmlDocFileSaveMode.None,
@@ -228,20 +227,17 @@ namespace OpenBots.Nuget
             }
         }
 
-        public static List<string> LoadPackageAssemblies(string configPath, bool throwException = false)
+        public static List<string> LoadPackageAssemblies(string configPath, string packagesPath, bool throwException = false)
         {
             List<string> assemblyPaths = new List<string>();
             var dependencies = JsonConvert.DeserializeObject<Project>(File.ReadAllText(configPath)).Dependencies;
-
-            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
-            string packagePath = Path.Combine(appDataPath, "packages");
-            var packagePathResolver = new PackagePathResolver(packagePath);
+            var packagePathResolver = new PackagePathResolver(packagesPath);
 
             var nuGetFramework = NuGetFramework.ParseFolder("net48");
             var settings = Settings.LoadDefaultSettings(root: null);
 
             var sourceRepositoryProvider = new SourceRepositoryProvider(new PackageSourceProvider(settings), Repository.Provider.GetCoreV3());
-            var localRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(packagePath, "Local OpenBots Repo", true));
+            var localRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(packagesPath, "Local OpenBots Repo", true));
             
             var resolver = new PackageResolver();
             var frameworkReducer = new FrameworkReducer();
@@ -288,10 +284,9 @@ namespace OpenBots.Nuget
                             {
                                 foreach (string path in packageListAssemblyPaths)
                                 {
-                                    if (!assemblyPaths.Contains(Path.Combine(packagePath, $"{packageToInstall.Id}.{packageToInstall.Version}", path)))
-                                        assemblyPaths.Add(Path.Combine(packagePath, $"{packageToInstall.Id}.{packageToInstall.Version}", path));
-                                }
-                                    
+                                    if (!assemblyPaths.Contains(Path.Combine(packagesPath, $"{packageToInstall.Id}.{packageToInstall.Version}", path)))
+                                        assemblyPaths.Add(Path.Combine(packagesPath, $"{packageToInstall.Id}.{packageToInstall.Version}", path));
+                                }                                   
                             }
                         }
                     }
@@ -301,7 +296,7 @@ namespace OpenBots.Nuget
                     //Only true for scheduled and attended executions
                     if (throwException)
                     {
-                        MessageBox.Show($"Unable to load {packagePath}\\{dependency.Key}.{dependency.Value}. " +
+                        MessageBox.Show($"Unable to load {packagesPath}\\{dependency.Key}.{dependency.Value}. " +
                                         "Please install this package using the OpenBots Studio Package Manager.", "Error");
 
                         Application.Exit();
@@ -319,7 +314,7 @@ namespace OpenBots.Nuget
             catch (Exception)
             {
                 //try again
-                return LoadPackageAssemblies(configPath, throwException);
+                return LoadPackageAssemblies(configPath, packagesPath, throwException);
             }
         }
 

@@ -778,10 +778,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 return;
             }
 
-            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
-            string packagePath = Path.Combine(appDataPath, "packages");
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
-            frmGalleryPackageManager frmManager = new frmGalleryPackageManager(ScriptProject.Dependencies, packagePath);
+            frmGalleryPackageManager frmManager = new frmGalleryPackageManager(ScriptProject.Dependencies, _packagesPath);
             frmManager.ShowDialog();
 
             if (frmManager.DialogResult == DialogResult.OK)
@@ -791,7 +789,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ScriptProject.Dependencies = ScriptProject.Dependencies.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
 
-                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath, _packagesPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();
                 
@@ -823,9 +821,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             Directory.CreateDirectory(_packagesPath);
             foreach (var dep in ScriptProject.Dependencies)
-                await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>());
+                await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), _packagesPath);
 
-            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath, _packagesPath);
             _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
             AContainer = _builder.Build();
 
