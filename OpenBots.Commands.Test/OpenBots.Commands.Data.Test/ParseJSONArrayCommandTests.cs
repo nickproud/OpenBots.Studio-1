@@ -25,7 +25,8 @@ namespace OpenBots.Commands.Data.Test
 
             string jsonArray = "[\"val1\",\"val2\",\"val3\"]";
             string[] expectedResult = {"val1","val2","val3"};
-            jsonArray.StoreInUserVariable(_engine, "{input}");
+            jsonArray.CreateTestVariable(_engine, "input");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _parseJSONArray.v_JsonArrayName = "{input}";
             _parseJSONArray.v_OutputUserVariableName = "{output}";

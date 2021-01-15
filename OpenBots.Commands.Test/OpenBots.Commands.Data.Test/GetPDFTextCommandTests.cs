@@ -28,7 +28,8 @@ namespace OpenBots.Commands.Data.Test
             {
                 filepath = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
             }
-            filepath.StoreInUserVariable(_engine, "{filepath}");
+            filepath.CreateTestVariable(_engine, "filepath");
+            "unassigned".CreateTestVariable(_engine, "outputText");
 
             _getPDFText.v_FileSourceType = filePathOrUrl;
             _getPDFText.v_FilePath = "{filepath}";
@@ -46,7 +47,7 @@ namespace OpenBots.Commands.Data.Test
             _engine = new AutomationEngineInstance(null);
             string filepath = "";
 
-            filepath.StoreInUserVariable(_engine, "{filepath}");
+            filepath.CreateTestVariable(_engine, "{filepath}");
 
             _getPDFText.v_FileSourceType = "File Path";
             _getPDFText.v_FilePath = "{filepath}";
