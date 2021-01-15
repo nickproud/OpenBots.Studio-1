@@ -56,15 +56,19 @@ namespace OpenBots.Commands.ErrorHandling
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private List<ScriptVariable> _scriptVariables { get; set; }
+		private List<ScriptVariable> _scriptVariables;
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private List<ScriptElement> _scriptElements { get; set; }
+		private List<ScriptArgument> _scriptArguments;
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private Exception _exception { get; set; }
+		private List<ScriptElement> _scriptElements;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private Exception _exception;
 
 		public BeginRetryCommand()
 		{
@@ -143,8 +147,9 @@ namespace OpenBots.Commands.ErrorHandling
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_RetryInterval", this, editor));
 
 			//get script variables for feeding into if builder form
-			_scriptVariables = editor.ScriptVariables;
-			_scriptElements = editor.ScriptElements;
+			_scriptVariables = editor.ScriptEngineContext.Variables;
+			_scriptArguments = editor.ScriptEngineContext.Arguments;
+			_scriptElements = editor.ScriptEngineContext.Elements;
 
 			//create controls
 			var controls = commandControls.CreateDataGridViewGroupFor("v_IfConditionsTable", this, editor);
@@ -201,8 +206,9 @@ namespace OpenBots.Commands.ErrorHandling
 					editor.EditingCommand = ifCommand;
 					editor.OriginalCommand = ifCommand;
 					editor.CreationModeInstance = CreationMode.Edit;
-					editor.ScriptVariables = _scriptVariables;
-					editor.ScriptElements = _scriptElements;
+					editor.ScriptEngineContext.Variables = _scriptVariables;
+					editor.ScriptEngineContext.Arguments = _scriptArguments;
+					editor.ScriptEngineContext.Elements = _scriptElements;
 
 					if (((Form)editor).ShowDialog() == DialogResult.OK)
 					{
@@ -231,7 +237,7 @@ namespace OpenBots.Commands.ErrorHandling
 			var automationCommands = new List<AutomationCommand>() { CommandsHelper.ConvertToAutomationCommand(commandControls.GetCommandType("BeginIfCommand")) };
             IfrmCommandEditor editor = commandControls.CreateCommandEditorForm(automationCommands, null);
 			editor.SelectedCommand = commandControls.CreateBeginIfCommand();
-            editor.ScriptVariables = parentEditor.ScriptVariables;
+            editor.ScriptEngineContext.Variables = parentEditor.ScriptEngineContext.Variables;
 
 			if (((Form)editor).ShowDialog() == DialogResult.OK)
 			{
@@ -239,7 +245,7 @@ namespace OpenBots.Commands.ErrorHandling
 				var configuredCommand = editor.SelectedCommand;
 				var displayText = configuredCommand.GetDisplayValue();
 				var serializedData = JsonConvert.SerializeObject(configuredCommand);
-				parentEditor.ScriptVariables = editor.ScriptVariables;
+				parentEditor.ScriptEngineContext.Variables = editor.ScriptEngineContext.Variables;
 
 				//add to list
 				v_IfConditionsTable.Rows.Add(displayText, serializedData);

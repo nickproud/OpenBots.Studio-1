@@ -14,10 +14,10 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static void AddAppInstance(this object appObject, IAutomationEngineInstance engine, string instanceName)
         {
 
-            if (engine.AppInstances.ContainsKey(instanceName) && engine.EngineSettings.OverrideExistingAppInstances)
-                engine.AppInstances.Remove(instanceName);
+            if (engine.AutomationEngineContext.AppInstances.ContainsKey(instanceName) && engine.EngineSettings.OverrideExistingAppInstances)
+                engine.AutomationEngineContext.AppInstances.Remove(instanceName);
 
-            else if (engine.AppInstances.ContainsKey(instanceName) && !engine.EngineSettings.OverrideExistingAppInstances)
+            else if (engine.AutomationEngineContext.AppInstances.ContainsKey(instanceName) && !engine.EngineSettings.OverrideExistingAppInstances)
             {
                 throw new Exception("App Instance already exists and override has been disabled in engine settings! " +
                     "Enable override existing app instances or use unique instance names!");
@@ -25,7 +25,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
             try
             {
-                engine.AppInstances.Add(instanceName, appObject);
+                engine.AutomationEngineContext.AppInstances.Add(instanceName, appObject);
             }
             catch (Exception ex)
             {
@@ -37,7 +37,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             try
             {
-                if (engine.AppInstances.TryGetValue(instanceName, out object appObject))
+                if (engine.AutomationEngineContext.AppInstances.TryGetValue(instanceName, out object appObject))
                     return appObject;
 
                 throw new Exception("App Instance '" + instanceName + "' not found!");
@@ -52,8 +52,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             try
             {
-                if (engine.AppInstances.ContainsKey(instanceName))
-                    engine.AppInstances.Remove(instanceName);
+                if (engine.AutomationEngineContext.AppInstances.ContainsKey(instanceName))
+                    engine.AutomationEngineContext.AppInstances.Remove(instanceName);
                 else
                     throw new Exception("App Instance '" + instanceName + "' not found!");
             }
@@ -67,7 +67,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {          
             try
             {
-                if (engine.AppInstances.TryGetValue(instanceName, out object appObject))
+                if (engine.AutomationEngineContext.AppInstances.TryGetValue(instanceName, out object appObject))
                 {                   
                     string appType = appObject.GetType().ToString();
 

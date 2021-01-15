@@ -17,7 +17,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void SetSuccessfulStatus()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
             string name = "SuccessfulQueueItem";
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void SetFailedShouldRetryStatus()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
             string name = "NewQueueItem";
@@ -67,7 +67,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void SetFailedFatallyStatus()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
             string name = "FailedQueueItem";
@@ -92,7 +92,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void HandlesNonExistentTransactionKey()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
             var queueItemDict = new Dictionary<string, object>()

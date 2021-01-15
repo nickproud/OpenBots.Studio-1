@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Data.Test
         public void ModifiesString(string input, string operation, string expectedOutput)
         {
             _modifyString = new ModifyStringCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             input.StoreInUserVariable(_engine, "{input}");
 

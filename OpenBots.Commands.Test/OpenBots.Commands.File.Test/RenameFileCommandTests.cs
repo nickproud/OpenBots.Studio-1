@@ -15,7 +15,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void RenamesFile()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _renameFile = new RenameFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -40,7 +40,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesInvalidFileInput()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _renameFile = new RenameFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.File.Test
 
         private void resetTestFilename(string file)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _renameFile = new RenameFileCommand();
 
             _renameFile.v_SourceFilePath = file;

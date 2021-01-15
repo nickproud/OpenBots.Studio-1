@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Data.Test
         public void CreatesDateTime()
         {
             _createDateTime = new CreateDateTimeCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             string year = "2020";
             string month = "jan";

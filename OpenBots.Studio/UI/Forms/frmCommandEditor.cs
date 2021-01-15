@@ -17,6 +17,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
@@ -36,12 +37,8 @@ namespace OpenBots.UI.Forms
     {
         //list of available commands
         public List<AutomationCommand> CommandList { get; set; } = new List<AutomationCommand>();
-        //list of variables, assigned from frmScriptBuilder
-        public List<ScriptVariable> ScriptVariables { get; set; }
-        //list of elements, assigned from frmScriptBuilder
-        public List<ScriptElement> ScriptElements { get; set; }
-        //project path, assigned from frmScriptBuilder
-        public string ProjectPath { get; set; }
+        //engine context assigned from frmScriptBuilder
+        public EngineContext ScriptEngineContext { get; set; } = new EngineContext();
         //reference to currently selected command
         public ScriptCommand SelectedCommand { get; set; }
         //reference to original command
@@ -55,7 +52,6 @@ namespace OpenBots.UI.Forms
         //track existing commands for visibility
         public List<ScriptCommand> ConfiguredCommands { get; set; }
         public string HTMLElementRecorderURL { get; set; }
-        public new IContainer Container { get; set; }
 
         private ICommandControls _commandControls;
 
@@ -72,7 +68,7 @@ namespace OpenBots.UI.Forms
         private void frmNewCommand_Load(object sender, EventArgs e)
         {
             // Initialize CommandControls with Current Editor
-            _commandControls = new CommandControls(this, Container);
+            _commandControls = new CommandControls(this, ScriptEngineContext.Container);
 
             //order list
             CommandList = CommandList.OrderBy(itm => itm.FullName).ToList();

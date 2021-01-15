@@ -22,7 +22,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void CompressesFiles()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _compressFiles = new CompressFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void CompressesFilesWithPassword()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _compressFiles = new CompressFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -74,7 +74,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesInvalidPath()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _compressFiles = new CompressFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;

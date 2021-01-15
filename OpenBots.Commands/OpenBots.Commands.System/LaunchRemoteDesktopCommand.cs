@@ -81,9 +81,9 @@ namespace OpenBots.Commands.System
 			var width = int.Parse(v_RDPWidth.ConvertUserVariableToString(engine));
 			var height = int.Parse(v_RDPHeight.ConvertUserVariableToString(engine));
 
-			if (engine.ScriptEngineUI != null)
+			if (engine.AutomationEngineContext.ScriptEngine != null)
 			{
-				var result = ((Form)engine.ScriptEngineUI).Invoke(new Action(() =>
+				var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
 				{
 					LaunchRDPSession(machineName, userName, password, width, height);
 				}));

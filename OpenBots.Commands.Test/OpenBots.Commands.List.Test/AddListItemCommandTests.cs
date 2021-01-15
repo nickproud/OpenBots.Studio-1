@@ -22,7 +22,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void AddsStringListItem()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _addListItem = new AddListItemCommand();
 
             List<string> stringList = new List<string>();
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void AddsDataTableListItem()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _addListItem = new AddListItemCommand();
 
             List<DataTable> stringList = new List<DataTable>();
@@ -65,7 +65,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void HandlesInvalidListItem()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _addListItem = new AddListItemCommand();
 
             List<DataTable> stringList = new List<DataTable>();

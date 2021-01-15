@@ -15,6 +15,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CoreResources = OpenBots.Core.Properties.Resources;
+using System.ComponentModel;
+using OpenBots.Core.Script;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -249,6 +251,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         case Keys.B:
                             AddRemoveBreakpoint();
                             break;
+                        case Keys.J:
+                            OpenArgumentManager();
+                            break;
                         case Keys.K:
                             OpenVariableManager();
                             break;
@@ -298,9 +303,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 newBuilder.ScriptProject = ScriptProject;
                 newBuilder.ScriptProjectPath = ScriptProjectPath;
 
-                //add variables/elements
+                //add variables/elements/arguments
                 newBuilder._scriptVariables = _scriptVariables;
                 newBuilder._scriptElements = _scriptElements;
+                newBuilder._scriptArguments = _scriptArguments;
 
                 TabPage newtabPage = new TabPage("Sequence");
                 newtabPage.Name = "Sequence";
@@ -342,9 +348,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //update label
                     selectedCommandItem.Text = sequence.GetDisplayValue();
 
-                    //update variables/elements
+                    //update variables/elements/arguments
                     _scriptVariables = newBuilder._scriptVariables;
                     _scriptElements = newBuilder._scriptElements;
+                    _scriptArguments = newBuilder._scriptArguments;
+
+                    newBuilder.dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                    newBuilder.dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
                 }
             }
             else
@@ -352,7 +362,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //create new command editor form
                 frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands());
 
-                editCommand.Container = AContainer;
+                editCommand.ScriptEngineContext.Container = AContainer;
 
                 //creation mode edit locks form to current command
                 editCommand.CreationModeInstance = CreationMode.Edit;
@@ -364,12 +374,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 editCommand.OriginalCommand = Common.Clone(currentCommand);
 
                 //set variables
-                editCommand.ScriptVariables = _scriptVariables;
+                editCommand.ScriptEngineContext.Variables = _scriptVariables;
+
+                //set arguments 
+                editCommand.ScriptEngineContext.Arguments = _scriptArguments;
 
                 //set elements
-                editCommand.ScriptElements = _scriptElements;
+                editCommand.ScriptEngineContext.Elements = _scriptElements;
 
-                editCommand.ProjectPath = ScriptProjectPath;
+                editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
 
                 if (currentCommand.CommandName == "SeleniumElementActionCommand")
                     editCommand.HTMLElementRecorderURL = HTMLElementRecorderURL;
@@ -379,14 +392,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     CreateUndoSnapshot();
                     selectedCommandItem.Tag = editCommand.SelectedCommand;
-                    selectedCommandItem.Text = editCommand.SelectedCommand.GetDisplayValue(); //+ "(" + cmdDetails.SelectedVariables() + ")";
-                    selectedCommandItem.SubItems.Add(editCommand.SelectedCommand.GetDisplayValue());                    
+                    selectedCommandItem.Text = editCommand.SelectedCommand.GetDisplayValue();
+                    selectedCommandItem.SubItems.Add(editCommand.SelectedCommand.GetDisplayValue());
+
+                    _scriptVariables = editCommand.ScriptEngineContext.Variables;
+                    _scriptArguments = editCommand.ScriptEngineContext.Arguments;
+                    dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                    dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
                 }
 
                 if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
                 {
                     CreateUndoSnapshot();
-                    _scriptElements = editCommand.ScriptElements;
+                    _scriptElements = editCommand.ScriptEngineContext.Elements;
                     HTMLElementRecorderURL = editCommand.HTMLElementRecorderURL;
                 }
             }
@@ -683,23 +701,32 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         _selectedTabScriptActions.Font, Brushes.LightSlateGray, modifiedBounds);
                     break;
                 case 1:
-                    if (command.PauseBeforeExecution)
+                    try
                     {
-                        var breakPointImg = new Bitmap(CoreResources.command_breakpoint, new Size(18, 18));
-                        e.Graphics.DrawImage(breakPointImg, modifiedBounds.Left, modifiedBounds.Top + 3);
+                        if (command.PauseBeforeExecution)
+                        {
+                            var breakPointImg = new Bitmap(CoreResources.command_breakpoint, new Size(18, 18));
+                            e.Graphics.DrawImage(breakPointImg, modifiedBounds.Left, modifiedBounds.Top + 3);
+                        }
+                        else if (command.IsCommented)
+                        {
+                            var commentedImg = new Bitmap(CoreResources.command_disabled, new Size(18, 18));
+                            e.Graphics.DrawImage(commentedImg, modifiedBounds.Left, modifiedBounds.Top + 3);
+                        }
+                        else
+                        {
+                            //draw command icon
+                            var img = _uiImages.Images[command.GetType().Name];
+                            if (img != null)
+                                e.Graphics.DrawImage(img, modifiedBounds.Left, modifiedBounds.Top + 3);
+                        }
+                        
                     }
-                    else if (command.IsCommented)
+                    catch (Exception ex)
                     {
-                        var commentedImg = new Bitmap(CoreResources.command_disabled, new Size(18, 18));
-                        e.Graphics.DrawImage(commentedImg, modifiedBounds.Left, modifiedBounds.Top + 3);
+                        //icon draw failure
+                        Console.WriteLine(ex);
                     }
-                    else
-                    {
-                        //draw command icon
-                        var img = _uiImages.Images[command.GetType().Name];
-                        if (img != null)
-                            e.Graphics.DrawImage(img, modifiedBounds.Left, modifiedBounds.Top + 3);
-                    }                   
                     break;
                 case 2:
                     //write command text

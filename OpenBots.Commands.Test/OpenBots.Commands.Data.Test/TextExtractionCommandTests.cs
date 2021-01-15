@@ -13,7 +13,7 @@ namespace OpenBots.Commands.Data.Test
         [Fact]
         public void ExtractsAllAfterText()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _textExtraction = new TextExtractionCommand();
 
             string input = "This is an example sentence";
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Data.Test
         [Fact]
         public void ExtractsAllBeforeText()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _textExtraction = new TextExtractionCommand();
 
             string input = "This is an example sentence";
@@ -77,7 +77,7 @@ namespace OpenBots.Commands.Data.Test
         [Fact]
         public void ExtractsAllBetweenText()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _textExtraction = new TextExtractionCommand();
 
             string input = "This is an example sentence";

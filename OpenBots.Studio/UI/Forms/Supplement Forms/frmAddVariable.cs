@@ -10,8 +10,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
     public partial class frmAddVariable : UIForm
     {
         public List<ScriptVariable> ScriptVariables { get; set; }
+        public List<ScriptArgument> ScriptArguments { get; set; }
         private bool _isEditMode;
         private string _editingVariableName;
+
         public frmAddVariable()
         {
             InitializeComponent();
@@ -26,7 +28,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             txtDefaultValue.Text = variableValue;
 
             _isEditMode = true;
-            _editingVariableName = variableName.Replace("{", "").Replace("}", "");
+            _editingVariableName = variableName;
         }
 
         private void frmAddVariable_Load(object sender, EventArgs e)
@@ -43,20 +45,21 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 return;
             }
 
-            string newVariableName = txtVariableName.Text.Replace("{", "").Replace("}", "");
+            string newVariableName = txtVariableName.Text;
             var existingVariable = ScriptVariables.Where(var => var.VariableName == newVariableName).FirstOrDefault();
-            if (existingVariable != null)
+            var existingArgument = ScriptArguments.Where(arg => arg.ArgumentName == newVariableName).FirstOrDefault();
+            if (existingVariable != null || existingArgument != null)
             {
                 if (!_isEditMode || existingVariable.VariableName != _editingVariableName)
                 {
-                    lblVariableNameError.Text = "A Variable with this name already exists";
+                    lblVariableNameError.Text = "A Variable or Argument with this name already exists";
                     return;
                 }
             }
 
-            if (!txtVariableName.Text.StartsWith("{") || !txtVariableName.Text.EndsWith("}"))
+            if (txtVariableName.Text.StartsWith("{") || txtVariableName.Text.EndsWith("}"))
             {
-                lblVariableNameError.Text = "Variable markers '{' and '}' must be included";
+                lblVariableNameError.Text = "Variable markers '{' and '}' should not be included";
                 return;
             }
 

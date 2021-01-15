@@ -238,7 +238,7 @@ namespace OpenBots.Nuget
             var packagePathResolver = new PackagePathResolver(packagePath);
 
             var nuGetFramework = NuGetFramework.ParseFolder("net48");
-            var settings = NuGet.Configuration.Settings.LoadDefaultSettings(root: null);
+            var settings = Settings.LoadDefaultSettings(root: null);
 
             var sourceRepositoryProvider = new SourceRepositoryProvider(new PackageSourceProvider(settings), Repository.Provider.GetCoreV3());
             var localRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(packagePath, "Local OpenBots Repo", true));
@@ -312,6 +312,19 @@ namespace OpenBots.Nuget
                 }
             });
 
+            try
+            {
+                return FilterAssemblies(assemblyPaths);
+            }
+            catch (Exception)
+            {
+                //try again
+                return LoadPackageAssemblies(configPath, throwException);
+            }
+        }
+
+        private static List<string> FilterAssemblies(List<string> assemblyPaths)
+        {
             List<string> filteredPaths = new List<string>();
             foreach (string path in assemblyPaths)
             {
@@ -321,6 +334,6 @@ namespace OpenBots.Nuget
             }
 
             return filteredPaths;
-        }        
+        }
     }
 }

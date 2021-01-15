@@ -16,7 +16,7 @@ namespace OpenBots.Commands.Dictionary.Test
         public void AddsDictionaryItem()
         {
             _addDictionaryItem = new AddDictionaryItemCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             Dictionary<string, string> inputDict = new Dictionary<string, string>();
             inputDict.StoreInUserVariable(_engine, "{inputDict}");

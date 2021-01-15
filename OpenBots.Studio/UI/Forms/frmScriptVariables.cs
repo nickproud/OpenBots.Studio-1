@@ -25,6 +25,7 @@ namespace OpenBots.UI.Forms
     public partial class frmScriptVariables : UIForm
     {
         public List<ScriptVariable> ScriptVariables { get; set; }
+        public List<ScriptArgument> ScriptArguments { get; set; }
         public string ScriptName { get; set; }
         public string LastModifiedVariableName { get; set; }
         private TreeNode _userVariableParentNode;
@@ -53,7 +54,7 @@ namespace OpenBots.UI.Forms
             //add each item to parent
             foreach (var item in variables)
             {
-                AddUserVariableNode(parentNode, "{" + item.VariableName + "}", (string)item.VariableValue);
+                AddUserVariableNode(parentNode, item.VariableName, (string)item.VariableValue);
             }
 
             //add parent to treeview
@@ -68,19 +69,7 @@ namespace OpenBots.UI.Forms
         #region Add/Cancel Buttons
         private void uiBtnOK_Click(object sender, EventArgs e)
         {
-            //remove all variables
-            ScriptVariables.Clear();
-
-            //loop each variable and add
-            for (int i = 0; i < _userVariableParentNode.Nodes.Count; i++)
-            {
-                //get name and value
-                var variableName = _userVariableParentNode.Nodes[i].Text.Replace("{", "").Replace("}", "");
-                var variableValue = _userVariableParentNode.Nodes[i].Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
-
-                //add to list
-                ScriptVariables.Add(new ScriptVariable() { VariableName = variableName, VariableValue = variableValue });
-            }
+            ResetVariables();
 
             //return success result
             DialogResult = DialogResult.OK;
@@ -99,6 +88,7 @@ namespace OpenBots.UI.Forms
             //create variable editing form
             frmAddVariable addVariableForm = new frmAddVariable();
             addVariableForm.ScriptVariables = ScriptVariables;
+            addVariableForm.ScriptArguments = ScriptArguments;
 
             ExpandUserVariableNode();
 
@@ -108,6 +98,7 @@ namespace OpenBots.UI.Forms
                 //add newly edited node
                 AddUserVariableNode(_userVariableParentNode, addVariableForm.txtVariableName.Text, addVariableForm.txtDefaultValue.Text);
                 LastModifiedVariableName = addVariableForm.txtVariableName.Text;
+                ResetVariables();
             }
         }
 
@@ -134,28 +125,29 @@ namespace OpenBots.UI.Forms
                 return;
             }
 
-            string VariableName, VariableValue;
+            string variableName, variableValue;
             TreeNode parentNode;
 
             if(tvScriptVariables.SelectedNode.Nodes.Count == 0)
             {
                 parentNode = tvScriptVariables.SelectedNode.Parent;
-                VariableName = tvScriptVariables.SelectedNode.Parent.Text;
-                VariableValue = tvScriptVariables.SelectedNode.Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                variableName = tvScriptVariables.SelectedNode.Parent.Text;
+                variableValue = tvScriptVariables.SelectedNode.Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
             }
             else
             {
                 parentNode = tvScriptVariables.SelectedNode;
-                VariableName = tvScriptVariables.SelectedNode.Text;
-                VariableValue = tvScriptVariables.SelectedNode.Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                variableName = tvScriptVariables.SelectedNode.Text;
+                variableValue = tvScriptVariables.SelectedNode.Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
             }
 
-            if (VariableName.Replace("{", "").Replace("}", "") == "ProjectPath")
+            if (variableName == "ProjectPath")
                 return;
 
             //create variable editing form
-            frmAddVariable addVariableForm = new frmAddVariable(VariableName, VariableValue);
+            frmAddVariable addVariableForm = new frmAddVariable(variableName, variableValue);
             addVariableForm.ScriptVariables = ScriptVariables;
+            addVariableForm.ScriptArguments = ScriptArguments;
 
             ExpandUserVariableNode();
 
@@ -168,6 +160,7 @@ namespace OpenBots.UI.Forms
                 //add newly edited node
                 AddUserVariableNode(_userVariableParentNode, addVariableForm.txtVariableName.Text, addVariableForm.txtDefaultValue.Text);
                 LastModifiedVariableName = addVariableForm.txtVariableName.Text;
+                ResetVariables();
             }
         }
 
@@ -184,7 +177,7 @@ namespace OpenBots.UI.Forms
             childNode.Nodes.Add(_leadingValue + variableText);
             parentNode.Nodes.Add(childNode);
             tvScriptVariables.Sort();
-            ExpandUserVariableNode();
+            ExpandUserVariableNode();            
         }
 
         private void ExpandUserVariableNode()
@@ -232,11 +225,12 @@ namespace OpenBots.UI.Forms
                     parentNode = tvScriptVariables.SelectedNode;
                 }
 
-                if (parentNode.Text.Replace("{", "").Replace("}", "") == "ProjectPath")
+                if (parentNode.Text == "ProjectPath")
                     return;
 
                 //remove parent node
                 parentNode.Remove();
+                ResetVariables();
             }
         }
 
@@ -250,5 +244,22 @@ namespace OpenBots.UI.Forms
             return node;
         }
         #endregion       
+
+        private void ResetVariables()
+        {
+            //remove all variables
+            ScriptVariables.Clear();
+
+            //loop each variable and add
+            for (int i = 0; i < _userVariableParentNode.Nodes.Count; i++)
+            {
+                //get name and value
+                var variableName = _userVariableParentNode.Nodes[i].Text;
+                var variableValue = _userVariableParentNode.Nodes[i].Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+
+                //add to list
+                ScriptVariables.Add(new ScriptVariable() { VariableName = variableName, VariableValue = variableValue });
+            }
+        }
     }
 }

@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Input
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			if (engine.ScriptEngineUI == null)
+			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{
 				engine.ReportProgress("HTML UserInput Supported With UI Only");
 				MessageBox.Show("HTML UserInput Supported With UI Only", "UserInput Command", 
@@ -62,9 +62,9 @@ namespace OpenBots.Commands.Input
 			var htmlInput = v_InputHTML.ConvertUserVariableToString(engine);
 
 			//invoke ui for data collection
-			var result = ((Form)engine.ScriptEngineUI).Invoke(new Action(() =>
+			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
 			{				
-				var variables = engine.ScriptEngineUI.ShowHTMLInput(htmlInput);
+				var variables = engine.AutomationEngineContext.ScriptEngine.ShowHTMLInput(htmlInput);
 
 				//if user selected Ok then process variables
 				//null result means user cancelled/closed

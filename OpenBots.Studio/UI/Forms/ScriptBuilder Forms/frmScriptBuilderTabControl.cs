@@ -2,6 +2,7 @@
 using OpenBots.UI.CustomControls.CustomUIControls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -21,7 +22,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (scriptObject != null)
                 {
                     _scriptVariables = scriptObject.ScriptVariables;
+                    _scriptArguments = scriptObject.ScriptArguments;
                     _scriptElements = scriptObject.ScriptElements;
+
+                    if (!_isRunTaskCommand)
+                    {
+                        dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                        dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                    }                             
                 }               
             }
         }

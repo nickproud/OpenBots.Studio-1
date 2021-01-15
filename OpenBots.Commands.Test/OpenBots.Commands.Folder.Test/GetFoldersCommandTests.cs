@@ -15,7 +15,7 @@ namespace OpenBots.Commands.Folder.Test
         [Fact]
         public void GetsFolders()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getFolders = new GetFoldersCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Folder.Test
         [Fact]
         public void HandlesInvalidDirectoryPath()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getFolders = new GetFoldersCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;

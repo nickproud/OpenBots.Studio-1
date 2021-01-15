@@ -91,7 +91,7 @@ namespace OpenBots.Commands.Input
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			if (engine.ScriptEngineUI == null)
+			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{
 				engine.ReportProgress("UserInput Supported With UI Only");
 				MessageBox.Show("UserInput Supported With UI Only", "UserInput Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -118,10 +118,10 @@ namespace OpenBots.Commands.Input
 			}
 
 			//invoke ui for data collection
-			var result = ((Form)engine.ScriptEngineUI).Invoke(new Action(() =>
+			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
 			{
 				//get input from user
-			  var userInputs = engine.ScriptEngineUI.ShowInput(header, directions, v_UserInputConfig);
+			  var userInputs = engine.AutomationEngineContext.ScriptEngine.ShowInput(header, directions, v_UserInputConfig);
 
 				//check if user provided input
 				if (userInputs != null)

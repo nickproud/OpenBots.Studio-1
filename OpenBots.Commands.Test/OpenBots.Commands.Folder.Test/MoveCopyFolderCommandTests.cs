@@ -16,7 +16,7 @@ namespace OpenBots.Commands.Folder.Test
         [InlineData("Copy Folder")]
         public void MovesCopiesFolder(string operation)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _moveCopyFolder = new MoveCopyFolderCommand();
 
             string folder = "";
@@ -63,7 +63,7 @@ namespace OpenBots.Commands.Folder.Test
         [Fact]
         public void HandlesInvalidSourceFolderInput()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _moveCopyFolder = new MoveCopyFolderCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
