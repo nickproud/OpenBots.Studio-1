@@ -394,8 +394,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 newSequence.SelectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(cmd));
             }
 
-            newSequence.ParentBuilder = this;
-
             try
             {
                 newSequence.ShowDialog();
@@ -437,6 +435,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                 dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
             }
+
+            //add to parent
+            newSequence.MoveToParentCommands.ForEach(x => AddCommandToListView(x));
 
             newSequence.Dispose();            
         }

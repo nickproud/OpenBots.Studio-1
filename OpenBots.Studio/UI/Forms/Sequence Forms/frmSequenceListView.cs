@@ -841,21 +841,17 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         private void moveToParentToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //create command list
-            var commandList = new List<ScriptCommand>();
-
+            var commandGroup = new List<ScriptCommand>();
             //loop each
             for (int i = SelectedTabScriptActions.SelectedItems.Count - 1; i >= 0; i--)
             {
                 //add to list and remove existing
-                commandList.Add((ScriptCommand)SelectedTabScriptActions.SelectedItems[i].Tag);
+                commandGroup.Add((ScriptCommand)SelectedTabScriptActions.SelectedItems[i].Tag);
                 SelectedTabScriptActions.Items.Remove(SelectedTabScriptActions.SelectedItems[i]);
             }
 
-            commandList.Reverse();
-
-            //add to parent
-            commandList.ForEach(x => ParentBuilder.AddCommandToListView(x));
+            commandGroup.Reverse();
+            MoveToParentCommands.AddRange(commandGroup);           
         }
 
         public void AddCommandToListView(ScriptCommand selectedCommand, int index = -1)

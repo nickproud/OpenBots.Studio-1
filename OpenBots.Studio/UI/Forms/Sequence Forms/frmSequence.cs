@@ -7,7 +7,6 @@ using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
-using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,8 +28,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         public List<ScriptArgument> SriptArguments { get; set; }
         public List<ScriptElement> ScriptElements { get; set; }
         public Project ScriptProject { get; set; }
-        public string ScriptProjectPath { get; set; }
-        public frmScriptBuilder ParentBuilder { get; set; }        
+        public string ScriptProjectPath { get; set; }       
 
         //notification variables
         private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
@@ -58,6 +56,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private ApplicationSettings _appSettings;
         private DateTime _lastAntiIdleEvent;
         public UIListView SelectedTabScriptActions { get; set; }
+        public List<ScriptCommand> MoveToParentCommands { get; set; } = new List<ScriptCommand>();
         #endregion
 
         #region Form Events
@@ -142,8 +141,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
                 return;
             }
-            else if (DialogResult == DialogResult.OK)
-                return;
         }
 
         private void frmSequence_FormClosed(object sender, FormClosedEventArgs e)
