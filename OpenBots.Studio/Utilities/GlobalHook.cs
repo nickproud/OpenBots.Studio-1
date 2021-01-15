@@ -145,8 +145,11 @@ namespace OpenBots.Utilities
             _keyboardHookID = SetKeyboardHook(_kbProc);
         }
 
-        public static void StartElementCaptureHook(bool stopOnFirstClick)
+        public static void StartElementCaptureHook(bool stopOnFirstClick, IContainer container = null)
         {
+            if (container != null)
+                _container = container;
+
             StopOnClick = stopOnFirstClick;
             //set hook for engine cancellation
             _mouseHookID = SetMouseHook(_mouseLeftUpProc);
