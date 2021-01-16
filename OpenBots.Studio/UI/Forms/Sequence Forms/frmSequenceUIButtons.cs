@@ -39,7 +39,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
                 ScriptVariables = ScriptVariables,
-                ScriptArguments = SriptArguments
+                ScriptArguments = ScriptArguments
             };
 
             if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
@@ -64,17 +64,17 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             frmScriptArguments scriptArgumentEditor = new frmScriptArguments
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
-                ScriptArguments = SriptArguments,
+                ScriptArguments = ScriptArguments,
                 ScriptVariables = ScriptVariables
             };
 
             if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
             {
-                SriptArguments = scriptArgumentEditor.ScriptArguments;
+                ScriptArguments = scriptArgumentEditor.ScriptArguments;
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
 
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(SriptArguments);
+                dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
             }
 
             scriptArgumentEditor.Dispose();

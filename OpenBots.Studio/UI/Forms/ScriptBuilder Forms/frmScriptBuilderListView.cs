@@ -375,7 +375,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //add variables/elements/arguments
             newSequence.ScriptVariables = _scriptVariables;
             newSequence.ScriptElements = _scriptElements;
-            newSequence.SriptArguments = _scriptArguments;
+            newSequence.ScriptArguments = _scriptArguments;
 
             newSequence.dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
             newSequence.dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
@@ -433,7 +433,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //update variables/elements/arguments
                 _scriptVariables = newSequence.ScriptVariables;
                 _scriptElements = newSequence.ScriptElements;
-                _scriptArguments = newSequence.SriptArguments;
+                _scriptArguments = newSequence.ScriptArguments;
 
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                 dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);

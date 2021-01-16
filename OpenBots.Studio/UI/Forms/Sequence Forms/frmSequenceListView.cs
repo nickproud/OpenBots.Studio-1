@@ -271,7 +271,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 editCommand.ScriptEngineContext.Variables = ScriptVariables;
 
                 //set arguments 
-                editCommand.ScriptEngineContext.Arguments = SriptArguments;
+                editCommand.ScriptEngineContext.Arguments = ScriptArguments;
 
                 //set elements
                 editCommand.ScriptEngineContext.Elements = ScriptElements;
@@ -290,9 +290,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     selectedCommandItem.SubItems.Add(editCommand.SelectedCommand.GetDisplayValue());
 
                     ScriptVariables = editCommand.ScriptEngineContext.Variables;
-                    SriptArguments = editCommand.ScriptEngineContext.Arguments;
+                    ScriptArguments = editCommand.ScriptEngineContext.Arguments;
                     dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
-                    dgvArguments.DataSource = new BindingList<ScriptArgument>(SriptArguments);
+                    dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
                 }
 
                 if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")

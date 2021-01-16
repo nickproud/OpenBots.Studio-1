@@ -25,7 +25,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         //engine context variables
         private List<ListViewItem> _rowsSelectedForCopy;
         public List<ScriptVariable> ScriptVariables { get; set; }
-        public List<ScriptArgument> SriptArguments { get; set; }
+        public List<ScriptArgument> ScriptArguments { get; set; }
         public List<ScriptElement> ScriptElements { get; set; }
         public Project ScriptProject { get; set; }
         public string ScriptProjectPath { get; set; }       
@@ -264,7 +264,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
             newCommandForm.ScriptEngineContext.Variables = ScriptVariables;
             newCommandForm.ScriptEngineContext.Elements = ScriptElements;
-            newCommandForm.ScriptEngineContext.Arguments = SriptArguments;
+            newCommandForm.ScriptEngineContext.Arguments = ScriptArguments;
             newCommandForm.ScriptEngineContext.Container = AContainer;
 
             newCommandForm.ScriptEngineContext.ProjectPath = ScriptProjectPath;
@@ -278,9 +278,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 AddCommandToListView(newCommandForm.SelectedCommand);
 
                 ScriptVariables = newCommandForm.ScriptEngineContext.Variables;
-                SriptArguments = newCommandForm.ScriptEngineContext.Arguments;
+                ScriptArguments = newCommandForm.ScriptEngineContext.Arguments;
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(SriptArguments);
+                dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
              }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")

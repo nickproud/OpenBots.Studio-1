@@ -21,7 +21,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 _preEditVarArgName = dgv.Rows[e.RowIndex].Cells[0].Value?.ToString();
 
                 _existingVarArgSearchList = new List<string>();
-                _existingVarArgSearchList.AddRange(SriptArguments.Select(arg => arg.ArgumentName).ToList());
+                _existingVarArgSearchList.AddRange(ScriptArguments.Select(arg => arg.ArgumentName).ToList());
                 _existingVarArgSearchList.AddRange(ScriptVariables.Select(var => var.VariableName).ToList());
                 _existingVarArgSearchList.AddRange(Common.GenerateSystemVariables().Select(var => var.VariableName).ToList());
             }
