@@ -361,7 +361,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //get sequence events
             ISequenceCommand sequence = currentCommand as ISequenceCommand;
             frmSequence newSequence = new frmSequence();
-            //newBuilder._isSequence = true;
 
             //apply editor style format
             newSequence.Text = sequence.v_Comment;
@@ -400,8 +399,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception)
             {
-                //failed to open sequence command. Try again
+                //Failed to open sequence command. Dispose and force collection
                 newSequence.Dispose();
+                GC.Collect();
+
+                //Try again
                 LoadSequenceCommand(selectedCommandItem, currentCommand);
                 return;
             }
@@ -439,7 +441,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //add to parent
             newSequence.MoveToParentCommands.ForEach(x => AddCommandToListView(x));
 
-            newSequence.Dispose();            
+            //Dispose and force collection
+            newSequence.Dispose();
+            GC.Collect();
         }
 
         private void CutRows()
