@@ -360,6 +360,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 return;
 
             bool childNodefound = false;
+
             //blocks repainting tree until all controls are loaded
             tvCommands.BeginUpdate();
             tvCommands.Nodes.Clear();
@@ -406,6 +407,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 }
                 tvCommands.CollapseAll();
             }
+
             //enables redrawing tree after all controls have been added
             tvCommands.EndUpdate();
         }

@@ -84,9 +84,10 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         private void lstScriptActions_DragDrop(object sender, DragEventArgs e)
         {
-            //Returns the location of the mouse pointer in the ListView control.
+            //returns the location of the mouse pointer in the ListView control
             Point cp = SelectedTabScriptActions.PointToClient(new Point(e.X, e.Y));
-            //Obtain the item that is located at the specified location of the mouse pointer.
+
+            //obtain the item that is located at the specified location of the mouse pointer
             ListViewItem dragToItem = SelectedTabScriptActions.GetItemAt(cp.X, cp.Y);
 
             if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
@@ -112,7 +113,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             }
             else
             {
-                //Return if the items are not selected in the ListView control.
+                //return if the items are not selected in the ListView control
                 if (SelectedTabScriptActions.SelectedItems.Count == 0)
                 {
                     return;
@@ -125,39 +126,15 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     return;
                 }
 
-                bool hasSequenceCommand = false;
                 List<ScriptCommand> commandsToMove = new List<ScriptCommand>();
 
                 for (int i = 0; i <= SelectedTabScriptActions.SelectedItems.Count - 1; i++)
                 {
                     var command = (ScriptCommand)SelectedTabScriptActions.SelectedItems[i].Tag;
-
-                    if (command.CommandName == "SequenceCommand")
-                        hasSequenceCommand = true;
-
                     commandsToMove.Add(command);
-                }
+                }               
 
-                    //drag and drop for sequence
-                if ((dragToItem.Tag.GetType().Name == "SequenceCommand") && (_appSettings.ClientSettings.EnableSequenceDragDrop) && !hasSequenceCommand)
-                {
-                    //sequence command for drag drop
-                    var sequence = (ISequenceCommand)dragToItem.Tag;
-                   
-                    //add command to script actions
-                    sequence.ScriptActions.AddRange(commandsToMove);
-
-                    //remove originals
-                    for (int i = SelectedTabScriptActions.SelectedItems.Count - 1; i >= 0; i--)
-                    {
-                        SelectedTabScriptActions.Items.Remove(SelectedTabScriptActions.SelectedItems[i]);
-                    }
-
-                    //return back
-                    return;
-                }
-
-                //Obtain the index of the item at the mouse pointer.
+                //obtain the index of the item at the mouse pointer
                 int dragIndex = dragToItem.Index;
 
                 ListViewItem[] sel = new ListViewItem[SelectedTabScriptActions.SelectedItems.Count];
@@ -167,7 +144,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 }
                 for (int i = 0; i < sel.GetLength(0); i++)
                 {
-                    //Obtain the ListViewItem to be dragged to the target location.
+                    //obtain the ListViewItem to be dragged to the target location
                     ListViewItem dragItem = sel[i];
                     int itemIndex = dragIndex;
                     if (itemIndex == dragItem.Index)
@@ -179,13 +156,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     else
                         itemIndex = dragIndex + i;
 
-                    //Insert the item at the mouse pointer.
+                    //insert the item at the mouse pointer
                     ListViewItem insertItem = (ListViewItem)dragItem.Clone();
                     SelectedTabScriptActions.Items.Insert(itemIndex, insertItem);
-                    //Removes the item from the initial location while
-                    //the item is moved to the new location.
+
+                    //removes the item from the initial location while the item is moved to the new location
                     SelectedTabScriptActions.Items.Remove(dragItem);
-                    //FormatCommandListView();
                     SelectedTabScriptActions.Invalidate();
                 }
             }
@@ -286,7 +262,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 //creation mode edit locks form to current command
                 editCommand.CreationModeInstance = CreationMode.Edit;
 
-                //editCommand.defaultStartupCommand = currentCommand.SelectionName;
                 editCommand.EditingCommand = currentCommand;
 
                 //create clone of current command so databinding does not affect if changes are not saved
@@ -339,6 +314,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void CutRows()
         {
             CreateUndoSnapshot();
+
             //initialize list of items to copy
             if (_rowsSelectedForCopy == null)
             {
@@ -364,7 +340,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         private void CopyRows()
         {
-
             //initialize list of items to copy
             if (_rowsSelectedForCopy == null)
             {
@@ -595,7 +570,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
             //create modified bounds
             var modifiedBounds = e.Bounds;
-            //modifiedBounds.Y += 2;
 
             //switch between column index
             switch (e.ColumnIndex)

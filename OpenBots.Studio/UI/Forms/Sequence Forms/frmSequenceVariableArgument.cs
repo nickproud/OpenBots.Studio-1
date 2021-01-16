@@ -63,7 +63,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                         Notify($"A variable or argument with the name '{variableName}' already exists", Color.Red);
                         dgv.Rows.RemoveAt(e.RowIndex);
                     }
-                    //If the variable/argument name is valid, set value cell's readonly as false
+                    //if the variable/argument name is valid, set value cell's readonly as false
                     else
                     {
                         foreach (DataGridViewCell cell in dgv.Rows[e.RowIndex].Cells)
@@ -140,7 +140,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     if (row.Cells[0].Value?.ToString() == "ProjectPath")
                         row.ReadOnly = true;
 
-                    //Sets Value cell to readonly if the Direction is Out
+                    //sets Value cell to readonly if the Direction is Out
                     if (row.Cells.Count == 3 && row.Cells[2].Value != null && (ScriptArgumentDirection)row.Cells[2].Value == ScriptArgumentDirection.Out)
                         row.Cells[1].ReadOnly = true;
                 }
@@ -156,7 +156,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             try
             {
-                //sets Direction to In by default when a new row is added. Prevents cell from ever being null.
+                //sets Direction to In by default when a new row is added. Prevents cell from ever being null
                 e.Row.Cells["Direction"].Value = ScriptArgumentDirection.In;
             }
             catch (Exception ex)
@@ -175,7 +175,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     DataGridView dgv = (DataGridView)sender;
                     DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells[2];
 
-                    //Sets value cell to read only if the argument direction is set to Out
+                    //sets value cell to read only if the argument direction is set to Out
                     if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.Out)
                     {
                         dgv.Rows[e.RowIndex].Cells[1].Value = null;
@@ -199,7 +199,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             {
                 DataGridView dgv = (DataGridView)sender;
 
-                //This fires the cell value changed handler above
+                //this fires the cell value changed handler above
                 if (dgv.IsCurrentCellDirty)
                     dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
             }
@@ -212,7 +212,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         private void dgvVariablesArguments_KeyDown(object sender, KeyEventArgs e)
         {
-            //various advanced keystroke shortcuts for saving, creating new var/arg/elem, shortcut menu, etc.
+            //various advanced keystroke shortcuts for saving, creating new var/arg/elem, shortcut menu, etc
             if (e.Control)
             {
                 switch (e.KeyCode)
