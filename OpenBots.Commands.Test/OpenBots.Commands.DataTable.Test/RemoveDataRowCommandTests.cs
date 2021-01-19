@@ -42,7 +42,7 @@ namespace OpenBots.Commands.DataTable.Test
             row3["lastname"] = "doe";
             inputTable.Rows.Add(row3);
 
-            inputTable.StoreInUserVariable(_engine, "{inputTable}");
+            inputTable.CreateTestVariable(_engine, "inputTable");
 
             _removeDataRow.v_DataTable = "{inputTable}";
             _removeDataRow.v_SearchItem = search;
