@@ -35,6 +35,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using IContainer = Autofac.IContainer;
 using Point = System.Drawing.Point;
@@ -175,6 +176,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public IContainer AContainer { get; private set; }
         private ContainerBuilder _builder;
         private string _packagesPath;
+        private string _programFilesPackagesSource;
 
         //variable/argument tab variables
         private List<string> _existingVarArgSearchList;
@@ -217,21 +219,36 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private void frmScriptBuilder_Load(object sender, EventArgs e)
+        private async void frmScriptBuilder_LoadAsync(object sender, EventArgs e)
         {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+            _builder = new ContainerBuilder();
+
+            if (!Directory.Exists(_packagesPath))
+                Directory.CreateDirectory(_packagesPath);
+
+            string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            _programFilesPackagesSource = Path.Combine(programFilesPath, "OpenBots Inc", "packages", Application.ProductVersion);
+
             if (Debugger.IsAttached)
             {
                 //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
                 installDefaultToolStripMenuItem.Visible = true;
             }
-
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
-
-            if (!Directory.Exists(_packagesPath))
-                Directory.CreateDirectory(_packagesPath);
-
-            _builder = new ContainerBuilder();
+            else //if OpenBots Studio is running in release mode
+            {
+                try
+                {
+                    //scan whether the current user account has unpacked default commands in their local appdata
+                    await NugetPackageManager.SetupFirstTimeUserEnvironment(_packagesPath, _programFilesPackagesSource);
+                }
+                catch(Exception ex)
+                {
+                    //packages missing from Program Files
+                    MessageBox.Show($"{ex.Message}\n\nFirst time user environment setup failed.", "Error");
+                }                
+            }
 
             //set controls double buffered
             foreach (Control control in Controls)

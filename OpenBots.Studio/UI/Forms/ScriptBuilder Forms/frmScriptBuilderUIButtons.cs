@@ -2,25 +2,26 @@
 using Newtonsoft.Json;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Nuget;
 using OpenBots.Core.IO;
+using OpenBots.Core.Model.EngineModel;
+using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.UI.Supplement_Forms;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using OpenBots.Core.Model.EngineModel;
-using System.ComponentModel;
-using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -809,28 +810,42 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private async void installDefaultToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(_packagesPath) && Directory.GetDirectories(_packagesPath).Length > 0)
+            try
             {
-                MessageBox.Show("Close OpenBots and delete all packages first.", "Delete Packages");
-                return;
+                if (Directory.Exists(_packagesPath) && Directory.GetDirectories(_packagesPath).Length > 0)
+                {
+                    MessageBox.Show("Close OpenBots and delete all packages first.", "Delete Packages");
+                    return;
+                }
+
+                tpbLoadingSpinner.Visible = true;
+                Directory.CreateDirectory(_packagesPath);
+
+                //require admin access to move/download packages and their dependency .nupkg files to Program Files
+                await NugetPackageManager.DownloadCommandDependencyPackages(_programFilesPackagesSource);
+
+                //unpack commands using Program Files as the source repository
+                var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
+                Dictionary<string, string> dependencies = Project.DefaultCommands.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+
+                foreach (var dep in dependencies)
+                    await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), _packagesPath, _programFilesPackagesSource);
+
+                //load existing command assemblies
+                string configPath = Path.Combine(ScriptProjectPath, "project.config");
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath, _packagesPath);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                AContainer = _builder.Build();
+
+                LoadCommands(this);
+                ReloadAllFiles();
+
+                tpbLoadingSpinner.Visible = false;
             }
-
-            tpbLoadingSpinner.Visible = true;
-
-            string configPath = Path.Combine(ScriptProjectPath, "project.config");
-
-            Directory.CreateDirectory(_packagesPath);
-            foreach (var dep in ScriptProject.Dependencies)
-                await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), _packagesPath);
-
-            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath, _packagesPath);
-            _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
-            AContainer = _builder.Build();
-
-            LoadCommands(this);
-            ReloadAllFiles();
-
-            tpbLoadingSpinner.Visible = false;
+            catch (Exception ex) when (ex is UnauthorizedAccessException)
+            {
+                MessageBox.Show("Close Visual Studio and run as Admin to install default packages.", "Unauthorized");
+            }          
         }
         #endregion
 
