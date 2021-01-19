@@ -34,7 +34,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmScriptBuilder));
-            OpenBots.Core.Utilities.FormsUtilities.Theme theme2 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.cmsProjectFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCopyFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDeleteFolder = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,7 +54,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.copySelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteSelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteSelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.moveToParentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openShortcutMenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyTray = new System.Windows.Forms.NotifyIcon(this.components);
@@ -132,7 +131,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pbRecentFiles = new System.Windows.Forms.PictureBox();
             this.pbLinks = new System.Windows.Forms.PictureBox();
             this.pbOpenBotsIcon = new System.Windows.Forms.PictureBox();
-            this.lblRecentFiles = new System.Windows.Forms.Label();
+            this.lblRecentProjects = new System.Windows.Forms.Label();
             this.lnkGitWiki = new System.Windows.Forms.LinkLabel();
             this.lnkGitIssue = new System.Windows.Forms.LinkLabel();
             this.lnkGitLatestReleases = new System.Windows.Forms.LinkLabel();
@@ -375,7 +374,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.copySelectedCodeToolStripMenuItem,
             this.pasteSelectedCodeToolStripMenuItem,
             this.deleteSelectedCodeToolStripMenuItem,
-            this.moveToParentToolStripMenuItem,
             this.viewCodeToolStripMenuItem,
             this.openShortcutMenuToolStripMenuItem});
             this.cmsScriptActions.Name = "cmsScriptActions";
@@ -437,14 +435,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.deleteSelectedCodeToolStripMenuItem.Text = "Delete Selected Code";
             this.deleteSelectedCodeToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedCodeToolStripMenuItem_Click);
             // 
-            // moveToParentToolStripMenuItem
-            // 
-            this.moveToParentToolStripMenuItem.Name = "moveToParentToolStripMenuItem";
-            this.moveToParentToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
-            this.moveToParentToolStripMenuItem.Text = "Move Out To Parent";
-            this.moveToParentToolStripMenuItem.Visible = false;
-            this.moveToParentToolStripMenuItem.Click += new System.EventHandler(this.moveToParentToolStripMenuItem_Click);
-            // 
             // viewCodeToolStripMenuItem
             // 
             this.viewCodeToolStripMenuItem.Name = "viewCodeToolStripMenuItem";
@@ -485,7 +475,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlControlContainer.Name = "pnlControlContainer";
             this.pnlControlContainer.Size = new System.Drawing.Size(1776, 98);
             this.pnlControlContainer.TabIndex = 7;
-            this.pnlControlContainer.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlControlContainer_Paint);
             // 
             // grpSearch
             // 
@@ -1143,9 +1132,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlPaneTabs.Name = "pnlPaneTabs";
             this.pnlPaneTabs.Size = new System.Drawing.Size(328, 673);
             this.pnlPaneTabs.TabIndex = 2;
-            theme2.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            theme2.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.pnlPaneTabs.Theme = theme2;
+            theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.pnlPaneTabs.Theme = theme1;
             // 
             // tpbLoadingSpinner
             // 
@@ -1564,11 +1553,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEnter);
             this.dgvArguments.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvArguments_CellValueChanged);
             this.dgvArguments.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvArguments_CurrentCellDirtyStateChanged);
+            this.dgvArguments.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvVariablesArguments_DataBindingComplete);
             this.dgvArguments.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvArguments_DefaultValuesNeeded);
             this.dgvArguments.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvArguments.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
             this.dgvArguments.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
-            this.dgvArguments.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvVariablesArguments_DataBindingComplete);
             // 
             // argumentName
             // 
@@ -1599,7 +1588,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pnlCommandHelper.Controls.Add(this.pbRecentFiles);
             this.pnlCommandHelper.Controls.Add(this.pbLinks);
             this.pnlCommandHelper.Controls.Add(this.pbOpenBotsIcon);
-            this.pnlCommandHelper.Controls.Add(this.lblRecentFiles);
+            this.pnlCommandHelper.Controls.Add(this.lblRecentProjects);
             this.pnlCommandHelper.Controls.Add(this.lnkGitWiki);
             this.pnlCommandHelper.Controls.Add(this.lnkGitIssue);
             this.pnlCommandHelper.Controls.Add(this.lnkGitLatestReleases);
@@ -1671,17 +1660,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pbOpenBotsIcon.TabIndex = 13;
             this.pbOpenBotsIcon.TabStop = false;
             // 
-            // lblRecentFiles
+            // lblRecentProjects
             // 
-            this.lblRecentFiles.AutoSize = true;
-            this.lblRecentFiles.Font = new System.Drawing.Font("Segoe UI Semilight", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRecentFiles.ForeColor = System.Drawing.Color.AliceBlue;
-            this.lblRecentFiles.Location = new System.Drawing.Point(138, 251);
-            this.lblRecentFiles.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblRecentFiles.Name = "lblRecentFiles";
-            this.lblRecentFiles.Size = new System.Drawing.Size(153, 37);
-            this.lblRecentFiles.TabIndex = 8;
-            this.lblRecentFiles.Text = "Recent Files";
+            this.lblRecentProjects.AutoSize = true;
+            this.lblRecentProjects.Font = new System.Drawing.Font("Segoe UI Semilight", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRecentProjects.ForeColor = System.Drawing.Color.AliceBlue;
+            this.lblRecentProjects.Location = new System.Drawing.Point(138, 251);
+            this.lblRecentProjects.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblRecentProjects.Name = "lblRecentProjects";
+            this.lblRecentProjects.Size = new System.Drawing.Size(194, 37);
+            this.lblRecentProjects.TabIndex = 8;
+            this.lblRecentProjects.Text = "Recent Projects";
             // 
             // lnkGitWiki
             // 
@@ -2389,7 +2378,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private System.Windows.Forms.ToolStripMenuItem copySelectedCodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteSelectedCodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cutSelectedCodeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem moveToParentToolStripMenuItem;
         private System.Windows.Forms.NotifyIcon notifyTray;
         private System.Windows.Forms.ToolStripMenuItem viewCodeToolStripMenuItem;
         private ContextMenuStrip cmsProjectFolderActions;
@@ -2468,7 +2456,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private PictureBox pbRecentFiles;
         private PictureBox pbLinks;
         private PictureBox pbOpenBotsIcon;
-        private Label lblRecentFiles;
+        private Label lblRecentProjects;
         private LinkLabel lnkGitWiki;
         private LinkLabel lnkGitIssue;
         private LinkLabel lnkGitLatestReleases;

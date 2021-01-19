@@ -6,9 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace OpenBots.UI.Forms.ScriptBuilder_Forms
+namespace OpenBots.UI.Forms.Sequence_Forms
 {
-    public partial class frmScriptBuilder : Form
+    public partial class frmSequence : Form
     {
         #region Variable/Argument Tab Events
         private void dgvVariablesArguments_CellEnter(object sender, DataGridViewCellEventArgs e)
@@ -21,8 +21,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _preEditVarArgName = dgv.Rows[e.RowIndex].Cells[0].Value?.ToString();
 
                 _existingVarArgSearchList = new List<string>();
-                _existingVarArgSearchList.AddRange(_scriptArguments.Select(arg => arg.ArgumentName).ToList());
-                _existingVarArgSearchList.AddRange(_scriptVariables.Select(var => var.VariableName).ToList());
+                _existingVarArgSearchList.AddRange(ScriptArguments.Select(arg => arg.ArgumentName).ToList());
+                _existingVarArgSearchList.AddRange(ScriptVariables.Select(var => var.VariableName).ToList());
                 _existingVarArgSearchList.AddRange(Common.GenerateSystemVariables().Select(var => var.VariableName).ToList());
             }
             catch (Exception ex)
@@ -175,7 +175,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     DataGridView dgv = (DataGridView)sender;
                     DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells[2];
 
-                    //Sets value cell to read only if the argument direction is set to Out
+                    //sets value cell to read only if the argument direction is set to Out
                     if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.Out)
                     {
                         dgv.Rows[e.RowIndex].Cells[1].Value = null;
@@ -215,42 +215,29 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //various advanced keystroke shortcuts for saving, creating new var/arg/elem, shortcut menu, etc
             if (e.Control)
             {
-                if (e.Shift)
+                switch (e.KeyCode)
                 {
-                    switch (e.KeyCode)
-                    {
-                        case Keys.S:
-                            SaveAllFiles();
-                            break;
-                    }
-                }
-                else
-                {
-                    switch (e.KeyCode)
-                    {
-                        case Keys.S:
-                            ClearSelectedListViewItems();
-                            SaveToFile(false);
-                            break;
-                        case Keys.J:
-                            OpenArgumentManager();
-                            break;
-                        case Keys.K:
-                            OpenVariableManager();
-                            break;
-                        case Keys.L:
-                            OpenElementManager();
-                            break;
-                        case Keys.M:
-                            shortcutMenuToolStripMenuItem_Click(null, null);
-                            break;
-                        case Keys.O:
-                            aboutOpenBotsToolStripMenuItem_Click(null, null);
-                            break;
-                    }
-                }
+                    case Keys.S:
+                        uiBtnSaveSequence_Click(null, null);
+                        break;
+                    case Keys.J:
+                        OpenArgumentManager();
+                        break;
+                    case Keys.K:
+                        OpenVariableManager();
+                        break;
+                    case Keys.L:
+                        OpenElementManager();
+                        break;
+                    case Keys.M:
+                        shortcutMenuToolStripMenuItem_Click(null, null);
+                        break;
+                    case Keys.O:
+                        aboutOpenBotsToolStripMenuItem_Click(null, null);
+                        break;
+                }               
             }
         }
-        #endregion             
+        #endregion       
     }
 }

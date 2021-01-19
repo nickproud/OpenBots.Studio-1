@@ -148,6 +148,8 @@ namespace OpenBots.UI.Forms
 
             if (Directory.Exists(newProjectPath))
                 Directory.Delete(newProjectPath, true);
+
+            newEngine.Dispose();
         }
 
         private void attendedScriptWatcher_Created(object sender, FileSystemEventArgs e)
@@ -224,8 +226,9 @@ namespace OpenBots.UI.Forms
             newSettings.ShowDialog();
 
             //reload app settings
-            _appSettings = new ApplicationSettings();
-            _appSettings = _appSettings.GetOrCreateApplicationSettings();
+            _appSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
+
+            newSettings.Dispose();
         }
 
         private void cboSelectedProject_MouseHover(object sender, EventArgs e)

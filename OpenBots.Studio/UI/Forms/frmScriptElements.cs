@@ -84,6 +84,8 @@ namespace OpenBots.UI.Forms
                     ElementValue = addElementForm.ElementValueDT
                 });
             }
+
+            addElementForm.Dispose();
         }
 
         private void tvScriptElements_DoubleClick(object sender, EventArgs e)
@@ -134,6 +136,8 @@ namespace OpenBots.UI.Forms
                 parentNode.Remove();
                 AddUserElementNode(_userElementParentNode, addElementForm.txtElementName.Text, addElementForm.ElementValueDT);
             }
+
+            addElementForm.Dispose();
         }
 
         private void AddUserElementNode(TreeNode parentNode, string elementName, DataTable elementValue)

@@ -17,11 +17,10 @@ using System.Windows.Forms;
 using CoreResources = OpenBots.Core.Properties.Resources;
 using System.ComponentModel;
 using OpenBots.Core.Script;
-using OpenBots.UI.Forms.Sequence_Forms;
 
-namespace OpenBots.UI.Forms.ScriptBuilder_Forms
+namespace OpenBots.UI.Forms.Sequence_Forms
 {
-    public partial class frmScriptBuilder : Form
+    public partial class frmSequence : Form
     {
         #region ListView Events
         private UIListView NewLstScriptActions(string title = "newLstScriptActions")
@@ -64,7 +63,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region ListView DragDrop
         private void lstScriptActions_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            _selectedTabScriptActions.DoDragDrop(_selectedTabScriptActions.SelectedItems, DragDropEffects.Move);
+            SelectedTabScriptActions.DoDragDrop(SelectedTabScriptActions.SelectedItems, DragDropEffects.Move);
         }
 
         private void lstScriptActions_DragEnter(object sender, DragEventArgs e)
@@ -86,10 +85,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void lstScriptActions_DragDrop(object sender, DragEventArgs e)
         {
             //returns the location of the mouse pointer in the ListView control
-            Point cp = _selectedTabScriptActions.PointToClient(new Point(e.X, e.Y));
+            Point cp = SelectedTabScriptActions.PointToClient(new Point(e.X, e.Y));
 
             //obtain the item that is located at the specified location of the mouse pointer
-            ListViewItem dragToItem = _selectedTabScriptActions.GetItemAt(cp.X, cp.Y);
+            ListViewItem dragToItem = SelectedTabScriptActions.GetItemAt(cp.X, cp.Y);
 
             if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
             {
@@ -110,12 +109,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (dragToItem != null)
                     AddCommandToListView(newCommandInstance, dragToItem.Index);
                 else
-                    AddCommandToListView(newCommandInstance, _selectedTabScriptActions.Items.Count);
+                    AddCommandToListView(newCommandInstance, SelectedTabScriptActions.Items.Count);
             }
             else
             {
                 //return if the items are not selected in the ListView control
-                if (_selectedTabScriptActions.SelectedItems.Count == 0)
+                if (SelectedTabScriptActions.SelectedItems.Count == 0)
                 {
                     return;
                 }
@@ -127,45 +126,21 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return;
                 }
 
-                bool hasSequenceCommand = false;
                 List<ScriptCommand> commandsToMove = new List<ScriptCommand>();
 
-                for (int i = 0; i <= _selectedTabScriptActions.SelectedItems.Count - 1; i++)
+                for (int i = 0; i <= SelectedTabScriptActions.SelectedItems.Count - 1; i++)
                 {
-                    var command = (ScriptCommand)_selectedTabScriptActions.SelectedItems[i].Tag;
-
-                    if (command.CommandName == "SequenceCommand")
-                        hasSequenceCommand = true;
-
+                    var command = (ScriptCommand)SelectedTabScriptActions.SelectedItems[i].Tag;
                     commandsToMove.Add(command);
-                }
-
-                    //drag and drop for sequence
-                if ((dragToItem.Tag.GetType().Name == "SequenceCommand") && (_appSettings.ClientSettings.EnableSequenceDragDrop) && !hasSequenceCommand)
-                {
-                    //sequence command for drag drop
-                    var sequence = (ISequenceCommand)dragToItem.Tag;
-                   
-                    //add command to script actions
-                    sequence.ScriptActions.AddRange(commandsToMove);
-
-                    //remove originals
-                    for (int i = _selectedTabScriptActions.SelectedItems.Count - 1; i >= 0; i--)
-                    {
-                        _selectedTabScriptActions.Items.Remove(_selectedTabScriptActions.SelectedItems[i]);
-                    }
-
-                    //return back
-                    return;
-                }
+                }               
 
                 //obtain the index of the item at the mouse pointer
                 int dragIndex = dragToItem.Index;
 
-                ListViewItem[] sel = new ListViewItem[_selectedTabScriptActions.SelectedItems.Count];
-                for (int i = 0; i <= _selectedTabScriptActions.SelectedItems.Count - 1; i++)
+                ListViewItem[] sel = new ListViewItem[SelectedTabScriptActions.SelectedItems.Count];
+                for (int i = 0; i <= SelectedTabScriptActions.SelectedItems.Count - 1; i++)
                 {
-                    sel[i] = _selectedTabScriptActions.SelectedItems[i];
+                    sel[i] = SelectedTabScriptActions.SelectedItems[i];
                 }
                 for (int i = 0; i < sel.GetLength(0); i++)
                 {
@@ -183,13 +158,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     //insert the item at the mouse pointer
                     ListViewItem insertItem = (ListViewItem)dragItem.Clone();
-                    _selectedTabScriptActions.Items.Insert(itemIndex, insertItem);
+                    SelectedTabScriptActions.Items.Insert(itemIndex, insertItem);
 
                     //removes the item from the initial location while the item is moved to the new location
-                    _selectedTabScriptActions.Items.Remove(dragItem);
-
-                    //FormatCommandListView();
-                    _selectedTabScriptActions.Invalidate();
+                    SelectedTabScriptActions.Items.Remove(dragItem);
+                    SelectedTabScriptActions.Invalidate();
                 }
             }
         }
@@ -212,71 +185,58 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             else if (e.Control)
             {
-                if (e.Shift)
+                switch (e.KeyCode)
                 {
-                    switch (e.KeyCode)
-                    {
-                        case Keys.S:
-                            SaveAllFiles();
-                            break;
-                    }
-                }
-                else
-                {
-                    switch (e.KeyCode)
-                    {
-                        case Keys.X:
-                            CutRows();
-                            break;
-                        case Keys.C:
-                            CopyRows();
-                            break;
-                        case Keys.V:
-                            PasteRows();
-                            break;
-                        case Keys.Z:
-                            UndoChange();
-                            break;
-                        case Keys.R:
-                            RedoChange();
-                            break;
-                        case Keys.A:
-                            foreach (ListViewItem item in _selectedTabScriptActions.Items)
-                                item.Selected = true;
-                            break;
-                        case Keys.S:
-                            ClearSelectedListViewItems();
-                            SaveToFile(false);
-                            break;
-                        case Keys.E:
-                            SetSelectedCodeToCommented(false);
-                            break;
-                        case Keys.D:
-                            SetSelectedCodeToCommented(true);
-                            break;
-                        case Keys.B:
-                            AddRemoveBreakpoint();
-                            break;
-                        case Keys.J:
-                            OpenArgumentManager();
-                            break;
-                        case Keys.K:
-                            OpenVariableManager();
-                            break;
-                        case Keys.L:
-                            OpenElementManager();
-                            break;
-                        case Keys.M:
-                            shortcutMenuToolStripMenuItem_Click(null, null);
-                            break;
-                        case Keys.O:
-                            aboutOpenBotsToolStripMenuItem_Click(null, null);
-                            break;
-                        case Keys.Back:
-                            clearAllToolStripMenuItem_Click(null, null);
-                            break;
-                    }
-                }                
+                    case Keys.X:
+                        CutRows();
+                        break;
+                    case Keys.C:
+                        CopyRows();
+                        break;
+                    case Keys.V:
+                        PasteRows();
+                        break;
+                    case Keys.Z:
+                        UndoChange();
+                        break;
+                    case Keys.R:
+                        RedoChange();
+                        break;
+                    case Keys.A:
+                        foreach (ListViewItem item in SelectedTabScriptActions.Items)
+                            item.Selected = true;
+                        break;
+                    case Keys.S:
+                        uiBtnSaveSequence_Click(null, null);
+                        break;
+                    case Keys.E:
+                        SetSelectedCodeToCommented(false);
+                        break;
+                    case Keys.D:
+                        SetSelectedCodeToCommented(true);
+                        break;
+                    case Keys.B:
+                        AddRemoveBreakpoint();
+                        break;
+                    case Keys.J:
+                        OpenArgumentManager();
+                        break;
+                    case Keys.K:
+                        OpenVariableManager();
+                        break;
+                    case Keys.L:
+                        OpenElementManager();
+                        break;
+                    case Keys.M:
+                        shortcutMenuToolStripMenuItem_Click(null, null);
+                        break;
+                    case Keys.O:
+                        aboutOpenBotsToolStripMenuItem_Click(null, null);
+                        break;
+                    case Keys.Back:
+                        clearAllToolStripMenuItem_Click(null, null);
+                        break;
+                }                             
             }
         }
 
@@ -284,72 +244,66 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             try 
             { 
-                if (_selectedTabScriptActions.SelectedItems.Count != 1)
+                if (SelectedTabScriptActions.SelectedItems.Count != 1)
                     return;
 
                 //bring up edit mode to edit the action
-                ListViewItem selectedCommandItem = _selectedTabScriptActions.SelectedItems[0];
+                ListViewItem selectedCommandItem = SelectedTabScriptActions.SelectedItems[0];
 
                 //set selected command from the listview item tag object which was assigned to the command
                 var currentCommand = (ScriptCommand)selectedCommandItem.Tag;
 
-                //check if editing a sequence
-                if (currentCommand is ISequenceCommand)
+
+                //create new command editor form
+                frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands());
+
+                editCommand.ScriptEngineContext.Container = AContainer;
+
+                //creation mode edit locks form to current command
+                editCommand.CreationModeInstance = CreationMode.Edit;
+
+                editCommand.EditingCommand = currentCommand;
+
+                //create clone of current command so databinding does not affect if changes are not saved
+                editCommand.OriginalCommand = Common.Clone(currentCommand);
+
+                //set variables
+                editCommand.ScriptEngineContext.Variables = ScriptVariables;
+
+                //set arguments 
+                editCommand.ScriptEngineContext.Arguments = ScriptArguments;
+
+                //set elements
+                editCommand.ScriptEngineContext.Elements = ScriptElements;
+
+                editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
+
+                if (currentCommand.CommandName == "SeleniumElementActionCommand")
+                    editCommand.HTMLElementRecorderURL = HTMLElementRecorderURL;
+
+                //show edit command form and save changes on OK result
+                if (editCommand.ShowDialog() == DialogResult.OK)
                 {
-                    LoadSequenceCommand(selectedCommandItem, currentCommand);
+                    CreateUndoSnapshot();
+                    selectedCommandItem.Tag = editCommand.SelectedCommand;
+                    selectedCommandItem.Text = editCommand.SelectedCommand.GetDisplayValue();
+                    selectedCommandItem.SubItems.Add(editCommand.SelectedCommand.GetDisplayValue());
+
+                    ScriptVariables = editCommand.ScriptEngineContext.Variables;
+                    ScriptArguments = editCommand.ScriptEngineContext.Arguments;
+                    dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
+                    dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
                 }
-                else
+
+                if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
                 {
-                    //create new command editor form
-                    frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands());
-
-                    editCommand.ScriptEngineContext.Container = AContainer;
-
-                    //creation mode edit locks form to current command
-                    editCommand.CreationModeInstance = CreationMode.Edit;
-
-                    editCommand.EditingCommand = currentCommand;
-
-                    //create clone of current command so databinding does not affect if changes are not saved
-                    editCommand.OriginalCommand = Common.Clone(currentCommand);
-
-                    //set variables
-                    editCommand.ScriptEngineContext.Variables = _scriptVariables;
-
-                    //set arguments 
-                    editCommand.ScriptEngineContext.Arguments = _scriptArguments;
-
-                    //set elements
-                    editCommand.ScriptEngineContext.Elements = _scriptElements;
-
-                    editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
-
-                    if (currentCommand.CommandName == "SeleniumElementActionCommand")
-                        editCommand.HTMLElementRecorderURL = HTMLElementRecorderURL;
-
-                    //show edit command form and save changes on OK result
-                    if (editCommand.ShowDialog() == DialogResult.OK)
-                    {
-                        CreateUndoSnapshot();
-                        selectedCommandItem.Tag = editCommand.SelectedCommand;
-                        selectedCommandItem.Text = editCommand.SelectedCommand.GetDisplayValue();
-                        selectedCommandItem.SubItems.Add(editCommand.SelectedCommand.GetDisplayValue());
-
-                        _scriptVariables = editCommand.ScriptEngineContext.Variables;
-                        _scriptArguments = editCommand.ScriptEngineContext.Arguments;
-                        dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                        dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-                    }
-
-                    if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
-                    {
-                        CreateUndoSnapshot();
-                        _scriptElements = editCommand.ScriptEngineContext.Elements;
-                        HTMLElementRecorderURL = editCommand.HTMLElementRecorderURL;
-                    }
-
-                    editCommand.Dispose();
+                    CreateUndoSnapshot();
+                    ScriptElements = editCommand.ScriptEngineContext.Elements;
+                    HTMLElementRecorderURL = editCommand.HTMLElementRecorderURL;
                 }
+
+                editCommand.Dispose();
+                
             }
             catch(Exception ex)
             {
@@ -357,99 +311,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private void LoadSequenceCommand(ListViewItem selectedCommandItem, ScriptCommand currentCommand)
-        {
-            //get sequence events
-            ISequenceCommand sequence = currentCommand as ISequenceCommand;
-            frmSequence newSequence = new frmSequence();
-
-            //apply editor style format
-            newSequence.Text = sequence.v_Comment;
-
-            newSequence.ScriptProject = ScriptProject;
-            newSequence.ScriptProjectPath = ScriptProjectPath;
-            newSequence.AContainer = AContainer;
-
-            newSequence.LoadCommands();
-
-            //add variables/elements/arguments
-            newSequence.ScriptVariables = _scriptVariables;
-            newSequence.ScriptElements = _scriptElements;
-            newSequence.ScriptArguments = _scriptArguments;
-
-            newSequence.dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-            newSequence.dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-
-            TabPage newtabPage = new TabPage("Sequence");
-            newtabPage.Name = "Sequence";
-            newtabPage.ToolTipText = "Sequence";
-
-            newSequence.uiScriptTabControl.TabPages.Add(newtabPage);
-            newtabPage.Controls.Add(newSequence.SelectedTabScriptActions);
-            newSequence.uiScriptTabControl.SelectedTab = newtabPage;
-
-            //append to new builder
-            foreach (var cmd in sequence.ScriptActions)
-            {
-                newSequence.SelectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(cmd));
-            }
-
-            try
-            {
-                newSequence.ShowDialog();
-            }
-            catch (Exception)
-            {
-                //failed to open sequence command. Dispose and force collection
-                newSequence.Dispose();
-                GC.Collect();
-
-                //try again
-                LoadSequenceCommand(selectedCommandItem, currentCommand);
-                return;
-            }
-
-            //if data has been changed
-            if (newSequence.DialogResult == DialogResult.OK)
-            {
-                CreateUndoSnapshot();
-                //create updated list
-                List<ScriptCommand> updatedList = new List<ScriptCommand>();
-
-                //update to list
-                for (int i = 0; i < newSequence.SelectedTabScriptActions.Items.Count; i++)
-                {
-                    var command = (ScriptCommand)newSequence.SelectedTabScriptActions.Items[i].Tag;
-                    updatedList.Add(command);
-                }
-
-                //apply new list to existing sequence
-                sequence.ScriptActions = updatedList;
-                sequence.v_Comment = newSequence.Text;
-
-                //update label
-                selectedCommandItem.Text = sequence.GetDisplayValue();
-
-                //update variables/elements/arguments
-                _scriptVariables = newSequence.ScriptVariables;
-                _scriptElements = newSequence.ScriptElements;
-                _scriptArguments = newSequence.ScriptArguments;
-
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-            }
-
-            //add to parent
-            newSequence.MoveToParentCommands.ForEach(x => AddCommandToListView(x));
-
-            //dispose and force collection
-            newSequence.Dispose();
-            GC.Collect();
-        }
-
         private void CutRows()
         {
             CreateUndoSnapshot();
+
             //initialize list of items to copy
             if (_rowsSelectedForCopy == null)
             {
@@ -461,12 +326,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //copy into list for all selected
-            if (_selectedTabScriptActions.SelectedItems.Count >= 1)
+            if (SelectedTabScriptActions.SelectedItems.Count >= 1)
             {
-                foreach (ListViewItem item in _selectedTabScriptActions.SelectedItems)
+                foreach (ListViewItem item in SelectedTabScriptActions.SelectedItems)
                 {
                     _rowsSelectedForCopy.Add(item);
-                    _selectedTabScriptActions.Items.Remove(item);
+                    SelectedTabScriptActions.Items.Remove(item);
                 }
 
                 Notify(_rowsSelectedForCopy.Count + " item(s) cut to clipboard!", Color.White);
@@ -475,7 +340,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void CopyRows()
         {
-
             //initialize list of items to copy
             if (_rowsSelectedForCopy == null)
             {
@@ -487,9 +351,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //copy into list for all selected
-            if (_selectedTabScriptActions.SelectedItems.Count >= 1)
+            if (SelectedTabScriptActions.SelectedItems.Count >= 1)
             {
-                foreach (ListViewItem item in _selectedTabScriptActions.SelectedItems)
+                foreach (ListViewItem item in SelectedTabScriptActions.SelectedItems)
                 {
                     _rowsSelectedForCopy.Add(item);
                 }
@@ -505,63 +369,63 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (_rowsSelectedForCopy != null)
             {
 
-                if (_selectedTabScriptActions.SelectedItems.Count == 0)
+                if (SelectedTabScriptActions.SelectedItems.Count == 0)
                 {
                     MessageBox.Show("In order to paste, you must first select a command to paste under.",
                         "Select Command To Paste Under");
                     return;
                 }
 
-                int destinationIndex = _selectedTabScriptActions.SelectedItems[0].Index + 1;
+                int destinationIndex = SelectedTabScriptActions.SelectedItems[0].Index + 1;
 
                 foreach (ListViewItem item in _rowsSelectedForCopy)
                 {
                     dynamic duplicatedCommand = Common.Clone(item.Tag);
                     duplicatedCommand.GenerateID();
-                    _selectedTabScriptActions.Items.Insert(destinationIndex, CreateScriptCommandListViewItem(duplicatedCommand));
+                    SelectedTabScriptActions.Items.Insert(destinationIndex, CreateScriptCommandListViewItem(duplicatedCommand));
                     destinationIndex += 1;
                 }
 
-                _selectedTabScriptActions.Invalidate();
+                SelectedTabScriptActions.Invalidate();
                 Notify(_rowsSelectedForCopy.Count + " item(s) pasted!", Color.White);
             }
         }
 
         private void UndoChange()
         {
-            if (((ScriptActionTag)_selectedTabScriptActions.Tag).UndoList.Count > 0)
+            if (((ScriptActionTag)SelectedTabScriptActions.Tag).UndoList.Count > 0)
             {
                 CreateRedoSnapshot();
-                _selectedTabScriptActions.Items.Clear();
+                SelectedTabScriptActions.Items.Clear();
 
-                foreach (ListViewItem rowItem in ((ScriptActionTag)_selectedTabScriptActions.Tag).UndoList.Last())
+                foreach (ListViewItem rowItem in ((ScriptActionTag)SelectedTabScriptActions.Tag).UndoList.Last())
                 {
-                    _selectedTabScriptActions.Items.Add(rowItem);
+                    SelectedTabScriptActions.Items.Add(rowItem);
                 }
 
-                ((ScriptActionTag)_selectedTabScriptActions.Tag).UndoList
-                    .RemoveAt(((ScriptActionTag)_selectedTabScriptActions.Tag).UndoList.Count - 1);
+                ((ScriptActionTag)SelectedTabScriptActions.Tag).UndoList
+                    .RemoveAt(((ScriptActionTag)SelectedTabScriptActions.Tag).UndoList.Count - 1);
 
-                _selectedTabScriptActions.Invalidate();
+                SelectedTabScriptActions.Invalidate();
             }
         }
 
         private void RedoChange()
         {
-            if (((ScriptActionTag)_selectedTabScriptActions.Tag).RedoList.Count > 0)
+            if (((ScriptActionTag)SelectedTabScriptActions.Tag).RedoList.Count > 0)
             {
                 CreateUndoSnapshot();
-                _selectedTabScriptActions.Items.Clear();
+                SelectedTabScriptActions.Items.Clear();
 
-                foreach (ListViewItem rowItem in ((ScriptActionTag)_selectedTabScriptActions.Tag).RedoList.Last())
+                foreach (ListViewItem rowItem in ((ScriptActionTag)SelectedTabScriptActions.Tag).RedoList.Last())
                 {
-                    _selectedTabScriptActions.Items.Add(rowItem);
+                    SelectedTabScriptActions.Items.Add(rowItem);
                 }
 
-                ((ScriptActionTag)_selectedTabScriptActions.Tag).RedoList
-                    .RemoveAt(((ScriptActionTag)_selectedTabScriptActions.Tag).RedoList.Count - 1);
+                ((ScriptActionTag)SelectedTabScriptActions.Tag).RedoList
+                    .RemoveAt(((ScriptActionTag)SelectedTabScriptActions.Tag).RedoList.Count - 1);
 
-                _selectedTabScriptActions.Invalidate();
+                SelectedTabScriptActions.Invalidate();
             }
         }
 
@@ -571,16 +435,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 uiScriptTabControl.SelectedTab.Text += " *";
 
             List<ListViewItem> itemList = new List<ListViewItem>();
-            foreach (ListViewItem rowItem in _selectedTabScriptActions.Items)
+            foreach (ListViewItem rowItem in SelectedTabScriptActions.Items)
             {
                 ListViewItem copiedRowItem = (ListViewItem)rowItem.Clone();
                 itemList.Add(copiedRowItem);
             }
 
-            ((ScriptActionTag)_selectedTabScriptActions.Tag).UndoList.Add(itemList);
+            ((ScriptActionTag)SelectedTabScriptActions.Tag).UndoList.Add(itemList);
 
-            if (((ScriptActionTag)_selectedTabScriptActions.Tag).UndoList.Count > 10)
-                ((ScriptActionTag)_selectedTabScriptActions.Tag).UndoList.RemoveAt(0);
+            if (((ScriptActionTag)SelectedTabScriptActions.Tag).UndoList.Count > 10)
+                ((ScriptActionTag)SelectedTabScriptActions.Tag).UndoList.RemoveAt(0);
         }
 
         private void CreateRedoSnapshot()
@@ -589,16 +453,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 uiScriptTabControl.SelectedTab.Text += " *";
 
             List<ListViewItem> itemList = new List<ListViewItem>();
-            foreach (ListViewItem rowItem in _selectedTabScriptActions.Items)
+            foreach (ListViewItem rowItem in SelectedTabScriptActions.Items)
             {
                 ListViewItem copiedRowItem = (ListViewItem)rowItem.Clone();
                 itemList.Add(copiedRowItem);
             }
 
-            ((ScriptActionTag)_selectedTabScriptActions.Tag).RedoList.Add(itemList);
+            ((ScriptActionTag)SelectedTabScriptActions.Tag).RedoList.Add(itemList);
 
-            if (((ScriptActionTag)_selectedTabScriptActions.Tag).RedoList.Count > 10)
-                ((ScriptActionTag)_selectedTabScriptActions.Tag).RedoList.RemoveAt(0);
+            if (((ScriptActionTag)SelectedTabScriptActions.Tag).RedoList.Count > 10)
+                ((ScriptActionTag)SelectedTabScriptActions.Tag).RedoList.RemoveAt(0);
         }
         #endregion
 
@@ -626,7 +490,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             int indent = 0;
             ScriptCommand cmd;
-            foreach (ListViewItem rowItem in _selectedTabScriptActions.Items)
+            foreach (ListViewItem rowItem in SelectedTabScriptActions.Items)
             {
                 if (rowItem is null)
                 {
@@ -686,8 +550,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void AutoSizeLineNumberColumn()
         {
             //auto adjust column width based on # of commands
-            int columnWidth = (20 * _selectedTabScriptActions.Items.Count.ToString().Length);
-            _selectedTabScriptActions.Columns[0].Width = columnWidth;
+            int columnWidth = (20 * SelectedTabScriptActions.Items.Count.ToString().Length);
+            SelectedTabScriptActions.Columns[0].Width = columnWidth;
         }
 
         private void lstScriptActions_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
@@ -713,7 +577,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 case 0:
                     //draw row number
                     e.Graphics.DrawString((e.ItemIndex + 1).ToString(),
-                        _selectedTabScriptActions.Font, Brushes.LightSlateGray, modifiedBounds);
+                        SelectedTabScriptActions.Font, Brushes.LightSlateGray, modifiedBounds);
                     break;
                 case 1:
                     try
@@ -746,54 +610,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 case 2:
                     //write command text
                     Brush commandNameBrush, commandBackgroundBrush;
-                    if ((_debugLine > 0) && (e.ItemIndex == _debugLine - 1) && !command.PauseBeforeExecution && !IsUnhandledException)
-                    {
-                        //debugging coloring
-                        commandNameBrush = Brushes.White;
-                        commandBackgroundBrush = Brushes.LimeGreen;
-                        IsScriptPaused = false;
-
-                        if (!IsScriptSteppedOver && !IsScriptSteppedInto)
-                        {
-                            RemoveDebugTab();
-                        }
-                    }
-                    else if((_debugLine > 0) && (e.ItemIndex == _debugLine - 1) && IsUnhandledException)
-                    {
-                        commandNameBrush = Brushes.Red;
-                        commandBackgroundBrush = Brushes.Black;
-
-                        if (!IsScriptPaused && _isDebugMode)
-                        {
-                            CreateDebugTab();
-                            IsScriptPaused = true;
-                        }
-                        
-                    }
-                    else if ((_debugLine > 0) && (e.ItemIndex == _debugLine - 1) && command.PauseBeforeExecution && !IsUnhandledException)
-                    {
-                        commandNameBrush = Brushes.White;
-                        commandBackgroundBrush = Brushes.Red;
-
-                        if (!IsScriptPaused && _isDebugMode)
-                        {                           
-                            CreateDebugTab();
-                            IsScriptPaused = true;
-                        }
-                    }
-                    else if ((_currentIndex >= 0) && (e.ItemIndex == _currentIndex))
-                    {
-                        //search primary item coloring
-                        commandNameBrush = Brushes.Black;
-                        commandBackgroundBrush = Brushes.Goldenrod;
-                    }
-                    else if (_matchingSearchIndex.Contains(e.ItemIndex))
-                    {
-                        //search match item coloring
-                        commandNameBrush = Brushes.Black;
-                        commandBackgroundBrush = Brushes.LightYellow;
-                    }
-                    else if ((e.Item.Focused) || (e.Item.Selected))
+                    if ((e.Item.Focused) || (e.Item.Selected))
                     {
                         //selected item coloring
                         commandNameBrush = Brushes.White;
@@ -834,7 +651,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     modifiedBounds.X += indentPixels;
 
                     //draw string
-                    e.Graphics.DrawString(command.GetDisplayValue(), _selectedTabScriptActions.Font,
+                    e.Graphics.DrawString(command.GetDisplayValue(), SelectedTabScriptActions.Font,
                                           commandNameBrush, modifiedBounds);
                     break;  
             }
@@ -842,14 +659,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void lstScriptActions_MouseMove(object sender, MouseEventArgs e)
         {
-            _selectedTabScriptActions.Invalidate();
+            SelectedTabScriptActions.Invalidate();
         }
 
         private void lstScriptActions_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
-                if (_selectedTabScriptActions.FocusedItem.Bounds.Contains(e.Location) == true)
+                if (SelectedTabScriptActions.FocusedItem.Bounds.Contains(e.Location) == true)
                 {
                     cmsScriptActions.Show(Cursor.Position);
                 }
@@ -860,15 +677,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             SelectAllScopedCode();
 
-            foreach (ListViewItem item in _selectedTabScriptActions.SelectedItems)
-                _selectedTabScriptActions.Items.Remove(item);
+            foreach (ListViewItem item in SelectedTabScriptActions.SelectedItems)
+                SelectedTabScriptActions.Items.Remove(item);
 
-            _selectedTabScriptActions.Invalidate();
+            SelectedTabScriptActions.Invalidate();
         }
 
         private void SelectAllScopedCode()
         {
-            foreach (ListViewItem item in _selectedTabScriptActions.SelectedItems)
+            foreach (ListViewItem item in SelectedTabScriptActions.SelectedItems)
             {
                 switch (((ScriptCommand)item.Tag).CommandName)
                 {
@@ -900,11 +717,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void FindEndCommand(ListViewItem item, string endCommandName)
         {
-            for (int itemIndex = item.Index; itemIndex < _selectedTabScriptActions.Items.Count; itemIndex++)
+            for (int itemIndex = item.Index; itemIndex < SelectedTabScriptActions.Items.Count; itemIndex++)
             {
-                _selectedTabScriptActions.Items[itemIndex].Selected = true;
-                if (((ScriptCommand)_selectedTabScriptActions.Items[itemIndex].Tag).CommandName == endCommandName &&
-                    _selectedTabScriptActions.Items[itemIndex].IndentCount == item.IndentCount)
+                SelectedTabScriptActions.Items[itemIndex].Selected = true;
+                if (((ScriptCommand)SelectedTabScriptActions.Items[itemIndex].Tag).CommandName == endCommandName &&
+                    SelectedTabScriptActions.Items[itemIndex].IndentCount == item.IndentCount)
                     break;
             }
         }
@@ -914,39 +731,39 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             SelectAllScopedCode();
 
             //warn if nothing was selected
-            if (_selectedTabScriptActions.SelectedItems.Count == 0)
+            if (SelectedTabScriptActions.SelectedItems.Count == 0)
                 Notify("No code was selected!", Color.Yellow);
             else
                 CreateUndoSnapshot();
 
             //get each item and set appropriately
-            foreach (ListViewItem item in _selectedTabScriptActions.SelectedItems)
+            foreach (ListViewItem item in SelectedTabScriptActions.SelectedItems)
             {
                 var selectedCommand = (ScriptCommand)item.Tag;
                 selectedCommand.IsCommented = setCommented;
             }
 
             //recolor
-            _selectedTabScriptActions.Invalidate();
+            SelectedTabScriptActions.Invalidate();
         }
 
         private void AddRemoveBreakpoint()
         {
             //warn if nothing was selected
-            if (_selectedTabScriptActions.SelectedItems.Count == 0)
+            if (SelectedTabScriptActions.SelectedItems.Count == 0)
                 Notify("No code was selected!", Color.Yellow);
             else
                 CreateUndoSnapshot();
 
             //get each item and set appropriately
-            foreach (ListViewItem item in _selectedTabScriptActions.SelectedItems)
+            foreach (ListViewItem item in SelectedTabScriptActions.SelectedItems)
             {
                 var selectedCommand = (ScriptCommand)item.Tag;
                 selectedCommand.PauseBeforeExecution = !selectedCommand.PauseBeforeExecution;
             }
 
             //recolor
-            _selectedTabScriptActions.Invalidate();
+            SelectedTabScriptActions.Invalidate();
         }
 
         private void disableSelectedCodeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -986,7 +803,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void viewCodeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var currentCommand = _selectedTabScriptActions.SelectedItems[0].Tag;
+            var currentCommand = SelectedTabScriptActions.SelectedItems[0].Tag;
             var jsonText = JsonConvert.SerializeObject(currentCommand, new JsonSerializerSettings()
             {
                 TypeNameHandling = TypeNameHandling.All
@@ -996,14 +813,24 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             dialog.Dispose();
         }
 
+        private void moveToParentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var commandGroup = new List<ScriptCommand>();
+            //loop each
+            for (int i = SelectedTabScriptActions.SelectedItems.Count - 1; i >= 0; i--)
+            {
+                //add to list and remove existing
+                commandGroup.Add((ScriptCommand)SelectedTabScriptActions.SelectedItems[i].Tag);
+                SelectedTabScriptActions.Items.Remove(SelectedTabScriptActions.SelectedItems[i]);
+            }
+
+            commandGroup.Reverse();
+            MoveToParentCommands.AddRange(commandGroup);           
+        }
+
         public void AddCommandToListView(ScriptCommand selectedCommand, int index = -1)
         {
-            if (pnlCommandHelper.Visible)
-            {
-                uiScriptTabControl.SelectedTab.Controls.Remove(pnlCommandHelper);
-                uiScriptTabControl.SelectedTab.Controls[0].Show();
-            }
-            else if(!uiScriptTabControl.SelectedTab.Controls[0].Visible)
+            if(!uiScriptTabControl.SelectedTab.Controls[0].Visible)
                 uiScriptTabControl.SelectedTab.Controls[0].Show();
 
             ListViewItem command;
@@ -1019,20 +846,20 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (index == -1)
             {
                 //insert to end by default
-                insertionIndex = _selectedTabScriptActions.Items.Count;
+                insertionIndex = SelectedTabScriptActions.Items.Count;
 
                 //verify setting to insert inline is selected and if an item is currently selected
-                if ((_appSettings.ClientSettings.InsertCommandsInline) && (_selectedTabScriptActions.SelectedItems.Count > 0))
+                if ((_appSettings.ClientSettings.InsertCommandsInline) && (SelectedTabScriptActions.SelectedItems.Count > 0))
                 {
                     //insert inline
-                    insertionIndex = _selectedTabScriptActions.SelectedItems[0].Index + 1;
+                    insertionIndex = SelectedTabScriptActions.SelectedItems[0].Index + 1;
                 }
             }
             else
                 insertionIndex = index;           
 
             //insert command
-            _selectedTabScriptActions.Items.Insert(insertionIndex, command);
+            SelectedTabScriptActions.Items.Insert(insertionIndex, command);
             ClearSelectedListViewItems();
             command.Selected = true;
 
@@ -1043,61 +870,61 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Items in this section will run within the loop";
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
 
                 dynamic endLoopCommand = TypeMethods.CreateTypeInstance(AContainer, "EndLoopCommand");
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(endLoopCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(endLoopCommand));
             }
             else if ((selectedCommand.CommandName == "BeginIfCommand") || (selectedCommand.CommandName == "BeginMultiIfCommand"))
             {
                 dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Items in this section will run if the statement is true";
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
                 
                 dynamic endIfCommand = TypeMethods.CreateTypeInstance(AContainer, "EndIfCommand");
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(endIfCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(endIfCommand));
             }
             else if (selectedCommand.CommandName == "BeginTryCommand")
             {
                 dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Items in this section will be handled if error occurs";
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
 
                 dynamic catchCommand = TypeMethods.CreateTypeInstance(AContainer, "CatchCommand");
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(catchCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(catchCommand));
 
                 dynamic codeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 codeCommentCommand.v_Comment = "This section executes if error occurs above";
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 3, CreateScriptCommandListViewItem(codeCommentCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 3, CreateScriptCommandListViewItem(codeCommentCommand));
 
                 dynamic endTryCommand = TypeMethods.CreateTypeInstance(AContainer, "EndTryCommand");
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 4, CreateScriptCommandListViewItem(endTryCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 4, CreateScriptCommandListViewItem(endTryCommand));
             }
             else if (selectedCommand.CommandName == "BeginRetryCommand")
             {
                 dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Items in this section will be retried as long as the condition is not met or an error is thrown";
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(addCodeCommentCommand));
                 
                 dynamic endRetryCommand = TypeMethods.CreateTypeInstance(AContainer, "EndRetryCommand");
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(endRetryCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(endRetryCommand));
             }
             else if (selectedCommand.CommandName == "BeginSwitchCommand")
             {
                 dynamic caseCommand = TypeMethods.CreateTypeInstance(AContainer, "CaseCommand");
                 caseCommand.v_CaseValue = "Default";
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(caseCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(caseCommand));
 
                 dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
                 addCodeCommentCommand.v_Comment = "Items in this section will run if no case statements match";
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(addCodeCommentCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 2, CreateScriptCommandListViewItem(addCodeCommentCommand));
                 
                 dynamic endSwitchCommand = TypeMethods.CreateTypeInstance(AContainer, "EndSwitchCommand");
-                _selectedTabScriptActions.Items.Insert(insertionIndex + 3, CreateScriptCommandListViewItem(endSwitchCommand));
+                SelectedTabScriptActions.Items.Insert(insertionIndex + 3, CreateScriptCommandListViewItem(endSwitchCommand));
             }
 
             CreateUndoSnapshot();
-            _selectedTabScriptActions.Invalidate();
+            SelectedTabScriptActions.Invalidate();
             AutoSizeLineNumberColumn();
         }
 
@@ -1112,119 +939,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             MessageBox.Show(_notificationPaintedText);
         }
-        #endregion
-
-        #region ListView Search
-        private void txtScriptSearch_TextChanged(object sender, EventArgs e)
-        {
-            if (_selectedTabScriptActions.Items.Count == 0)
-                return;
-
-            _reqdIndex = 0;
-
-            if (txtScriptSearch.Text == "")
-            {
-                //hide info
-                HideSearchInfo();
-
-                //clear indexes
-                _matchingSearchIndex.Clear();
-                _currentIndex = -1;
-
-                //repaint
-                _selectedTabScriptActions.Invalidate();
-            }
-            else
-            {
-                lblCurrentlyViewing.Show();
-                lblTotalResults.Show();
-                SearchForItemInListView();
-
-                //repaint
-                _selectedTabScriptActions.Invalidate();
-            }
-        }
-
-        private void HideSearchInfo()
-        {
-            lblCurrentlyViewing.Hide();
-            lblTotalResults.Hide();
-        }
-
-        private void pbSearch_Click(object sender, EventArgs e)
-        {
-            if (txtScriptSearch.Text != "" || tsSearchBox.Text != "")
-            {
-                _reqdIndex++;
-                SearchForItemInListView();
-            }
-        }
-
-        private void SearchForItemInListView()
-        {
-            var searchCriteria = txtScriptSearch.Text;
-
-            if (searchCriteria == "")
-            {
-                searchCriteria = tsSearchBox.Text;
-            }
-
-            var matchingItems = _selectedTabScriptActions.Items.OfType<ListViewItem>()
-                                                               .Where(x => x.Text.Contains(searchCriteria))
-                                                               .ToList();
-
-            int? matchCount = matchingItems.Count();
-            int totalMatches = matchCount ?? 0;
-
-            if ((_reqdIndex == matchingItems.Count) || (_reqdIndex < 0))
-            {
-                _reqdIndex = 0;
-            }
-
-            lblTotalResults.Show();
-
-            if (totalMatches == 0)
-            {
-                _reqdIndex = -1;
-                lblTotalResults.Text = "No Matches Found";
-                lblCurrentlyViewing.Hide();
-
-                //clear indexes
-                _matchingSearchIndex.Clear();
-                _reqdIndex = -1;
-                _selectedTabScriptActions.Invalidate();
-                return;
-            }
-            else
-            {
-                lblCurrentlyViewing.Text = "Viewing " + (_reqdIndex + 1) + " of " + totalMatches + "";
-                tsSearchResult.Text = "Viewing " + (_reqdIndex + 1) + " of " + totalMatches + "";
-                lblTotalResults.Text = totalMatches + " total results found";
-            }
-
-            _matchingSearchIndex = new List<int>();
-            foreach (ListViewItem itm in matchingItems)
-            {
-                _matchingSearchIndex.Add(itm.Index);
-                itm.BackColor = Color.LightGoldenrodYellow;
-            }
-
-            _currentIndex = matchingItems[_reqdIndex].Index;
-
-            _selectedTabScriptActions.Invalidate();
-            _selectedTabScriptActions.EnsureVisible(_currentIndex);
-        }
-
-        private void pbSearch_MouseEnter(object sender, EventArgs e)
-        {
-            Cursor = Cursors.Hand;
-        }
-
-        private void pbSearch_MouseLeave(object sender, EventArgs e)
-        {
-            Cursor = Cursors.Arrow;
-        }
-        #endregion
+        #endregion        
         #endregion
     }
 }

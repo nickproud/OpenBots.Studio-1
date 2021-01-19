@@ -60,7 +60,8 @@ namespace OpenBots.Core.Enums
         ShowHTMLBuilder,
         ShowIfBuilder,
         ShowLoopBuilder,
-        ShowEncryptionHelper
+        ShowEncryptionHelper,
+        CaptureWindowHelper
     }
 
     public enum ScriptFinishedResult

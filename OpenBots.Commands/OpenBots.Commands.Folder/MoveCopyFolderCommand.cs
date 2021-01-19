@@ -69,7 +69,7 @@ namespace OpenBots.Commands.Folder
 			CommandName = "MoveCopyFolderCommand";
 			SelectionName = "Move/Copy Folder";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_folders;
 
 			v_CreateDirectory = "Yes";
 			v_DeleteExisting = "Yes";

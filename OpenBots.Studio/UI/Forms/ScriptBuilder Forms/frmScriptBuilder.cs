@@ -19,9 +19,9 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
+using OpenBots.Core.Server.User;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls.CustomControls;
-using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
@@ -30,7 +30,6 @@ using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -39,13 +38,12 @@ using System.Reflection;
 using System.Windows.Forms;
 using IContainer = Autofac.IContainer;
 using Point = System.Drawing.Point;
-using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
     public partial class frmScriptBuilder : Form, IfrmScriptBuilder
-    //Form tracks the overall configuration and enables script editing, saving, and running
-    //Features ability to add, drag/drop reorder commands
+    //form tracks the overall configuration and enables script editing, saving, and running
+    //features ability to add, drag/drop reorder commands
     {
         #region Instance Variables
         //engine context variables
@@ -70,8 +68,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public string ScriptProjectPath { get; private set; }
         private string _mainFileName;
         public Logger EngineLogger { get; set; }
-        public IfrmScriptEngine CurrentEngine { get; set; }
-        private frmScriptBuilder _parentBuilder;        
+        public IfrmScriptEngine CurrentEngine { get; set; }      
 
         //notification variables
         private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
@@ -113,7 +110,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
 
                 _selectedTabScriptActions.Invalidate();
-                //FormatCommandListView();
 
                 if (IsScriptSteppedInto || IsScriptSteppedOver)
                     CreateDebugTab();
@@ -186,17 +182,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
         private List<AutomationCommand> _automationCommands;
-        private bool _editMode;
         private ImageList _uiImages;
         private ApplicationSettings _appSettings;
         private DateTime _lastAntiIdleEvent;
         private int _reqdIndex;
-        private int _selectedIndex = -1;
         private List<int> _matchingSearchIndex = new List<int>();
         private int _currentIndex = -1;
         private UIListView _selectedTabScriptActions;
         private Point _lastClickPosition;
-        private bool _isSequence;
         #endregion
 
         #region Form Events
@@ -227,7 +220,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             if (Debugger.IsAttached)
             {
-                //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
+                //set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
                 installDefaultToolStripMenuItem.Visible = true;
             }
             
@@ -250,23 +243,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _appSettings = new ApplicationSettings();
             _appSettings = _appSettings.GetOrCreateApplicationSettings();
 
-            string clientLoggerFilePath = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Automation Client Logs.txt");
-            Logger automationClientLogger = new Logging().CreateFileLogger(clientLoggerFilePath, Serilog.RollingInterval.Day);
-            //Core.Sockets.SocketClient.Initialize();
-            //Core.Sockets.SocketClient.associatedBuilder = this;
-
             //handle action bar preference
-            //hide action panel
-
-            if (_editMode)
-            {
-                tlpControls.RowStyles[0].SizeType = SizeType.Absolute;
-                tlpControls.RowStyles[0].Height = 0;
-
-                tlpControls.RowStyles[1].SizeType = SizeType.Absolute;
-                tlpControls.RowStyles[1].Height = 81;
-            }
-            else if (_appSettings.ClientSettings.UseSlimActionBar)
+            if (_appSettings.ClientSettings.UseSlimActionBar)
             {
                 tlpControls.RowStyles[1].SizeType = SizeType.Absolute;
                 tlpControls.RowStyles[1].Height = 0;
@@ -291,27 +269,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     Directory.CreateDirectory(rpaScriptsFolder);
                 }
+
+                userDialog.Dispose();
             }
 
             //get latest files for recent files list on load
-            GenerateRecentFiles();
+            GenerateRecentProjects();
 
             //no height for status bar
             HideNotificationRow();
-
-            //instantiate for script variables
-            if (!_editMode)
-            {
-                _scriptVariables = new List<ScriptVariable>();
-                _scriptArguments = new List<ScriptArgument>();
-                _scriptElements = new List<ScriptElement>();
-
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-            }
-
-            //set image list
-            _selectedTabScriptActions.SmallImageList = _uiImages;
 
             //set listview column size
             frmScriptBuilder_SizeChanged(null, null);
@@ -325,7 +291,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //instantiate and populate display icons for commands
             scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
 
-            var groupedCommands = _automationCommands.GroupBy(f => f.DisplayGroup);
+            var groupedCommands = scriptBuilder._automationCommands.GroupBy(f => f.DisplayGroup);
 
             scriptBuilder.tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)
@@ -354,21 +320,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             DialogResult result;
 
-            if (_isSequence && uiScriptTabControl.TabPages[0].Text.Contains(" *") && DialogResult == DialogResult.Cancel)
-            {
-                result = MessageBox.Show($"Would you like to save the sequence before closing?",
-                                         $"Save Sequence", MessageBoxButtons.YesNoCancel);
-
-                if (result == DialogResult.Yes)
-                    DialogResult = DialogResult.OK;
-                else if (result == DialogResult.Cancel)
-                    e.Cancel = true;
-
-                return;
-            }
-            else if (_isSequence && DialogResult == DialogResult.OK)
-                return;
-
             result = CheckForUnsavedScripts();
             if (result == DialogResult.Cancel)
                 e.Cancel = true;
@@ -379,70 +330,43 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             notifyTray.Dispose();
         }
 
-        private void GenerateRecentFiles()
+        private void GenerateRecentProjects()
         {
+
             flwRecentFiles.Controls.Clear();
 
-            var scriptPath = Folders.GetFolder(FolderType.ScriptsFolder);
+            List<string> recentlyOpenedProjectPaths = _appSettings.ClientSettings.RecentProjects;
 
-            if (!Directory.Exists(scriptPath))
+            if (recentlyOpenedProjectPaths == null || recentlyOpenedProjectPaths.Count() == 0)
             {
-                lblRecentFiles.Text = "Script Folder does not exist";
-                lblFilesMissing.Text = "Directory Not Found: " + scriptPath;
-                lblRecentFiles.ForeColor = Color.White;
-                lblFilesMissing.ForeColor = Color.White;
-                lblFilesMissing.Show();
-                flwRecentFiles.Hide();
-                return;
-            }
-
-            var directory = new DirectoryInfo(scriptPath);
-            var recentFiles = directory.GetFiles()
-                                       .OrderByDescending(file => file.LastWriteTime)
-                                       .Select(f => f.Name);
-
-            if (recentFiles.Count() == 0)
-            {
-                //Label noFilesLabel = new Label();
-                //noFilesLabel.Text = "No Recent Files Found";
-                //noFilesLabel.AutoSize = true;
-                //noFilesLabel.ForeColor = Color.SteelBlue;
-                //noFilesLabel.Font = lnkGitIssue.Font;
-                //noFilesLabel.Margin = new Padding(0, 0, 0, 0);
-                //flwRecentFiles.Controls.Add(noFilesLabel);
-                lblRecentFiles.Text = "No Recent Files Found";
-                lblRecentFiles.ForeColor = Color.White;
+                lblRecentProjects.Text = "No Recent Projects Found";
+                lblRecentProjects.ForeColor = Color.White;
                 lblFilesMissing.ForeColor = Color.White;
                 lblFilesMissing.Show();
                 flwRecentFiles.Hide();
             }
             else
             {
-                foreach (var fil in recentFiles)
+                foreach (string projectPath in recentlyOpenedProjectPaths)
                 {
-                    if (flwRecentFiles.Controls.Count == 7)
-                        return;
-
-                    LinkLabel newFileLink = new LinkLabel
+                    LinkLabel newProjectLink = new LinkLabel
                     {
-                        Text = fil,
+                        Text = new DirectoryInfo(projectPath).Name,
+                        Tag = projectPath,
                         AutoSize = true,
                         LinkColor = Color.AliceBlue,
                         Font = lnkGitIssue.Font,
                         Margin = new Padding(0, 0, 0, 0)
                     };
-                    newFileLink.LinkClicked += NewFileLink_LinkClicked;
-                    flwRecentFiles.Controls.Add(newFileLink);
+                    newProjectLink.LinkClicked += NewProjectLink_LinkClicked;
+                    flwRecentFiles.Controls.Add(newProjectLink);
+                    flwRecentFiles.Show();
                 }
             }
         }
-
         private void frmScriptBuilder_Shown(object sender, EventArgs e)
         {
             Program.SplashForm.Close();
-
-            if (_editMode)
-                return;
 
             tpbLoadingSpinner.Visible = true;
 
@@ -451,27 +375,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 Notify("Welcome! Press 'Add Command' to get started!", Color.White);
 
             tpbLoadingSpinner.Visible = false;
-        }
-
-        private void pnlControlContainer_Paint(object sender, PaintEventArgs e)
-        {
-            //Rectangle rect = new Rectangle(0, 0, pnlControlContainer.Width, pnlControlContainer.Height);
-            //using (LinearGradientBrush brush = new LinearGradientBrush(rect, Color.White, Color.WhiteSmoke, LinearGradientMode.Vertical))
-            //{
-            //    e.Graphics.FillRectangle(brush, rect);
-            //}
-
-            //Pen steelBluePen = new Pen(Color.SteelBlue, 2);
-            //Pen lightSteelBluePen = new Pen(Color.LightSteelBlue, 1);
-            ////e.Graphics.DrawLine(steelBluePen, 0, 0, pnlControlContainer.Width, 0);
-            //e.Graphics.DrawLine(lightSteelBluePen, 0, 0, pnlControlContainer.Width, 0);
-            //e.Graphics.DrawLine(lightSteelBluePen, 0, pnlControlContainer.Height - 1, pnlControlContainer.Width, pnlControlContainer.Height - 1);
-        }
-
-        private void pbMainLogo_Click(object sender, EventArgs e)
-        {
-            frmAbout aboutForm = new frmAbout();
-            aboutForm.Show();
         }
 
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)
@@ -537,14 +440,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             _notificationText = textToDisplay;
             _notificationColor = textColor;
-            //lblStatus.Left = 20;
-            //lblStatus.Text = textToDisplay;
 
             pnlStatus.SuspendLayout();
-            //for (int i = 0; i < 30; i++)
-            //{
-            //    tlpControls.RowStyles[1].Height = i;
-            //}
+
             ShowNotificationRow();
             pnlStatus.ResumeLayout();
             _isDisplaying = true;
@@ -553,10 +451,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void HideNotification()
         {
             pnlStatus.SuspendLayout();
-            //for (int i = 30; i > 0; i--)
-            //{
-            //    tlpControls.RowStyles[1].Height = i;
-            //}
+
             HideNotificationRow();
             pnlStatus.ResumeLayout();
             _isDisplaying = false;
@@ -620,7 +515,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptArguments = newCommandForm.ScriptEngineContext.Arguments;
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                 dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-            }
+             }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
             {
@@ -628,6 +523,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptElements = newCommandForm.ScriptEngineContext.Elements;
                 HTMLElementRecorderURL = newCommandForm.HTMLElementRecorderURL;
             }
+
+            newCommandForm.Dispose();
         }
 
         private List<ScriptCommand> GetConfiguredCommands()
@@ -697,6 +594,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 return;
 
             bool childNodefound = false;
+
             //blocks repainting tree until all controls are loaded
             tvCommands.BeginUpdate();
             tvCommands.Nodes.Clear();
@@ -743,6 +641,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
                 tvCommands.CollapseAll();
             }
+
             //enables redrawing tree after all controls have been added
             tvCommands.EndUpdate();
         }
@@ -802,15 +701,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             Process.Start("https://openbots.ai/api/execute-dll/");
         }
-        private void NewFileLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void NewProjectLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             LinkLabel senderLink = (LinkLabel)sender;
-            OpenFile(Path.Combine(Folders.GetFolder(FolderType.ScriptsFolder), senderLink.Text));
+            if (File.Exists(Path.Combine(senderLink.Tag.ToString(), "project.config")))
+                OpenProject(senderLink.Tag.ToString());
+            else
+                Notify($"Could not find 'project.config' for {senderLink.Tag}", Color.Red);
         }
 
-        #endregion
-
-        
+        #endregion        
     }
 }
 

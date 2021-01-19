@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Folder
 			CommandName = "CreateFolderCommand";
 			SelectionName = "Create Folder";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_folders;
 
 		}
 

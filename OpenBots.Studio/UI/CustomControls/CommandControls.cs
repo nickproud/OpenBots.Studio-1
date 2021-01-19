@@ -9,13 +9,14 @@ using OpenBots.Core.Properties;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Engine;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
+using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -242,6 +243,7 @@ namespace OpenBots.UI.CustomControls
                         inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptVariableEditor.LastModifiedVariableName + "}");
                 }
 
+                scriptVariableEditor.Dispose();
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
@@ -258,6 +260,8 @@ namespace OpenBots.UI.CustomControls
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
                         inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptArgumentEditor.LastModifiedArgumentName + "}");
                 }
+
+                scriptArgumentEditor.Dispose();
 
             }
             else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
@@ -366,6 +370,8 @@ namespace OpenBots.UI.CustomControls
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
                         ((ComboBox)sender).Text = "{" + scriptVariableEditor.LastModifiedVariableName + "}";
                 }
+
+                scriptVariableEditor.Dispose();
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
@@ -382,6 +388,8 @@ namespace OpenBots.UI.CustomControls
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
                         ((ComboBox)sender).Text = "{" + scriptArgumentEditor.LastModifiedArgumentName + "}";
                 }
+
+                scriptArgumentEditor.Dispose();
             }
             else if (e.KeyCode == Keys.Enter)
                 _currentEditor.uiBtnAdd_Click(null, null);
@@ -544,6 +552,12 @@ namespace OpenBots.UI.CustomControls
                         helperControl.CommandDisplay = "Encrypt Text";
                         helperControl.Click += (sender, e) => EncryptText(sender, e, (frmCommandEditor)editor);
                         break;
+                    case UIAdditionalHelperType.CaptureWindowHelper:
+                        //show window name helper
+                        helperControl.CommandImage = Resources.command_window;
+                        helperControl.CommandDisplay = "Capture Window Name";
+                        helperControl.Click += (sender, e) => GetWindowName(sender, e);
+                        break;
                 }
 
                 controlList.Add(helperControl);
@@ -576,6 +590,8 @@ namespace OpenBots.UI.CustomControls
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
                         dataGridView.CurrentCell.Value = "{" + scriptVariableEditor.LastModifiedVariableName + "}";                   
                 }
+
+                scriptVariableEditor.Dispose();
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
@@ -592,6 +608,8 @@ namespace OpenBots.UI.CustomControls
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
                         dataGridView.CurrentCell.Value = "{" + scriptArgumentEditor.LastModifiedArgumentName + "}";
                 }
+
+                scriptArgumentEditor.Dispose();
             }
             else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
                 return;
@@ -618,6 +636,8 @@ namespace OpenBots.UI.CustomControls
             {
                 targetTextbox.Text = codeBuilder.rtbCode.Text;
             }
+
+            codeBuilder.Dispose();
         }
 
         private void ShowMouseCaptureForm(object sender, EventArgs e, IfrmCommandEditor editor)
@@ -631,6 +651,8 @@ namespace OpenBots.UI.CustomControls
                 ((frmCommandEditor)editor).flw_InputVariables.Controls["v_XMousePosition"].Text = frmShowCursorPos.XPosition.ToString();
                 ((frmCommandEditor)editor).flw_InputVariables.Controls["v_YMousePosition"].Text = frmShowCursorPos.YPosition.ToString();
             }
+
+            frmShowCursorPos.Dispose();
         }
 
         public void ShowVariableSelector(object sender, EventArgs e)
@@ -708,6 +730,8 @@ namespace OpenBots.UI.CustomControls
 
                 }
             }
+
+            newVariableSelector.Dispose();
         }
 
         public void ShowElementSelector(object sender, EventArgs e)
@@ -743,6 +767,8 @@ namespace OpenBots.UI.CustomControls
                         .FirstOrDefault().ElementValue;
                 }
             }
+
+            newElementSelector.Dispose();
         }
 
         private void ShowFileSelector(object sender, EventArgs e)
@@ -800,9 +826,10 @@ namespace OpenBots.UI.CustomControls
                     UIPictureBox targetPictureBox = (UIPictureBox)inputBox.Tag;
                     targetPictureBox.Image = imageCaptureForm.UserSelectedBitmap;
                     var convertedImage = Common.ImageToBase64(imageCaptureForm.UserSelectedBitmap);
-                    targetPictureBox.EncodedImage = convertedImage;
-                    imageCaptureForm.Close();
+                    targetPictureBox.EncodedImage = convertedImage;                   
                 }
+
+                imageCaptureForm.Dispose();
             }
 
             ShowAllForms();
@@ -846,7 +873,7 @@ namespace OpenBots.UI.CustomControls
 
         public ImageElement FindImageElementTest(Bitmap smallBmp, double accuracy)
         {
-            FormsHelper.HideAllForms();
+            HideAllForms();
 
             dynamic element = null;
             double tolerance = 1.0 - accuracy;
@@ -1002,7 +1029,11 @@ namespace OpenBots.UI.CustomControls
             if (parameterRow != null)
                 parameterValue = parameterRow.ItemArray[2].ToString();
 
-            return new Tuple<string,string>(newElementRecorder.cboWindowTitle.Text, parameterValue);
+            var elementParameters = new Tuple<string, string>(newElementRecorder.WindowName, parameterValue);
+
+            newElementRecorder.Dispose();
+
+            return elementParameters;
         }
 
         private void ShowElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor)
@@ -1129,6 +1160,8 @@ namespace OpenBots.UI.CustomControls
                     }
                 }
             }
+
+            dllExplorer.Dispose();
         }
 
         private void AddInputParameter(object sender, EventArgs e)
@@ -1151,6 +1184,8 @@ namespace OpenBots.UI.CustomControls
             {
                 inputControl.Text = htmlForm.rtbHTML.Text;
             }
+
+            htmlForm.Dispose();
         }
 
         private void EncryptText(object sender, EventArgs e, IfrmCommandEditor editor)
@@ -1166,6 +1201,91 @@ namespace OpenBots.UI.CustomControls
 
             ComboBox comboBoxControl = (ComboBox)((frmCommandEditor)editor).flw_InputVariables.Controls["v_EncryptionOption"];
             comboBoxControl.Text = "Encrypted";
+        }
+
+        private void GetWindowName(object sender, EventArgs e)
+        {
+            ApplicationSettings settings = new ApplicationSettings().GetOrCreateApplicationSettings();
+            var minimizePreference = settings.ClientSettings.MinimizeToTray;
+
+            if (minimizePreference)
+            {
+                settings.ClientSettings.MinimizeToTray = false;
+                settings.Save(settings);
+            }
+
+            SendAllFormsToBack();
+            GlobalHook.StartElementCaptureHook(true);
+            GlobalHook.MouseEvent += (se, ev) => GlobalHook_MouseEvent(se, ev, (CommandItemControl)sender, settings, minimizePreference);
+        }
+
+        private void GlobalHook_MouseEvent(object sender, MouseCoordinateEventArgs e, CommandItemControl inputBox = null, 
+            ApplicationSettings settings = null, bool minimizePreference = false)
+        {
+            //mouse down has occured
+            if (e != null)
+            {
+                try
+                {
+                    Point point = new Point((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
+                    var window = User32Functions.WindowFromPoint(point);
+
+                    User32Functions.GetWindowThreadProcessId(window, out uint processId);
+                    Process process = Process.GetProcessById((int)processId);
+
+                    var windowName = process.MainWindowTitle;
+
+                    if (inputBox.Tag is ComboBox)
+                    {
+                        ComboBox targetComboBox = (ComboBox)inputBox.Tag;
+                        targetComboBox.Text = windowName;
+                    }
+                  
+                    if (minimizePreference)
+                    {
+                        settings.ClientSettings.MinimizeToTray = true;
+                        settings.Save(settings);
+                    }
+
+                    GlobalHook.MouseEvent -= (se, ev) => GlobalHook_MouseEvent(se, ev);
+
+                }
+                catch (Exception)
+                {                  
+                    if (minimizePreference)
+                    {
+                        settings.ClientSettings.MinimizeToTray = true;
+                        settings.Save(settings);
+                    }
+
+                    GlobalHook.MouseEvent -= (se, ev) => GlobalHook_MouseEvent(se, ev);
+
+                    MessageBox.Show("Could not find Window", "Error");
+                }
+            } 
+        }
+
+        public void SendAllFormsToBack()
+        {
+            foreach (Form form in Application.OpenForms)
+                SendFormToBack(form);
+
+            Thread.Sleep(1000);
+        }
+
+        public delegate void MoveFormToBackDelegate(Form form);
+        public void SendFormToBack(Form form)
+        {
+            if (form.InvokeRequired)
+            {
+                var d = new MoveFormToBackDelegate(SendFormToBack);
+                form.Invoke(d, new object[] { form });
+            }
+            else
+            {
+                form.TopMost = false;
+                form.SendToBack();
+            }              
         }
 
         public void ShowAllForms()
@@ -1221,7 +1341,7 @@ namespace OpenBots.UI.CustomControls
             //pull the main window title for each
             foreach (Process process in processlist)
             {
-                if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                if (!string.IsNullOrEmpty(process.MainWindowTitle))
                 {
                     //add to the control list of available windows
                     cbo.Items.Add(process.MainWindowTitle);

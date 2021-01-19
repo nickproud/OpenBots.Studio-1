@@ -405,6 +405,8 @@ namespace OpenBots.UI.Forms
                             PopulatetvPackageFeeds();
                             _settings.Save(_settings);                           
                         }
+
+                        addPackageSource.Dispose();
                         tpbLoadingSpinner.Visible = false;
                     }
                     else if (tvPackageFeeds.SelectedNode.Name == "ProjectDependencies")
