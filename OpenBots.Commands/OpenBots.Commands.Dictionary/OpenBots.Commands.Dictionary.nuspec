@@ -14,7 +14,7 @@
     <description>OpenBots commands for creating and manipulating Dictionary objects.</description>
     <releaseNotes>https://openbots.ai/category/release-notes/</releaseNotes>
     <copyright>(C) OpenBots Inc 2020-2021</copyright>
-    <tags>OpenBots Studio Dictionary Commands AddDictionaryItem CreateDictionary GetDictionaryValue</tags>
+    <tags>OpenBots Studio Dictionary Commands AddDictionaryItem CreateDictionary GetDictionaryValue GetKeyFromKeyValuePair GetValueFromKeyValuePair GetDictionaryCount RemoveDictionaryKeyValuePair RemoveDictionaryValue UpdateDictionaryValue</tags>
     <dependencies>
       <group targetFramework="net48">
       </group>
