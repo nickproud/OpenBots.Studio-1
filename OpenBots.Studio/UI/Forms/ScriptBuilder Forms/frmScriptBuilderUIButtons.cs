@@ -848,9 +848,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 LoadCommands(this);
                 ReloadAllFiles();
             }
-            catch (Exception ex) when (ex is UnauthorizedAccessException)
-            {                
-                MessageBox.Show("Close Visual Studio and run as Admin to install default packages.", "Unauthorized");
+            catch (Exception ex)
+            {
+                if (ex is UnauthorizedAccessException)
+                    MessageBox.Show("Close Visual Studio and run as Admin to install default packages.", "Unauthorized");
+                else
+                    Notify("Error: " + ex.Message, Color.Red);
             }
 
             //hide spinner and enable package manager related buttons
