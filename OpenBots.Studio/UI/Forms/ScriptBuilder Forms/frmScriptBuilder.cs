@@ -239,7 +239,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 try
                 {
-                    //scan whether the current user account has unpacked default commands in their local appdata
+                    //scan whether the current user account has unpacked default commands in their local appdata                   
                     await NugetPackageManager.SetupFirstTimeUserEnvironment(_packagesPath, _programFilesPackagesSource);
                 }
                 catch(Exception ex)

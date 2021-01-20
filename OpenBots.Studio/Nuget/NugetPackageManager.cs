@@ -433,6 +433,8 @@ namespace OpenBots.Nuget
         #region First Time User Scan
         public static async Task SetupFirstTimeUserEnvironment(string packagesPath, string programPackagesSource)
         {
+            bool isSplashLabelVisible = false;
+
             if (!Directory.Exists(programPackagesSource))
                 throw new DirectoryNotFoundException($"Unable to find '{programPackagesSource}'.");
 
@@ -449,7 +451,16 @@ namespace OpenBots.Nuget
                                                                    .FirstOrDefault();
 
                 if (existingDirectory == null)
+                {
+                    if (!isSplashLabelVisible)
+                    {
+                        Program.SplashForm.lblFirstTimeSetup.Visible = true;
+                        Program.SplashForm.Refresh();
+                        isSplashLabelVisible = true;
+                    }
+                    
                     await InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), packagesPath, programPackagesSource);
+                }
             }
         }
         #endregion
