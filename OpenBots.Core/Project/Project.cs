@@ -78,7 +78,10 @@ namespace OpenBots.Core.Project
 
                 //If requirements are met, a project.config is created/updated
                 if (dirName == ProjectName && File.Exists(configPath))
+                {
+                    Version = Application.ProductVersion;
                     File.WriteAllText(configPath, JsonConvert.SerializeObject(this));
+                }
             }
             catch (Exception)
             {

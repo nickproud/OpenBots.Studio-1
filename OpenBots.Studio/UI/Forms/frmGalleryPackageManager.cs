@@ -1,9 +1,9 @@
 ﻿using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
-using OpenBots.Nuget;
-using OpenBots.Properties;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Nuget;
+using OpenBots.Properties;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
@@ -13,9 +13,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms
 {
@@ -310,10 +310,11 @@ namespace OpenBots.UI.Forms
             PopulateProjectDetails(cbxVersion.SelectedItem.ToString());
         }
 
-        private async void DownloadAndOpenPackage(string packageId, string version)
+        private async Task DownloadAndOpenPackage(string packageId, string version)
         {            
             try
             {
+                tpbLoadingSpinner.Visible = true;
                 string packageName = $"{packageId}.{version}";
                 Cursor.Current = Cursors.WaitCursor;
                 lblError.Text = $"Installing {packageName}";
@@ -321,10 +322,10 @@ namespace OpenBots.UI.Forms
                 await NugetPackageManager.InstallPackage(packageId, version, _projectDependenciesDict, _packagesPath);                   
 
                 lblError.Text = string.Empty;
-                DialogResult = DialogResult.OK;
             }
             catch (Exception ex)
             {
+                tpbLoadingSpinner.Visible = false;
                 lblError.Text = "Error: " + ex.Message;
             }
         }
@@ -516,15 +517,19 @@ namespace OpenBots.UI.Forms
             e.Cancel = true;
         }
 
-        private void btnInstall_Click(object sender, EventArgs e)
+        private async void btnInstall_Click(object sender, EventArgs e)
         {
             lblError.Text = "";
             if (btnInstall.Text == "Install")
-                DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
+            {
+                await DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
+                DialogResult = DialogResult.OK;
+            }
             else if (btnInstall.Text == "Update")
             {
                 _projectDependenciesDict.Remove(_catalog.Identity.Id);
-                DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
+                await DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
+                DialogResult = DialogResult.OK;
             }
         }
 
@@ -555,6 +560,20 @@ namespace OpenBots.UI.Forms
                 //ScrolledToBottom(e.NewValue, scrollmax);
             //if (e.NewValue == scrollmax)
                 //ScrolledToBottom(e.NewValue, scrollmax);
+        }
+
+        private async void btnSyncCommandsAndStudio_Click(object sender, EventArgs e)
+        {
+            var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
+            var projectDependenciesDictCopy = _projectDependenciesDict.Keys.ToDictionary(_ => _, _ => _projectDependenciesDict[_]);
+
+            foreach (var dep in projectDependenciesDictCopy)
+            {
+                _projectDependenciesDict.Remove(dep.Key);
+                await DownloadAndOpenPackage(dep.Key, commandVersion);
+            }
+             
+            DialogResult = DialogResult.OK;
         }
     }
 }
