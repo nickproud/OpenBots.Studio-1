@@ -373,7 +373,6 @@ namespace OpenBots.Nuget
             }
 
             List<string> newPackageFilePaths = Directory.GetFiles(programPackagesSource).Where(x => x.EndsWith(commandVersion + ".nupkg")).ToList();
-
             return newPackageFilePaths;
         }
 
@@ -406,7 +405,6 @@ namespace OpenBots.Nuget
                         var nugetRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(nugetSourcePath, "Nuget", true));
                         repositories.Add(sourceRepo);
                         repositories.Add(nugetRepo);
-
 
                         var availablePackages = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
                         await GetPackageDependencies(
@@ -449,7 +447,6 @@ namespace OpenBots.Nuget
             {
                 string existingDirectory = existingOpenBotsPackages.Where(x => new DirectoryInfo(x).Name.StartsWith(dep.Key))
                                                                    .FirstOrDefault();
-
                 if (existingDirectory == null)
                 {
                     if (!isSplashLabelVisible)
