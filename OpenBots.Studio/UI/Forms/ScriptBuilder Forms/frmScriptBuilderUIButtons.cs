@@ -818,7 +818,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return;
                 }
 
+                //show spinner and disable package manager related buttons
                 tpbLoadingSpinner.Visible = true;
+                installDefaultToolStripMenuItem.Enabled = false;
+                packageManagerToolStripMenuItem.Enabled = false;
+                uiBtnPackageManager.Enabled = false;
+
                 Directory.CreateDirectory(_packagesPath);
 
                 //require admin access to move/download packages and their dependency .nupkg files to Program Files
@@ -839,13 +844,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 LoadCommands(this);
                 ReloadAllFiles();
-
-                tpbLoadingSpinner.Visible = false;
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException)
-            {
+            {                
                 MessageBox.Show("Close Visual Studio and run as Admin to install default packages.", "Unauthorized");
-            }          
+            }
+
+            //hide spinner and enable package manager related buttons
+            installDefaultToolStripMenuItem.Enabled = true;
+            packageManagerToolStripMenuItem.Enabled = true;
+            uiBtnPackageManager.Enabled = true;
+            tpbLoadingSpinner.Visible = false;
         }
         #endregion
 

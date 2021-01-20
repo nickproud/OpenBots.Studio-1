@@ -19,7 +19,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
-using OpenBots.Core.Server.User;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Nuget;
@@ -35,7 +34,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using IContainer = Autofac.IContainer;
 using Point = System.Drawing.Point;
@@ -205,6 +203,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             dgvVariables.AutoGenerateColumns = false;
             dgvArguments.AutoGenerateColumns = false;
             direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
+
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
+
+            if (!Directory.Exists(_packagesPath))
+                Directory.CreateDirectory(_packagesPath);
+
+            _builder = new ContainerBuilder();
+
+            string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            _programFilesPackagesSource = Path.Combine(programFilesPath, "OpenBots Inc", "packages", Application.ProductVersion);
         }
 
         private void UpdateWindowTitle()
@@ -221,16 +230,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private async void frmScriptBuilder_LoadAsync(object sender, EventArgs e)
         {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
-            _builder = new ContainerBuilder();
-
-            if (!Directory.Exists(_packagesPath))
-                Directory.CreateDirectory(_packagesPath);
-
-            string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-            _programFilesPackagesSource = Path.Combine(programFilesPath, "OpenBots Inc", "packages", Application.ProductVersion);
-
             if (Debugger.IsAttached)
             {
                 //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
