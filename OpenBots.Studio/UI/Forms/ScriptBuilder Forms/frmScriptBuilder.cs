@@ -227,8 +227,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
                 installDefaultToolStripMenuItem.Visible = true;
             }
-            //else //if OpenBots Studio is running in release mode
-            //{
+            else //if OpenBots Studio is running in release mode
+            {
                 try
                 {
                     //scan whether the current user account has unpacked default commands in their local appdata                   
@@ -239,7 +239,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //packages missing from Program Files
                     MessageBox.Show($"{ex.Message}\n\nFirst time user environment setup failed.", "Error");
                 }                
-            //}
+            }
 
             //set controls double buffered
             foreach (Control control in Controls)
