@@ -10,6 +10,8 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
 using NuGet.Versioning;
+using OpenBots.Core.Enums;
+using OpenBots.Core.IO;
 using OpenBots.Core.Project;
 using OpenBots.Core.Settings;
 using System;
@@ -116,7 +118,7 @@ namespace OpenBots.Nuget
             }
         }
 
-        public static async Task InstallPackage(string packageId, string version, Dictionary<string, string> projectDependenciesDict, string packagesPath, string installDefaultSource = "")
+        public static async Task InstallPackage(string packageId, string version, Dictionary<string, string> projectDependenciesDict, string installDefaultSource = "")
         {
             var packageSources = new ApplicationSettings().GetOrCreateApplicationSettings().ClientSettings.PackageSourceDT;
             var packageVersion = NuGetVersion.Parse(version);
@@ -162,7 +164,7 @@ namespace OpenBots.Nuget
                 var resolver = new PackageResolver();
                 var packagesToInstall = resolver.Resolve(resolverContext, CancellationToken.None)
                     .Select(p => availablePackages.Single(x => PackageIdentityComparer.Default.Equals(x, p)));
-                var packagePathResolver = new PackagePathResolver(packagesPath);
+                var packagePathResolver = new PackagePathResolver(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder));
                 var packageExtractionContext = new PackageExtractionContext(
                     PackageSaveMode.Defaultv3,
                     XmlDocFileSaveMode.None,
@@ -240,9 +242,11 @@ namespace OpenBots.Nuget
             }
         }
 
-        public static List<string> LoadPackageAssemblies(string configPath, string packagesPath, bool throwException = false)
+        public static List<string> LoadPackageAssemblies(string configPath, bool throwException = false)
         {
+            string packagesPath = Folders.GetFolder(FolderType.LocalAppDataPackagesFolder);
             List<string> assemblyPaths = new List<string>();
+
             var dependencies = JsonConvert.DeserializeObject<Project>(File.ReadAllText(configPath)).Dependencies;
             var packagePathResolver = new PackagePathResolver(packagesPath);
 
@@ -327,7 +331,7 @@ namespace OpenBots.Nuget
             catch (Exception)
             {
                 //try again
-                return LoadPackageAssemblies(configPath, packagesPath, throwException);
+                return LoadPackageAssemblies(configPath, throwException);
             }
         }
 
@@ -347,13 +351,14 @@ namespace OpenBots.Nuget
         #region Install Default Packages
 
         //moves all package files from OpenBots.Packages to Program Files (x86)/OpenBots Inc/packages
-        public static List<string> MovePackagesToProgramFiles(string programPackagesSource)
+        public static List<string> MovePackagesToProgramFiles()
         {
             List<string> defaultCommandsList = Project.DefaultCommands;
 
             string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string openBotsPackagesBuildPath = Path.Combine(new DirectoryInfo(projectDirectory).Parent.Parent.Parent.FullName, "OpenBots.Packages");
 
+            string programPackagesSource = Folders.GetFolder(FolderType.ProgramFilesPackagesFolder);
             if (!Directory.Exists(programPackagesSource))
                 Directory.CreateDirectory(programPackagesSource);
 
@@ -377,9 +382,10 @@ namespace OpenBots.Nuget
         }
 
         //determines all command package dependencies and downloads their .nupkg files to Program Files
-        public static async Task DownloadCommandDependencyPackages(string programPackagesSource)
+        public static async Task DownloadCommandDependencyPackages()
         {
-            List<string> newPackageFilePaths = MovePackagesToProgramFiles(programPackagesSource);
+            string programPackagesSource = Folders.GetFolder(FolderType.ProgramFilesPackagesFolder);
+            List<string> newPackageFilePaths = MovePackagesToProgramFiles();
             string nugetSourcePath = "https://api.nuget.org/v3/index.json";
 
             List<string> packageList = new List<string>();
@@ -429,9 +435,11 @@ namespace OpenBots.Nuget
         #endregion
 
         #region First Time User Scan
-        public static async Task SetupFirstTimeUserEnvironment(string packagesPath, string programPackagesSource)
+        public static async Task SetupFirstTimeUserEnvironment()
         {
             bool isSplashLabelVisible = false;
+            string packagesPath = Folders.GetFolder(FolderType.LocalAppDataPackagesFolder);
+            string programPackagesSource = Folders.GetFolder(FolderType.ProgramFilesPackagesFolder);
 
             if (!Directory.Exists(programPackagesSource))
                 throw new DirectoryNotFoundException($"Unable to find '{programPackagesSource}'.");
@@ -456,7 +464,7 @@ namespace OpenBots.Nuget
                         isSplashLabelVisible = true;
                     }
                     
-                    await InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), packagesPath, programPackagesSource);
+                    await InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), programPackagesSource);
                 }
             }
         }

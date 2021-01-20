@@ -780,7 +780,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
-            frmGalleryPackageManager frmManager = new frmGalleryPackageManager(ScriptProject.Dependencies, _packagesPath);
+            frmGalleryPackageManager frmManager = new frmGalleryPackageManager(ScriptProject.Dependencies);
             frmManager.ShowDialog();
 
             if (frmManager.DialogResult == DialogResult.OK)
@@ -790,7 +790,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ScriptProject.Dependencies = ScriptProject.Dependencies.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
 
-                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath, _packagesPath);
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();
                 
@@ -812,7 +812,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             try
             {
-                if (Directory.Exists(_packagesPath) && Directory.GetDirectories(_packagesPath).Length > 0)
+                string localPackagesPath = Folders.GetFolder(FolderType.LocalAppDataPackagesFolder);
+
+                if (Directory.Exists(localPackagesPath) && Directory.GetDirectories(localPackagesPath).Length > 0)
                 {
                     MessageBox.Show("Close OpenBots and delete all packages first.", "Delete Packages");
                     return;
@@ -824,21 +826,22 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 packageManagerToolStripMenuItem.Enabled = false;
                 uiBtnPackageManager.Enabled = false;
 
-                Directory.CreateDirectory(_packagesPath);
+                Directory.CreateDirectory(localPackagesPath);
 
                 //require admin access to move/download packages and their dependency .nupkg files to Program Files
-                await NugetPackageManager.DownloadCommandDependencyPackages(_programFilesPackagesSource);
+                await NugetPackageManager.DownloadCommandDependencyPackages();
 
                 //unpack commands using Program Files as the source repository
                 var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
                 Dictionary<string, string> dependencies = Project.DefaultCommands.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
 
                 foreach (var dep in dependencies)
-                    await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), _packagesPath, _programFilesPackagesSource);
+                    await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), 
+                        Folders.GetFolder(FolderType.ProgramFilesPackagesFolder));
 
                 //load existing command assemblies
                 string configPath = Path.Combine(ScriptProjectPath, "project.config");
-                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath, _packagesPath);
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();
 

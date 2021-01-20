@@ -260,9 +260,7 @@ namespace OpenBots.UI.Forms
         {
             if (_isParentScheduledTask)
             {
-                string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                string packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
-                List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, packagesPath, true);
+                List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, true);
                 var builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 ScriptEngineContext.Container = builder.Build();
             }

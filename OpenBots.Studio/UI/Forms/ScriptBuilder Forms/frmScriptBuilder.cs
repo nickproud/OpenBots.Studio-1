@@ -173,8 +173,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         //package manager variables
         public IContainer AContainer { get; private set; }
         private ContainerBuilder _builder;
-        private string _packagesPath;
-        private string _programFilesPackagesSource;
 
         //variable/argument tab variables
         private List<string> _existingVarArgSearchList;
@@ -204,16 +202,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             dgvArguments.AutoGenerateColumns = false;
             direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
 
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            _packagesPath = Path.Combine(appDataPath, "OpenBots Inc", "packages");
-
-            if (!Directory.Exists(_packagesPath))
-                Directory.CreateDirectory(_packagesPath);
+            if (!Directory.Exists(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder)))
+                Directory.CreateDirectory(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder));
 
             _builder = new ContainerBuilder();
-
-            string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-            _programFilesPackagesSource = Path.Combine(programFilesPath, "OpenBots Inc", "packages", Application.ProductVersion);
         }
 
         private void UpdateWindowTitle()
@@ -235,19 +227,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
                 installDefaultToolStripMenuItem.Visible = true;
             }
-            else //if OpenBots Studio is running in release mode
-            {
+            //else //if OpenBots Studio is running in release mode
+            //{
                 try
                 {
                     //scan whether the current user account has unpacked default commands in their local appdata                   
-                    await NugetPackageManager.SetupFirstTimeUserEnvironment(_packagesPath, _programFilesPackagesSource);
+                    await NugetPackageManager.SetupFirstTimeUserEnvironment();
                 }
                 catch(Exception ex)
                 {
                     //packages missing from Program Files
                     MessageBox.Show($"{ex.Message}\n\nFirst time user environment setup failed.", "Error");
                 }                
-            }
+            //}
 
             //set controls double buffered
             foreach (Control control in Controls)
@@ -690,7 +682,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             tpbLoadingSpinner.Visible = true;
 
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
-            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath, _packagesPath);
+            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
             _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
             AContainer = _builder.Build();
             LoadCommands(this);

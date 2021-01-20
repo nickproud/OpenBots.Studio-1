@@ -1,5 +1,7 @@
 ﻿using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
+using OpenBots.Core.Enums;
+using OpenBots.Core.IO;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Nuget;
@@ -36,12 +38,11 @@ namespace OpenBots.UI.Forms
 
         private ApplicationSettings _settings;
 
-        public frmGalleryPackageManager(Dictionary<string, string> projectDependenciesDict, 
-            string packageLocation = "")
+        public frmGalleryPackageManager(Dictionary<string, string> projectDependenciesDict)
         {
             InitializeComponent();
 
-            _packagesPath = packageLocation;
+            _packagesPath = Folders.GetFolder(FolderType.LocalAppDataPackagesFolder);
 
             _settings = new ApplicationSettings().GetOrCreateApplicationSettings();
             _packageSourceDT = _settings.ClientSettings.PackageSourceDT;

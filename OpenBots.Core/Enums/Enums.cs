@@ -40,7 +40,9 @@ namespace OpenBots.Core.Enums
         LogFolder,
         TempFolder,
         AttendedTasksFolder,
-        PublishedFolder
+        PublishedFolder,
+        LocalAppDataPackagesFolder,
+        ProgramFilesPackagesFolder,
     }
 
     public enum UIAdditionalHelperType
