@@ -330,7 +330,7 @@ namespace OpenBots.UI.Forms
                 Cursor.Current = Cursors.WaitCursor;
                 lblError.Text = $"Installing {packageName}";
 
-                await NugetPackageManager.InstallPackage(packageId, version, _projectDependenciesDict, _packagesPath);                   
+                await NugetPackageManager.InstallPackage(packageId, version, _projectDependenciesDict);                   
 
                 lblError.Text = string.Empty;
             }
