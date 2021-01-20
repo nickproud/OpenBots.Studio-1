@@ -349,6 +349,8 @@ namespace OpenBots.Nuget
         //moves all package files from OpenBots.Packages to Program Files (x86)/OpenBots Inc/packages
         public static List<string> MovePackagesToProgramFiles(string programPackagesSource)
         {
+            List<string> defaultCommandsList = Project.DefaultCommands;
+
             string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string openBotsPackagesBuildPath = Path.Combine(new DirectoryInfo(projectDirectory).Parent.Parent.Parent.FullName, "OpenBots.Packages");
 
@@ -358,7 +360,11 @@ namespace OpenBots.Nuget
             string applicationVersion = Application.ProductVersion;
             var commandVersion = Regex.Matches(applicationVersion, @"\d+\.\d+\.\d+")[0].ToString();
 
-            List<string> packageFilePaths = Directory.GetFiles(openBotsPackagesBuildPath).Where(x => x.EndsWith(commandVersion + ".nupkg")).ToList();
+            List<string> packageFilePaths = Directory.GetFiles(openBotsPackagesBuildPath)
+                                                     .Where(x => x.EndsWith(commandVersion + ".nupkg") &&
+                                                     (defaultCommandsList.Contains(Path.GetFileNameWithoutExtension(x).Split('.')[2]) ||
+                                                     Path.GetFileNameWithoutExtension(x).Split('.')[1] == "Core"))
+                                                     .ToList();
 
             foreach (string packagePath in packageFilePaths)
             {
