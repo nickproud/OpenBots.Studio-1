@@ -30,8 +30,9 @@ namespace OpenBots.UI.Forms
         private bool _isInstalled;
         private string _installedVersion;
         private bool _includePrerelease;
-        private DataTable _packageSourceDT { get; set; }
+        private DataTable _packageSourceDT;
         private string _packagesPath;
+        private string _currentCommandsVersion;
 
         private ApplicationSettings _settings;
 
@@ -56,6 +57,15 @@ namespace OpenBots.UI.Forms
             PopulatetvPackageFeeds();
             pnlProjectVersion.Hide();
             pnlProjectDetails.Hide();
+
+            _currentCommandsVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
+
+            //check if command dependencies include any that don't match the current app version
+            var outdatedPackage = _projectDependenciesDict.Where(x => x.Key.StartsWith("OpenBots") && x.Value != _currentCommandsVersion).FirstOrDefault().Key;
+            if (!string.IsNullOrEmpty(outdatedPackage))
+                btnSyncCommandsAndStudio.Visible = true;
+            else
+                btnSyncCommandsAndStudio.Visible = false;
 
             try
             {
@@ -564,13 +574,13 @@ namespace OpenBots.UI.Forms
 
         private async void btnSyncCommandsAndStudio_Click(object sender, EventArgs e)
         {
-            var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
-            var projectDependenciesDictCopy = _projectDependenciesDict.Keys.ToDictionary(_ => _, _ => _projectDependenciesDict[_]);
+            var projectDependenciesDictCopy = _projectDependenciesDict.Where(x => x.Key.StartsWith("OpenBots") && x.Value != _currentCommandsVersion)
+                                                                      .ToDictionary(x => x.Key, x => x.Value);
 
             foreach (var dep in projectDependenciesDictCopy)
             {
                 _projectDependenciesDict.Remove(dep.Key);
-                await DownloadAndOpenPackage(dep.Key, commandVersion);
+                await DownloadAndOpenPackage(dep.Key, _currentCommandsVersion);
             }
              
             DialogResult = DialogResult.OK;
