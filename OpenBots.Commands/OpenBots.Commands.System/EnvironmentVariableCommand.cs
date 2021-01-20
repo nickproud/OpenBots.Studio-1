@@ -4,18 +4,17 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.System
 {
-	[Serializable]
+    [Serializable]
 	[Category("System Commands")]
 	[Description("This command exclusively selects an environment variable.")]
 	public class EnvironmentVariableCommand : ScriptCommand
@@ -43,6 +42,30 @@ namespace OpenBots.Commands.System
 		[Browsable(false)]
 		private Label _variableValue;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private string[] _excludedVariables = {
+				"_NO_DEBUG_HEAP",
+				"ENABLE_XAML_DIAGNOSTICS_SOURCE_INFO",
+				"ForceIdentityAuthenticationType",
+				"FPS_BROWSER_APP_PROFILE_STRING",
+				"FPS_BROWSER_USER_PROFILE_STRING",
+				"MSBuildLoadMicrosoftTargetsReadOnly",
+				"PkgDefApplicationConfigFile",
+				"ServiceHubLogSessionKey",
+				"SESSIONNAME",
+				"ThreadedWaitDialogDpiContext",
+				"VisualStudioDir",
+				"VisualStudioEdition",
+				"VisualStudioVersion",
+				"VSAPPIDDIR",
+				"VSAPPIDNAME",
+				"VSLANG",
+				"VSSKUEDITION",
+				"SignInWithHomeTenantOnly",
+				"CLIENTNAME"
+			};
+
 		public EnvironmentVariableCommand()
 		{
 			CommandName = "EnvironmentVariableCommand";
@@ -56,9 +79,12 @@ namespace OpenBots.Commands.System
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var environmentVariable = v_EnvVariableName.ConvertUserVariableToString(engine);
+			
+			var envVariables = Environment.GetEnvironmentVariables();
+			var envDict = envVariables.Keys.Cast<object>().ToDictionary(k => k.ToString(), v => envVariables[v]);
+			var filteredEnvDict = envDict.Where(kvp => !_excludedVariables.Contains(kvp.Key)).ToDictionary(k => k.Key, v => v.Value);
 
-			var variables = Environment.GetEnvironmentVariables();
-			var envValue = (string)variables[environmentVariable];
+			var envValue = (string)filteredEnvDict[environmentVariable];
 
 			envValue.StoreInUserVariable(engine, v_OutputUserVariableName);
 		}
@@ -70,7 +96,11 @@ namespace OpenBots.Commands.System
 			var ActionNameComboBoxLabel = commandControls.CreateDefaultLabelFor("v_EnvVariableName", this);
 			_variableNameComboBox = (ComboBox)commandControls.CreateDropdownFor("v_EnvVariableName", this);
 
-			foreach (DictionaryEntry env in Environment.GetEnvironmentVariables())
+			var envVariables = Environment.GetEnvironmentVariables();
+			var envDict = envVariables.Keys.Cast<object>().ToDictionary(k => k.ToString(), v => envVariables[v]);
+			var filteredEnvDict = envDict.Where(kvp => !_excludedVariables.Contains(kvp.Key)).ToDictionary(k => k.Key, v => v.Value);
+
+			foreach (var env in filteredEnvDict)
 			{
 				var envVariableKey = env.Key.ToString();
 				var envVariableValue = env.Value.ToString();
