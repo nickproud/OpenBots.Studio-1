@@ -21,7 +21,7 @@ namespace OpenBots.Commands.Engine.Test
         [Fact]
         public void ExecutesStopwatchActionSequence()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _stopwatch = new StopwatchCommand();
 
             "ss\\.fff".StoreInUserVariable(_engine, "{timeFormat}");

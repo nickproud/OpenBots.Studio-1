@@ -20,7 +20,7 @@ namespace OpenBots.Commands.Engine.Test
         [InlineData("Fatal", "fatalLog.txt")]
         public void LogsMessage(string logType, string logFile)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _logMessage = new LogMessageCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;

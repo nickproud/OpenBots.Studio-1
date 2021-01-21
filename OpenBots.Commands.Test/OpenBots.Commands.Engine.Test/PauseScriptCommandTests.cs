@@ -20,7 +20,7 @@ namespace OpenBots.Commands.Engine.Test
         [Fact]
         public void PausesScript()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _pauseScript = new PauseScriptCommand();
 
             int pauseLength = 1000;
