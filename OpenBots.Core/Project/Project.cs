@@ -23,9 +23,7 @@ namespace OpenBots.Core.Project
         [JsonIgnore]
         public static List<string> DefaultCommands = new List<string>()
         {
-            "Data",
-            "DataTable",
-            "Dictionary",
+            "DataManipulation",
             "Engine",
             "ErrorHandling",
             "File",
@@ -33,7 +31,6 @@ namespace OpenBots.Core.Project
             "If",
             "Image",
             "Input",
-            "List",
             "Loop",
             "Microsoft",
             "Misc",

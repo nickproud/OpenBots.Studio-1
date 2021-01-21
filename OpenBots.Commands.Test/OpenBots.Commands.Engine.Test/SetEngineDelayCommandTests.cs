@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Engine.Test
         [Fact]
         public void SetsEngineDelay()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setEngineDelay = new SetEngineDelayCommand();
 
             string newDelay = "1000";

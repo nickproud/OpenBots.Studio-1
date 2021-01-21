@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Engine.Test
         [InlineData("Continue Processing")]
         public void ChangesEngineErrorHandling(string handleAction)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _errorHandling = new ErrorHandlingCommand();
 
             _errorHandling.v_ErrorHandlingAction = handleAction;

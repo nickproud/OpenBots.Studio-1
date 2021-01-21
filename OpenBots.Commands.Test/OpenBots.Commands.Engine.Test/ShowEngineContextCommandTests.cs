@@ -12,7 +12,7 @@ namespace OpenBots.Commands.Engine.Test
         [Fact]
         public void ShowsEngineContext()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _showEngineContextCommand = new ShowEngineContextCommand();
 
 
