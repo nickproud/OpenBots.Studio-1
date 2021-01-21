@@ -58,7 +58,11 @@ namespace OpenBots.Commands.Misc
 				variableMessage = v_Message.ConvertUserVariableToObject(engine);
 
 			string type = "";
-			if (variableMessage != null)
+			if(variableMessage?.GetType().Name == typeof(KeyValuePair<,>).Name)
+            {
+				type = variableMessage.GetType().FullName;
+			}
+			else if (variableMessage != null)
 				type = variableMessage.GetType().FullName;
 
 			if (variableMessage is string)

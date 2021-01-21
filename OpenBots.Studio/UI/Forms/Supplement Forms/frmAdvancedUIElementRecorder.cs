@@ -130,7 +130,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     //start global hook and wait for left mouse down event
                     GlobalHook.StartEngineCancellationHook(Keys.F2);
                     GlobalHook.HookStopped += GlobalHook_HookStopped;
-                    GlobalHook.StartElementCaptureHook(chkStopOnClick.Checked);
+                    GlobalHook.StartElementCaptureHook(chkStopOnClick.Checked, _container);
                     GlobalHook.MouseEvent += GlobalHook_MouseEvent;
                     GlobalHook.KeyDownEvent += GlobalHook_KeyDownEvent;
                 }
@@ -168,15 +168,12 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 {                    
                     if (_isRecording)
                     {
-                        DPoint point = new DPoint((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
-                        var window = User32Functions.WindowFromPoint(point);
+                        var windowName = GetWindowName((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
 
-                        User32Functions.GetWindowThreadProcessId(window, out uint processId);
-                        Process process = Process.GetProcessById((int)processId);
+                        if (string.IsNullOrEmpty(windowName))
+                            return;
 
-                        var windowName = process.MainWindowTitle;
-
-                        if (WindowName != windowName && !string.IsNullOrEmpty(windowName))
+                        if (WindowName != windowName)
                         {
                             WindowName = windowName;
                             cboWindowTitle.SelectedItem = WindowName;
@@ -244,12 +241,28 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 {
                     if (_isRecording)
                     {
+                        var windowName = GetWindowName((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
+
+                        if (string.IsNullOrEmpty(windowName))
+                            return;
+
+                        if (WindowName != windowName)
+                        {
+                            WindowName = windowName;
+                            cboWindowTitle.SelectedItem = WindowName;
+
+                            if (IsRecordingSequence)
+                                BuildActivateWindowCommand();
+                        }
+                     
                         LoadSearchParameters(e.MouseCoordinates);
                         lblDescription.Text = _recordingMessage;
                     }
 
                     if (IsRecordingSequence && _isRecording)
+                    {
                         BuildElementSetTextActionCommand(e.Key);
+                    }
                     else if (e.Key.ToString() == GlobalHook.StopHookKey)
                     {
                         //STOP HOOK
@@ -263,6 +276,18 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     lblDescription.Text = _errorMessage;
                 }
             }
+        }
+
+        private string GetWindowName(int XCoordinate, int YCoordinate)
+        {
+            DPoint point = new DPoint(XCoordinate, YCoordinate);
+            var window = User32Functions.WindowFromPoint(point);
+
+            User32Functions.GetWindowThreadProcessId(window, out uint processId);
+            Process process = Process.GetProcessById((int)processId);
+
+            var windowName = process.MainWindowTitle;
+            return windowName;
         }
 
         private void LoadSearchParameters(Point point)

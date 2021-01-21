@@ -97,7 +97,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 //start global hook and wait for left mouse down event
                 GlobalHook.StartEngineCancellationHook(Keys.F2);
                 GlobalHook.HookStopped += GlobalHook_HookStopped;
-                GlobalHook.StartElementCaptureHook(chkStopOnClick.Checked);
+                GlobalHook.StartElementCaptureHook(chkStopOnClick.Checked, _container);
                 wbElementRecorder.DomClick += wbElementRecorder_DomClick;
                 wbElementRecorder.DomDoubleClick += wbElementRecorder_DomDoubleClick;
                 wbElementRecorder.DomKeyDown += WbElementRecorder_DomKeyDown;

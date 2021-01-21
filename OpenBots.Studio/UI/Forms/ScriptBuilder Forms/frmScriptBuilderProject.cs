@@ -43,14 +43,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             var projectBuilder = new frmProjectBuilder();
             projectBuilder.ShowDialog();
 
-            //Close OpenBots if add project form is closed at startup
+            //close OpenBots if add project form is closed at startup
             if (projectBuilder.DialogResult == DialogResult.Cancel && ScriptProject == null)
             {
                 Application.Exit();
                 return DialogResult.Abort;
             }
 
-            //Create new OpenBots project
+            //create new OpenBots project
             else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.CreateProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
@@ -60,7 +60,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 uiScriptTabControl.TabPages.Clear();
                 ScriptProjectPath = projectBuilder.NewProjectPath;
 
-                //Create new project
+                //create new project
                 ScriptProject = new Project(projectBuilder.NewProjectName);
                 string configPath = Path.Combine(ScriptProjectPath, "project.config");
 
@@ -92,12 +92,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(brokenHelloWorldCommand));
                 }
                 
-                //Begin saving as main.xml
+                //begin saving as main.xml
                 ClearSelectedListViewItems();
 
                 try
                 {
-                    //Serialize main script
+                    //serialize main script
                     EngineContext engineContext = new EngineContext
                     {
                         Variables = mainScriptVariables,
@@ -114,7 +114,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     OpenFile(mainScriptPath);
                     ScriptFilePath = mainScriptPath;
 
-                    //Show success dialog
+                    //show success dialog
                     Notify("Project has been created successfully!", Color.White);
                 }
                 catch (Exception ex)
@@ -123,7 +123,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
             }
 
-            //Open existing OpenBots project
+            //open existing OpenBots project
             else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.OpenProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
@@ -132,7 +132,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 try
                 {
-                    //Open project
+                    //open project
                     Project project = Project.OpenProject(projectBuilder.ExistingConfigPath);
                     string mainFileName = project.Main;
 
@@ -149,17 +149,20 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     ScriptProjectPath = projectBuilder.ExistingProjectPath;
                     uiScriptTabControl.TabPages.Clear();
 
-                    //Open Main
+                    //open Main
                     OpenFile(mainFilePath);
+
                     //show success dialog
                     Notify("Project has been opened successfully!", Color.White);
                 }
                 catch (Exception ex)
                 {
                     projectBuilder.Dispose();
+
                     //show fail dialog
                     Notify("An Error Occured: " + ex.Message, Color.Red);
-                    //Try adding project again
+
+                    //try adding project again
                     AddProject();                    
                     return DialogResult.None;
                 }
@@ -177,7 +180,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             projectNode.Expand();
             LoadCommands(this);
 
-            //Save to recent projects 
+            //save to recent projects 
             if (_appSettings.ClientSettings.RecentProjects == null)
                 _appSettings.ClientSettings.RecentProjects = new List<string>();
 
@@ -205,7 +208,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {
                 string configPath = Path.Combine(projectPath, "project.config");
-                //Open project
+
+                //open project
                 Project project = Project.OpenProject(configPath);
                 string mainFileName = project.Main;
 
@@ -222,8 +226,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ScriptProjectPath = projectPath;
                 uiScriptTabControl.TabPages.Clear();
 
-                //Open Main
+                //open Main
                 OpenFile(mainFilePath);
+
                 //show success dialog
                 Notify("Project has been opened successfully!", Color.White);
             }
@@ -244,7 +249,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             projectNode.Expand();
             LoadCommands(this);
 
-            //Save to recent projects 
+            //save to recent projects 
             if (_appSettings.ClientSettings.RecentProjects == null)
                 _appSettings.ClientSettings.RecentProjects = new List<string>();
 

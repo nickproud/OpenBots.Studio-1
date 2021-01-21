@@ -7,7 +7,6 @@ using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
-using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,11 +25,10 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         //engine context variables
         private List<ListViewItem> _rowsSelectedForCopy;
         public List<ScriptVariable> ScriptVariables { get; set; }
-        public List<ScriptArgument> SriptArguments { get; set; }
+        public List<ScriptArgument> ScriptArguments { get; set; }
         public List<ScriptElement> ScriptElements { get; set; }
         public Project ScriptProject { get; set; }
-        public string ScriptProjectPath { get; set; }
-        public frmScriptBuilder ParentBuilder { get; set; }        
+        public string ScriptProjectPath { get; set; }       
 
         //notification variables
         private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
@@ -58,6 +56,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private ApplicationSettings _appSettings;
         private DateTime _lastAntiIdleEvent;
         public UIListView SelectedTabScriptActions { get; set; }
+        public List<ScriptCommand> MoveToParentCommands { get; set; } = new List<ScriptCommand>();
         #endregion
 
         #region Form Events
@@ -142,8 +141,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
                 return;
             }
-            else if (DialogResult == DialogResult.OK)
-                return;
         }
 
         private void frmSequence_FormClosed(object sender, FormClosedEventArgs e)
@@ -267,7 +264,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
             newCommandForm.ScriptEngineContext.Variables = ScriptVariables;
             newCommandForm.ScriptEngineContext.Elements = ScriptElements;
-            newCommandForm.ScriptEngineContext.Arguments = SriptArguments;
+            newCommandForm.ScriptEngineContext.Arguments = ScriptArguments;
             newCommandForm.ScriptEngineContext.Container = AContainer;
 
             newCommandForm.ScriptEngineContext.ProjectPath = ScriptProjectPath;
@@ -281,9 +278,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 AddCommandToListView(newCommandForm.SelectedCommand);
 
                 ScriptVariables = newCommandForm.ScriptEngineContext.Variables;
-                SriptArguments = newCommandForm.ScriptEngineContext.Arguments;
+                ScriptArguments = newCommandForm.ScriptEngineContext.Arguments;
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(SriptArguments);
+                dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
              }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
@@ -363,6 +360,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 return;
 
             bool childNodefound = false;
+
             //blocks repainting tree until all controls are loaded
             tvCommands.BeginUpdate();
             tvCommands.Nodes.Clear();
@@ -409,6 +407,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 }
                 tvCommands.CollapseAll();
             }
+
             //enables redrawing tree after all controls have been added
             tvCommands.EndUpdate();
         }

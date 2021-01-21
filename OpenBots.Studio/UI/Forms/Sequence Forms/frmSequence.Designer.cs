@@ -19,6 +19,58 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             if (disposing && (components != null))
             {
+                SelectedTabScriptActions.DrawSubItem -= lstScriptActions_DrawSubItem;
+                SelectedTabScriptActions.ItemDrag -= lstScriptActions_ItemDrag;
+                SelectedTabScriptActions.DragDrop -= lstScriptActions_DragDrop;
+                SelectedTabScriptActions.DragEnter -= lstScriptActions_DragEnter;
+                SelectedTabScriptActions.DoubleClick -= lstScriptActions_DoubleClick;
+                SelectedTabScriptActions.KeyDown -= lstScriptActions_KeyDown;
+                SelectedTabScriptActions.MouseClick -= lstScriptActions_MouseClick;
+                SelectedTabScriptActions.MouseMove -= lstScriptActions_MouseMove;
+                tmrNotify.Tick -= tmrNotify_Tick;
+                enableSelectedCodeToolStripMenuItem.Click -= enableSelectedCodeToolStripMenuItem_Click;
+                disableSelectedCodeToolStripMenuItem.Click -= disableSelectedCodeToolStripMenuItem_Click;
+                addRemoveBreakpointToolStripMenuItem.Click -= addRemoveBreakpointToolStripMenuItem_Click;
+                cutSelectedCodeToolStripMenuItem.Click -= cutSelectedCodeToolStripMenuItem_Click;
+                copySelectedCodeToolStripMenuItem.Click -= copySelectedCodeToolStripMenuItem_Click;
+                pasteSelectedCodeToolStripMenuItem.Click -= pasteSelectedCodeToolStripMenuItem_Click;
+                deleteSelectedCodeToolStripMenuItem.Click -= deleteSelectedCodeToolStripMenuItem_Click;
+                moveToParentToolStripMenuItem.Click -= moveToParentToolStripMenuItem_Click;
+                viewCodeToolStripMenuItem.Click -= viewCodeToolStripMenuItem_Click;
+                openShortcutMenuToolStripMenuItem.Click -= openShortcutMenuToolStripMenuItem_Click;
+                notifyTray.MouseDoubleClick -= notifyTray_MouseDoubleClick;
+                uiBtnRenameSequence.Click -= uiBtnRenameSequence_Click;
+                uiBtnClose.Click -= uiBtnClose_Click;
+                uiBtnSaveSequence.Click -= uiBtnSaveSequence_Click;
+                uiBtnAddArgument.Click -= uiBtnAddArgument_Click;
+                uiBtnAddElement.Click -= uiBtnAddElement_Click;
+                uiBtnClearAll.Click -= uiBtnClearAll_Click;
+                uiBtnSettings.Click -= uiBtnSettings_Click;
+                uiBtnAddVariable.Click -= uiBtnAddVariable_Click;
+                pnlStatus.Paint -= pnlStatus_Paint;
+                pnlStatus.DoubleClick -= pnlStatus_DoubleClick;
+                tvCommands.ItemDrag -= tvCommands_ItemDrag;
+                tvCommands.DoubleClick -= tvCommands_DoubleClick;
+                tvCommands.KeyPress -= tvCommands_KeyPress;
+                uiBtnClearCommandSearch.Click -= uiBtnClearCommandSearch_Click;
+                txtCommandSearch.TextChanged -= txtCommandSearch_TextChanged;
+                txtCommandSearch.Enter -= txtCommandSearch_Enter;
+                txtCommandSearch.Leave -= txtCommandSearch_Leave;
+                dgvVariables.CellEndEdit -= dgvVariablesArguments_CellEndEdit;
+                dgvVariables.CellEnter -= dgvVariablesArguments_CellEnter;
+                dgvVariables.DataBindingComplete -= dgvVariablesArguments_DataBindingComplete;
+                dgvVariables.RowsAdded -= dgvVariablesArguments_RowsAdded;
+                dgvVariables.UserDeletingRow -= dgvVariablesArguments_UserDeletingRow;
+                dgvVariables.KeyDown -= dgvVariablesArguments_KeyDown;
+                dgvArguments.CellEndEdit -= dgvVariablesArguments_CellEndEdit;
+                dgvArguments.CellEnter -= dgvVariablesArguments_CellEnter;
+                dgvArguments.CellValueChanged -= dgvArguments_CellValueChanged;
+                dgvArguments.CurrentCellDirtyStateChanged -= dgvArguments_CurrentCellDirtyStateChanged;
+                dgvArguments.DataBindingComplete -= dgvVariablesArguments_DataBindingComplete;
+                dgvArguments.DefaultValuesNeeded -= dgvArguments_DefaultValuesNeeded;
+                dgvArguments.RowsAdded -= dgvVariablesArguments_RowsAdded;
+                dgvArguments.UserDeletingRow -= dgvVariablesArguments_UserDeletingRow;
+                dgvArguments.KeyDown -= dgvVariablesArguments_KeyDown;
                 components.Dispose();
             }
             base.Dispose(disposing);

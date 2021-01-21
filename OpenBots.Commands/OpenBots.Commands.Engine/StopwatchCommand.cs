@@ -41,8 +41,8 @@ namespace OpenBots.Commands.Engine
 		public string v_StopwatchAction { get; set; }
 
 		[DisplayName("String Format (Optional)")]
-		[Description("Specify a DateTime string format if required.")]
-		[SampleUsage("MM/dd/yy || hh:mm || {vFormat}")]
+		[Description("Specify a TimeSpan string format if required.")]
+		[SampleUsage("g || dd\\.hh\\:mm || {vFormat}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		public string v_ToStringFormat { get; set; }
