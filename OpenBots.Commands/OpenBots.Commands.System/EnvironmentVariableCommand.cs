@@ -85,6 +85,8 @@ namespace OpenBots.Commands.System
 			var filteredEnvDict = envDict.Where(kvp => !_excludedVariables.Contains(kvp.Key)).ToDictionary(k => k.Key, v => v.Value);
 
 			var envValue = (string)filteredEnvDict[environmentVariable];
+			if (string.IsNullOrEmpty(envValue))
+				envValue = "null";
 
 			envValue.StoreInUserVariable(engine, v_OutputUserVariableName);
 		}
