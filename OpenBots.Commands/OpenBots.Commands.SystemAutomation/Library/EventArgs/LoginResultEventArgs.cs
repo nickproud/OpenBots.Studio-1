@@ -1,6 +1,6 @@
-﻿using OpenBots.Commands.SystemAutomation.Library.Enums;
+﻿using OpenBots.Commands.System.Library.Enums;
 
-namespace OpenBots.Commands.SystemAutomation.Library.EventArgs
+namespace OpenBots.Commands.System.Library.EventArgs
 {
     public class LoginResultEventArgs
     {

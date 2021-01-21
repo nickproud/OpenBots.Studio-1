@@ -1,5 +1,5 @@
-﻿using OpenBots.Commands.SystemAutomation.Library.Enums;
-using OpenBots.Commands.SystemAutomation.Library.EventArgs;
+﻿using OpenBots.Commands.System.Library.Enums;
+using OpenBots.Commands.System.Library.EventArgs;
 using OpenBots.Core.UI.DTOs;
 using OpenBots.Core.UI.Forms;
 using System;
@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 
-namespace OpenBots.Commands.SystemAutomation.Forms
+namespace OpenBots.Commands.System.Forms
 {
     public partial class frmDisplayManager : UIForm
     {

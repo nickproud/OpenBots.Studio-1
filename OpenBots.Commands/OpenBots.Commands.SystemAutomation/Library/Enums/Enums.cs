@@ -1,4 +1,4 @@
-﻿namespace OpenBots.Commands.SystemAutomation.Library.Enums
+﻿namespace OpenBots.Commands.System.Library.Enums
 {
     public enum LoginResultCode
     {

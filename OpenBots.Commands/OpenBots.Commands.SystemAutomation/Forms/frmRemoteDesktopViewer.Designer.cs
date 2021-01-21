@@ -1,6 +1,6 @@
 ﻿using GSystem = global::System;
 
-namespace OpenBots.Commands.SystemAutomation.Forms
+namespace OpenBots.Commands.System.Forms
 {
     partial class frmRemoteDesktopViewer
     {        
