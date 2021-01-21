@@ -834,7 +834,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 //unpack commands using Program Files as the source repository
                 var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
-                Dictionary<string, string> dependencies = Project.DefaultCommands.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+                Dictionary<string, string> dependencies = Project.DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
 
                 foreach (var dep in dependencies)
                     await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), 

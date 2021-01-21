@@ -21,17 +21,13 @@ namespace OpenBots.Core.Project
         public Dictionary<string, string> Dependencies { get; set; }
 
         [JsonIgnore]
-        public static List<string> DefaultCommands = new List<string>()
+        public static List<string> DefaultCommandGroups = new List<string>()
         {
             "Core",
             "DataManipulation",
-            "Image",
-            "Input",
             "Microsoft",
-            "Process",
             "SystemAutomation",
-            "WebBrowser",
-            "Window",
+            "UIAutomation"
         };
 
         public Project(string projectName)
@@ -42,7 +38,7 @@ namespace OpenBots.Core.Project
             Version = Application.ProductVersion;
 
             var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
-            Dependencies = DefaultCommands.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+            Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
         }
 
         public void SaveProject(string scriptPath)
