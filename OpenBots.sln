@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.Database"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.Email", "OpenBots.Commands\OpenBots.Commands.Email\OpenBots.Commands.Email.csproj", "{0B7B875D-2754-424E-8F4A-52DF9573D8C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.File", "OpenBots.Commands\OpenBots.Commands.File\OpenBots.Commands.File.csproj", "{7568D2F1-41AC-46A9-B5D7-A86A4E40BE9F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.SystemAutomation", "OpenBots.Commands\OpenBots.Commands.File\OpenBots.Commands.SystemAutomation.csproj", "{7568D2F1-41AC-46A9-B5D7-A86A4E40BE9F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBots.Commands.Folder", "OpenBots.Commands\OpenBots.Commands.Folder\OpenBots.Commands.Folder.csproj", "{38BA5C5F-5345-46A8-AF0B-33A63EAD1B11}"
 EndProject
