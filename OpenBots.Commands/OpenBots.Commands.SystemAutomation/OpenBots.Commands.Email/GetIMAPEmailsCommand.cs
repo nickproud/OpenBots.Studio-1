@@ -17,6 +17,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Threading;
 using System.Windows.Forms;
+using OBFile = System.IO.File;
 
 namespace OpenBots.Commands.Email
 {
@@ -289,7 +290,7 @@ namespace OpenBots.Commands.Email
 						if (string.IsNullOrEmpty(fileName))
 							fileName = "attached-message.eml";
 
-						using (var stream = File.Create(Path.Combine(attDirectory, fileName)))
+						using (var stream = OBFile.Create(Path.Combine(attDirectory, fileName)))
 							rfc822.Message.WriteTo(stream);
 					}
 					else
@@ -297,7 +298,7 @@ namespace OpenBots.Commands.Email
 						var part = (MimePart)attachment;
 						var fileName = part.FileName;
 
-						using (var stream = File.Create(Path.Combine(attDirectory, fileName)))
+						using (var stream = OBFile.Create(Path.Combine(attDirectory, fileName)))
 							part.Content.DecodeTo(stream);
 					}
 				}

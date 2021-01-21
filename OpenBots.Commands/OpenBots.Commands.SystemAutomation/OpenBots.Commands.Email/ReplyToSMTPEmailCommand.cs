@@ -14,6 +14,7 @@ using System.IO;
 using System.Security.Authentication;
 using System.Threading;
 using System.Windows.Forms;
+using OBFile = System.IO.File;
 
 namespace OpenBots.Commands.Email
 {
@@ -155,7 +156,7 @@ namespace OpenBots.Commands.Email
 						var splitAttachments = vSMTPAttachments.Split(';');
 						foreach (var vSMTPattachment in splitAttachments)
 						{
-							using (MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(vSMTPattachment)))
+							using (MemoryStream memoryStream = new MemoryStream(OBFile.ReadAllBytes(vSMTPattachment)))
 								builder.Attachments.Add(vSMTPattachment, memoryStream.ToArray());
 						}
 					}
