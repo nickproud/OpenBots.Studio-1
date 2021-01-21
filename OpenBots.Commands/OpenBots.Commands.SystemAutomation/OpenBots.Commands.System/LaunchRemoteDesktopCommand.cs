@@ -1,4 +1,4 @@
-﻿using OpenBots.Commands.SystemAutomation.Forms;
+﻿using OpenBots.Commands.System.Forms;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
