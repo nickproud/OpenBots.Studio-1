@@ -1,14 +1,15 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpenBots.Commands.Process")]
-[assembly: AssemblyDescription("OpenBots commands for starting and stopping Windows processes, as well as running custom scripts.")]
+[assembly: AssemblyTitle("OpenBots.Commands.UIAutomation")]
+[assembly: AssemblyDescription("OpenBots commands for interacting with a web browser via the Selenium WebDriver. Supports creation of a browser session, as well as any web page interaction allowed by the webdriver.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenBots Inc")]
-[assembly: AssemblyProduct("OpenBots.Commands.Process")]
+[assembly: AssemblyProduct("OpenBots.Commands.UIAutomation")]
 [assembly: AssemblyCopyright("(C) OpenBots Inc 2020-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("49a14ac5-873f-4a79-bf8b-2a58158e5104")]
+[assembly: Guid("12d43805-8463-43a3-9915-577369b61a0d")]
 
 // Version information for an assembly consists of the following four values:
 //

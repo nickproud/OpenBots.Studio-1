@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata>
-    <id>OpenBots.Commands.Process</id>
+    <id>OpenBots.Commands.UIAutomation</id>
     <version>1.3.0.0</version>
-    <title>Process Commands</title>
+    <title>UI Automation Commands</title>
     <authors>OpenBots Inc</authors>
     <owners>OpenBots Inc</owners>
     <licenseUrl>https://github.com/OpenBotsAI/OpenBots.Studio/blob/develop/LICENSE</licenseUrl>
@@ -11,10 +11,10 @@
     <iconUrl>https://openbots.ai/wp-content/uploads/2020/11/Studio-Icon-256px.png</iconUrl>
     <repository type="git" url="https://github.com/OpenBotsAI/OpenBots.Studio" branch="master" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>OpenBots commands for starting and stopping Windows processes, as well as running custom scripts.</description>
+    <description>UI Automation Commands</description>
     <releaseNotes>https://openbots.ai/category/release-notes/</releaseNotes>
     <copyright>(C) OpenBots Inc 2020-2021</copyright>
-    <tags>OpenBots Studio Process Commands RunCustomCode RunScript StartProcess StopProcess</tags>
+    <tags></tags>
     <dependencies>
       <group targetFramework="net48">
       </group>

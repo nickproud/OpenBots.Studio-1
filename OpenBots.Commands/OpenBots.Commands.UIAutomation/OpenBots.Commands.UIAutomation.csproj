@@ -37,6 +37,15 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OneNoteOCRDll, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OneNoteOCR.1.0.0.0\lib\OneNoteOCRDll.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpSimpleNLG, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpSimpleNLG.1.2.1\lib\net462\SharpSimpleNLG.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -48,28 +57,62 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.XmlDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpSimpleNLG.1.2.1\lib\net462\System.Xml.XmlDocument.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Selenium.WebDriver.3.141.0\lib\net45\WebDriver.dll</HintPath>
     </Reference>
     <Reference Include="WebDriver.Support, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Selenium.Support.3.141.0\lib\net45\WebDriver.Support.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WindowsBase.4.6.1055.0\lib\WindowsBase.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsInput, Version=1.0.4.0, Culture=neutral, PublicKeyToken=9b287f7dc5073cad, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GetHTMLSourceCommand.cs" />
+    <Compile Include="OpenBots.Commands.Image\CaptureImageCommand.cs" />
+    <Compile Include="OpenBots.Commands.Image\PerformOCRCommand.cs" />
+    <Compile Include="OpenBots.Commands.Image\SurfaceAutomationCommand.cs" />
+    <Compile Include="OpenBots.Commands.Image\TakeScreenshotCommand.cs" />
+    <Compile Include="OpenBots.Commands.Input\HTMLInputCommand.cs" />
+    <Compile Include="OpenBots.Commands.Input\InputCommand.cs" />
+    <Compile Include="OpenBots.Commands.Input\SendAdvancedKeystrokesCommand.cs" />
+    <Compile Include="OpenBots.Commands.Input\SendKeystrokesCommand.cs" />
+    <Compile Include="OpenBots.Commands.Input\SendMouseClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.Input\SendMouseMoveCommand.cs" />
+    <Compile Include="OpenBots.Commands.Input\UIAutomationCommand.cs" />
+    <Compile Include="OpenBots.Commands.Process\RunCustomCodeCommand.cs" />
+    <Compile Include="OpenBots.Commands.Process\RunScriptCommand.cs" />
+    <Compile Include="OpenBots.Commands.Process\StartProcessCommand.cs" />
+    <Compile Include="OpenBots.Commands.Process\StopProcessCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\GetHTMLSourceCommand.cs" />
+    <Compile Include="OpenBots.Commands.Window\ActivateWindowCommand.cs" />
+    <Compile Include="OpenBots.Commands.Window\CloseWindowCommand.cs" />
+    <Compile Include="OpenBots.Commands.Window\MoveWindowCommand.cs" />
+    <Compile Include="OpenBots.Commands.Window\ResizeWindowCommand.cs" />
+    <Compile Include="OpenBots.Commands.Window\SetWindowStateCommand.cs" />
+    <Compile Include="OpenBots.Commands.Window\WaitForWindowToExistCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryHTMLSourceCommand.cs" />
-    <Compile Include="SeleniumCloseBrowserCommand.cs" />
-    <Compile Include="SeleniumCreateBrowserCommand.cs" />
-    <Compile Include="SeleniumElementActionCommand.cs" />
-    <Compile Include="SeleniumExecuteScriptCommand.cs" />
-    <Compile Include="SeleniumGetBrowserInfoCommand.cs" />
-    <Compile Include="SeleniumNavigateBackCommand.cs" />
-    <Compile Include="SeleniumNavigateForwardCommand.cs" />
-    <Compile Include="SeleniumNavigateToURLCommand.cs" />
-    <Compile Include="SeleniumRefreshCommand.cs" />
-    <Compile Include="SeleniumSwitchBrowserFrameCommand.cs" />
-    <Compile Include="SeleniumSwitchBrowserWindowCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\QueryHTMLSourceCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumCloseBrowserCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumCreateBrowserCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumElementActionCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumExecuteScriptCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumGetBrowserInfoCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumNavigateBackCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumNavigateForwardCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumNavigateToURLCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumRefreshCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumSwitchBrowserFrameCommand.cs" />
+    <Compile Include="OpenBots.Commands.WebBrowser\SeleniumSwitchBrowserWindowCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OpenBots.Core\OpenBots.Core.csproj">
