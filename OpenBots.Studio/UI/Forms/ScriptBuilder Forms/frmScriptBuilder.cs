@@ -41,8 +41,8 @@ using Point = System.Drawing.Point;
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
     public partial class frmScriptBuilder : Form, IfrmScriptBuilder
-    //Form tracks the overall configuration and enables script editing, saving, and running
-    //Features ability to add, drag/drop reorder commands
+    //form tracks the overall configuration and enables script editing, saving, and running
+    //features ability to add, drag/drop reorder commands
     {
         #region Instance Variables
         //engine context variables
@@ -109,7 +109,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
 
                 _selectedTabScriptActions.Invalidate();
-                //FormatCommandListView();
 
                 if (IsScriptSteppedInto || IsScriptSteppedOver)
                     CreateDebugTab();
@@ -224,7 +223,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             if (Debugger.IsAttached)
             {
-                //Set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
+                //set this value to 'true' to display the 'Install Default' button, and 'false' to hide it
                 installDefaultToolStripMenuItem.Visible = true;
             }
             else //if OpenBots Studio is running in release mode
@@ -604,6 +603,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 return;
 
             bool childNodefound = false;
+
             //blocks repainting tree until all controls are loaded
             tvCommands.BeginUpdate();
             tvCommands.Nodes.Clear();
@@ -650,6 +650,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
                 tvCommands.CollapseAll();
             }
+
             //enables redrawing tree after all controls have been added
             tvCommands.EndUpdate();
         }

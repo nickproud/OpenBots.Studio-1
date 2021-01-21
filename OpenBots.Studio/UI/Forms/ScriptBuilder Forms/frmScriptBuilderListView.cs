@@ -85,9 +85,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void lstScriptActions_DragDrop(object sender, DragEventArgs e)
         {
-            //Returns the location of the mouse pointer in the ListView control.
+            //returns the location of the mouse pointer in the ListView control
             Point cp = _selectedTabScriptActions.PointToClient(new Point(e.X, e.Y));
-            //Obtain the item that is located at the specified location of the mouse pointer.
+
+            //obtain the item that is located at the specified location of the mouse pointer
             ListViewItem dragToItem = _selectedTabScriptActions.GetItemAt(cp.X, cp.Y);
 
             if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
@@ -113,7 +114,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             else
             {
-                //Return if the items are not selected in the ListView control.
+                //return if the items are not selected in the ListView control
                 if (_selectedTabScriptActions.SelectedItems.Count == 0)
                 {
                     return;
@@ -158,7 +159,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return;
                 }
 
-                //Obtain the index of the item at the mouse pointer.
+                //obtain the index of the item at the mouse pointer
                 int dragIndex = dragToItem.Index;
 
                 ListViewItem[] sel = new ListViewItem[_selectedTabScriptActions.SelectedItems.Count];
@@ -168,7 +169,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
                 for (int i = 0; i < sel.GetLength(0); i++)
                 {
-                    //Obtain the ListViewItem to be dragged to the target location.
+                    //obtain the ListViewItem to be dragged to the target location
                     ListViewItem dragItem = sel[i];
                     int itemIndex = dragIndex;
                     if (itemIndex == dragItem.Index)
@@ -180,12 +181,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     else
                         itemIndex = dragIndex + i;
 
-                    //Insert the item at the mouse pointer.
+                    //insert the item at the mouse pointer
                     ListViewItem insertItem = (ListViewItem)dragItem.Clone();
                     _selectedTabScriptActions.Items.Insert(itemIndex, insertItem);
-                    //Removes the item from the initial location while
-                    //the item is moved to the new location.
+
+                    //removes the item from the initial location while the item is moved to the new location
                     _selectedTabScriptActions.Items.Remove(dragItem);
+
                     //FormatCommandListView();
                     _selectedTabScriptActions.Invalidate();
                 }
@@ -306,7 +308,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //creation mode edit locks form to current command
                     editCommand.CreationModeInstance = CreationMode.Edit;
 
-                    //editCommand.defaultStartupCommand = currentCommand.SelectionName;
                     editCommand.EditingCommand = currentCommand;
 
                     //create clone of current command so databinding does not affect if changes are not saved
@@ -361,7 +362,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //get sequence events
             ISequenceCommand sequence = currentCommand as ISequenceCommand;
             frmSequence newSequence = new frmSequence();
-            //newBuilder._isSequence = true;
 
             //apply editor style format
             newSequence.Text = sequence.v_Comment;
@@ -375,7 +375,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //add variables/elements/arguments
             newSequence.ScriptVariables = _scriptVariables;
             newSequence.ScriptElements = _scriptElements;
-            newSequence.SriptArguments = _scriptArguments;
+            newSequence.ScriptArguments = _scriptArguments;
 
             newSequence.dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
             newSequence.dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
@@ -394,16 +394,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 newSequence.SelectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(cmd));
             }
 
-            newSequence.ParentBuilder = this;
-
             try
             {
                 newSequence.ShowDialog();
             }
             catch (Exception)
             {
-                //failed to open sequence command. Try again
+                //failed to open sequence command. Dispose and force collection
                 newSequence.Dispose();
+                GC.Collect();
+
+                //try again
                 LoadSequenceCommand(selectedCommandItem, currentCommand);
                 return;
             }
@@ -432,13 +433,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //update variables/elements/arguments
                 _scriptVariables = newSequence.ScriptVariables;
                 _scriptElements = newSequence.ScriptElements;
-                _scriptArguments = newSequence.SriptArguments;
+                _scriptArguments = newSequence.ScriptArguments;
 
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                 dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
             }
 
-            newSequence.Dispose();            
+            //add to parent
+            newSequence.MoveToParentCommands.ForEach(x => AddCommandToListView(x));
+
+            //dispose and force collection
+            newSequence.Dispose();
+            GC.Collect();
         }
 
         private void CutRows()
@@ -700,7 +706,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //create modified bounds
             var modifiedBounds = e.Bounds;
-            //modifiedBounds.Y += 2;
 
             //switch between column index
             switch (e.ColumnIndex)
@@ -1183,6 +1188,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _reqdIndex = -1;
                 lblTotalResults.Text = "No Matches Found";
                 lblCurrentlyViewing.Hide();
+
                 //clear indexes
                 _matchingSearchIndex.Clear();
                 _reqdIndex = -1;

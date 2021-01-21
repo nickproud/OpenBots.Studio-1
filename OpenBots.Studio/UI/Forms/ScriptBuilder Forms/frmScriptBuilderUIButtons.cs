@@ -61,6 +61,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             HideSearchInfo();
 
             _scriptVariables = new List<ScriptVariable>();
+
             //assign ProjectPath variable
             var projectPathVariable = new ScriptVariable
             {
@@ -128,6 +129,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 try
                 {
                     _isRunTaskCommand = isRunTaskCommand;
+
                     //create or switch to TabPage
                     string fileName = Path.GetFileNameWithoutExtension(filePath);
                     var foundTab = uiScriptTabControl.TabPages.Cast<TabPage>().Where(t => t.ToolTipText == filePath)
@@ -190,7 +192,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                         dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-                        //notify
+    
                         Notify("Script Loaded Successfully!", Color.White);
                     }                   
                 }
@@ -202,7 +204,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }           
         }
 
-        //Helper method for RunTaskCommand
+        //helper method for RunTaskCommand
         public void OpenScriptFile(string scriptFilePath, bool isRunTaskCommand = true)
         {
             OpenFile(scriptFilePath, isRunTaskCommand);
@@ -405,7 +407,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 var exportedScript = Script.SerializeScript(_selectedTabScriptActions.Items, engineContext);
                 uiScriptTabControl.SelectedTab.Text = uiScriptTabControl.SelectedTab.Text.Replace(" *", "");
-                //show success dialog
+
                 Notify("File has been saved successfully!", Color.White);
                 isSuccessfulSave = true;
                 try
@@ -431,6 +433,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             foreach (TabPage openTab in uiScriptTabControl.TabPages)
             {
                 uiScriptTabControl.SelectedTab = openTab;
+
                 //clear selected items
                 ClearSelectedListViewItems();
 
@@ -560,8 +563,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 codeCommentCommand.v_Comment = "End Import From " + fileName + " @ " + dateTimeNow;
                 _selectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(codeCommentCommand));
 
-                //format listview
-                //notify
                 Notify("Script Imported Successfully!", Color.White);
             }
             catch (Exception ex)
@@ -947,12 +948,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null);
+
             //initialize Engine
             CurrentEngine = new frmScriptEngine(engineContext, false, _isDebugMode);
-
-            //executionManager = new ScriptExectionManager();
-            //executionManager.CurrentlyExecuting = true;
-            //executionManager.ScriptName = new System.IO.FileInfo(ScriptFilePath).Name;
 
             CurrentEngine.ScriptEngineContext.ScriptBuilder = this;
             ((frmScriptEngine)CurrentEngine).Show();
