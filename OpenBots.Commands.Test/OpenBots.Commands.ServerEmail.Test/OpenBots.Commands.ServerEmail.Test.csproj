@@ -114,10 +114,6 @@
       <Project>{ed8f6540-c341-4b5f-8966-26a08e39af87}</Project>
       <Name>OpenBots.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.Outlook\OpenBots.Commands.Outlook.csproj">
-      <Project>{6A4AD804-FF5D-44ED-9F49-A07D6D80DA38}</Project>
-      <Name>OpenBots.Commands.Outlook</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.ServerEmail\OpenBots.Commands.ServerEmail.csproj">
       <Project>{94ae5f8a-ecc2-4d79-a770-a0f7acc9a9b9}</Project>
       <Name>OpenBots.Commands.ServerEmail</Name>

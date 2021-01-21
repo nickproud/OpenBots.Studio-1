@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpenBots.Commands.Excel")]
-[assembly: AssemblyDescription("OpenBots commands for manipulating Excel spreadsheets via a local instance of the Microsoft Excel application. Supports all standard spreadsheet interactions allowed by Excel.")]
+[assembly: AssemblyTitle("OpenBots.Commands.Microsoft")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenBots Inc")]
-[assembly: AssemblyProduct("OpenBots.Commands.Excel")]
+[assembly: AssemblyProduct("OpenBots.Commands.Microsoft")]
 [assembly: AssemblyCopyright("(C) OpenBots Inc 2020-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
