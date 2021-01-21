@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Engine.Test
         [Fact]
         public void SetsEnginePreference()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setEnginePreference = new SetEnginePreferenceCommand();
 
             _setEnginePreference.v_CalculationOption = "Disable Automatic Calculations";
