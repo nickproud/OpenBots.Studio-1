@@ -23,22 +23,13 @@ namespace OpenBots.Core.Project
         [JsonIgnore]
         public static List<string> DefaultCommands = new List<string>()
         {
+            "Core",
             "DataManipulation",
-            "Engine",
-            "ErrorHandling",
-            "File",
-            "Folder",
-            "If",
             "Image",
             "Input",
-            "Loop",
             "Microsoft",
-            "Misc",
             "Process",
-            "Switch",
-            "Task",
-            "TextFile",
-            "Variable",
+            "SystemAutomation",
             "WebBrowser",
             "Window",
         };
