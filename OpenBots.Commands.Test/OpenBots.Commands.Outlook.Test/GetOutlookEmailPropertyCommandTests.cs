@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Outlook.Test
         [InlineData("Size", "57813")]
         public void GetsOutlookEmailProperty(string prop, string propValue)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
             _getOutlookEmailProperty = new GetOutlookEmailPropertyCommand();
 

@@ -15,7 +15,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void AppendsTextAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _appendTextAsset = new AppendTextAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void HandlesNonexistentAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _appendTextAsset = new AppendTextAssetCommand();
 
             string assetName = "doesNotExist";
@@ -67,7 +67,7 @@ namespace OpenBots.Commands.Asset.Test
 
         private void resetAsset(string assetName, string assetVal, string type)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
 
             _updateAsset.v_AssetName = assetName;

@@ -69,7 +69,7 @@ namespace OpenBots.Commands.Folder
 			CommandName = "MoveCopyFolderCommand";
 			SelectionName = "Move/Copy Folder";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_folders;
 
 			v_CreateDirectory = "Yes";
 			v_DeleteExisting = "Yes";
@@ -81,6 +81,11 @@ namespace OpenBots.Commands.Folder
 			//apply variable logic
 			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
 			var destinationFolder = v_DestinationDirectory.ConvertUserVariableToString(engine);
+			
+			if (!Directory.Exists(sourceFolder))
+            {
+				throw new DirectoryNotFoundException($"Directory {sourceFolder} does not exist");
+            }
 
 			if ((v_CreateDirectory == "Yes") && (!Directory.Exists(destinationFolder)))
 			{

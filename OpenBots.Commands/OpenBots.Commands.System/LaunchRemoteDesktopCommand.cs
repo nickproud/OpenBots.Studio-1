@@ -81,9 +81,9 @@ namespace OpenBots.Commands.System
 			var width = int.Parse(v_RDPWidth.ConvertUserVariableToString(engine));
 			var height = int.Parse(v_RDPHeight.ConvertUserVariableToString(engine));
 
-			if (engine.ScriptEngineUI != null)
+			if (engine.AutomationEngineContext.ScriptEngine != null)
 			{
-				var result = ((Form)engine.ScriptEngineUI).Invoke(new Action(() =>
+				var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
 				{
 					LaunchRDPSession(machineName, userName, password, width, height);
 				}));
@@ -125,7 +125,7 @@ namespace OpenBots.Commands.System
 		{
 			frmDisplayManager displayManager = new frmDisplayManager();
 			displayManager.ShowDialog();
-			displayManager.Close();            
+			displayManager.Dispose();            
 		}
 
 		public void LaunchRDPSession(string machineName, string userName, string password, int width, int height)

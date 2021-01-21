@@ -15,7 +15,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void WaitsForFile()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _waitForFile = new WaitForFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void FailsWhenFileNotFound()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _waitForFile = new WaitForFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;

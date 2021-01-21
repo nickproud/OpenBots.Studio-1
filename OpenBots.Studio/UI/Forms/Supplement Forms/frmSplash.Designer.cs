@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSplash));
             this.lblAppVersion = new System.Windows.Forms.Label();
+            this.lblFirstTimeSetup = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblAppVersion
@@ -45,6 +46,21 @@
             this.lblAppVersion.TabIndex = 3;
             this.lblAppVersion.Text = "v";
             // 
+            // lblFirstTimeSetup
+            // 
+            this.lblFirstTimeSetup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblFirstTimeSetup.AutoSize = true;
+            this.lblFirstTimeSetup.BackColor = System.Drawing.Color.Transparent;
+            this.lblFirstTimeSetup.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.lblFirstTimeSetup.ForeColor = System.Drawing.Color.Black;
+            this.lblFirstTimeSetup.Location = new System.Drawing.Point(1, 271);
+            this.lblFirstTimeSetup.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblFirstTimeSetup.Name = "lblFirstTimeSetup";
+            this.lblFirstTimeSetup.Size = new System.Drawing.Size(289, 25);
+            this.lblFirstTimeSetup.TabIndex = 4;
+            this.lblFirstTimeSetup.Text = "Performing first time user setup...";
+            this.lblFirstTimeSetup.Visible = false;
+            // 
             // frmSplash
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -53,6 +69,7 @@
             this.BackgroundImage = global::OpenBots.Properties.Resources.OpenBots_splash;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(450, 300);
+            this.Controls.Add(this.lblFirstTimeSetup);
             this.Controls.Add(this.lblAppVersion);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -70,5 +87,6 @@
         #endregion
 
         private System.Windows.Forms.Label lblAppVersion;
+        public System.Windows.Forms.Label lblFirstTimeSetup;
     }
 }

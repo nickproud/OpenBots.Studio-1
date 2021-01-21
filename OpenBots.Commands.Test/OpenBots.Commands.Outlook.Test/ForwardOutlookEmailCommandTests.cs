@@ -19,7 +19,7 @@ namespace OpenBots.Commands.Outlook.Test
         [Fact]
         public void ForwardsOutlookEmail()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
             _forwardOutlookEmail = new ForwardOutlookEmailCommand();
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();

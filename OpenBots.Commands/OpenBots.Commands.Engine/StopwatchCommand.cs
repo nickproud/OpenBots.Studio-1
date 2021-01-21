@@ -41,8 +41,8 @@ namespace OpenBots.Commands.Engine
 		public string v_StopwatchAction { get; set; }
 
 		[DisplayName("String Format (Optional)")]
-		[Description("Specify a DateTime string format if required.")]
-		[SampleUsage("MM/dd/yy || hh:mm || {vFormat}")]
+		[Description("Specify a TimeSpan string format if required.")]
+		[SampleUsage("g || dd\\.hh\\:mm || {vFormat}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		public string v_ToStringFormat { get; set; }
@@ -86,22 +86,22 @@ namespace OpenBots.Commands.Engine
 					break;
 				case "Stop Stopwatch":
 					//stop existing stopwatch
-					stopwatch = (Stopwatch)engine.AppInstances[v_InstanceName];
+					stopwatch = (Stopwatch)engine.AutomationEngineContext.AppInstances[v_InstanceName];
 					stopwatch.Stop();
 					break;
 				case "Restart Stopwatch":
 					//restart which sets to 0 and automatically starts
-					stopwatch = (Stopwatch)engine.AppInstances[v_InstanceName];
+					stopwatch = (Stopwatch)engine.AutomationEngineContext.AppInstances[v_InstanceName];
 					stopwatch.Restart();
 					break;
 				case "Reset Stopwatch":
 					//reset which sets to 0
-					stopwatch = (Stopwatch)engine.AppInstances[v_InstanceName];
+					stopwatch = (Stopwatch)engine.AutomationEngineContext.AppInstances[v_InstanceName];
 					stopwatch.Reset();
 					break;
 				case "Measure Stopwatch":
 					//check elapsed which gives measure
-					stopwatch = (Stopwatch)engine.AppInstances[v_InstanceName];
+					stopwatch = (Stopwatch)engine.AutomationEngineContext.AppInstances[v_InstanceName];
 					string elapsedTime;
 					if (string.IsNullOrEmpty(format))
 						elapsedTime = stopwatch.Elapsed.ToString();

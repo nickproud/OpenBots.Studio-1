@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Folder
 			CommandName = "GetFoldersCommand";
 			SelectionName = "Get Folders";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_folders;
 
 		}
 
@@ -51,6 +51,11 @@ namespace OpenBots.Commands.Folder
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
 			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
+
+            if (!Directory.Exists(sourceFolder))
+            {
+				throw new DirectoryNotFoundException($"Directory {sourceFolder} does not exist");
+            }
 
 			//Get Subdirectories List
 			var directoriesList = Directory.GetDirectories(sourceFolder).ToList();

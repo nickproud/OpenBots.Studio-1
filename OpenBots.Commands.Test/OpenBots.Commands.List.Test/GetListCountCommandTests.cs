@@ -14,7 +14,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void GetsListCount()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getListCount = new GetListCountCommand();
 
             List<string> inputList = new List<string>();

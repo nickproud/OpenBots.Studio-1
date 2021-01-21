@@ -118,6 +118,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                         return ConvertIWebElementToString((IWebElement)obj);
                     case "System.Drawing.Bitmap":
                         return ConvertBitmapToString((Bitmap)obj);
+                    case "System.Collections.Generic.KeyValuePair":
+                        return ConvertBitmapToString((Bitmap)obj);
                     case string a when a.Contains("System.Collections.Generic.List`1[[System.String"):
                     case string b when b.Contains("System.Collections.Generic.List`1[[System.Data.DataTable"):
                     case string c when c.Contains("System.Collections.Generic.List`1[[Microsoft.Office.Interop.Outlook.MailItem"):
@@ -125,8 +127,18 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                     case string e when e.Contains("System.Collections.Generic.List`1[[OpenQA.Selenium.IWebElement"):
                         return ConvertListToString(obj);
                     case string a when a.Contains("System.Collections.Generic.Dictionary`2[[System.String") && a.Contains("],[System.String"):
-                    case string b when b.Contains("System.Collections.Generic.Dictionary`2[[System.String") && b.Contains("],[System.Object"):
+                    case string b when b.Contains("System.Collections.Generic.Dictionary`2[[System.String") && b.Contains("],[System.Data.DataTable"):
+                    case string c when c.Contains("System.Collections.Generic.Dictionary`2[[System.String") && c.Contains("],[Microsoft.Office.Interop.Outlook.MailItem"):
+                    case string d when d.Contains("System.Collections.Generic.Dictionary`2[[System.String") && d.Contains("],[MimeKit.MimeMessage"):
+                    case string e when e.Contains("System.Collections.Generic.Dictionary`2[[System.String") && e.Contains("],[OpenQA.Selenium.IWebElement"):
+                    case string f when f.Contains("System.Collections.Generic.Dictionary`2[[System.String") && f.Contains("],[System.Object"):
                         return ConvertDictionaryToString(obj);
+                    case string a when a.Contains("System.Collections.Generic.KeyValuePair`2[[System.String") && a.Contains("],[System.String"):
+                    case string b when b.Contains("System.Collections.Generic.KeyValuePair`2[[System.String") && b.Contains("],[System.Data.DataTable"):
+                    case string c when c.Contains("System.Collections.Generic.KeyValuePair`2[[System.String") && c.Contains("],[Microsoft.Office.Interop.Outlook.MailItem"):
+                    case string d when d.Contains("System.Collections.Generic.KeyValuePair`2[[System.String") && d.Contains("],[MimeKit.MimeMessage"):
+                    case string e when e.Contains("System.Collections.Generic.KeyValuePair`2[[System.String") && e.Contains("],[OpenQA.Selenium.IWebElement"):
+                        return ConvertKeyValuePairToString(obj);
                     case "":
                         return "null";
                     default:
@@ -143,6 +155,9 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public static string ConvertDataTableToString(DataTable dt)
         {
+            if (dt == null)
+                return "Null";
+
             StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder.Append("[[");
@@ -172,6 +187,9 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public static string ConvertDataRowToString(DataRow row)
         {
+            if (row == null)
+                return "Null";
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("[");
 
@@ -184,6 +202,9 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public static string ConvertMailItemToString(MailItem mail)
         {
+            if (mail == null)
+                return "Null";
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append($"[Subject: {mail.Subject}, \n" +
                                   $"Sender: {mail.SenderName}, \n" +
@@ -209,6 +230,9 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public static string ConvertMimeMessageToString(MimeMessage message)
         {
+            if (message == null)
+                return "Null";
+
             int attachmentCount = 0;
             foreach (var attachment in message.Attachments)
                 attachmentCount += 1;
@@ -238,6 +262,9 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public static string ConvertIWebElementToString(IWebElement element)
         {
+            if (element == null)
+                return "Null";
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append($"[Text: {element.Text}, \n" +
                                  $"Tag Name: {element.TagName}, \n" +
@@ -345,6 +372,38 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 foreach (KeyValuePair<string, string> pair in stringDictionary)
                     stringBuilder.AppendFormat("[{0}, {1}], ", pair.Key, pair.Value);
             }
+            else if (type == typeof(DataTable))
+            {
+                stringDictionary = (Dictionary<string, DataTable>)dictionary;
+                stringBuilder.Append($"Count({stringDictionary.Count}) [");
+
+                foreach (KeyValuePair<string, DataTable> pair in stringDictionary)
+                    stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertDataTableToString(pair.Value));
+            }
+            else if (type == typeof(MailItem))
+            {
+                stringDictionary = (Dictionary<string, MailItem>)dictionary;
+                stringBuilder.Append($"Count({stringDictionary.Count}) [");
+
+                foreach (KeyValuePair<string, MailItem> pair in stringDictionary)
+                    stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertMailItemToString(pair.Value));
+            }
+            else if (type == typeof(MimeMessage))
+            {
+                stringDictionary = (Dictionary<string, MimeMessage>)dictionary;
+                stringBuilder.Append($"Count({stringDictionary.Count}) [");
+
+                foreach (KeyValuePair<string, MimeMessage> pair in stringDictionary)
+                    stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertMimeMessageToString(pair.Value));
+            }
+            else if (type == typeof(IWebElement))
+            {
+                stringDictionary = (Dictionary<string, IWebElement>)dictionary;
+                stringBuilder.Append($"Count({stringDictionary.Count}) [");
+
+                foreach (KeyValuePair<string, IWebElement> pair in stringDictionary)
+                    stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertIWebElementToString(pair.Value));
+            }
             else if (type == typeof(object))
             {
                 stringDictionary = (Dictionary<string, object>)dictionary;
@@ -362,6 +421,39 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             }
             else
                 stringBuilder.Length = stringBuilder.Length - 2;
+
+            return stringBuilder.ToString();
+        }
+        public static string ConvertKeyValuePairToString(object pair)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            Type type = pair.GetType().GetGenericArguments()[1];
+
+            if (type == typeof(string))
+            {
+                KeyValuePair<string, string> stringPair = (KeyValuePair<string,string>)pair;
+                stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, stringPair.Value);
+            }
+            else if (type == typeof(DataTable))
+            {
+                KeyValuePair<string, DataTable> stringPair = (KeyValuePair<string, DataTable>)pair;
+                stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertDataTableToString(stringPair.Value));
+            }
+            else if (type == typeof(MailItem))
+            {
+                KeyValuePair<string, MailItem> stringPair = (KeyValuePair<string, MailItem>)pair;
+                stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertMailItemToString(stringPair.Value));
+            }
+            else if (type == typeof(MimeMessage))
+            {
+                KeyValuePair<string, MimeMessage> stringPair = (KeyValuePair<string, MimeMessage>)pair;
+                stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertMimeMessageToString(stringPair.Value));
+            }
+            else if (type == typeof(IWebElement))
+            {
+                KeyValuePair<string, IWebElement> stringPair = (KeyValuePair<string, IWebElement>)pair;
+                stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertIWebElementToString(stringPair.Value));
+            }
 
             return stringBuilder.ToString();
         }

@@ -212,6 +212,7 @@
     <Compile Include="IO\Folders.cs" />
     <Compile Include="Metrics\ExecutionMetric.cs" />
     <Compile Include="Metrics\Metric.cs" />
+    <Compile Include="Model\EngineModel\EngineContext.cs" />
     <Compile Include="Model\EngineModel\LineNumberChangedEventArgs.cs" />
     <Compile Include="Model\EngineModel\ReportProgressEventArgs.cs" />
     <Compile Include="Model\EngineModel\ScriptError.cs" />
@@ -225,6 +226,8 @@
     </Compile>
     <Compile Include="Script\Script.cs" />
     <Compile Include="Script\ScriptAction.cs" />
+    <Compile Include="Script\ScriptArgument.cs" />
+    <Compile Include="Script\ScriptArgumentDirection.cs" />
     <Compile Include="Script\ScriptAutofacContractResolver.cs" />
     <Compile Include="Script\ScriptElement.cs" />
     <Compile Include="Script\ScriptObject.cs" />
@@ -365,7 +368,6 @@
     <None Include="Resources\Icons\Commands\command-queueitem.png" />
     <Content Include="Resources\Icons\Commands\command-regex.png" />
     <Content Include="Resources\Icons\Commands\command-remote.png" />
-    <Content Include="Resources\Icons\Commands\command-resume.png" />
     <Content Include="Resources\Icons\Commands\command-run-code.png" />
     <Content Include="Resources\Icons\Commands\command-script.png" />
     <Content Include="Resources\Icons\Commands\command-search.png" />
@@ -383,7 +385,6 @@
     <Content Include="Resources\Icons\Commands\command-web.png" />
     <Content Include="Resources\Icons\Commands\command-window-close.png" />
     <Content Include="Resources\Icons\Commands\command-window.png" />
-    <Content Include="Resources\Icons\Commands\command_folders.bmp" />
     <None Include="Resources\Icons\Logo\openbots-ico.ico" />
     <None Include="Resources\Icons\Logo\openbots-icon.png" />
     <Content Include="Resources\Samples\HTMLInputSample.html" />

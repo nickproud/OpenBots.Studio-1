@@ -28,6 +28,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             lvShortcutMenu.Items.Add(new ListViewItem(new string[] { "Redo Changes", "Ctrl + R" }));
             lvShortcutMenu.Items.Add(new ListViewItem(new string[] { "Save Script File", "Ctrl + S" }));
             lvShortcutMenu.Items.Add(new ListViewItem(new string[] { "Save All Script Files", "Ctrl + Shift + S" }));
+            lvShortcutMenu.Items.Add(new ListViewItem(new string[] { "Open Argument Manager", "Ctrl + J" }));
             lvShortcutMenu.Items.Add(new ListViewItem(new string[] { "Open Variable Manager", "Ctrl + K" }));
             lvShortcutMenu.Items.Add(new ListViewItem(new string[] { "Open Element Manager", "Ctrl + L" }));
             lvShortcutMenu.Items.Add(new ListViewItem(new string[] { "Open About", "Ctrl + O" }));

@@ -17,6 +17,7 @@ using Autofac;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenBots.Core.Command;
+using OpenBots.Core.Model.EngineModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,6 +37,10 @@ namespace OpenBots.Core.Script
         /// </summary>
         public List<ScriptVariable> Variables { get; set; }
         /// <summary>
+        /// Contains user-defined arguments
+        /// </summary>
+        public List<ScriptArgument> Arguments { get; set; }
+        /// <summary>
         /// Contains user-defined elements
         /// </summary>
         public List<ScriptElement> Elements { get; set; }
@@ -48,6 +53,7 @@ namespace OpenBots.Core.Script
         public Script()
         {
             Variables = new List<ScriptVariable>();
+            Arguments = new List<ScriptArgument>();
             Elements = new List<ScriptElement>();
             Commands = new List<ScriptAction>();
         }
@@ -65,16 +71,18 @@ namespace OpenBots.Core.Script
         /// <summary>
         /// Converts and serializes the user-defined commands into an JSON file
         /// </summary>
-        public static Script SerializeScript(ListView.ListViewItemCollection scriptCommands, List<ScriptVariable> scriptVariables,
-            List<ScriptElement> scriptElements, string scriptFilePath, IContainer container)
+        public static Script SerializeScript(ListView.ListViewItemCollection scriptCommands, EngineContext engineContext)
         {
             var script = new Script();
 
             //save variables to file
-            script.Variables = scriptVariables;
+            script.Variables = engineContext.Variables;
+
+            //save arguments to file
+            script.Arguments = engineContext.Arguments;
 
             //save elements to file
-            script.Elements = scriptElements;
+            script.Elements = engineContext.Elements;
 
             //set version to current application version
             script.Version = Application.ProductVersion;
@@ -142,17 +150,17 @@ namespace OpenBots.Core.Script
             {
                 TypeNameHandling = TypeNameHandling.Objects,
                 Error = HandleDeserializationError,
-                ContractResolver = new ScriptAutofacContractResolver(container)
+                ContractResolver = new ScriptAutofacContractResolver(engineContext.Container)
             };
 
             JsonSerializer serializer = JsonSerializer.Create(serializerSettings);
 
             //output to json file
             //if output path was provided
-            if (scriptFilePath != "")
+            if (engineContext.FilePath != "")
             {
                 //write to file
-                using (StreamWriter sw = new StreamWriter(scriptFilePath))
+                using (StreamWriter sw = new StreamWriter(engineContext.FilePath))
                 using (JsonWriter writer = new JsonTextWriter(sw){ Formatting = Formatting.Indented })
                 {
                     serializer.Serialize(writer, script, typeof(Script));

@@ -17,7 +17,7 @@ namespace OpenBots.Commands.File.Test
         [InlineData("Copy File")]
         public void CopiesAndMovesFile(string operation)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _moveCopyFile = new MoveCopyFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -48,7 +48,7 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesInvalidFilepath()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _moveCopyFile = new MoveCopyFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -68,7 +68,7 @@ namespace OpenBots.Commands.File.Test
 
         private void resetMoveTest(string initialDirectory, string movedFile)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _moveCopyFile = new MoveCopyFileCommand();
 
             _moveCopyFile.v_OperationType = "Move File";

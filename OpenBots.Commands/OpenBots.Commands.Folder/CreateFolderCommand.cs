@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Folder
 			CommandName = "CreateFolderCommand";
 			SelectionName = "Create Folder";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_folders;
 
 		}
 
@@ -60,6 +60,11 @@ namespace OpenBots.Commands.Folder
 			//apply variable logic
 			var destinationDirectory = v_DestinationDirectory.ConvertUserVariableToString(engine);
 			var newFolder = v_NewFolderName.ConvertUserVariableToString(engine);
+
+            if (!Directory.Exists(destinationDirectory))
+            {
+				throw new DirectoryNotFoundException($"Directory {destinationDirectory} is not a valid directory");
+            }
 
 			var finalPath = Path.Combine(destinationDirectory, newFolder);
 			//delete folder if it exists AND the delete option is selected 

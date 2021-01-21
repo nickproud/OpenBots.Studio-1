@@ -15,7 +15,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private bool _isEditMode;
         private string _editingVariableName;
 
-
         public frmAddElement()
         {
             InitializeComponent();
@@ -44,7 +43,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             ElementValueDT = elementValueDT;
 
             _isEditMode = true;
-            _editingVariableName = elementName.Replace("<", "").Replace(">", "");          
+            _editingVariableName = elementName;          
         }
 
         private void frmAddElement_Load(object sender, EventArgs e)
@@ -60,7 +59,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 return;
             }
 
-            string newElementName = txtElementName.Text.Replace("<", "").Replace(">", "");
+            string newElementName = txtElementName.Text;
             var existingElement = ScriptElements.Where(var => var.ElementName == newElementName).FirstOrDefault();
             if (existingElement != null)                
             {
@@ -71,9 +70,9 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 }               
             }
 
-            if (!txtElementName.Text.StartsWith("<") || !txtElementName.Text.EndsWith(">"))
+            if (txtElementName.Text.StartsWith("<") || txtElementName.Text.EndsWith(">"))
             {
-                lblElementNameError.Text = "Element markers '<' and '>' must be included";
+                lblElementNameError.Text = "Element markers '<' and '>' should not be included";
                 return;
             }
 

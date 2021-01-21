@@ -12,7 +12,7 @@ namespace OpenBots.Commands.Data.Test
         [Fact]
         public void ReplacesText()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _replaceTextCommand = new ReplaceTextCommand();
 
             string inputText = "Hello john";

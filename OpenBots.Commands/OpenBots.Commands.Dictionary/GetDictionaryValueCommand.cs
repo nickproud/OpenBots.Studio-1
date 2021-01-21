@@ -9,6 +9,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using System.Data;
+using Microsoft.Office.Interop.Outlook;
+using MimeKit;
+using OpenQA.Selenium;
+using Exception = System.Exception;
 
 namespace OpenBots.Commands.Dictionary
 {
@@ -57,17 +62,25 @@ namespace OpenBots.Commands.Dictionary
 			var engine = (IAutomationEngineInstance)sender;
 			var vKey = v_Key.ConvertUserVariableToString(engine);
 
-			dynamic dict = null;
+			dynamic dict;
 
 			//Declare local dictionary and assign output
 			if (v_InputDictionary.ConvertUserVariableToObject(engine) is Dictionary<string, string>)
 				dict = (Dictionary<string,string>)v_InputDictionary.ConvertUserVariableToObject(engine);
+			else if (v_InputDictionary.ConvertUserVariableToObject(engine) is Dictionary<string, DataTable>)
+				dict = (Dictionary<string, DataTable>)v_InputDictionary.ConvertUserVariableToObject(engine);
+			else if (v_InputDictionary.ConvertUserVariableToObject(engine) is Dictionary<string, MailItem>)
+				dict = (Dictionary<string, MailItem>)v_InputDictionary.ConvertUserVariableToObject(engine);
+			else if (v_InputDictionary.ConvertUserVariableToObject(engine) is Dictionary<string, MimeMessage>)
+				dict = (Dictionary<string, MimeMessage>)v_InputDictionary.ConvertUserVariableToObject(engine);
+			else if (v_InputDictionary.ConvertUserVariableToObject(engine) is Dictionary<string, IWebElement>)
+				dict = (Dictionary<string, IWebElement>)v_InputDictionary.ConvertUserVariableToObject(engine);
 			else if (v_InputDictionary.ConvertUserVariableToObject(engine) is Dictionary<string, object>)
 				dict = (Dictionary<string, object>)v_InputDictionary.ConvertUserVariableToObject(engine);
+			else
+				throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 
-			var dictValue = ((object)dict[vKey]).ToString().ConvertUserVariableToString(engine);
-
-			dictValue.StoreInUserVariable(engine, v_OutputUserVariableName);
+			((object)dict[vKey]).StoreInUserVariable(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

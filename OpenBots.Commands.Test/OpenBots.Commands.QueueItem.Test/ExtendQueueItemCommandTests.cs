@@ -17,7 +17,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void ExtendQueueItem()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
             _extendQueueItem = new ExtendQueueItemCommand();
@@ -56,7 +56,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void HandlesNonExistentTransactionKey()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _extendQueueItem = new ExtendQueueItemCommand();
 
             var queueItemDict = new Dictionary<string, object>()

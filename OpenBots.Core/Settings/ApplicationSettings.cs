@@ -45,11 +45,18 @@ namespace OpenBots.Core.Settings
 
             //output to json file
             //if output path was provided
-            using (StreamWriter sw = new StreamWriter(filePath))
-            using (JsonWriter writer = new JsonTextWriter(sw){ Formatting = Formatting.Indented })
+            try
             {
-                serializer.Serialize(writer, appSettings, typeof(ApplicationSettings));
+                using (StreamWriter sw = new StreamWriter(filePath))
+                using (JsonWriter writer = new JsonTextWriter(sw) { Formatting = Formatting.Indented })
+                {
+                    serializer.Serialize(writer, appSettings, typeof(ApplicationSettings));
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }           
         }
 
         public ApplicationSettings GetOrCreateApplicationSettings(string settingsDir = "")

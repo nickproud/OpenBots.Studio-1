@@ -58,7 +58,11 @@ namespace OpenBots.Commands.Misc
 				variableMessage = v_Message.ConvertUserVariableToObject(engine);
 
 			string type = "";
-			if (variableMessage != null)
+			if(variableMessage?.GetType().Name == typeof(KeyValuePair<,>).Name)
+            {
+				type = variableMessage.GetType().FullName;
+			}
+			else if (variableMessage != null)
 				type = variableMessage.GetType().FullName;
 
 			if (variableMessage is string)
@@ -66,7 +70,7 @@ namespace OpenBots.Commands.Misc
 			else
 				variableMessage = type + Environment.NewLine + StringMethods.ConvertObjectToString(variableMessage);
 
-			if (engine.ScriptEngineUI == null)
+			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{
 				engine.ReportProgress("Complex Messagebox Supported With UI Only");
 				MessageBox.Show(variableMessage, "Message Box Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -77,9 +81,9 @@ namespace OpenBots.Commands.Misc
 			if (engine.IsServerExecution && closeAfter <= 0)
 				closeAfter = 10;
 
-			var result = ((Form)engine.ScriptEngineUI).Invoke(new Action(() =>
+			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
 				{
-					engine.ScriptEngineUI.ShowMessage(variableMessage, "MessageBox", DialogType.OkOnly, closeAfter);
+					engine.AutomationEngineContext.ScriptEngine.ShowMessage(variableMessage, "MessageBox", DialogType.OkOnly, closeAfter);
 				}
 			));
 

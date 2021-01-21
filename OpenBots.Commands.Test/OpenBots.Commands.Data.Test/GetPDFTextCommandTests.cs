@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Data.Test
         public void GetsPDFText(string filePathOrUrl)
         {
             _getPDFText = new GetPDFTextCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             string filepath = "";
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             if (filePathOrUrl.Equals("File Path"))
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Data.Test
         public void HandlesInvalidFilepath()
         {
             _getPDFText = new GetPDFTextCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             string filepath = "";
 
             filepath.StoreInUserVariable(_engine, "{filepath}");

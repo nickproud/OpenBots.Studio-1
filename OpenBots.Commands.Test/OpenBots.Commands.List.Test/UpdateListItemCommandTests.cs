@@ -15,7 +15,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void UpdatesStringListItem()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateListItem = new UpdateListItemCommand();
 
             List<string> inputList = new List<string>();
@@ -41,7 +41,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void UpdatesDataTableListItem()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateListItem = new UpdateListItemCommand();
 
             List<DataTable> inputList = new List<DataTable>();
@@ -72,7 +72,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void HandlesInvalidListItem()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateListItem = new UpdateListItemCommand();
 
             List<DataTable> inputList = new List<DataTable>();

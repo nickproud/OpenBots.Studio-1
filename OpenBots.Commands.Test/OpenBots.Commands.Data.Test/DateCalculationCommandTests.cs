@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Data.Test
         public void CorrectlyPerformsOperation(DateTime input, string calcMethod, string increment, dynamic expectedResult)
         {
             _dateCalculation = new DateCalculationCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             string defaultFormat = "MM/dd/yyyy hh:mm:ss";
             if (calcMethod.Contains("Get"))
             {
