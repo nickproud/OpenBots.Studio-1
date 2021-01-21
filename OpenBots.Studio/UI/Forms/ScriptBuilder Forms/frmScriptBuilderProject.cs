@@ -16,6 +16,8 @@ using System.Linq;
 using System.Windows.Forms;
 using VBFileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
 using OpenBots.Core.Model.EngineModel;
+using OpenBots.Core.Enums;
+using OpenBots.Core.IO;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {

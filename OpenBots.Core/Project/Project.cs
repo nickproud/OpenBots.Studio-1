@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ZipFile = ICSharpCode.SharpZipLib.Zip.ZipFile;
 
@@ -20,7 +21,7 @@ namespace OpenBots.Core.Project
         public Dictionary<string, string> Dependencies { get; set; }
 
         [JsonIgnore]
-        public List<string> DefaultCommands = new List<string>()
+        public static List<string> DefaultCommands = new List<string>()
         {
             "Data",
             "DataTable",
@@ -52,10 +53,9 @@ namespace OpenBots.Core.Project
             ProjectName = projectName;
             Main = "Main.json";
             Version = Application.ProductVersion;
-            Dependencies = new Dictionary<string, string>();
 
-            foreach (string commandSet in DefaultCommands)
-                Dependencies.Add($"OpenBots.Commands.{commandSet}", "1.3.0");
+            var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
+            Dependencies = DefaultCommands.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
         }
 
         public void SaveProject(string scriptPath)
@@ -78,7 +78,10 @@ namespace OpenBots.Core.Project
 
                 //If requirements are met, a project.config is created/updated
                 if (dirName == ProjectName && File.Exists(configPath))
+                {
+                    Version = Application.ProductVersion;
                     File.WriteAllText(configPath, JsonConvert.SerializeObject(this));
+                }
             }
             catch (Exception)
             {

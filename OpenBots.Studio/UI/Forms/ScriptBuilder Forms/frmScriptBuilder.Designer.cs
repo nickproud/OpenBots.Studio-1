@@ -2285,7 +2285,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.Text = "OpenBots Studio";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmScriptBuilder_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmScriptBuilder_FormClosed);
-            this.Load += new System.EventHandler(this.frmScriptBuilder_Load);
+            this.Load += new System.EventHandler(this.frmScriptBuilder_LoadAsync);
             this.Shown += new System.EventHandler(this.frmScriptBuilder_Shown);
             this.SizeChanged += new System.EventHandler(this.frmScriptBuilder_SizeChanged);
             this.Resize += new System.EventHandler(this.frmScriptBuilder_Resize);
