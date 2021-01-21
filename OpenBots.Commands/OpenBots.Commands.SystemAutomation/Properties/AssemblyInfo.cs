@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpenBots.Commands.File")]
-[assembly: AssemblyDescription("OpenBots commands for interacting with file within the local file system. Allows for standard file operations such as moving, renaming, compression, and copying.")]
+[assembly: AssemblyTitle("OpenBots.Commands.SystemAutomation")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenBots Inc")]
-[assembly: AssemblyProduct("OpenBots.Commands.File")]
+[assembly: AssemblyProduct("OpenBots.Commands.SystemAutomation")]
 [assembly: AssemblyCopyright("(C) OpenBots Inc 2020-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
