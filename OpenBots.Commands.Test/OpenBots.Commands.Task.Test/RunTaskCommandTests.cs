@@ -40,8 +40,6 @@ namespace OpenBots.Commands.Task.Test
             var1.VariableName = "output";
             var1.VariableValue = "outputValue";
             variables.Add(var1);
-
-            output.WriteLine(variables[0].VariableValue.ToString());
             
             _taskScript.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
