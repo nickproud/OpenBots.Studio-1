@@ -275,7 +275,7 @@ namespace OpenBots.Core.Script
                     commandGroupFullName = commandGroupFullName.Replace(commandGroupShortName, newCommandGroupMapping[commandGroupShortName]);
 
                 deserializationError = $"Unable to load '{commandNameMatch.Value}'. Please install '{commandGroupFullName}'" +
-                                        " from the Package Manager and reload the Script.";
+                                        " from the Package Manager.";
             }
                 
             if (e.CurrentObject is ScriptAction)
