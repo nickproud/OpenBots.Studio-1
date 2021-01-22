@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("OpenBots.Commands.UIAutomation")]
-[assembly: AssemblyDescription("OpenBots commands for interacting with a web browser via the Selenium WebDriver. Supports creation of a browser session, as well as any web page interaction allowed by the webdriver.")]
+[assembly: AssemblyDescription("OpenBots Command group containing UI automation commands (Image, Input, Process, WebBroswer, Window).")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenBots Inc")]
 [assembly: AssemblyProduct("OpenBots.Commands.UIAutomation")]

@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpenBots.Commands.ServerEmail")]
-[assembly: AssemblyDescription("OpenBots command for sending an email message with optional attachments in OpenBots Server. Supports Azure and SMTP.")]
+[assembly: AssemblyTitle("OpenBots.Commands.Server")]
+[assembly: AssemblyDescription("OpenBots Command group containing OpenBots Server commands (Asset, Credential, QueueItem, ServerEmail).")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenBots Inc")]
-[assembly: AssemblyProduct("OpenBots.Commands.ServerEmail")]
+[assembly: AssemblyProduct("OpenBots.Commands.Server")]
 [assembly: AssemblyCopyright("(C) OpenBots Inc 2020-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

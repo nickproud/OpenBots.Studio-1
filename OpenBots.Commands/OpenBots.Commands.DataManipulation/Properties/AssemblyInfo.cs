@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("OpenBots.Commands.DataManipulation")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("OpenBots Command group containing data manipulation commands (Data, DataTable, Dictionary, List, RegEx).")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OpenBots Inc")]
 [assembly: AssemblyProduct("OpenBots.Commands.DataManipulation")]

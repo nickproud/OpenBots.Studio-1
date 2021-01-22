@@ -11,8 +11,7 @@
     <iconUrl>https://openbots.ai/wp-content/uploads/2020/11/Studio-Icon-256px.png</iconUrl>
     <repository type="git" url="https://github.com/OpenBotsAI/OpenBots.Studio" branch="master" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>OpenBots Command group containing Core automation commands (Engine, ErrorHandling, If, Loop, Misc, SecureData,
-                 Switch, Task, Variable).</description>
+    <description>OpenBots Command group containing Core automation commands (Engine, ErrorHandling, If, Loop, Misc, SecureData, Switch, Task, Variable).</description>
     <releaseNotes>https://openbots.ai/category/release-notes/</releaseNotes>
     <copyright>(C) OpenBots Inc 2020-2021</copyright>
     <tags>OpenBots Studio Core Commands Engine ErrorHandling If Loop Misc SecureData Switch Task Variable</tags>
