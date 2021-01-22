@@ -230,10 +230,51 @@ namespace OpenBots.Core.Script
             var deserializationError = e.ErrorContext.Error.Message;
             var commandNameMatch = Regex.Match(deserializationError, @"OpenBots\.Commands\.\w+\.\w+Command");
             
+            Dictionary<string, string> newCommandGroupMapping = new Dictionary<string, string>()
+            {
+                { "Data", "DataManipulation" },
+                { "DataTable", "DataManipulation" },
+                { "Dictionary", "DataManipulation" },
+                { "List", "DataManipulation" },
+                { "RegEx", "DataManipulation" },
+                { "Email", "SystemAutomation" },
+                { "File", "SystemAutomation" },
+                { "Folder", "SystemAutomation" },
+                { "TextFile", "SystemAutomation" },
+                { "System", "SystemAutomation" },
+                { "Image", "UIAutomation" },
+                { "Input", "UIAutomation" },
+                { "Process", "UIAutomation" },
+                { "WebBrowser", "UIAutomation" },
+                { "Window", "UIAutomation" },
+                { "Excel", "Microsoft" },
+                { "Outlook", "Microsoft" },
+                { "Word", "Microsoft" },
+                { "Engine", "Core" },
+                { "ErrorHandling", "Core" },
+                { "If", "Core" },
+                { "Loop", "Core" },
+                { "Misc", "Core" },
+                { "SecureData", "Core" },
+                { "Switch", "Core" },
+                { "Task", "Core" },
+                { "Variable", "Core" },
+                { "Asset", "Server" },
+                { "Credential", "Server" },
+                { "QueueItem", "Server" },
+                { "ServerEmail", "Server" },
+            };
+
             if (commandNameMatch.Success)
             {
                 var commandGroupMatch = Regex.Match(commandNameMatch.Value, @"OpenBots\.Commands\.\w+");
-                deserializationError = $"Unable to load '{commandNameMatch.Value}'. Please install '{commandGroupMatch.Value}'" +
+                string commandGroupFullName = commandGroupMatch.Value;
+                string commandGroupShortName = commandGroupFullName.Split('.').Last();
+
+                if (newCommandGroupMapping.ContainsKey(commandGroupShortName))
+                    commandGroupFullName = commandGroupFullName.Replace(commandGroupShortName, newCommandGroupMapping[commandGroupShortName]);
+
+                deserializationError = $"Unable to load '{commandNameMatch.Value}'. Please install '{commandGroupFullName}'" +
                                         " from the Package Manager and reload the Script.";
             }
                 

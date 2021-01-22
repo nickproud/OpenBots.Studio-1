@@ -61,12 +61,13 @@ namespace OpenBots.UI.Forms
 
             _currentCommandsVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
 
+            //TODO: Will be implemented in future versions
             //check if command dependencies include any that don't match the current app version
-            var outdatedPackage = _projectDependenciesDict.Where(x => x.Key.StartsWith("OpenBots") && x.Value != _currentCommandsVersion).FirstOrDefault().Key;
-            if (!string.IsNullOrEmpty(outdatedPackage))
-                btnSyncCommandsAndStudio.Visible = true;
-            else
-                btnSyncCommandsAndStudio.Visible = false;
+            //var outdatedPackage = _projectDependenciesDict.Where(x => x.Key.StartsWith("OpenBots") && x.Value != _currentCommandsVersion).FirstOrDefault().Key;
+            //if (!string.IsNullOrEmpty(outdatedPackage))
+            //    btnSyncCommandsAndStudio.Visible = true;
+            //else
+            //    btnSyncCommandsAndStudio.Visible = false;
 
             try
             {
