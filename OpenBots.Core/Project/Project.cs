@@ -99,7 +99,7 @@ namespace OpenBots.Core.Project
                 {
                     dialogMessageFirstLine = $"Attempting to open a 'project.config' from OpenBots Studio version {project.Version}.";
 
-                    var dialogResult = MessageBox.Show($"{dialogMessageFirstLine}" +
+                    var dialogResult = MessageBox.Show($"{dialogMessageFirstLine} " +
                                                    $"Would you like to attempt to convert this config file to {Application.ProductVersion}? " +
                                                    "\n\nWarning: Once a 'project.config' has been converted, it cannot be undone.",
                                                    "Convert 'project.config'", MessageBoxButtons.YesNo);
