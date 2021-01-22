@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using OpenBots.Core.Script;
+using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Engine;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
+using System.IO;
+using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
-using OpenBots.Engine;
-using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Core.Script;
-using OpenBots.Core.Command;
 
 namespace OpenBots.Commands.Task.Test
 {
@@ -16,7 +16,9 @@ namespace OpenBots.Commands.Task.Test
     {
         private AutomationEngineInstance _engine;
         private RunTaskCommand _runTask;
-        private Script _script;
+        private Variable.SetVariableCommand _setVariable;
+        private TextFile.WriteCreateTextFileCommand _textFile;
+        private Script _taskScript;
         private readonly ITestOutputHelper output;
 
         public RunTaskCommandTests(ITestOutputHelper output)
@@ -29,30 +31,103 @@ namespace OpenBots.Commands.Task.Test
         {
             _engine = new AutomationEngineInstance(null);
             _runTask = new RunTaskCommand();
-            _script = new Script();
+            _textFile = new TextFile.WriteCreateTextFileCommand();
+            _setVariable = new Variable.SetVariableCommand();
+            _taskScript = new Script();
 
             List<ScriptVariable> variables = new List<ScriptVariable>();
             ScriptVariable var1 = new ScriptVariable();
-            var1.VariableName = "input";
-            var1.VariableValue = "inputValue";
+            var1.VariableName = "output";
+            var1.VariableValue = "outputValue";
             variables.Add(var1);
 
-            //_runTask.v_TaskPath = "";
-            //_runTask.v_AssignArguments = true;
-            //_runTask.v_ArgumentAssignments = "";
-
             output.WriteLine(variables[0].VariableValue.ToString());
+            
+            _taskScript.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-            _script.Variables = variables;
+            // set script variables
+            _taskScript.Variables = variables;
 
+            List<ScriptArgument> arguments = new List<ScriptArgument>();
+            ScriptArgument arg1 = new ScriptArgument();
+            arg1.ArgumentName = "inputArg";
+            arg1.Direction = ScriptArgumentDirection.In;
+            arg1.ArgumentValue = "default";
+            arguments.Add(arg1);
+            ScriptArgument arg2 = new ScriptArgument();
+            arg2.ArgumentName = "outputArg";
+            arg2.Direction = ScriptArgumentDirection.Out;
+            arg2.ArgumentValue = "default";
+            arg2.AssignedVariable = "{outputVar}";
+            arguments.Add(arg2);
+
+            // set script arguments
+            _taskScript.Arguments = arguments;
+
+            string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
+            string filePath = Path.Combine(projectDirectory, @"Resources");
+            _textFile.v_FilePath = Path.Combine(filePath, @"test.txt");
+            _textFile.v_TextToWrite = "{inputArg}";
+            _textFile.v_Overwrite = "Overwrite";
+            _engine.AutomationEngineContext.FilePath = Path.Combine(filePath, "task.json");
+            _engine.AutomationEngineContext.IsTest = true;
             List<ScriptAction> commands = new List<ScriptAction>();
             ScriptAction com1 = new ScriptAction();
-            com1.ScriptCommand = _runTask;
+            com1.ScriptCommand = _textFile;
             commands.Add(com1);
 
-            _script.Commands = commands;
+            _setVariable.v_Input = "outputValue";
+            _setVariable.v_OutputUserVariableName = "{outputArg}";
+            ScriptAction com2 = new ScriptAction();
+            com2.ScriptCommand = _setVariable;
+            commands.Add(com2);
 
-            
+            _taskScript.Commands = commands;
+
+            //write to file
+            var serializerSettings = new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.Objects,
+            };
+            JsonSerializer serializer = JsonSerializer.Create(serializerSettings);
+            using (StreamWriter sw = new StreamWriter(_engine.AutomationEngineContext.FilePath))
+            using (JsonWriter writer = new JsonTextWriter(sw) { Formatting = Formatting.Indented })
+            {
+                serializer.Serialize(writer, _taskScript, typeof(Script));
+            }
+
+            DataTable argumentTable = new DataTable();
+            argumentTable.Columns.Add("ArgumentName");
+            argumentTable.Columns.Add("ArgumentValue");
+            argumentTable.Columns.Add("ArgumentDirection");
+            DataRow arg1row = argumentTable.NewRow();
+            arg1row["ArgumentName"] = "inputArg";
+            arg1row["ArgumentValue"] = "{taskInput}";
+            arg1row["ArgumentDirection"] = "In";
+            DataRow arg2row = argumentTable.NewRow();
+            arg2row["ArgumentName"] = "outputArg";
+            arg2row["ArgumentValue"] = "{outputVar}";
+            arg2row["ArgumentDirection"] = "Out";
+            argumentTable.Rows.Add(arg1row);
+            argumentTable.Rows.Add(arg2row);
+
+            _runTask.v_TaskPath = _engine.AutomationEngineContext.FilePath;
+            _runTask.v_AssignArguments = true;
+            _runTask.v_ArgumentAssignments = argumentTable;
+
+            List<ScriptAction> mainCommands = new List<ScriptAction>();
+            ScriptAction runTaskAction = new ScriptAction();
+            runTaskAction.ScriptCommand = _runTask;
+
+            "inputValue".CreateTestVariable(_engine, "taskInput");
+            "default".CreateTestVariable(_engine, "taskOutput");
+            "unassigned".CreateTestVariable(_engine, "outputVar");
+
+            _engine.ExecuteCommand(runTaskAction);
+
+            Assert.Equal("outputValue", "{outputVar}".ConvertUserVariableToString(_engine));
+            Assert.True(File.Exists(Path.Combine(filePath, @"test.txt")));
+            Assert.Equal("inputValue", File.ReadAllText(Path.Combine(filePath, @"test.txt")));
         }
     }
 }

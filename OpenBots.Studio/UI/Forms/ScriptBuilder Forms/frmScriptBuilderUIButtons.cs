@@ -154,7 +154,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
 
                     //get deserialized script
-                    Script deserializedScript = Script.DeserializeFile(filePath, AContainer);
+                    EngineContext engineContext = new EngineContext()
+                    {
+                        FilePath = filePath,
+                        Container = AContainer
+                    };
+                    Script deserializedScript = Script.DeserializeFile(engineContext);
 
                     //reinitialize
                     _selectedTabScriptActions.Items.Clear();
@@ -511,7 +516,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {
                 //deserialize file
-                Script deserializedScript = Script.DeserializeFile(filePath, AContainer);
+                EngineContext engineContext = new EngineContext()
+                {
+                    FilePath = filePath,
+                    Container = AContainer
+                };
+                Script deserializedScript = Script.DeserializeFile(engineContext);
 
                 if (deserializedScript.Commands.Count == 0)
                 {

@@ -1,0 +1,70 @@
+{
+  "$type": "OpenBots.Core.Script.Script, OpenBots.Core",
+  "Commands": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.TextFile.WriteCreateTextFileCommand, OpenBots.Commands.TextFile",
+        "v_FilePath": "C:\\Users\\SamuelUribe\\Source\\Repos\\OpenBots.Studio\\OpenBots.Commands.Test\\OpenBots.Commands.Task.Test\\Resources\\test.txt",
+        "v_TextToWrite": "{inputArg}",
+        "v_Overwrite": "Overwrite",
+        "CommandID": "6cb069f3-7963-488a-af25-e73bd948cc56",
+        "CommandName": "WriteCreateTextFileCommand",
+        "SelectionName": "Write/Create Text File",
+        "LineNumber": 0,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "v_IsPrivate": false,
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Variable.SetVariableCommand, OpenBots.Commands.Variable",
+        "v_Input": "outputValue",
+        "v_OutputUserVariableName": "{outputArg}",
+        "CommandID": "7e58558b-c019-46f3-a022-397407f0abd6",
+        "CommandName": "SetVariableCommand",
+        "SelectionName": "Set Variable",
+        "LineNumber": 0,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "v_IsPrivate": false,
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    }
+  ],
+  "Variables": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "output",
+      "VariableValue": "outputValue",
+      "IsSecureString": false
+    }
+  ],
+  "Arguments": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptArgument, OpenBots.Core",
+      "ArgumentName": "inputArg",
+      "Direction": 0,
+      "ArgumentValue": "default",
+      "AssignedVariable": null,
+      "IsSecureString": false
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptArgument, OpenBots.Core",
+      "ArgumentName": "outputArg",
+      "Direction": 1,
+      "ArgumentValue": "default",
+      "AssignedVariable": "{outputVar}",
+      "IsSecureString": false
+    }
+  ],
+  "Elements": [],
+  "Version": "1.3.0.0"
+}
