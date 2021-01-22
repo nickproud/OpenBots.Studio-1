@@ -127,6 +127,22 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
                             userInputString = userInputString.Replace(searchVariable, cellItem);
                         }
+                        else if (varCheck.VariableValue?.GetType().Name == typeof(KeyValuePair<,>).Name && potentialVariable.Split('.').Length == 2)
+                        {
+                            //get data from a keyvaluepair using Key/Value
+                            string resultType = potentialVariable.Split('.')[1].ConvertUserVariableToString(engine, false);
+
+                            dynamic pair;
+                            string resultItem;
+                            pair = varCheck.VariableValue;
+                            if (resultType.ToLower() == "key")
+                                resultItem = pair.Key;
+                            else if(resultType.ToLower() == "value")
+                                resultItem = StringMethods.ConvertObjectToString(pair.Value);
+                            else
+                                throw new DataException("Only use of Key and Value is allowed using dot operater with KeyValuePair");
+                            userInputString = userInputString.Replace(searchVariable, resultItem);
+                        }
                     }
                     else if (!requiresMarkers)
                     {

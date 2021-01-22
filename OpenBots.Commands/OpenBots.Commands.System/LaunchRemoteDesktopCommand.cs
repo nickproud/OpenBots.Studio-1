@@ -125,7 +125,7 @@ namespace OpenBots.Commands.System
 		{
 			frmDisplayManager displayManager = new frmDisplayManager();
 			displayManager.ShowDialog();
-			displayManager.Close();            
+			displayManager.Dispose();            
 		}
 
 		public void LaunchRDPSession(string machineName, string userName, string password, int width, int height)

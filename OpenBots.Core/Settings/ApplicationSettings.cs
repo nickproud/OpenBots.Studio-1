@@ -53,14 +53,9 @@ namespace OpenBots.Core.Settings
                     serializer.Serialize(writer, appSettings, typeof(ApplicationSettings));
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //try again
-                using (StreamWriter sw = new StreamWriter(filePath))
-                using (JsonWriter writer = new JsonTextWriter(sw) { Formatting = Formatting.Indented })
-                {
-                    serializer.Serialize(writer, appSettings, typeof(ApplicationSettings));
-                }
+                Console.WriteLine(ex);
             }           
         }
 

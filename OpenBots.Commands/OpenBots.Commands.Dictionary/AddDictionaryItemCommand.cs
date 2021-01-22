@@ -8,8 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Windows.Forms;
+using System.Data;
+using Microsoft.Office.Interop.Outlook;
+using MimeKit;
+using OpenQA.Selenium;
+using Exception = System.Exception;
 
 namespace OpenBots.Commands.Dictionary
 {
@@ -56,16 +60,98 @@ namespace OpenBots.Commands.Dictionary
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var dictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine);
-
-			Dictionary<string, string> outputDictionary = (Dictionary<string, string>)dictionaryVariable;
-
-			foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
+			if (dictionaryVariable != null)
 			{
-				outputDictionary.Add(
-					rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), 
-					rwColumnName.Field<string>("Values").ConvertUserVariableToString(engine));
+				if (dictionaryVariable is Dictionary<string, string>)
+				{
+					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
+					{
+						((Dictionary<string, string>)dictionaryVariable).Add(
+							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine),
+							rwColumnName.Field<string>("Values").ConvertUserVariableToString(engine));
+					}
+				}
+				else if (dictionaryVariable is Dictionary<string, DataTable>)
+				{
+					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
+					{
+						DataTable dataTable;
+						var dataTableVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						if (dataTableVariable != null && dataTableVariable is DataTable)
+							dataTable = (DataTable)dataTableVariable;
+						else
+							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
+						((Dictionary<string, DataTable>)dictionaryVariable).Add(
+							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), dataTable);
+					}
+				}
+				else if (dictionaryVariable is Dictionary<string, MailItem>)
+				{
+					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
+					{
+						MailItem mailItem;
+						var mailItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						if (mailItemVariable != null && mailItemVariable is MailItem)
+							mailItem = (MailItem)mailItemVariable;
+						else
+							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
+						((Dictionary<string, MailItem>)dictionaryVariable).Add(
+							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), mailItem);
+					}
+				}
+				else if (dictionaryVariable is Dictionary<string, MimeMessage>)
+				{
+					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
+					{
+						MimeMessage mimeMessage;
+						var mimeMessageVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
+							mimeMessage = (MimeMessage)mimeMessageVariable;
+						else
+							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
+						((Dictionary<string, MimeMessage>)dictionaryVariable).Add(
+							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), mimeMessage);
+					}
+				}
+				else if (dictionaryVariable is Dictionary<string, IWebElement>)
+				{
+					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
+					{
+						IWebElement webElement;
+						var webElementVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						if (webElementVariable != null && webElementVariable is IWebElement)
+							webElement = (IWebElement)webElementVariable;
+						else
+							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
+						((Dictionary<string, IWebElement>)dictionaryVariable).Add(
+							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), webElement);
+					}
+				}
+				else if (dictionaryVariable is Dictionary<string, object>)
+				{
+					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
+					{
+						object objectItem;
+						var objectItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						if (objectItemVariable != null && objectItemVariable is object)
+							objectItem = (object)objectItemVariable;
+						else
+							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
+						((Dictionary<string, object>)dictionaryVariable).Add(
+							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), objectItem);
+					}
+				}
+				else
+				{
+					throw new NotSupportedException("Dictionary type not supported");
+				}
+
+			((object)dictionaryVariable).StoreInUserVariable(engine, v_DictionaryName);
 			}
-			outputDictionary.StoreInUserVariable(engine, v_DictionaryName);
+			else
+			{
+				throw new NullReferenceException("Attempted to add data to a variable, but the variable was not found. Enclose variables within braces, ex. {vVariable}");
+			}
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

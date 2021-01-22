@@ -103,6 +103,8 @@ namespace OpenBots.UI.Forms
                 LastModifiedArgumentName = addArgumentForm.txtArgumentName.Text;
                 ResetArguments();
             }
+
+            addArgumentForm.Dispose();
         }
 
         private void tvScriptArguments_DoubleClick(object sender, EventArgs e)
@@ -170,6 +172,8 @@ namespace OpenBots.UI.Forms
                 LastModifiedArgumentName = addArgumentForm.txtArgumentName.Text;
                 ResetArguments();
             }
+
+            addArgumentForm.Dispose();
         }
 
         private void AddUserArgumentNode(TreeNode parentNode, string argumentName, ScriptArgumentDirection argumentDirection, string argumentText)

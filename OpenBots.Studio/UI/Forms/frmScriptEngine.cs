@@ -618,6 +618,7 @@ namespace OpenBots.UI.Forms
             {
                 var confirmationForm = new frmDialog(message, title, dialogType, closeAfter);
                 confirmationForm.ShowDialog();
+                confirmationForm.Dispose();
             }
         }
 
@@ -640,6 +641,7 @@ namespace OpenBots.UI.Forms
             {
                 var contextForm = new frmEngineContextViewer(context, closeAfter);
                 contextForm.ShowDialog();
+                contextForm.Dispose();
             }
         }
 
@@ -665,10 +667,15 @@ namespace OpenBots.UI.Forms
                 {
                     var variables = inputForm.GetVariablesFromHTML("input");
                     variables.AddRange(inputForm.GetVariablesFromHTML("select"));
+
+                    inputForm.Dispose();
                     return variables;
                 }
                 else
+                {
+                    inputForm.Dispose();
                     return null;
+                }                                  
             }
         }
 
@@ -701,10 +708,14 @@ namespace OpenBots.UI.Forms
                         else
                             responses.Add(ctrl.Text);
                     }
+                    inputForm.Dispose();
                     return responses;
                 }
                 else
+                {
+                    inputForm.Dispose();
                     return null;
+                }
             }
         }
 

@@ -368,7 +368,6 @@
     <None Include="Resources\Icons\Commands\command-queueitem.png" />
     <Content Include="Resources\Icons\Commands\command-regex.png" />
     <Content Include="Resources\Icons\Commands\command-remote.png" />
-    <Content Include="Resources\Icons\Commands\command-resume.png" />
     <Content Include="Resources\Icons\Commands\command-run-code.png" />
     <Content Include="Resources\Icons\Commands\command-script.png" />
     <Content Include="Resources\Icons\Commands\command-search.png" />
@@ -386,7 +385,6 @@
     <Content Include="Resources\Icons\Commands\command-web.png" />
     <Content Include="Resources\Icons\Commands\command-window-close.png" />
     <Content Include="Resources\Icons\Commands\command-window.png" />
-    <Content Include="Resources\Icons\Commands\command_folders.bmp" />
     <None Include="Resources\Icons\Logo\openbots-ico.ico" />
     <None Include="Resources\Icons\Logo\openbots-icon.png" />
     <Content Include="Resources\Samples\HTMLInputSample.html" />

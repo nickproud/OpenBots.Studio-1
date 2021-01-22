@@ -115,6 +115,7 @@ namespace OpenBots.UI.Supplement_Forms
             if (chkGroupIntoSequence.Checked)
             {
                 dynamic newSequence = TypeMethods.CreateTypeInstance(_container, "SequenceCommand");
+                newSequence.v_Comment = sequenceComment;
 
                 foreach (ScriptCommand cmd in _scriptCommandList)
                     newSequence.ScriptActions.Add(cmd);

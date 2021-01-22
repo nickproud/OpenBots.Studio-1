@@ -4,7 +4,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,7 +40,7 @@ namespace OpenBots.Commands.Folder
 			CommandName = "RenameFolderCommand";
 			SelectionName = "Rename Folder";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_folders;
 
 		}
 
@@ -51,6 +50,11 @@ namespace OpenBots.Commands.Folder
 			//apply variable logic
 			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
 			var newFolderName = v_NewName.ConvertUserVariableToString(engine);
+
+			if (!Directory.Exists(sourceFolder))
+            {
+				throw new DirectoryNotFoundException($"Directory {sourceFolder} does not exist");
+            }
 
 			//get source folder name and info
 			DirectoryInfo sourceFolderInfo = new DirectoryInfo(sourceFolder);

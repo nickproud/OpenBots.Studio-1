@@ -126,7 +126,9 @@ namespace OpenBots.UI.Forms
                 {
                     frmUpdating frmUpdating = new frmUpdating(manifest.PackageURL);
                     frmUpdating.ShowDialog();
+                    frmUpdating.Dispose();
                 }
+                frmUpdate.Dispose();
             }
             else
             {

@@ -1,8 +1,8 @@
 ﻿using OpenBots.Core.Enums;
-using OpenBots.Core.Server.User;
 using OpenBots.Core.Settings;
 using System;
 using System.IO;
+using System.Windows.Forms;
 
 namespace OpenBots.Core.IO
 {
@@ -24,7 +24,7 @@ namespace OpenBots.Core.IO
                     return attentedTasksFolder;
                 case FolderType.SettingsFolder:
                     //return app data OpenBots folder
-                    return Path.Combine(new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName);
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc");
                 case FolderType.ScriptsFolder:
                     //return scripts folder
                     return Path.Combine(GetFolder(FolderType.RootFolder), "My Scripts");
@@ -37,6 +37,12 @@ namespace OpenBots.Core.IO
                 case FolderType.TempFolder:
                     //return temp folder
                     return Path.Combine(Path.GetTempPath(), "OpenBotsStudio");
+                case FolderType.LocalAppDataPackagesFolder:
+                    //return local app data packages folder
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "packages");
+                case FolderType.ProgramFilesPackagesFolder:
+                    //return program files packages folder
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "OpenBots Inc", "packages", Application.ProductVersion);
                 default:
                     //enum is not implemented
                     throw new NotImplementedException("FolderType " + folderType.ToString() + " Not Supported");

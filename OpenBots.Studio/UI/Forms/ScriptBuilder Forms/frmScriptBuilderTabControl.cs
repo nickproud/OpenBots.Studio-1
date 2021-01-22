@@ -176,8 +176,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void tsmiCloseAllButThis_Click(object sender, EventArgs e)
         {
-            //iterate through each tab, and check if it's the selected tab.
-            //If it is, store and continue. If it isn't, check for unsaved changes.
+            //iterate through each tab, and check if it's the selected tab
+            //if it is, store and continue
+            //if it isn't, check for unsaved changes
             TabPage keepTab = new TabPage();
             for (int i = 0; i < uiScriptTabControl.TabCount; i++)
             {

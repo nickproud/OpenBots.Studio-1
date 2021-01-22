@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Loop
@@ -48,7 +49,6 @@ namespace OpenBots.Commands.Loop
 			SelectionName = "Loop Collection";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_startloop;
-
 		}
 
 		public override void RunCommand(object sender, ScriptAction parentCommand)
@@ -86,6 +86,30 @@ namespace OpenBots.Commands.Loop
 			else if (complexVariable is List<MimeMessage>)
 			{
 				listToLoop = (List<MimeMessage>)complexVariable;
+			}
+			else if (complexVariable is Dictionary<string, string>)
+			{
+                listToLoop = ((Dictionary<string, string>)complexVariable).ToList();
+            }
+			else if (complexVariable is Dictionary<string, DataTable>)
+			{
+				listToLoop = ((Dictionary<string, DataTable>)complexVariable).ToList();
+			}
+			else if (complexVariable is Dictionary<string, MailItem>)
+			{
+				listToLoop = ((Dictionary<string, MailItem>)complexVariable).ToList();
+			}
+			else if (complexVariable is Dictionary<string, MimeMessage>)
+			{
+				listToLoop = ((Dictionary<string, MimeMessage>)complexVariable).ToList();
+			}
+			else if (complexVariable is Dictionary<string, IWebElement>)
+			{
+				listToLoop = ((Dictionary<string, IWebElement>)complexVariable).ToList();
+			}
+			else if (complexVariable is Dictionary<string, object>)
+			{
+				listToLoop = ((Dictionary<string, object>)complexVariable).ToList();
 			}
 			else if ((complexVariable.ToString().StartsWith("[")) && 
 				(complexVariable.ToString().EndsWith("]")) && 

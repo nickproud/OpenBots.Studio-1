@@ -2,25 +2,26 @@
 using Newtonsoft.Json;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Nuget;
 using OpenBots.Core.IO;
+using OpenBots.Core.Model.EngineModel;
+using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.UI.Supplement_Forms;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using OpenBots.Core.Model.EngineModel;
-using System.ComponentModel;
-using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -60,6 +61,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             HideSearchInfo();
 
             _scriptVariables = new List<ScriptVariable>();
+
             //assign ProjectPath variable
             var projectPathVariable = new ScriptVariable
             {
@@ -73,7 +75,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
             dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
 
-            GenerateRecentFiles();
+            GenerateRecentProjects();
             newTabPage.Controls[0].Hide();
             pnlCommandHelper.Show();
         }
@@ -127,6 +129,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 try
                 {
                     _isRunTaskCommand = isRunTaskCommand;
+
                     //create or switch to TabPage
                     string fileName = Path.GetFileNameWithoutExtension(filePath);
                     var foundTab = uiScriptTabControl.TabPages.Cast<TabPage>().Where(t => t.ToolTipText == filePath)
@@ -194,7 +197,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                         dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-                        //notify
+    
                         Notify("Script Loaded Successfully!", Color.White);
                     }                   
                 }
@@ -206,7 +209,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }           
         }
 
-        //Helper method for RunTaskCommand
+        //helper method for RunTaskCommand
         public void OpenScriptFile(string scriptFilePath, bool isRunTaskCommand = true)
         {
             OpenFile(scriptFilePath, isRunTaskCommand);
@@ -409,7 +412,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 var exportedScript = Script.SerializeScript(_selectedTabScriptActions.Items, engineContext);
                 uiScriptTabControl.SelectedTab.Text = uiScriptTabControl.SelectedTab.Text.Replace(" *", "");
-                //show success dialog
+
                 Notify("File has been saved successfully!", Color.White);
                 isSuccessfulSave = true;
                 try
@@ -435,6 +438,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             foreach (TabPage openTab in uiScriptTabControl.TabPages)
             {
                 uiScriptTabControl.SelectedTab = openTab;
+
                 //clear selected items
                 ClearSelectedListViewItems();
 
@@ -460,7 +464,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void ClearSelectedListViewItems()
         {
             _selectedTabScriptActions.SelectedItems.Clear();
-            _selectedIndex = -1;
             _selectedTabScriptActions.Invalidate();
         }
 
@@ -474,6 +477,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             if (publishProject.DialogResult == DialogResult.OK)
                 Notify(publishProject.NotificationMessage, Color.White);
+
+            publishProject.Dispose();
         }
 
         private void uiBtnPublishProject_Click(object sender, EventArgs e)
@@ -568,8 +573,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 codeCommentCommand.v_Comment = "End Import From " + fileName + " @ " + dateTimeNow;
                 _selectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(codeCommentCommand));
 
-                //format listview
-                //notify
                 Notify("Script Imported Successfully!", Color.White);
             }
             catch (Exception ex)
@@ -622,12 +625,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void uiBtnClose_Click(object sender, EventArgs e)
         {
-            if (_isSequence)
-            {
-                DialogResult = DialogResult.Cancel;
-                return;
-            }
-
             Application.Exit();
         }
         #endregion
@@ -661,6 +658,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
             }
+
+            scriptVariableEditor.Dispose();
         }
 
         private void argumentsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -690,6 +689,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
             }
+
+            scriptArgumentEditor.Dispose();
         }
 
         private void elementManagerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -715,6 +716,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 CreateUndoSnapshot();
                 _scriptElements = scriptElementEditor.ScriptElements;
             }
+
+            scriptElementEditor.Dispose();
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -734,8 +737,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newSettings.ShowDialog();
 
             //reload app settings
-            _appSettings = new ApplicationSettings();
-            _appSettings = _appSettings.GetOrCreateApplicationSettings();
+            _appSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
+
+            newSettings.Dispose();
         }
 
         private void showSearchBarToolStripMenuItem_Click(object sender, EventArgs e)
@@ -786,10 +790,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 return;
             }
 
-            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName;
-            string packagePath = Path.Combine(appDataPath, "packages");
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
-            frmGalleryPackageManager frmManager = new frmGalleryPackageManager(ScriptProject.Dependencies, packagePath);
+            frmGalleryPackageManager frmManager = new frmGalleryPackageManager(ScriptProject.Dependencies);
             frmManager.ShowDialog();
 
             if (frmManager.DialogResult == DialogResult.OK)
@@ -808,6 +810,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 tpbLoadingSpinner.Visible = false;
             }
+
+            frmManager.Dispose();
         }
 
         private void uiBtnPackageManager_Click(object sender, EventArgs e)
@@ -817,27 +821,56 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private async void installDefaultToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(_packagesPath) && Directory.GetDirectories(_packagesPath).Length > 0)
+            try
             {
-                MessageBox.Show("Close OpenBots and delete all packages first.", "Delete Packages");
-                return;
+                string localPackagesPath = Folders.GetFolder(FolderType.LocalAppDataPackagesFolder);
+
+                if (Directory.Exists(localPackagesPath) && Directory.GetDirectories(localPackagesPath).Length > 0)
+                {
+                    MessageBox.Show("Close OpenBots and delete all packages first.", "Delete Packages");
+                    return;
+                }
+
+                //show spinner and disable package manager related buttons
+                tpbLoadingSpinner.Visible = true;
+                installDefaultToolStripMenuItem.Enabled = false;
+                packageManagerToolStripMenuItem.Enabled = false;
+                uiBtnPackageManager.Enabled = false;
+
+                Directory.CreateDirectory(localPackagesPath);
+
+                //require admin access to move/download packages and their dependency .nupkg files to Program Files
+                await NugetPackageManager.DownloadCommandDependencyPackages();
+
+                //unpack commands using Program Files as the source repository
+                var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
+                Dictionary<string, string> dependencies = Project.DefaultCommands.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+
+                foreach (var dep in dependencies)
+                    await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), 
+                        Folders.GetFolder(FolderType.ProgramFilesPackagesFolder));
+
+                //load existing command assemblies
+                string configPath = Path.Combine(ScriptProjectPath, "project.config");
+                var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                AContainer = _builder.Build();
+
+                LoadCommands(this);
+                ReloadAllFiles();
+            }
+            catch (Exception ex)
+            {
+                if (ex is UnauthorizedAccessException)
+                    MessageBox.Show("Close Visual Studio and run as Admin to install default packages.", "Unauthorized");
+                else
+                    Notify("Error: " + ex.Message, Color.Red);
             }
 
-            tpbLoadingSpinner.Visible = true;
-
-            string configPath = Path.Combine(ScriptProjectPath, "project.config");
-
-            Directory.CreateDirectory(_packagesPath);
-            foreach (var dep in ScriptProject.Dependencies)
-                await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>());
-
-            var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-            _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
-            AContainer = _builder.Build();
-
-            LoadCommands(this);
-            ReloadAllFiles();
-
+            //hide spinner and enable package manager related buttons
+            installDefaultToolStripMenuItem.Enabled = true;
+            packageManagerToolStripMenuItem.Enabled = true;
+            uiBtnPackageManager.Enabled = true;
             tpbLoadingSpinner.Visible = false;
         }
         #endregion
@@ -925,12 +958,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null);
+
             //initialize Engine
             CurrentEngine = new frmScriptEngine(engineContext, false, _isDebugMode);
-
-            //executionManager = new ScriptExectionManager();
-            //executionManager.CurrentlyExecuting = true;
-            //executionManager.ScriptName = new System.IO.FileInfo(ScriptFilePath).Name;
 
             CurrentEngine.ScriptEngineContext.ScriptBuilder = this;
             ((frmScriptEngine)CurrentEngine).Show();
@@ -978,7 +1008,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             elementRecorder.ShowDialog();
 
             HTMLElementRecorderURL = elementRecorder.StartURL;
-            _scriptElements = elementRecorder.ScriptElements;           
+            _scriptElements = elementRecorder.ScriptElements;
+
+            elementRecorder.Dispose();
         }
 
         private void uiBtnRecordElementSequence_Click(object sender, EventArgs e)
@@ -1006,6 +1038,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             };
 
             sequenceRecorder.ShowDialog();
+            sequenceRecorder.Dispose();
             uiScriptTabControl.SelectedTab.Controls.Remove(pnlCommandHelper);
             uiScriptTabControl.SelectedTab.Controls[0].Show();
 
@@ -1028,6 +1061,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             CreateUndoSnapshot();
 
             appElementRecorder.ShowDialog();
+            appElementRecorder.Dispose();
 
             Show();
             BringToFront();
@@ -1052,6 +1086,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             if (renameSequence.DialogResult == DialogResult.OK)
                 Text = renameSequence.txtInput.Text;
+
+            renameSequence.Dispose();
         }
 
         private void shortcutMenuToolStripMenuItem_Click(object sender, EventArgs e)

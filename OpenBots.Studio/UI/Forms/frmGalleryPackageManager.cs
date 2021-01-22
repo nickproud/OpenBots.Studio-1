@@ -1,9 +1,11 @@
 ﻿using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
-using OpenBots.Nuget;
-using OpenBots.Properties;
+using OpenBots.Core.Enums;
+using OpenBots.Core.IO;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Nuget;
+using OpenBots.Properties;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
@@ -13,15 +15,14 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OpenBots.Core.Server.User;
 
 namespace OpenBots.UI.Forms
 {
     public partial class frmGalleryPackageManager : UIForm
     {
-        private string _packageLocation;
         private List<IPackageSearchMetadata> _allResults;
         private List<IPackageSearchMetadata> _projectDependencies;
         private Dictionary<string, string> _projectDependenciesDict;
@@ -31,24 +32,22 @@ namespace OpenBots.UI.Forms
         private bool _isInstalled;
         private string _installedVersion;
         private bool _includePrerelease;
-        private DataTable _packageSourceDT { get; set; }
-        private string _appDataPackagePath;
+        private DataTable _packageSourceDT;
+        private string _packagesPath;
+        private string _currentCommandsVersion;
 
         private ApplicationSettings _settings;
 
-        public frmGalleryPackageManager(Dictionary<string, string> projectDependenciesDict, 
-            string packageLocation = "")
+        public frmGalleryPackageManager(Dictionary<string, string> projectDependenciesDict)
         {
             InitializeComponent();
 
-            string appDataPath = new DirectoryInfo(EnvironmentSettings.GetEnvironmentVariable()).Parent.FullName; ;
-            _appDataPackagePath = Path.Combine(appDataPath, "packages");
+            _packagesPath = Folders.GetFolder(FolderType.LocalAppDataPackagesFolder);
 
             _settings = new ApplicationSettings().GetOrCreateApplicationSettings();
             _packageSourceDT = _settings.ClientSettings.PackageSourceDT;
 
             _projectDependenciesDict = projectDependenciesDict;
-            _packageLocation = packageLocation;
             _allResults = new List<IPackageSearchMetadata>();
             _projectDependencies = new List<IPackageSearchMetadata>();
             _projectVersions = new List<NuGetVersion>();
@@ -59,6 +58,15 @@ namespace OpenBots.UI.Forms
             PopulatetvPackageFeeds();
             pnlProjectVersion.Hide();
             pnlProjectDetails.Hide();
+
+            _currentCommandsVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
+
+            //check if command dependencies include any that don't match the current app version
+            var outdatedPackage = _projectDependenciesDict.Where(x => x.Key.StartsWith("OpenBots") && x.Value != _currentCommandsVersion).FirstOrDefault().Key;
+            if (!string.IsNullOrEmpty(outdatedPackage))
+                btnSyncCommandsAndStudio.Visible = true;
+            else
+                btnSyncCommandsAndStudio.Visible = false;
 
             try
             {
@@ -127,7 +135,7 @@ namespace OpenBots.UI.Forms
 
                 if (lblPackageCategory.Text == "Project Dependencies")
                 {
-                    metadata.AddRange(await NugetPackageManager.GetPackageMetadata(projectId, _appDataPackagePath, _includePrerelease));
+                    metadata.AddRange(await NugetPackageManager.GetPackageMetadata(projectId, _packagesPath, _includePrerelease));
                 }
                 else if (lblPackageCategory.Text == "All Packages")
                 {
@@ -313,10 +321,11 @@ namespace OpenBots.UI.Forms
             PopulateProjectDetails(cbxVersion.SelectedItem.ToString());
         }
 
-        private async void DownloadAndOpenPackage(string packageId, string version)
+        private async Task DownloadAndOpenPackage(string packageId, string version)
         {            
             try
             {
+                tpbLoadingSpinner.Visible = true;
                 string packageName = $"{packageId}.{version}";
                 Cursor.Current = Cursors.WaitCursor;
                 lblError.Text = $"Installing {packageName}";
@@ -324,10 +333,10 @@ namespace OpenBots.UI.Forms
                 await NugetPackageManager.InstallPackage(packageId, version, _projectDependenciesDict);                   
 
                 lblError.Text = string.Empty;
-                DialogResult = DialogResult.OK;
             }
             catch (Exception ex)
             {
+                tpbLoadingSpinner.Visible = false;
                 lblError.Text = "Error: " + ex.Message;
             }
         }
@@ -405,6 +414,8 @@ namespace OpenBots.UI.Forms
                             PopulatetvPackageFeeds();
                             _settings.Save(_settings);                           
                         }
+
+                        addPackageSource.Dispose();
                         tpbLoadingSpinner.Visible = false;
                     }
                     else if (tvPackageFeeds.SelectedNode.Name == "ProjectDependencies")
@@ -445,12 +456,12 @@ namespace OpenBots.UI.Forms
 
         private async Task GetCurrentDepencies()
         {
-            List<string> nugetDirectoryList = Directory.GetDirectories(_packageLocation).ToList();
+            List<string> nugetDirectoryList = Directory.GetDirectories(_packagesPath).ToList();
             
             _projectDependencies.Clear();
             foreach(var pair in _projectDependenciesDict)
             {
-                var dependency = (await NugetPackageManager.GetPackageMetadata(pair.Key, _appDataPackagePath, _includePrerelease))
+                var dependency = (await NugetPackageManager.GetPackageMetadata(pair.Key, _packagesPath, _includePrerelease))
                     .Where(x => x.Identity.Version.ToString() == pair.Value).FirstOrDefault();
                 if (dependency != null && nugetDirectoryList.Where(x => x.EndsWith($"{pair.Key}.{pair.Value}")).FirstOrDefault() != null)
                     _projectDependencies.Add(dependency);
@@ -517,15 +528,19 @@ namespace OpenBots.UI.Forms
             e.Cancel = true;
         }
 
-        private void btnInstall_Click(object sender, EventArgs e)
+        private async void btnInstall_Click(object sender, EventArgs e)
         {
             lblError.Text = "";
             if (btnInstall.Text == "Install")
-                DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
+            {
+                await DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
+                DialogResult = DialogResult.OK;
+            }
             else if (btnInstall.Text == "Update")
             {
                 _projectDependenciesDict.Remove(_catalog.Identity.Id);
-                DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
+                await DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
+                DialogResult = DialogResult.OK;
             }
         }
 
@@ -556,6 +571,20 @@ namespace OpenBots.UI.Forms
                 //ScrolledToBottom(e.NewValue, scrollmax);
             //if (e.NewValue == scrollmax)
                 //ScrolledToBottom(e.NewValue, scrollmax);
+        }
+
+        private async void btnSyncCommandsAndStudio_Click(object sender, EventArgs e)
+        {
+            var projectDependenciesDictCopy = _projectDependenciesDict.Where(x => x.Key.StartsWith("OpenBots") && x.Value != _currentCommandsVersion)
+                                                                      .ToDictionary(x => x.Key, x => x.Value);
+
+            foreach (var dep in projectDependenciesDictCopy)
+            {
+                _projectDependenciesDict.Remove(dep.Key);
+                await DownloadAndOpenPackage(dep.Key, _currentCommandsVersion);
+            }
+             
+            DialogResult = DialogResult.OK;
         }
     }
 }

@@ -190,7 +190,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 frmError errorForm = new frmError(errorMessage);
                 errorForm.Owner = this;
                 errorForm.ShowDialog();
-                return errorForm.DialogResult;
+
+                var result = errorForm.DialogResult;
+
+                errorForm.Dispose();
+                return result;
             }          
         }
     }
