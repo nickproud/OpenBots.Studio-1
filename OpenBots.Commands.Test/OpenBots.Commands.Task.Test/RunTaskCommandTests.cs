@@ -126,6 +126,9 @@ namespace OpenBots.Commands.Task.Test
             Assert.Equal("outputValue", "{outputVar}".ConvertUserVariableToString(_engine));
             Assert.True(File.Exists(Path.Combine(filePath, @"test.txt")));
             Assert.Equal("inputValue", File.ReadAllText(Path.Combine(filePath, @"test.txt")));
+
+            File.Delete(Path.Combine(filePath, @"test.txt"));
+            File.Delete(Path.Combine(filePath, @"task.json"));
         }
     }
 }
