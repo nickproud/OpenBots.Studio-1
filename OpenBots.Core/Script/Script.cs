@@ -205,7 +205,7 @@ namespace OpenBots.Core.Script
                                                    "Convert Script", MessageBoxButtons.YesNo);
 
                 if (dialogResult == DialogResult.Yes || isDialogResultYes)
-                    deserializedData = ConvertToLatestVersion(filePath, container, deserializedScriptVersion.ToString());
+                    deserializedData = ConvertScriptToLatestVersion(filePath, container, deserializedScriptVersion.ToString());
             }
 
             //update ProjectPath variable
@@ -250,7 +250,7 @@ namespace OpenBots.Core.Script
             return JsonConvert.DeserializeObject<Script>(jsonScript);
         }
 
-        public static Script ConvertToLatestVersion(string filePath, IContainer container, string version)
+        public static Script ConvertScriptToLatestVersion(string filePath, IContainer container, string version)
         {
             string scriptText = File.ReadAllText(filePath);
 
@@ -258,7 +258,7 @@ namespace OpenBots.Core.Script
                 scriptText = scriptText.Insert(scriptText.LastIndexOf('\r'), ",\r\n  \"Version\": \"1.1.0.0\"");
 
             var conversionFilePath = Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, 
-                                                  "Supplementary Files", "Conversion Files", version + ".json");
+                                                  "Supplementary Files", "Script Conversion Files", version + ".json");
 
             string conversionFileText = File.ReadAllText(conversionFilePath);
             JObject conversionObject = JObject.Parse(conversionFileText);

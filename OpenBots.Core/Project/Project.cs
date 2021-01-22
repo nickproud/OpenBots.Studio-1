@@ -89,16 +89,28 @@ namespace OpenBots.Core.Project
             {
                 string projectJSONString = File.ReadAllText(configFilePath);
                 var project = JsonConvert.DeserializeObject<Project>(projectJSONString);
+                string dialogMessageFirstLine = "";
 
                 if (!projectJSONString.Contains("Version"))
                 {
-                    var dialogResult = MessageBox.Show($"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.0.0" +
+                    dialogMessageFirstLine = $"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.0.0.";
+                }
+                else if (project.Version != Application.ProductVersion)
+                {
+                    dialogMessageFirstLine = $"Attempting to open a 'project.config' from OpenBots Studio version {project.Version}.";
+
+                    var dialogResult = MessageBox.Show($"{dialogMessageFirstLine}" +
                                                    $"Would you like to attempt to convert this config file to {Application.ProductVersion}? " +
                                                    "\n\nWarning: Once a 'project.config' has been converted, it cannot be undone.",
                                                    "Convert 'project.config'", MessageBoxButtons.YesNo);
 
                     if (dialogResult == DialogResult.Yes)
+                    {
+                        project.Version = Application.ProductVersion;
+                        var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
+                        project.Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
                         File.WriteAllText(configFilePath, JsonConvert.SerializeObject(project));
+                    }                        
                 }
                     
                 return project;
