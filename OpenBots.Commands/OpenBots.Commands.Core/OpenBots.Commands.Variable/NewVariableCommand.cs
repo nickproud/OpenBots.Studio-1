@@ -3,6 +3,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
+using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -22,7 +23,7 @@ namespace OpenBots.Commands.Variable
 		[Required]
 		[DisplayName("New Variable Name")]
 		[Description("Indicate a unique reference name for later use.")]
-		[SampleUsage("{vSomeVariable}")]
+		[SampleUsage("vSomeVariable")]
 		[Remarks("")]
 		public string v_VariableName { get; set; }
 
@@ -58,19 +59,24 @@ namespace OpenBots.Commands.Variable
 		{
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
-			var variable = v_VariableName.ConvertUserVariableToObject(engine);
+			var variable = ("{" + v_VariableName + "}").ConvertUserVariableToObject(engine); 
 
 			dynamic input = v_Input.ConvertUserVariableToString(engine);
 
 			if (input == v_Input && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_Input.ConvertUserVariableToObject(engine);
+				if (v_Input.ConvertUserVariableToObject(engine) != null)
+					input = v_Input.ConvertUserVariableToObject(engine);
 
 			if (variable == null)
 			{
 				//variable does not exist so add to the list
 				try
 				{
-					((object)input).StoreInUserVariable(engine, v_VariableName);
+					engine.AutomationEngineContext.Variables.Add(new ScriptVariable
+					{
+						VariableName = v_VariableName,
+						VariableValue = (object)input
+					});
 				}
 				catch (Exception ex)
 				{
@@ -83,7 +89,7 @@ namespace OpenBots.Commands.Variable
 				switch (v_IfExists)
 				{
 					case "Replace If Variable Exists":
-						((object)input).StoreInUserVariable(engine, v_VariableName);
+						((object)input).StoreInUserVariable(engine, "{" + v_VariableName + "}");
 						break;
 					case "Error If Variable Exists":
 						throw new Exception("Attempted to create a variable that already exists! Use 'Set Variable' instead or change the Exception Setting in the 'Add Variable' Command.");

@@ -49,7 +49,8 @@ namespace OpenBots.Commands.Variable
 			dynamic input = v_Input.ConvertUserVariableToString(engine);
 
 			if (input == v_Input && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_Input.ConvertUserVariableToObject(engine);
+				if (v_Input.ConvertUserVariableToObject(engine) != null)
+					input = v_Input.ConvertUserVariableToObject(engine);
 
 			((object)input).StoreInUserVariable(engine, v_OutputUserVariableName);
 		}
