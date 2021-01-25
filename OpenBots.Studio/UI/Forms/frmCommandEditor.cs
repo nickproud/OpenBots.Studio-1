@@ -68,7 +68,7 @@ namespace OpenBots.UI.Forms
         private void frmNewCommand_Load(object sender, EventArgs e)
         {
             // Initialize CommandControls with Current Editor
-            _commandControls = new CommandControls(this, ScriptEngineContext.Container);
+            _commandControls = new CommandControls(this, ScriptEngineContext);
 
             //order list
             CommandList = CommandList.OrderBy(itm => itm.FullName).ToList();

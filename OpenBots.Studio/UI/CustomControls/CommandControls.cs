@@ -36,15 +36,17 @@ namespace OpenBots.UI.CustomControls
     {
         private frmCommandEditor _currentEditor;
         private IContainer _container;
+        private string _projectPath;
 
         public CommandControls()
         {
         }
 
-        public CommandControls(frmCommandEditor editor, IContainer container)
+        public CommandControls(frmCommandEditor editor, EngineContext engineContext)
         {
             _currentEditor = editor;
-            _container = container;
+            _container = engineContext.Container;
+            _projectPath = engineContext.ProjectPath;
         }
 
         public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300)
@@ -774,26 +776,39 @@ namespace OpenBots.UI.CustomControls
         private void ShowFileSelector(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = _projectPath;
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 CommandItemControl inputBox = (CommandItemControl)sender;
-                //currently variable insertion is only available for simply textboxes
+
                 TextBox targetTextbox = (TextBox)inputBox.Tag;
-                //concat variable name with brackets [vVariable] as engine searches for the same
-                targetTextbox.Text = ofd.FileName;
+
+                string filePath = ofd.FileName;
+
+                if (filePath.StartsWith(_projectPath))
+                    filePath = filePath.Replace(_projectPath, "{ProjectPath}");
+
+                targetTextbox.Text = filePath;
             }
         }
 
         private void ShowFolderSelector(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.SelectedPath = _projectPath;
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {
                 CommandItemControl inputBox = (CommandItemControl)sender;
                 TextBox targetTextBox = (TextBox)inputBox.Tag;
-                targetTextBox.Text = fbd.SelectedPath;
+
+                string folderPath = fbd.SelectedPath;
+
+                if (folderPath.StartsWith(_projectPath))
+                    folderPath = folderPath.Replace(_projectPath, "{ProjectPath}");
+
+                targetTextBox.Text = folderPath;
             }
         }
 
