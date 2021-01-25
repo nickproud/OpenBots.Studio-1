@@ -42,7 +42,7 @@ namespace OpenBots.Core.IO
                     return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "packages");
                 case FolderType.ProgramFilesPackagesFolder:
                     //return program files packages folder
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "OpenBots Inc", "packages", Application.ProductVersion);
+                    return Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "packages", Application.ProductVersion);
                 default:
                     //enum is not implemented
                     throw new NotImplementedException("FolderType " + folderType.ToString() + " Not Supported");
