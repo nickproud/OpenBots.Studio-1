@@ -152,6 +152,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         #region Recorder Buttons
         private void uiBtnSaveSequence_Click(object sender, EventArgs e)
         {
+            dgvVariables.EndEdit();
+            dgvArguments.EndEdit();
+
             if (SelectedTabScriptActions.Items.Count == 0)
             {
                 Notify("You must have at least 1 automation command to save.", Color.Yellow);

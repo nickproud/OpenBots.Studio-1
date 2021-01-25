@@ -175,15 +175,18 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     DataGridView dgv = (DataGridView)sender;
                     DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells[2];
 
-                    //sets value cell to read only if the argument direction is set to Out
-                    if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.Out)
+                    if (cb.Value != null)
                     {
-                        dgv.Rows[e.RowIndex].Cells[1].Value = null;
-                        dgv.Rows[e.RowIndex].Cells[1].ReadOnly = true;
+                        //sets value cell to read only if the argument direction is set to Out
+                        if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.Out)
+                        {
+                            dgv.Rows[e.RowIndex].Cells[1].Value = null;
+                            dgv.Rows[e.RowIndex].Cells[1].ReadOnly = true;
+                        }
+
+                        else if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.In)
+                            dgv.Rows[e.RowIndex].Cells[1].ReadOnly = false;
                     }
-                        
-                    else if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.In)
-                        dgv.Rows[e.RowIndex].Cells[1].ReadOnly = false;
                 }
             }
             catch (Exception ex)

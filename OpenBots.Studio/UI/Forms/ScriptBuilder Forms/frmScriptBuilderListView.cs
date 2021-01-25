@@ -359,6 +359,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void LoadSequenceCommand(ListViewItem selectedCommandItem, ScriptCommand currentCommand)
         {
+            List<ScriptVariable> originalStudioVariables = new List<ScriptVariable>();
+            originalStudioVariables.AddRange(_scriptVariables);
+
+            List<ScriptArgument> originalStudioArguments = new List<ScriptArgument>();
+            originalStudioArguments.AddRange(_scriptArguments);
+
             //get sequence events
             ISequenceCommand sequence = currentCommand as ISequenceCommand;
             frmSequence newSequence = new frmSequence();
@@ -431,9 +437,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 selectedCommandItem.Text = sequence.GetDisplayValue();
 
                 //update variables/elements/arguments
-                _scriptVariables = newSequence.ScriptVariables;
-                _scriptElements = newSequence.ScriptElements;
-                _scriptArguments = newSequence.ScriptArguments;
+                _scriptVariables = newSequence.ScriptVariables.Where(x => !string.IsNullOrEmpty(x.VariableName)).ToList();
+                _scriptElements = newSequence.ScriptElements.Where(x => !string.IsNullOrEmpty(x.ElementName)).ToList();
+                _scriptArguments = newSequence.ScriptArguments.Where(x => !string.IsNullOrEmpty(x.ArgumentName)).ToList();
+
+                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+            }
+            else
+            {
+                _scriptVariables = originalStudioVariables;
+                _scriptArguments = originalStudioArguments;
 
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                 dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);

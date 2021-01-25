@@ -241,6 +241,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private bool SaveToFile(bool saveAs)
         {
             bool isSuccessfulSave = false;
+
+            dgvVariables.EndEdit();
+            dgvArguments.EndEdit();
+
             if (_selectedTabScriptActions.Items.Count == 0)
             {
                 Notify("You must have at least 1 automation command to save.", Color.Yellow);
@@ -398,9 +402,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 EngineContext engineContext = new EngineContext
                 {
-                    Variables = _scriptVariables,
-                    Arguments = _scriptArguments,
-                    Elements = _scriptElements,
+                    Variables = _scriptVariables.Where(x => !string.IsNullOrEmpty(x.VariableName)).ToList(),
+                    Arguments = _scriptArguments.Where(x => !string.IsNullOrEmpty(x.ArgumentName)).ToList(),
+                    Elements = _scriptElements.Where(x => !string.IsNullOrEmpty(x.ElementName)).ToList(),
                     FilePath = ScriptFilePath,
                     Container = AContainer
                 };
