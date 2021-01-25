@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Infrastructure;
+﻿using OpenBots.Core.Enums;
+using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
@@ -155,7 +156,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 string debugName = ((DataGridView)sender).Rows[e.RowIndex].Cells[0].Value.ToString();               
                 string debugValue = ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
-                MessageBox.Show(debugValue, debugName);
+
+                frmDialog debugDialog = new frmDialog(debugValue, debugName, DialogType.OkOnly, 0);
+                debugDialog.Show();
+                //MessageBox.Show(debugValue, debugName, "", "");
             }
         }
 

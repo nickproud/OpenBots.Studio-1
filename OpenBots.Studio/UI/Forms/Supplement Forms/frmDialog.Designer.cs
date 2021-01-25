@@ -38,12 +38,14 @@
             this.uiBtnCopyError = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnOk = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnCancel = new OpenBots.Core.UI.Controls.UIPictureButton();
+            this.pnlMessage = new System.Windows.Forms.Panel();
             this.lblMessage = new System.Windows.Forms.Label();
             this.tlpMain.SuspendLayout();
             this.pnlControlContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCopyError)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnOk)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).BeginInit();
+            this.pnlMessage.SuspendLayout();
             this.SuspendLayout();
             // 
             // autoCloseTimer
@@ -60,7 +62,7 @@
             this.lblAutoClose.Location = new System.Drawing.Point(4, 0);
             this.lblAutoClose.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAutoClose.Name = "lblAutoClose";
-            this.lblAutoClose.Size = new System.Drawing.Size(883, 28);
+            this.lblAutoClose.Size = new System.Drawing.Size(701, 28);
             this.lblAutoClose.TabIndex = 19;
             this.lblAutoClose.Text = "auto close label";
             this.lblAutoClose.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -68,12 +70,13 @@
             // 
             // tlpMain
             // 
+            this.tlpMain.AutoScroll = true;
             this.tlpMain.BackColor = System.Drawing.Color.White;
             this.tlpMain.ColumnCount = 1;
             this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMain.Controls.Add(this.pnlControlContainer, 0, 2);
             this.tlpMain.Controls.Add(this.lblAutoClose, 0, 0);
-            this.tlpMain.Controls.Add(this.lblMessage, 0, 1);
+            this.tlpMain.Controls.Add(this.pnlMessage, 0, 1);
             this.tlpMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMain.Location = new System.Drawing.Point(0, 0);
             this.tlpMain.Margin = new System.Windows.Forms.Padding(4);
@@ -82,7 +85,7 @@
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 76F));
-            this.tlpMain.Size = new System.Drawing.Size(891, 459);
+            this.tlpMain.Size = new System.Drawing.Size(709, 365);
             this.tlpMain.TabIndex = 20;
             // 
             // pnlControlContainer
@@ -92,10 +95,10 @@
             this.pnlControlContainer.Controls.Add(this.uiBtnOk);
             this.pnlControlContainer.Controls.Add(this.uiBtnCancel);
             this.pnlControlContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlControlContainer.Location = new System.Drawing.Point(0, 383);
+            this.pnlControlContainer.Location = new System.Drawing.Point(0, 289);
             this.pnlControlContainer.Margin = new System.Windows.Forms.Padding(0);
             this.pnlControlContainer.Name = "pnlControlContainer";
-            this.pnlControlContainer.Size = new System.Drawing.Size(891, 76);
+            this.pnlControlContainer.Size = new System.Drawing.Size(709, 76);
             this.pnlControlContainer.TabIndex = 19;
             theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
@@ -111,7 +114,7 @@
             this.uiBtnCopyError.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnCopyError.Image = global::OpenBots.Properties.Resources.copy;
             this.uiBtnCopyError.IsMouseOver = false;
-            this.uiBtnCopyError.Location = new System.Drawing.Point(821, 8);
+            this.uiBtnCopyError.Location = new System.Drawing.Point(641, 10);
             this.uiBtnCopyError.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnCopyError.Name = "uiBtnCopyError";
             this.uiBtnCopyError.Size = new System.Drawing.Size(60, 60);
@@ -130,7 +133,7 @@
             this.uiBtnOk.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnOk.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOk.Image")));
             this.uiBtnOk.IsMouseOver = false;
-            this.uiBtnOk.Location = new System.Drawing.Point(10, 8);
+            this.uiBtnOk.Location = new System.Drawing.Point(10, 10);
             this.uiBtnOk.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnOk.Name = "uiBtnOk";
             this.uiBtnOk.Size = new System.Drawing.Size(60, 60);
@@ -149,7 +152,7 @@
             this.uiBtnCancel.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnCancel.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCancel.Image")));
             this.uiBtnCancel.IsMouseOver = false;
-            this.uiBtnCancel.Location = new System.Drawing.Point(70, 8);
+            this.uiBtnCancel.Location = new System.Drawing.Point(70, 10);
             this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnCancel.Name = "uiBtnCancel";
             this.uiBtnCancel.Size = new System.Drawing.Size(60, 60);
@@ -158,24 +161,36 @@
             this.uiBtnCancel.Text = "Cancel";
             this.uiBtnCancel.Click += new System.EventHandler(this.uiBtnCancel_Click);
             // 
+            // pnlMessage
+            // 
+            this.pnlMessage.AutoScroll = true;
+            this.pnlMessage.Controls.Add(this.lblMessage);
+            this.pnlMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlMessage.Location = new System.Drawing.Point(3, 31);
+            this.pnlMessage.Name = "pnlMessage";
+            this.pnlMessage.Size = new System.Drawing.Size(703, 255);
+            this.pnlMessage.TabIndex = 20;
+            // 
             // lblMessage
             // 
-            this.lblMessage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblMessage.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMessage.AutoSize = true;
+            this.lblMessage.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.lblMessage.ForeColor = System.Drawing.Color.SteelBlue;
-            this.lblMessage.Location = new System.Drawing.Point(4, 32);
+            this.lblMessage.Location = new System.Drawing.Point(4, 4);
             this.lblMessage.Margin = new System.Windows.Forms.Padding(4);
             this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(883, 347);
+            this.lblMessage.Size = new System.Drawing.Size(87, 28);
             this.lblMessage.TabIndex = 20;
+            this.lblMessage.Text = "message";
             this.lblMessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtMessage_KeyDown);
             // 
             // frmDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.SteelBlue;
-            this.ClientSize = new System.Drawing.Size(891, 459);
+            this.ClientSize = new System.Drawing.Size(709, 365);
             this.Controls.Add(this.tlpMain);
             this.Icon = global::OpenBots.Properties.Resources.OpenBots_ico;
             this.Margin = new System.Windows.Forms.Padding(4);
@@ -191,6 +206,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCopyError)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnOk)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).EndInit();
+            this.pnlMessage.ResumeLayout(false);
+            this.pnlMessage.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -205,5 +222,6 @@
         private OpenBots.UI.CustomControls.CustomUIControls.UIPanel pnlControlContainer;
         private System.Windows.Forms.Label lblMessage;
         private Core.UI.Controls.UIPictureButton uiBtnCopyError;
+        private System.Windows.Forms.Panel pnlMessage;
     }
 }
