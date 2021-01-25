@@ -68,6 +68,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             //rendering for variable/argument tabs
             dgvVariables.AutoGenerateColumns = false;
             dgvArguments.AutoGenerateColumns = false;
+
+            //vertical control splitter default location
+            splitContainerScript.SplitterDistance = (int)(splitContainerScript.Size.Height * 0.7);
+            //horizontal control splitter default location
+            splitContainerStudioControls.SplitterDistance = (int)(splitContainerStudioControls.Size.Width * 0.3);
+
             direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
         }
 

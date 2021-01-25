@@ -199,12 +199,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //rendering for variable/argument tabs
             dgvVariables.AutoGenerateColumns = false;
             dgvArguments.AutoGenerateColumns = false;
+
+            //vertical control splitter default location
+            splitContainerScript.SplitterDistance = (int)(splitContainerScript.Size.Height * 0.7);
+            //horizontal control splitter default location
+            splitContainerStudioControls.SplitterDistance = (int)(splitContainerStudioControls.Size.Width * 0.3);
+
             direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
 
             if (!Directory.Exists(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder)))
                 Directory.CreateDirectory(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder));
 
-            _builder = new ContainerBuilder();
+            _builder = new ContainerBuilder();            
         }
 
         private void UpdateWindowTitle()
@@ -290,6 +296,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //set listview column size
             frmScriptBuilder_SizeChanged(null, null);
+            this.Refresh();
         }
 
         private void LoadCommands(frmScriptBuilder scriptBuilder)
