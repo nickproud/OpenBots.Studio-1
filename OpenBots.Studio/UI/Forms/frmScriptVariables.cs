@@ -12,9 +12,9 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-using OpenBots.Core.Common;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
@@ -43,7 +43,7 @@ namespace OpenBots.UI.Forms
            //initialize
             _userVariableParentNode = InitializeNodes("My Task Variables", ScriptVariables);
             lblMainLogo.Text = ScriptName + " variables";
-            InitializeNodes("Default Task Variables", Common.GenerateSystemVariables());
+            InitializeNodes("Default Task Variables", CommonMethods.GenerateSystemVariables());
         }
 
         private TreeNode InitializeNodes(string parentName, List<ScriptVariable> variables)

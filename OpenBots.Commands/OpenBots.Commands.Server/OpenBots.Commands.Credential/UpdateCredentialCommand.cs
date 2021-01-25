@@ -2,7 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Credential
 			CommandEnabled = true;
 			CommandIcon = Resources.command_asset;
 
-			Common.InitializeDefaultWebProtocol();
+			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
 		public override void RunCommand(object sender)

@@ -27,9 +27,9 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Net;
 
-namespace OpenBots.Core.Common
+namespace OpenBots.Core.Utilities.CommonUtilities
 {
-    public static class Common
+    public static class CommonMethods
     {
         /// <summary>
         /// Creates a unique 'clone' of an item. Used to create unique clones of commands when changing/updating new parameters.

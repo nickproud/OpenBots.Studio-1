@@ -1,6 +1,6 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Image
 			var engine = (IAutomationEngineInstance)sender;
 
 			//user image to bitmap
-			Bitmap capturedBmp = new Bitmap(Common.Base64ToImage(v_ImageCapture));
+			Bitmap capturedBmp = new Bitmap(CommonMethods.Base64ToImage(v_ImageCapture));
 			capturedBmp.StoreInUserVariable(engine, v_OutputUserVariableName);
 		}
 

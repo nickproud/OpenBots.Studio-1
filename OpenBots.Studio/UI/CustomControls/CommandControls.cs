@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
@@ -664,7 +664,7 @@ namespace OpenBots.UI.CustomControls
 
             //get copy of user variables and append system variables, then load to listview
             var variableList = _currentEditor.ScriptEngineContext.Variables.Select(f => f.VariableName).ToList();
-            variableList.AddRange(Common.GenerateSystemVariables().Select(f => f.VariableName));
+            variableList.AddRange(CommonMethods.GenerateSystemVariables().Select(f => f.VariableName));
             newVariableSelector.lstVariables.Items.AddRange(variableList.ToArray());
 
             //get copy of user arguments, then load to listview
@@ -840,7 +840,7 @@ namespace OpenBots.UI.CustomControls
                     CommandItemControl inputBox = (CommandItemControl)sender;
                     UIPictureBox targetPictureBox = (UIPictureBox)inputBox.Tag;
                     targetPictureBox.Image = imageCaptureForm.UserSelectedBitmap;
-                    var convertedImage = Common.ImageToBase64(imageCaptureForm.UserSelectedBitmap);
+                    var convertedImage = CommonMethods.ImageToBase64(imageCaptureForm.UserSelectedBitmap);
                     targetPictureBox.EncodedImage = convertedImage;                   
                 }
 
@@ -874,7 +874,7 @@ namespace OpenBots.UI.CustomControls
 
             try
             {
-                ImageElement element = FindImageElementTest(new Bitmap(Common.Base64ToImage(imageSource)), 0.8);
+                ImageElement element = FindImageElementTest(new Bitmap(CommonMethods.Base64ToImage(imageSource)), 0.8);
                 if (element == null)
                     MessageBox.Show("Image not found");
             }

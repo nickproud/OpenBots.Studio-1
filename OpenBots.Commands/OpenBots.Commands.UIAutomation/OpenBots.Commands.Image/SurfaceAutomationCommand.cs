@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -119,7 +119,7 @@ namespace OpenBots.Commands.Image
 			var engine = (IAutomationEngineInstance)sender;
 			bool testMode = TestMode;
 			//user image to bitmap
-			Bitmap userImage = new Bitmap(Common.Base64ToImage(v_ImageCapture));
+			Bitmap userImage = new Bitmap(CommonMethods.Base64ToImage(v_ImageCapture));
 			double accuracy;
 			try
 			{

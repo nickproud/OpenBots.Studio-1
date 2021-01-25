@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -141,7 +141,7 @@ namespace OpenBots.Commands.IEBrowser
             browserObject = v_InstanceName.GetAppInstance(engine);
             var browserInstance = (InternetExplorer)browserObject;
 
-            DataTable searchTable = Common.Clone(v_WebSearchParameter);
+            DataTable searchTable = CommonMethods.Clone(v_WebSearchParameter);
 
             DataColumn matchFoundColumn = new DataColumn();
             matchFoundColumn.ColumnName = "Match Found";

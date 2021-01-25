@@ -1,5 +1,5 @@
-﻿using OpenBots.Core.Common;
-using OpenBots.Core.Script;
+﻿using OpenBots.Core.Script;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -23,7 +23,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 _existingVarArgSearchList = new List<string>();
                 _existingVarArgSearchList.AddRange(ScriptArguments.Select(arg => arg.ArgumentName).ToList());
                 _existingVarArgSearchList.AddRange(ScriptVariables.Select(var => var.VariableName).ToList());
-                _existingVarArgSearchList.AddRange(Common.GenerateSystemVariables().Select(var => var.VariableName).ToList());
+                _existingVarArgSearchList.AddRange(CommonMethods.GenerateSystemVariables().Select(var => var.VariableName).ToList());
             }
             catch (Exception ex)
             {

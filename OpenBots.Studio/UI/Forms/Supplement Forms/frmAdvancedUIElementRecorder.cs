@@ -1,11 +1,11 @@
 ﻿using Autofac;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.User32;
+using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Supplement_Forms;
@@ -63,7 +63,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void frmThickAppElementRecorder_Load(object sender, EventArgs e)
         {
             //create data source from windows
-            cboWindowTitle.DataSource = Common.GetAvailableWindowNames();
+            cboWindowTitle.DataSource = CommonMethods.GetAvailableWindowNames();
             if (!string.IsNullOrEmpty(WindowName))
                 cboWindowTitle.SelectedItem = WindowName;
         }
@@ -363,7 +363,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void pbRefresh_Click(object sender, EventArgs e)
         {
             //handle window refresh requests
-            cboWindowTitle.DataSource = Common.GetAvailableWindowNames();
+            cboWindowTitle.DataSource = CommonMethods.GetAvailableWindowNames();
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)

@@ -14,14 +14,13 @@
 //limitations under the License.
 using Autofac;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
-using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.CustomControls;
 using System;
 using System.Collections.Generic;
@@ -130,13 +129,13 @@ namespace OpenBots.UI.Forms
                         {
                             cmd = (IImageCommands)SelectedCommand;
                             if (!string.IsNullOrEmpty(cmd.v_ImageCapture))
-                                typedControl.Image = Common.Base64ToImage(cmd.v_ImageCapture);
+                                typedControl.Image = CommonMethods.Base64ToImage(cmd.v_ImageCapture);
                         }
                         else if (SelectedCommand.CommandName == "CaptureImageCommand")
                         {
                             cmd = (IImageCommands)SelectedCommand;
                             if (!string.IsNullOrEmpty(cmd.v_ImageCapture))
-                                typedControl.Image = Common.Base64ToImage(cmd.v_ImageCapture);
+                                typedControl.Image = CommonMethods.Base64ToImage(cmd.v_ImageCapture);
                         }
                     }
                 }

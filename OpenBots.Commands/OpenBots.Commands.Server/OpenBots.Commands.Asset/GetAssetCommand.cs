@@ -3,7 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -74,7 +74,7 @@ namespace OpenBots.Commands.Asset
 			CommandIcon = Resources.command_asset;
 
 			v_AssetType = "Text";
-			Common.InitializeDefaultWebProtocol();
+			CommonMethods.InitializeDefaultWebProtocol();
 
 		}
 

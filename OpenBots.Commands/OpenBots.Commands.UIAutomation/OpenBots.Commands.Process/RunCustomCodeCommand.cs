@@ -1,6 +1,6 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.Process
 				var memberToInvoke = Regex.Match(v_Code, @"\.(\w+)").Groups[1].ToString();
 
 				List<ScriptVariable> variableList = engine.AutomationEngineContext.Variables;
-				variableList.AddRange(Common.GenerateSystemVariables());
+				variableList.AddRange(CommonMethods.GenerateSystemVariables());
 
 				object invokingVar = (from vars in variableList
 									  where vars.VariableName == userInputtedVariables[0]

@@ -12,7 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 
 namespace OpenBots.Commands.Asset
 {
@@ -73,7 +73,7 @@ namespace OpenBots.Commands.Asset
 			CommandIcon = Resources.command_asset;
 
 			v_AssetType = "Text";
-			Common.InitializeDefaultWebProtocol();
+			CommonMethods.InitializeDefaultWebProtocol();
 
 		}
 
