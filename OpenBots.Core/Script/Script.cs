@@ -217,7 +217,7 @@ namespace OpenBots.Core.Script
                                                    "Convert Script", MessageBoxButtons.YesNo);
 
                 if (dialogResult == DialogResult.Yes || isDialogResultYes)
-                    deserializedData = ConvertToLatestVersion(engineContext.FilePath, engineContext.Container, deserializedScriptVersion.ToString());
+                    deserializedData = ConvertScriptToLatestVersion(engineContext.FilePath, engineContext.Container, deserializedScriptVersion.ToString());
             }
 
             //update ProjectPath variable
@@ -242,11 +242,52 @@ namespace OpenBots.Core.Script
             var deserializationError = e.ErrorContext.Error.Message;
             var commandNameMatch = Regex.Match(deserializationError, @"OpenBots\.Commands\.\w+\.\w+Command");
             
+            Dictionary<string, string> newCommandGroupMapping = new Dictionary<string, string>()
+            {
+                { "Data", "DataManipulation" },
+                { "DataTable", "DataManipulation" },
+                { "Dictionary", "DataManipulation" },
+                { "List", "DataManipulation" },
+                { "RegEx", "DataManipulation" },
+                { "Email", "SystemAutomation" },
+                { "File", "SystemAutomation" },
+                { "Folder", "SystemAutomation" },
+                { "TextFile", "SystemAutomation" },
+                { "System", "SystemAutomation" },
+                { "Image", "UIAutomation" },
+                { "Input", "UIAutomation" },
+                { "Process", "UIAutomation" },
+                { "WebBrowser", "UIAutomation" },
+                { "Window", "UIAutomation" },
+                { "Excel", "Microsoft" },
+                { "Outlook", "Microsoft" },
+                { "Word", "Microsoft" },
+                { "Engine", "Core" },
+                { "ErrorHandling", "Core" },
+                { "If", "Core" },
+                { "Loop", "Core" },
+                { "Misc", "Core" },
+                { "SecureData", "Core" },
+                { "Switch", "Core" },
+                { "Task", "Core" },
+                { "Variable", "Core" },
+                { "Asset", "Server" },
+                { "Credential", "Server" },
+                { "QueueItem", "Server" },
+                { "ServerEmail", "Server" },
+            };
+
             if (commandNameMatch.Success)
             {
                 var commandGroupMatch = Regex.Match(commandNameMatch.Value, @"OpenBots\.Commands\.\w+");
-                deserializationError = $"Unable to load '{commandNameMatch.Value}'. Please install '{commandGroupMatch.Value}'" +
-                                        " from the Package Manager and reload the Script.";
+                string commandGroupFullName = commandGroupMatch.Value;
+                string commandGroupShortName = commandGroupFullName.Split('.').Last();
+
+                if (newCommandGroupMapping.ContainsKey(commandGroupShortName))
+                    commandGroupFullName = commandGroupFullName.Replace(commandGroupShortName, newCommandGroupMapping[commandGroupShortName]);
+
+                deserializationError = $"Unable to load '{commandNameMatch.Value}'. Please install '{commandGroupFullName}'" +
+                                        " from the Package Manager.";
             }
                 
             if (e.CurrentObject is ScriptAction)
@@ -262,7 +303,7 @@ namespace OpenBots.Core.Script
             return JsonConvert.DeserializeObject<Script>(jsonScript);
         }
 
-        public static Script ConvertToLatestVersion(string filePath, IContainer container, string version)
+        public static Script ConvertScriptToLatestVersion(string filePath, IContainer container, string version)
         {
             string scriptText = File.ReadAllText(filePath);
 
@@ -270,7 +311,7 @@ namespace OpenBots.Core.Script
                 scriptText = scriptText.Insert(scriptText.LastIndexOf('\r'), ",\r\n  \"Version\": \"1.1.0.0\"");
 
             var conversionFilePath = Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, 
-                                                  "Supplementary Files", "Conversion Files", version + ".json");
+                                                  "Supplementary Files", "Script Conversion Files", version + ".json");
 
             string conversionFileText = File.ReadAllText(conversionFilePath);
             JObject conversionObject = JObject.Parse(conversionFileText);

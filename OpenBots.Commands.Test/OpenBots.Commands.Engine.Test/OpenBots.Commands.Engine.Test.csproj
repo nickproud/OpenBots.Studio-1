@@ -108,18 +108,6 @@
     <Analyzer Include="..\..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.Engine\OpenBots.Commands.Engine.csproj">
-      <Project>{89ca4ba7-1faf-4cc2-9881-d579ede0406f}</Project>
-      <Name>OpenBots.Commands.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.TextFile\OpenBots.Commands.TextFile.csproj">
-      <Project>{b3818a00-154d-4296-b6d1-e20663d47397}</Project>
-      <Name>OpenBots.Commands.TextFile</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.Variable\OpenBots.Commands.Variable.csproj">
-      <Project>{f8be380a-a963-405a-8b57-24c2e87e6504}</Project>
-      <Name>OpenBots.Commands.Variable</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\OpenBots.Core\OpenBots.Core.csproj">
       <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
       <Name>OpenBots.Core</Name>

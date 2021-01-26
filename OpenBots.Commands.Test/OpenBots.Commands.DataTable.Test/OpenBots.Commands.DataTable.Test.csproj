@@ -112,10 +112,6 @@
       <Project>{ed8f6540-c341-4b5f-8966-26a08e39af87}</Project>
       <Name>OpenBots.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.DataTable\OpenBots.Commands.DataTable.csproj">
-      <Project>{39849d7e-1dba-45c9-b151-78f14f233482}</Project>
-      <Name>OpenBots.Commands.DataTable</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

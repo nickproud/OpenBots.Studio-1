@@ -40,7 +40,7 @@ namespace OpenBots.Studio.Utilities
                     commandList.Add(newAutomationCommand);
             }
 
-            return commandList;
+            return commandList.Distinct().ToList();
         }
 
         public static Type GetTypeByName(IContainer container, string typeName)
