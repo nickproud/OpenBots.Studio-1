@@ -26,7 +26,7 @@ namespace OpenBots.Nuget
 
                     if (existingAssembly == null && name != "RestSharp" && name != "WebDriver" && name != "OpenBots.Core")
                     {
-                        var assembly = Assembly.LoadFile(path);
+                        var assembly = Assembly.LoadFrom(path);
                         existingAssemblies.Add(assembly);
                     }
                     else if (existingAssembly != null)
