@@ -22,8 +22,8 @@ namespace OpenBots.Commands.List.Test
             inputList.Add("item2");
             string index = "0";
 
-            inputList.StoreInUserVariable(_engine, "{inputList}");
-            index.StoreInUserVariable(_engine, "{index}");
+            inputList.CreateTestVariable(_engine, "inputList");
+            index.CreateTestVariable(_engine, "index");
 
             _removeListItem.v_ListName = "{inputList}";
             _removeListItem.v_ListIndex = "{index}";
@@ -48,8 +48,8 @@ namespace OpenBots.Commands.List.Test
             inputList.Add(item2);
             string index = "0";
 
-            inputList.StoreInUserVariable(_engine, "{inputList}");
-            index.StoreInUserVariable(_engine, "{index}");
+            inputList.CreateTestVariable(_engine, "inputList");
+            index.CreateTestVariable(_engine, "index");
 
             _removeListItem.v_ListName = "{inputList}";
             _removeListItem.v_ListIndex = "{index}";

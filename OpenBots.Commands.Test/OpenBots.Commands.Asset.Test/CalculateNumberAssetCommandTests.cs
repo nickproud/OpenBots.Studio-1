@@ -21,8 +21,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testIncrementNumberAsset";
             string newAsset = "50";
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            newAsset.StoreInUserVariable(_engine, "{newAsset}");
+            assetName.CreateTestVariable(_engine, "assetName");
+            newAsset.CreateTestVariable(_engine, "newAsset");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _calculateAsset.v_AssetName = "{assetName}";
             _calculateAsset.v_AssetActionType = "Increment";
@@ -51,8 +52,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testIncrementNumberAsset";
             string newAsset = "48";
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            newAsset.StoreInUserVariable(_engine, "{newAsset}");
+            assetName.CreateTestVariable(_engine, "assetName");
+            newAsset.CreateTestVariable(_engine, "newAsset");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _calculateAsset.v_AssetName = "{assetName}";
             _calculateAsset.v_AssetActionType = "Decrement";
@@ -81,8 +83,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testIncrementNumberAsset";
             string newAsset = "54";
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            newAsset.StoreInUserVariable(_engine, "{newAsset}");
+            assetName.CreateTestVariable(_engine, "assetName");
+            newAsset.CreateTestVariable(_engine, "newAsset");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _calculateAsset.v_AssetName = "{assetName}";
             _calculateAsset.v_AssetActionType = "Add";
@@ -111,8 +114,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testIncrementNumberAsset";
             string newAsset = "43";
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            newAsset.StoreInUserVariable(_engine, "{newAsset}");
+            assetName.CreateTestVariable(_engine, "assetName");
+            newAsset.CreateTestVariable(_engine, "newAsset");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _calculateAsset.v_AssetName = "{assetName}";
             _calculateAsset.v_AssetActionType = "Subtract";
@@ -141,8 +145,8 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "noAsset";
             string newAsset = "50";
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            newAsset.StoreInUserVariable(_engine, "{assetName}");
+            assetName.CreateTestVariable(_engine, "{assetName}");
+            newAsset.CreateTestVariable(_engine, "{assetName}");
 
             _calculateAsset.v_AssetName = "{assetName}";
             _calculateAsset.v_AssetActionType = "Increment";

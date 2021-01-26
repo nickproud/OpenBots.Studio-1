@@ -18,9 +18,10 @@ namespace OpenBots.Commands.Data.Test
             _engine = new AutomationEngineInstance(null);
 
             string jsonObject = "{\"rect\":{\"length\":10, \"width\":5}}";
-            jsonObject.StoreInUserVariable(_engine, "{input}");
+            jsonObject.CreateTestVariable(_engine, "input");
             string selector = "rect.length";
-            selector.StoreInUserVariable(_engine, "{selector}");
+            selector.CreateTestVariable(_engine, "selector");
+            "unassigned".CreateTestVariable(_engine, "r1output");
 
             DataTable selectorTable = new DataTable();
             selectorTable.Columns.Add("Json Selector");

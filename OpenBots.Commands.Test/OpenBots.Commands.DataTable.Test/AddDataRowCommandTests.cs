@@ -20,7 +20,7 @@ namespace OpenBots.Commands.DataTable.Test
         }
 
         [Fact]
-        public void addsDataRow()
+        public void AddsDataRow()
         {
             _addDataRow = new AddDataRowCommand();
             _engine = new AutomationEngineInstance(null);
@@ -31,7 +31,7 @@ namespace OpenBots.Commands.DataTable.Test
             DataRow inputrow = inputTable.NewRow();
             inputrow["firstname"] = "john";
             inputrow["lastname"] = "smith";
-            inputTable.StoreInUserVariable(_engine, "{inputTable}");
+            inputTable.CreateTestVariable(_engine, "inputTable");
             _addDataRow.v_DataTable = "{inputTable}";
             Data.DataRow newrow = _addDataRow.v_DataRowDataTable.NewRow();
             newrow["Column Name"] = "firstname";

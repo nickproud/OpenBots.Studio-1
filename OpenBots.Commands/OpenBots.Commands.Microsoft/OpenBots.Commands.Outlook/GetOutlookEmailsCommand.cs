@@ -128,7 +128,7 @@ namespace OpenBots.Commands.Outlook
 			var vAttachmentDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
 			var vMessageDirectory = v_MessageDirectory.ConvertUserVariableToString(engine);
 
-			if (vFolder == "")
+			if (vFolder == "") 
 				vFolder = "Inbox";
 
 			Application outlookApp = new Application();
@@ -153,7 +153,7 @@ namespace OpenBots.Commands.Outlook
 					{
 						throw new InvalidDataException("Outlook Filter is not valid");
 					}
-				}
+
 				else
 					filteredItems = userFolder.Items;
 
@@ -163,6 +163,7 @@ namespace OpenBots.Commands.Outlook
 				{
 					if (_obj is MailItem)
 					{
+
 						MailItem tempMail = (MailItem)_obj;
 						if (v_GetUnreadOnly == "Yes")
 						{
@@ -175,7 +176,7 @@ namespace OpenBots.Commands.Outlook
 						else {
 							ProcessEmail(tempMail, vMessageDirectory, vAttachmentDirectory);
 							outMail.Add(tempMail);
-						}
+						}   
 					}
 				}
 
@@ -253,7 +254,6 @@ namespace OpenBots.Commands.Outlook
 				}
 			}
 		}
-	
 
 		private void SaveMailItemsComboBox_SelectedValueChanged(object sender, EventArgs e)
 		{
