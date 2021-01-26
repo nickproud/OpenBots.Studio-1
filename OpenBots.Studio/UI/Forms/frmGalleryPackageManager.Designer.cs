@@ -701,6 +701,7 @@ namespace OpenBots.UI.Forms
             this.btnSyncCommandsAndStudio.TabIndex = 41;
             this.btnSyncCommandsAndStudio.Text = "Sync Commands and Studio";
             this.btnSyncCommandsAndStudio.UseVisualStyleBackColor = true;
+            this.btnSyncCommandsAndStudio.Visible = false;
             this.btnSyncCommandsAndStudio.Click += new System.EventHandler(this.btnSyncCommandsAndStudio_Click);
             // 
             // frmGalleryPackageManager
