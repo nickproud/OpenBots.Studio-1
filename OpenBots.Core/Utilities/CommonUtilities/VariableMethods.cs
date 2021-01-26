@@ -266,5 +266,13 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             string strValue = new NetworkCredential(string.Empty, secureString).Password;
             return strValue;
         }
+
+        public static void CreateTestVariable(this object variableValue, IAutomationEngineInstance engine, string variableName)
+        {
+            ScriptVariable newVar = new ScriptVariable();
+            newVar.VariableName = variableName;
+            newVar.VariableValue = variableValue;
+            engine.AutomationEngineContext.Variables.Add(newVar);
+        }
     }
 }

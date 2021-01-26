@@ -20,6 +20,8 @@ namespace OpenBots.Commands.Outlook.Test
             _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
 
+            "unassigned".CreateTestVariable(_engine, "emails");
+
             _getOutlookEmails.v_SourceFolder = "Inbox";
             _getOutlookEmails.v_Filter = "[Subject] = 'toDelete'";
             _getOutlookEmails.v_GetUnreadOnly = "No";

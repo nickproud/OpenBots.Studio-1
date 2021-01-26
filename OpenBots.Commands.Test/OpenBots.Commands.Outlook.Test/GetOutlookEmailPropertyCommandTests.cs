@@ -28,6 +28,8 @@ namespace OpenBots.Commands.Outlook.Test
             _getOutlookEmails = new GetOutlookEmailsCommand();
             _getOutlookEmailProperty = new GetOutlookEmailPropertyCommand();
 
+            "unassigned".CreateTestVariable(_engine, "emails");
+
             _getOutlookEmails.v_SourceFolder = "TestInput";
             _getOutlookEmails.v_Filter = "[Subject] = 'subjectProp'";
             _getOutlookEmails.v_GetUnreadOnly = "No";
@@ -41,7 +43,8 @@ namespace OpenBots.Commands.Outlook.Test
 
             var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             MailItem email = emails[0];
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
+            "unassigned".CreateTestVariable(_engine, "property");
 
             _getOutlookEmailProperty.v_MailItem = "{email}";
             _getOutlookEmailProperty.v_Property = prop;

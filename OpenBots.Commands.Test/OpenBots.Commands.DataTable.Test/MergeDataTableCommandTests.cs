@@ -22,8 +22,8 @@ namespace OpenBots.Commands.DataTable.Test
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.StoreInUserVariable(_engine, "{dt1}");
-            dt2.StoreInUserVariable(_engine, "{dt2}");
+            dt1.CreateTestVariable(_engine, "dt1");
+            dt2.CreateTestVariable(_engine, "dt2");
 
             _mergeDataTable.v_SourceDataTable = "{dt1}";
             _mergeDataTable.v_DestinationDataTable = "{dt2}";
@@ -39,8 +39,8 @@ namespace OpenBots.Commands.DataTable.Test
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.StoreInUserVariable(_engine, "{dt1}");
-            dt2.StoreInUserVariable(_engine, "{dt2}");
+            dt1.CreateTestVariable(_engine, "dt1");
+            dt2.CreateTestVariable(_engine, "dt2");
 
             _mergeDataTable.v_SourceDataTable = "{dt1}";
             _mergeDataTable.v_DestinationDataTable = "{dt2}";
@@ -56,8 +56,8 @@ namespace OpenBots.Commands.DataTable.Test
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.StoreInUserVariable(_engine, "{dt1}");
-            dt2.StoreInUserVariable(_engine, "{dt2}");
+            dt1.CreateTestVariable(_engine, "dt1");
+            dt2.CreateTestVariable(_engine, "dt2");
 
             switch (schema)
             {

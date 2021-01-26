@@ -20,7 +20,7 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toDelete.txt");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             _deleteFile.v_SourceFilePath = "{inputPath}";
 
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             _deleteFile.v_SourceFilePath = "{inputPath}";
 
