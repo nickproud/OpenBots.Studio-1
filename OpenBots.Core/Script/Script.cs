@@ -324,6 +324,7 @@ namespace OpenBots.Core.Script
             }
                                
             File.WriteAllText(filePath, scriptText);
+
             EngineContext engineContext = new EngineContext()
             {
                 FilePath = filePath,

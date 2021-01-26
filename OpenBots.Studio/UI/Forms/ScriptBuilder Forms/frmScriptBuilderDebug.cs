@@ -146,6 +146,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 variableGridViewHelper.DataSource = variableValues;
                 argumentGridViewHelper.DataSource = argumentValues;
                 uiPaneTabs.SelectedTab = debugTab;
+                foreach (var control in debugTab.Controls[0].Controls)
+                    if (control is DataGridView)
+                        (control as DataGridView).Refresh();
             }           
         }
 

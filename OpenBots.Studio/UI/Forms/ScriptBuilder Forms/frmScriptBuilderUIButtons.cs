@@ -192,14 +192,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     FileInfo scriptFileInfo = new FileInfo(_scriptFilePath);
                     uiScriptTabControl.SelectedTab.Text = scriptFileInfo.Name.Replace(".json", "");
-                                          
+
                     if (!isRunTaskCommand)
                     {
                         dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                         dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-    
+
                         Notify("Script Loaded Successfully!", Color.White);
-                    }                   
+                    }
+                    else
+                        _selectedTabScriptActions.Enabled = false;
                 }
                 catch (Exception ex)
                 {

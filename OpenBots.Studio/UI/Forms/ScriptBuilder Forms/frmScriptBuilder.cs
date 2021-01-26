@@ -130,6 +130,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         uiVariableArgumentTabs.Visible = false;
                         splitContainerScript.Panel2Collapsed = true;
+                        tpProject.Controls[0].Enabled = false;
+                        tpCommands.Controls[0].Enabled = false;
+                        tlpControls.Controls[0].Enabled = false;
+
+                        foreach (TabPage tab in uiScriptTabControl.TabPages)
+                            tab.Controls[0].Enabled = false;
+
                         uiScriptTabControl.AllowDrop = false;
                     }
                     catch (Exception)
@@ -146,8 +153,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         {
                             dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                             dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-                            splitContainerScript.Panel2Collapsed = false;
+                            splitContainerScript.Panel2Collapsed = false;                           
+                            tpProject.Controls[0].Enabled = true;
+                            tpCommands.Controls[0].Enabled = true;
+                            tlpControls.Controls[0].Enabled = true;
+
+                            foreach (TabPage tab in uiScriptTabControl.TabPages)
+                                tab.Controls[0].Enabled = true;
                         }
+
                         uiVariableArgumentTabs.Visible = true;
                         uiScriptTabControl.AllowDrop = true;
                     }
