@@ -217,7 +217,7 @@ namespace OpenBots.Core.Script
                                                    "Convert Script", MessageBoxButtons.YesNo);
 
                 if (dialogResult == DialogResult.Yes || isDialogResultYes)
-                    deserializedData = ConvertToLatestVersion(engineContext.FilePath, engineContext.Container, deserializedScriptVersion.ToString());
+                    deserializedData = ConvertScriptToLatestVersion(engineContext.FilePath, engineContext.Container, deserializedScriptVersion.ToString());
             }
 
             //update ProjectPath variable

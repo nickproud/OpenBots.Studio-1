@@ -298,10 +298,10 @@ namespace OpenBots.Commands.Task
 			//create argument list
 			InitializeArgumentLists(parentAutomationEngineInstance);
 			object engineLogger = Log.Logger;
+
 			if(parentAutomationEngineInstance.AutomationEngineContext.IsTest == true)
-            {
 				engineLogger = null;
-            }
+
 			EngineContext childEngineContext = new EngineContext
 			{
 				FilePath = childTaskPath,
