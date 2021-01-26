@@ -217,7 +217,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //vertical control splitter default location
             splitContainerScript.SplitterDistance = (int)(splitContainerScript.Size.Height * 0.7);
             //horizontal control splitter default location
-            splitContainerStudioControls.SplitterDistance = (int)(splitContainerStudioControls.Size.Width * 0.25);
+            splitContainerStudioControls.SplitterDistance = (int)(splitContainerStudioControls.Size.Width * 0.2);
 
             direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
 
