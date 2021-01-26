@@ -20,10 +20,10 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toCompress.txt");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             string waitTime = "5";
-            waitTime.StoreInUserVariable(_engine, "{waitTime}");
+            waitTime.CreateTestVariable(_engine, "waitTime");
 
             _waitForFile.v_FileName = "{inputPath}";
             _waitForFile.v_WaitTime = "{waitTime}";
@@ -41,10 +41,10 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\nofile.txt");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             string waitTime = "2";
-            waitTime.StoreInUserVariable(_engine, "{waitTime}");
+            waitTime.CreateTestVariable(_engine, "waitTime");
 
             _waitForFile.v_FileName = "{inputPath}";
             _waitForFile.v_WaitTime = "{waitTime}";

@@ -20,7 +20,8 @@ namespace OpenBots.Commands.List.Test
             List<string> list = new List<string>();
             list.Add("item1");
             list.Add("item2");
-            list.StoreInUserVariable(_engine, "{inputList}");
+            list.CreateTestVariable(_engine, "inputList");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getListItem.v_ListName = "{inputList}";
             _getListItem.v_ItemIndex = "1";
@@ -44,7 +45,8 @@ namespace OpenBots.Commands.List.Test
             item2.Columns.Add("d2col");
             list.Add(item1);
             list.Add(item2);
-            list.StoreInUserVariable(_engine, "{inputList}");
+            list.CreateTestVariable(_engine, "inputList");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getListItem.v_ListName = "{inputList}";
             _getListItem.v_ItemIndex = "1";
