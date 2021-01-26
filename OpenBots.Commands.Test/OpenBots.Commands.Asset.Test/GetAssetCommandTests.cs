@@ -26,6 +26,8 @@ namespace OpenBots.Commands.Asset.Test
             _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
 
+            "unassigned".CreateTestVariable(_engine, "output");
+
             _getAsset.v_AssetName = "testTextAsset";
             _getAsset.v_AssetType = "Text";
             _getAsset.v_OutputDirectoryPath = "";
@@ -41,6 +43,8 @@ namespace OpenBots.Commands.Asset.Test
         {
             _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
+
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getAsset.v_AssetName = "testNumberAsset";
             _getAsset.v_AssetType = "Number";
@@ -59,6 +63,8 @@ namespace OpenBots.Commands.Asset.Test
         {
             _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
+
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getAsset.v_AssetName = "testJSONAsset";
             _getAsset.v_AssetType = "JSON";
@@ -98,6 +104,8 @@ namespace OpenBots.Commands.Asset.Test
         {
             _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
+
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getAsset.v_AssetName = "noAsset";
             _getAsset.v_AssetType = "Text";

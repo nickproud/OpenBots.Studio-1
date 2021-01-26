@@ -18,7 +18,8 @@ namespace OpenBots.Commands.Dictionary.Test
 
             Dictionary<string, string> inputDictionary = new Dictionary<string, string>();
             inputDictionary.Add("key1", "val1");
-            inputDictionary.StoreInUserVariable(_engine, "{inputDictionary}");
+            inputDictionary.CreateTestVariable(_engine, "inputDictionary");
+            "unassigned".CreateTestVariable(_engine, "outputValue");
 
             _getDictionaryValue.v_InputDictionary = "{inputDictionary}";
             _getDictionaryValue.v_Key = "key1";

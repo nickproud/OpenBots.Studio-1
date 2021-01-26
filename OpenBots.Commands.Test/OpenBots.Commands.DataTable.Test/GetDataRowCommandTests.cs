@@ -30,7 +30,8 @@ namespace OpenBots.Commands.DataTable.Test
             row["col2"] = "c2r1";
             inputTable.Rows.Add(row);
 
-            inputTable.StoreInUserVariable(_engine, "{inputTable}");
+            inputTable.CreateTestVariable(_engine, "inputTable");
+            "unassigned".CreateTestVariable(_engine, "outputRow");
             
             _getDataRow.v_DataTable = "{inputTable}";
             _getDataRow.v_DataRowIndex = "0";

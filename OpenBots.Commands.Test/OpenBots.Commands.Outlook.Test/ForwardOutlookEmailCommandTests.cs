@@ -24,6 +24,8 @@ namespace OpenBots.Commands.Outlook.Test
             _forwardOutlookEmail = new ForwardOutlookEmailCommand();
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
 
+            "unassigned".CreateTestVariable(_engine, "emails");
+
             _getOutlookEmails.v_SourceFolder = "TestInput";
             _getOutlookEmails.v_Filter = "[Subject] = 'toForward'";
             _getOutlookEmails.v_GetUnreadOnly = "No";
@@ -37,9 +39,9 @@ namespace OpenBots.Commands.Outlook.Test
 
             var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             MailItem email = emails[0];
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
             string forwardAddress = "openbots.test@outlook.com";
-            forwardAddress.StoreInUserVariable(_engine, "{forwardEmail}");
+            forwardAddress.CreateTestVariable(_engine, "forwardEmail");
 
             _forwardOutlookEmail.v_MailItem = "{email}";
             _forwardOutlookEmail.v_Recipients = "{forwardEmail}";
@@ -77,7 +79,7 @@ namespace OpenBots.Commands.Outlook.Test
         {
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
 
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";

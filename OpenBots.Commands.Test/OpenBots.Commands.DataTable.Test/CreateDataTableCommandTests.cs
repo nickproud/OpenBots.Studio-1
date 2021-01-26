@@ -22,7 +22,8 @@ namespace OpenBots.Commands.DataTable.Test
             {
                 TableName = "ColumnNamesDataTable" + DateTime.Now.ToString("MMddyy.hhmmss")
             };
-            "Col1".StoreInUserVariable(_engine, "{Col1}");
+            "Col1".CreateTestVariable(_engine, "Col1");
+            "unassigned".CreateTestVariable(_engine, "outputTable");
             columnNameDataTable.Columns.Add("{Col1}");
 
             _createDataTableCommand.v_ColumnNameDataTable = columnNameDataTable;

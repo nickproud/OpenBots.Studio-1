@@ -172,16 +172,28 @@ namespace OpenBots.Core.Script
         /// <summary>
         /// Deserializes a valid JSON file back into user-defined commands
         /// </summary>
-        public static Script DeserializeFile(string filePath, IContainer container, bool isDialogResultYes = false)
+        public static Script DeserializeFile(EngineContext engineContext, bool isDialogResultYes = false)
         {
-            var serializerSettings = new JsonSerializerSettings()
+            
+            var serializerSettings = new JsonSerializerSettings();
+            if (engineContext.IsTest)
             {
-                TypeNameHandling = TypeNameHandling.Objects,
-                Error = HandleDeserializationError,
-                ContractResolver = new ScriptAutofacContractResolver(container)
-            };
+                serializerSettings = new JsonSerializerSettings()
+                {
+                    TypeNameHandling = TypeNameHandling.Objects,
+                };
+            }
+            else
+            {
+                serializerSettings = new JsonSerializerSettings()
+                {
+                    TypeNameHandling = TypeNameHandling.Objects,
+                    Error = HandleDeserializationError,
+                    ContractResolver = new ScriptAutofacContractResolver(engineContext.Container)
+                };
+            }
 
-            Script deserializedData = JsonConvert.DeserializeObject<Script>(File.ReadAllText(filePath), serializerSettings);
+            Script deserializedData = JsonConvert.DeserializeObject<Script>(File.ReadAllText(engineContext.FilePath), serializerSettings);
             Version deserializedScriptVersion;
 
             if (deserializedData != null)
@@ -197,7 +209,7 @@ namespace OpenBots.Core.Script
             }
 
             //if deserialized Script version is lower than than the current application version
-            if (deserializedScriptVersion.CompareTo(new Version(Application.ProductVersion)) < 0)
+            if (deserializedScriptVersion.CompareTo(new Version(Application.ProductVersion)) < 0 && !engineContext.IsTest)
             {
                 var dialogResult = MessageBox.Show($"Attempting to open a Script file from OpenBots Studio {deserializedScriptVersion}. " +
                                                    $"Would you like to attempt to convert this Script to {Application.ProductVersion}? " + 
@@ -205,7 +217,7 @@ namespace OpenBots.Core.Script
                                                    "Convert Script", MessageBoxButtons.YesNo);
 
                 if (dialogResult == DialogResult.Yes || isDialogResultYes)
-                    deserializedData = ConvertToLatestVersion(filePath, container, deserializedScriptVersion.ToString());
+                    deserializedData = ConvertToLatestVersion(engineContext.FilePath, engineContext.Container, deserializedScriptVersion.ToString());
             }
 
             //update ProjectPath variable
@@ -271,7 +283,12 @@ namespace OpenBots.Core.Script
             }
                                
             File.WriteAllText(filePath, scriptText);
-            return DeserializeFile(filePath, container, true);
+            EngineContext engineContext = new EngineContext()
+            {
+                FilePath = filePath,
+                Container = container
+            };
+            return DeserializeFile(engineContext, true);
         }       
     }
 }

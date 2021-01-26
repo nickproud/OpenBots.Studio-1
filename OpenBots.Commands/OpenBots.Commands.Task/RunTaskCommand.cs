@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Task
 		[DisplayName("Task Arguments")]
 		[Description("Enter an ArgumentValue for each input argument.")]
 		[SampleUsage("Hello World || {vArgumentValue}")]
-		[Remarks("For inputs, set ArgumentDreiction to *In*. For outputs, set ArgumentDirection to *Out*. " +
+		[Remarks("For inputs, set ArgumentDirection to *In*. For outputs, set ArgumentDirection to *Out*. " +
 				 "Failure to assign an ArgumenDirection value will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		public DataTable v_ArgumentAssignments { get; set; }
@@ -287,7 +287,7 @@ namespace OpenBots.Commands.Task
 			{
 				v_ArgumentAssignments.Clear();
 			}
-		}       
+		}
 
 		private void RunServerTask(object sender)
 		{
@@ -297,16 +297,22 @@ namespace OpenBots.Commands.Task
 
 			//create argument list
 			InitializeArgumentLists(parentAutomationEngineInstance);
-
+			object engineLogger = Log.Logger;
+			if(parentAutomationEngineInstance.AutomationEngineContext.IsTest == true)
+            {
+				engineLogger = null;
+            }
 			EngineContext childEngineContext = new EngineContext
 			{
 				FilePath = childTaskPath,
 				ProjectPath = parentAutomationEngineInstance.GetProjectPath(),
-				EngineLogger = (Logger)Log.Logger,
+				EngineLogger = (Logger)engineLogger,
 				Container = parentAutomationEngineInstance.AutomationEngineContext.Container,
 			};
 
 			var childAutomationEngineInstance = parentAutomationEngineInstance.CreateAutomationEngineInstance(childEngineContext);
+			
+			childAutomationEngineInstance.AutomationEngineContext.IsTest = parentAutomationEngineInstance.AutomationEngineContext.IsTest;
 			childAutomationEngineInstance.AutomationEngineContext.Arguments = _argumentList;
 			childAutomationEngineInstance.AutomationEngineContext.AppInstances = parentAutomationEngineInstance.AutomationEngineContext.AppInstances;
 			childAutomationEngineInstance.IsServerChildExecution = true;

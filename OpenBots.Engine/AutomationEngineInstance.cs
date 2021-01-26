@@ -176,7 +176,7 @@ namespace OpenBots.Engine
                     ReportProgress("Deserializing File");
                     Log.Information("Script Path: " + AutomationEngineContext.FilePath);
                     FileName = AutomationEngineContext.FilePath;
-                    automationScript = Script.DeserializeFile(AutomationEngineContext.FilePath, AutomationEngineContext.Container);
+                    automationScript = Script.DeserializeFile(AutomationEngineContext);
                 }
                 else
                 {
