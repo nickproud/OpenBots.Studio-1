@@ -43,7 +43,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 case DialogType.OkOnly:
                     uiBtnCancel.Hide();
                     break;
-
+                //actually DialogType.CancelOnly if there were one
+                case DialogType.OkCancel:
+                    uiBtnOk.Hide();
+                    uiBtnCancel.Hide();
+                    break;
                 default:
                     break;
             }

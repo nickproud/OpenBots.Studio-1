@@ -38,6 +38,11 @@ namespace OpenBots.UI.CustomControls
         private IContainer _container;
         private string _projectPath;
 
+        //used in capture window helper
+        private CommandItemControl _inputBox;
+        private ApplicationSettings _settings;
+        private bool _minimizePreference;
+
         public CommandControls()
         {
         }
@@ -1220,22 +1225,23 @@ namespace OpenBots.UI.CustomControls
 
         private void GetWindowName(object sender, EventArgs e)
         {
-            ApplicationSettings settings = new ApplicationSettings().GetOrCreateApplicationSettings();
-            var minimizePreference = settings.ClientSettings.MinimizeToTray;
+            GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
+            _inputBox = (CommandItemControl)sender;
+            _settings = new ApplicationSettings().GetOrCreateApplicationSettings();
+            var minimizePreference = _settings.ClientSettings.MinimizeToTray;
 
             if (minimizePreference)
             {
-                settings.ClientSettings.MinimizeToTray = false;
-                settings.Save(settings);
+                _settings.ClientSettings.MinimizeToTray = false;
+                _settings.Save(_settings);
             }
 
             SendAllFormsToBack();
             GlobalHook.StartElementCaptureHook(true);
-            GlobalHook.MouseEvent += (se, ev) => GlobalHook_MouseEvent(se, ev, (CommandItemControl)sender, settings, minimizePreference);
+            GlobalHook.MouseEvent += GlobalHook_MouseEvent;
         }
 
-        private void GlobalHook_MouseEvent(object sender, MouseCoordinateEventArgs e, CommandItemControl inputBox = null, 
-            ApplicationSettings settings = null, bool minimizePreference = false)
+        private void GlobalHook_MouseEvent(object sender, MouseCoordinateEventArgs e)
         {
             //mouse down has occured
             if (e != null)
@@ -1250,30 +1256,36 @@ namespace OpenBots.UI.CustomControls
 
                     var windowName = process.MainWindowTitle;
 
-                    if (inputBox.Tag is ComboBox)
+                    if (string.IsNullOrEmpty(windowName))
                     {
-                        ComboBox targetComboBox = (ComboBox)inputBox.Tag;
+                        MessageBox.Show("Could not find Window", "Error");
+                        GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
+                        return;
+                    }
+
+                    if (_inputBox.Tag is ComboBox)
+                    {
+                        ComboBox targetComboBox = (ComboBox)_inputBox.Tag;
                         targetComboBox.Text = windowName;
                     }
                   
-                    if (minimizePreference)
+                    if (_minimizePreference)
                     {
-                        settings.ClientSettings.MinimizeToTray = true;
-                        settings.Save(settings);
+                        _settings.ClientSettings.MinimizeToTray = true;
+                        _settings.Save(_settings);
                     }
 
-                    GlobalHook.MouseEvent -= (se, ev) => GlobalHook_MouseEvent(se, ev);
-
+                    GlobalHook.MouseEvent -= GlobalHook_MouseEvent;                  
                 }
                 catch (Exception)
                 {                  
-                    if (minimizePreference)
+                    if (_minimizePreference)
                     {
-                        settings.ClientSettings.MinimizeToTray = true;
-                        settings.Save(settings);
+                        _settings.ClientSettings.MinimizeToTray = true;
+                        _settings.Save(_settings);
                     }
 
-                    GlobalHook.MouseEvent -= (se, ev) => GlobalHook_MouseEvent(se, ev);
+                    GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
 
                     MessageBox.Show("Could not find Window", "Error");
                 }
