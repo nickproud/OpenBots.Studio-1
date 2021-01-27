@@ -215,7 +215,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                         SetSelectedCodeToCommented(true);
                         break;
                     case Keys.B:
-                        AddRemoveBreakpoint();
+                        //AddRemoveBreakpoint();
                         break;
                     case Keys.J:
                         OpenArgumentManager();

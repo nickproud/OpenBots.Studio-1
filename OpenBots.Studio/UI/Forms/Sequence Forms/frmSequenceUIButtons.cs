@@ -137,18 +137,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         }
         #endregion
 
-        #region Script Events Tool Strip and Buttons        
-        private void breakpointToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AddRemoveBreakpoint();
-        }
-
-        private void uiBtnBreakpoint_Click(object sender, EventArgs e)
-        {
-            AddRemoveBreakpoint();
-        }
-        #endregion
-
         #region Recorder Buttons
         private void uiBtnSaveSequence_Click(object sender, EventArgs e)
         {
