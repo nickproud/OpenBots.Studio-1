@@ -68,7 +68,7 @@ namespace OpenBots.Commands.Outlook
 		public string v_SaveMessagesAndAttachments { get; set; }
 
 		[Required]
-		[DisplayName("Include Images in Email Body as Attachments")]
+		[DisplayName("Include Embedded Images")]
 		[PropertyUISelectionOption("Yes")]
 		[PropertyUISelectionOption("No")]
 		[Description("Specify whether to consider images in body as attachments")]
