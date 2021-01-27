@@ -153,7 +153,7 @@ namespace OpenBots.Commands.Outlook
 					{
 						throw new InvalidDataException("Outlook Filter is not valid");
 					}
-
+				}
 				else
 					filteredItems = userFolder.Items;
 

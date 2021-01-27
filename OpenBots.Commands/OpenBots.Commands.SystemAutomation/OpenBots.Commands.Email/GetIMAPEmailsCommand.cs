@@ -2,6 +2,7 @@
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MimeKit;
+using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
@@ -138,6 +139,10 @@ namespace OpenBots.Commands.Email
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
 		public string v_OutputUserVariableName { get; set; }
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private List<Control> _savingControls;
+
 		public GetIMAPEmailsCommand()
 		{
 			CommandName = "GetIMAPEmailsCommand";
@@ -250,10 +255,18 @@ namespace OpenBots.Commands.Email
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_IMAPGetUnreadOnly", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_IMAPMarkAsRead", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_IMAPSaveMessagesAndAttachments", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_IncludeEmbeddedImagesAsAttachments", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPMessageDirectory", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPAttachmentDirectory", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
+			((ComboBox)RenderedControls[23]).SelectedIndexChanged += SaveMailItemsComboBox_SelectedValueChanged;
+
+			_savingControls = new List<Control>();
+			_savingControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_IncludeEmbeddedImagesAsAttachments", this, editor));
+			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPMessageDirectory", this, editor));
+			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPAttachmentDirectory", this, editor));
+
+			foreach (var ctrl in _savingControls)
+				ctrl.Visible = false;
+
+			RenderedControls.AddRange(_savingControls);
 
 			return RenderedControls;
 		}
@@ -345,6 +358,24 @@ namespace OpenBots.Commands.Email
 					}
 				}
 			}           
+		}
+
+		private void SaveMailItemsComboBox_SelectedValueChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[23]).Text == "Yes")
+			{
+				foreach (var ctrl in _savingControls)
+					ctrl.Visible = true;
+			}
+			else
+			{
+				foreach (var ctrl in _savingControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is TextBox)
+						((TextBox)ctrl).Clear();
+				}
+			}
 		}
 	}
 }
