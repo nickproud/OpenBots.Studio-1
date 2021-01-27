@@ -25,7 +25,8 @@ namespace OpenBots.Commands.DataTable.Test
             row["col1"] = "data11";
             inputTable.Rows.Add(row);
 
-            row.StoreInUserVariable(_engine, "{inputRow}");
+            row.CreateTestVariable(_engine, "inputRow");
+            "unassigned".CreateTestVariable(_engine, "outputValue");
 
             _getDataRowValue.v_DataRow = "{inputRow}";
             _getDataRowValue.v_Option = option;

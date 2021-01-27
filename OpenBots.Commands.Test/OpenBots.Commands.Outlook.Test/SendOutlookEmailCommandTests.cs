@@ -30,6 +30,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _sendOutlookEmail.RunCommand(_engine);
 
+            "unassigned".CreateTestVariable(_engine, "emails");
             List<MailItem> emails;
             int attempts = 0;
             do {
@@ -58,7 +59,7 @@ namespace OpenBots.Commands.Outlook.Test
         private void resetSendEmail(AutomationEngineInstance _engine, MailItem email)
         {
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";

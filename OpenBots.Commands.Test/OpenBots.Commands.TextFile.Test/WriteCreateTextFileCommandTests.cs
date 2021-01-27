@@ -22,10 +22,10 @@ namespace OpenBots.Commands.TextFile.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\writetest.txt");
-            filePath.StoreInUserVariable(_engine, "{filepath}");
+            filePath.CreateTestVariable(_engine, "filepath");
 
             string testText = "Write this text to file";
-            testText.StoreInUserVariable(_engine, "{testText}");
+            testText.CreateTestVariable(_engine, "testText");
 
             _writeCreateTextFile.v_FilePath = "{filepath}";
             _writeCreateTextFile.v_TextToWrite = "{testText}";

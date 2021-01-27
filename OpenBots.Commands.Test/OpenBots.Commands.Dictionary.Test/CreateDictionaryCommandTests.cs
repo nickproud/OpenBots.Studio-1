@@ -23,7 +23,8 @@ namespace OpenBots.Commands.Dictionary.Test
             row1["Keys"] = "key1";
             row1["Values"] = "val1";
             inputDt.Rows.Add(row1);
-            inputDt.StoreInUserVariable(_engine, "{inputDt}");
+            inputDt.CreateTestVariable(_engine, "inputDt");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _createDictionary.v_ColumnNameDataTable = (DataTable)"{inputDt}".ConvertUserVariableToObject(_engine);
             _createDictionary.v_OutputUserVariableName = "{output}";
