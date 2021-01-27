@@ -39,8 +39,6 @@ namespace OpenBots.Nuget
             }
 
             ContainerBuilder builder = new ContainerBuilder();
-
-            var assemblies2 = AppDomain.CurrentDomain.GetAssemblies();
             builder.RegisterAssemblyTypes(existingAssemblies.ToArray())
                                                    .Where(t => t.IsAssignableTo<ScriptCommand>())
                                                    .Named<ScriptCommand>(t => t.Name)
