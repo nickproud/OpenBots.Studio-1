@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using OpenBots.Commands.If;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
@@ -20,7 +20,7 @@ using System.Windows.Forms;
 
 namespace OpenBots.Commands.ErrorHandling
 {
-	[Serializable]
+    [Serializable]
 	[Category("Error Handling Commands")]
 	[Description("This command defines a retry block which will retry the contained commands as long as the condition is not met or " +
 		"an error is thrown.")]
@@ -134,7 +134,10 @@ namespace OpenBots.Commands.ErrorHandling
 					if(!(engine.LastExecutedCommand.CommandName == "RethrowCommand"))
 						engine.ErrorsOccured.Clear();	
 					
-					throw new Exception("Number of retries has expired! - " + _exception.Message);
+					if (_exception != null)
+						throw new Exception("Number of retries has expired! - " + _exception.Message);
+					else
+						throw new Exception("Number of retries has expired!");
 				}
 			}
 		}
@@ -258,17 +261,8 @@ namespace OpenBots.Commands.ErrorHandling
 			foreach (DataRow rw in v_IfConditionsTable.Rows)
 			{
 				var commandData = rw["CommandData"].ToString();
-				JObject ifCommandJson = JObject.Parse(commandData);
-				string ifActionType = ifCommandJson["v_IfActionType"].ToString();
-				JArray actionParamsArray = (JArray) ifCommandJson["v_IfActionParameterTable"];
-
-				DataTable ifActionParameterTable = new DataTable();
-				ifActionParameterTable.Columns.Add("Parameter Name");
-                ifActionParameterTable.Columns.Add("Parameter Value");
-                foreach (var item in actionParamsArray)
-                    ifActionParameterTable.Rows.Add(item["Parameter Name"].ToString(), item["Parameter Value"].ToString());
-
-                var statementResult = CommandsHelper.DetermineStatementTruth(engine, ifActionType, ifActionParameterTable);
+				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
+				var statementResult = CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
 
 				if (!statementResult)
 				{

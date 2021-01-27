@@ -28,7 +28,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 return userInputString;
 
             var variableList = engine.AutomationEngineContext.Variables;
-            var systemVariables = Common.Common.GenerateSystemVariables();
+            var systemVariables = CommonMethods.GenerateSystemVariables();
             var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new ScriptVariable { 
                                                                                         VariableName = arg.ArgumentName, 
                                                                                         VariableValue = arg.ArgumentValue })

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -149,7 +149,7 @@ namespace OpenBots.Commands.Input
 			_keystrokeGridHelper.Height = 140;
 
 			DataGridViewComboBoxColumn propertyName = new DataGridViewComboBoxColumn();
-			propertyName.DataSource = Common.GetAvailableKeys();
+			propertyName.DataSource = CommonMethods.GetAvailableKeys();
 			propertyName.HeaderText = "Selected Key";
 			propertyName.DataPropertyName = "Key";
 			_keystrokeGridHelper.Columns.Add(propertyName);

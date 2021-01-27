@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.User32;
+using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Studio.Utilities;
 using System;
 using System.Collections.Generic;
@@ -342,7 +342,7 @@ namespace OpenBots.Utilities
                 if (IsKeyDown(lastPressedKey) && !(IsKeyDown(Keys.ShiftKey) && key.ToString().Length == 1))
                 {
                     DataRow newKeyStrokeRow = previousKeyActionsDT.NewRow();
-                    newKeyStrokeRow["Key"] = $"{Common.GetKeyDescription(key)} [{key}]";
+                    newKeyStrokeRow["Key"] = $"{CommonMethods.GetKeyDescription(key)} [{key}]";
                     newKeyStrokeRow["Action"] = "Key Down";
                     previousKeyActionsDT.Rows.Add(newKeyStrokeRow);
                     return true;
@@ -363,7 +363,7 @@ namespace OpenBots.Utilities
 
                 DataTable newkeyActionaDT = sendAdvancedKeystrokesCommand.v_KeyActions;
                 DataRow newKeyStrokeRow = newkeyActionaDT.NewRow();
-                newKeyStrokeRow["Key"] = $"{Common.GetKeyDescription(key)} [{key}]";
+                newKeyStrokeRow["Key"] = $"{CommonMethods.GetKeyDescription(key)} [{key}]";
                 newKeyStrokeRow["Action"] = "Key Down";
                 newkeyActionaDT.Rows.Add(newKeyStrokeRow);
 

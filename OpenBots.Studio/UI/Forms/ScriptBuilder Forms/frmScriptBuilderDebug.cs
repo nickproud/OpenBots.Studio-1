@@ -1,9 +1,11 @@
-﻿using OpenBots.Core.Infrastructure;
+﻿using OpenBots.Core.Enums;
+using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -76,7 +78,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 variableGridViewHelper.AllowUserToAddRows = false;
                 variableGridViewHelper.AllowUserToDeleteRows = false;
                 variableGridViewHelper.ReadOnly = true;
-                variableGridViewHelper.CellContentDoubleClick += DebugGridViewHelper_CellContentDoubleClick;                
+                variableGridViewHelper.CellContentDoubleClick += DebugGridViewHelper_CellContentDoubleClick;
+                variableGridViewHelper.BorderStyle = BorderStyle.None;
 
                 DataTable argumentValues = new DataTable();
                 argumentValues.Columns.Add("Name");
@@ -95,6 +98,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 argumentGridViewHelper.AllowUserToDeleteRows = false;
                 argumentGridViewHelper.ReadOnly = true;
                 argumentGridViewHelper.CellContentDoubleClick += DebugGridViewHelper_CellContentDoubleClick;
+                argumentGridViewHelper.BorderStyle = BorderStyle.None;
 
                 if (debugTab.Controls[0].Controls.Count != 0)
                     debugTab.Controls[0].Controls.Clear();
@@ -145,6 +149,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 variableGridViewHelper.DataSource = variableValues;
                 argumentGridViewHelper.DataSource = argumentValues;
                 uiPaneTabs.SelectedTab = debugTab;
+
+                variableGridViewHelper.Sort(variableGridViewHelper.Columns["Name"], ListSortDirection.Ascending);
+                argumentGridViewHelper.Sort(argumentGridViewHelper.Columns["Name"], ListSortDirection.Ascending);
             }           
         }
 
@@ -155,7 +162,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 string debugName = ((DataGridView)sender).Rows[e.RowIndex].Cells[0].Value.ToString();               
                 string debugValue = ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
-                MessageBox.Show(debugValue, debugName);
+
+                frmDialog debugDialog = new frmDialog(debugValue, debugName, DialogType.OkCancel, 0);
+                debugDialog.Show();
             }
         }
 

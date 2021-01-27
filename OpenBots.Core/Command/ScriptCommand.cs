@@ -53,7 +53,7 @@ namespace OpenBots.Core.Command
 
 		[JsonIgnore]
 		[Browsable(false)]
-		public List<Control> RenderedControls;      
+		public List<Control> RenderedControls;
 
 		[JsonIgnore]
 		[Browsable(false)]

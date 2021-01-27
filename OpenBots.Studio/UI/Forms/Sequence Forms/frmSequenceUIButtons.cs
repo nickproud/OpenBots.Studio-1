@@ -110,7 +110,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void OpenSettingsManager()
         {
             //show settings dialog
-            frmSettings newSettings = new frmSettings();
+            frmSettings newSettings = new frmSettings(AContainer);
             newSettings.ShowDialog();
 
             //reload app settings
@@ -137,21 +137,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         }
         #endregion
 
-        #region Script Events Tool Strip and Buttons        
-        private void breakpointToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AddRemoveBreakpoint();
-        }
-
-        private void uiBtnBreakpoint_Click(object sender, EventArgs e)
-        {
-            AddRemoveBreakpoint();
-        }
-        #endregion
-
         #region Recorder Buttons
         private void uiBtnSaveSequence_Click(object sender, EventArgs e)
         {
+            dgvVariables.EndEdit();
+            dgvArguments.EndEdit();
+
             if (SelectedTabScriptActions.Items.Count == 0)
             {
                 Notify("You must have at least 1 automation command to save.", Color.Yellow);

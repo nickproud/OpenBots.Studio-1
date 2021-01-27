@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Data
 
 		public GetPDFTextCommand()
 		{
-			OpenBots.Core.Common.Common.InitializeDefaultWebProtocol();
+			CommonMethods.InitializeDefaultWebProtocol();
 			CommandName = "GetPDFTextCommand";
 			SelectionName = "Get PDF Text";
 			CommandEnabled = true;

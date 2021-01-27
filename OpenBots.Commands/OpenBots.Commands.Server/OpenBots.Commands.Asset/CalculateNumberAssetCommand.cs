@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -60,7 +60,7 @@ namespace OpenBots.Commands.Asset
             CommandIcon = Resources.command_asset;
 
             v_AssetActionType = "Increment";
-            Common.InitializeDefaultWebProtocol();
+            CommonMethods.InitializeDefaultWebProtocol();
         }
 
         public override void RunCommand(object sender)

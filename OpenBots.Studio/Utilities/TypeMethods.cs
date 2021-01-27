@@ -13,7 +13,7 @@ namespace OpenBots.Studio.Utilities
 {
     public static class TypeMethods
     {       
-        public static List<AutomationCommand> GenerateCommands(IContainer container)
+        public static List<AutomationCommand> GenerateAutomationCommands(IContainer container)
         {
             var commandList = new List<AutomationCommand>();
             var commandClasses = new List<Type>();
@@ -41,6 +41,23 @@ namespace OpenBots.Studio.Utilities
             }
 
             return commandList.Distinct().ToList();
+        }
+
+        public static List<Type> GenerateCommandTypes(IContainer container)
+        {
+            var commandList = new List<AutomationCommand>();
+            var commandClasses = new List<Type>();
+
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var types = scope.ComponentRegistry.Registrations
+                            .Where(r => typeof(ScriptCommand).IsAssignableFrom(r.Activator.LimitType))
+                            .Select(r => r.Activator.LimitType).ToList();
+
+                commandClasses.AddRange(types);
+            }
+            
+            return commandClasses;
         }
 
         public static Type GetTypeByName(IContainer container, string typeName)
