@@ -454,7 +454,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //add to parent
-            newSequence.MoveToParentCommands.ForEach(x => AddCommandToListView(x));
+            List<ScriptCommand> movedCommands = CommonMethods.Clone(newSequence.MoveToParentCommands);
+            movedCommands.ForEach(x => AddCommandToListView(x));
 
             //dispose and force collection
             newSequence.Dispose();
