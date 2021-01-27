@@ -316,7 +316,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void LoadCommands(frmScriptBuilder scriptBuilder)
         {
             //load all commands           
-            scriptBuilder._automationCommands = TypeMethods.GenerateCommands(AContainer);
+            scriptBuilder._automationCommands = TypeMethods.GenerateAutomationCommands(AContainer);
 
             //instantiate and populate display icons for commands
             scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);

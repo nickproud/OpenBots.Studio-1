@@ -101,7 +101,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         public void LoadCommands()
         {
             //load all commands           
-            _automationCommands = TypeMethods.GenerateCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
+            _automationCommands = TypeMethods.GenerateAutomationCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
 
             //instantiate and populate display icons for commands
             _uiImages = UIImage.UIImageList(_automationCommands);

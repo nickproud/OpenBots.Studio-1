@@ -110,7 +110,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void OpenSettingsManager()
         {
             //show settings dialog
-            frmSettings newSettings = new frmSettings();
+            frmSettings newSettings = new frmSettings(AContainer);
             newSettings.ShowDialog();
 
             //reload app settings

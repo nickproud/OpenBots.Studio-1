@@ -27,22 +27,29 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using AContainer = Autofac.IContainer;
 
 namespace OpenBots.UI.Forms
 {
     public partial class frmSettings : UIForm
     {
-        ApplicationSettings newAppSettings;
-        public frmSettings()
+        private ApplicationSettings _newAppSettings;
+        private AContainer _container;
+
+        public frmSettings(AContainer container)
         {
             InitializeComponent();
+            _container = container;
         }
 
         private void frmSettings_Load(object sender, EventArgs e)
         {
-            newAppSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
+            if (_container == null)
+                btnGenerateWikiDocs.Enabled = false;
 
-            var engineSettings = newAppSettings.EngineSettings;
+            _newAppSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
+
+            var engineSettings = _newAppSettings.EngineSettings;
             chkShowDebug.DataBindings.Add("Checked", engineSettings, "ShowDebugWindow", false, DataSourceUpdateMode.OnPropertyChanged);
             chkAutoCloseWindow.DataBindings.Add("Checked", engineSettings, "AutoCloseDebugWindow", false, DataSourceUpdateMode.OnPropertyChanged);
             chkEnableLogging.DataBindings.Add("Checked", engineSettings, "EnableDiagnosticLogging", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -68,7 +75,7 @@ namespace OpenBots.UI.Forms
             txtLogging3.DataBindings.Add("Text", engineSettings, "LoggingValue3", false, DataSourceUpdateMode.OnPropertyChanged);
             txtLogging4.DataBindings.Add("Text", engineSettings, "LoggingValue4", false, DataSourceUpdateMode.OnPropertyChanged);
 
-            var clientSettings = newAppSettings.ClientSettings;
+            var clientSettings = _newAppSettings.ClientSettings;
             chkAntiIdle.DataBindings.Add("Checked", clientSettings, "AntiIdleWhileOpen", false, DataSourceUpdateMode.OnPropertyChanged);
             txtAppFolderPath.DataBindings.Add("Text", clientSettings, "RootFolder", false, DataSourceUpdateMode.OnPropertyChanged);
             txtAttendedTaskFolder.DataBindings.Add("Text", clientSettings, "AttendedTasksFolder", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -96,12 +103,12 @@ namespace OpenBots.UI.Forms
         private void uiBtnOpen_Click(object sender, EventArgs e)
         {
             Keys key = (Keys)Enum.Parse(typeof(Keys), cbxCancellationKey.Text);
-            newAppSettings.EngineSettings.CancellationKey = key;
+            _newAppSettings.EngineSettings.CancellationKey = key;
 
             if ((SinkType)cbxSinkType.SelectedItem == SinkType.File && string.IsNullOrEmpty(txtLogging1.Text.Trim()))
-                newAppSettings.EngineSettings.LoggingValue1 = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
+                _newAppSettings.EngineSettings.LoggingValue1 = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
 
-            newAppSettings.Save(newAppSettings);
+            _newAppSettings.Save(_newAppSettings);
 
             Close();
         }
@@ -199,7 +206,7 @@ namespace OpenBots.UI.Forms
                     }
                     //update textbox which will be updated once user selects "Ok"
                     txtAppFolderPath.Text = newRootFolder;
-                    newAppSettings.Save(newAppSettings);
+                    _newAppSettings.Save(_newAppSettings);
                 }
             }
         }
@@ -268,7 +275,7 @@ namespace OpenBots.UI.Forms
         private void btnGenerateWikiDocs_Click(object sender, EventArgs e)
         {
             DocumentationGeneration docGeneration = new DocumentationGeneration();
-            var docsRoot = docGeneration.GenerateMarkdownFiles();
+            var docsRoot = docGeneration.GenerateMarkdownFiles(_container);
             Process.Start(docsRoot);
         }
 
@@ -300,8 +307,8 @@ namespace OpenBots.UI.Forms
 
         private void cbxSinkType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            newAppSettings.EngineSettings.LoggingSinkType = (SinkType)cbxSinkType.SelectedItem;
-            switch (newAppSettings.EngineSettings.LoggingSinkType)
+            _newAppSettings.EngineSettings.LoggingSinkType = (SinkType)cbxSinkType.SelectedItem;
+            switch (_newAppSettings.EngineSettings.LoggingSinkType)
             {
                 case SinkType.File:
                     LoadFileLoggingSettings();
@@ -375,7 +382,7 @@ namespace OpenBots.UI.Forms
 
         private void cbxMinLogLevel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            newAppSettings.EngineSettings.MinLogLevel = (LogEventLevel)cbxMinLogLevel.SelectedItem;
+            _newAppSettings.EngineSettings.MinLogLevel = (LogEventLevel)cbxMinLogLevel.SelectedItem;
         }
 
         private void btnFileManager_Click(object sender, EventArgs e)

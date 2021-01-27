@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using AContainer = Autofac.IContainer;
 
 namespace OpenBots.Studio.Utilities.Documentation
 {
@@ -19,7 +20,7 @@ namespace OpenBots.Studio.Utilities.Documentation
         /// Returns a path that contains the generated markdown files
         /// </summary>
         /// <returns></returns>
-        public string GenerateMarkdownFiles()
+        public string GenerateMarkdownFiles(AContainer container)
         {
             //create directory if required
             var docsFolderName = "docs";
@@ -28,24 +29,7 @@ namespace OpenBots.Studio.Utilities.Documentation
                 Directory.CreateDirectory(docsFolderName);
             }
 
-            //get all commands   
-            var studioPath = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*Studio.exe").First();
-            var commandClasses = Assembly.LoadFrom(studioPath).GetTypes()
-                      .Where(t => t.Namespace == "OpenBots.Commands")
-                      .Where(t => t.Name != "ScriptCommand")
-                      .Where(t => t.IsAbstract == false)
-                      .Where(t => t.BaseType.Name == "ScriptCommand")
-                      .ToList();
-
-            var cmdAssemblyPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "OpenBots.Commands.*.dll");
-            foreach (var path in cmdAssemblyPaths)
-            {
-                commandClasses.AddRange(Assembly.LoadFrom(path).GetTypes()
-                                 .Where(t => t.Namespace != null && t.Namespace.StartsWith("OpenBots.Commands"))
-                                 .Where(t => t.IsAbstract == false)
-                                 .Where(t => t.BaseType.Name == "ScriptCommand")
-                                 .ToList());
-            }
+            var commandClasses = TypeMethods.GenerateCommandTypes(container);
 
             var highLevelCommandInfo = new List<CommandMetaData>();
             StringBuilder stringBuilder;
