@@ -170,10 +170,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     {
                         var windowName = GetWindowName((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
 
-                        if (string.IsNullOrEmpty(windowName))
-                            return;
-
-                        if (WindowName != windowName)
+                        if (WindowName != windowName && !string.IsNullOrEmpty(windowName))
                         {
                             WindowName = windowName;
                             cboWindowTitle.SelectedItem = WindowName;
@@ -243,10 +240,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     {
                         var windowName = GetWindowName((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
 
-                        if (string.IsNullOrEmpty(windowName))
-                            return;
-
-                        if (WindowName != windowName)
+                        if (WindowName != windowName && !string.IsNullOrEmpty(windowName))
                         {
                             WindowName = windowName;
                             cboWindowTitle.SelectedItem = WindowName;

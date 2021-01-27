@@ -133,6 +133,10 @@ namespace OpenBots.Commands.Input
 				try
 				{
 					requiredHandle = CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
+
+					if (requiredHandle == null)
+						throw new Exception("Element Not Yet Found... ");
+
 					break;
 				}
 				catch (Exception)
