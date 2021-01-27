@@ -1228,9 +1228,9 @@ namespace OpenBots.UI.CustomControls
             GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
             _inputBox = (CommandItemControl)sender;
             _settings = new ApplicationSettings().GetOrCreateApplicationSettings();
-            var minimizePreference = _settings.ClientSettings.MinimizeToTray;
+            _minimizePreference = _settings.ClientSettings.MinimizeToTray;
 
-            if (minimizePreference)
+            if (_minimizePreference)
             {
                 _settings.ClientSettings.MinimizeToTray = false;
                 _settings.Save(_settings);
