@@ -21,7 +21,7 @@ namespace OpenBots.Commands.DataTable
     public class GroupByCommand : ScriptCommand
     {
 		[Required]
-		[DisplayName("Input DataTable")]
+		[DisplayName("DataTable")]
 		[Description("Enter the DataTable to group.")]
 		[SampleUsage("{vDataTable}")]
 		[Remarks("")]
