@@ -120,7 +120,7 @@ namespace OpenBots.Commands.DataTable
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Sort '{v_DataTable}' by Column '{v_DataValueIndex}']";
+			return base.GetDisplayValue() + $" [Sort '{v_DataTable}' by Column '{v_DataValueIndex}' {v_SortType} - Store Sorted DataTable in '{v_OutputUserVariableName}']";
 		}
 	}
 }
