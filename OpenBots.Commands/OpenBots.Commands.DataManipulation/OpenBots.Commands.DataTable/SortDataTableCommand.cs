@@ -20,7 +20,7 @@ namespace OpenBots.Commands.DataTable
     public class SortDataTableCommand : ScriptCommand
     {
 		[Required]
-		[DisplayName("Input DataTable")]
+		[DisplayName("DataTable")]
 		[Description("Enter the DataTable to sort.")]
 		[SampleUsage("{vDataTable}")]
 		[Remarks("")]
