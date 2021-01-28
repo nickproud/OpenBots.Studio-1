@@ -55,7 +55,7 @@ namespace OpenBots.Commands.DataTable
 
 		public GroupByCommand()
 		{
-			CommandName = "GroupByCommand";
+			CommandName = "GroupDataTableCommand";
 			SelectionName = "Group Datatable";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_spreadsheet;
