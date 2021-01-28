@@ -16,7 +16,7 @@ namespace OpenBots.Commands.DataTable
 {
     [Serializable]
     [Category("DataTable Commands")]
-    [Description("This command sort a datatable at a specified column name/index.")]
+    [Description("This command sorts a DataTable by a specified column name/index.")]
     public class SortDataTableCommand : ScriptCommand
     {
 		[Required]
