@@ -17,7 +17,7 @@ namespace OpenBots.Commands.DataTable
 {
     [Serializable]
     [Category("DataTable Commands")]
-    [Description("This command group a datatable using specified column name/index.")]
+    [Description("This command groups a DataTable by a specified column name/index as a List of DataTables.")]
     public class GroupByCommand : ScriptCommand
     {
 		[Required]
