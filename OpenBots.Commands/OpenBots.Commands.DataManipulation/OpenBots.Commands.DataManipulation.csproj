@@ -111,7 +111,7 @@
     <Compile Include="OpenBots.Commands.DataTable\GetDataRowCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\GetDataRowCountCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\GetDataRowValueCommand.cs" />
-    <Compile Include="OpenBots.Commands.DataTable\GroupByCommand.cs" />
+    <Compile Include="OpenBots.Commands.DataTable\GroupDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\MergeDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\RemoveDataRowCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\SortDataTableCommand.cs" />

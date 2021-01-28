@@ -32,7 +32,7 @@ namespace OpenBots.Commands.DataTable
 		[DisplayName("Search Option")]
 		[PropertyUISelectionOption("Column Name")]
 		[PropertyUISelectionOption("Column Index")]
-		[Description("Select whether the DataRow value should be found by column index or column name.")]
+		[Description("Select whether the Datatable should be grouped by column index or column name.")]
 		[SampleUsage("")]
 		[Remarks("")]
 		public string v_Option { get; set; }
