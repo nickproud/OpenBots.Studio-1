@@ -48,7 +48,7 @@ namespace OpenBots.Commands.DataTable
 		[DisplayName("Sort Type")]
 		[PropertyUISelectionOption("Ascending")]
 		[PropertyUISelectionOption("Descending")]
-		[Description("Select whether the datatable should be sorted ascending or descending.")]
+		[Description("Select whether the DataTable should be sorted by ascending or descending order.")]
 		[SampleUsage("")]
 		[Remarks("")]
 		public string v_SortType { get; set; }
@@ -94,6 +94,7 @@ namespace OpenBots.Commands.DataTable
 			}
 
 			DataView dataView = dataTable.DefaultView;
+
 			if (v_SortType == "Ascending")
 			{
 				dataView.Sort = columnName + " ASC";
