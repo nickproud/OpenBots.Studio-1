@@ -106,7 +106,7 @@ namespace OpenBots.Commands.DataTable
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Group '{v_DataTable}' by Column '{v_DataValueIndex}']";
+			return base.GetDisplayValue() + $" [Group '{v_DataTable}' by Column '{v_DataValueIndex}' - Store DataTable List in '{v_OutputUserVariableName}']";
 		}
 	}
 }
