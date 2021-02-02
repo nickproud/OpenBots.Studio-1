@@ -82,13 +82,13 @@ namespace OpenBots.Commands.Window
 					List<IntPtr> targetWindows = User32Functions.FindTargetWindows(windowName);
 					if (targetWindows.Count == 0)
 					{
-						throw new Exception("Window Not Yet Found... ");
+						throw new Exception($"Window '{windowName}' Not Yet Found... ");
 					}
 					break;
 				}
 				catch (Exception)
 				{
-					engine.ReportProgress("Window Not Yet Found... " + (timeToEnd - DateTime.Now).Minutes + "m, " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+					engine.ReportProgress($"Window '{windowName}' Not Yet Found... " + (timeToEnd - DateTime.Now).Minutes + "m, " + (timeToEnd - DateTime.Now).Seconds + "s remain");
 					Thread.Sleep(500);
 				}
 			}

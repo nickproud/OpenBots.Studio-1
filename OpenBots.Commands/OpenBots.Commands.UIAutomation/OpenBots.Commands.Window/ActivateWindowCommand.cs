@@ -59,16 +59,20 @@ namespace OpenBots.Commands.Window
 					User32Functions.ActivateWindow(windowName);
 					if (!User32Functions.GetActiveWindowTitle().Equals(windowName))
 					{
-						throw new Exception("Window Not Yet Found... ");
+						throw new Exception($"Window '{windowName}' Not Yet Found... ");
 					}
 					break;
 				}
 				catch (Exception)
                 {
-					engine.ReportProgress("Window Not Yet Found... "+ (timeToEnd - DateTime.Now).Minutes + "m, " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+					engine.ReportProgress($"Window '{windowName}' Not Yet Found... "+ (timeToEnd - DateTime.Now).Minutes + "m, " + (timeToEnd - DateTime.Now).Seconds + "s remain");
 					Thread.Sleep(500);
 				}
             }
+			if (!User32Functions.GetActiveWindowTitle().Equals(windowName))
+			{
+				throw new Exception($"Window '{windowName}' Not Found");
+			}
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

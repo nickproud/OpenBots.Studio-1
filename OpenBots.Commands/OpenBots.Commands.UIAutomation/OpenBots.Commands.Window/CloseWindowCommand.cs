@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Window
 			string windowName = v_WindowName.ConvertUserVariableToString(engine);
 			int timeout = Int32.Parse(v_Timeout);
 			DateTime timeToEnd = DateTime.Now.AddSeconds(timeout);
-			List<IntPtr> targetWindows = User32Functions.FindTargetWindows(windowName);
+			List<IntPtr> targetWindows = new List<IntPtr>();
 			while (timeToEnd >= DateTime.Now)
 			{
 				try 
@@ -68,10 +68,11 @@ namespace OpenBots.Commands.Window
 				}
 				catch (Exception)
                 {
-					engine.ReportProgress("Window Not Yet Found... " + (timeToEnd - DateTime.Now).Minutes + "m, " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+					engine.ReportProgress($"Window '{windowName}' Not Yet Found... " + (timeToEnd - DateTime.Now).Minutes + "m, " + (timeToEnd - DateTime.Now).Seconds + "s remain");
 					Thread.Sleep(500);
 				}
 			}
+			targetWindows = User32Functions.FindTargetWindows(windowName);
 			//loop each window
 			foreach (var targetedWindow in targetWindows)
 				User32Functions.CloseWindow(targetedWindow);
