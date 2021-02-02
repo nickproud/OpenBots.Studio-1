@@ -17,16 +17,16 @@ namespace OpenBots.Commands.Data.Test
         public void CorrectlyPerformsOperation(DateTime input, string calcMethod, string increment, dynamic expectedResult)
         {
             _dateCalculation = new DateCalculationCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             string defaultFormat = "MM/dd/yyyy hh:mm:ss";
             if (calcMethod.Contains("Get"))
             {
                 defaultFormat = null;
             }
-            defaultFormat.StoreInUserVariable(_engine, "{format}");
-            increment.StoreInUserVariable(_engine, "{increment}");
-            DateTime.Now.StoreInUserVariable(_engine, "{inputDate}");
-            input.StoreInUserVariable(_engine, "{inputDate}");
+            defaultFormat.CreateTestVariable(_engine, "format");
+            increment.CreateTestVariable(_engine, "increment");
+            input.CreateTestVariable(_engine, "inputDate");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _dateCalculation.v_InputDate = "{inputDate}";
             _dateCalculation.v_CalculationMethod = calcMethod;

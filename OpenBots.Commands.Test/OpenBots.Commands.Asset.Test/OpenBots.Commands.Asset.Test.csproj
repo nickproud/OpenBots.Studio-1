@@ -52,8 +52,8 @@
       <HintPath>..\..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Diagnostics.DiagnosticSource.5.0.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Diagnostics.DiagnosticSource.5.0.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
@@ -107,10 +107,6 @@
     <ProjectReference Include="..\..\OpenBots.Engine\OpenBots.Engine.csproj">
       <Project>{ed8f6540-c341-4b5f-8966-26a08e39af87}</Project>
       <Name>OpenBots.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.Asset\OpenBots.Commands.Asset.csproj">
-      <Project>{a9ce78b5-0a21-4be5-9f3b-f4791c1d6570}</Project>
-      <Name>OpenBots.Commands.Asset</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

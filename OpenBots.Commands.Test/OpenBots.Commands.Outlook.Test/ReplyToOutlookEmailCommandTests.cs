@@ -21,9 +21,11 @@ namespace OpenBots.Commands.Outlook.Test
         [Fact]
         public void RepliesToOutlookEmail()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _replyToOutlookEmail = new ReplyToOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
+
+            "unassigned".CreateTestVariable(_engine, "emails");
 
             _getOutlookEmails.v_SourceFolder = "TestInput";
             _getOutlookEmails.v_Filter = "[Subject] = 'toReply'";
@@ -38,7 +40,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             MailItem email = emails[0];
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
 
             _replyToOutlookEmail.v_MailItem = "{email}";
             _replyToOutlookEmail.v_OperationType = "Reply";
@@ -78,6 +80,8 @@ namespace OpenBots.Commands.Outlook.Test
             _sendOutlookEmail = new SendOutlookEmailCommand();
             _moveCopyOutlookEmail = new MoveCopyOutlookEmailCommand();
 
+            "unassigned".CreateTestVariable(_engine, "emails");
+
             _getOutlookEmails.v_SourceFolder = "Inbox";
             _getOutlookEmails.v_Filter = "[Subject] = 'toReply'";
             _getOutlookEmails.v_GetUnreadOnly = "No";
@@ -91,7 +95,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             List<MailItem> emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             MailItem email = emails[0];
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";
@@ -111,7 +115,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             email = emails[0];
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";
@@ -143,7 +147,7 @@ namespace OpenBots.Commands.Outlook.Test
                 attempts++;
             } while (attempts < 5 && emails.Count < 1);
             email = emails[0];
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
 
             _moveCopyOutlookEmail.v_MailItem = "{email}";
             _moveCopyOutlookEmail.v_DestinationFolder = "TestInput";

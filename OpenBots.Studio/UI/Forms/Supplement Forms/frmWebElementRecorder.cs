@@ -97,7 +97,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 //start global hook and wait for left mouse down event
                 GlobalHook.StartEngineCancellationHook(Keys.F2);
                 GlobalHook.HookStopped += GlobalHook_HookStopped;
-                GlobalHook.StartElementCaptureHook(chkStopOnClick.Checked);
+                GlobalHook.StartElementCaptureHook(chkStopOnClick.Checked, _container);
                 wbElementRecorder.DomClick += wbElementRecorder_DomClick;
                 wbElementRecorder.DomDoubleClick += wbElementRecorder_DomDoubleClick;
                 wbElementRecorder.DomKeyDown += WbElementRecorder_DomKeyDown;
@@ -117,6 +117,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                         _browserInstanceName = settingsForm.txtBrowserInstanceName.Text;
                         _browserEngineType = settingsForm.cbxBrowserEngineType.SelectedItem.ToString();
                         _parameterSettings = settingsForm.ParameterSettingsDT;
+
+                        settingsForm.Dispose();
                     }
                     else
                     {
@@ -132,6 +134,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                         wbElementRecorder.DomKeyDown -= WbElementRecorder_DomKeyDown;
                         GlobalHook.HookStopped -= GlobalHook_HookStopped;
 
+                        settingsForm.Dispose();
                         return;
                     }
 
@@ -407,6 +410,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
                 ScriptElements.Add(newElement);
             }
+
+            addElementForm.Dispose();
         }
 
         private void pbElements_Click(object sender, EventArgs e)
@@ -417,6 +422,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
             if (scriptElementForm.DialogResult == DialogResult.OK)
                 ScriptElements = scriptElementForm.ScriptElements;
+
+            scriptElementForm.Dispose();
         }
 
         private void tbURL_KeyDown(object sender, KeyEventArgs e)

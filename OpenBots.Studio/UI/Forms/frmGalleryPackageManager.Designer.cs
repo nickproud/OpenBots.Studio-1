@@ -84,6 +84,7 @@ namespace OpenBots.UI.Forms
             this.uiBtnCancel = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.tvPackageFeeds = new OpenBots.UI.CustomControls.CustomUIControls.UITreeView();
             this.imlNodes = new System.Windows.Forms.ImageList(this.components);
+            this.btnSyncCommandsAndStudio = new System.Windows.Forms.Button();
             this.tlpPackageLayout.SuspendLayout();
             this.pnlNugetPackages.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tpbLoadingSpinner)).BeginInit();
@@ -112,6 +113,7 @@ namespace OpenBots.UI.Forms
             this.tlpPackageLayout.Controls.Add(this.pnlProjectDetails, 2, 1);
             this.tlpPackageLayout.Controls.Add(this.pnlFinishButtons, 2, 2);
             this.tlpPackageLayout.Controls.Add(this.tvPackageFeeds, 0, 1);
+            this.tlpPackageLayout.Controls.Add(this.btnSyncCommandsAndStudio, 0, 0);
             this.tlpPackageLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpPackageLayout.Location = new System.Drawing.Point(0, 0);
             this.tlpPackageLayout.Name = "tlpPackageLayout";
@@ -203,7 +205,7 @@ namespace OpenBots.UI.Forms
             this.txtInstalled.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.txtInstalled.ForeColor = System.Drawing.Color.SteelBlue;
             this.txtInstalled.Location = new System.Drawing.Point(121, 72);
-            this.txtInstalled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtInstalled.Margin = new System.Windows.Forms.Padding(4);
             this.txtInstalled.Name = "txtInstalled";
             this.txtInstalled.Size = new System.Drawing.Size(333, 34);
             this.txtInstalled.TabIndex = 48;
@@ -265,7 +267,7 @@ namespace OpenBots.UI.Forms
             this.cbxVersion.ForeColor = System.Drawing.Color.SteelBlue;
             this.cbxVersion.FormattingEnabled = true;
             this.cbxVersion.Location = new System.Drawing.Point(121, 110);
-            this.cbxVersion.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbxVersion.Margin = new System.Windows.Forms.Padding(4);
             this.cbxVersion.Name = "cbxVersion";
             this.cbxVersion.Size = new System.Drawing.Size(333, 36);
             this.cbxVersion.TabIndex = 42;
@@ -365,7 +367,7 @@ namespace OpenBots.UI.Forms
             this.txtSampleSearch.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.txtSampleSearch.ForeColor = System.Drawing.Color.SteelBlue;
             this.txtSampleSearch.Location = new System.Drawing.Point(105, 110);
-            this.txtSampleSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtSampleSearch.Margin = new System.Windows.Forms.Padding(4);
             this.txtSampleSearch.Name = "txtSampleSearch";
             this.txtSampleSearch.Size = new System.Drawing.Size(460, 34);
             this.txtSampleSearch.TabIndex = 34;
@@ -688,6 +690,20 @@ namespace OpenBots.UI.Forms
             this.imlNodes.Images.SetKeyName(2, "nugetIcon");
             this.imlNodes.Images.SetKeyName(3, "settings.png");
             // 
+            // btnSyncCommandsAndStudio
+            // 
+            this.btnSyncCommandsAndStudio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSyncCommandsAndStudio.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
+            this.btnSyncCommandsAndStudio.Location = new System.Drawing.Point(3, 114);
+            this.btnSyncCommandsAndStudio.Name = "btnSyncCommandsAndStudio";
+            this.btnSyncCommandsAndStudio.Size = new System.Drawing.Size(294, 36);
+            this.btnSyncCommandsAndStudio.TabIndex = 41;
+            this.btnSyncCommandsAndStudio.Text = "Sync Commands and Studio";
+            this.btnSyncCommandsAndStudio.UseVisualStyleBackColor = true;
+            this.btnSyncCommandsAndStudio.Visible = false;
+            this.btnSyncCommandsAndStudio.Click += new System.EventHandler(this.btnSyncCommandsAndStudio_Click);
+            // 
             // frmGalleryPackageManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -697,7 +713,7 @@ namespace OpenBots.UI.Forms
             this.Controls.Add(this.tlpPackageLayout);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "frmGalleryPackageManager";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Gallery Project Manager";
@@ -767,5 +783,6 @@ namespace OpenBots.UI.Forms
         private System.Windows.Forms.CheckBox chbxIncludePrerelease;
         private UIPanel pnlMetadata;
         private System.Windows.Forms.TableLayoutPanel tlpMetadata;
+        private System.Windows.Forms.Button btnSyncCommandsAndStudio;
     }
 }

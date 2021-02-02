@@ -27,12 +27,14 @@ namespace OpenBots.Commands.Credential.Test
         [Fact]
         public void GetsCredential()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getCredential = new GetCredentialCommand();
 
             string credentialName = "CommandTestCreds";
 
-            credentialName.StoreInUserVariable(_engine, "{credName}");
+            credentialName.CreateTestVariable(_engine, "credName");
+            "unassigned".CreateTestVariable(_engine, "username");
+            "unassigned".CreateTestVariable(_engine, "password");
 
             _getCredential.v_CredentialName = "{credName}";
             _getCredential.v_OutputUserVariableName = "{username}";

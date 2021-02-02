@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.CustomControls.CustomUIControls
@@ -13,7 +12,10 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
     {
         public static ImageList UIImageList(List<AutomationCommand> automationCommands)
         {
-            Dictionary<string, Image> commandIcons = automationCommands.ToDictionary(x => x.Command.CommandName, x => x.CommandIcon);
+            Dictionary<string, Image> commandIcons = new Dictionary<string, Image>();
+
+            foreach(var command in automationCommands)
+                commandIcons[command.Command.CommandName] = command.CommandIcon;
 
             ImageList uiImages = new ImageList();
             uiImages.ImageSize = new Size(18, 18);

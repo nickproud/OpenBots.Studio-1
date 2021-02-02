@@ -17,10 +17,11 @@ namespace OpenBots.Commands.Data.Test
         public void PerformsCalculationCorrectly(string num1, string operation, string num2, string expectedOutput)
         {
             _mathCalculation = new MathCalculationCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
-            num1.StoreInUserVariable(_engine, "{num1}");
-            num2.StoreInUserVariable(_engine, "{num2}");
+            num1.CreateTestVariable(_engine, "num1");
+            num2.CreateTestVariable(_engine, "num2");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _mathCalculation.v_MathExpression = "{num1}" + operation + "{num2}";
             _mathCalculation.v_OutputUserVariableName = "{output}";
@@ -34,13 +35,15 @@ namespace OpenBots.Commands.Data.Test
         public void HandlesThousandSeparator()
         {
             _mathCalculation = new MathCalculationCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             string num1 = "10.000";
             string num2 = "1.000";
             string thouSeparator = ".";
-            num1.StoreInUserVariable(_engine, "{num1}");
-            num2.StoreInUserVariable(_engine, "{num2}");
-            thouSeparator.StoreInUserVariable(_engine, "{thouSeparator}");
+            num1.CreateTestVariable(_engine, "num1");
+            num2.CreateTestVariable(_engine, "num2");
+            thouSeparator.CreateTestVariable(_engine, "thouSeparator");
+            "unassigned".CreateTestVariable(_engine, "output");
+
             string mathExpression = "{num1} + {num2}";
 
             _mathCalculation.v_MathExpression = mathExpression;
@@ -56,14 +59,16 @@ namespace OpenBots.Commands.Data.Test
         public void HandlesDecimalSeparator()
         {
             _mathCalculation = new MathCalculationCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             string num1 = "1:10";
             string num2 = "0:50";
             string decSeparator = ":";
-            num1.StoreInUserVariable(_engine, "{num1}");
-            num2.StoreInUserVariable(_engine, "{num2}");
-            decSeparator.StoreInUserVariable(_engine, "{decSeparator}");
+            num1.CreateTestVariable(_engine, "num1");
+            num2.CreateTestVariable(_engine, "num2");
+            decSeparator.CreateTestVariable(_engine, "decSeparator");
+            "unassigned".CreateTestVariable(_engine, "output");
+
             string mathExpression = "{num1} + {num2}";
 
             _mathCalculation.v_MathExpression = mathExpression;

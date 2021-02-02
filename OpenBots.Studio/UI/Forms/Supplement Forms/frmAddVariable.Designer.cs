@@ -49,7 +49,7 @@
             this.lblDefineName.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineName.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineName.ForeColor = System.Drawing.Color.White;
-            this.lblDefineName.Location = new System.Drawing.Point(13, 59);
+            this.lblDefineName.Location = new System.Drawing.Point(16, 59);
             this.lblDefineName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineName.Name = "lblDefineName";
             this.lblDefineName.Size = new System.Drawing.Size(210, 28);
@@ -80,7 +80,6 @@
             this.txtVariableName.Name = "txtVariableName";
             this.txtVariableName.Size = new System.Drawing.Size(566, 32);
             this.txtVariableName.TabIndex = 16;
-            this.txtVariableName.Text = "{}";
             // 
             // lblDefineNameDescription
             // 
@@ -92,7 +91,7 @@
             this.lblDefineNameDescription.Name = "lblDefineNameDescription";
             this.lblDefineNameDescription.Size = new System.Drawing.Size(571, 79);
             this.lblDefineNameDescription.TabIndex = 17;
-            this.lblDefineNameDescription.Text = "Define a name for your variable, such as {vNumber}.  Remember to enclose the name" +
+            this.lblDefineNameDescription.Text = "Define a name for your variable, such as \'vNumber\'.  Remember to enclose the name" +
     " within brackets in order to use the variable in commands.";
             // 
             // lblDefineDefaultValueDescriptor
@@ -105,8 +104,8 @@
             this.lblDefineDefaultValueDescriptor.Name = "lblDefineDefaultValueDescriptor";
             this.lblDefineDefaultValueDescriptor.Size = new System.Drawing.Size(571, 53);
             this.lblDefineDefaultValueDescriptor.TabIndex = 20;
-            this.lblDefineDefaultValueDescriptor.Text = "Optionally, define a default value for the variable. The variable will represent" +
-    " this value until changed during the task by a task command.";
+            this.lblDefineDefaultValueDescriptor.Text = "Optionally, define a default value for the variable. The variable will represent " +
+    "this value until changed during the task by a task command.";
             // 
             // txtDefaultValue
             // 
@@ -143,7 +142,7 @@
             this.uiBtnOk.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnOk.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOk.Image")));
             this.uiBtnOk.IsMouseOver = false;
-            this.uiBtnOk.Location = new System.Drawing.Point(10, 370);
+            this.uiBtnOk.Location = new System.Drawing.Point(10, 375);
             this.uiBtnOk.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnOk.Name = "uiBtnOk";
             this.uiBtnOk.Size = new System.Drawing.Size(60, 60);
@@ -162,7 +161,7 @@
             this.uiBtnCancel.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnCancel.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCancel.Image")));
             this.uiBtnCancel.IsMouseOver = false;
-            this.uiBtnCancel.Location = new System.Drawing.Point(70, 370);
+            this.uiBtnCancel.Location = new System.Drawing.Point(70, 375);
             this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnCancel.Name = "uiBtnCancel";
             this.uiBtnCancel.Size = new System.Drawing.Size(60, 60);
@@ -186,7 +185,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(609, 444);
+            this.ClientSize = new System.Drawing.Size(609, 449);
             this.Controls.Add(this.lblVariableNameError);
             this.Controls.Add(this.uiBtnOk);
             this.Controls.Add(this.uiBtnCancel);
@@ -197,7 +196,7 @@
             this.Controls.Add(this.txtVariableName);
             this.Controls.Add(this.lblDefineName);
             this.Controls.Add(this.lblHeader);
-            this.Icon = OpenBots.Properties.Resources.OpenBots_ico;
+            this.Icon = global::OpenBots.Properties.Resources.OpenBots_ico;
             this.Margin = new System.Windows.Forms.Padding(5);
             this.MinimumSize = new System.Drawing.Size(627, 491);
             this.Name = "frmAddVariable";

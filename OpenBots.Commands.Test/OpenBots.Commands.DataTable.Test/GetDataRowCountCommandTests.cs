@@ -15,7 +15,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void getsDataRowCount()
         {
             _getDataRowCount = new GetDataRowCountCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             // Set up existing data table for the command
             Data.DataTable inputTable = new Data.DataTable();
@@ -23,7 +23,8 @@ namespace OpenBots.Commands.DataTable.Test
             DataRow row1 = inputTable.NewRow();
             row1["Column1"] = "data1";
             inputTable.Rows.Add(row1);
-            inputTable.StoreInUserVariable(_engine, "{inputTable}");
+            inputTable.CreateTestVariable(_engine, "inputTable");
+            "unassigned".CreateTestVariable(_engine, "outputCount");
 
             _getDataRowCount.v_DataTable = "{inputTable}";
             _getDataRowCount.v_OutputUserVariableName = "{outputCount}";

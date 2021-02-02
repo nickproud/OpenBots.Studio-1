@@ -16,10 +16,10 @@ namespace OpenBots.Commands.Dictionary.Test
         public void AddsDictionaryItem()
         {
             _addDictionaryItem = new AddDictionaryItemCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             Dictionary<string, string> inputDict = new Dictionary<string, string>();
-            inputDict.StoreInUserVariable(_engine, "{inputDict}");
+            inputDict.CreateTestVariable(_engine, "inputDict");
 
             Data.DataTable inputTable = new Data.DataTable();
             inputTable.Columns.Add("Keys");
@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Dictionary.Test
             row1["Keys"] = "key1";
             row1["Values"] = "val1";
             inputTable.Rows.Add(row1);
-            inputTable.StoreInUserVariable(_engine, "{inputTable}");
+            inputTable.CreateTestVariable(_engine, "inputTable");
 
             _addDictionaryItem.v_DictionaryName = "{inputDict}";
             _addDictionaryItem.v_ColumnNameDataTable = (Data.DataTable)"{inputTable}".ConvertUserVariableToObject(_engine);

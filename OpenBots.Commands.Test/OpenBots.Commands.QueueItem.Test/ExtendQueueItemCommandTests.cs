@@ -17,10 +17,13 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void ExtendQueueItem()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
             _extendQueueItem = new ExtendQueueItemCommand();
+
+            "unassigned".CreateTestVariable(_engine, "output");
+            "unassigned".CreateTestVariable(_engine, "vQueueItem");
 
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "ExtendQueueItemTest";
@@ -56,7 +59,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void HandlesNonExistentTransactionKey()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _extendQueueItem = new ExtendQueueItemCommand();
 
             var queueItemDict = new Dictionary<string, object>()
@@ -72,6 +75,7 @@ namespace OpenBots.Commands.QueueItem.Test
                 { "LockedUntilUTC", DateTime.UtcNow.AddHours(1) }
             };
 
+            "unassigned".CreateTestVariable(_engine, "vQueueItem");
             _extendQueueItem.v_QueueItem = "{vQueueItem}";
             queueItemDict.StoreInUserVariable(_engine, _extendQueueItem.v_QueueItem);
 

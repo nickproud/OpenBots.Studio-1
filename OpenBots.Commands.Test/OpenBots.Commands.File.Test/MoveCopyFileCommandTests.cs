@@ -17,14 +17,14 @@ namespace OpenBots.Commands.File.Test
         [InlineData("Copy File")]
         public void CopiesAndMovesFile(string operation)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _moveCopyFile = new MoveCopyFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toCompress.txt");
             string destinationPath = Path.Combine(projectDirectory, @"Resources\moveCopyDestination");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
-            destinationPath.StoreInUserVariable(_engine, "{destinationPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
+            destinationPath.CreateTestVariable(_engine, "destinationPath");
 
             _moveCopyFile.v_OperationType = operation;
             _moveCopyFile.v_SourceFilePath = "{inputPath}";
@@ -48,14 +48,14 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesInvalidFilepath()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _moveCopyFile = new MoveCopyFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\nofile.txt");
             string destinationPath = Path.Combine(projectDirectory, @"Resources\moveCopyDestination");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
-            destinationPath.StoreInUserVariable(_engine, "{destinationPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
+            destinationPath.CreateTestVariable(_engine, "destinationPath");
 
             _moveCopyFile.v_OperationType = "Copy File";
             _moveCopyFile.v_SourceFilePath = "{inputPath}";
@@ -68,7 +68,7 @@ namespace OpenBots.Commands.File.Test
 
         private void resetMoveTest(string initialDirectory, string movedFile)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _moveCopyFile = new MoveCopyFileCommand();
 
             _moveCopyFile.v_OperationType = "Move File";

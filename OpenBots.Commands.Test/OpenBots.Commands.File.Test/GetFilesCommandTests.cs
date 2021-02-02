@@ -22,12 +22,13 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void GetsFiles()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getFiles = new GetFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getFiles.v_SourceFolderPath = "{inputPath}";
             _getFiles.v_OutputUserVariableName = "{output}";
@@ -54,12 +55,13 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesInvalidFilepath()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getFiles = new GetFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toDelete.txt");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getFiles.v_SourceFolderPath = "{inputPath}";
             _getFiles.v_OutputUserVariableName = "{output}";

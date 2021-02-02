@@ -14,11 +14,12 @@ namespace OpenBots.Commands.Dictionary.Test
         public void GetsDictionaryValue()
         {
             _getDictionaryValue = new GetDictionaryValueCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             Dictionary<string, string> inputDictionary = new Dictionary<string, string>();
             inputDictionary.Add("key1", "val1");
-            inputDictionary.StoreInUserVariable(_engine, "{inputDictionary}");
+            inputDictionary.CreateTestVariable(_engine, "inputDictionary");
+            "unassigned".CreateTestVariable(_engine, "outputValue");
 
             _getDictionaryValue.v_InputDictionary = "{inputDictionary}";
             _getDictionaryValue.v_Key = "key1";

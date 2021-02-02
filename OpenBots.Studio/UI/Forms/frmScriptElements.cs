@@ -38,7 +38,7 @@ namespace OpenBots.UI.Forms
 
             //add each item to parent
             foreach (var item in elements)
-                AddUserElementNode(parentNode, "<" + item.ElementName + ">", item.ElementValue);
+                AddUserElementNode(parentNode, item.ElementName, item.ElementValue);
 
             //add parent to treeview
             tvScriptElements.Nodes.Add(parentNode);
@@ -80,10 +80,12 @@ namespace OpenBots.UI.Forms
 
                 ScriptElements.Add(new ScriptElement
                 {
-                    ElementName = addElementForm.txtElementName.Text.Replace("<", "").Replace(">", ""),
+                    ElementName = addElementForm.txtElementName.Text,
                     ElementValue = addElementForm.ElementValueDT
                 });
             }
+
+            addElementForm.Dispose();
         }
 
         private void tvScriptElements_DoubleClick(object sender, EventArgs e)
@@ -118,7 +120,7 @@ namespace OpenBots.UI.Forms
                 elementName = tvScriptElements.SelectedNode.Text;
             }
 
-            element = ScriptElements.Where(x => x.ElementName == elementName.Replace("<", "").Replace(">", "")).FirstOrDefault();
+            element = ScriptElements.Where(x => x.ElementName == elementName).FirstOrDefault();
             elementValue = element.ElementValue;
 
             //create element editing form
@@ -134,6 +136,8 @@ namespace OpenBots.UI.Forms
                 parentNode.Remove();
                 AddUserElementNode(_userElementParentNode, addElementForm.txtElementName.Text, addElementForm.ElementValueDT);
             }
+
+            addElementForm.Dispose();
         }
 
         private void AddUserElementNode(TreeNode parentNode, string elementName, DataTable elementValue)
@@ -200,7 +204,7 @@ namespace OpenBots.UI.Forms
                     parentNode = tvScriptElements.SelectedNode;
 
                 //remove parent node
-                string elementName = parentNode.Text.Replace("<", "").Replace(">", "");
+                string elementName = parentNode.Text;
                 ScriptElement element = ScriptElements.Where(x => x.ElementName == elementName).FirstOrDefault();
                 ScriptElements.Remove(element);
                 parentNode.Remove();

@@ -15,6 +15,7 @@
 using OpenBots.Core.Enums;
 using OpenBots.Core.UI.Forms;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.Supplement_Forms
@@ -29,6 +30,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             InitializeComponent();
 
             lblMessage.Text = message;
+            lblMessage.MaximumSize = new Size(pnlMessage.Size.Width - 30, 0);
+
             Text = title;
             switch (dialogType)
             {
@@ -40,7 +43,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 case DialogType.OkOnly:
                     uiBtnCancel.Hide();
                     break;
-
+                //actually DialogType.CancelOnly if there were one
+                case DialogType.OkCancel:
+                    uiBtnOk.Hide();
+                    uiBtnCancel.Hide();
+                    break;
                 default:
                     break;
             }

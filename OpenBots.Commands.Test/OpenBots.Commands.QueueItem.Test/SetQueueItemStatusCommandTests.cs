@@ -17,7 +17,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void SetSuccessfulStatus()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
             string name = "SuccessfulQueueItem";
@@ -28,6 +28,7 @@ namespace OpenBots.Commands.QueueItem.Test
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
+            "unassigned".CreateTestVariable(_engine, "vQueueItem");
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem);
             _setQueueItem.v_QueueItemStatusType = "Successful";
@@ -42,7 +43,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void SetFailedShouldRetryStatus()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
             string name = "NewQueueItem";
@@ -53,6 +54,7 @@ namespace OpenBots.Commands.QueueItem.Test
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
+            "unassigned".CreateTestVariable(_engine, "vQueueItem");
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem);
             _setQueueItem.v_QueueItemStatusType = "Failed - Should Retry";
@@ -67,7 +69,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void SetFailedFatallyStatus()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
             string name = "FailedQueueItem";
@@ -78,6 +80,7 @@ namespace OpenBots.Commands.QueueItem.Test
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
+            "unassigned".CreateTestVariable(_engine, "vQueueItem");
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem);
             _setQueueItem.v_QueueItemStatusType = "Failed - Fatal";
@@ -92,7 +95,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void HandlesNonExistentTransactionKey()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
             var queueItemDict = new Dictionary<string, object>()
@@ -108,6 +111,7 @@ namespace OpenBots.Commands.QueueItem.Test
                 { "LockedUntilUTC", DateTime.UtcNow.AddHours(1) }
             };
 
+            "unassigned".CreateTestVariable(_engine, "vQueueItem");
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             _setQueueItem.v_QueueItemStatusType = "Successful";
             queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem);
@@ -132,6 +136,7 @@ namespace OpenBots.Commands.QueueItem.Test
         public Dictionary<string, object> WorkQueueItem()
         {
             _workQueueItem = new WorkQueueItemCommand();
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";

@@ -15,12 +15,12 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void DeletesFile()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _deleteFile = new DeleteFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toDelete.txt");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             _deleteFile.v_SourceFilePath = "{inputPath}";
 
@@ -34,12 +34,12 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesBadFilepath()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _deleteFile = new DeleteFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             _deleteFile.v_SourceFilePath = "{inputPath}";
 

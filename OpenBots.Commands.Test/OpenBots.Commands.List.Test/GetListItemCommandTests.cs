@@ -14,13 +14,14 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void GetsStringListItem()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getListItem = new GetListItemCommand();
 
             List<string> list = new List<string>();
             list.Add("item1");
             list.Add("item2");
-            list.StoreInUserVariable(_engine, "{inputList}");
+            list.CreateTestVariable(_engine, "inputList");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getListItem.v_ListName = "{inputList}";
             _getListItem.v_ItemIndex = "1";
@@ -34,7 +35,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void GetsDataTableListItem()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getListItem = new GetListItemCommand();
 
             List<DataTable> list = new List<DataTable>();
@@ -44,7 +45,8 @@ namespace OpenBots.Commands.List.Test
             item2.Columns.Add("d2col");
             list.Add(item1);
             list.Add(item2);
-            list.StoreInUserVariable(_engine, "{inputList}");
+            list.CreateTestVariable(_engine, "inputList");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getListItem.v_ListName = "{inputList}";
             _getListItem.v_ItemIndex = "1";

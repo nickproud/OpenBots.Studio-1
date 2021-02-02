@@ -22,15 +22,16 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void CompressesFiles()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _compressFiles = new CompressFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             string outputPath = Environment.CurrentDirectory;
-            outputPath.StoreInUserVariable(_engine, "{outputPath}");
+            outputPath.CreateTestVariable(_engine, "outputPath");
+            "unassigned".CreateTestVariable(_engine, "output");
             
             _compressFiles.v_DirectoryPathOrigin = "{inputPath}";
             _compressFiles.v_PathDestination = "{outputPath}";
@@ -46,18 +47,19 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void CompressesFilesWithPassword()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _compressFiles = new CompressFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             string outputPath = Environment.CurrentDirectory;
-            outputPath.StoreInUserVariable(_engine, "{outputPath}");
+            outputPath.CreateTestVariable(_engine, "outputPath");
 
             string password = "testPassword";
-            password.StoreInUserVariable(_engine, "{testPassword}");
+            password.CreateTestVariable(_engine, "testPassword");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _compressFiles.v_DirectoryPathOrigin = "{inputPath}";
             _compressFiles.v_Password = "{testPassword}";
@@ -74,15 +76,16 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesInvalidPath()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _compressFiles = new CompressFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toCompress.txt");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             string outputPath = Environment.CurrentDirectory;
-            outputPath.StoreInUserVariable(_engine, "{outputPath}");
+            outputPath.CreateTestVariable(_engine, "outputPath");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _compressFiles.v_DirectoryPathOrigin = "{inputPath}";
             _compressFiles.v_PathDestination = "{outputPath}";

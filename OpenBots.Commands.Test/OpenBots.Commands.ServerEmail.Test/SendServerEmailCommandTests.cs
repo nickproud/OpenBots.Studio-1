@@ -23,7 +23,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         [Fact]
         public void SendServerEmailWithAttachment()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         [Fact]
         public void SendServerEmailWithMultipleAttachments()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -95,7 +95,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         [Fact]
         public void SendServerEmailWithNoAttachments()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -124,7 +124,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         [Fact]
         public void SendServerEmailWithAccountName()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -152,7 +152,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         [Fact]
         public void SendServerEmailWithOneCC()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -181,7 +181,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         [Fact]
         public void SendServerEmailWithOneBCC()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -210,7 +210,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         [Fact]
         public void SendServerEmaiWithMultipleCC()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -239,7 +239,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         [Fact]
         public void SendServerEmailWithMultipleBCC()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -268,7 +268,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         [Fact]
         public void HandlesNonExistentRecipients()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
 
             _sendServerEmail.v_AccountName = "";
@@ -285,6 +285,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         public MailItem GetEmail(string filePath, string subject)
         {
             _getEmail = new GetOutlookEmailsCommand();
+            "unassigned".CreateTestVariable(_engine, "vTestEmail");
 
             var emailMessageList = new List<MailItem>();
             Application outlookApp = new Application();
@@ -320,6 +321,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         {
             _deleteEmail = new DeleteOutlookEmailCommand();
 
+            "unassigned".CreateTestVariable(_engine, "vMailItem");
             _deleteEmail.v_MailItem = "{vMailItem}";
             emailMessage.StoreInUserVariable(_engine, _deleteEmail.v_MailItem);
             _deleteEmail.v_DeleteReadOnly = "Yes";

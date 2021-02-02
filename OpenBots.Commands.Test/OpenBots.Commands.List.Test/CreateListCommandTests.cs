@@ -30,8 +30,10 @@ namespace OpenBots.Commands.List.Test
         [InlineData("IWebElement")]
         public void CreatesList(string listType)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _createList = new CreateListCommand();
+
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _createList.v_ListType = listType;
             _createList.v_OutputUserVariableName = "{output}";
@@ -68,13 +70,14 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void RejectsIncorrectValue()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _createList = new CreateListCommand();
 
             int item1 = 1;
             bool item2 = false;
-            item1.StoreInUserVariable(_engine, "{item1}");
-            item2.StoreInUserVariable(_engine, "{item2}");
+            item1.CreateTestVariable(_engine, "item1");
+            item2.CreateTestVariable(_engine, "item2");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _createList.v_ListType = "DataTable";
             _createList.v_ListItems = "{item1},{item2}";

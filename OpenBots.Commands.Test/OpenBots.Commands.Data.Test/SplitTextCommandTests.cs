@@ -14,12 +14,13 @@ namespace OpenBots.Commands.Data.Test
         public void SplitsText()
         {
             _splitText = new SplitTextCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             string inputText = "test text";
             string splitCharacter = " ";
-            inputText.StoreInUserVariable(_engine, "{input}");
-            splitCharacter.StoreInUserVariable(_engine, "{splitChar}");
+            inputText.CreateTestVariable(_engine, "input");
+            splitCharacter.CreateTestVariable(_engine, "splitChar");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _splitText.v_InputText = "{input}";
             _splitText.v_SplitCharacter = "{splitChar}";
@@ -36,7 +37,7 @@ namespace OpenBots.Commands.Data.Test
         public void SplitsTextWithMultipleDelimiters()
         {
             _splitText = new SplitTextCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             string inputText = "test text:with!multiple;delimiters";
             List<string> splitCharacters = new List<string>();
@@ -44,8 +45,9 @@ namespace OpenBots.Commands.Data.Test
             splitCharacters.Add(":");
             splitCharacters.Add("!");
             splitCharacters.Add(";");
-            inputText.StoreInUserVariable(_engine, "{input}");
-            splitCharacters.StoreInUserVariable(_engine, "{splitChar}");
+            inputText.CreateTestVariable(_engine, "input");
+            splitCharacters.CreateTestVariable(_engine, "splitChar");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _splitText.v_InputText = "{input}";
             _splitText.v_SplitCharacter = "{splitChar}";

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ZipFile = ICSharpCode.SharpZipLib.Zip.ZipFile;
 
@@ -20,30 +21,13 @@ namespace OpenBots.Core.Project
         public Dictionary<string, string> Dependencies { get; set; }
 
         [JsonIgnore]
-        public List<string> DefaultCommands = new List<string>()
+        public static List<string> DefaultCommandGroups = new List<string>()
         {
-            "Data",
-            "DataTable",
-            "Dictionary",
-            "Engine",
-            "ErrorHandling",
-            "Excel",
-            "File",
-            "Folder",
-            "If",
-            "Image",
-            "Input",
-            "List",
-            "Loop",
-            "Misc",
-            "Outlook",
-            "Process",
-            "Switch",
-            "Task",
-            "TextFile",
-            "Variable",
-            "WebBrowser",
-            "Window",
+            "Core",
+            "DataManipulation",
+            "Microsoft",
+            "SystemAutomation",
+            "UIAutomation"
         };
 
         public Project(string projectName)
@@ -52,10 +36,9 @@ namespace OpenBots.Core.Project
             ProjectName = projectName;
             Main = "Main.json";
             Version = Application.ProductVersion;
-            Dependencies = new Dictionary<string, string>();
 
-            foreach (string commandSet in DefaultCommands)
-                Dependencies.Add($"OpenBots.Commands.{commandSet}", "1.2.1");
+            var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
+            Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
         }
 
         public void SaveProject(string scriptPath)
@@ -78,7 +61,10 @@ namespace OpenBots.Core.Project
 
                 //If requirements are met, a project.config is created/updated
                 if (dirName == ProjectName && File.Exists(configPath))
+                {
+                    Version = Application.ProductVersion;
                     File.WriteAllText(configPath, JsonConvert.SerializeObject(this));
+                }
             }
             catch (Exception)
             {
@@ -103,16 +89,29 @@ namespace OpenBots.Core.Project
             {
                 string projectJSONString = File.ReadAllText(configFilePath);
                 var project = JsonConvert.DeserializeObject<Project>(projectJSONString);
+                string dialogMessageFirstLine = "";
 
                 if (!projectJSONString.Contains("Version"))
                 {
-                    var dialogResult = MessageBox.Show($"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.0.0" +
+                    dialogMessageFirstLine = $"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.0.0.";
+                }
+                //if project version is lower than than 1.3.0.0
+                else if (new Version(project.Version).CompareTo(new Version("1.3.0.0")) < 0)
+                {
+                    dialogMessageFirstLine = $"Attempting to open a 'project.config' from OpenBots Studio version {project.Version}.";
+
+                    var dialogResult = MessageBox.Show($"{dialogMessageFirstLine} " +
                                                    $"Would you like to attempt to convert this config file to {Application.ProductVersion}? " +
                                                    "\n\nWarning: Once a 'project.config' has been converted, it cannot be undone.",
                                                    "Convert 'project.config'", MessageBoxButtons.YesNo);
 
                     if (dialogResult == DialogResult.Yes)
+                    {
+                        project.Version = Application.ProductVersion;
+                        var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
+                        project.Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
                         File.WriteAllText(configFilePath, JsonConvert.SerializeObject(project));
+                    }                        
                 }
                     
                 return project;

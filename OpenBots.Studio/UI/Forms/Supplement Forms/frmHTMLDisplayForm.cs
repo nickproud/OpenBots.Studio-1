@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.Supplement_Forms
 {
-    [System.Runtime.InteropServices.ComVisibleAttribute(true)]
+    [System.Runtime.InteropServices.ComVisible(true)]
     public partial class frmHTMLDisplayForm : UIForm
     {
         public string TemplateHTML { get; set; }
@@ -24,7 +24,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             TopMost = true;
         }
 
-        public List<ScriptVariable> GetVariablesFromHTML(string tagSearch)
+        public List< ScriptVariable> GetVariablesFromHTML(string tagSearch)
         {
             var varList = new List<ScriptVariable>();
 

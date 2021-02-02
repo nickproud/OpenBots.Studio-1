@@ -2,7 +2,6 @@
 using OpenBots.Core.Command;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -26,6 +25,7 @@ namespace OpenBots.Nuget
 
                     if (existingAssembly == null && name != "RestSharp" && name != "WebDriver" && name != "OpenBots.Core")
                     {
+                        //has to be LoadFile because package manager can't update/uninstall assemblies if LoadFrom
                         var assembly = Assembly.LoadFile(path);
                         existingAssemblies.Add(assembly);
                     }
@@ -39,7 +39,6 @@ namespace OpenBots.Nuget
             }
 
             ContainerBuilder builder = new ContainerBuilder();
-
             builder.RegisterAssemblyTypes(existingAssemblies.ToArray())
                                                    .Where(t => t.IsAssignableTo<ScriptCommand>())
                                                    .Named<ScriptCommand>(t => t.Name)

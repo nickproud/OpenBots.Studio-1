@@ -22,7 +22,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void filtersDataTable()
         {
             _filterDataTable = new FilterDataTableCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             Data.DataTable tableToFilter = new Data.DataTable();
             tableToFilter.Columns.Add("col1");
@@ -36,9 +36,10 @@ namespace OpenBots.Commands.DataTable.Test
             row2["col2"] = "data2";
             tableToFilter.Rows.Add(row2);
 
-            "col1".StoreInUserVariable(_engine, "{col1}");
-            "id1".StoreInUserVariable(_engine, "{id1}");
-            tableToFilter.StoreInUserVariable(_engine, "{tableToFilter}");
+            "col1".CreateTestVariable(_engine, "col1");
+            "id1".CreateTestVariable(_engine, "id1");
+            tableToFilter.CreateTestVariable(_engine, "tableToFilter");
+            "unassigned".CreateTestVariable(_engine, "outputTable");
 
             _filterDataTable.v_DataTable = "{tableToFilter}";
             _filterDataTable.v_SearchItem = "({col1},{id1})";

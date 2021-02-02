@@ -20,9 +20,11 @@ namespace OpenBots.Commands.Outlook.Test
         [Fact]
         public void CopiesOutlookEmail()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
             _moveCopyOutlookEmail = new MoveCopyOutlookEmailCommand();
+
+            "unassigned".CreateTestVariable(_engine, "emails");
 
             _getOutlookEmails.v_SourceFolder = "TestInput";
             _getOutlookEmails.v_Filter = "[Subject] = 'toCopy'";
@@ -37,9 +39,9 @@ namespace OpenBots.Commands.Outlook.Test
 
             var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             MailItem originalEmail = emails[0];
-            originalEmail.StoreInUserVariable(_engine, "{originalEmail}");
+            originalEmail.CreateTestVariable(_engine, "originalEmail");
             string destFolder = "MovedMail";
-            destFolder.StoreInUserVariable(_engine, "{destFolder}");
+            destFolder.CreateTestVariable(_engine, "destFolder");
 
             _moveCopyOutlookEmail.v_MailItem = "{originalEmail}";
             _moveCopyOutlookEmail.v_DestinationFolder = "{destFolder}";
@@ -71,9 +73,11 @@ namespace OpenBots.Commands.Outlook.Test
         [Fact]
         public void MovesOutlookEmail()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
             _moveCopyOutlookEmail = new MoveCopyOutlookEmailCommand();
+
+            "unassigned".CreateTestVariable(_engine, "emails");
 
             _getOutlookEmails.v_SourceFolder = "Inbox";
             _getOutlookEmails.v_Filter = "[Subject] = 'toMove'";
@@ -88,9 +92,9 @@ namespace OpenBots.Commands.Outlook.Test
 
             var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             MailItem email = emails[0];
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
             string destFolder = "MovedMail";
-            destFolder.StoreInUserVariable(_engine, "{destFolder}");
+            destFolder.CreateTestVariable(_engine, "destFolder");
 
             _moveCopyOutlookEmail.v_MailItem = "{email}";
             _moveCopyOutlookEmail.v_DestinationFolder = "{destFolder}";
@@ -123,6 +127,8 @@ namespace OpenBots.Commands.Outlook.Test
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
 
+            "unassigned".CreateTestVariable(_engine, "emails");
+
             _getOutlookEmails.v_SourceFolder = "MovedMail";
             _getOutlookEmails.v_Filter = "[Subject] = 'toCopy'";
             _getOutlookEmails.v_GetUnreadOnly = "No";
@@ -136,7 +142,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             MailItem email = emails[0];
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";
@@ -149,6 +155,8 @@ namespace OpenBots.Commands.Outlook.Test
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
             _sendOutlookEmail = new SendOutlookEmailCommand();
+
+            "unassigned".CreateTestVariable(_engine, "emails");
 
             _getOutlookEmails.v_SourceFolder = "MovedMail";
             _getOutlookEmails.v_Filter = "[Subject] = 'toMove'";
@@ -163,7 +171,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
             MailItem email = emails[0];
-            email.StoreInUserVariable(_engine, "{email}");
+            email.CreateTestVariable(_engine, "email");
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";

@@ -19,11 +19,11 @@ namespace OpenBots.Commands.DataTable.Test
         [ClassData(typeof(NullTestData))]
         public void HandlesNullDataTables(Data.DataTable dt1, Data.DataTable dt2)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.StoreInUserVariable(_engine, "{dt1}");
-            dt2.StoreInUserVariable(_engine, "{dt2}");
+            dt1.CreateTestVariable(_engine, "dt1");
+            dt2.CreateTestVariable(_engine, "dt2");
 
             _mergeDataTable.v_SourceDataTable = "{dt1}";
             _mergeDataTable.v_DestinationDataTable = "{dt2}";
@@ -36,11 +36,11 @@ namespace OpenBots.Commands.DataTable.Test
         [ClassData(typeof(IncorrectTypeTestData))]
         public void HandlesIncorrectTypeInput(object dt1, object dt2)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.StoreInUserVariable(_engine, "{dt1}");
-            dt2.StoreInUserVariable(_engine, "{dt2}");
+            dt1.CreateTestVariable(_engine, "dt1");
+            dt2.CreateTestVariable(_engine, "dt2");
 
             _mergeDataTable.v_SourceDataTable = "{dt1}";
             _mergeDataTable.v_DestinationDataTable = "{dt2}";
@@ -53,11 +53,11 @@ namespace OpenBots.Commands.DataTable.Test
         [ClassData(typeof(TableTestData))]
         public void TableDataIsEqual(Data.DataTable dt1, Data.DataTable dt2, string schema)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.StoreInUserVariable(_engine, "{dt1}");
-            dt2.StoreInUserVariable(_engine, "{dt2}");
+            dt1.CreateTestVariable(_engine, "dt1");
+            dt2.CreateTestVariable(_engine, "dt2");
 
             switch (schema)
             {

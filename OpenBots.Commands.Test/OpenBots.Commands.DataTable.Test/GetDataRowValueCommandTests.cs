@@ -17,7 +17,7 @@ namespace OpenBots.Commands.DataTable.Test
         public void getsDataRowValue(string option)
         {
             _getDataRowValue = new GetDataRowValueCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             Data.DataTable inputTable = new Data.DataTable();
             inputTable.Columns.Add("col1");
@@ -25,7 +25,8 @@ namespace OpenBots.Commands.DataTable.Test
             row["col1"] = "data11";
             inputTable.Rows.Add(row);
 
-            row.StoreInUserVariable(_engine, "{inputRow}");
+            row.CreateTestVariable(_engine, "inputRow");
+            "unassigned".CreateTestVariable(_engine, "outputValue");
 
             _getDataRowValue.v_DataRow = "{inputRow}";
             _getDataRowValue.v_Option = option;

@@ -27,12 +27,17 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             if (userInputString.Length < 2)
                 return userInputString;
 
-            var variableList = engine.VariableList;
-            var systemVariables = Common.Common.GenerateSystemVariables();
+            var variableList = engine.AutomationEngineContext.Variables;
+            var systemVariables = CommonMethods.GenerateSystemVariables();
+            var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new ScriptVariable { 
+                                                                                        VariableName = arg.ArgumentName, 
+                                                                                        VariableValue = arg.ArgumentValue })
+                                                                                    .ToList();
 
             var variableSearchList = new List<ScriptVariable>();
             variableSearchList.AddRange(variableList);
             variableSearchList.AddRange(systemVariables);
+            variableSearchList.AddRange(argumentsAsVariablesList);
 
             //variable markers
             var startVariableMarker = "{";
@@ -122,6 +127,22 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
                             userInputString = userInputString.Replace(searchVariable, cellItem);
                         }
+                        else if (varCheck.VariableValue?.GetType().Name == typeof(KeyValuePair<,>).Name && potentialVariable.Split('.').Length == 2)
+                        {
+                            //get data from a keyvaluepair using Key/Value
+                            string resultType = potentialVariable.Split('.')[1].ConvertUserVariableToString(engine, false);
+
+                            dynamic pair;
+                            string resultItem;
+                            pair = varCheck.VariableValue;
+                            if (resultType.ToLower() == "key")
+                                resultItem = pair.Key;
+                            else if(resultType.ToLower() == "value")
+                                resultItem = StringMethods.ConvertObjectToString(pair.Value);
+                            else
+                                throw new DataException("Only use of Key and Value is allowed using dot operater with KeyValuePair");
+                            userInputString = userInputString.Replace(searchVariable, resultItem);
+                        }
                     }
                     else if (!requiresMarkers)
                     {
@@ -136,18 +157,22 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static object ConvertUserVariableToObject(this string variableName, IAutomationEngineInstance engine)
         {
             ScriptVariable requiredVariable;
+            ScriptArgument requiredArgument;
 
             if (variableName.StartsWith("{") && variableName.EndsWith("}"))
             {
                 //reformat and attempt
                 var reformattedVariable = variableName.Replace("{", "").Replace("}", "");
-                requiredVariable = engine.VariableList.Where(var => var.VariableName == reformattedVariable).FirstOrDefault();
+                requiredVariable = engine.AutomationEngineContext.Variables.Where(var => var.VariableName == reformattedVariable).FirstOrDefault();
+                requiredArgument = engine.AutomationEngineContext.Arguments.Where(arg => arg.ArgumentName == reformattedVariable).FirstOrDefault();
             }
             else
-                throw new Exception("Variable markers '{}' missing. Variable '" + variableName + "' could not be found.");
+                throw new Exception("Variable/Argument markers '{}' missing. Variable/Argument '" + variableName + "' could not be found.");
 
             if (requiredVariable != null)
                 return requiredVariable.VariableValue;
+            else if (requiredArgument != null)
+                return requiredArgument.ArgumentValue;
             else
                 return null;
         }
@@ -208,20 +233,21 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             else
                 throw new Exception("Variable markers '{}' missing. '" + variableName + "' is an invalid output variable name.");
 
-            if (engine.VariableList.Any(f => f.VariableName == variableName))
+            if (engine.AutomationEngineContext.Variables.Any(f => f.VariableName == variableName))
             {
                 //update existing variable
-                var existingVariable = engine.VariableList.FirstOrDefault(f => f.VariableName == variableName);
-                existingVariable.VariableName = variableName;
+                var existingVariable = engine.AutomationEngineContext.Variables.FirstOrDefault(f => f.VariableName == variableName);
                 existingVariable.VariableValue = variableValue;
+            }
+            else if (engine.AutomationEngineContext.Arguments.Any(f => f.ArgumentName == variableName))
+            {
+                //update existing argument
+                var existingArgument = engine.AutomationEngineContext.Arguments.FirstOrDefault(f => f.ArgumentName == variableName);
+                existingArgument.ArgumentValue = variableValue;
             }
             else
             {
-                //add new variable
-                var newVariable = new ScriptVariable();
-                newVariable.VariableName = variableName;
-                newVariable.VariableValue = variableValue;
-                engine.VariableList.Add(newVariable);
+                throw new ArgumentException($"No variable/argument with the name '{variableName}' was found");
             }
         }       
 
@@ -239,6 +265,14 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             string strValue = new NetworkCredential(string.Empty, secureString).Password;
             return strValue;
+        }
+
+        public static void CreateTestVariable(this object variableValue, IAutomationEngineInstance engine, string variableName)
+        {
+            ScriptVariable newVar = new ScriptVariable();
+            newVar.VariableName = variableName;
+            newVar.VariableValue = variableValue;
+            engine.AutomationEngineContext.Variables.Add(newVar);
         }
     }
 }

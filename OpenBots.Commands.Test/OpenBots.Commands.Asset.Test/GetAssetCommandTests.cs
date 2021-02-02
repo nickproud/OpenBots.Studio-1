@@ -23,8 +23,10 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void GetsTextAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
+
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getAsset.v_AssetName = "testTextAsset";
             _getAsset.v_AssetType = "Text";
@@ -39,8 +41,10 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void GetsNumberAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
+
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getAsset.v_AssetName = "testNumberAsset";
             _getAsset.v_AssetType = "Number";
@@ -57,8 +61,10 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void GetsJSONAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
+
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getAsset.v_AssetName = "testJSONAsset";
             _getAsset.v_AssetType = "JSON";
@@ -75,7 +81,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void GetsFileAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
@@ -96,8 +102,10 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void HandlesNonexistentAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
+
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getAsset.v_AssetName = "noAsset";
             _getAsset.v_AssetType = "Text";

@@ -14,7 +14,7 @@ namespace OpenBots.Commands.List.Test
         [Fact]
         public void GetsListCount()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _getListCount = new GetListCountCommand();
 
             List<string> inputList = new List<string>();
@@ -22,7 +22,8 @@ namespace OpenBots.Commands.List.Test
             inputList.Add("2");
             inputList.Add("3");
 
-            inputList.StoreInUserVariable(_engine, "{inputList}");
+            inputList.CreateTestVariable(_engine, "inputList");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _getListCount.v_ListName = "{inputList}";
             _getListCount.v_OutputUserVariableName = "{output}";

@@ -1,0 +1,44 @@
+{
+  "Replace": {
+    "1\\.2\\.1\\.0": "1.3.0.0",
+    ", OpenBots\\.Commands\\.Data\"": ", OpenBots.Commands.DataManipulation",
+    ", OpenBots\\.Commands\\.DataTable": ", OpenBots.Commands.DataManipulation",
+    ", OpenBots\\.Commands\\.Dictionary": ", OpenBots.Commands.DataManipulation",
+    ", OpenBots\\.Commands\\.List": ", OpenBots.Commands.DataManipulation",
+    ", OpenBots\\.Commands\\.RegEx": ", OpenBots.Commands.DataManipulation",
+
+    ", OpenBots\\.Commands\\.Email": ", OpenBots.Commands.SystemAutomation",
+    ", OpenBots\\.Commands\\.File": ", OpenBots.Commands.SystemAutomation",
+    ", OpenBots\\.Commands\\.Folder": ", OpenBots.Commands.SystemAutomation",
+    ", OpenBots\\.Commands\\.TextFile": ", OpenBots.Commands.SystemAutomation",
+    ", OpenBots\\.Commands\\.System": ", OpenBots.Commands.SystemAutomation",
+
+    ", OpenBots\\.Commands\\.Image": ", OpenBots.Commands.UIAutomation",
+    ", OpenBots\\.Commands\\.Input": ", OpenBots.Commands.UIAutomation",
+    ", OpenBots\\.Commands\\.Process": ", OpenBots.Commands.UIAutomation",
+    ", OpenBots\\.Commands\\.WebBrowser": ", OpenBots.Commands.UIAutomation",
+    ", OpenBots\\.Commands\\.Window": ", OpenBots.Commands.UIAutomation",
+
+    ", OpenBots\\.Commands\\.Excel": ", OpenBots.Commands.Microsoft",
+    ", OpenBots\\.Commands\\.Outlook": ", OpenBots.Commands.Microsoft",
+    ", OpenBots\\.Commands\\.Word": ", OpenBots.Commands.Microsoft",
+
+    ", OpenBots\\.Commands\\.Engine": ", OpenBots.Commands.Core",
+    ", OpenBots\\.Commands\\.ErrorHandling": ", OpenBots.Commands.Core",
+    ", OpenBots\\.Commands\\.If": ", OpenBots.Commands.Core",
+    ", OpenBots\\.Commands\\.Loop": ", OpenBots.Commands.Core",
+    ", OpenBots\\.Commands\\.Misc": ", OpenBots.Commands.Core",
+    ", OpenBots\\.Commands\\.SecureData": ", OpenBots.Commands.Core",
+    ", OpenBots\\.Commands\\.Switch": ", OpenBots.Commands.Core",
+    ", OpenBots\\.Commands\\.Task": ", OpenBots.Commands.Core",
+    ", OpenBots\\.Commands\\.Variable": ", OpenBots.Commands.Core",
+
+    ", OpenBots\\.Commands\\.Asset": ", OpenBots.Commands.Server",
+    ", OpenBots\\.Commands\\.Credential": ", OpenBots.Commands.Server",
+    ", OpenBots\\.Commands\\.QueueItem": ", OpenBots.Commands.Server",
+    ", OpenBots\\.Commands\\.ServerEmail": ", OpenBots.Commands.Server",
+
+    "ExcelActivateCellCommand": "ExcelActivateRangeCommand",
+    "Activate Cell": "Activate Range"
+  }
+}

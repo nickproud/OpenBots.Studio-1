@@ -17,14 +17,15 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void UpdatesTextAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
-            string assetName = "testUpdateTextAsset";
+            string assetName = "testTextAsset";
             string newAsset = "newText";
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            newAsset.StoreInUserVariable(_engine, "{newAsset}");
+            assetName.CreateTestVariable(_engine, "assetName");
+            newAsset.CreateTestVariable(_engine, "newAsset");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = "Text";
@@ -42,20 +43,21 @@ namespace OpenBots.Commands.Asset.Test
             string outputAsset = "{output}".ConvertUserVariableToString(_engine);
             Assert.Equal("newText", outputAsset);
 
-            resetAsset(assetName, "oldText", "Text");
+            resetAsset(assetName, "testText", "Text");
         }
 
         [Fact]
         public void UpdatesNumberAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
             string assetName = "testNumberAsset";
             string newAsset = "70";
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            newAsset.StoreInUserVariable(_engine, "{newAsset}");
+            assetName.CreateTestVariable(_engine, "assetName");
+            newAsset.CreateTestVariable(_engine, "newAsset");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = "Number";
@@ -79,14 +81,15 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void UpdatesJSONAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
             string assetName = "testJSONAsset";
             string newAsset = "{ \"text\": \"newText\" }";
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            newAsset.StoreInUserVariable(_engine, "{newAsset}");
+            assetName.CreateTestVariable(_engine, "assetName");
+            newAsset.CreateTestVariable(_engine, "newAsset");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = "JSON";
@@ -110,7 +113,7 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void UpdatesFileAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
@@ -118,12 +121,12 @@ namespace OpenBots.Commands.Asset.Test
             string filepath = Path.Combine(projectDirectory, @"Resources\");
             string assetName = "testUpdateFileAsset";
             string newAsset = filepath + @"Upload\newtest.txt";
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            newAsset.StoreInUserVariable(_engine, "{newAsset}");
+            assetName.CreateTestVariable(_engine, "assetName");
+            newAsset.CreateTestVariable(_engine, "newAsset");
 
             _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = "File";
-            _updateAsset.v_AssetFilePath = newAsset;
+            _updateAsset.v_AssetFilePath = "{newAsset}";
 
             _updateAsset.RunCommand(_engine);
 
@@ -145,14 +148,14 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void HandlesNonexistentAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
             string assetName = "noAsset";
             string newAsset = "newText";
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            newAsset.StoreInUserVariable(_engine, "{newAsset}");
+            assetName.CreateTestVariable(_engine, "{assetName}");
+            newAsset.CreateTestVariable(_engine, "{newAsset}");
 
             _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = "Text";
@@ -164,7 +167,7 @@ namespace OpenBots.Commands.Asset.Test
 
         private void resetAsset(string assetName, string assetVal, string type)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
 
             _updateAsset.v_AssetName = assetName;

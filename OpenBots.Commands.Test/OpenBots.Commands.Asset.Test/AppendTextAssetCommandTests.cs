@@ -15,15 +15,17 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void AppendsTextAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _appendTextAsset = new AppendTextAssetCommand();
             _getAsset = new GetAssetCommand();
 
             string assetName = "testUpdateTextAsset";
             string toAppend = "textToAppend";
 
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            toAppend.StoreInUserVariable(_engine, "{toAppend}");
+            assetName.CreateTestVariable(_engine, "assetName");
+            toAppend.CreateTestVariable(_engine, "toAppend");
+            "unassigned".CreateTestVariable(_engine, "initialText");
+            "unassigned".CreateTestVariable(_engine, "updatedAsset");
 
             _getAsset.v_AssetName = assetName;
             _getAsset.v_AssetType = "Text";
@@ -53,21 +55,21 @@ namespace OpenBots.Commands.Asset.Test
         [Fact]
         public void HandlesNonexistentAsset()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _appendTextAsset = new AppendTextAssetCommand();
 
             string assetName = "doesNotExist";
             string toAppend = "textToAppend";
 
-            assetName.StoreInUserVariable(_engine, "{assetName}");
-            toAppend.StoreInUserVariable(_engine, "{toAppend}");
+            assetName.CreateTestVariable(_engine, "{assetName}");
+            toAppend.CreateTestVariable(_engine, "{toAppend}");
 
             Assert.Throws<DataException>(() => _appendTextAsset.RunCommand(_engine));
         }
 
         private void resetAsset(string assetName, string assetVal, string type)
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
 
             _updateAsset.v_AssetName = assetName;

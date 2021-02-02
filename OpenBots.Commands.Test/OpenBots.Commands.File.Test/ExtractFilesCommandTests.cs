@@ -15,15 +15,16 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void ExtractsFiles()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _extractFiles = new ExtractFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\compressed.zip");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             string outputPath = Environment.CurrentDirectory;
-            outputPath.StoreInUserVariable(_engine, "{outputPath}");
+            outputPath.CreateTestVariable(_engine, "outputPath");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _extractFiles.v_FilePathOrigin = "{inputPath}";
             _extractFiles.v_PathDestination = "{outputPath}";
@@ -45,18 +46,19 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void ExtractsFilesWithPassword()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _extractFiles = new ExtractFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\compressedWithPassword.zip");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             string outputPath = Environment.CurrentDirectory;
-            outputPath.StoreInUserVariable(_engine, "{outputPath}");
+            outputPath.CreateTestVariable(_engine, "outputPath");
 
             string password = "testPassword";
-            password.StoreInUserVariable(_engine, "{testPassword}");
+            password.CreateTestVariable(_engine, "testPassword");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _extractFiles.v_FilePathOrigin = "{inputPath}";
             _extractFiles.v_Password = "{testPassword}";
@@ -80,15 +82,16 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesNonDirectoryOutputTarget()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _extractFiles = new ExtractFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\compressed.zip");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             string outputPath = inputPath;
-            outputPath.StoreInUserVariable(_engine, "{outputPath}");
+            outputPath.CreateTestVariable(_engine, "outputPath");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _extractFiles.v_FilePathOrigin = "{inputPath}";
             _extractFiles.v_PathDestination = "{outputPath}";
@@ -100,15 +103,16 @@ namespace OpenBots.Commands.File.Test
         [Fact]
         public void HandlesNonZipInput()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _extractFiles = new ExtractFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toCompress.txt");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             string outputPath = Environment.CurrentDirectory;
-            outputPath.StoreInUserVariable(_engine, "{outputPath}");
+            outputPath.CreateTestVariable(_engine, "outputPath");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _extractFiles.v_FilePathOrigin = "{inputPath}";
             _extractFiles.v_PathDestination = "{outputPath}";

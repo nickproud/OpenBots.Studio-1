@@ -17,14 +17,14 @@ namespace OpenBots.Commands.DataTable.Test
         public void updatesDataRowValue(string option, string searchVal, string updateVal)
         {
             _updateDataRowValue = new UpdateDataRowValueCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             Data.DataTable inputTable = new Data.DataTable();
             inputTable.Columns.Add("firstname");
             DataRow row = inputTable.NewRow();
             row["firstname"] = "john";
             inputTable.Rows.Add(row);
-            row.StoreInUserVariable(_engine, "{inputRow}");
+            row.CreateTestVariable(_engine, "inputRow");
 
             _updateDataRowValue.v_DataRow = "{inputRow}";
             _updateDataRowValue.v_Option = option;

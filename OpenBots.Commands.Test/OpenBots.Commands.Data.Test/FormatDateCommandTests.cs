@@ -15,13 +15,14 @@ namespace OpenBots.Commands.Data.Test
         public void FormatsDate()
         {
             _formatDate = new FormatDateCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             DateTime inputDate = DateTime.Now;
             string dateFormat = "MM/dd/yy, hh:mm:ss";
 
-            inputDate.StoreInUserVariable(_engine, "{inputDate}");
-            dateFormat.StoreInUserVariable(_engine, "{dateFormat}");
+            inputDate.CreateTestVariable(_engine, "inputDate");
+            dateFormat.CreateTestVariable(_engine, "dateFormat");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _formatDate.v_InputData = "{inputDate}";
             _formatDate.v_ToStringFormat = "{dateFormat}";
@@ -37,13 +38,13 @@ namespace OpenBots.Commands.Data.Test
         public void HandlesInvalidInput()
         {
             _formatDate = new FormatDateCommand();
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
 
             int inputDate = 1;
             string dateFormat = "MM/dd/yy, hh:mm:ss";
 
-            inputDate.StoreInUserVariable(_engine, "{inputDate}");
-            dateFormat.StoreInUserVariable(_engine, "{dateFormat}");
+            inputDate.CreateTestVariable(_engine, "{inputDate}");
+            dateFormat.CreateTestVariable(_engine, "{dateFormat}");
 
             _formatDate.v_InputData = "{inputDate}";
             _formatDate.v_ToStringFormat = "{dateFormat}";

@@ -12,15 +12,16 @@ namespace OpenBots.Commands.Data.Test
         [Fact]
         public void CreatesSubstring()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _substringCommand = new SubstringCommand();
 
             string input = "test text";
             string startIndex = "5";
             string length = "4";
-            input.StoreInUserVariable(_engine, "{input}");
-            startIndex.StoreInUserVariable(_engine, "{start}");
-            length.StoreInUserVariable(_engine, "{length}");
+            input.CreateTestVariable(_engine, "input");
+            startIndex.CreateTestVariable(_engine, "start");
+            length.CreateTestVariable(_engine, "length");
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _substringCommand.v_InputText = "{input}";
             _substringCommand.v_StartIndex = "{start}";

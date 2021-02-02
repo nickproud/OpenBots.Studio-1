@@ -20,9 +20,10 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void WorkQueueItemNoAttachments()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "WorkQueueItemNoAttachmentTest";
@@ -50,7 +51,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void WorkQueueItemOneAttachment()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
@@ -58,6 +59,7 @@ namespace OpenBots.Commands.QueueItem.Test
             string filePath = Path.Combine(projectDirectory, @"Resources\");
             string fileName = "testFile.txt";
             string attachment = Path.Combine(filePath, @"Download\", fileName);
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "WorkQueueItemAttachmentTest";
@@ -92,7 +94,7 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void WorkQueueItemMultipleAttachments()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
 
@@ -102,6 +104,7 @@ namespace OpenBots.Commands.QueueItem.Test
             string fileName2 = "testFile2.txt";
             string attachment1 = Path.Combine(filePath, @"Download\", fileName1);
             string attachment2 = Path.Combine(filePath, @"Download\", fileName2);
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "WorkQueueItemAttachmentsTest";
@@ -139,9 +142,10 @@ namespace OpenBots.Commands.QueueItem.Test
         [Fact]
         public void HandlesNonExistentQueue()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
+            "unassigned".CreateTestVariable(_engine, "output");
 
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "WorkQueueItemJsonTest";

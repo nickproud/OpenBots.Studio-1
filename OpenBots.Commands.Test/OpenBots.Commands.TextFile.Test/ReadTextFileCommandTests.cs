@@ -14,11 +14,13 @@ namespace OpenBots.Commands.TextFile.Test
         [Fact]
         public void ReadsTextFromFile()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _readTextFile = new ReadTextFileCommand();
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string filePath = Path.Combine(projectDirectory, @"Resources\readtest.txt");
-            filePath.StoreInUserVariable(_engine, "{filepath}");
+            filePath.CreateTestVariable(_engine, "filepath");
+            "unassigned".CreateTestVariable(_engine, "test");
+
             _readTextFile.v_OutputUserVariableName = "{test}";
             _readTextFile.v_FilePath = "{filepath}";
             _readTextFile.RunCommand(_engine);
@@ -31,8 +33,9 @@ namespace OpenBots.Commands.TextFile.Test
         [Fact]
         public void HandlesNonexistentFile()
         {
-            _engine = new AutomationEngineInstance(null, null);
+            _engine = new AutomationEngineInstance(null);
             _readTextFile = new ReadTextFileCommand();
+            "unassigned".CreateTestVariable(_engine, "test");
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             _readTextFile.v_FilePath = Path.Combine(projectDirectory, @"Resources\doesNotExist.txt");
             _readTextFile.v_OutputUserVariableName = "{test}";
