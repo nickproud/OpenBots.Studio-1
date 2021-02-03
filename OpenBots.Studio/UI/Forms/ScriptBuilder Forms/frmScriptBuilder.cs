@@ -313,16 +313,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //handle action bar preference
             if (_appSettings.ClientSettings.UseSlimActionBar)
             {
-                tlpControls.RowStyles[1].SizeType = SizeType.Absolute;
-                tlpControls.RowStyles[1].Height = 0;
-
                 tlpControls.RowStyles[0].Height = _slimBarHeight;
+                tlpControls.RowStyles[1].Height = 0;              
             }
             else
             {
-                tlpControls.RowStyles[0].SizeType = SizeType.Absolute;
                 tlpControls.RowStyles[0].Height = 0;
-
                 tlpControls.RowStyles[1].Height = _thickBarHeight;
             }
 
