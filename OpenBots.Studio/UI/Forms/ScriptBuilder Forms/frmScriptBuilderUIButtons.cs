@@ -802,10 +802,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             if (frmManager.DialogResult == DialogResult.OK)
             {
-                tpbLoadingSpinner.Visible = true;
-
                 ScriptProject.Dependencies = ScriptProject.Dependencies.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
+
+                NotifySync("Loading package assemblies...", Color.White);
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
@@ -813,8 +813,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 
                 LoadCommands(this);
                 ReloadAllFiles();
-
-                tpbLoadingSpinner.Visible = false;
             }
 
             frmManager.Dispose();
@@ -838,7 +836,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
 
                 //show spinner and disable package manager related buttons
-                tpbLoadingSpinner.Visible = true;
+                NotifySync("Installing and loading package assemblies...", Color.White);
+
                 installDefaultToolStripMenuItem.Enabled = false;
                 packageManagerToolStripMenuItem.Enabled = false;
                 uiBtnPackageManager.Enabled = false;
@@ -877,7 +876,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             installDefaultToolStripMenuItem.Enabled = true;
             packageManagerToolStripMenuItem.Enabled = true;
             uiBtnPackageManager.Enabled = true;
-            tpbLoadingSpinner.Visible = false;
         }
         #endregion
 

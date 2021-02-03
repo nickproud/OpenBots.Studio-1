@@ -398,13 +398,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             Program.SplashForm.Close();
 
-            tpbLoadingSpinner.Visible = true;
-
             var result = AddProject();
             if (result != DialogResult.Abort)
                 Notify("Welcome! Press 'Add Command' to get started!", Color.White);
-
-            tpbLoadingSpinner.Visible = false;
         }
 
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)
@@ -466,6 +462,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _notificationList.Add(new Tuple<string, Color>(notificationText, notificationColor));
         }
 
+        public void NotifySync(string notificationText, Color notificationColor)
+        {
+            Notify(notificationText, notificationColor);
+            tmrNotify_Tick(null, null);
+            pnlStatus.Refresh();
+        }
+        
         private void ShowNotification(string textToDisplay, Color textColor)
         {
             _notificationText = textToDisplay;
@@ -701,16 +704,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void uiBtnReloadCommands_Click(object sender, EventArgs e)
         {
-            tpbLoadingSpinner.Visible = true;
-
+            NotifySync("Loading package assemblies...", Color.White);
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
             _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
             AContainer = _builder.Build();
             LoadCommands(this);
             ReloadAllFiles();
-
-            tpbLoadingSpinner.Visible = false;
         }
 
         private void tlpCommands_EnabledChanged(object sender, EventArgs e)
