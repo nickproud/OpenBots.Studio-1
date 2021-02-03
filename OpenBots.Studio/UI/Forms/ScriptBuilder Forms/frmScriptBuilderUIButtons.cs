@@ -746,6 +746,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _appSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
 
             newSettings.Dispose();
+
+            LoadActionBarPreference();
         }
 
         private void showSearchBarToolStripMenuItem_Click(object sender, EventArgs e)

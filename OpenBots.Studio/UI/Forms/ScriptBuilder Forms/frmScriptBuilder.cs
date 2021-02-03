@@ -202,6 +202,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private int _currentIndex = -1;
         private UIListView _selectedTabScriptActions;
         private Point _lastClickPosition;
+        private float _slimBarHeight;
+        private float _thickBarHeight;
         #endregion
 
         #region Form Events
@@ -272,18 +274,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _appSettings = new ApplicationSettings();
             _appSettings = _appSettings.GetOrCreateApplicationSettings();
 
-            //handle action bar preference
-            if (_appSettings.ClientSettings.UseSlimActionBar)
-            {
-                tlpControls.RowStyles[1].SizeType = SizeType.Absolute;
-                tlpControls.RowStyles[1].Height = 0;
-            }
-            else
-            {
-                tlpControls.RowStyles[0].SizeType = SizeType.Absolute;
-                tlpControls.RowStyles[0].Height = 0;
-            }
+            _slimBarHeight = tlpControls.RowStyles[0].Height;
+            _thickBarHeight = tlpControls.RowStyles[1].Height;
 
+            LoadActionBarPreference();
+            
             //get scripts folder
             var rpaScriptsFolder = Folders.GetFolder(FolderType.ScriptsFolder);
 
@@ -310,7 +305,28 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //set listview column size
             frmScriptBuilder_SizeChanged(null, null);
-            this.Refresh();
+            Refresh();
+        }
+
+        private void LoadActionBarPreference()
+        {
+            //handle action bar preference
+            if (_appSettings.ClientSettings.UseSlimActionBar)
+            {
+                tlpControls.RowStyles[1].SizeType = SizeType.Absolute;
+                tlpControls.RowStyles[1].Height = 0;
+
+                tlpControls.RowStyles[0].Height = _slimBarHeight;
+            }
+            else
+            {
+                tlpControls.RowStyles[0].SizeType = SizeType.Absolute;
+                tlpControls.RowStyles[0].Height = 0;
+
+                tlpControls.RowStyles[1].Height = _thickBarHeight;
+            }
+
+            Refresh();
         }
 
         private void LoadCommands(frmScriptBuilder scriptBuilder)
