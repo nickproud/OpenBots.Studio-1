@@ -24,9 +24,9 @@ namespace OpenBots.Commands.List.Test
             string index = "0";
             string item = "item3";
 
-            inputList.StoreInUserVariable(_engine, "{inputList}");
-            index.StoreInUserVariable(_engine, "{index}");
-            item.StoreInUserVariable(_engine, "{item}");
+            inputList.CreateTestVariable(_engine, "inputList");
+            index.CreateTestVariable(_engine, "index");
+            item.CreateTestVariable(_engine, "item");
 
             _updateListItem.v_ListName = "{inputList}";
             _updateListItem.v_ListIndex = "{index}";
@@ -55,9 +55,9 @@ namespace OpenBots.Commands.List.Test
             DataTable newitem = new DataTable();
             newitem.Columns.Add("d3col");
 
-            inputList.StoreInUserVariable(_engine, "{inputList}");
-            index.StoreInUserVariable(_engine, "{index}");
-            newitem.StoreInUserVariable(_engine, "{newitem}");
+            inputList.CreateTestVariable(_engine, "inputList");
+            index.CreateTestVariable(_engine, "index");
+            newitem.CreateTestVariable(_engine, "newitem");
 
             _updateListItem.v_ListName = "{inputList}";
             _updateListItem.v_ListIndex = "{index}";
@@ -81,9 +81,9 @@ namespace OpenBots.Commands.List.Test
             inputList.Add(item1);
             string index = "0";
 
-            inputList.StoreInUserVariable(_engine, "{inputList}");
-            index.StoreInUserVariable(_engine, "{index}");
-            newItem.StoreInUserVariable(_engine, "{item}");
+            inputList.CreateTestVariable(_engine, "inputList");
+            index.CreateTestVariable(_engine, "index");
+            newItem.CreateTestVariable(_engine, "item");
 
             _updateListItem.v_ListName = "{inputList}";
             _updateListItem.v_ListIndex = "{index}";

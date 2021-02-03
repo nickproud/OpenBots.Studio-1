@@ -130,6 +130,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         uiVariableArgumentTabs.Visible = false;
                         splitContainerScript.Panel2Collapsed = true;
+                        tpProject.Controls[0].Enabled = false;
+                        tpCommands.Controls[0].Enabled = false;
+                        tlpControls.Controls[0].Enabled = false;
+
+                        foreach (TabPage tab in uiScriptTabControl.TabPages)
+                            tab.Controls[0].Enabled = false;
+
                         uiScriptTabControl.AllowDrop = false;
                     }
                     catch (Exception)
@@ -146,8 +153,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         {
                             dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                             dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-                            splitContainerScript.Panel2Collapsed = false;
+                            splitContainerScript.Panel2Collapsed = false;                           
+                            tpProject.Controls[0].Enabled = true;
+                            tpCommands.Controls[0].Enabled = true;
+                            tlpControls.Controls[0].Enabled = true;
+
+                            foreach (TabPage tab in uiScriptTabControl.TabPages)
+                                tab.Controls[0].Enabled = true;
                         }
+
                         uiVariableArgumentTabs.Visible = true;
                         uiScriptTabControl.AllowDrop = true;
                     }
@@ -199,12 +213,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //rendering for variable/argument tabs
             dgvVariables.AutoGenerateColumns = false;
             dgvArguments.AutoGenerateColumns = false;
+
+            //vertical control splitter default location
+            splitContainerScript.SplitterDistance = (int)(splitContainerScript.Size.Height * 0.7);
+            //horizontal control splitter default location
+            splitContainerStudioControls.SplitterDistance = (int)(splitContainerStudioControls.Size.Width * 0.2);
+
             direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
 
             if (!Directory.Exists(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder)))
                 Directory.CreateDirectory(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder));
 
-            _builder = new ContainerBuilder();
+            _builder = new ContainerBuilder();            
         }
 
         private void UpdateWindowTitle()
@@ -290,12 +310,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //set listview column size
             frmScriptBuilder_SizeChanged(null, null);
+            this.Refresh();
         }
 
         private void LoadCommands(frmScriptBuilder scriptBuilder)
         {
             //load all commands           
-            scriptBuilder._automationCommands = TypeMethods.GenerateCommands(AContainer);
+            scriptBuilder._automationCommands = TypeMethods.GenerateAutomationCommands(AContainer);
 
             //instantiate and populate display icons for commands
             scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
@@ -718,8 +739,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else
                 Notify($"Could not find 'project.config' for {senderLink.Tag}", Color.Red);
         }
-
-        #endregion        
+        #endregion
     }
 }
 

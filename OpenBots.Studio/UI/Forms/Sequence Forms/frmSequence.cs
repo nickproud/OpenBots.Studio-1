@@ -68,6 +68,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             //rendering for variable/argument tabs
             dgvVariables.AutoGenerateColumns = false;
             dgvArguments.AutoGenerateColumns = false;
+
+            //vertical control splitter default location
+            splitContainerScript.SplitterDistance = (int)(splitContainerScript.Size.Height * 0.7);
+            //horizontal control splitter default location
+            splitContainerStudioControls.SplitterDistance = (int)(splitContainerStudioControls.Size.Width * 0.2);
+
             direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
         }
 
@@ -95,7 +101,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         public void LoadCommands()
         {
             //load all commands           
-            _automationCommands = TypeMethods.GenerateCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
+            _automationCommands = TypeMethods.GenerateAutomationCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
 
             //instantiate and populate display icons for commands
             _uiImages = UIImage.UIImageList(_automationCommands);

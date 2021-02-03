@@ -1,7 +1,8 @@
-﻿using OpenBots.Core.Common;
-using OpenBots.Core.Script;
+﻿using OpenBots.Core.Script;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -23,7 +24,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _existingVarArgSearchList = new List<string>();
                 _existingVarArgSearchList.AddRange(_scriptArguments.Select(arg => arg.ArgumentName).ToList());
                 _existingVarArgSearchList.AddRange(_scriptVariables.Select(var => var.VariableName).ToList());
-                _existingVarArgSearchList.AddRange(Common.GenerateSystemVariables().Select(var => var.VariableName).ToList());
+                _existingVarArgSearchList.AddRange(CommonMethods.GenerateSystemVariables().Select(var => var.VariableName).ToList());
             }
             catch (Exception ex)
             {
@@ -152,6 +153,46 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
+        private void dgvVariables_SelectionChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                DataGridView dgv = (DataGridView)sender;
+
+                var dgvBindingList = (BindingList<ScriptVariable>)dgv.DataSource;
+                var nullScriptVariable = dgvBindingList.Where(x => string.IsNullOrEmpty(x.VariableName)).FirstOrDefault();
+
+                if (nullScriptVariable != null && dgvBindingList.Count > 1)
+                    dgvBindingList.Remove(nullScriptVariable);
+
+            }
+            catch (Exception ex)
+            {
+                //datagridview event failure
+                Console.WriteLine(ex);
+            }
+        }
+
+        private void dgvArguments_SelectionChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                DataGridView dgv = (DataGridView)sender;
+
+                var dgvBindingList = (BindingList<ScriptArgument>)dgv.DataSource;
+                var nullScriptVariable = dgvBindingList.Where(x => string.IsNullOrEmpty(x.ArgumentName)).FirstOrDefault();
+
+                if (nullScriptVariable != null && dgvBindingList.Count > 1)
+                    dgvBindingList.Remove(nullScriptVariable);
+
+            }
+            catch (Exception ex)
+            {
+                //datagridview event failure
+                Console.WriteLine(ex);
+            }
+        }
+
         private void dgvArguments_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
         {
             try
@@ -175,15 +216,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     DataGridView dgv = (DataGridView)sender;
                     DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells[2];
 
-                    //Sets value cell to read only if the argument direction is set to Out
-                    if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.Out)
+                    if (cb.Value != null)
                     {
-                        dgv.Rows[e.RowIndex].Cells[1].Value = null;
-                        dgv.Rows[e.RowIndex].Cells[1].ReadOnly = true;
-                    }
-                        
-                    else if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.In)
-                        dgv.Rows[e.RowIndex].Cells[1].ReadOnly = false;
+                        //Sets value cell to read only if the argument direction is set to Out
+                        if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.Out)
+                        {
+                            dgv.Rows[e.RowIndex].Cells[1].Value = null;
+                            dgv.Rows[e.RowIndex].Cells[1].ReadOnly = true;
+                        }
+
+                        else if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.In)
+                            dgv.Rows[e.RowIndex].Cells[1].ReadOnly = false;
+                    }                    
                 }
             }
             catch (Exception ex)

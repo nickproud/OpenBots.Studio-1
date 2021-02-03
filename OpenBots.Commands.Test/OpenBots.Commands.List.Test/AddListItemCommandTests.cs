@@ -28,8 +28,8 @@ namespace OpenBots.Commands.List.Test
             List<string> stringList = new List<string>();
             string itemToAdd = "item1";
 
-            stringList.StoreInUserVariable(_engine, "{list}");
-            itemToAdd.StoreInUserVariable(_engine, "{itemToAdd}");
+            stringList.CreateTestVariable(_engine, "list");
+            itemToAdd.CreateTestVariable(_engine, "itemToAdd");
 
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";
@@ -50,8 +50,8 @@ namespace OpenBots.Commands.List.Test
             DataTable itemToAdd = new DataTable();
             itemToAdd.Columns.Add("first column");
 
-            stringList.StoreInUserVariable(_engine, "{list}");
-            itemToAdd.StoreInUserVariable(_engine, "{itemToAdd}");
+            stringList.CreateTestVariable(_engine, "list");
+            itemToAdd.CreateTestVariable(_engine, "itemToAdd");
 
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";
@@ -71,8 +71,8 @@ namespace OpenBots.Commands.List.Test
             List<DataTable> stringList = new List<DataTable>();
             string itemToAdd = "newitem";
 
-            stringList.StoreInUserVariable(_engine, "{list}");
-            itemToAdd.StoreInUserVariable(_engine, "{itemToAdd}");
+            stringList.CreateTestVariable(_engine, "list");
+            itemToAdd.CreateTestVariable(_engine, "itemToAdd");
 
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";

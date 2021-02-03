@@ -1,23 +1,23 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Properties;
+using OpenBots.Core.Script;
 using OpenBots.Core.UI.DTOs;
+using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Properties;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
+using OpenBots.UI.Forms.Sequence_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CoreResources = OpenBots.Core.Properties.Resources;
-using System.ComponentModel;
-using OpenBots.Core.Script;
-using OpenBots.UI.Forms.Sequence_Forms;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -311,7 +311,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     editCommand.EditingCommand = currentCommand;
 
                     //create clone of current command so databinding does not affect if changes are not saved
-                    editCommand.OriginalCommand = Common.Clone(currentCommand);
+                    editCommand.OriginalCommand = CommonMethods.Clone(currentCommand);
 
                     //set variables
                     editCommand.ScriptEngineContext.Variables = _scriptVariables;
@@ -359,6 +359,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void LoadSequenceCommand(ListViewItem selectedCommandItem, ScriptCommand currentCommand)
         {
+            List<ScriptVariable> originalStudioVariables = new List<ScriptVariable>();
+            originalStudioVariables.AddRange(_scriptVariables);
+
+            List<ScriptArgument> originalStudioArguments = new List<ScriptArgument>();
+            originalStudioArguments.AddRange(_scriptArguments);
+
             //get sequence events
             ISequenceCommand sequence = currentCommand as ISequenceCommand;
             frmSequence newSequence = new frmSequence();
@@ -431,16 +437,25 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 selectedCommandItem.Text = sequence.GetDisplayValue();
 
                 //update variables/elements/arguments
-                _scriptVariables = newSequence.ScriptVariables;
-                _scriptElements = newSequence.ScriptElements;
-                _scriptArguments = newSequence.ScriptArguments;
+                _scriptVariables = newSequence.ScriptVariables.Where(x => !string.IsNullOrEmpty(x.VariableName)).ToList();
+                _scriptElements = newSequence.ScriptElements.Where(x => !string.IsNullOrEmpty(x.ElementName)).ToList();
+                _scriptArguments = newSequence.ScriptArguments.Where(x => !string.IsNullOrEmpty(x.ArgumentName)).ToList();
+
+                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+            }
+            else
+            {
+                _scriptVariables = originalStudioVariables;
+                _scriptArguments = originalStudioArguments;
 
                 dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                 dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
             }
 
             //add to parent
-            newSequence.MoveToParentCommands.ForEach(x => AddCommandToListView(x));
+            List<ScriptCommand> movedCommands = CommonMethods.Clone(newSequence.MoveToParentCommands);
+            movedCommands.ForEach(x => AddCommandToListView(x));
 
             //dispose and force collection
             newSequence.Dispose();
@@ -516,7 +531,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 foreach (ListViewItem item in _rowsSelectedForCopy)
                 {
-                    dynamic duplicatedCommand = Common.Clone(item.Tag);
+                    dynamic duplicatedCommand = CommonMethods.Clone(item.Tag);
                     duplicatedCommand.GenerateID();
                     _selectedTabScriptActions.Items.Insert(destinationIndex, CreateScriptCommandListViewItem(duplicatedCommand));
                     destinationIndex += 1;

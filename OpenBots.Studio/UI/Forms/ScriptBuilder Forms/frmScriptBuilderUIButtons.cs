@@ -157,7 +157,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
 
                     //get deserialized script
-                    Script deserializedScript = Script.DeserializeFile(filePath, AContainer);
+                    EngineContext engineContext = new EngineContext()
+                    {
+                        FilePath = filePath,
+                        Container = AContainer
+                    };
+                    Script deserializedScript = Script.DeserializeFile(engineContext);
 
                     //reinitialize
                     _selectedTabScriptActions.Items.Clear();
@@ -187,14 +192,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     FileInfo scriptFileInfo = new FileInfo(_scriptFilePath);
                     uiScriptTabControl.SelectedTab.Text = scriptFileInfo.Name.Replace(".json", "");
-                                          
+
                     if (!isRunTaskCommand)
                     {
                         dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
                         dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-    
+
                         Notify("Script Loaded Successfully!", Color.White);
-                    }                   
+                    }
+                    else
+                        _selectedTabScriptActions.Enabled = false;
                 }
                 catch (Exception ex)
                 {
@@ -241,6 +248,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private bool SaveToFile(bool saveAs)
         {
             bool isSuccessfulSave = false;
+
+            dgvVariables.EndEdit();
+            dgvArguments.EndEdit();
+
             if (_selectedTabScriptActions.Items.Count == 0)
             {
                 Notify("You must have at least 1 automation command to save.", Color.Yellow);
@@ -398,9 +409,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 EngineContext engineContext = new EngineContext
                 {
-                    Variables = _scriptVariables,
-                    Arguments = _scriptArguments,
-                    Elements = _scriptElements,
+                    Variables = _scriptVariables.Where(x => !string.IsNullOrEmpty(x.VariableName)).ToList(),
+                    Arguments = _scriptArguments.Where(x => !string.IsNullOrEmpty(x.ArgumentName)).ToList(),
+                    Elements = _scriptElements.Where(x => !string.IsNullOrEmpty(x.ElementName)).ToList(),
                     FilePath = ScriptFilePath,
                     Container = AContainer
                 };
@@ -516,7 +527,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {
                 //deserialize file
-                Script deserializedScript = Script.DeserializeFile(filePath, AContainer);
+                EngineContext engineContext = new EngineContext()
+                {
+                    FilePath = filePath,
+                    Container = AContainer
+                };
+                Script deserializedScript = Script.DeserializeFile(engineContext);
 
                 if (deserializedScript.Commands.Count == 0)
                 {
@@ -723,7 +739,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void OpenSettingsManager()
         {
             //show settings dialog
-            frmSettings newSettings = new frmSettings();
+            frmSettings newSettings = new frmSettings(AContainer);
             newSettings.ShowDialog();
 
             //reload app settings
@@ -834,7 +850,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 //unpack commands using Program Files as the source repository
                 var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
-                Dictionary<string, string> dependencies = Project.DefaultCommands.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+                Dictionary<string, string> dependencies = Project.DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
 
                 foreach (var dep in dependencies)
                     await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), 

@@ -18,7 +18,7 @@ namespace OpenBots.Core.Model.EngineModel
         public List<ScriptElement> Elements { get; set; }
         public Dictionary<string, object> AppInstances { get; set; }
         public IfrmScriptEngine ScriptEngine { get; set; }
-
+        public bool IsTest { get; set; } = false;
         public EngineContext()
         {
 

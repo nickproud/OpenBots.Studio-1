@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Common;
+using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
@@ -36,15 +36,22 @@ namespace OpenBots.UI.CustomControls
     {
         private frmCommandEditor _currentEditor;
         private IContainer _container;
+        private string _projectPath;
+
+        //used in capture window helper
+        private CommandItemControl _inputBox;
+        private ApplicationSettings _settings;
+        private bool _minimizePreference;
 
         public CommandControls()
         {
         }
 
-        public CommandControls(frmCommandEditor editor, IContainer container)
+        public CommandControls(frmCommandEditor editor, EngineContext engineContext)
         {
             _currentEditor = editor;
-            _container = container;
+            _container = engineContext.Container;
+            _projectPath = engineContext.ProjectPath;
         }
 
         public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300)
@@ -662,7 +669,7 @@ namespace OpenBots.UI.CustomControls
 
             //get copy of user variables and append system variables, then load to listview
             var variableList = _currentEditor.ScriptEngineContext.Variables.Select(f => f.VariableName).ToList();
-            variableList.AddRange(Common.GenerateSystemVariables().Select(f => f.VariableName));
+            variableList.AddRange(CommonMethods.GenerateSystemVariables().Select(f => f.VariableName));
             newVariableSelector.lstVariables.Items.AddRange(variableList.ToArray());
 
             //get copy of user arguments, then load to listview
@@ -774,26 +781,39 @@ namespace OpenBots.UI.CustomControls
         private void ShowFileSelector(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = _projectPath;
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 CommandItemControl inputBox = (CommandItemControl)sender;
-                //currently variable insertion is only available for simply textboxes
+
                 TextBox targetTextbox = (TextBox)inputBox.Tag;
-                //concat variable name with brackets [vVariable] as engine searches for the same
-                targetTextbox.Text = ofd.FileName;
+
+                string filePath = ofd.FileName;
+
+                if (filePath.StartsWith(_projectPath))
+                    filePath = filePath.Replace(_projectPath, "{ProjectPath}");
+
+                targetTextbox.Text = filePath;
             }
         }
 
         private void ShowFolderSelector(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.SelectedPath = _projectPath;
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {
                 CommandItemControl inputBox = (CommandItemControl)sender;
                 TextBox targetTextBox = (TextBox)inputBox.Tag;
-                targetTextBox.Text = fbd.SelectedPath;
+
+                string folderPath = fbd.SelectedPath;
+
+                if (folderPath.StartsWith(_projectPath))
+                    folderPath = folderPath.Replace(_projectPath, "{ProjectPath}");
+
+                targetTextBox.Text = folderPath;
             }
         }
 
@@ -825,8 +845,9 @@ namespace OpenBots.UI.CustomControls
                     CommandItemControl inputBox = (CommandItemControl)sender;
                     UIPictureBox targetPictureBox = (UIPictureBox)inputBox.Tag;
                     targetPictureBox.Image = imageCaptureForm.UserSelectedBitmap;
-                    var convertedImage = Common.ImageToBase64(imageCaptureForm.UserSelectedBitmap);
-                    targetPictureBox.EncodedImage = convertedImage;                   
+                    var convertedImage = CommonMethods.ImageToBase64(imageCaptureForm.UserSelectedBitmap);
+                    targetPictureBox.EncodedImage = convertedImage;
+                    targetPictureBox.DataBindings[0].WriteValue();
                 }
 
                 imageCaptureForm.Dispose();
@@ -859,7 +880,7 @@ namespace OpenBots.UI.CustomControls
 
             try
             {
-                ImageElement element = FindImageElementTest(new Bitmap(Common.Base64ToImage(imageSource)), 0.8);
+                ImageElement element = FindImageElementTest(new Bitmap(CommonMethods.Base64ToImage(imageSource)), 0.8);
                 if (element == null)
                     MessageBox.Show("Image not found");
             }
@@ -1205,22 +1226,23 @@ namespace OpenBots.UI.CustomControls
 
         private void GetWindowName(object sender, EventArgs e)
         {
-            ApplicationSettings settings = new ApplicationSettings().GetOrCreateApplicationSettings();
-            var minimizePreference = settings.ClientSettings.MinimizeToTray;
+            GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
+            _inputBox = (CommandItemControl)sender;
+            _settings = new ApplicationSettings().GetOrCreateApplicationSettings();
+            _minimizePreference = _settings.ClientSettings.MinimizeToTray;
 
-            if (minimizePreference)
+            if (_minimizePreference)
             {
-                settings.ClientSettings.MinimizeToTray = false;
-                settings.Save(settings);
+                _settings.ClientSettings.MinimizeToTray = false;
+                _settings.Save(_settings);
             }
 
             SendAllFormsToBack();
             GlobalHook.StartElementCaptureHook(true);
-            GlobalHook.MouseEvent += (se, ev) => GlobalHook_MouseEvent(se, ev, (CommandItemControl)sender, settings, minimizePreference);
+            GlobalHook.MouseEvent += GlobalHook_MouseEvent;
         }
 
-        private void GlobalHook_MouseEvent(object sender, MouseCoordinateEventArgs e, CommandItemControl inputBox = null, 
-            ApplicationSettings settings = null, bool minimizePreference = false)
+        private void GlobalHook_MouseEvent(object sender, MouseCoordinateEventArgs e)
         {
             //mouse down has occured
             if (e != null)
@@ -1235,30 +1257,36 @@ namespace OpenBots.UI.CustomControls
 
                     var windowName = process.MainWindowTitle;
 
-                    if (inputBox.Tag is ComboBox)
+                    if (string.IsNullOrEmpty(windowName))
                     {
-                        ComboBox targetComboBox = (ComboBox)inputBox.Tag;
+                        MessageBox.Show("Could not find Window", "Error");
+                        GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
+                        return;
+                    }
+
+                    if (_inputBox.Tag is ComboBox)
+                    {
+                        ComboBox targetComboBox = (ComboBox)_inputBox.Tag;
                         targetComboBox.Text = windowName;
                     }
                   
-                    if (minimizePreference)
+                    if (_minimizePreference)
                     {
-                        settings.ClientSettings.MinimizeToTray = true;
-                        settings.Save(settings);
+                        _settings.ClientSettings.MinimizeToTray = true;
+                        _settings.Save(_settings);
                     }
 
-                    GlobalHook.MouseEvent -= (se, ev) => GlobalHook_MouseEvent(se, ev);
-
+                    GlobalHook.MouseEvent -= GlobalHook_MouseEvent;                  
                 }
                 catch (Exception)
                 {                  
-                    if (minimizePreference)
+                    if (_minimizePreference)
                     {
-                        settings.ClientSettings.MinimizeToTray = true;
-                        settings.Save(settings);
+                        _settings.ClientSettings.MinimizeToTray = true;
+                        _settings.Save(_settings);
                     }
 
-                    GlobalHook.MouseEvent -= (se, ev) => GlobalHook_MouseEvent(se, ev);
+                    GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
 
                     MessageBox.Show("Could not find Window", "Error");
                 }

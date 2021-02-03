@@ -28,7 +28,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 return userInputString;
 
             var variableList = engine.AutomationEngineContext.Variables;
-            var systemVariables = Common.Common.GenerateSystemVariables();
+            var systemVariables = CommonMethods.GenerateSystemVariables();
             var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new ScriptVariable { 
                                                                                         VariableName = arg.ArgumentName, 
                                                                                         VariableValue = arg.ArgumentValue })
@@ -265,6 +265,14 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             string strValue = new NetworkCredential(string.Empty, secureString).Password;
             return strValue;
+        }
+
+        public static void CreateTestVariable(this object variableValue, IAutomationEngineInstance engine, string variableName)
+        {
+            ScriptVariable newVar = new ScriptVariable();
+            newVar.VariableName = variableName;
+            newVar.VariableValue = variableValue;
+            engine.AutomationEngineContext.Variables.Add(newVar);
         }
     }
 }

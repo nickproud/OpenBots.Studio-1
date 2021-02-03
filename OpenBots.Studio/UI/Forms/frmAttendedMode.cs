@@ -222,7 +222,7 @@ namespace OpenBots.UI.Forms
         private void uiBtnSettings_Click(object sender, EventArgs e)
         {
             //show settings dialog
-            frmSettings newSettings = new frmSettings();
+            frmSettings newSettings = new frmSettings(null);
             newSettings.ShowDialog();
 
             //reload app settings

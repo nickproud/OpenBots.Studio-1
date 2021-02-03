@@ -50,8 +50,7 @@
       <HintPath>..\..\packages\Microsoft.Web.Xdt.3.1.0\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenBots.Commands.If\bin\Debug\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
@@ -61,8 +60,8 @@
       <HintPath>..\..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Diagnostics.DiagnosticSource.5.0.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Diagnostics.DiagnosticSource.5.0.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
@@ -113,14 +112,6 @@
     <ProjectReference Include="..\..\OpenBots.Engine\OpenBots.Engine.csproj">
       <Project>{ed8f6540-c341-4b5f-8966-26a08e39af87}</Project>
       <Name>OpenBots.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.Outlook\OpenBots.Commands.Outlook.csproj">
-      <Project>{6A4AD804-FF5D-44ED-9F49-A07D6D80DA38}</Project>
-      <Name>OpenBots.Commands.Outlook</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.ServerEmail\OpenBots.Commands.ServerEmail.csproj">
-      <Project>{94ae5f8a-ecc2-4d79-a770-a0f7acc9a9b9}</Project>
-      <Name>OpenBots.Commands.ServerEmail</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

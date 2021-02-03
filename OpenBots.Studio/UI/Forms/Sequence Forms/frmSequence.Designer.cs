@@ -86,7 +86,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSequence));
-            OpenBots.Core.Utilities.FormsUtilities.Theme theme2 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.tmrNotify = new System.Windows.Forms.Timer(this.components);
             this.cmsScriptActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.enableSelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -195,7 +195,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.viewCodeToolStripMenuItem,
             this.openShortcutMenuToolStripMenuItem});
             this.cmsScriptActions.Name = "cmsScriptActions";
-            this.cmsScriptActions.Size = new System.Drawing.Size(329, 284);
+            this.cmsScriptActions.Size = new System.Drawing.Size(329, 312);
             // 
             // enableSelectedCodeToolStripMenuItem
             // 
@@ -215,6 +215,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             // 
             // addRemoveBreakpointToolStripMenuItem
             // 
+            this.addRemoveBreakpointToolStripMenuItem.Enabled = false;
             this.addRemoveBreakpointToolStripMenuItem.Name = "addRemoveBreakpointToolStripMenuItem";
             this.addRemoveBreakpointToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
             this.addRemoveBreakpointToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
@@ -527,9 +528,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.pnlPaneTabs.Name = "pnlPaneTabs";
             this.pnlPaneTabs.Size = new System.Drawing.Size(328, 711);
             this.pnlPaneTabs.TabIndex = 2;
-            theme2.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            theme2.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.pnlPaneTabs.Theme = theme2;
+            theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.pnlPaneTabs.Theme = theme1;
             // 
             // uiPaneTabs
             // 
@@ -716,6 +717,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.dgvVariables.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvVariables.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
             this.dgvVariables.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
+            this.dgvVariables.SelectionChanged += new System.EventHandler(this.dgvVariables_SelectionChanged);
             // 
             // variableName
             // 
@@ -766,6 +768,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.dgvArguments.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvArguments.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
             this.dgvArguments.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
+            this.dgvArguments.SelectionChanged += new System.EventHandler(this.dgvArguments_SelectionChanged);
             // 
             // argumentName
             // 

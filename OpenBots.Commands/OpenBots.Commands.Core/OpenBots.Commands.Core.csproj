@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D104C957-9DC9-4F97-8BCE-00B21720EF2F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenBots.Commands.Core</RootNamespace>
+    <AssemblyName>OpenBots.Commands.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=6.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.6.1.0\lib\netstandard2.0\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Portable.BouncyCastle.1.8.9\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Office.Interop.Outlook.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Outlook.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="MimeKit, Version=2.10.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MimeKit.2.10.1\lib\net48\MimeKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.File, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Serilog.Sinks.File.4.1.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Diagnostics.DiagnosticSource.5.0.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Selenium.WebDriver.3.141.0\lib\net45\WebDriver.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="OpenBots.Commands.Engine\ErrorHandlingCommand.cs" />
+    <Compile Include="OpenBots.Commands.Engine\LogMessageCommand.cs" />
+    <Compile Include="OpenBots.Commands.Engine\PauseScriptCommand.cs" />
+    <Compile Include="OpenBots.Commands.Engine\SetEngineDelayCommand.cs" />
+    <Compile Include="OpenBots.Commands.Engine\SetEnginePreferenceCommand.cs" />
+    <Compile Include="OpenBots.Commands.Engine\ShowEngineContextCommand.cs" />
+    <Compile Include="OpenBots.Commands.Engine\StopwatchCommand.cs" />
+    <Compile Include="OpenBots.Commands.ErrorHandling\BeginRetryCommand.cs" />
+    <Compile Include="OpenBots.Commands.ErrorHandling\BeginTryCommand.cs" />
+    <Compile Include="OpenBots.Commands.ErrorHandling\CatchCommand.cs" />
+    <Compile Include="OpenBots.Commands.ErrorHandling\EndRetryCommand.cs" />
+    <Compile Include="OpenBots.Commands.ErrorHandling\EndTryCommand.cs" />
+    <Compile Include="OpenBots.Commands.ErrorHandling\FinallyCommand.cs" />
+    <Compile Include="OpenBots.Commands.ErrorHandling\GetExceptionMessageCommand.cs" />
+    <Compile Include="OpenBots.Commands.ErrorHandling\RethrowCommand.cs" />
+    <Compile Include="OpenBots.Commands.ErrorHandling\ThrowCommand.cs" />
+    <Compile Include="OpenBots.Commands.If\BeginIfCommand.cs" />
+    <Compile Include="OpenBots.Commands.If\BeginMutliIfCommand.cs" />
+    <Compile Include="OpenBots.Commands.If\ElseCommand.cs" />
+    <Compile Include="OpenBots.Commands.If\EndIfCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\BeginLoopCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\BeginMultiLoopCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\EndLoopCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\ExitLoopCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\LoopCollectionCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\LoopContinuouslyCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\LoopNumberOfTimesCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\NextLoopCommand.cs" />
+    <Compile Include="OpenBots.Commands.Misc\AddCodeCommentCommand.cs" />
+    <Compile Include="OpenBots.Commands.Misc\EncryptionCommand.cs" />
+    <Compile Include="OpenBots.Commands.Misc\GetClipboardTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.Misc\SequenceCommand.cs" />
+    <Compile Include="OpenBots.Commands.Misc\SetClipboardTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.Misc\ShowMessageCommand.cs" />
+    <Compile Include="OpenBots.Commands.SecureData\NewSecureStringCommand.cs" />
+    <Compile Include="OpenBots.Commands.Switch\BeginSwitchCommand.cs" />
+    <Compile Include="OpenBots.Commands.Switch\CaseCommand.cs" />
+    <Compile Include="OpenBots.Commands.Switch\EndSwitchCommand.cs" />
+    <Compile Include="OpenBots.Commands.Task\RunTaskCommand.cs" />
+    <Compile Include="OpenBots.Commands.Task\StopCurrentTaskCommand.cs" />
+    <Compile Include="OpenBots.Commands.Variable\NewVariableCommand.cs" />
+    <Compile Include="OpenBots.Commands.Variable\SetVariableCommand.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenBots.Core\OpenBots.Core.csproj">
+      <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
+      <Name>OpenBots.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Forms\" />
+    <Folder Include="Library\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>nuget pack "$(ProjectPath)" -Properties Configuration=$(ConfigurationName) -IncludeReferencedProjects -OutputDirectory "$(ProjectDir)..\..\OpenBots.Packages"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

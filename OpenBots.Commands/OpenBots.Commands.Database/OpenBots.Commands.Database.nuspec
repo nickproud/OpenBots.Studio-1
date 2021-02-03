@@ -21,7 +21,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Debug\*.dll" target="lib\net48" />
-	<file src="bin\Debug\*.pdb" target="lib\net48" />
+	<file src="bin\Debug\OpenBots.Commands*.pdb" target="lib\net48" />
   </files>
 </package>
