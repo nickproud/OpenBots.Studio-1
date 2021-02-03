@@ -72,7 +72,10 @@ namespace OpenBots.Commands.Input
 				{
 					//store each one into context
 					foreach (var variable in variables)
-						variable.VariableValue.ToString().StoreInUserVariable(engine, variable.VariableName);
+                        if (variable.IsSecureString)
+							variable.VariableValue.ToString().GetSecureString().StoreInUserVariable(engine, variable.VariableName.ConvertStringToVariableName());
+						else
+							variable.VariableValue.ToString().StoreInUserVariable(engine, variable.VariableName.ConvertStringToVariableName());
 				}
 				else if (v_ErrorOnClose == "Yes")
 					throw new Exception("Input Form was closed by the user");
