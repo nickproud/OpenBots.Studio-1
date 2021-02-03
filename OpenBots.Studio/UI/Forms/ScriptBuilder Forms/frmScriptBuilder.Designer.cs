@@ -1194,6 +1194,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tlpProject.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpProject.Size = new System.Drawing.Size(316, 688);
             this.tlpProject.TabIndex = 1;
+            this.tlpProject.EnabledChanged += new System.EventHandler(this.tlpProject_EnabledChanged);
             // 
             // tvProject
             // 
@@ -1342,6 +1343,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tlpCommands.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpCommands.Size = new System.Drawing.Size(316, 688);
             this.tlpCommands.TabIndex = 10;
+            this.tlpCommands.EnabledChanged += new System.EventHandler(this.tlpCommands_EnabledChanged);
             // 
             // tvCommands
             // 
@@ -1559,9 +1561,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvVariablesArguments_DataBindingComplete);
             this.dgvArguments.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvArguments_DefaultValuesNeeded);
             this.dgvArguments.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
+            this.dgvArguments.SelectionChanged += new System.EventHandler(this.dgvArguments_SelectionChanged);
             this.dgvArguments.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
             this.dgvArguments.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
-            this.dgvArguments.SelectionChanged += new System.EventHandler(this.dgvArguments_SelectionChanged);
             // 
             // argumentName
             // 

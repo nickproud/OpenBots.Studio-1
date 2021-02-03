@@ -712,6 +712,20 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             tpbLoadingSpinner.Visible = false;
         }
+
+        private void tlpCommands_EnabledChanged(object sender, EventArgs e)
+        {
+            ((TreeView)tlpCommands.Controls[0]).CollapseAll();
+            ((TreeView)tlpCommands.Controls[0]).Nodes.Cast<TreeNode>().ToList().ForEach(n => n.BackColor = Color.FromArgb(59, 59, 59));
+            ((TreeView)tlpCommands.Controls[0]).Nodes.Cast<TreeNode>().ToList().ForEach(n => n.ForeColor = Color.White);
+        }
+
+        private void tlpProject_EnabledChanged(object sender, EventArgs e)
+        {
+            ((TreeView)tlpProject.Controls[0]).CollapseAll();
+            ((TreeView)tlpProject.Controls[0]).Nodes.Cast<TreeNode>().ToList().ForEach(n => n.BackColor = Color.FromArgb(59, 59, 59));
+            ((TreeView)tlpProject.Controls[0]).Nodes.Cast<TreeNode>().ToList().ForEach(n => n.ForeColor = Color.White);
+        }
         #endregion
 
         #region Link Labels
@@ -739,7 +753,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else
                 Notify($"Could not find 'project.config' for {senderLink.Tag}", Color.Red);
         }
-        #endregion
+        #endregion       
     }
 }
 
