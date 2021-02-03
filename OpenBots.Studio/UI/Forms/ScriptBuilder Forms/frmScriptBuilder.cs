@@ -466,7 +466,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             Notify(notificationText, notificationColor);
             tmrNotify_Tick(null, null);
-            pnlStatus.Refresh();
+            tlpControls.Refresh();
         }
         
         private void ShowNotification(string textToDisplay, Color textColor)
