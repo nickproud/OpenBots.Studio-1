@@ -413,6 +413,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             var result = AddProject();
             if (result != DialogResult.Abort)
                 Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+
+            TypeMethods.GenerateAllVariableTypes(AContainer);
         }
 
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)

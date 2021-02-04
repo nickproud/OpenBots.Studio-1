@@ -487,6 +487,12 @@
     <Compile Include="UI\Forms\Supplement Forms\frmPublishProject.Designer.cs">
       <DependentUpon>frmPublishProject.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Forms\Supplement Forms\frmTypes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\Supplement Forms\frmTypes.Designer.cs">
+      <DependentUpon>frmTypes.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Forms\Supplement Forms\frmUpdating.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -798,6 +804,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmPublishProject.resx">
       <DependentUpon>frmPublishProject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\Supplement Forms\frmTypes.resx">
+      <DependentUpon>frmTypes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmUpdating.resx">
       <DependentUpon>frmUpdating.cs</DependentUpon>

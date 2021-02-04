@@ -8,13 +8,14 @@ using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace OpenBots.Studio.Utilities
 {
     public static class TypeMethods
     {       
         public static List<AutomationCommand> GenerateAutomationCommands(IContainer container)
-        {
+        {          
             var commandList = new List<AutomationCommand>();
             var commandClasses = new List<Type>();
                       
@@ -58,6 +59,37 @@ namespace OpenBots.Studio.Utilities
             }
             
             return commandClasses;
+        }
+
+        public static List<Type> GenerateAllVariableTypes(IContainer container)
+        {
+            var variableTypes = new List<Type>();
+
+            List<Type> types = new List<Type>();
+            var assemList = AppDomain.CurrentDomain.GetAssemblies().ToList(); //.ForEach(a => types.AddRange(a.GetTypes()));
+            foreach (var assem in assemList)
+            {
+                try
+                {
+                    var newTypes = assem.GetTypes().Where(x => !x.IsInterface && !x.IsAbstract && !x.IsGenericType).ToList();
+                    variableTypes.AddRange(newTypes);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+            }
+
+            var typeForm = new frmTypes(variableTypes);
+            typeForm.ShowDialog();
+
+            if (typeForm.DialogResult == DialogResult.OK)
+            {
+                var type = typeForm.SelectedType;
+            }
+
+            return variableTypes;
         }
 
         public static Type GetTypeByName(IContainer container, string typeName)
