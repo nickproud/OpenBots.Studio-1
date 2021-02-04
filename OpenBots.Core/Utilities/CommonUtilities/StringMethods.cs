@@ -118,8 +118,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                         return ConvertIWebElementToString((IWebElement)obj);
                     case "System.Drawing.Bitmap":
                         return ConvertBitmapToString((Bitmap)obj);
-                    case "System.Collections.Generic.KeyValuePair":
-                        return ConvertBitmapToString((Bitmap)obj);
                     case string a when a.Contains("System.Collections.Generic.List`1[[System.String"):
                     case string b when b.Contains("System.Collections.Generic.List`1[[System.Data.DataTable"):
                     case string c when c.Contains("System.Collections.Generic.List`1[[Microsoft.Office.Interop.Outlook.MailItem"):
