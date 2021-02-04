@@ -176,6 +176,7 @@
             this.txtLocation.Name = "txtLocation";
             this.txtLocation.Size = new System.Drawing.Size(510, 32);
             this.txtLocation.TabIndex = 45;
+            this.txtLocation.TextChanged += new System.EventHandler(this.txtLocation_TextChanged);
             // 
             // lblLocalPath
             // 
