@@ -267,18 +267,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return strValue;
         }
 
-        /// <summary>
-        /// Converts string without {} to supported VariableName
-        /// </summary>
-        /// <param name="variableName">The string to be converted to VariableName</param>
-        public static string ConvertStringToVariableName(this string variableName)
-        {
-            if (!variableName.Contains("{"))
-                return "{" + variableName + "}";
-            else
-                return variableName;
-        }
-
         public static void CreateTestVariable(this object variableValue, IAutomationEngineInstance engine, string variableName)
         {
             ScriptVariable newVar = new ScriptVariable();

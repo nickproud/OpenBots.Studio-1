@@ -73,9 +73,9 @@ namespace OpenBots.Commands.Input
 					//store each one into context
 					foreach (var variable in variables)
                         if (variable.IsSecureString)
-							variable.VariableValue.ToString().GetSecureString().StoreInUserVariable(engine, variable.VariableName.ConvertStringToVariableName());
+							variable.VariableValue.ToString().GetSecureString().StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName));
 						else
-							variable.VariableValue.ToString().StoreInUserVariable(engine, variable.VariableName.ConvertStringToVariableName());
+							variable.VariableValue.ToString().StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName));
 				}
 				else if (v_ErrorOnClose == "Yes")
 					throw new Exception("Input Form was closed by the user");
@@ -96,6 +96,14 @@ namespace OpenBots.Commands.Input
 		public override string GetDisplayValue()
 		{
 			return base.GetDisplayValue();
+		}
+
+		private static string ConvertStringToVariableName(string variableName)
+		{
+			if (!variableName.Contains("{"))
+				return "{" + variableName + "}";
+			else
+				return variableName;
 		}
 	}
 }
