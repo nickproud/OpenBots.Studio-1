@@ -27,9 +27,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region Project Tool Strip, Buttons and Pane
         private void addProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            tpbLoadingSpinner.Visible = true;
             AddProject();
-            tpbLoadingSpinner.Visible = false;
         }
 
         private void uiBtnProject_Click(object sender, EventArgs e)
@@ -66,6 +64,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 //create config file
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
+
+                NotifySync("Loading package assemblies...", Color.White);               
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
@@ -139,6 +139,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     string mainFilePath = Directory.GetFiles(projectBuilder.ExistingProjectPath, mainFileName, SearchOption.AllDirectories).FirstOrDefault();
                     if (mainFilePath == null)
                         throw new Exception("Main script not found");
+
+                    NotifySync("Loading package assemblies...", Color.White);
 
                     var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
                     _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
