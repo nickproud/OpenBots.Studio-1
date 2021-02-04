@@ -252,7 +252,10 @@ namespace OpenBots.Engine
 
                 ReportProgress("Creating App Instance Tracking List");
                 //create app instances and merge in global instances
-                AutomationEngineContext.AppInstances = new Dictionary<string, object>();
+                if (AutomationEngineContext.AppInstances == null)
+                {
+                    AutomationEngineContext.AppInstances = new Dictionary<string, object>();
+                }
                 var GlobalInstances = GlobalAppInstances.GetInstances();
                 foreach (var instance in GlobalInstances)
                 {
