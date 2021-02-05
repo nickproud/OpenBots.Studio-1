@@ -650,7 +650,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void OpenVariableManager()
         {
-            frmScriptVariables scriptVariableEditor = new frmScriptVariables
+            frmScriptVariables scriptVariableEditor = new frmScriptVariables(_groupedTypes)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
                 ScriptVariables = _scriptVariables,

@@ -238,7 +238,7 @@ namespace OpenBots.UI.CustomControls
             TextBox inputBox = (TextBox)sender;
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_groupedTypes)
                 {
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
@@ -366,7 +366,7 @@ namespace OpenBots.UI.CustomControls
         {
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_groupedTypes)
                 {
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
@@ -586,7 +586,7 @@ namespace OpenBots.UI.CustomControls
             DataGridView dataGridView = (DataGridView)sender;
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_groupedTypes)
                 {
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments

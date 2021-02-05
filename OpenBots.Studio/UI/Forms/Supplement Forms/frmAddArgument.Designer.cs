@@ -181,7 +181,7 @@
             this.lblArgumentNameError.BackColor = System.Drawing.Color.Transparent;
             this.lblArgumentNameError.Font = new System.Drawing.Font("Segoe UI Light", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblArgumentNameError.ForeColor = System.Drawing.Color.Red;
-            this.lblArgumentNameError.Location = new System.Drawing.Point(16, 201);
+            this.lblArgumentNameError.Location = new System.Drawing.Point(16, 200);
             this.lblArgumentNameError.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblArgumentNameError.Name = "lblArgumentNameError";
             this.lblArgumentNameError.Size = new System.Drawing.Size(571, 36);
@@ -255,8 +255,8 @@
             this.btnDefaultType.Name = "btnDefaultType";
             this.btnDefaultType.Size = new System.Drawing.Size(566, 33);
             this.btnDefaultType.TabIndex = 28;
-            this.btnDefaultType.Text = "System.String";
             this.btnDefaultType.Tag = typeof(string);
+            this.btnDefaultType.Text = "System.String";
             this.btnDefaultType.Click += new System.EventHandler(this.btnDefaultType_Click);
             // 
             // lblDefineDefaultType

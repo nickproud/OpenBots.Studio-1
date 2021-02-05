@@ -84,6 +84,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 new ScriptVariable { VariableName = "OpenBots.EngineContext", VariableValue = "{JsonContext}" },
                 new ScriptVariable { VariableName = "OpenBots.Location", VariableValue = Assembly.GetEntryAssembly()?.Location }
             };
+
+            systemVariableList.ForEach(v => v.VariableType = typeof(string));
             return systemVariableList;
         }
 

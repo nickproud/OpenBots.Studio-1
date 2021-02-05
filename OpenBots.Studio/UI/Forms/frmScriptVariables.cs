@@ -31,11 +31,14 @@ namespace OpenBots.UI.Forms
         private TreeNode _userVariableParentNode;
         private string _leadingValue = "Default Value: ";
         private string _emptyValue = "(no default value)";
+        private string _leadingType = "Type: ";
+        private Dictionary<string, List<Type>> _groupedTypes;
 
         #region Initialization and Form Load
-        public frmScriptVariables()
+        public frmScriptVariables(Dictionary<string, List<Type>> groupedTypes)
         {
             InitializeComponent();
+            _groupedTypes = groupedTypes;
             LastModifiedVariableName = string.Empty;
         }
         private void frmScriptVariables_Load(object sender, EventArgs e)
@@ -54,7 +57,7 @@ namespace OpenBots.UI.Forms
             //add each item to parent
             foreach (var item in variables)
             {
-                AddUserVariableNode(parentNode, item.VariableName, (string)item.VariableValue);
+                AddUserVariableNode(parentNode, item.VariableName, (string)item.VariableValue, item.VariableType);
             }
 
             //add parent to treeview
@@ -86,7 +89,7 @@ namespace OpenBots.UI.Forms
         private void uiBtnNew_Click(object sender, EventArgs e)
         {
             //create variable editing form
-            frmAddVariable addVariableForm = new frmAddVariable();
+            frmAddVariable addVariableForm = new frmAddVariable(_groupedTypes);
             addVariableForm.ScriptVariables = ScriptVariables;
             addVariableForm.ScriptArguments = ScriptArguments;
 
@@ -96,7 +99,8 @@ namespace OpenBots.UI.Forms
             if (addVariableForm.ShowDialog() == DialogResult.OK)
             {
                 //add newly edited node
-                AddUserVariableNode(_userVariableParentNode, addVariableForm.txtVariableName.Text, addVariableForm.txtDefaultValue.Text);
+                AddUserVariableNode(_userVariableParentNode, addVariableForm.txtVariableName.Text, addVariableForm.txtDefaultValue.Text,
+                    (Type)addVariableForm.btnDefaultType.Tag);
                 LastModifiedVariableName = addVariableForm.txtVariableName.Text;
                 ResetVariables();
             }
@@ -128,26 +132,29 @@ namespace OpenBots.UI.Forms
             }
 
             string variableName, variableValue;
+            Type variableType;
             TreeNode parentNode;
 
             if(tvScriptVariables.SelectedNode.Nodes.Count == 0)
             {
                 parentNode = tvScriptVariables.SelectedNode.Parent;
                 variableName = tvScriptVariables.SelectedNode.Parent.Text;
-                variableValue = tvScriptVariables.SelectedNode.Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                variableValue = tvScriptVariables.SelectedNode.Parent.Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                variableType = (Type)tvScriptVariables.SelectedNode.Parent.Nodes[1].Tag;
             }
             else
             {
                 parentNode = tvScriptVariables.SelectedNode;
                 variableName = tvScriptVariables.SelectedNode.Text;
                 variableValue = tvScriptVariables.SelectedNode.Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                variableType = (Type)tvScriptVariables.SelectedNode.Nodes[1].Tag;
             }
 
             if (variableName == "ProjectPath")
                 return;
 
             //create variable editing form
-            frmAddVariable addVariableForm = new frmAddVariable(variableName, variableValue);
+            frmAddVariable addVariableForm = new frmAddVariable(variableName, variableValue, variableType, _groupedTypes);
             addVariableForm.ScriptVariables = ScriptVariables;
             addVariableForm.ScriptArguments = ScriptArguments;
 
@@ -160,7 +167,8 @@ namespace OpenBots.UI.Forms
                 parentNode.Remove();
 
                 //add newly edited node
-                AddUserVariableNode(_userVariableParentNode, addVariableForm.txtVariableName.Text, addVariableForm.txtDefaultValue.Text);
+                AddUserVariableNode(_userVariableParentNode, addVariableForm.txtVariableName.Text, addVariableForm.txtDefaultValue.Text,
+                    (Type)addVariableForm.btnDefaultType.Tag);
                 LastModifiedVariableName = addVariableForm.txtVariableName.Text;
                 ResetVariables();
             }
@@ -168,7 +176,7 @@ namespace OpenBots.UI.Forms
             addVariableForm.Dispose();
         }
 
-        private void AddUserVariableNode(TreeNode parentNode, string variableName, string variableText)
+        private void AddUserVariableNode(TreeNode parentNode, string variableName, string variableText, Type variableType)
         {
             //add new node and sort
             var childNode = new TreeNode(variableName);
@@ -179,6 +187,16 @@ namespace OpenBots.UI.Forms
             }
 
             childNode.Nodes.Add(_leadingValue + variableText);
+
+            TreeNode typeNode = new TreeNode
+            {
+                Name = "Type",
+                Text = _leadingType + variableType.ToString(),
+                Tag = variableType
+            };
+
+            childNode.Nodes.Add(typeNode);
+
             parentNode.Nodes.Add(childNode);
             tvScriptVariables.Sort();
             ExpandUserVariableNode();            
@@ -260,9 +278,15 @@ namespace OpenBots.UI.Forms
                 //get name and value
                 var variableName = _userVariableParentNode.Nodes[i].Text;
                 var variableValue = _userVariableParentNode.Nodes[i].Nodes[0].Text.Replace(_leadingValue, "").Replace(_emptyValue, "");
+                var variableType = (Type)_userVariableParentNode.Nodes[i].Nodes[1].Tag;
 
                 //add to list
-                ScriptVariables.Add(new ScriptVariable() { VariableName = variableName, VariableValue = variableValue });
+                ScriptVariables.Add(new ScriptVariable() 
+                { 
+                    VariableName = variableName, 
+                    VariableValue = variableValue,
+                    VariableType = variableType
+                });
             }
         }
     }

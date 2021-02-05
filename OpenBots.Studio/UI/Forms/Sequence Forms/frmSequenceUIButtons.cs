@@ -35,7 +35,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         private void OpenVariableManager()
         {
-            frmScriptVariables scriptVariableEditor = new frmScriptVariables
+            frmScriptVariables scriptVariableEditor = new frmScriptVariables(GroupedTypes)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
                 ScriptVariables = ScriptVariables,
