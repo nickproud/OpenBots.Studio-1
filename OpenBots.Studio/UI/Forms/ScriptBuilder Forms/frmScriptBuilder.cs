@@ -186,6 +186,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         //package manager variables
         public IContainer AContainer { get; private set; }
         private ContainerBuilder _builder;
+        private Dictionary<string, List<Type>> _groupedTypes;
 
         //variable/argument tab variables
         private List<string> _existingVarArgSearchList;
@@ -226,8 +227,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (!Directory.Exists(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder)))
                 Directory.CreateDirectory(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder));
 
-            _builder = new ContainerBuilder();            
-        }
+            _builder = new ContainerBuilder();
+            _groupedTypes = new Dictionary<string, List<Type>>();
+    }
 
         private void UpdateWindowTitle()
         {
@@ -533,7 +535,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void AddNewCommand(string specificCommand = "")
         {
             //bring up new command configuration form
-            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands())
+            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), _groupedTypes)
             {
                 CreationModeInstance = CreationMode.Add
             };
@@ -719,8 +721,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             NotifySync("Loading package assemblies...", Color.White);
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-            _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+            _builder = AppDomainSetupManager.LoadBuilder(assemblyList);            
             AContainer = _builder.Build();
+            _groupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
             LoadCommands(this);
             ReloadAllFiles();
         }

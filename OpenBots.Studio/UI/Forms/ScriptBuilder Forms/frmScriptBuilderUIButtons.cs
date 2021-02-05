@@ -681,7 +681,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void OpenArgumentManager()
         {
-            frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+            frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_groupedTypes)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
                 ScriptArguments = _scriptArguments,
@@ -813,7 +813,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();
-                
+                _groupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
+
                 LoadCommands(this);
                 ReloadAllFiles();
             }
@@ -863,6 +864,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();
+                _groupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
 
                 LoadCommands(this);
                 ReloadAllFiles();

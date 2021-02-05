@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Studio.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,21 +14,27 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         public List<ScriptArgument> ScriptArguments { get; set; }
         private bool _isEditMode;
         private string _editingArgumentName;
+        private Dictionary<string, List<Type>> _groupedTypes;
 
-        public frmAddArgument()
+        public frmAddArgument(Dictionary<string, List<Type>> groupedTypes)
         {
             InitializeComponent();
+            _groupedTypes = groupedTypes;
             cbxDefaultDirection.SelectedIndex = 0;
         }
 
-        public frmAddArgument(string argumentName, ScriptArgumentDirection argumentDirection, string argumentValue)
+        public frmAddArgument(string argumentName, ScriptArgumentDirection argumentDirection, string argumentValue, Type argumentType, 
+            Dictionary<string, List<Type>> groupedTypes)
         {
             InitializeComponent();
+            _groupedTypes = groupedTypes;
             Text = "edit argument";
             lblHeader.Text = "edit argument";
             txtArgumentName.Text = argumentName;
             cbxDefaultDirection.Text = argumentDirection.ToString();
             txtDefaultValue.Text = argumentValue;
+            btnDefaultType.Text = argumentType.ToString();
+            btnDefaultType.Tag = argumentType;
 
             _isEditMode = true;
             _editingArgumentName = argumentName;
@@ -88,6 +95,18 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             ComboBox clickedDropdownBox = (ComboBox)sender;
             clickedDropdownBox.DroppedDown = true;
+        }
+
+        private void btnDefaultType_Click(object sender, EventArgs e)
+        {
+            frmTypes typeForm = new frmTypes(_groupedTypes);
+            typeForm.ShowDialog();
+
+            if (typeForm.DialogResult == DialogResult.OK)
+            {
+                btnDefaultType.Text = typeForm.SelectedType.ToString();
+                btnDefaultType.Tag = typeForm.SelectedType;
+            }
         }
     }
 }

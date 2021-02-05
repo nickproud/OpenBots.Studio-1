@@ -44,6 +44,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         //package manager variables
         public IContainer AContainer { get; set; }
+        public Dictionary<string, List<Type>> GroupedTypes { get; set; }
 
         //variable/argument tab variables
         private List<string> _existingVarArgSearchList;
@@ -260,7 +261,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void AddNewCommand(string specificCommand = "")
         {
             //bring up new command configuration form
-            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands())
+            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), GroupedTypes)
             {
                 CreationModeInstance = CreationMode.Add
             };

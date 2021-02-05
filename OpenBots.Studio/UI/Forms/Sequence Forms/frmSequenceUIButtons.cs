@@ -61,7 +61,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         private void OpenArgumentManager()
         {
-            frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+            frmScriptArguments scriptArgumentEditor = new frmScriptArguments(GroupedTypes)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
                 ScriptArguments = ScriptArguments,

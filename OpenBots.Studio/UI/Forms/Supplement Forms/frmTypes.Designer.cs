@@ -145,6 +145,7 @@
             this.Controls.Add(this.tlpCommands);
             this.Name = "frmTypes";
             this.Text = "Types";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.frmTypes_Load);
             this.tlpCommands.ResumeLayout(false);
             this.pnlCommandSearch.ResumeLayout(false);

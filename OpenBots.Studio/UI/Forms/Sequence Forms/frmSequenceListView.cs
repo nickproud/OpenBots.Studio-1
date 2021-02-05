@@ -254,7 +254,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
 
                 //create new command editor form
-                frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands());
+                frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), GroupedTypes);
 
                 editCommand.ScriptEngineContext.Container = AContainer;
 

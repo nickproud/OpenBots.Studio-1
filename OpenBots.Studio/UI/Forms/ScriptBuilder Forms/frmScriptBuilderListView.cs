@@ -301,7 +301,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 else
                 {
                     //create new command editor form
-                    frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands());
+                    frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), _groupedTypes);
 
                     editCommand.ScriptEngineContext.Container = AContainer;
 
@@ -375,6 +375,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newSequence.ScriptProject = ScriptProject;
             newSequence.ScriptProjectPath = ScriptProjectPath;
             newSequence.AContainer = AContainer;
+            newSequence.GroupedTypes = _groupedTypes;
 
             newSequence.LoadCommands();
 

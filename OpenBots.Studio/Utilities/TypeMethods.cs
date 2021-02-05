@@ -61,7 +61,7 @@ namespace OpenBots.Studio.Utilities
             return commandClasses;
         }
 
-        public static List<Type> GenerateAllVariableTypes(IContainer container)
+        public static Dictionary<string, List<Type>> GenerateAllVariableTypes(IContainer container)
         {
             var variableTypes = new List<Type>();
 
@@ -79,7 +79,9 @@ namespace OpenBots.Studio.Utilities
                 }
             }
 
-            return variableTypes;
+            Dictionary<string, List<Type>> groupedTypes = variableTypes.GroupBy(t => t.Assembly.FullName).ToDictionary(g => g.Key, g => g.ToList());
+
+            return groupedTypes;
         }
 
         public static Type GetTypeByName(IContainer container, string typeName)

@@ -42,16 +42,18 @@ namespace OpenBots.UI.CustomControls
         private CommandItemControl _inputBox;
         private ApplicationSettings _settings;
         private bool _minimizePreference;
+        private Dictionary<string, List<Type>> _groupedTypes;
 
         public CommandControls()
         {
         }
 
-        public CommandControls(frmCommandEditor editor, EngineContext engineContext)
+        public CommandControls(frmCommandEditor editor, EngineContext engineContext, Dictionary<string, List<Type>> groupedTypes)
         {
             _currentEditor = editor;
             _container = engineContext.Container;
             _projectPath = engineContext.ProjectPath;
+            _groupedTypes = groupedTypes;
         }
 
         public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300)
@@ -254,7 +256,7 @@ namespace OpenBots.UI.CustomControls
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
-                frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_groupedTypes)
                 {
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
@@ -382,7 +384,7 @@ namespace OpenBots.UI.CustomControls
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
-                frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_groupedTypes)
                 {
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments,
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables
@@ -602,7 +604,7 @@ namespace OpenBots.UI.CustomControls
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
-                frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_groupedTypes)
                 {
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments,
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
@@ -1441,7 +1443,7 @@ namespace OpenBots.UI.CustomControls
 
         public IfrmCommandEditor CreateCommandEditorForm(List<AutomationCommand> commands, List<ScriptCommand> existingCommands)
         {
-            frmCommandEditor editor = new frmCommandEditor(commands, existingCommands);
+            frmCommandEditor editor = new frmCommandEditor(commands, existingCommands, null);
             editor.ScriptEngineContext.Container = _container;
 
             return editor;

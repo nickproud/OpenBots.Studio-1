@@ -13,23 +13,23 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 {
     public partial class frmTypes : UIForm
     {
-        public List<Type> Types { get; set; } = new List<Type>();
+        public Dictionary<string, List<Type>> GroupedTypes { get; set; } = new Dictionary<string, List<Type>>();
         public Type SelectedType { get; set; }
 
         private TreeView _tvTypesCopy;
         private string _txtTypeWatermark = "Type Here to Search";
 
-        public frmTypes(List<Type> types)
+        public frmTypes(Dictionary<string, List<Type>> groupedTypes)
         {
             InitializeComponent();
-            Types = types;
+            GroupedTypes = groupedTypes;
         }
 
         private void frmTypes_Load(object sender, EventArgs e)
         {
-            Dictionary<string, List<Type>> groupedTypes = Types.GroupBy(t => t.Assembly.FullName).ToDictionary(g => g.Key, g => g.ToList());
+            
 
-            foreach(var group in groupedTypes)
+            foreach(var group in GroupedTypes)
             {
                 var groupNode = new TreeNode();
                 groupNode.Name = group.Key;

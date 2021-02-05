@@ -54,12 +54,15 @@ namespace OpenBots.UI.Forms
 
         private ICommandControls _commandControls;
 
+        private Dictionary<string, List<Type>> _groupedTypes;
+
         #region Form Events
         //handle events for the form
 
-        public frmCommandEditor(List<AutomationCommand> commands, List<ScriptCommand> existingCommands)
+        public frmCommandEditor(List<AutomationCommand> commands, List<ScriptCommand> existingCommands, Dictionary<string, List<Type>> groupedTypes)
         {
             InitializeComponent();
+            _groupedTypes = groupedTypes;
             CommandList = commands;
             ConfiguredCommands = existingCommands;
         }
@@ -67,7 +70,7 @@ namespace OpenBots.UI.Forms
         private void frmNewCommand_Load(object sender, EventArgs e)
         {
             // Initialize CommandControls with Current Editor
-            _commandControls = new CommandControls(this, ScriptEngineContext);
+            _commandControls = new CommandControls(this, ScriptEngineContext, _groupedTypes);
 
             //order list
             CommandList = CommandList.OrderBy(itm => itm.FullName).ToList();
