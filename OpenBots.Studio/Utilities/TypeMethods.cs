@@ -65,28 +65,18 @@ namespace OpenBots.Studio.Utilities
         {
             var variableTypes = new List<Type>();
 
-            List<Type> types = new List<Type>();
             var assemList = AppDomain.CurrentDomain.GetAssemblies().ToList(); //.ForEach(a => types.AddRange(a.GetTypes()));
             foreach (var assem in assemList)
             {
                 try
                 {
-                    var newTypes = assem.GetTypes().Where(x => !x.IsInterface && !x.IsAbstract && !x.IsGenericType).ToList();
+                    var newTypes = assem.GetTypes().Where(x => x.IsClass && !x.IsInterface && !x.IsAbstract && !x.IsGenericType).ToList();
                     variableTypes.AddRange(newTypes);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                 }
-
-            }
-
-            var typeForm = new frmTypes(variableTypes);
-            typeForm.ShowDialog();
-
-            if (typeForm.DialogResult == DialogResult.OK)
-            {
-                var type = typeForm.SelectedType;
             }
 
             return variableTypes;

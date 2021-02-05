@@ -211,6 +211,7 @@ namespace OpenBots.Engine
                     projectPathVariable = new ScriptVariable
                     {
                         VariableName = "ProjectPath",
+                        VariableType = typeof(string),
                         VariableValue = AutomationEngineContext.ProjectPath
                     };
                     AutomationEngineContext.Variables.Add(projectPathVariable);

@@ -1,5 +1,7 @@
 ﻿using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Studio.Utilities;
+using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -153,6 +155,55 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
+        private void dgvVariables_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                DataGridView dgv = (DataGridView)sender;
+
+                if (dgv.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+                {
+                    var types = TypeMethods.GenerateAllVariableTypes(AContainer);
+                    frmTypes typeForm = new frmTypes(types);
+                    typeForm.ShowDialog();
+
+                    if (typeForm.DialogResult == DialogResult.OK)
+                    {
+                        //dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = typeForm.SelectedType;
+                        ((DataGridViewButtonCell)dgv.Rows[e.RowIndex].Cells[e.ColumnIndex]).Value = typeForm.SelectedType;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //datagridview event failure
+                Console.WriteLine(ex);
+            }
+        }
+
+        private void dgvVariablesArguments_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
+        {
+            try
+            {
+                DataGridView dgv = (DataGridView)sender;
+
+                if (dgv.Columns.Count == 4)
+                {
+                    //sets Direction to In by default when a new row is added. Prevents cell from ever being null
+                    e.Row.Cells["Direction"].Value = ScriptArgumentDirection.In;
+                }
+
+                e.Row.Cells[1].Value = typeof(string);
+                
+            }
+            catch (Exception ex)
+            {
+                //datagridview event failure
+                Console.WriteLine(ex);
+            }
+        }
+
         private void dgvVariables_SelectionChanged(object sender, EventArgs e)
         {
             try
@@ -193,20 +244,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private void dgvArguments_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
-        {
-            try
-            {
-                //sets Direction to In by default when a new row is added. Prevents cell from ever being null
-                e.Row.Cells["Direction"].Value = ScriptArgumentDirection.In;
-            }
-            catch (Exception ex)
-            {
-                //datagridview event failure
-                Console.WriteLine(ex);
-            }
-        }
-
         private void dgvArguments_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             try
@@ -214,19 +251,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (e.RowIndex != -1)
                 {
                     DataGridView dgv = (DataGridView)sender;
-                    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells[2];
+                    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells["Direction"];
 
                     if (cb.Value != null)
                     {
                         //Sets value cell to read only if the argument direction is set to Out
                         if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.Out)
                         {
-                            dgv.Rows[e.RowIndex].Cells[1].Value = null;
-                            dgv.Rows[e.RowIndex].Cells[1].ReadOnly = true;
+                            dgv.Rows[e.RowIndex].Cells["ArgumentValue"].Value = null;
+                            dgv.Rows[e.RowIndex].Cells["ArgumentValue"].ReadOnly = true;
                         }
 
                         else if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.In)
-                            dgv.Rows[e.RowIndex].Cells[1].ReadOnly = false;
+                            dgv.Rows[e.RowIndex].Cells["ArgumentValue"].ReadOnly = false;
                     }                    
                 }
             }

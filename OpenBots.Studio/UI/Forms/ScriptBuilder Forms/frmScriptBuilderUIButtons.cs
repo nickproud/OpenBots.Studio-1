@@ -66,6 +66,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             var projectPathVariable = new ScriptVariable
             {
                 VariableName = "ProjectPath",
+                VariableType = typeof(string),
                 VariableValue = "Value Provided at Runtime"
             };
             _scriptVariables.Add(projectPathVariable);
