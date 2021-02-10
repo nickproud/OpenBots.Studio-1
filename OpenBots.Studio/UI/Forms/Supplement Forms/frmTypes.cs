@@ -40,8 +40,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 {
                     var typeNode = new TreeNode();
                     typeNode.Name = type.FullName;
-                    typeNode.Text = type.Name;
-                    typeNode.ToolTipText = type.FullName;
+                    typeNode.Text = type.FullName;
+                    typeNode.ToolTipText = type.Name;
                     typeNode.Tag = type;
                     groupNode.Nodes.Add(typeNode);
                 }
@@ -79,6 +79,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             foreach (TreeNode originalChildNode in originalTreeNode.Nodes)
             {
                 copiedChildNode = new TreeNode(originalChildNode.Text);
+                copiedChildNode.Name = originalChildNode.Name;
                 copiedChildNode.ToolTipText = originalChildNode.ToolTipText;
                 copiedChildNode.Tag = originalChildNode.Tag;
                 copiedTreeNode.Nodes.Add(copiedChildNode);
@@ -130,7 +131,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     }
                     childNodefound = false;
                 }
-                tvTypes.ExpandAll();
             }
             else
             {
@@ -166,6 +166,16 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void uiBtnClearTypeSearch_Click(object sender, EventArgs e)
         {
             txtTypeSearch.Clear();
+        }
+
+        private void uiBtnExpand_Click(object sender, EventArgs e)
+        {
+            tvTypes.ExpandAll();
+        }
+
+        private void uiBtnCollapse_Click(object sender, EventArgs e)
+        {
+            tvTypes.CollapseAll();
         }
     }
 }

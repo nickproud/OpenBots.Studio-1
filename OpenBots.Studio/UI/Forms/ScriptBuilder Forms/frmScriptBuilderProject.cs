@@ -70,7 +70,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();
-                _groupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
+                _typeContext.GroupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
 
                 string mainScriptPath = Path.Combine(ScriptProjectPath, "Main.json");
                 string mainScriptName = Path.GetFileNameWithoutExtension(mainScriptPath);
@@ -146,7 +146,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
                     _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                     AContainer = _builder.Build();
-                    _groupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
+                    _typeContext.GroupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
 
                     ScriptProject = project;
                     _mainFileName = mainFileName;                 
@@ -224,7 +224,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();
-                _groupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
+                _typeContext.GroupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
 
                 _mainFileName = mainFileName;
                 ScriptProject = project;

@@ -63,23 +63,26 @@ namespace OpenBots.Studio.Utilities
 
         public static Dictionary<string, List<Type>> GenerateAllVariableTypes(IContainer container)
         {
-            var variableTypes = new List<Type>();
+            Dictionary<string, List<Type>> groupedTypes = new Dictionary<string, List<Type>>();
+            var assemList = AppDomain.CurrentDomain.GetAssemblies().ToList();
 
-            var assemList = AppDomain.CurrentDomain.GetAssemblies().ToList(); //.ForEach(a => types.AddRange(a.GetTypes()));
             foreach (var assem in assemList)
             {
                 try
                 {
-                    var newTypes = assem.GetTypes().Where(x => x.IsClass && !x.IsInterface && !x.IsAbstract && !x.IsGenericType).ToList();
-                    variableTypes.AddRange(newTypes);
+                    var newTypes = assem.GetTypes()?
+                                        .Where(x => x.IsClass && x.IsVisible && x.IsPublic && !x.IsInterface && !x.IsAbstract 
+                                                              && x.Namespace != null && !x.Namespace.StartsWith("OpenBots"))
+                                        .ToList();
+
+                    if (newTypes.Count > 0 && !groupedTypes.ContainsKey($"{assem.GetName().Name} [{assem.GetName().Version}]"))
+                        groupedTypes.Add($"{assem.GetName().Name} [{assem.GetName().Version}]", newTypes);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                 }
             }
-
-            Dictionary<string, List<Type>> groupedTypes = variableTypes.GroupBy(t => t.Assembly.FullName).ToDictionary(g => g.Key, g => g.ToList());
 
             return groupedTypes;
         }

@@ -73,8 +73,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             _scriptArguments = new List<ScriptArgument>();
 
-            dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-            dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+            ResetVariableArgumentBindings();
 
             GenerateRecentProjects();
             newTabPage.Controls[0].Hide();
@@ -196,8 +195,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     if (!isRunTaskCommand)
                     {
-                        dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                        dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                        ResetVariableArgumentBindings();
 
                         Notify("Script Loaded Successfully!", Color.White);
                     }
@@ -650,7 +648,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void OpenVariableManager()
         {
-            frmScriptVariables scriptVariableEditor = new frmScriptVariables(_groupedTypes)
+            frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
                 ScriptVariables = _scriptVariables,
@@ -659,11 +657,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
             {
+                Invalidate();
                 _scriptVariables = scriptVariableEditor.ScriptVariables;
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
 
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                ResetVariableArgumentBindings();
             }
 
             scriptVariableEditor.Dispose();
@@ -681,7 +680,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void OpenArgumentManager()
         {
-            frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_groupedTypes)
+            frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
                 ScriptArguments = _scriptArguments,
@@ -694,7 +693,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
 
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                ResetVariableArgumentBindings();
             }
 
             scriptArgumentEditor.Dispose();
@@ -813,7 +812,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();
-                _groupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
+                _typeContext.GroupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
 
                 LoadCommands(this);
                 ReloadAllFiles();
@@ -864,7 +863,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();
-                _groupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
+                _typeContext.GroupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
 
                 LoadCommands(this);
                 ReloadAllFiles();

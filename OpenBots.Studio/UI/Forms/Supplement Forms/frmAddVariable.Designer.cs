@@ -40,7 +40,7 @@
             this.uiBtnCancel = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.lblVariableNameError = new System.Windows.Forms.Label();
             this.lblDefineDefaultTypeDescriptor = new System.Windows.Forms.Label();
-            this.btnDefaultType = new System.Windows.Forms.Button();
+            this.cbxDefaultType = new System.Windows.Forms.ComboBox();
             this.lblDefineDefaultType = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnOk)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).BeginInit();
@@ -197,20 +197,20 @@
             this.lblDefineDefaultTypeDescriptor.Text = "Define a default type for the variable. The type of the variable cannot be change" +
     "d during the execution of a Script.";
             // 
-            // btnDefaultType
+            // cbxDefaultType
             // 
-            this.btnDefaultType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbxDefaultType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDefaultType.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDefaultType.ForeColor = System.Drawing.Color.SteelBlue;
-            this.btnDefaultType.Location = new System.Drawing.Point(21, 323);
-            this.btnDefaultType.Margin = new System.Windows.Forms.Padding(4);
-            this.btnDefaultType.Name = "btnDefaultType";
-            this.btnDefaultType.Size = new System.Drawing.Size(566, 33);
-            this.btnDefaultType.TabIndex = 31;
-            this.btnDefaultType.Tag = typeof(string);
-            this.btnDefaultType.Text = "System.String";
-            this.btnDefaultType.Click += new System.EventHandler(this.btnDefaultType_Click);
+            this.cbxDefaultType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxDefaultType.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbxDefaultType.ForeColor = System.Drawing.Color.SteelBlue;
+            this.cbxDefaultType.Location = new System.Drawing.Point(21, 323);
+            this.cbxDefaultType.Margin = new System.Windows.Forms.Padding(4);
+            this.cbxDefaultType.Name = "cbxDefaultType";
+            this.cbxDefaultType.Size = new System.Drawing.Size(566, 33);
+            this.cbxDefaultType.TabIndex = 31;
+            this.cbxDefaultType.Tag = typeof(string);
+            this.cbxDefaultType.SelectionChangeCommitted += new System.EventHandler(this.cbxDefaultType_SelectionChangeCommitted);
             // 
             // lblDefineDefaultType
             // 
@@ -221,7 +221,7 @@
             this.lblDefineDefaultType.Location = new System.Drawing.Point(16, 240);
             this.lblDefineDefaultType.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineDefaultType.Name = "lblDefineDefaultType";
-            this.lblDefineDefaultType.Size = new System.Drawing.Size(339, 35);
+            this.lblDefineDefaultType.Size = new System.Drawing.Size(271, 28);
             this.lblDefineDefaultType.TabIndex = 30;
             this.lblDefineDefaultType.Text = "Define Variable Default Type";
             // 
@@ -231,7 +231,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(609, 588);
             this.Controls.Add(this.lblDefineDefaultTypeDescriptor);
-            this.Controls.Add(this.btnDefaultType);
+            this.Controls.Add(this.cbxDefaultType);
             this.Controls.Add(this.lblDefineDefaultType);
             this.Controls.Add(this.lblVariableNameError);
             this.Controls.Add(this.uiBtnOk);
@@ -270,7 +270,7 @@
         public System.Windows.Forms.TextBox txtDefaultValue;
         private System.Windows.Forms.Label lblVariableNameError;
         private System.Windows.Forms.Label lblDefineDefaultTypeDescriptor;
-        public System.Windows.Forms.Button btnDefaultType;
+        public System.Windows.Forms.ComboBox cbxDefaultType;
         private System.Windows.Forms.Label lblDefineDefaultType;
     }
 }

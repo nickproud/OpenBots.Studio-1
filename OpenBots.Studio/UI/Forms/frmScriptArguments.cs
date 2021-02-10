@@ -33,13 +33,13 @@ namespace OpenBots.UI.Forms
 
         private string _leadingDirection = "Direction: ";
         private string _leadingType = "Type: ";
-        private Dictionary<string, List<Type>> _groupedTypes;
+        private TypeContext _typeContext;
 
         #region Initialization and Form Load
-        public frmScriptArguments(Dictionary<string, List<Type>> groupedTypes)
+        public frmScriptArguments(TypeContext typeContext)
         {
             InitializeComponent();
-            _groupedTypes = groupedTypes;
+            _typeContext = typeContext;
             LastModifiedArgumentName = string.Empty;
         }
         private void frmScriptArguments_Load(object sender, EventArgs e)
@@ -90,7 +90,7 @@ namespace OpenBots.UI.Forms
         private void uiBtnNew_Click(object sender, EventArgs e)
         {
             //create argument editing form
-            frmAddArgument addArgumentForm = new frmAddArgument(_groupedTypes);
+            frmAddArgument addArgumentForm = new frmAddArgument(_typeContext);
             addArgumentForm.ScriptArguments = ScriptArguments;
             addArgumentForm.ScriptVariables = ScriptVariables;
 
@@ -102,7 +102,7 @@ namespace OpenBots.UI.Forms
                 //add newly edited node
                 AddUserArgumentNode(_userArgumentParentNode, addArgumentForm.txtArgumentName.Text, 
                     (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), addArgumentForm.cbxDefaultDirection.Text),
-                    addArgumentForm.txtDefaultValue.Text, (Type)addArgumentForm.btnDefaultType.Tag);
+                    addArgumentForm.txtDefaultValue.Text, (Type)addArgumentForm.cbxDefaultType.Tag);
                 LastModifiedArgumentName = addArgumentForm.txtArgumentName.Text;
                 ResetArguments();
             }
@@ -159,7 +159,7 @@ namespace OpenBots.UI.Forms
                 return;
 
             //create argument editing form
-            frmAddArgument addArgumentForm = new frmAddArgument(argumentName, argumentDirection, argumentValue, argumentType, _groupedTypes);
+            frmAddArgument addArgumentForm = new frmAddArgument(argumentName, argumentDirection, argumentValue, argumentType, _typeContext);
             addArgumentForm.ScriptArguments = ScriptArguments;
             addArgumentForm.ScriptVariables = ScriptVariables;
 
@@ -174,7 +174,7 @@ namespace OpenBots.UI.Forms
                 //add newly edited node
                 AddUserArgumentNode(_userArgumentParentNode, addArgumentForm.txtArgumentName.Text,
                     (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), addArgumentForm.cbxDefaultDirection.Text),
-                    addArgumentForm.txtDefaultValue.Text, (Type)addArgumentForm.btnDefaultType.Tag);
+                    addArgumentForm.txtDefaultValue.Text, (Type)addArgumentForm.cbxDefaultType.Tag);
                 LastModifiedArgumentName = addArgumentForm.txtArgumentName.Text;
                 ResetArguments();
             }

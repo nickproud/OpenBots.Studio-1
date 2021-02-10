@@ -301,7 +301,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 else
                 {
                     //create new command editor form
-                    frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), _groupedTypes);
+                    frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), _typeContext);
 
                     editCommand.ScriptEngineContext.Container = AContainer;
 
@@ -337,8 +337,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                         _scriptVariables = editCommand.ScriptEngineContext.Variables;
                         _scriptArguments = editCommand.ScriptEngineContext.Arguments;
-                        dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                        dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                        ResetVariableArgumentBindings();
                     }
 
                     if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
@@ -375,7 +374,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newSequence.ScriptProject = ScriptProject;
             newSequence.ScriptProjectPath = ScriptProjectPath;
             newSequence.AContainer = AContainer;
-            newSequence.GroupedTypes = _groupedTypes;
+            newSequence.TypeContext = _typeContext;
 
             newSequence.LoadCommands();
 
@@ -441,18 +440,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptVariables = newSequence.ScriptVariables.Where(x => !string.IsNullOrEmpty(x.VariableName)).ToList();
                 _scriptElements = newSequence.ScriptElements.Where(x => !string.IsNullOrEmpty(x.ElementName)).ToList();
                 _scriptArguments = newSequence.ScriptArguments.Where(x => !string.IsNullOrEmpty(x.ArgumentName)).ToList();
-
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
             }
             else
             {
                 _scriptVariables = originalStudioVariables;
-                _scriptArguments = originalStudioArguments;
-
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                _scriptArguments = originalStudioArguments;                
             }
+
+            ResetVariableArgumentBindings();
 
             //add to parent
             List<ScriptCommand> movedCommands = CommonMethods.Clone(newSequence.MoveToParentCommands);

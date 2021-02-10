@@ -13,24 +13,38 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         public List<ScriptArgument> ScriptArguments { get; set; }
         private bool _isEditMode;
         private string _editingVariableName;
-        private Dictionary<string, List<Type>> _groupedTypes;
+        private TypeContext _typeContext;
+        private Type _preEditType;
 
-        public frmAddVariable(Dictionary<string, List<Type>> groupedTypes)
+        public frmAddVariable(TypeContext typeContext)
         {
             InitializeComponent();
-            _groupedTypes = groupedTypes;
+            _typeContext = typeContext;
+
+            cbxDefaultType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+            cbxDefaultType.DisplayMember = "Key";
+            cbxDefaultType.ValueMember = "Value";
+
+            cbxDefaultType.SelectedValue = typeof(string);
+            cbxDefaultType.Tag = typeof(string);
         }
 
-        public frmAddVariable(string variableName, string variableValue, Type variableType, Dictionary<string, List<Type>> groupedTypes)
+        public frmAddVariable(string variableName, string variableValue, Type variableType, TypeContext typeContext)
         {
             InitializeComponent();
-            _groupedTypes = groupedTypes;
+            _typeContext = typeContext;
+            cbxDefaultType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+            cbxDefaultType.DisplayMember = "Key";
+            cbxDefaultType.ValueMember = "Value";
+
             Text = "edit variable";
             lblHeader.Text = "edit variable";
             txtVariableName.Text = variableName;
             txtDefaultValue.Text = variableValue;
-            btnDefaultType.Text = variableType.ToString();
-            btnDefaultType.Tag = variableType;
+            cbxDefaultType.SelectedValue = variableType;
+            cbxDefaultType.Tag = variableType;
+
+            _preEditType = variableType;
 
             _isEditMode = true;
             _editingVariableName = variableName;
@@ -38,7 +52,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void frmAddVariable_Load(object sender, EventArgs e)
         {
-
+            
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
@@ -76,16 +90,34 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             DialogResult = DialogResult.Cancel;
         }
 
-        private void btnDefaultType_Click(object sender, EventArgs e)
+        private void cbxDefaultType_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            frmTypes typeForm = new frmTypes(_groupedTypes);
-            typeForm.ShowDialog();
-
-            if (typeForm.DialogResult == DialogResult.OK)
+            if (((Type)cbxDefaultType.SelectedValue).Name == "MoreOptions")
             {
-                btnDefaultType.Text = typeForm.SelectedType.ToString();
-                btnDefaultType.Tag = typeForm.SelectedType;
+                frmTypes typeForm = new frmTypes(_typeContext.GroupedTypes);
+                typeForm.ShowDialog();
+
+                if (typeForm.DialogResult == DialogResult.OK)
+                {
+                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.FullName))
+                    {
+                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.FullName, typeForm.SelectedType);
+                        cbxDefaultType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+                    }
+
+                    cbxDefaultType.SelectedValue = typeForm.SelectedType;
+                    cbxDefaultType.Tag = typeForm.SelectedType;
+                }
+                else
+                {
+                    cbxDefaultType.SelectedValue = _preEditType;
+                    cbxDefaultType.Tag = _preEditType;
+                }
             }
+            else
+                cbxDefaultType.Tag = cbxDefaultType.SelectedValue;
+
+            _preEditType = (Type)cbxDefaultType.SelectedValue;
         }
     }
 }

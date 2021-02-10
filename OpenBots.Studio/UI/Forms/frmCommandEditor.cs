@@ -17,6 +17,7 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
+using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.UI.Forms;
@@ -54,15 +55,15 @@ namespace OpenBots.UI.Forms
 
         private ICommandControls _commandControls;
 
-        private Dictionary<string, List<Type>> _groupedTypes;
+        private TypeContext _typeContext;
 
         #region Form Events
         //handle events for the form
 
-        public frmCommandEditor(List<AutomationCommand> commands, List<ScriptCommand> existingCommands, Dictionary<string, List<Type>> groupedTypes)
+        public frmCommandEditor(List<AutomationCommand> commands, List<ScriptCommand> existingCommands, TypeContext typeContext)
         {
             InitializeComponent();
-            _groupedTypes = groupedTypes;
+            _typeContext = typeContext;
             CommandList = commands;
             ConfiguredCommands = existingCommands;
         }
@@ -70,7 +71,7 @@ namespace OpenBots.UI.Forms
         private void frmNewCommand_Load(object sender, EventArgs e)
         {
             // Initialize CommandControls with Current Editor
-            _commandControls = new CommandControls(this, ScriptEngineContext, _groupedTypes);
+            _commandControls = new CommandControls(this, ScriptEngineContext, _typeContext);
 
             //order list
             CommandList = CommandList.OrderBy(itm => itm.FullName).ToList();

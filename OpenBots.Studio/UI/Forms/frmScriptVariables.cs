@@ -32,13 +32,13 @@ namespace OpenBots.UI.Forms
         private string _leadingValue = "Default Value: ";
         private string _emptyValue = "(no default value)";
         private string _leadingType = "Type: ";
-        private Dictionary<string, List<Type>> _groupedTypes;
+        private TypeContext _typeContext;
 
         #region Initialization and Form Load
-        public frmScriptVariables(Dictionary<string, List<Type>> groupedTypes)
+        public frmScriptVariables(TypeContext typeContext)
         {
             InitializeComponent();
-            _groupedTypes = groupedTypes;
+            _typeContext = typeContext;
             LastModifiedVariableName = string.Empty;
         }
         private void frmScriptVariables_Load(object sender, EventArgs e)
@@ -89,7 +89,7 @@ namespace OpenBots.UI.Forms
         private void uiBtnNew_Click(object sender, EventArgs e)
         {
             //create variable editing form
-            frmAddVariable addVariableForm = new frmAddVariable(_groupedTypes);
+            frmAddVariable addVariableForm = new frmAddVariable(_typeContext);
             addVariableForm.ScriptVariables = ScriptVariables;
             addVariableForm.ScriptArguments = ScriptArguments;
 
@@ -100,7 +100,7 @@ namespace OpenBots.UI.Forms
             {
                 //add newly edited node
                 AddUserVariableNode(_userVariableParentNode, addVariableForm.txtVariableName.Text, addVariableForm.txtDefaultValue.Text,
-                    (Type)addVariableForm.btnDefaultType.Tag);
+                    (Type)addVariableForm.cbxDefaultType.Tag);
                 LastModifiedVariableName = addVariableForm.txtVariableName.Text;
                 ResetVariables();
             }
@@ -154,7 +154,7 @@ namespace OpenBots.UI.Forms
                 return;
 
             //create variable editing form
-            frmAddVariable addVariableForm = new frmAddVariable(variableName, variableValue, variableType, _groupedTypes);
+            frmAddVariable addVariableForm = new frmAddVariable(variableName, variableValue, variableType, _typeContext);
             addVariableForm.ScriptVariables = ScriptVariables;
             addVariableForm.ScriptArguments = ScriptArguments;
 
@@ -168,7 +168,7 @@ namespace OpenBots.UI.Forms
 
                 //add newly edited node
                 AddUserVariableNode(_userVariableParentNode, addVariableForm.txtVariableName.Text, addVariableForm.txtDefaultValue.Text,
-                    (Type)addVariableForm.btnDefaultType.Tag);
+                    (Type)addVariableForm.cbxDefaultType.Tag);
                 LastModifiedVariableName = addVariableForm.txtVariableName.Text;
                 ResetVariables();
             }

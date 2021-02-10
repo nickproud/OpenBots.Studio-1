@@ -1,6 +1,5 @@
 ﻿using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
@@ -22,6 +21,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 DataGridView dgv = (DataGridView)sender;
 
                 _preEditVarArgName = dgv.Rows[e.RowIndex].Cells[0].Value?.ToString();
+                //_preEditVarArgType = (Type)dgv.Rows[e.RowIndex].Cells[1].Value;
 
                 _existingVarArgSearchList = new List<string>();
                 _existingVarArgSearchList.AddRange(_scriptArguments.Select(arg => arg.ArgumentName).ToList());
@@ -143,9 +143,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     if (row.Cells[0].Value?.ToString() == "ProjectPath")
                         row.ReadOnly = true;
 
+                    //adds new type to default list when a script containing non-defaults is loaded
+                    if (!_typeContext.DefaultTypes.ContainsKey(((Type)row.Cells[1].Value)?.ToString()))
+                        _typeContext.DefaultTypes.Add(((Type)row.Cells[1].Value).ToString(), (Type)row.Cells[1].Value);
+
                     //sets Value cell to readonly if the Direction is Out
-                    if (row.Cells.Count == 3 && row.Cells[2].Value != null && (ScriptArgumentDirection)row.Cells[2].Value == ScriptArgumentDirection.Out)
-                        row.Cells[1].ReadOnly = true;
+                    if (row.Cells.Count == 4 && row.Cells["Direction"].Value != null && (ScriptArgumentDirection)row.Cells["Direction"].Value == ScriptArgumentDirection.Out)
+                        row.Cells["ArgumentValue"].ReadOnly = true;
                 }
             }
             catch (Exception ex)
@@ -155,25 +159,87 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private void dgvVariables_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dgvVariablesArguments_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
             try
             {
                 DataGridView dgv = (DataGridView)sender;
 
-                if (dgv.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+                if (dgv.IsCurrentCellDirty)
                 {
-                    var types = TypeMethods.GenerateAllVariableTypes(AContainer);
-                    frmTypes typeForm = new frmTypes(types);
-                    typeForm.ShowDialog();
-
-                    if (typeForm.DialogResult == DialogResult.OK)
-                    {
-                        //dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = typeForm.SelectedType;
-                        ((DataGridViewButtonCell)dgv.Rows[e.RowIndex].Cells[e.ColumnIndex]).Value = typeForm.SelectedType;
-                    }
+                    //grab pre-edit value from here
+                    if (dgv.CurrentCell.Value is Type)
+                        _preEditVarArgType = (Type)dgv.CurrentCell.Value;
+                    
+                    //this fires the cell value changed handler below
+                    dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
                 }
 
+            }
+            catch (Exception ex)
+            {
+                //datagridview event failure
+                Console.WriteLine(ex);
+            }
+        }
+
+        private void dgvVariablesArguments_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                DataGridView dgv = (DataGridView)sender;
+                if (e.RowIndex != -1)
+                {
+                    var selectedCell = dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+                    if (selectedCell.Value == null)
+                        return;
+
+                    else if (e.RowIndex != -1 && e.ColumnIndex == 3)
+                    {
+                        //sets value cell to read only if the argument direction is set to Out
+                        if ((ScriptArgumentDirection)selectedCell.Value == ScriptArgumentDirection.Out)
+                        {
+                            dgv.Rows[e.RowIndex].Cells["ArgumentValue"].Value = null;
+                            dgv.Rows[e.RowIndex].Cells["ArgumentValue"].ReadOnly = true;
+                        }
+
+                        else if ((ScriptArgumentDirection)selectedCell.Value == ScriptArgumentDirection.In)
+                            dgv.Rows[e.RowIndex].Cells["ArgumentValue"].ReadOnly = false;
+                    }
+
+                    else if (selectedCell.Value is Type && ((Type)selectedCell.Value).Name == "MoreOptions")
+                    {
+                        //triggers the type form to open if 'More Options...' is selected
+                        frmTypes typeForm = new frmTypes(_typeContext.GroupedTypes);
+                        typeForm.ShowDialog();
+
+                        //adds type to defaults if new, then commits selection to the cell
+                        if (typeForm.DialogResult == DialogResult.OK)
+                        {
+                            if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.FullName))
+                            {
+                                _typeContext.DefaultTypes.Add(typeForm.SelectedType.FullName, typeForm.SelectedType);
+                                VariableType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+                                ArgumentType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+                            }
+
+                            dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = typeForm.SelectedType;
+                            ((DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells[1]).Value = typeForm.SelectedType;
+                        }
+                        //returns the cell to its original value
+                        else
+                        {
+                            dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = _preEditVarArgType;
+                            ((DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells[1]).Value = _preEditVarArgType;
+                        }
+
+                        //necessary hack to force the set value to update
+                        SendKeys.Send("{TAB}");
+                        SendKeys.Send("+{TAB}");
+                    }
+                }
+                
             }
             catch (Exception ex)
             {
@@ -248,47 +314,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             try
             {
-                if (e.RowIndex != -1)
-                {
-                    DataGridView dgv = (DataGridView)sender;
-                    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells["Direction"];
-
-                    if (cb.Value != null)
-                    {
-                        //Sets value cell to read only if the argument direction is set to Out
-                        if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.Out)
-                        {
-                            dgv.Rows[e.RowIndex].Cells["ArgumentValue"].Value = null;
-                            dgv.Rows[e.RowIndex].Cells["ArgumentValue"].ReadOnly = true;
-                        }
-
-                        else if ((ScriptArgumentDirection)cb.Value == ScriptArgumentDirection.In)
-                            dgv.Rows[e.RowIndex].Cells["ArgumentValue"].ReadOnly = false;
-                    }                    
-                }
+                
             }
             catch (Exception ex)
             {
                 //datagridview event failure
                 Console.WriteLine(ex);
             }                       
-        }
-
-        private void dgvArguments_CurrentCellDirtyStateChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                DataGridView dgv = (DataGridView)sender;
-
-                //this fires the cell value changed handler above
-                if (dgv.IsCurrentCellDirty)
-                    dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
-            }
-            catch (Exception ex)
-            {
-                //datagridview event failure
-                Console.WriteLine(ex);
-            }
         }
 
         private void dgvVariablesArguments_KeyDown(object sender, KeyEventArgs e)
@@ -332,6 +364,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
             }
         }
-        #endregion             
+        #endregion        
+        
+        private void ResetVariableArgumentBindings()
+        {
+            dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+            dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+
+            var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
+            VariableType.DataSource = defaultTypesBinding;
+            ArgumentType.DataSource = defaultTypesBinding;
+        }
     }
 }

@@ -44,11 +44,15 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         //package manager variables
         public IContainer AContainer { get; set; }
-        public Dictionary<string, List<Type>> GroupedTypes { get; set; }
+        private Dictionary<string, List<Type>> _groupedTypes { get; set; }
 
         //variable/argument tab variables
         private List<string> _existingVarArgSearchList;
         private string _preEditVarArgName;
+
+        private Dictionary<string, Type> _defaultTypes;
+        private BindingSource _defaultTypesBinding;
+        public TypeContext TypeContext;
 
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
@@ -261,7 +265,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void AddNewCommand(string specificCommand = "")
         {
             //bring up new command configuration form
-            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), GroupedTypes)
+            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), TypeContext)
             {
                 CreationModeInstance = CreationMode.Add
             };

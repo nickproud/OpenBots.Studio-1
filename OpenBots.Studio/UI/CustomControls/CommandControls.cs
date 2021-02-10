@@ -29,6 +29,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using IContainer = Autofac.IContainer;
+using OpenBots.Core.Script;
 
 namespace OpenBots.UI.CustomControls
 {
@@ -42,18 +43,18 @@ namespace OpenBots.UI.CustomControls
         private CommandItemControl _inputBox;
         private ApplicationSettings _settings;
         private bool _minimizePreference;
-        private Dictionary<string, List<Type>> _groupedTypes;
+        private TypeContext _typeContext;
 
         public CommandControls()
         {
         }
 
-        public CommandControls(frmCommandEditor editor, EngineContext engineContext, Dictionary<string, List<Type>> groupedTypes)
+        public CommandControls(frmCommandEditor editor, EngineContext engineContext, TypeContext typeContext)
         {
             _currentEditor = editor;
             _container = engineContext.Container;
             _projectPath = engineContext.ProjectPath;
-            _groupedTypes = groupedTypes;
+            _typeContext = typeContext;
         }
 
         public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300)
@@ -238,7 +239,7 @@ namespace OpenBots.UI.CustomControls
             TextBox inputBox = (TextBox)sender;
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_groupedTypes)
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
                 {
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
@@ -256,7 +257,7 @@ namespace OpenBots.UI.CustomControls
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
-                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_groupedTypes)
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
@@ -366,7 +367,7 @@ namespace OpenBots.UI.CustomControls
         {
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_groupedTypes)
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
                 {
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
@@ -384,7 +385,7 @@ namespace OpenBots.UI.CustomControls
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
-                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_groupedTypes)
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments,
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables
@@ -586,7 +587,7 @@ namespace OpenBots.UI.CustomControls
             DataGridView dataGridView = (DataGridView)sender;
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_groupedTypes)
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
                 {
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
@@ -604,7 +605,7 @@ namespace OpenBots.UI.CustomControls
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
-                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_groupedTypes)
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
                     ScriptArguments = _currentEditor.ScriptEngineContext.Arguments,
                     ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
