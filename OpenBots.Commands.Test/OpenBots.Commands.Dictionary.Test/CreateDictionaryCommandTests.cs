@@ -3,6 +3,7 @@ using OpenBots.Engine;
 using System.Collections.Generic;
 using System.Data;
 using Xunit;
+using OBData = System.Data;
 
 namespace OpenBots.Commands.Dictionary.Test
 {
@@ -16,7 +17,7 @@ namespace OpenBots.Commands.Dictionary.Test
         {
             _createDictionary = new CreateDictionaryCommand();
             _engine = new AutomationEngineInstance(null);
-            DataTable inputDt = new DataTable();
+            OBData.DataTable inputDt = new OBData.DataTable();
             inputDt.Columns.Add("Keys");
             inputDt.Columns.Add("Values");
             DataRow row1 = inputDt.NewRow();
@@ -26,7 +27,7 @@ namespace OpenBots.Commands.Dictionary.Test
             inputDt.CreateTestVariable(_engine, "inputDt");
             "unassigned".CreateTestVariable(_engine, "output");
 
-            _createDictionary.v_ColumnNameDataTable = (DataTable)"{inputDt}".ConvertUserVariableToObject(_engine);
+            _createDictionary.v_ColumnNameDataTable = (OBData.DataTable)"{inputDt}".ConvertUserVariableToObject(_engine);
             _createDictionary.v_OutputUserVariableName = "{output}";
 
             _createDictionary.RunCommand(_engine);

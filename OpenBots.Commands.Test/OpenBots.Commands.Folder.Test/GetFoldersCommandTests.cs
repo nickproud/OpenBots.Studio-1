@@ -20,7 +20,8 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
+            "undefined".CreateTestVariable(_engine, "output");
 
             Directory.CreateDirectory(Path.Combine(inputPath, @"toGet"));
 
@@ -42,7 +43,8 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\doesNotExist");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
+            "undefined".CreateTestVariable(_engine, "output");
 
             _getFolders.v_SourceFolderPath = "{inputPath}";
             _getFolders.v_OutputUserVariableName = "{output}";

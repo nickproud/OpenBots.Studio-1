@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using Xunit;
-using Data = System.Data;
+using OBData = System.Data;
 
 namespace OpenBots.Commands.DataTable.Test
 {
@@ -17,7 +17,7 @@ namespace OpenBots.Commands.DataTable.Test
         
         [Theory]
         [ClassData(typeof(NullTestData))]
-        public void HandlesNullDataTables(Data.DataTable dt1, Data.DataTable dt2)
+        public void HandlesNullDataTables(OBData.DataTable dt1, OBData.DataTable dt2)
         {
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.DataTable.Test
 
         [Theory]
         [ClassData(typeof(TableTestData))]
-        public void TableDataIsEqual(Data.DataTable dt1, Data.DataTable dt2, string schema)
+        public void TableDataIsEqual(OBData.DataTable dt1, OBData.DataTable dt2, string schema)
         {
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _mergeDataTable.RunCommand(_engine);
 
-            Data.DataTable resultDataTable = (Data.DataTable)_mergeDataTable.v_DestinationDataTable.ConvertUserVariableToObject(_engine);
+            OBData.DataTable resultDataTable = (OBData.DataTable)_mergeDataTable.v_DestinationDataTable.ConvertUserVariableToObject(_engine);
 
             Assert.Equal(dt2.GetType(), resultDataTable.GetType());
             // Check each row / column pair and assert equivalence
@@ -101,7 +101,7 @@ namespace OpenBots.Commands.DataTable.Test
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            Data.DataTable dt1 = new Data.DataTable();
+            OBData.DataTable dt1 = new OBData.DataTable();
             DataColumn column1 = new DataColumn();
             column1.ColumnName = "col1";
             DataColumn column2 = new DataColumn();
@@ -112,7 +112,7 @@ namespace OpenBots.Commands.DataTable.Test
             row["col1"] = "c1r1";
             row["col2"] = "c2r1";
             dt1.Rows.Add(row);
-            Data.DataTable dt2 = null;
+            OBData.DataTable dt2 = null;
             yield return new object[] { dt1, dt2 };
             yield return new object[] { dt2, dt1 };
         }
@@ -124,7 +124,7 @@ namespace OpenBots.Commands.DataTable.Test
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            Data.DataTable dt1 = new Data.DataTable();
+            OBData.DataTable dt1 = new OBData.DataTable();
             DataColumn column1 = new DataColumn();
             column1.ColumnName = "col1";
             DataColumn column2 = new DataColumn();
@@ -146,7 +146,7 @@ namespace OpenBots.Commands.DataTable.Test
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            Data.DataTable dt1 = new Data.DataTable();
+            OBData.DataTable dt1 = new OBData.DataTable();
             DataColumn column1 = new DataColumn();
             column1.ColumnName = "col1";
             DataColumn column2 = new DataColumn();
@@ -157,7 +157,7 @@ namespace OpenBots.Commands.DataTable.Test
             row["col1"] = "c1r1";
             row["col2"] = "c2r1";
             dt1.Rows.Add(row);
-            Data.DataTable dt2 = new Data.DataTable();
+            OBData.DataTable dt2 = new OBData.DataTable();
             column1 = new DataColumn();
             column1.ColumnName = "col1";
             column2 = new DataColumn();

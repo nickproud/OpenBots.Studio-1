@@ -3,6 +3,7 @@ using OpenBots.Engine;
 using System;
 using System.IO;
 using Xunit;
+using OBIO = System.IO;
 
 namespace OpenBots.Commands.TextFile.Test
 {
@@ -31,13 +32,13 @@ namespace OpenBots.Commands.TextFile.Test
             _writeCreateTextFile.v_TextToWrite = "{testText}";
             _writeCreateTextFile.v_Overwrite = writeType;
 
-            string currentText = File.ReadAllText(filePath);
+            string currentText = OBIO.File.ReadAllText(filePath);
 
             _writeCreateTextFile.RunCommand(_engine);
 
             try
             {
-                string textInFile =  File.ReadAllText(filePath);
+                string textInFile =  OBIO.File.ReadAllText(filePath);
                 if(writeType == "Append")
                 {
                     Assert.Equal(textInFile, currentText + testText);
@@ -53,7 +54,7 @@ namespace OpenBots.Commands.TextFile.Test
                 throw(ex);
             }
             //Clean up test file for the next run
-            File.WriteAllText(filePath, currentText);
+            OBIO.File.WriteAllText(filePath, currentText);
         }
     }
 }

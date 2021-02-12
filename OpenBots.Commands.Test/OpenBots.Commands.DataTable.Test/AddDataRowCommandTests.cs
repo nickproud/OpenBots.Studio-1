@@ -3,7 +3,7 @@ using OpenBots.Engine;
 using System.Data;
 using Xunit;
 using Xunit.Abstractions;
-using Data = System.Data;
+using OBData = System.Data;
 
 namespace OpenBots.Commands.DataTable.Test
 {
@@ -25,7 +25,7 @@ namespace OpenBots.Commands.DataTable.Test
             _addDataRow = new AddDataRowCommand();
             _engine = new AutomationEngineInstance(null);
 
-            Data.DataTable inputTable = new Data.DataTable();
+            OBData.DataTable inputTable = new OBData.DataTable();
             inputTable.Columns.Add("firstname");
             inputTable.Columns.Add("lastname");
             DataRow inputrow = inputTable.NewRow();
@@ -33,10 +33,10 @@ namespace OpenBots.Commands.DataTable.Test
             inputrow["lastname"] = "smith";
             inputTable.CreateTestVariable(_engine, "inputTable");
             _addDataRow.v_DataTable = "{inputTable}";
-            Data.DataRow newrow = _addDataRow.v_DataRowDataTable.NewRow();
+            OBData.DataRow newrow = _addDataRow.v_DataRowDataTable.NewRow();
             newrow["Column Name"] = "firstname";
             newrow["Data"] = "john";
-            Data.DataRow newrow2 = _addDataRow.v_DataRowDataTable.NewRow();
+            OBData.DataRow newrow2 = _addDataRow.v_DataRowDataTable.NewRow();
             newrow2["Column Name"] = "lastname";
             newrow2["Data"] = "smith";
 
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _addDataRow.RunCommand(_engine);
 
-            Data.DataTable outputTable = (Data.DataTable)_addDataRow.v_DataTable.ConvertUserVariableToObject(_engine);
+            OBData.DataTable outputTable = (OBData.DataTable)_addDataRow.v_DataTable.ConvertUserVariableToObject(_engine);
             Assert.Equal(inputTable.Rows[0]["firstname"], outputTable.Rows[0]["firstname"]);
             Assert.Equal(inputTable.Rows[0]["lastname"], outputTable.Rows[0]["lastname"]);
         }

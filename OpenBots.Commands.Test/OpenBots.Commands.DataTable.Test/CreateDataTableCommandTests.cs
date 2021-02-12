@@ -3,7 +3,7 @@ using OpenBots.Engine;
 using System;
 using System.Data;
 using Xunit;
-using Data = System.Data;
+using OBData = System.Data;
 
 namespace OpenBots.Commands.DataTable.Test
 {
@@ -18,7 +18,7 @@ namespace OpenBots.Commands.DataTable.Test
             _createDataTableCommand = new CreateDataTableCommand();
             _engine = new AutomationEngineInstance(null);
 
-            Data.DataTable columnNameDataTable = new Data.DataTable
+            OBData.DataTable columnNameDataTable = new OBData.DataTable
             {
                 TableName = "ColumnNamesDataTable" + DateTime.Now.ToString("MMddyy.hhmmss")
             };
@@ -31,13 +31,13 @@ namespace OpenBots.Commands.DataTable.Test
 
             _createDataTableCommand.RunCommand(_engine);
 
-            Data.DataTable expectedDt = new Data.DataTable();
+            OBData.DataTable expectedDt = new OBData.DataTable();
             foreach (DataRow rwColumnName in columnNameDataTable.Rows)
             {
                 expectedDt.Columns.Add(rwColumnName.Field<string>("Column Name").ConvertUserVariableToString(_engine));
             }
 
-            Data.DataTable resultDataTable = (Data.DataTable)_createDataTableCommand.v_OutputUserVariableName.ConvertUserVariableToObject(_engine);
+            OBData.DataTable resultDataTable = (OBData.DataTable)_createDataTableCommand.v_OutputUserVariableName.ConvertUserVariableToObject(_engine);
 
             for (int row = 0; row < expectedDt.Rows.Count; row++)
             {

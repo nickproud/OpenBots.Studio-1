@@ -3,6 +3,7 @@ using OpenBots.Engine;
 using System;
 using System.IO;
 using Xunit;
+using OBIO = System.IO;
 
 namespace OpenBots.Commands.TextFile.Test
 {
@@ -24,7 +25,7 @@ namespace OpenBots.Commands.TextFile.Test
             _readTextFile.v_OutputUserVariableName = "{test}";
             _readTextFile.v_FilePath = "{filepath}";
             _readTextFile.RunCommand(_engine);
-            var textFromFile = File.ReadAllText(filePath);
+            var textFromFile = OBIO.File.ReadAllText(filePath);
             var storedText = _readTextFile.v_OutputUserVariableName.ConvertUserVariableToString(_engine);
 
             Assert.Equal(textFromFile, storedText);

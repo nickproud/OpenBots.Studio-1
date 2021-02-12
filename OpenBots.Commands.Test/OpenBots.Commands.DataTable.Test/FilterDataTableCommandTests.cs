@@ -3,7 +3,7 @@ using OpenBots.Engine;
 using System.Data;
 using Xunit;
 using Xunit.Abstractions;
-using Data = System.Data;
+using OBData = System.Data;
 
 namespace OpenBots.Commands.DataTable.Test
 {
@@ -24,7 +24,7 @@ namespace OpenBots.Commands.DataTable.Test
             _filterDataTable = new FilterDataTableCommand();
             _engine = new AutomationEngineInstance(null);
 
-            Data.DataTable tableToFilter = new Data.DataTable();
+            OBData.DataTable tableToFilter = new OBData.DataTable();
             tableToFilter.Columns.Add("col1");
             tableToFilter.Columns.Add("col2");
             DataRow row1 = tableToFilter.NewRow();
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _filterDataTable.RunCommand(_engine);
 
-            Data.DataTable expectedDT = new Data.DataTable();
+            OBData.DataTable expectedDT = new OBData.DataTable();
             expectedDT.Columns.Add("col1");
             expectedDT.Columns.Add("col2");
             DataRow row1copy = expectedDT.NewRow();
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.DataTable.Test
             row1copy["col2"] = "data1";
             expectedDT.Rows.Add(row1copy);
             
-            Data.DataTable resultDataTable = (Data.DataTable)_filterDataTable.v_OutputUserVariableName.ConvertUserVariableToObject(_engine);
+            OBData.DataTable resultDataTable = (OBData.DataTable)_filterDataTable.v_OutputUserVariableName.ConvertUserVariableToObject(_engine);
             // Check each row / column pair and assert equivalence
             output.WriteLine(expectedDT.Rows[0].ToString());
             output.WriteLine(resultDataTable.Rows[0].ToString());

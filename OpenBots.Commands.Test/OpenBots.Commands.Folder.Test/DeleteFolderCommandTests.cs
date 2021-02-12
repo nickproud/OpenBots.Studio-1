@@ -3,7 +3,7 @@ using OpenBots.Engine;
 using System;
 using System.IO;
 using Xunit;
-
+using OBIO = System.IO;
 namespace OpenBots.Commands.Folder.Test
 {
     public class DeleteFolderCommandTests
@@ -19,10 +19,10 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toDelete");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             Directory.CreateDirectory(inputPath);
-            File.Create(Path.Combine(inputPath + @"toDelete.txt"));
+            OBIO.File.Create(Path.Combine(inputPath + @"toDelete.txt"));
 
             _deleteFolder.v_SourceFolderPath = "{inputPath}";
 

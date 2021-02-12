@@ -3,6 +3,7 @@ using OpenBots.Engine;
 using System.Collections.Generic;
 using Xunit;
 using System.Data;
+using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List.Test
 {
@@ -39,10 +40,10 @@ namespace OpenBots.Commands.List.Test
             _engine = new AutomationEngineInstance(null);
             _removeListItem = new RemoveListItemCommand();
 
-            List<DataTable> inputList = new List<DataTable>();
-            DataTable item1 = new DataTable();
+            List<OBDataTable> inputList = new List<OBDataTable>();
+            OBDataTable item1 = new OBDataTable();
             item1.Columns.Add("d1col");
-            DataTable item2 = new DataTable();
+            OBDataTable item2 = new OBDataTable();
             item2.Columns.Add("d2col");
             inputList.Add(item1);
             inputList.Add(item2);
@@ -55,7 +56,7 @@ namespace OpenBots.Commands.List.Test
             _removeListItem.v_ListIndex = "{index}";
 
             _removeListItem.RunCommand(_engine);
-            List<DataTable> outputList = (List<DataTable>)"{inputList}".ConvertUserVariableToObject(_engine);
+            List<OBDataTable> outputList = (List<OBDataTable>)"{inputList}".ConvertUserVariableToObject(_engine);
             Assert.Equal(item2, outputList[0]);
         }
     }

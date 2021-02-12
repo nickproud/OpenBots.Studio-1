@@ -9,6 +9,7 @@ using System.IO;
 using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
+using OBIO = System.IO;
 
 namespace OpenBots.Commands.Task.Test
 {
@@ -124,11 +125,11 @@ namespace OpenBots.Commands.Task.Test
             _engine.ExecuteCommand(runTaskAction);
 
             Assert.Equal("outputValue", "{outputVar}".ConvertUserVariableToString(_engine));
-            Assert.True(File.Exists(Path.Combine(filePath, @"test.txt")));
-            Assert.Equal("inputValue", File.ReadAllText(Path.Combine(filePath, @"test.txt")));
+            Assert.True(OBIO.File.Exists(Path.Combine(filePath, @"test.txt")));
+            Assert.Equal("inputValue", OBIO.File.ReadAllText(Path.Combine(filePath, @"test.txt")));
 
-            File.Delete(Path.Combine(filePath, @"test.txt"));
-            File.Delete(Path.Combine(filePath, @"task.json"));
+            OBIO.File.Delete(Path.Combine(filePath, @"test.txt"));
+            OBIO.File.Delete(Path.Combine(filePath, @"task.json"));
         }
     }
 }

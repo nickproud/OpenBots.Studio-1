@@ -3,6 +3,7 @@ using OpenBots.Engine;
 using System;
 using System.IO;
 using Xunit;
+using OBIO = System.IO;
 
 namespace OpenBots.Commands.Engine.Test
 {
@@ -25,9 +26,9 @@ namespace OpenBots.Commands.Engine.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\" + logFile);
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
-
-            "testLogData".StoreInUserVariable(_engine, "{logText}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
+            "testLogData".CreateTestVariable(_engine, "logText");
+            
 
             _logMessage.v_LogFile = "{inputPath}";
             _logMessage.v_LogText = "{logText}";
@@ -35,7 +36,7 @@ namespace OpenBots.Commands.Engine.Test
 
             _logMessage.RunCommand(_engine);
 
-            string fileText = File.ReadAllText(inputPath);
+            string fileText = OBIO.File.ReadAllText(inputPath);
 
             Assert.Contains("testLogData", fileText);
             switch (logType)
@@ -62,8 +63,8 @@ namespace OpenBots.Commands.Engine.Test
                     break;
             }
 
-            File.Delete(inputPath);
-            File.Create(inputPath);
+            OBIO.File.Delete(inputPath);
+            OBIO.File.Create(inputPath);
         }
     }
 }

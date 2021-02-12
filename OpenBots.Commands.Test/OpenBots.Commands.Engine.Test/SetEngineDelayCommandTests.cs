@@ -27,7 +27,9 @@ namespace OpenBots.Commands.Engine.Test
             _setEngineDelay = new SetEngineDelayCommand();
 
             string newDelay = "1000";
-            newDelay.StoreInUserVariable(_engine, "{newDelay}");
+            newDelay.CreateTestVariable(_engine, "newDelay");
+            "undefined".CreateTestVariable(_engine, "var1");
+            "undefined".CreateTestVariable(_engine, "var2");
 
             _setEngineDelay.v_EngineDelay = "{newDelay}";
 

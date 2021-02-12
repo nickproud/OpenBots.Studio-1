@@ -88,17 +88,31 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RunTaskCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Resources\task.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.Core\OpenBots.Commands.Core.csproj">
+      <Project>{d104c957-9dc9-4f97-8bce-00b21720ef2f}</Project>
+      <Name>OpenBots.Commands.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.SystemAutomation\OpenBots.Commands.SystemAutomation.csproj">
+      <Project>{7568d2f1-41ac-46a9-b5d7-a86a4e40be9f}</Project>
+      <Name>OpenBots.Commands.SystemAutomation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.Task\OpenBots.Commands.Task.csproj">
       <Project>{74a1ec41-09a7-4e1d-89bd-58da555d011a}</Project>
       <Name>OpenBots.Commands.Task</Name>
@@ -119,6 +133,12 @@
       <Project>{ed8f6540-c341-4b5f-8966-26a08e39af87}</Project>
       <Name>OpenBots.Engine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

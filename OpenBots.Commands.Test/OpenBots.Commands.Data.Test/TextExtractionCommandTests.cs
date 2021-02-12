@@ -2,6 +2,7 @@
 using OpenBots.Engine;
 using System.Data;
 using Xunit;
+using OBData = System.Data;
 
 namespace OpenBots.Commands.Data.Test
 {
@@ -17,7 +18,7 @@ namespace OpenBots.Commands.Data.Test
             _textExtraction = new TextExtractionCommand();
 
             string input = "This is an example sentence";
-            DataTable extractParams = new DataTable();
+            OBData.DataTable extractParams = new OBData.DataTable();
             extractParams.Columns.Add("Parameter Name");
             extractParams.Columns.Add("Parameter Value");
             DataRow row1 = extractParams.NewRow();
@@ -50,7 +51,7 @@ namespace OpenBots.Commands.Data.Test
             _textExtraction = new TextExtractionCommand();
 
             string input = "This is an example sentence";
-            DataTable extractParams = new DataTable();
+            OBData.DataTable extractParams = new OBData.DataTable();
             extractParams.Columns.Add("Parameter Name");
             extractParams.Columns.Add("Parameter Value");
             DataRow row1 = extractParams.NewRow();
@@ -83,7 +84,7 @@ namespace OpenBots.Commands.Data.Test
             _textExtraction = new TextExtractionCommand();
 
             string input = "This is an example sentence";
-            DataTable extractParams = new DataTable();
+            OBData.DataTable extractParams = new OBData.DataTable();
             extractParams.Columns.Add("Parameter Name");
             extractParams.Columns.Add("Parameter Value");
             DataRow row1 = extractParams.NewRow();

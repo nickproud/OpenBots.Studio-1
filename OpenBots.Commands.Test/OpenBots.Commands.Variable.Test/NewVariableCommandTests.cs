@@ -16,9 +16,9 @@ namespace OpenBots.Commands.Variable.Test
             _engine = new AutomationEngineInstance(null);
             _newVariable = new NewVariableCommand();
 
-            "testValue".StoreInUserVariable(_engine, "{testValue}");
+            "testValue".CreateTestVariable(_engine, "testValue");
 
-            _newVariable.v_VariableName = "{testVariable}";
+            _newVariable.v_VariableName = "testVariable";
             _newVariable.v_Input = "{testValue}";
             _newVariable.v_IfExists = "Do Nothing If Variable Exists";
 
@@ -33,8 +33,8 @@ namespace OpenBots.Commands.Variable.Test
             _engine = new AutomationEngineInstance(null);
             _newVariable = new NewVariableCommand();
 
-            "testValue".StoreInUserVariable(_engine, "{testValue}");
-            "existingValue".StoreInUserVariable(_engine, "{testVariable}");
+            "testValue".CreateTestVariable(_engine, "testValue");
+            "existingValue".CreateTestVariable(_engine, "testVariable");
 
             _newVariable.v_VariableName = "{testVariable}";
             _newVariable.v_Input = "{testValue}";
@@ -49,8 +49,8 @@ namespace OpenBots.Commands.Variable.Test
             _engine = new AutomationEngineInstance(null);
             _newVariable = new NewVariableCommand();
 
-            "testValue".StoreInUserVariable(_engine, "{testValue}");
-            "existingValue".StoreInUserVariable(_engine, "{testVariable}");
+            "testValue".CreateTestVariable(_engine, "testValue");
+            "existingValue".CreateTestVariable(_engine, "testVariable");
 
             _newVariable.v_VariableName = "{testVariable}";
             _newVariable.v_Input = "{testValue}";

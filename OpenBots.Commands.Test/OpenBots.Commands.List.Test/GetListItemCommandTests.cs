@@ -3,6 +3,7 @@ using OpenBots.Engine;
 using System.Collections.Generic;
 using Xunit;
 using System.Data;
+using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List.Test
 {
@@ -38,10 +39,10 @@ namespace OpenBots.Commands.List.Test
             _engine = new AutomationEngineInstance(null);
             _getListItem = new GetListItemCommand();
 
-            List<DataTable> list = new List<DataTable>();
-            DataTable item1 = new DataTable();
+            List<OBDataTable> list = new List<OBDataTable>();
+            OBDataTable item1 = new OBDataTable();
             item1.Columns.Add("d1col");
-            DataTable item2 = new DataTable();
+            OBDataTable item2 = new OBDataTable();
             item2.Columns.Add("d2col");
             list.Add(item1);
             list.Add(item2);
@@ -54,7 +55,7 @@ namespace OpenBots.Commands.List.Test
 
             _getListItem.RunCommand(_engine);
 
-            Assert.Equal(item2, (DataTable)"{output}".ConvertUserVariableToObject(_engine));
+            Assert.Equal(item2, (OBDataTable)"{output}".ConvertUserVariableToObject(_engine));
         }
     }
 }

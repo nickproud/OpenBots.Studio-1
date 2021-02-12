@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using Xunit;
 using Xunit.Abstractions;
+using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List.Test
 {
@@ -46,8 +47,8 @@ namespace OpenBots.Commands.List.Test
             _engine = new AutomationEngineInstance(null);
             _addListItem = new AddListItemCommand();
 
-            List<DataTable> stringList = new List<DataTable>();
-            DataTable itemToAdd = new DataTable();
+            List<OBDataTable> stringList = new List<OBDataTable>();
+            OBDataTable itemToAdd = new OBDataTable();
             itemToAdd.Columns.Add("first column");
 
             stringList.CreateTestVariable(_engine, "list");
@@ -58,7 +59,7 @@ namespace OpenBots.Commands.List.Test
 
             _addListItem.RunCommand(_engine);
 
-            List<DataTable> outputList = (List<DataTable>)"{list}".ConvertUserVariableToObject(_engine);
+            List<OBDataTable> outputList = (List<OBDataTable>)"{list}".ConvertUserVariableToObject(_engine);
             Assert.Equal(itemToAdd, outputList[0]);
         }
 
@@ -68,7 +69,7 @@ namespace OpenBots.Commands.List.Test
             _engine = new AutomationEngineInstance(null);
             _addListItem = new AddListItemCommand();
 
-            List<DataTable> stringList = new List<DataTable>();
+            List<OBDataTable> stringList = new List<OBDataTable>();
             string itemToAdd = "newitem";
 
             stringList.CreateTestVariable(_engine, "list");

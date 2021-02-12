@@ -2,7 +2,7 @@
 using OpenBots.Engine;
 using System.Data;
 using Xunit;
-using Data = System.Data;
+using OBData = System.Data;
 
 namespace OpenBots.Commands.DataTable.Test
 {
@@ -18,7 +18,7 @@ namespace OpenBots.Commands.DataTable.Test
             _getDataRow = new GetDataRowCommand();
             _engine = new AutomationEngineInstance(null);
 
-            Data.DataTable inputTable = new Data.DataTable();
+            OBData.DataTable inputTable = new OBData.DataTable();
             DataColumn column1 = new DataColumn();
             column1.ColumnName = "col1";
             DataColumn column2 = new DataColumn();

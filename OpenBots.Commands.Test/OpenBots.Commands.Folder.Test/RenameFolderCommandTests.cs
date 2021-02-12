@@ -19,11 +19,11 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toRename");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             Directory.CreateDirectory(inputPath);
 
-            "newName".StoreInUserVariable(_engine, "{newName}");
+            "newName".CreateTestVariable(_engine, "newName");
 
             _renameFolder.v_SourceFolderPath = "{inputPath}";
             _renameFolder.v_NewName = "{newName}";
@@ -43,9 +43,9 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\doesNotExist");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
-            "newName".StoreInUserVariable(_engine, "{newName}");
+            "newName".CreateTestVariable(_engine, "newName");
 
             _renameFolder.v_SourceFolderPath = "{inputPath}";
             _renameFolder.v_NewName = "{newName}";
@@ -60,9 +60,9 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\newName");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
-            "toDelete".StoreInUserVariable(_engine, "{newName}");
+            "toDelete".CreateTestVariable(_engine, "newName");
 
             _renameFolder.v_SourceFolderPath = "{inputPath}";
             _renameFolder.v_NewName = "{newName}";

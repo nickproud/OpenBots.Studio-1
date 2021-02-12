@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Xunit;
+using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List.Test
 {
@@ -44,15 +45,15 @@ namespace OpenBots.Commands.List.Test
             _engine = new AutomationEngineInstance(null);
             _updateListItem = new UpdateListItemCommand();
 
-            List<DataTable> inputList = new List<DataTable>();
-            DataTable item1 = new DataTable();
+            List<OBDataTable> inputList = new List<OBDataTable>();
+            OBDataTable item1 = new OBDataTable();
             item1.Columns.Add("d1col");
-            DataTable item2 = new DataTable();
+            OBDataTable item2 = new OBDataTable();
             item2.Columns.Add("d2col");
             inputList.Add(item1);
             inputList.Add(item2);
             string index = "0";
-            DataTable newitem = new DataTable();
+            OBDataTable newitem = new OBDataTable();
             newitem.Columns.Add("d3col");
 
             inputList.CreateTestVariable(_engine, "inputList");
@@ -65,7 +66,7 @@ namespace OpenBots.Commands.List.Test
 
             _updateListItem.RunCommand(_engine);
 
-            List<DataTable> outputList = (List<DataTable>)"{inputList}".ConvertUserVariableToObject(_engine);
+            List<OBDataTable> outputList = (List<OBDataTable>)"{inputList}".ConvertUserVariableToObject(_engine);
             Assert.Equal(newitem, outputList[0]);
         }
 
@@ -75,8 +76,8 @@ namespace OpenBots.Commands.List.Test
             _engine = new AutomationEngineInstance(null);
             _updateListItem = new UpdateListItemCommand();
 
-            List<DataTable> inputList = new List<DataTable>();
-            DataTable item1 = new DataTable();
+            List<OBDataTable> inputList = new List<OBDataTable>();
+            OBDataTable item1 = new OBDataTable();
             string newItem = "item2";
             inputList.Add(item1);
             string index = "0";

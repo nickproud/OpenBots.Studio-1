@@ -105,6 +105,10 @@
     <Compile Include="SendServerEmailCommandTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.Server\OpenBots.Commands.Server.csproj">
+      <Project>{94ae5f8a-ecc2-4d79-a770-a0f7acc9a9b9}</Project>
+      <Name>OpenBots.Commands.Server</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\OpenBots.Core\OpenBots.Core.csproj">
       <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
       <Name>OpenBots.Core</Name>

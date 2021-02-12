@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using Xunit;
 using Xunit.Abstractions;
+using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List.Test
 {
@@ -47,7 +48,7 @@ namespace OpenBots.Commands.List.Test
                     expectedList = new List<string>();
                     break;
                 case "DataTable":
-                    expectedList = new List<DataTable>();
+                    expectedList = new List<OBDataTable>();
                     break;
                 case "MailItem (Outlook)":
                     expectedList = new List<MailItem>();

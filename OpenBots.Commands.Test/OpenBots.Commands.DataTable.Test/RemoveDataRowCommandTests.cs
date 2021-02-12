@@ -3,7 +3,7 @@ using OpenBots.Engine;
 using System.Data;
 using Xunit;
 using Xunit.Abstractions;
-using Data = System.Data;
+using OBData = System.Data;
 
 namespace OpenBots.Commands.DataTable.Test
 {
@@ -26,7 +26,7 @@ namespace OpenBots.Commands.DataTable.Test
             _removeDataRow = new RemoveDataRowCommand();
             _engine = new AutomationEngineInstance(null);
 
-            Data.DataTable inputTable = new Data.DataTable();
+            OBData.DataTable inputTable = new OBData.DataTable();
             inputTable.Columns.Add("firstname");
             inputTable.Columns.Add("lastname");
             DataRow row1 = inputTable.NewRow();
@@ -50,7 +50,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _removeDataRow.RunCommand(_engine);
             
-            Data.DataTable outputTable = (Data.DataTable)_removeDataRow.v_DataTable.ConvertUserVariableToObject(_engine);
+            OBData.DataTable outputTable = (OBData.DataTable)_removeDataRow.v_DataTable.ConvertUserVariableToObject(_engine);
             Assert.True(outputTable.Rows[expectedIndex][0].Equals(expectedName));
         }
     }

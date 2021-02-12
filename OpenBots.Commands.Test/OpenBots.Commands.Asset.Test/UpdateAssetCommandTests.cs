@@ -141,7 +141,7 @@ namespace OpenBots.Commands.Asset.Test
 
             Assert.True(File.Exists(filepath + @"Download\newtest.txt"));
 
-            File.Delete(filepath+@"Download\newtest.txt");
+            File.Delete(filepath + @"Download\newtest.txt");
             resetAsset(assetName, filepath + @"Upload\oldtest.txt", "File");
         }
 
@@ -174,7 +174,7 @@ namespace OpenBots.Commands.Asset.Test
             _updateAsset.v_AssetType = type;
             _updateAsset.v_AssetValue = assetVal;
 
-            if(type == "File")
+            if (type == "File")
             {
                 _updateAsset.v_AssetFilePath = assetVal;
             }

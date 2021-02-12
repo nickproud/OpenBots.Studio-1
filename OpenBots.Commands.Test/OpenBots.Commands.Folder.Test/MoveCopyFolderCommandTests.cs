@@ -31,12 +31,12 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\" + folder);
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             Directory.CreateDirectory(inputPath);
 
             string destinationPath = Path.Combine(projectDirectory, @"Resources\moveCopyDestination");
-            destinationPath.StoreInUserVariable(_engine, "{destinationPath}");
+            destinationPath.CreateTestVariable(_engine, "destinationPath");
 
             _moveCopyFolder.v_OperationType = operation;
             _moveCopyFolder.v_SourceFolderPath = "{inputPath}";
@@ -68,10 +68,10 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\doesNotExist");
-            inputPath.StoreInUserVariable(_engine, "{inputPath}");
+            inputPath.CreateTestVariable(_engine, "inputPath");
 
             string destinationPath = Path.Combine(projectDirectory, @"Resources\moveCopyDestination");
-            destinationPath.StoreInUserVariable(_engine, "{destinationPath}");
+            destinationPath.CreateTestVariable(_engine, "destinationPath");
 
             _moveCopyFolder.v_OperationType = "Move Folder";
             _moveCopyFolder.v_SourceFolderPath = "{inputPath}";

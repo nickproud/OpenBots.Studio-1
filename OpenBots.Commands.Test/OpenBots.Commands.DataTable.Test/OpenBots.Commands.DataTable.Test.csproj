@@ -104,6 +104,10 @@
     <Analyzer Include="..\..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\OpenBots.Commands\OpenBots.Commands.DataManipulation\OpenBots.Commands.DataManipulation.csproj">
+      <Project>{41f0e8c9-1f9c-42f8-ab41-94f10b21b023}</Project>
+      <Name>OpenBots.Commands.DataManipulation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\OpenBots.Core\OpenBots.Core.csproj">
       <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
       <Name>OpenBots.Core</Name>

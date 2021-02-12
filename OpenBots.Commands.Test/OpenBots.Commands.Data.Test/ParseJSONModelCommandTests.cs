@@ -3,6 +3,7 @@ using OpenBots.Engine;
 using System.Collections.Generic;
 using System.Data;
 using Xunit;
+using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Data.Test
 {
@@ -23,7 +24,7 @@ namespace OpenBots.Commands.Data.Test
             selector.CreateTestVariable(_engine, "selector");
             "unassigned".CreateTestVariable(_engine, "r1output");
 
-            DataTable selectorTable = new DataTable();
+            OBDataTable selectorTable = new OBDataTable();
             selectorTable.Columns.Add("Json Selector");
             selectorTable.Columns.Add("Output Variable");
             DataRow row1 = selectorTable.NewRow();

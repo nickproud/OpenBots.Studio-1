@@ -3,7 +3,7 @@ using OpenBots.Engine;
 using System.Collections.Generic;
 using System.Data;
 using Xunit;
-using Data = System.Data;
+using OBData = System.Data;
 
 namespace OpenBots.Commands.Dictionary.Test
 {
@@ -21,7 +21,7 @@ namespace OpenBots.Commands.Dictionary.Test
             Dictionary<string, string> inputDict = new Dictionary<string, string>();
             inputDict.CreateTestVariable(_engine, "inputDict");
 
-            Data.DataTable inputTable = new Data.DataTable();
+            OBData.DataTable inputTable = new OBData.DataTable();
             inputTable.Columns.Add("Keys");
             inputTable.Columns.Add("Values");
             DataRow row1 = inputTable.NewRow();
@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Dictionary.Test
             inputTable.CreateTestVariable(_engine, "inputTable");
 
             _addDictionaryItem.v_DictionaryName = "{inputDict}";
-            _addDictionaryItem.v_ColumnNameDataTable = (Data.DataTable)"{inputTable}".ConvertUserVariableToObject(_engine);
+            _addDictionaryItem.v_ColumnNameDataTable = (OBData.DataTable)"{inputTable}".ConvertUserVariableToObject(_engine);
 
             _addDictionaryItem.RunCommand(_engine);
 

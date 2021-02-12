@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Engine.Test
 
 
             string closeAfterSec = "2";
-            closeAfterSec.StoreInUserVariable(_engine, "{closeAfterSec}");
+            closeAfterSec.CreateTestVariable(_engine, "closeAfterSec");
 
             _showEngineContextCommand.v_AutoCloseAfter = "{closeAfterSec}";
 
