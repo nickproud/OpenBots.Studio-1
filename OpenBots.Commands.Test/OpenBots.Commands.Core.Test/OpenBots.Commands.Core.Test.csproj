@@ -6,11 +6,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5F799931-ADE7-448C-B47D-0181F7983A9B}</ProjectGuid>
+    <ProjectGuid>{3B77EF50-BDEF-464B-BC30-0ACA47BF530B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenBots.Command.Core.Test</RootNamespace>
-    <AssemblyName>OpenBots.Command.Core.Test</AssemblyName>
+    <RootNamespace>OpenBots.Commands.Core.Test</RootNamespace>
+    <AssemblyName>OpenBots.Commands.Core.Test</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
