@@ -48,7 +48,9 @@ namespace OpenBots.Core.User32
         [DllImport("User32.dll", EntryPoint = "SetForegroundWindow")]
         private static extern IntPtr SetForegroundWindowNative(IntPtr hWnd);
 
-        [DllImport("user32.dll")]
+        [DllImport("User32.dll")]
+        private static extern bool BringWindowToTop(IntPtr hWnd);
+        [DllImport("User32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
@@ -80,6 +82,12 @@ namespace OpenBots.Core.User32
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr processId);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetClipboardData(uint uFormat);
@@ -233,9 +241,23 @@ namespace OpenBots.Core.User32
             return targetWindows;
         }
 
-        public static void SetForegroundWindow(IntPtr hWnd)
+        public static void BringWindowToFront(IntPtr hWnd)
         {
-            SetForegroundWindowNative(hWnd);
+            uint foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
+            uint appThread = (uint)System.AppDomain.GetCurrentThreadId();
+
+            if (foreThread != appThread)
+            {
+                AttachThreadInput(foreThread, appThread, true);
+                BringWindowToTop(hWnd);
+                ShowWindow(hWnd, (int)WindowState.SwShow);
+                AttachThreadInput(foreThread, appThread, false);
+            }
+            else
+            {
+                BringWindowToTop(hWnd);
+                ShowWindow(hWnd, (int)WindowState.SwShow);
+            }
         }
 
         public static void SetWindowState(IntPtr hWnd, WindowState windowState)
@@ -406,7 +428,7 @@ namespace OpenBots.Core.User32
             {
                 hWnd = FindWindow(windowName);
                 SetWindowState(hWnd, WindowState.SwRestore);
-                SetForegroundWindow(hWnd);
+                BringWindowToFront(hWnd);
             }
 
             var rect = new Rect();
@@ -460,7 +482,7 @@ namespace OpenBots.Core.User32
                         SetWindowState(targetedWindow, WindowState.SwMaximize);
                         break;
                 }
-                SetForegroundWindow(targetedWindow);
+                BringWindowToFront(targetedWindow);
             }
         }
 

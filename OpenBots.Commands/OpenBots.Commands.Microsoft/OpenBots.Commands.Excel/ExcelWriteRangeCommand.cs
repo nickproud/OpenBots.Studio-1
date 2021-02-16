@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
@@ -79,57 +81,50 @@ namespace OpenBots.Commands.Excel
 			DataTable Dt = (DataTable)v_DataTableToSet.ConvertUserVariableToObject(engine);
 			if (string.IsNullOrEmpty(vTargetAddress) || vTargetAddress.Contains(":")) 
 				throw new Exception("Cell Location is invalid or empty");
-		  
-			var numberOfRow = Regex.Match(vTargetAddress, @"\d+").Value;
-			vTargetAddress = Regex.Replace(vTargetAddress, @"[\d-]", string.Empty);
-			vTargetAddress = vTargetAddress.ToUpperInvariant();
-
-			int sum = 0;
-
-			for (int i = 0; i < vTargetAddress.Length; i++)
-			{   
-				sum *= 26;
-				sum += (vTargetAddress[i] - 'A' + 1);
-			}
 
 			if (v_AddHeaders == "Yes")
 			{
-				//Write column names
-				string columnName;
-				for (int j = 0; j < Dt.Columns.Count; j++)
+				DataRow firstRow = Dt.NewRow();
+				List<string> names = new List<string>();
+				foreach (DataColumn column in Dt.Columns)
 				{
-					if (Dt.Columns[j].ColumnName == "null")                    
-						columnName = string.Empty;                  
-					else                    
-						columnName = Dt.Columns[j].ColumnName;
-					
-					excelSheet.Cells[int.Parse(numberOfRow), j + sum] = columnName;
+					names.Add(column.ColumnName);
+				}
+				firstRow.ItemArray = names.ToArray();
+				Dt.Rows.InsertAt(firstRow, 0);
+			}
+
+			var dataTableList = ToChunks(Dt.AsEnumerable(), 3000);
+			string movingRange = vTargetAddress;
+
+			foreach (var listItem in dataTableList)
+            {
+				DataTable dataTable = listItem.AsEnumerable().CopyToDataTable();
+
+				int colStartIndex = NumberFromExcelColumn(Regex.Replace(movingRange, @"[\d-]", string.Empty));
+				int colEndIndex = colStartIndex + dataTable.Columns.Count - 1;
+				string colEndAddress = ExcelColumnFromNumber(colEndIndex);
+				colEndAddress = colEndAddress + ((dataTable.Rows.Count) + Convert.ToInt32(Regex.Match(movingRange, @"\d+").Value) - 1).ToString();
+
+				String excelRangeStr = String.Format(movingRange + ":" + colEndAddress);
+				Range excelRange = excelSheet.get_Range(excelRangeStr);
+
+				int rowCount = dataTable.Rows.Count;
+				int columnCount = dataTable.Columns.Count;
+
+				object[,] objectArr = new object[rowCount, columnCount];
+
+				for (int i = 0; i < rowCount; i++)
+				{
+					for (int j = 0; j < columnCount; j++)
+					{
+						objectArr[i, j] = dataTable.Rows[i][j];
+					}
 				}
 
-				for (int i = 0; i < Dt.Rows.Count; i++)
-				{
-					for (int j = 0; j < Dt.Columns.Count; j++)
-					{
-						if (Dt.Rows[i][j].ToString() == "null")
-						{
-							Dt.Rows[i][j] = string.Empty;
-						}
-						excelSheet.Cells[i + int.Parse(numberOfRow) + 1, j + sum] = Dt.Rows[i][j].ToString();
-					}
-				}
-			}
-			else { 
-				for (int i = 0; i < Dt.Rows.Count; i++)
-				{
-					for (int j = 0; j < Dt.Columns.Count; j++)
-					{
-						if (Dt.Rows[i][j].ToString() == "null")
-						{
-							Dt.Rows[i][j] = string.Empty;
-						}
-						excelSheet.Cells[i + int.Parse(numberOfRow), j + sum] = Dt.Rows[i][j].ToString();
-					}
-				}
+				excelRange.Value = objectArr;
+
+				movingRange = Regex.Replace(movingRange, @"[\d-]", string.Empty) + (Convert.ToInt32(Regex.Match(movingRange, @"\d+").Value) + 3000);
 			}
 		}
 
@@ -148,6 +143,44 @@ namespace OpenBots.Commands.Excel
 		public override string GetDisplayValue()
 		{
 			return base.GetDisplayValue() + $" [Write '{v_DataTableToSet}' to Cell '{v_CellLocation}' - Instance Name '{v_InstanceName}']";
-		}        
+		}
+
+		public static int NumberFromExcelColumn(string column)
+		{
+			int retVal = 0;
+			string col = column.ToUpper();
+			for (int iChar = col.Length - 1; iChar >= 0; iChar--)
+			{
+				char colPiece = col[iChar];
+				int colNum = colPiece - 64;
+				retVal = retVal + colNum * (int)Math.Pow(26, col.Length - (iChar + 1));
+			}
+			return retVal;
+		}
+		public static string ExcelColumnFromNumber(int column)
+		{
+			string columnString = "";
+			decimal columnNumber = column;
+			while (columnNumber > 0)
+			{
+				decimal currentLetterNumber = (columnNumber - 1) % 26;
+				char currentLetter = (char)(currentLetterNumber + 65);
+				columnString = currentLetter + columnString;
+				columnNumber = (columnNumber - (currentLetterNumber + 1)) / 26;
+			}
+			return columnString;
+		}
+		public static IEnumerable<IEnumerable<T>> ToChunks<T>(IEnumerable<T> enumerable, int chunkSize)
+		{
+			int itemsReturned = 0;
+			var list = enumerable.ToList(); // Prevent multiple execution of IEnumerable.
+			int count = list.Count;
+			while (itemsReturned < count)
+			{
+				int currentChunkSize = Math.Min(chunkSize, count - itemsReturned);
+				yield return list.GetRange(itemsReturned, currentChunkSize);
+				itemsReturned += currentChunkSize;
+			}
+		}
 	}
 }

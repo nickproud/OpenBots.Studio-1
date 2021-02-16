@@ -106,55 +106,77 @@ namespace OpenBots.Commands.Excel
 				cellRange = excelSheet.Range[splitRange[0], splitRange[1]];
 			}
 
-			int rw = cellRange.Rows.Count;
-			int cl = cellRange.Columns.Count;
+			;
 
-			object[,] rangeData;
-			if (v_Formulas == "Yes")
-				rangeData = cellRange.Formula;
-			else
-				rangeData = cellRange.Value;
+			int rowStart =1, rowEnd = 0, columnEnd = cellRange.Columns.Count, movingRangeSize = 3000;
 
-			int rCnt, cCnt;
-			DataTable DT = new DataTable();
-
-			int startRow;
-			if (v_AddHeaders == "Yes")
-				startRow = 2;
-			else
-				startRow = 1;
-
-			for (rCnt = startRow; rCnt <= rw; rCnt++)
+			using (DataTable DT = new DataTable())
 			{
-				DataRow newRow = DT.NewRow();
-				for (cCnt = 1; cCnt <= cl; cCnt++)
+				do
 				{
-					string colName = $"Column{cCnt - 1}";
-					if (!DT.Columns.Contains(colName))
-						DT.Columns.Add(colName);
+					Range movingRange;
+					object[,] rangeData;
 
-					var cellValue = rangeData[rCnt, cCnt];
+					rowEnd = rowEnd + movingRangeSize;
 
-					if (cellValue == null)
-						newRow[colName] = "";
+					if (rowEnd < cellRange.Rows.Count)
+						movingRange = excelSheet.Range[cellRange.Cells[rowStart, 1], cellRange.Cells[rowEnd, columnEnd]];
 					else
-						newRow[colName] = cellValue.ToString();
-				}
-				DT.Rows.Add(newRow);
-			}
+						movingRange = excelSheet.Range[cellRange.Cells[rowStart, 1], cellRange.Cells[cellRange.Rows.Count, columnEnd]];
 
-			if (v_AddHeaders == "Yes")
-			{
-				//Set column names
-				for (cCnt = 1; cCnt <= cl; cCnt++)
+					rowStart = rowEnd + 1;
+
+
+					int rw = movingRange.Rows.Count;
+					int cl = movingRange.Columns.Count;
+
+					if (v_Formulas == "Yes")
+						rangeData = movingRange.Formula;
+					else
+						rangeData = movingRange.Value;
+
+					int rCnt, cCnt;
+
+					int startRow;
+					if (v_AddHeaders == "Yes" && rowEnd == movingRangeSize)
+						startRow = 2;
+					else
+						startRow = 1;
+
+					for (rCnt = startRow; rCnt <= rw; rCnt++)
+					{
+						DataRow newRow = DT.NewRow();
+						for (cCnt = 1; cCnt <= cl; cCnt++)
+						{
+							string colName = $"Column{cCnt - 1}";
+							if (!DT.Columns.Contains(colName))
+								DT.Columns.Add(colName);
+
+							var cellValue = rangeData[rCnt, cCnt];
+
+							if (cellValue == null)
+								newRow[colName] = "";
+							else
+								newRow[colName] = cellValue.ToString();
+						}
+						DT.Rows.Add(newRow);
+					}
+				}
+				while (rowEnd < cellRange.Rows.Count);
+
+				if (v_AddHeaders == "Yes")
 				{
-					var cellValue = rangeData[1, cCnt];
-					if (cellValue != null)
-						DT.Columns[cCnt - 1].ColumnName = cellValue.ToString();
+					//Set column names
+					for (int cCnt = 1; cCnt <= cellRange.Columns.Count; cCnt++)
+					{
+						var cellValue = (cellRange.Cells[1, cCnt] as Range).Value;
+						if (cellValue != null)
+							DT.Columns[cCnt - 1].ColumnName = cellValue.ToString();
+					}
 				}
-			}
 
-			DT.StoreInUserVariable(engine, v_OutputUserVariableName);           
+				DT.StoreInUserVariable(engine, v_OutputUserVariableName);
+			}
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
