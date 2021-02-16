@@ -154,7 +154,6 @@ namespace OpenBots.Commands.WebBrowser
 			_searchParametersGridViewHelper = new DataGridView();
 			_searchParametersGridViewHelper.Width = 400;
 			_searchParametersGridViewHelper.Height = 250;
-			_searchParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_SeleniumSearchParameters", false, DataSourceUpdateMode.OnPropertyChanged);
 
 			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
 			enabled.HeaderText = "Enabled";
@@ -188,6 +187,16 @@ namespace OpenBots.Commands.WebBrowser
 			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
 			_actionParametersGridViewHelper.AllowUserToResizeRows = false;
 			_actionParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
+
+			v_SeleniumSearchParameters.Rows.Add(true, "XPath", "");
+			v_SeleniumSearchParameters.Rows.Add(false, "ID", "");
+			v_SeleniumSearchParameters.Rows.Add(false, "Name", "");
+			v_SeleniumSearchParameters.Rows.Add(false, "Tag Name", "");
+			v_SeleniumSearchParameters.Rows.Add(false, "Class Name", "");
+			v_SeleniumSearchParameters.Rows.Add(false, "Link Text", "");
+			v_SeleniumSearchParameters.Rows.Add(false, "CSS Selector", "");
+
+			_searchParametersGridViewHelper.DataSource = v_SeleniumSearchParameters;
 		}
 
 		public override void RunCommand(object sender)
@@ -541,16 +550,10 @@ namespace OpenBots.Commands.WebBrowser
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
-			if (v_SeleniumSearchParameters.Rows.Count == 0)
-			{
-				v_SeleniumSearchParameters.Rows.Add(true, "XPath", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "ID", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Tag Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Class Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Link Text", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "CSS Selector", "");
-			}
+			foreach (Binding binding in _searchParametersGridViewHelper.DataBindings)
+            {
+				binding.WriteValue();
+            }
 			
 			//create search parameters   
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_SeleniumSearchParameters", this));
