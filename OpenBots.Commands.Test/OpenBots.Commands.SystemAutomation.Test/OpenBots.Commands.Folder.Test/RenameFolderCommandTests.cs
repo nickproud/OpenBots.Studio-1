@@ -62,7 +62,7 @@ namespace OpenBots.Commands.Folder.Test
             string inputPath = Path.Combine(projectDirectory, @"Resources\newName");
             inputPath.CreateTestVariable(_engine, "inputPath");
 
-            "toDelete".CreateTestVariable(_engine, "newName");
+            "toRename".CreateTestVariable(_engine, "newName");
 
             _renameFolder.v_SourceFolderPath = "{inputPath}";
             _renameFolder.v_NewName = "{newName}";

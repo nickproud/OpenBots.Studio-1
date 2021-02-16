@@ -19,7 +19,7 @@ namespace OpenBots.Commands.File.Test
             _renameFile = new RenameFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-            string inputPath = Path.Combine(projectDirectory, @"Resources\toCompress.txt");
+            string inputPath = Path.Combine(projectDirectory, @"Resources\toRename.txt");
             inputPath.CreateTestVariable(_engine, "inputPath");
 
             string newName = "newname.txt";
@@ -62,7 +62,7 @@ namespace OpenBots.Commands.File.Test
             _renameFile = new RenameFileCommand();
 
             _renameFile.v_SourceFilePath = file;
-            _renameFile.v_NewName = "toCompress.txt";
+            _renameFile.v_NewName = "toRename.txt";
 
             _renameFile.RunCommand(_engine);
         }

@@ -26,7 +26,7 @@ namespace OpenBots.Commands.File.Test
             _compressFiles = new CompressFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-            string inputPath = Path.Combine(projectDirectory, @"Resources");
+            string inputPath = Path.Combine(projectDirectory, @"Resources\toCompress");
             inputPath.CreateTestVariable(_engine, "inputPath");
 
             string outputPath = Environment.CurrentDirectory;
@@ -39,9 +39,9 @@ namespace OpenBots.Commands.File.Test
 
             _compressFiles.RunCommand(_engine);
 
-            Assert.True(IO.File.Exists(Path.Combine(Environment.CurrentDirectory, @"Resources.zip")));
+            Assert.True(IO.File.Exists(Path.Combine(Environment.CurrentDirectory, @"toCompress.zip")));
 
-            IO.File.Delete(Path.Combine(outputPath, @"Resources.zip"));
+            IO.File.Delete(Path.Combine(outputPath, @"toCompress.zip"));
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.File.Test
             _compressFiles = new CompressFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-            string inputPath = Path.Combine(projectDirectory, @"Resources");
+            string inputPath = Path.Combine(projectDirectory, @"Resources\toCompressWithPassword");
             inputPath.CreateTestVariable(_engine, "inputPath");
 
             string outputPath = Environment.CurrentDirectory;
@@ -68,9 +68,9 @@ namespace OpenBots.Commands.File.Test
 
             _compressFiles.RunCommand(_engine);
 
-            Assert.True(IO.File.Exists(Path.Combine(Environment.CurrentDirectory, @"Resources.zip")));
+            Assert.True(IO.File.Exists(Path.Combine(Environment.CurrentDirectory, @"toCompressWithPassword.zip")));
 
-            IO.File.Delete(Path.Combine(outputPath, @"Resources.zip"));
+            IO.File.Delete(Path.Combine(outputPath, @"toCompressWithPassword.zip"));
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.File.Test
             _compressFiles = new CompressFilesCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-            string inputPath = Path.Combine(projectDirectory, @"Resources\toCompress.txt");
+            string inputPath = Path.Combine(projectDirectory, @"Resources\writetest.txt");
             inputPath.CreateTestVariable(_engine, "inputPath");
 
             string outputPath = Environment.CurrentDirectory;

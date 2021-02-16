@@ -49,7 +49,6 @@ namespace OpenBots.Commands.File.Test
 
             Assert.Contains("compressed.zip", filenames);
             Assert.Contains("toCompress.txt", filenames);
-            Assert.Contains("toDelete.txt", filenames);
         }
 
         [Fact]

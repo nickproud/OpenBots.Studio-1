@@ -22,13 +22,15 @@ namespace OpenBots.Commands.Folder.Test
             inputPath.CreateTestVariable(_engine, "inputPath");
 
             Directory.CreateDirectory(inputPath);
-            OBIO.File.Create(Path.Combine(inputPath + @"toDelete.txt"));
-
+            
             _deleteFolder.v_SourceFolderPath = "{inputPath}";
 
             _deleteFolder.RunCommand(_engine);
 
             Assert.False(Directory.Exists(inputPath));
+
+            OBIO.Directory.CreateDirectory(inputPath);
+            OBIO.File.Create(Path.Combine(inputPath + @"\toDelete.txt"));
         }
     }
 }

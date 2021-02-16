@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Folder.Test
                 Assert.True(Directory.Exists(inputPath));
             }
 
-            Directory.Delete(Path.Combine(destinationPath, folder));
+            Directory.Delete(Path.Combine(destinationPath, folder), true);
         }
 
         [Fact]

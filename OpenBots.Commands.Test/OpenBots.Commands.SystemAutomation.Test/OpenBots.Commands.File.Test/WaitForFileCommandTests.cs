@@ -19,7 +19,7 @@ namespace OpenBots.Commands.File.Test
             _waitForFile = new WaitForFileCommand();
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
-            string inputPath = Path.Combine(projectDirectory, @"Resources\toCompress.txt");
+            string inputPath = Path.Combine(projectDirectory, @"Resources\toWaitFor.txt");
             inputPath.CreateTestVariable(_engine, "inputPath");
 
             string waitTime = "5";
