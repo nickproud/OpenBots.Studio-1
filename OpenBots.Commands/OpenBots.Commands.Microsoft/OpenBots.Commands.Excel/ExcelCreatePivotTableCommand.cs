@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Excel
         [Required]
         [DisplayName("Source Table Name")]
         [Description("Enter the Table name to extract data for Pivot Table.")]
-        [SampleUsage("Table|| {vTable}")]
+        [SampleUsage("Table || {vTable}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         public string v_TableName { get; set; }
