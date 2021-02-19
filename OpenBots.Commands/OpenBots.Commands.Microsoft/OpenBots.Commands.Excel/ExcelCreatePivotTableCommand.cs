@@ -118,7 +118,7 @@ namespace OpenBots.Commands.Excel
 
         public override string GetDisplayValue()
         {
-            return base.GetDisplayValue() + $" [Create '{v_PivotTable}' - From '{v_TableName}' -Instance Name  '{v_InstanceName}']";
+            return base.GetDisplayValue() + $" [Create '{v_PivotTable}' From '{v_TableName}' - Instance Name  '{v_InstanceName}']";
         }
     }
 }
