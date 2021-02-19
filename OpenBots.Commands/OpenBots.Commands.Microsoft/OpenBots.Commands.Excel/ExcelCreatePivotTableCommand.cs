@@ -5,7 +5,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,8 +35,8 @@ namespace OpenBots.Commands.Excel
         public string v_SheetName { get; set; }
 
         [Required]
-        [DisplayName("Source Table Name")]
-        [Description("Enter the Table name to extract data for Pivot Table.")]
+        [DisplayName("Excel Table Name")]
+        [Description("Enter the Excel Table name to extract data for Pivot Table.")]
         [SampleUsage("Table || {vTable}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
