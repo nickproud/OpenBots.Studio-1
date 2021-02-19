@@ -21,7 +21,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 DataGridView dgv = (DataGridView)sender;
 
                 _preEditVarArgName = dgv.Rows[e.RowIndex].Cells[0].Value?.ToString();
-                //_preEditVarArgType = (Type)dgv.Rows[e.RowIndex].Cells[1].Value;
 
                 _existingVarArgSearchList = new List<string>();
                 _existingVarArgSearchList.AddRange(_scriptArguments.Select(arg => arg.ArgumentName).ToList());
@@ -310,17 +309,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private void dgvArguments_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void ResetVariableArgumentBindings()
         {
-            try
-            {
-                
-            }
-            catch (Exception ex)
-            {
-                //datagridview event failure
-                Console.WriteLine(ex);
-            }                       
+            dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+            dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+
+            var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
+            VariableType.DataSource = defaultTypesBinding;
+            ArgumentType.DataSource = defaultTypesBinding;
         }
 
         private void dgvVariablesArguments_KeyDown(object sender, KeyEventArgs e)
@@ -365,15 +361,5 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
         #endregion        
-        
-        private void ResetVariableArgumentBindings()
-        {
-            dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-            dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-
-            var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
-            VariableType.DataSource = defaultTypesBinding;
-            ArgumentType.DataSource = defaultTypesBinding;
-        }
     }
 }

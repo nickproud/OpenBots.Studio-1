@@ -290,8 +290,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
                     ScriptVariables = editCommand.ScriptEngineContext.Variables;
                     ScriptArguments = editCommand.ScriptEngineContext.Arguments;
-                    dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
-                    dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
+                    ResetVariableArgumentBindings();
                 }
 
                 if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")

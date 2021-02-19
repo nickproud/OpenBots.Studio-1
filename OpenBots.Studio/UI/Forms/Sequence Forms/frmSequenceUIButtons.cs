@@ -48,7 +48,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
 
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
+                ResetVariableArgumentBindings();
             }
 
             scriptVariableEditor.Dispose();
@@ -74,7 +74,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
 
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
+                ResetVariableArgumentBindings();
             }
 
             scriptArgumentEditor.Dispose();

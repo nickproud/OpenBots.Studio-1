@@ -49,10 +49,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         //variable/argument tab variables
         private List<string> _existingVarArgSearchList;
         private string _preEditVarArgName;
-
-        private Dictionary<string, Type> _defaultTypes;
-        private BindingSource _defaultTypesBinding;
-        public TypeContext TypeContext;
+        private Type _preEditVarArgType;
+        public TypeContext TypeContext { get; set; }
 
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
@@ -290,9 +288,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
                 ScriptVariables = newCommandForm.ScriptEngineContext.Variables;
                 ScriptArguments = newCommandForm.ScriptEngineContext.Arguments;
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
-             }
+                ResetVariableArgumentBindings();
+            }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
             {
@@ -445,7 +442,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             txtCommandSearch.Clear();
         }
-        #endregion      
+        #endregion
     }
 }
 
