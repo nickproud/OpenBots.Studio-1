@@ -202,6 +202,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private int _currentIndex = -1;
         private UIListView _selectedTabScriptActions;
         private Point _lastClickPosition;
+        private float _slimBarHeight;
+        private float _thickBarHeight;
         #endregion
 
         #region Form Events
@@ -272,18 +274,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _appSettings = new ApplicationSettings();
             _appSettings = _appSettings.GetOrCreateApplicationSettings();
 
-            //handle action bar preference
-            if (_appSettings.ClientSettings.UseSlimActionBar)
-            {
-                tlpControls.RowStyles[1].SizeType = SizeType.Absolute;
-                tlpControls.RowStyles[1].Height = 0;
-            }
-            else
-            {
-                tlpControls.RowStyles[0].SizeType = SizeType.Absolute;
-                tlpControls.RowStyles[0].Height = 0;
-            }
+            _slimBarHeight = tlpControls.RowStyles[0].Height;
+            _thickBarHeight = tlpControls.RowStyles[1].Height;
 
+            LoadActionBarPreference();
+            
             //get scripts folder
             var rpaScriptsFolder = Folders.GetFolder(FolderType.ScriptsFolder);
 
@@ -310,7 +305,24 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //set listview column size
             frmScriptBuilder_SizeChanged(null, null);
-            this.Refresh();
+            Refresh();
+        }
+
+        private void LoadActionBarPreference()
+        {
+            //handle action bar preference
+            if (_appSettings.ClientSettings.UseSlimActionBar)
+            {
+                tlpControls.RowStyles[0].Height = _slimBarHeight;
+                tlpControls.RowStyles[1].Height = 0;              
+            }
+            else
+            {
+                tlpControls.RowStyles[0].Height = 0;
+                tlpControls.RowStyles[1].Height = _thickBarHeight;
+            }
+
+            Refresh();
         }
 
         private void LoadCommands(frmScriptBuilder scriptBuilder)
@@ -398,13 +410,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             Program.SplashForm.Close();
 
-            tpbLoadingSpinner.Visible = true;
-
             var result = AddProject();
             if (result != DialogResult.Abort)
                 Notify("Welcome! Press 'Add Command' to get started!", Color.White);
-
-            tpbLoadingSpinner.Visible = false;
         }
 
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)
@@ -466,6 +474,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _notificationList.Add(new Tuple<string, Color>(notificationText, notificationColor));
         }
 
+        public void NotifySync(string notificationText, Color notificationColor)
+        {
+            Notify(notificationText, notificationColor);
+            tmrNotify_Tick(null, null);
+            tlpControls.Refresh();
+        }
+        
         private void ShowNotification(string textToDisplay, Color textColor)
         {
             _notificationText = textToDisplay;
@@ -701,16 +716,27 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void uiBtnReloadCommands_Click(object sender, EventArgs e)
         {
-            tpbLoadingSpinner.Visible = true;
-
+            NotifySync("Loading package assemblies...", Color.White);
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
             _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
             AContainer = _builder.Build();
             LoadCommands(this);
             ReloadAllFiles();
+        }
 
-            tpbLoadingSpinner.Visible = false;
+        private void tlpCommands_EnabledChanged(object sender, EventArgs e)
+        {
+            ((TreeView)tlpCommands.Controls[0]).CollapseAll();
+            ((TreeView)tlpCommands.Controls[0]).Nodes.Cast<TreeNode>().ToList().ForEach(n => n.BackColor = Color.FromArgb(59, 59, 59));
+            ((TreeView)tlpCommands.Controls[0]).Nodes.Cast<TreeNode>().ToList().ForEach(n => n.ForeColor = Color.White);
+        }
+
+        private void tlpProject_EnabledChanged(object sender, EventArgs e)
+        {
+            ((TreeView)tlpProject.Controls[0]).CollapseAll();
+            ((TreeView)tlpProject.Controls[0]).Nodes.Cast<TreeNode>().ToList().ForEach(n => n.BackColor = Color.FromArgb(59, 59, 59));
+            ((TreeView)tlpProject.Controls[0]).Nodes.Cast<TreeNode>().ToList().ForEach(n => n.ForeColor = Color.White);
         }
         #endregion
 
@@ -739,7 +765,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else
                 Notify($"Could not find 'project.config' for {senderLink.Tag}", Color.Red);
         }
-        #endregion
+        #endregion       
     }
 }
 
