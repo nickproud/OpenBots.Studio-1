@@ -61,7 +61,7 @@ namespace OpenBots.Commands.File
 			var filesList = Directory.GetFiles(sourceFolder, ".", SearchOption.AllDirectories).ToList();
 
 			//Add File Paths to the output variable
-			filesList.StoreInUserVariable(engine, v_OutputUserVariableName);
+			filesList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -190,8 +190,7 @@
     <Compile Include="App\GlobalAppInstances.cs" />
     <Compile Include="Attributes\PropertyAttributes\PropertyUISelectionOption.cs" />
     <Compile Include="Attributes\PropertyAttributes\Remarks.cs" />
-    <Compile Include="Attributes\PropertyAttributes\OutputType.cs" />
-    <Compile Include="Attributes\PropertyAttributes\InputType.cs" />
+    <Compile Include="Attributes\PropertyAttributes\CompatibleTypes.cs" />
     <Compile Include="Attributes\PropertyAttributes\SampleUsage.cs" />
     <Compile Include="Command\BrokenCodeCommentCommand.cs" />
     <Compile Include="Command\ScriptCommand.cs" />

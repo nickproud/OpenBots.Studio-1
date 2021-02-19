@@ -126,7 +126,7 @@ namespace OpenBots.Commands.Data
 			else
 				date = new DateTime(vYear, vMonthInt, vDay);
 
-			date.StoreInUserVariable(engine, v_OutputUserVariableName);
+			date.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

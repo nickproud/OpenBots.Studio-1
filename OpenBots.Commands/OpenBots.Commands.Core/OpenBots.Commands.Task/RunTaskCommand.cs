@@ -341,7 +341,7 @@ namespace OpenBots.Commands.Task
 				if (argumentDirection == "In")
                 {
 					if (((string)rw.ItemArray[1]).StartsWith("{") && ((string)rw.ItemArray[1]).EndsWith("}"))
-						argumentValue = ((string)rw.ItemArray[1]).ConvertUserVariableToObject(parentAutomationEngineInstance);
+						argumentValue = ((string)rw.ItemArray[1]).ConvertUserVariableToObject(parentAutomationEngineInstance, typeof(object));
 
 					if (argumentValue is string || argumentValue == null)
 						argumentValue = ((string)rw.ItemArray[1]).ConvertUserVariableToString(parentAutomationEngineInstance);
@@ -350,7 +350,8 @@ namespace OpenBots.Commands.Task
 					{
 						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
 						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
-						ArgumentValue = argumentValue
+						ArgumentValue = argumentValue,
+						ArgumentType = argumentValue.GetType()
 					});
 				}
 
@@ -361,7 +362,7 @@ namespace OpenBots.Commands.Task
 					{
 						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
 						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
-						AssignedVariable = ((string)rw.ItemArray[1]).Replace("{", "").Replace("}", "")
+						AssignedVariable = ((string)rw.ItemArray[1]).Replace("{", "").Replace("}", ""),
 					});
                 }
             }

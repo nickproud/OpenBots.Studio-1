@@ -70,7 +70,7 @@ namespace OpenBots.Commands.System
 					if (prop.Name == systemVariable.ToString())
 					{
 						var sysValue = prop.Value.ToString();
-						sysValue.StoreInUserVariable(engine, v_OutputUserVariableName);
+						sysValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 						return;
 					}
 				}

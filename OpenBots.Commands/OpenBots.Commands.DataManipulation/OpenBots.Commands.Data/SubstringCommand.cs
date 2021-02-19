@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Data
 				inputText = inputText.Substring(startIndex);
 			}
 
-			inputText.StoreInUserVariable(engine, v_OutputUserVariableName);
+			inputText.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -142,7 +142,7 @@ namespace OpenBots.Commands.Excel
 			//remove instance
 			vInstance.RemoveAppInstance(engine);
 
-			outputDictionary.StoreInUserVariable(engine, v_OutputUserVariableName);
+			outputDictionary.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

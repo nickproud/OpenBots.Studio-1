@@ -87,7 +87,7 @@ namespace OpenBots.Commands.WebBrowser
 					throw new NotImplementedException($"{requestedInfo} is not implemented for lookup.");
 			}
 			//store data
-			info.StoreInUserVariable(engine, v_OutputUserVariableName);
+			info.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

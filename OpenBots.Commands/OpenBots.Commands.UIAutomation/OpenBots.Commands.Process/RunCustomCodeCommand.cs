@@ -120,7 +120,7 @@ namespace OpenBots.Commands.Process
 
 				if(v_OutputUserVariableName.Length != 0)
 				{
-					((object)result).StoreInUserVariable(engine, v_OutputUserVariableName);
+					((object)result).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 				}
 			}
 		}
@@ -178,7 +178,7 @@ namespace OpenBots.Commands.Process
 					if (v_OutputUserVariableName != "")
 					{
 						var output = scriptProc.StandardOutput.ReadToEnd();
-						output.StoreInUserVariable(engine, v_OutputUserVariableName);
+						output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 					}
 				}
 			}

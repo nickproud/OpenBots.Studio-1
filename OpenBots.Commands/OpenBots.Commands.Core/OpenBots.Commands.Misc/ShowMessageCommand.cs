@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Misc
 			dynamic variableMessage = v_Message.ConvertUserVariableToString(engine);
 
 			if (variableMessage == v_Message && variableMessage.StartsWith("{") && variableMessage.EndsWith("}"))
-				variableMessage = v_Message.ConvertUserVariableToObject(engine);
+				variableMessage = v_Message.ConvertUserVariableToObject(engine, nameof(v_Message), this);
 
 			string type = "";
 			if(variableMessage?.GetType().Name == typeof(KeyValuePair<,>).Name)
@@ -68,7 +68,7 @@ namespace OpenBots.Commands.Misc
 			if (variableMessage is string)
 				variableMessage = variableMessage.Replace("\\n", Environment.NewLine);
 			else
-				variableMessage = type + Environment.NewLine + StringMethods.ConvertObjectToString(variableMessage);
+				variableMessage = type + Environment.NewLine + StringMethods.ConvertObjectToString(variableMessage, variableMessage.GetType());
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{

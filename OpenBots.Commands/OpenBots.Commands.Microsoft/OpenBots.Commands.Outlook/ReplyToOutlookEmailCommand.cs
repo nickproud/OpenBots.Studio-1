@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Outlook
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine);
+			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
 			var vBody = v_Body.ConvertUserVariableToString(engine);
 			var vAttachment = v_Attachments.ConvertUserVariableToString(engine);
 		   

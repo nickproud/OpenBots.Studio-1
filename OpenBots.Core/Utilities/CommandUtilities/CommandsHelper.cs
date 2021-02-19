@@ -376,7 +376,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				dynamic input1 = value1.ConvertUserVariableToString(engine);
 
 				if (input1 == value1 && input1.StartsWith("{") && input1.EndsWith("}"))
-					input1 = value1.ConvertUserVariableToObject(engine);
+					input1 = value1.ConvertUserVariableToObject(engine, typeof(object));
 
 				if (input1 is DateTime)
 					dt1 = (DateTime)input1;
@@ -388,7 +388,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				dynamic input2 = value2.ConvertUserVariableToString(engine);
 
 				if (input2 == value2 && input2.StartsWith("{") && input2.EndsWith("}"))
-					input2 = value2.ConvertUserVariableToObject(engine);
+					input2 = value2.ConvertUserVariableToObject(engine, typeof(object));
 
 				if (input2 is DateTime)
 					dt2 = (DateTime)input2;
@@ -474,7 +474,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										where rw.Field<string>("Parameter Name") == "Variable Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var actualVariable = variableName.ConvertUserVariableToObject(engine);
+				var actualVariable = variableName.ConvertUserVariableToObject(engine, typeof(object));
 
 				if (actualVariable != null)
 					ifResult = true;
@@ -514,9 +514,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				{
 
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.StoreInUserVariable(engine, "Error.Message");
-					error.LineNumber.ToString().StoreInUserVariable(engine, "Error.Line");
-					error.StackTrace.StoreInUserVariable(engine, "Error.StackTrace");
+					error.ErrorMessage.StoreInUserVariable(engine, "Error.Message", typeof(string));
+					error.LineNumber.ToString().StoreInUserVariable(engine, "Error.Line", typeof(string));
+					error.StackTrace.StoreInUserVariable(engine, "Error.StackTrace", typeof(string));
 
 					ifResult = true;
 				}
@@ -544,9 +544,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				else
 				{
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.StoreInUserVariable(engine, "Error.Message");
-					error.LineNumber.ToString().StoreInUserVariable(engine, "Error.Line");
-					error.StackTrace.StoreInUserVariable(engine, "Error.StackTrace");
+					error.ErrorMessage.StoreInUserVariable(engine, "Error.Message", typeof(string));
+					error.LineNumber.ToString().StoreInUserVariable(engine, "Error.Line", typeof(string));
+					error.StackTrace.StoreInUserVariable(engine, "Error.StackTrace", typeof(string));
 
 					ifResult = false;
 				}
@@ -737,7 +737,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				var imageVariable = imageName.ConvertUserVariableToObject(engine);
+				var imageVariable = imageName.ConvertUserVariableToObject(engine, typeof(Bitmap));
 
 				Bitmap capturedImage;
 				if (imageVariable != null && imageVariable is Bitmap)

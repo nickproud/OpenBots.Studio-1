@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Data
 			var wordCount = stringRequiringCount.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries).Length;
 
 			//store word count into variable
-			wordCount.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+			wordCount.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -87,7 +87,7 @@ namespace OpenBots.Commands.Email
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MimeMessage vMimeMessage = (MimeMessage)v_IMAPMimeMessage.ConvertUserVariableToObject(engine);
+			MimeMessage vMimeMessage = (MimeMessage)v_IMAPMimeMessage.ConvertUserVariableToObject(engine, nameof(v_IMAPMimeMessage), this);
 			string vIMAPHost = v_IMAPHost.ConvertUserVariableToString(engine);
 			string vIMAPPort = v_IMAPPort.ConvertUserVariableToString(engine);
 			string vIMAPUserName = v_IMAPUserName.ConvertUserVariableToString(engine);

@@ -49,7 +49,7 @@ namespace OpenBots.Commands.SecureData
 			var engine = (IAutomationEngineInstance)sender;
 			SecureString secureStringValue = v_Input.ConvertUserVariableToString(engine).GetSecureString();
 
-			secureStringValue.StoreInUserVariable(engine, v_OutputUserVariableName);           
+			secureStringValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

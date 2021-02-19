@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Data
             var engine = (IAutomationEngineInstance)sender;
             var fullText = v_FullText.ConvertUserVariableToString(engine);
             var comparisonText = v_ComparisonText.ConvertUserVariableToString(engine);
-            string outputUserVar = fullText.Contains(comparisonText).ToString(); outputUserVar.StoreInUserVariable(engine, v_OutputUserVariableName);
+            string outputUserVar = fullText.Contains(comparisonText).ToString(); outputUserVar.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
         {

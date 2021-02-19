@@ -139,7 +139,7 @@ namespace OpenBots.Commands.File
 				var filesList = Directory.GetFiles(vFilePathDestination, ".", SearchOption.AllDirectories).ToList();
 
 				//Add File Paths to the output variable
-				filesList.StoreInUserVariable(engine, v_OutputUserVariableName);
+				filesList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}           
 		}
 

@@ -113,7 +113,7 @@ namespace OpenBots.Commands.Asset
 			}
 			
 			if (v_AssetType != "File")
-				assetValue.StoreInUserVariable(engine, v_OutputUserVariableName);
+				assetValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

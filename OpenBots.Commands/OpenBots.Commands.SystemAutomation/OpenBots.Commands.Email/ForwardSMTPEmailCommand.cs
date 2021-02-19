@@ -92,7 +92,7 @@ namespace OpenBots.Commands.Email
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MimeMessage vMimeMessageToForward = (MimeMessage)v_SMTPMimeMessage.ConvertUserVariableToObject(engine);
+			MimeMessage vMimeMessageToForward = (MimeMessage)v_SMTPMimeMessage.ConvertUserVariableToObject(engine, nameof(v_SMTPMimeMessage), this);
 			string vSMTPHost = v_SMTPHost.ConvertUserVariableToString(engine);
 			string vSMTPPort = v_SMTPPort.ConvertUserVariableToString(engine);
 			string vSMTPUserName = v_SMTPUserName.ConvertUserVariableToString(engine);

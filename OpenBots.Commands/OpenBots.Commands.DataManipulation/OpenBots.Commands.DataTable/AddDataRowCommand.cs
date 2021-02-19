@@ -32,6 +32,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("{vDataTable}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_DataTable { get; set; }
 
 		[Required]
@@ -67,7 +68,7 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine);
+			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
 			var newRow = Dt.NewRow();
 
 			foreach (DataRow rw in v_DataRowDataTable.Rows)
@@ -78,7 +79,7 @@ namespace OpenBots.Commands.DataTable
 			}
 			Dt.Rows.Add(newRow);
 
-			Dt.StoreInUserVariable(engine, v_DataTable);
+			Dt.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -465,7 +465,7 @@ namespace OpenBots.Commands.IEBrowser
 
                     string convertedAttribute = Convert.ToString(element.getAttribute(attributeName));
 
-                    convertedAttribute.StoreInUserVariable(engine, variableName);
+                    convertedAttribute.StoreInUserVariable(engine, variableName, typeof(string));
                     break;
             }
         }

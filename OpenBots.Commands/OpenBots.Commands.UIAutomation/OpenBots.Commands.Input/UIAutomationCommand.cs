@@ -269,7 +269,7 @@ namespace OpenBots.Commands.Input
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = secureString.ConvertUserVariableToObject(engine);
+					var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
 
 					if (secureStrVariable is SecureString)
 						secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
@@ -355,7 +355,7 @@ namespace OpenBots.Commands.Input
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 					//declare search result
-					string searchResult = "";
+					dynamic searchResult;
 					if (v_AutomationType == "Get Text")
 					{
 						//string currentText;
@@ -367,18 +367,21 @@ namespace OpenBots.Commands.Input
 						}
 						else
 							searchResult = requiredHandle.Current.Name.ToString();
+
+						searchResult.StoreInUserVariable(engine, applyToVariable, typeof(string));
 					}
 
 					else if (v_AutomationType == "Element Exists")
 					{
 						//determine search result
 						if (requiredHandle == null)
-							searchResult = "False";
+							searchResult = false;
 						else
-							searchResult = "True";
+							searchResult = true;
+
+						searchResult.StoreInUserVariable(engine, applyToVariable, typeof(bool));
 					}
-					//store data
-					searchResult.StoreInUserVariable(engine, applyToVariable);
+					
 					break;
 				case "Wait For Element To Exist":
 					if (requiredHandle == null)
@@ -404,7 +407,7 @@ namespace OpenBots.Commands.Input
 					var requiredValue = requiredHandle.Current.GetType().GetRuntimeProperty(propertyName)?.GetValue(requiredHandle.Current).ToString();
 
 					//store into variable
-					((object)requiredValue).StoreInUserVariable(engine, applyToVariable2);
+					((object)requiredValue).StoreInUserVariable(engine, applyToVariable2, typeof(string));
 					break;
 				default:
 					throw new NotImplementedException("Automation type '" + v_AutomationType + "' not supported.");

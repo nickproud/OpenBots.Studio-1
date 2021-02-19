@@ -102,7 +102,7 @@ namespace OpenBots.Commands.Data
 			dynamic input = v_InputDate.ConvertUserVariableToString(engine);
 
 			if (input == v_InputDate && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_InputDate.ConvertUserVariableToObject(engine);
+				input = v_InputDate.ConvertUserVariableToObject(engine, nameof(v_InputDate), this);
 
 			DateTime variableDate;
 
@@ -193,7 +193,7 @@ namespace OpenBots.Commands.Data
 				stringDateFormatted = ((object)dateTimeValue).ToString();
 
 			//store string (Result) in variable
-			stringDateFormatted.StoreInUserVariable(engine, v_OutputUserVariableName);
+			stringDateFormatted.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

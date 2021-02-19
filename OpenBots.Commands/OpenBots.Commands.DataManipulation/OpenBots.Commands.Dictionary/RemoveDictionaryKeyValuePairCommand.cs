@@ -51,7 +51,7 @@ namespace OpenBots.Commands.Dictionary
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vDictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine);
+			var vDictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
 			var vKey = v_Key.ConvertUserVariableToString(engine);
 
 			if (vDictionaryVariable != null)

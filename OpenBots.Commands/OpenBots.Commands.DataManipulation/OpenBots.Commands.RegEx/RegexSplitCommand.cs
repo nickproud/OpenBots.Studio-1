@@ -61,7 +61,7 @@ namespace OpenBots.Commands.RegEx
 
 			var vResultData = Regex.Split(vInputData, vRegex).ToList();
 
-			vResultData.StoreInUserVariable(engine, v_OutputUserVariableName);
+			vResultData.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

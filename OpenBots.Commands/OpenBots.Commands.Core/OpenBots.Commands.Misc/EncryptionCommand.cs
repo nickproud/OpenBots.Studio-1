@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Misc
 			else if (v_EncryptionType == "Decrypt")
 				resultData = EncryptionServices.DecryptString(variableInput, passphrase);
 
-			resultData.StoreInUserVariable(engine, v_OutputUserVariableName);
+			resultData.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

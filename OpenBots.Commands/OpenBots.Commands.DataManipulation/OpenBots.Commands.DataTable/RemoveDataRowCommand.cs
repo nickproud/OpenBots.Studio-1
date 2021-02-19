@@ -28,6 +28,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("{vDataTable}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_DataTable { get; set; }
 
 		[Required]
@@ -45,6 +46,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("(ColumnName1,Item1),(ColumnName2,Item2) || ({vColumn1},{vItem1}),({vCloumn2},{vItem2}) || {vTuple} || 0 || {vIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(true)]
 		public string v_SearchItem { get; set; }
 
 		[Required]
@@ -72,13 +74,13 @@ namespace OpenBots.Commands.DataTable
 			var engine = (IAutomationEngineInstance)sender;
 			var vSearchItem = v_SearchItem.ConvertUserVariableToString(engine);
 
-			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine);
+			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
 
 			if(v_RemoveOption == "Index")
             {
                 Dt.Rows[Convert.ToInt32(vSearchItem)].Delete();
 				Dt.AcceptChanges();
-				Dt.StoreInUserVariable(engine, v_DataTable);
+				Dt.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
 			}
             else
             {
@@ -127,7 +129,7 @@ namespace OpenBots.Commands.DataTable
 						Dt.Rows.Remove(item);
 					}
 					Dt.AcceptChanges();
-					Dt.StoreInUserVariable(engine, v_DataTable);
+					Dt.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
 				}
 
 				//If And operation is checked
@@ -156,7 +158,7 @@ namespace OpenBots.Commands.DataTable
 					Dt.AcceptChanges();
 
 					//Assigns Datatable to newly updated Datatable
-					Dt.StoreInUserVariable(engine, v_DataTable);
+					Dt.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
 				}
 			}
 			

@@ -49,10 +49,10 @@ namespace OpenBots.Commands.Variable
 			dynamic input = v_Input.ConvertUserVariableToString(engine);
 
 			if (input == v_Input && input.StartsWith("{") && input.EndsWith("}"))
-				if (v_Input.ConvertUserVariableToObject(engine) != null)
-					input = v_Input.ConvertUserVariableToObject(engine);
+				if (v_Input.ConvertUserVariableToObject(engine, typeof(object)) != null)
+					input = v_Input.ConvertUserVariableToObject(engine, typeof(object));
 
-			((object)input).StoreInUserVariable(engine, v_OutputUserVariableName);
+			((object)input).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

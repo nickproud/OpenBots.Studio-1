@@ -60,7 +60,7 @@ namespace OpenBots.Commands.Folder
 			//Get Subdirectories List
 			var directoriesList = Directory.GetDirectories(sourceFolder).ToList();
 
-			directoriesList.StoreInUserVariable(engine, v_OutputUserVariableName);
+			directoriesList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

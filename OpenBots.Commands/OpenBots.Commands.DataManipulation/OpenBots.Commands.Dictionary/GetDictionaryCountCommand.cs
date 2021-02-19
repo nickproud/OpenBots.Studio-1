@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Dictionary
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable by regular name
-			var DictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine);
+			var DictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
 
 			//if still null then throw exception
 			if (DictionaryVariable == null)
@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Dictionary
 				throw new DataException("Invalid dictionary type, please provide valid dictionary type.");
 
 			string count = DictionaryToCount.Count.ToString();
-			count.StoreInUserVariable(engine, v_OutputUserVariableName);
+			count.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -222,7 +222,7 @@ namespace OpenBots.Commands.API
 					restContent = content;
 				}
 
-				restContent.StoreInUserVariable(engine, v_OutputUserVariableName);
+				restContent.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			catch (Exception ex)
 			{

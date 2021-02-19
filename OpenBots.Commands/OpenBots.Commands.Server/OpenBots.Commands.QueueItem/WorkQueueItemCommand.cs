@@ -102,7 +102,7 @@ namespace OpenBots.Commands.QueueItem
 			if (queueItem == null)
 			{
 				queueItemDict = null;
-				queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName);
+				queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 				return;
 			}
 
@@ -120,7 +120,7 @@ namespace OpenBots.Commands.QueueItem
 													   kvp.Key == "LockedUntilUTC")
 										 .ToDictionary(i => i.Key, i => i.Value);
 
-			queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName);
+			queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 			if (v_SaveAttachments == "Yes")
 			{

@@ -52,7 +52,7 @@ namespace OpenBots.Commands.NLG
 			Realiser realiser = new Realiser(lexicon);
 
 			string phraseOutput = realiser.realiseSentence(p);
-			phraseOutput.StoreInUserVariable(engine, v_OutputUserVariableName);
+			phraseOutput.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

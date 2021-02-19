@@ -65,7 +65,7 @@ namespace OpenBots.Commands.Outlook
         public override void RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            MailItem email = (MailItem)v_MailItem.ConvertUserVariableToObject(engine);
+            MailItem email = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
             bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.ConvertUserVariableToString(engine).Equals("Yes");
             string attDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
 
@@ -86,7 +86,7 @@ namespace OpenBots.Commands.Outlook
                 }
             }
 
-            attachmentList.StoreInUserVariable(engine, v_OutputUserVariableName);
+            attachmentList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

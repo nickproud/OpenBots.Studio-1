@@ -25,6 +25,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("{vDataTable}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_DataTable { get; set; }
 
 		[Required]
@@ -42,6 +43,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("0 || {vIndex} || Column1 || {vColumnName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(true)]
 		public string v_DataValueIndex { get; set; }
 
 		[Required]
@@ -59,6 +61,7 @@ namespace OpenBots.Commands.DataTable
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public SortDataTableCommand()
@@ -76,7 +79,7 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine);
+			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
 			OBDataTable dataTable = (OBDataTable)dataTableVariable;
 
 			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);
@@ -103,7 +106,7 @@ namespace OpenBots.Commands.DataTable
 			{
 				dataView.Sort = columnName + " DESC";
 			}
-			dataView.ToTable().StoreInUserVariable(engine, v_OutputUserVariableName);
+			dataView.ToTable().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

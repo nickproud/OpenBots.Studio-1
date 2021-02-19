@@ -234,7 +234,7 @@ namespace OpenBots.Commands.Email
 						outMail.Add(message);
 
 					}
-					outMail.StoreInUserVariable(engine, v_OutputUserVariableName);
+					outMail.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 					client.Disconnect(true, cancel.Token);
 					client.ServerCertificateValidationCallback = null;

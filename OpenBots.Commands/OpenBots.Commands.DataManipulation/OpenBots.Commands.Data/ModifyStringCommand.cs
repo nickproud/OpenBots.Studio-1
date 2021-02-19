@@ -80,7 +80,7 @@ namespace OpenBots.Commands.Data
 					throw new NotImplementedException("Conversion Type '" + v_TextOperation + "' not implemented!");
 			}
 
-			stringValue.StoreInUserVariable(engine, v_OutputUserVariableName);
+			stringValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

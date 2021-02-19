@@ -37,9 +37,10 @@ namespace OpenBots.Commands.List
 		[DisplayName("List Item(s) (Optional)")]
 		[Description("Enter the item(s) to write to the List.")]
 		[SampleUsage("Hello || {vItem} || Hello,World || {vItem1},{vItem2}")]
-		[Remarks("List item can only be a String, DataTable, MailItem or IWebElement.\n" + 
+		[Remarks("List item can only be a String, DataTable, MailItem or IWebElement.\n" +
 				 "Multiple items should be delimited by a comma(,). This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement) })]
 		public string v_ListItems { get; set; }
 
 		[Required]
@@ -48,6 +49,7 @@ namespace OpenBots.Commands.List
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public CreateListCommand()
@@ -79,7 +81,7 @@ namespace OpenBots.Commands.List
 					if (splitListItems != null)
 					{
 						foreach (string item in splitListItems)
-							((List<string>)vNewList).Add(item.Trim().ConvertUserVariableToString(engine));
+							((List<string>)vNewList).Add(item.ConvertUserVariableToString(engine));
 					}                   
 					break;
 				case "DataTable":
@@ -89,7 +91,7 @@ namespace OpenBots.Commands.List
 						foreach (string item in splitListItems)
 						{
 							OBDataTable dataTable;
-							var dataTableVariable = item.Trim().ConvertUserVariableToObject(engine);
+							var dataTableVariable = item.ConvertUserVariableToObject(engine, typeof(OBDataTable));
 							if (dataTableVariable != null && dataTableVariable is OBDataTable)
 								dataTable = (OBDataTable)dataTableVariable;
 							else
@@ -105,7 +107,7 @@ namespace OpenBots.Commands.List
 						foreach (string item in splitListItems)
 						{
 							MailItem mailItem;
-							var mailItemVariable = item.Trim().ConvertUserVariableToObject(engine);
+							var mailItemVariable = item.ConvertUserVariableToObject(engine, typeof(MailItem));
 							if (mailItemVariable != null && mailItemVariable is MailItem)
 								mailItem = (MailItem)mailItemVariable;
 							else
@@ -121,7 +123,7 @@ namespace OpenBots.Commands.List
 						foreach (string item in splitListItems)
 						{
 							MimeMessage mimeMessage;
-							var mimeMessageVariable = item.Trim().ConvertUserVariableToObject(engine);
+							var mimeMessageVariable = item.ConvertUserVariableToObject(engine, typeof(MimeMessage));
 							if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 								mimeMessage = (MimeMessage)mimeMessageVariable;
 							else
@@ -137,7 +139,7 @@ namespace OpenBots.Commands.List
 						foreach (string item in splitListItems)
 						{
 							IWebElement webElement;
-							var webElementVariable = item.Trim().ConvertUserVariableToObject(engine);
+							var webElementVariable = item.ConvertUserVariableToObject(engine, typeof(IWebElement));
 							if (webElementVariable != null && webElementVariable is IWebElement)
 								webElement = (IWebElement)webElementVariable;
 							else
@@ -148,7 +150,7 @@ namespace OpenBots.Commands.List
 					break;
 			}
 
-			((object)vNewList).StoreInUserVariable(engine, v_OutputUserVariableName);
+			((object)vNewList).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

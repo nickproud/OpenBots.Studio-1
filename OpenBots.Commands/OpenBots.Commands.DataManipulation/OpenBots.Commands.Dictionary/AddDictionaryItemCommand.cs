@@ -59,7 +59,7 @@ namespace OpenBots.Commands.Dictionary
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var dictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine);
+			var dictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
 			if (dictionaryVariable != null)
 			{
 				if (dictionaryVariable is Dictionary<string, string>)
@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						OBDataTable dataTable;
-						var dataTableVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var dataTableVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(OBDataTable));
 						if (dataTableVariable != null && dataTableVariable is OBDataTable)
 							dataTable = (OBDataTable)dataTableVariable;
 						else
@@ -90,7 +90,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						MailItem mailItem;
-						var mailItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var mailItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(MailItem));
 						if (mailItemVariable != null && mailItemVariable is MailItem)
 							mailItem = (MailItem)mailItemVariable;
 						else
@@ -104,7 +104,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						MimeMessage mimeMessage;
-						var mimeMessageVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var mimeMessageVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(MimeMessage));
 						if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 							mimeMessage = (MimeMessage)mimeMessageVariable;
 						else
@@ -118,7 +118,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						IWebElement webElement;
-						var webElementVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var webElementVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(IWebElement));
 						if (webElementVariable != null && webElementVariable is IWebElement)
 							webElement = (IWebElement)webElementVariable;
 						else
@@ -132,7 +132,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						object objectItem;
-						var objectItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var objectItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(object));
 						if (objectItemVariable != null && objectItemVariable is object)
 							objectItem = (object)objectItemVariable;
 						else
@@ -146,7 +146,7 @@ namespace OpenBots.Commands.Dictionary
 					throw new NotSupportedException("Dictionary type not supported");
 				}
 
-			((object)dictionaryVariable).StoreInUserVariable(engine, v_DictionaryName);
+			((object)dictionaryVariable).StoreInUserVariable(engine, v_DictionaryName, nameof(v_DictionaryName), this);
 			}
 			else
 			{

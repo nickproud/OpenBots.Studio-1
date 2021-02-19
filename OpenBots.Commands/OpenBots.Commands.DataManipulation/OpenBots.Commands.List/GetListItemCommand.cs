@@ -62,7 +62,7 @@ namespace OpenBots.Commands.List
 			var itemIndex = v_ItemIndex.ConvertUserVariableToString(engine);
 			int index = int.Parse(itemIndex);
 			//get variable by regular name
-			var listVariable = v_ListName.ConvertUserVariableToObject(engine);
+			var listVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
 
 			//if still null then throw exception
 			if (listVariable == null)
@@ -108,7 +108,7 @@ namespace OpenBots.Commands.List
 					itemList.Add(value.ToString());
 				}
 
-				itemList.StoreInUserVariable(engine, v_ListName);
+				itemList.StoreInUserVariable(engine, v_ListName, nameof(v_ListName), this);
 				listToIndex = itemList;
 			}
 			else
@@ -118,7 +118,7 @@ namespace OpenBots.Commands.List
 
 			var item = listToIndex[index];
 
-			((object)item).StoreInUserVariable(engine, v_OutputUserVariableName);         
+			((object)item).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);         
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -107,7 +107,7 @@ namespace OpenBots.Commands.Data
 					resultList.Add(result.ToString());
 				}
 
-				resultList.StoreInUserVariable(engine, targetVariableName);               
+				resultList.StoreInUserVariable(engine, targetVariableName, typeof(List<string>));               
 			}
 		}
 

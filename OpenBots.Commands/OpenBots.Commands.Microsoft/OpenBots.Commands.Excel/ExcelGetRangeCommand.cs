@@ -175,7 +175,7 @@ namespace OpenBots.Commands.Excel
 					}
 				}
 
-				DT.StoreInUserVariable(engine, v_OutputUserVariableName);
+				DT.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 		}
 

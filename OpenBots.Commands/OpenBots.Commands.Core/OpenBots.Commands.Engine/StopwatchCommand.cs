@@ -108,7 +108,7 @@ namespace OpenBots.Commands.Engine
 					else
 						elapsedTime = stopwatch.Elapsed.ToString(format);
 
-					elapsedTime.StoreInUserVariable(engine, v_OutputUserVariableName);
+					elapsedTime.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 					break;
 				default:
 					throw new NotImplementedException("Stopwatch Action '" + v_StopwatchAction + "' not implemented");

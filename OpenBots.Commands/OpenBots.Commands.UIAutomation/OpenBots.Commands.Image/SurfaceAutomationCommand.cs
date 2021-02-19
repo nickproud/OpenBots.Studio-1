@@ -244,7 +244,7 @@ namespace OpenBots.Commands.Image
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
 
-						var secureStrVariable = secureString.ConvertUserVariableToObject(engine);
+						var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
 
 						if (secureStrVariable is SecureString)
 							secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
@@ -269,9 +269,9 @@ namespace OpenBots.Commands.Image
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 						if (element != null)
-							"True".StoreInUserVariable(engine, outputVariable);
+							true.StoreInUserVariable(engine, outputVariable, typeof(bool));
 						else
-							"False".StoreInUserVariable(engine, outputVariable);
+							false.StoreInUserVariable(engine, outputVariable, typeof(bool));
 						break;
 					default:
 						break;

@@ -59,7 +59,7 @@ namespace OpenBots.Commands.Image
 			foreach (var text in ocrTextArray)
 				endResult += text.Text;
 
-			endResult.StoreInUserVariable(engine, v_OutputUserVariableName);
+			endResult.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

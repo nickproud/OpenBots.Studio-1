@@ -65,7 +65,7 @@ namespace OpenBots.Commands.Excel
 			var excelSheet = excelInstance.ActiveSheet;
 			var lastRow = (int)excelSheet.Cells(excelSheet.Rows.Count, vColumnLetter).End(XlDirection.xlUp).Row;
 
-			lastRow.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);   
+			lastRow.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);   
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

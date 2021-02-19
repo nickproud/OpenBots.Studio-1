@@ -119,7 +119,7 @@ namespace OpenBots.Commands.Data
 			}
 
 			//store variable
-			extractedText.StoreInUserVariable(engine, v_OutputUserVariableName);
+			extractedText.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

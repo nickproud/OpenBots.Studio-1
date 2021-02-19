@@ -1,4 +1,6 @@
-﻿using OpenBots.Core.Infrastructure;
+﻿using OpenBots.Core.Attributes.PropertyAttributes;
+using OpenBots.Core.Command;
+using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         /// <summary>
         /// Replaces variable placeholders ({variable}) with variable text.
         /// </summary>
-        /// <param name="sender">The script engine instance (frmScriptEngine) which contains session variables.</param>
+        /// <param name="sender">The script engine instance (AutomationEngineInstance) which contains session variables.</param>
         public static string ConvertUserVariableToString(this string userInputString, IAutomationEngineInstance engine, bool requiresMarkers = true)
         {
             if (string.IsNullOrEmpty(userInputString))
@@ -31,6 +33,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             var systemVariables = CommonMethods.GenerateSystemVariables();
             var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new ScriptVariable { 
                                                                                         VariableName = arg.ArgumentName, 
+                                                                                        VariableType = arg.ArgumentType,
                                                                                         VariableValue = arg.ArgumentValue })
                                                                                     .ToList();
 
@@ -64,7 +67,11 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                     varcheckname = potentialVariable.Split('.')[0];
                 }
 
-                var varCheck = variableSearchList.Where(v => v.VariableName == varcheckname).FirstOrDefault();
+                var varCheck = variableSearchList.Where(v => v.VariableName == varcheckname)
+                                                 .FirstOrDefault();
+
+                if (varCheck != null && !varCheck.VariableType.IsPrimitive)
+                    throw new ArgumentException($"Variable/Argument {varCheck.VariableName} is not a valid primitive type.");
                     
                 if (potentialVariable == "OpenBots.EngineContext") 
                     varCheck.VariableValue = engine.GetEngineContext();
@@ -138,7 +145,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                             if (resultType.ToLower() == "key")
                                 resultItem = pair.Key;
                             else if(resultType.ToLower() == "value")
-                                resultItem = StringMethods.ConvertObjectToString(pair.Value);
+                                resultItem = StringMethods.ConvertObjectToString(pair.Value, pair.Value.GetType());
                             else
                                 throw new DataException("Only use of Key and Value is allowed using dot operater with KeyValuePair");
                             userInputString = userInputString.Replace(searchVariable, resultItem);
@@ -154,25 +161,70 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return userInputString.CalculateVariables(engine);
         }
 
-        public static object ConvertUserVariableToObject(this string variableName, IAutomationEngineInstance engine)
+        public static object ConvertUserVariableToObject(this string varArgName, IAutomationEngineInstance engine, string parameterName, ScriptCommand parent)
+        {
+            var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
+            var compatibleTypes = ((CompatibleTypes[])variableProperties.GetCustomAttributes(typeof(CompatibleTypes), true))[0].CompTypes;
+
+            ScriptVariable requiredVariable;
+            ScriptArgument requiredArgument;
+
+            if (varArgName.StartsWith("{") && varArgName.EndsWith("}"))
+            {
+                //reformat and attempt
+                var reformattedVarArg = varArgName.Replace("{", "").Replace("}", "");
+
+                requiredVariable = engine.AutomationEngineContext.Variables
+                                                .Where(var => var.VariableName == reformattedVarArg)
+                                                .FirstOrDefault();
+
+                if (requiredVariable != null && compatibleTypes!= null && !compatibleTypes.Any(x => x == requiredVariable.VariableType))
+                    throw new ArgumentException($"The type of variable '{requiredVariable.VariableName}' is not compatible.");
+
+                requiredArgument = engine.AutomationEngineContext.Arguments
+                                                .Where(arg => arg.ArgumentName == reformattedVarArg)
+                                                .FirstOrDefault();
+
+                if (requiredArgument != null && compatibleTypes != null && !compatibleTypes.Any(x => x == requiredArgument.ArgumentType))
+                    throw new ArgumentException($"The type of argument '{requiredArgument.ArgumentName}' is not compatible.");
+            }
+            else
+                throw new Exception("Variable/Argument markers '{}' missing. Variable/Argument '" + varArgName + "' could not be found.");
+
+            Type varType = requiredVariable.VariableType;
+            if (requiredVariable != null)
+                return Convert.ChangeType(requiredVariable.VariableValue, requiredVariable.VariableType);
+            else if (requiredArgument != null)
+                return Convert.ChangeType(requiredArgument.ArgumentValue, requiredArgument.ArgumentType);
+            else
+                return null;
+        }
+
+        public static object ConvertUserVariableToObject(this string varArgName, IAutomationEngineInstance engine, Type compatibleType)
         {
             ScriptVariable requiredVariable;
             ScriptArgument requiredArgument;
 
-            if (variableName.StartsWith("{") && variableName.EndsWith("}"))
+            if (varArgName.StartsWith("{") && varArgName.EndsWith("}"))
             {
                 //reformat and attempt
-                var reformattedVariable = variableName.Replace("{", "").Replace("}", "");
-                requiredVariable = engine.AutomationEngineContext.Variables.Where(var => var.VariableName == reformattedVariable).FirstOrDefault();
-                requiredArgument = engine.AutomationEngineContext.Arguments.Where(arg => arg.ArgumentName == reformattedVariable).FirstOrDefault();
+                var reformattedVariable = varArgName.Replace("{", "").Replace("}", "");
+
+                requiredVariable = engine.AutomationEngineContext.Variables
+                                                .Where(var => var.VariableName == reformattedVariable && var.VariableType == compatibleType)
+                                                .FirstOrDefault();
+                requiredArgument = engine.AutomationEngineContext.Arguments
+                                                .Where(arg => arg.ArgumentName == reformattedVariable && arg.ArgumentType == compatibleType)
+                                                .FirstOrDefault();
             }
             else
-                throw new Exception("Variable/Argument markers '{}' missing. Variable/Argument '" + variableName + "' could not be found.");
+                throw new Exception("Variable/Argument markers '{}' missing. Variable/Argument '" + varArgName + "' could not be found.");
 
+            Type varType = requiredVariable.VariableType;
             if (requiredVariable != null)
-                return requiredVariable.VariableValue;
+                return Convert.ChangeType(requiredVariable.VariableValue, requiredVariable.VariableType);
             else if (requiredArgument != null)
-                return requiredArgument.ArgumentValue;
+                return Convert.ChangeType(requiredArgument.ArgumentValue, requiredArgument.ArgumentType);
             else
                 return null;
         }
@@ -224,32 +276,78 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         /// <summary>
         /// Stores value of the object to a user-defined variable.
         /// </summary>
-        /// <param name="sender">The script engine instance (frmScriptEngine) which contains session variables.</param>
+        /// <param name="sender">The script engine instance (AutomationEngineInstance) which contains session variables.</param>
         /// <param name="targetVariable">the name of the user-defined variable to override with new value</param>
-        public static void StoreInUserVariable(this object variableValue, IAutomationEngineInstance engine, string variableName)
+        public static void StoreInUserVariable(this object varArgValue, IAutomationEngineInstance engine, string varArgName, string propertyName, ScriptCommand parent)
         {
-            if (variableName.StartsWith("{") && variableName.EndsWith("}"))
-                variableName = variableName.Replace("{", "").Replace("}", "");           
-            else
-                throw new Exception("Variable markers '{}' missing. '" + variableName + "' is an invalid output variable name.");
+            var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == propertyName).FirstOrDefault();
+            var compatibleTypes = ((CompatibleTypes[])variableProperties.GetCustomAttributes(typeof(CompatibleTypes), true))[0].CompTypes;
 
-            if (engine.AutomationEngineContext.Variables.Any(f => f.VariableName == variableName))
-            {
-                //update existing variable
-                var existingVariable = engine.AutomationEngineContext.Variables.FirstOrDefault(f => f.VariableName == variableName);
-                existingVariable.VariableValue = variableValue;
-            }
-            else if (engine.AutomationEngineContext.Arguments.Any(f => f.ArgumentName == variableName))
-            {
-                //update existing argument
-                var existingArgument = engine.AutomationEngineContext.Arguments.FirstOrDefault(f => f.ArgumentName == variableName);
-                existingArgument.ArgumentValue = variableValue;
-            }
+            if (varArgName.StartsWith("{") && varArgName.EndsWith("}"))
+                varArgName = varArgName.Replace("{", "").Replace("}", "");           
             else
+                throw new Exception("Variable markers '{}' missing. '" + varArgName + "' is an invalid output variable name.");
+
+            var existingVariable = engine.AutomationEngineContext.Variables
+                                               .Where(var => var.VariableName == varArgName)
+                                               .FirstOrDefault();
+
+            if (existingVariable != null && compatibleTypes != null && !compatibleTypes.Any(x => x == existingVariable.VariableType))
+                throw new ArgumentException($"The type of variable '{existingVariable.VariableName}' is not compatible.");
+            else if (existingVariable != null)
             {
-                throw new ArgumentException($"No variable/argument with the name '{variableName}' was found");
+                existingVariable.VariableValue = varArgValue;
+                return;
             }
-        }       
+
+            var existingArgument = engine.AutomationEngineContext.Arguments
+                                            .Where(arg => arg.ArgumentName == varArgName)
+                                            .FirstOrDefault();
+
+            if (existingArgument != null && compatibleTypes != null && !compatibleTypes.Any(x => x == existingArgument.ArgumentType))
+                throw new ArgumentException($"The type of argument '{existingArgument.ArgumentName}' is not compatible.");
+            else if (existingArgument != null)
+            {
+                existingArgument.ArgumentValue = varArgValue;
+                return;
+            }
+
+            throw new ArgumentException($"No variable/argument with the name '{varArgName}' was found.");
+        }
+
+        public static void StoreInUserVariable(this object varArgValue, IAutomationEngineInstance engine, string varArgName, Type compatibleType)
+        {
+            if (varArgName.StartsWith("{") && varArgName.EndsWith("}"))
+                varArgName = varArgName.Replace("{", "").Replace("}", "");
+            else
+                throw new Exception("Variable/Argument markers '{}' missing. '" + varArgName + "' is an invalid output variable/argument name.");
+
+            var existingVariable = engine.AutomationEngineContext.Variables
+                                               .Where(var => var.VariableName == varArgName)
+                                               .FirstOrDefault();
+
+            if (existingVariable != null && existingVariable.VariableType != compatibleType)
+                throw new ArgumentException($"The type of variable '{existingVariable.VariableName}' is not compatible.");
+            else if (existingVariable != null)
+            {
+                existingVariable.VariableValue = varArgValue;
+                return;
+            }
+
+            var existingArgument = engine.AutomationEngineContext.Arguments
+                                            .Where(arg => arg.ArgumentName == varArgName)
+                                            .FirstOrDefault();
+
+            if (existingArgument != null && existingArgument.ArgumentType != compatibleType)
+                throw new ArgumentException($"The type of argument '{existingArgument.ArgumentName}' is not compatible.");
+            else if (existingArgument != null)
+            {
+                existingArgument.ArgumentValue = varArgValue;
+                return;
+            }
+
+            throw new ArgumentException($"No variable/argument with the name '{varArgName}' was found.");
+        }
 
         /// <summary>
         /// Converts a string to SecureString
@@ -267,11 +365,13 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return strValue;
         }
 
-        public static void CreateTestVariable(this object variableValue, IAutomationEngineInstance engine, string variableName)
+        //TODO: add type. Set to null as default for now
+        public static void CreateTestVariable(this object variableValue, IAutomationEngineInstance engine, string variableName, Type variableType = null)
         {
             ScriptVariable newVar = new ScriptVariable();
             newVar.VariableName = variableName;
             newVar.VariableValue = variableValue;
+            newVar.VariableType = variableType;
             engine.AutomationEngineContext.Variables.Add(newVar);
         }
     }

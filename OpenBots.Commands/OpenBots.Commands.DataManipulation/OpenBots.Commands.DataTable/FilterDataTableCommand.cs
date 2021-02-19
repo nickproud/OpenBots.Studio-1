@@ -26,6 +26,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("{vDataTable}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_DataTable { get; set; }
 
 		[Required]
@@ -43,6 +44,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("(ColumnName1,Item1),(ColumnName2,Item2) || ({vColumn1},{vItem1}),({vCloumn2},{vItem2}) || {vFilterTuple} || Age > 30 || Name <> 'John' || {vRowFilter}")]
 		[Remarks("DataRows must match all provided tuples to be included in the filtered DataTable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(true)]
 		public string v_SearchItem { get; set; }
 
 		[Required]
@@ -67,13 +69,13 @@ namespace OpenBots.Commands.DataTable
 			var engine = (IAutomationEngineInstance)sender;
 			var vSearchItem = v_SearchItem.ConvertUserVariableToString(engine);
 
-			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine);
+			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
 
             if (v_FilterOption == "RowFilter")
             {
 				DataView dv = new DataView(Dt);
 				dv.RowFilter = vSearchItem;
-				dv.ToTable().StoreInUserVariable(engine, v_OutputUserVariableName);
+				dv.ToTable().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
             else
             {
@@ -120,7 +122,7 @@ namespace OpenBots.Commands.DataTable
 				foreach (DataRow item in templist)
 					outputDT.Rows.Add(item.ItemArray);
 
-				outputDT.StoreInUserVariable(engine, v_OutputUserVariableName);
+				outputDT.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 
 		}

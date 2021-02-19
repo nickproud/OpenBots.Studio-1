@@ -66,7 +66,7 @@ namespace OpenBots.Commands.Data
 			dynamic input = v_SplitCharacter.ConvertUserVariableToString(engine);
 
 			if (input == v_SplitCharacter && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_SplitCharacter.ConvertUserVariableToObject(engine);
+				input = v_SplitCharacter.ConvertUserVariableToObject(engine, nameof(v_SplitCharacter), this);
 
 			if (input is List<string>)
 			{
@@ -108,7 +108,7 @@ namespace OpenBots.Commands.Data
 			}
 			
 
-			splitString.StoreInUserVariable(engine, v_OutputUserVariableName);           
+			splitString.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

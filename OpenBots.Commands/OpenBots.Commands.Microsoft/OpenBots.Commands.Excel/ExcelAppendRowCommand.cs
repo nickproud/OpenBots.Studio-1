@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Excel
 			dynamic vRow = v_RowToSet.ConvertUserVariableToString(engine);
 
 			if (vRow == v_RowToSet && v_RowToSet.StartsWith("{") && v_RowToSet.EndsWith("}"))
-				vRow = v_RowToSet.ConvertUserVariableToObject(engine);
+				vRow = v_RowToSet.ConvertUserVariableToObject(engine, nameof(v_RowToSet), this);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;

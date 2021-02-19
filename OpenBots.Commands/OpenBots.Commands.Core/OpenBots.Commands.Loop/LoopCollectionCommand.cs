@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Loop
 			var engine = (IAutomationEngineInstance)sender;
 
 			int loopTimes;
-			var complexVariable = v_LoopParameter.ConvertUserVariableToObject(engine);           
+			var complexVariable = v_LoopParameter.ConvertUserVariableToObject(engine, nameof(v_LoopParameter), this);           
 
 			//if still null then throw exception
 			if (complexVariable == null)
@@ -125,7 +125,7 @@ namespace OpenBots.Commands.Loop
 					itemList.Add(value.ToString());
 				}
 
-				itemList.StoreInUserVariable(engine, v_LoopParameter);
+				itemList.StoreInUserVariable(engine, v_LoopParameter, nameof(v_LoopParameter), this);
 				listToLoop = itemList;
 			}
 			else
@@ -137,7 +137,7 @@ namespace OpenBots.Commands.Loop
 			{
 				engine.ReportProgress("Starting Loop Number " + (i + 1) + "/" + loopTimes + " From Line " + loopCommand.LineNumber);
 				
-				((object)listToLoop[i]).StoreInUserVariable(engine, v_OutputUserVariableName);
+				((object)listToLoop[i]).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 				foreach (var cmd in parentCommand.AdditionalScriptCommands)
 				{

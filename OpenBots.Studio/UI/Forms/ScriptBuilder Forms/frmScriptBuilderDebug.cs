@@ -123,11 +123,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     DataRow[] foundVariables = variableValues.Select("Name = '" + variable.VariableName + "'");
                     if (foundVariables.Length == 0)
                     {
-                        string type = "null";
-                        if (variable.VariableValue != null)
-                            type = variable.VariableValue.GetType().FullName;
-
-                        variableValues.Rows.Add(variable.VariableName, type, StringMethods.ConvertObjectToString(variable.VariableValue));                     
+                        string type = variable.VariableType.FullName;
+                        variableValues.Rows.Add(variable.VariableName, type, StringMethods.ConvertObjectToString(variable.VariableValue, variable.VariableType));                     
                     }
                 }
 
@@ -138,11 +135,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     DataRow[] foundArguments = argumentValues.Select("Name = '" + argument.ArgumentName + "'");
                     if (foundArguments.Length == 0)
                     {
-                        string type = "null";
-                        if (argument.ArgumentValue != null)
-                            type = argument.ArgumentValue.GetType().FullName;
-
-                        argumentValues.Rows.Add(argument.ArgumentName, type, StringMethods.ConvertObjectToString(argument.ArgumentValue), argument.Direction.ToString());
+                        string type = argument.ArgumentType.FullName;
+                        argumentValues.Rows.Add(argument.ArgumentName, type, StringMethods.ConvertObjectToString(argument.ArgumentValue, argument.ArgumentType), 
+                            argument.Direction.ToString());
                     }
                 }
 

@@ -180,7 +180,7 @@ namespace OpenBots.Commands.Outlook
 					}
 				}
 
-				outMail.StoreInUserVariable(engine, v_OutputUserVariableName);
+				outMail.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 		}
 

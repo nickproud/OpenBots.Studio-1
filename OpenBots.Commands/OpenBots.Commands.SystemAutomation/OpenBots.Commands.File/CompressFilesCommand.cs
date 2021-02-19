@@ -135,7 +135,7 @@ namespace OpenBots.Commands.File
 			}
 
 			//Add File Path to the output variable
-			compressedFileName.StoreInUserVariable(engine, v_OutputUserVariableName);
+			compressedFileName.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

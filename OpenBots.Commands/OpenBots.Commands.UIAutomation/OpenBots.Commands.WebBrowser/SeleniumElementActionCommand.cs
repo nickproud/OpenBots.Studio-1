@@ -320,7 +320,7 @@ namespace OpenBots.Commands.WebBrowser
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = secureString.ConvertUserVariableToObject(engine);
+					var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
 
 					if (secureStrVariable is SecureString)
 						secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
@@ -380,7 +380,7 @@ namespace OpenBots.Commands.WebBrowser
 						optionsItems.Add(optionValue);
 					}
 
-					optionsItems.StoreInUserVariable(engine, applyToVarName);
+					optionsItems.StoreInUserVariable(engine, applyToVarName, typeof(List<string>));
 				   
 					break;
 
@@ -449,7 +449,7 @@ namespace OpenBots.Commands.WebBrowser
 					else
 						elementValue = ((IWebElement)element).GetAttribute(attributeName);
 
-					elementValue.StoreInUserVariable(engine, VariableName);
+					elementValue.StoreInUserVariable(engine, VariableName, typeof(string));
 					break;
 
 				case "Get Matching Element(s)":
@@ -465,10 +465,10 @@ namespace OpenBots.Commands.WebBrowser
 						{
 							elementList.Add(item);
 						}
-						elementList.StoreInUserVariable(engine, variableName);
+						elementList.StoreInUserVariable(engine, variableName, typeof(List<IWebElement>));
 					}
 					else
-						((IWebElement)element).StoreInUserVariable(engine, variableName);                    
+						((IWebElement)element).StoreInUserVariable(engine, variableName, typeof(IWebElement));                    
 					break;
 
 				case "Get Table":
@@ -504,7 +504,7 @@ namespace OpenBots.Commands.WebBrowser
 					foreach (var row in doc.DocumentNode.SelectNodes("//tr[td]"))
 						DT.Rows.Add(row.SelectNodes("td").Select(td => Regex.Replace(td.InnerText, @"\t|\n|\r", "").Trim()).ToArray());
 
-					DT.StoreInUserVariable(engine, DTVariableName);
+					DT.StoreInUserVariable(engine, DTVariableName, typeof(DataTable));
 					break;
 
 				case "Clear Element":
@@ -525,9 +525,9 @@ namespace OpenBots.Commands.WebBrowser
 													select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 					if (element == null)
-						"False".StoreInUserVariable(engine, existsBoolVariableName);
+						false.StoreInUserVariable(engine, existsBoolVariableName, typeof(bool));
 					else
-						"True".StoreInUserVariable(engine, existsBoolVariableName);
+						true.StoreInUserVariable(engine, existsBoolVariableName, typeof(bool));
 
 					break;
 				default:

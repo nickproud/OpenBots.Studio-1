@@ -215,7 +215,7 @@ namespace OpenBots.Commands.API
 			}
 
 			//store result in variable
-			result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+			result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -52,7 +52,7 @@ namespace OpenBots.Commands.List
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vListVariable = v_ListName.ConvertUserVariableToObject(engine);
+			var vListVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
 			var vListIndex = int.Parse(v_ListIndex.ConvertUserVariableToString(engine));
 
 			if (vListVariable != null)

@@ -59,7 +59,7 @@ namespace OpenBots.Commands.Dictionary
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vDictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine);
+			var vDictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
 			var vKey = v_Key.ConvertUserVariableToString(engine);
 
 			if (vDictionaryVariable != null)
@@ -71,7 +71,7 @@ namespace OpenBots.Commands.Dictionary
 				else if (vDictionaryVariable is Dictionary<string, OBDataTable>)
 				{
 					OBDataTable dataTable;
-					var dataTableVariable = v_Value.Trim().ConvertUserVariableToObject(engine);
+					var dataTableVariable = v_Value.ConvertUserVariableToObject(engine, nameof(v_Value), this);
 					if (dataTableVariable != null && dataTableVariable is OBDataTable)
 						dataTable = (OBDataTable)dataTableVariable;
 					else
@@ -81,7 +81,7 @@ namespace OpenBots.Commands.Dictionary
 				else if (vDictionaryVariable is Dictionary<string, MailItem>)
 				{
 					MailItem mailItem;
-					var mailItemVariable = v_Value.Trim().ConvertUserVariableToObject(engine);
+					var mailItemVariable = v_Value.ConvertUserVariableToObject(engine, nameof(v_Value), this);
 					if (mailItemVariable != null && mailItemVariable is MailItem)
 						mailItem = (MailItem)mailItemVariable;
 					else
@@ -91,7 +91,7 @@ namespace OpenBots.Commands.Dictionary
 				else if (vDictionaryVariable is Dictionary<string, MimeMessage>)
 				{
 					MimeMessage mimeMessage;
-					var mimeMessageVariable = v_Value.Trim().ConvertUserVariableToObject(engine);
+					var mimeMessageVariable = v_Value.ConvertUserVariableToObject(engine, nameof(v_Value), this);
 					if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 						mimeMessage = (MimeMessage)mimeMessageVariable;
 					else
@@ -101,7 +101,7 @@ namespace OpenBots.Commands.Dictionary
 				else if (vDictionaryVariable is Dictionary<string, IWebElement>)
 				{
 					IWebElement webElement;
-					var webElementVariable = v_Value.Trim().ConvertUserVariableToObject(engine);
+					var webElementVariable = v_Value.ConvertUserVariableToObject(engine, nameof(v_Value), this);
 					if (webElementVariable != null && webElementVariable is IWebElement)
 						webElement = (IWebElement)webElementVariable;
 					else
@@ -111,7 +111,7 @@ namespace OpenBots.Commands.Dictionary
 				else if (vDictionaryVariable is Dictionary<string, object>)
 				{
 					object objectItem;
-					var objectItemVariable = v_Value.Trim().ConvertUserVariableToObject(engine);
+					var objectItemVariable = v_Value.ConvertUserVariableToObject(engine, nameof(v_Value), this);
 					if (objectItemVariable != null && objectItemVariable is object)
 						objectItem = (object)objectItemVariable;
 					else

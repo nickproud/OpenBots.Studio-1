@@ -71,7 +71,7 @@ namespace OpenBots.Commands.WebBrowser
 			StreamReader reader = new StreamReader(dataStream);
 			string strResponse = reader.ReadToEnd();
 
-			strResponse.StoreInUserVariable(engine, v_OutputUserVariableName);
+			strResponse.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

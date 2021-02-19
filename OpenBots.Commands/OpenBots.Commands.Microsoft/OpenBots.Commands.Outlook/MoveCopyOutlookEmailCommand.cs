@@ -70,7 +70,7 @@ namespace OpenBots.Commands.Outlook
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine);
+			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
 			var vDestinationFolder = v_DestinationFolder.ConvertUserVariableToString(engine);
 			
 			Application outlookApp = new Application();

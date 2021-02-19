@@ -61,7 +61,7 @@ namespace OpenBots.Commands.WebBrowser
 			var div = doc.DocumentNode.SelectSingleNode(v_XPathQuery);
 			string divString = div.InnerText;
 
-			divString.StoreInUserVariable(engine, v_OutputUserVariableName);
+			divString.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

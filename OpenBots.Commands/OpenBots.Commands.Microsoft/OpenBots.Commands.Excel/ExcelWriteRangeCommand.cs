@@ -78,7 +78,7 @@ namespace OpenBots.Commands.Excel
 			var excelInstance = (Application)excelObject;
 			var excelSheet = (Worksheet)excelInstance.ActiveSheet;
 
-			DataTable Dt = (DataTable)v_DataTableToSet.ConvertUserVariableToObject(engine);
+			DataTable Dt = (DataTable)v_DataTableToSet.ConvertUserVariableToObject(engine, nameof(v_DataTableToSet), this);
 			if (string.IsNullOrEmpty(vTargetAddress) || vTargetAddress.Contains(":")) 
 				throw new Exception("Cell Location is invalid or empty");
 

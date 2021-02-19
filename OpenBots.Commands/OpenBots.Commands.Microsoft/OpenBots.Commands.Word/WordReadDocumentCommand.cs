@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Word
 
 			//store text in variable
 			string textFromDocument = wordDocument.Content.Text;
-			textFromDocument.StoreInUserVariable(engine, v_OutputUserVariableName);
+			textFromDocument.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

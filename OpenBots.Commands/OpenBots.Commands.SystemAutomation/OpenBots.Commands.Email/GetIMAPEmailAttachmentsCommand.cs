@@ -67,7 +67,7 @@ namespace OpenBots.Commands.Email
         public override void RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            MimeMessage email = (MimeMessage)v_IMAPMimeMessage.ConvertUserVariableToObject(engine);
+            MimeMessage email = (MimeMessage)v_IMAPMimeMessage.ConvertUserVariableToObject(engine, nameof(v_IMAPMimeMessage), this);
             bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.ConvertUserVariableToString(engine).Equals("Yes");
             string attDirectory = v_IMAPAttachmentDirectory.ConvertUserVariableToString(engine);
 
@@ -104,7 +104,7 @@ namespace OpenBots.Commands.Email
                 }
             }
             
-            attachmentList.StoreInUserVariable(engine, v_OutputUserVariableName);
+            attachmentList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
