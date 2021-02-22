@@ -29,6 +29,7 @@ namespace OpenBots.Commands.If
 		[SampleUsage("")]
 		[Remarks("All of the conditions must be true to execute the If block.")]
 		[Editor("ShowIfBuilder", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_IfConditionsTable { get; set; }
 
 		[JsonIgnore]

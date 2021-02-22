@@ -30,6 +30,7 @@ namespace OpenBots.Commands.API
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowDLLExplorer", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -38,6 +39,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("myNamespace.myClassName || {vClassName}")]
 		[Remarks("Namespace should be included")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ClassName { get; set; }
 
 		[Required]
@@ -46,6 +48,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("GetSomething || {vMethodName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_MethodName { get; set; }
 
 		[DisplayName("Parameters (Optional)")]
@@ -53,6 +56,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("GenerateDLLParameters", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_MethodParameters { get; set; }
 
 		[Required]
@@ -61,6 +65,7 @@ namespace OpenBots.Commands.API
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(String)})]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]

@@ -28,6 +28,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("https://example.com || {vMyUrl}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_BaseURL { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("/v2/getUser/1 || {vMyUrl}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_APIEndPoint { get; set; }
 
 		[Required]
@@ -63,6 +65,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("")]
 		[Remarks("Once you have clicked on a valid window the search parameters will be populated." +
 				 " Enable only the ones required to be a match at runtime.")]
+		[CompatibleTypes(null, true)]
 		public DataTable v_RESTParameters { get; set; }
 
 		[Required]
@@ -70,6 +73,7 @@ namespace OpenBots.Commands.API
 		[Description("Specify a list of advanced parameters.")]
 		[SampleUsage("")]
 		[Remarks("")]
+		[CompatibleTypes(null, true)]
 		public DataTable v_AdvancedParameters { get; set; }
 
 		[Required]
@@ -78,6 +82,7 @@ namespace OpenBots.Commands.API
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]

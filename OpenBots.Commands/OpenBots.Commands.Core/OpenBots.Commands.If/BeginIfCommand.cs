@@ -50,6 +50,7 @@ namespace OpenBots.Commands.If
 		[SampleUsage("Param Value || {vParamValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_ActionParameterTable { get; set; }
 
 		[JsonIgnore]

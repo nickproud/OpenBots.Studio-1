@@ -32,6 +32,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[SampleUsage("3 || {vRetryCount}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_RetryCount { get; set; }
 
 		[Required]
@@ -40,6 +41,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[SampleUsage("5 || {vRetryInterval}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_RetryInterval { get; set; }
 
 		[Required]
@@ -48,6 +50,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[SampleUsage("")]
 		[Remarks("Items in the retry scope will be executed if the condition doesn't satisfy.")]
 		[Editor("ShowIfBuilder", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_IfConditionsTable { get; set; }
 
 		[JsonIgnore]

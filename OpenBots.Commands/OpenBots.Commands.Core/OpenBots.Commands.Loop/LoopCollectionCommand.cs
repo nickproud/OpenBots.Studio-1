@@ -33,6 +33,7 @@ namespace OpenBots.Commands.Loop
 		[Remarks("If the collection is a DataTable then the output item will be a DataRow and its column value can be accessed using the " +
 			"dot operator like {vDataRow.ColumnName}.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(DataTable), typeof(List<>), typeof(Dictionary<,>), typeof(string) })]
 		public string v_LoopParameter { get; set; }
 
 		[Required]
@@ -41,6 +42,7 @@ namespace OpenBots.Commands.Loop
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public LoopCollectionCommand()
