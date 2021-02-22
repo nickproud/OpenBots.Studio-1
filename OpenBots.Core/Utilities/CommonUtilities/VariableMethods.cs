@@ -239,6 +239,35 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 return null;
         }
 
+        public static Type GetVarArgType(this string varArgName, IAutomationEngineInstance engine)
+        {
+            ScriptVariable requiredVariable;
+            ScriptArgument requiredArgument;
+
+            if (varArgName.StartsWith("{") && varArgName.EndsWith("}"))
+            {
+                //reformat and attempt
+                var reformattedVarArg = varArgName.Replace("{", "").Replace("}", "");
+
+                requiredVariable = engine.AutomationEngineContext.Variables
+                                                .Where(var => var.VariableName == reformattedVarArg)
+                                                .FirstOrDefault();              
+
+                requiredArgument = engine.AutomationEngineContext.Arguments
+                                                .Where(arg => arg.ArgumentName == reformattedVarArg)
+                                                .FirstOrDefault();
+            }
+            else
+                throw new Exception("Variable/Argument markers '{}' missing. Variable/Argument '" + varArgName + "' could not be found.");
+
+            if (requiredVariable != null)
+                return requiredVariable.VariableType;
+            else if (requiredArgument != null)
+                return requiredArgument.ArgumentType;
+            else
+                return null;
+        }
+
         private static string CalculateVariables(this string str, IAutomationEngineInstance engine)
         {
             if (!engine.AutoCalculateVariables)

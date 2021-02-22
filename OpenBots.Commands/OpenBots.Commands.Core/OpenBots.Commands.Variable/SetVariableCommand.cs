@@ -24,6 +24,7 @@ namespace OpenBots.Commands.Variable
 		[SampleUsage("Hello || {vNum} || {vNum}+1")]
 		[Remarks("You can use variables in input if you encase them within braces {vValue}. You can also perform basic math operations.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(object) }, true)]
 		public string v_Input { get; set; }
 
 		[Required]
@@ -32,6 +33,7 @@ namespace OpenBots.Commands.Variable
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(object) }, true)]
 		public string v_OutputUserVariableName { get; set; }
 
 		public SetVariableCommand()
@@ -51,6 +53,12 @@ namespace OpenBots.Commands.Variable
 			if (input == v_Input && input.StartsWith("{") && input.EndsWith("}"))
 				if (v_Input.ConvertUserVariableToObject(engine, typeof(object)) != null)
 					input = v_Input.ConvertUserVariableToObject(engine, typeof(object));
+
+			Type inputType = input.GetType();
+			Type outputType = v_OutputUserVariableName.GetVarArgType(engine);
+
+			if (inputType != outputType)
+				throw new InvalidCastException("Input and Output types do not match");
 
 			((object)input).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}

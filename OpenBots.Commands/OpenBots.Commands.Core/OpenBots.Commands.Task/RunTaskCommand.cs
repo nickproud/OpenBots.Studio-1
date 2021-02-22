@@ -274,9 +274,7 @@ namespace OpenBots.Commands.Task
 
 					DataRow[] foundArguments  = v_ArgumentAssignments.Select("ArgumentName = '" + "{" + argument.ArgumentName + "}" + "'");
 					if (foundArguments.Length == 0)
-                    {
 					    v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentType, argument.ArgumentValue, argument.Direction.ToString());
-					}
 				}               
 
 				for (int i = 0; i < _assignmentsGridViewHelper.Rows.Count; i++)
