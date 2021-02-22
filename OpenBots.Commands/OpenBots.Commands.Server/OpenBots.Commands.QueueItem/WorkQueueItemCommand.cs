@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -124,15 +123,17 @@ namespace OpenBots.Commands.QueueItem
 
 			if (v_SaveAttachments == "Yes")
 			{
+				
 				if (Directory.Exists(vAttachmentDirectory))
 				{
 					//get all queue item attachments
-					var binaryObjectFiles = BinaryObjectMethods.GetBinaryObjectsByCorrelationEntityId(client, queueItem.Id);
+					var attachments = QueueItemMethods.GetAttachments(client, queueItem.Id);
 					//save each attachment in the directory
-					foreach (BinaryObject file in binaryObjectFiles)
+					foreach (var attachment in attachments)
 					{
 						//export (save) in appropriate directory
-						BinaryObjectMethods.DownloadBinaryObject(client, file.Id, vAttachmentDirectory, file.Name);
+						var file = FileMethods.GetFile(client, attachment.FileId);
+						FileMethods.DownloadFile(client, file.Id, vAttachmentDirectory, file.Name);
 					}
 				}
 			}
