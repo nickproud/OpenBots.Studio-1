@@ -69,6 +69,7 @@
     <Compile Include="OpenBots.Commands.Excel\ExcelAppendSheetCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelCloseApplicationCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelCreateApplicationCommand.cs" />
+    <Compile Include="OpenBots.Commands.Excel\ExcelCreatePivotTableCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelDeleteColumnCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelDeleteRangeCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelDeleteRowCommand.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="OpenBots.Commands.Excel\ExcelGetLastRowIndexCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelGetRangeCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelLoadDictionaryCommand.cs" />
+    <Compile Include="OpenBots.Commands.Excel\ExcelRefreshPivotTableCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelRenameSheetCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelRunMacroCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelSaveWorkbookAsCommand.cs" />

@@ -112,8 +112,6 @@ namespace OpenBots.UI.Forms
             //apply original variables if command is being updated
             if (OriginalCommand != null)
             {
-                //copy original properties
-                CopyPropertiesTo(OriginalCommand, SelectedCommand);
 
                 //update bindings
                 foreach (Control c in flw_InputVariables.Controls)
@@ -188,6 +186,12 @@ namespace OpenBots.UI.Forms
 
             //update data source
             userSelectedCommand.Command = SelectedCommand;
+
+            if(OriginalCommand != null)
+            {
+                //copy original properties
+                CopyPropertiesTo(OriginalCommand, SelectedCommand);
+            }
 
             //bind controls to new data source
             userSelectedCommand.Bind(this, _commandControls);
