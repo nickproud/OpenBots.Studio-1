@@ -27,6 +27,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("MyColumn || {vColumn}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public OBDataTable v_ColumnNameDataTable { get; set; }
 
 		[Required]

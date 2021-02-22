@@ -39,6 +39,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
+		[CompatibleTypes(null, true)]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -56,6 +57,7 @@ namespace OpenBots.Commands.WebBrowser
 					)]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_SeleniumSearchParameters { get; set; }
 
 		[Required]
@@ -99,6 +101,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.\n"+
 				 "Advanced keystrokes may be set the following way: Hello[tab]World[enter]")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(IWebElement) }, true)]
 		public DataTable v_WebActionParameterTable { get; set; }
 
 		[Required]
@@ -107,6 +110,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
