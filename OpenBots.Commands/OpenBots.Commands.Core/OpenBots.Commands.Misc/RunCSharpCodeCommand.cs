@@ -18,7 +18,7 @@ namespace OpenBots.Commands.Core.OpenBots.Commands.Misc
     [Serializable]
     [Category("Misc Commands")]
     [Description("This command run a block C# code.")]
-    public class RunCSharpScriptCommand : ScriptCommand
+    public class RunCSharpCodeCommand : ScriptCommand
     {
 		[Required]
 		[DisplayName("C# Script")]
@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Core.OpenBots.Commands.Misc
         [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
         public string v_OutputUserVariableName { get; set; }
 
-        public RunCSharpScriptCommand()
+        public RunCSharpCodeCommand()
         {
             CommandName = "RunC#ScriptCommand";
             SelectionName = "Run C# Script";
@@ -47,11 +47,14 @@ namespace OpenBots.Commands.Core.OpenBots.Commands.Misc
         {
             var engine = (IAutomationEngineInstance)sender;
 
+            ScriptState state = await CSharpScript.RunAsync("", ScriptOptions.Default.WithImports("System.Collections.Generic"));
+
             string code = v_Code;
             foreach(OBScript.ScriptVariable variable in engine.AutomationEngineContext.Variables)
             {
                 string varString = "{" + variable.VariableName + "}";
-                Regex.Replace(code, varString, varString.ConvertUserVariableToString(engine));
+                state.ContinueWithAsync();
+                //Regex.Replace(code, varString, varString.ConvertUserVariableToString(engine));
             }
 
             var result = new object();
