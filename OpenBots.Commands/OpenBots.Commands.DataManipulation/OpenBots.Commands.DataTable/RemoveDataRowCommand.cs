@@ -46,7 +46,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("(ColumnName1,Item1),(ColumnName2,Item2) || ({vColumn1},{vItem1}),({vCloumn2},{vItem2}) || {vTuple} || 0 || {vIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(true)]
+		[CompatibleTypes(null, true)]
 		public string v_SearchItem { get; set; }
 
 		[Required]

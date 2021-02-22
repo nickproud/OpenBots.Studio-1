@@ -2,22 +2,16 @@
 
 namespace OpenBots.Core.Attributes.PropertyAttributes
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Property)]
     public class CompatibleTypes : Attribute
     {
         public Type[] CompTypes { get; private set; }
-        public bool IsPrimitive { get; private set; }
+        public bool IsStringOrPrimitive { get; private set; }
 
-        //handled by VariableMethods.ConvertUserVariableToObject() and VariableMethods.StoreInUserVariable()
-        public CompatibleTypes(Type[] compTypes)
+        public CompatibleTypes(Type[] compTypes, bool isStringOrPrimitive = false)
         {
             CompTypes = compTypes;
-        }
-
-        //handled by VariableMethods.ConvertUserVariableToString()
-        public CompatibleTypes(bool isPrimitive)
-        {
-            IsPrimitive = isPrimitive;
+            IsStringOrPrimitive = isStringOrPrimitive;
         }
     }
 }

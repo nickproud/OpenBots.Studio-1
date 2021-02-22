@@ -44,7 +44,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("(ColumnName1,Item1),(ColumnName2,Item2) || ({vColumn1},{vItem1}),({vCloumn2},{vItem2}) || {vFilterTuple} || Age > 30 || Name <> 'John' || {vRowFilter}")]
 		[Remarks("DataRows must match all provided tuples to be included in the filtered DataTable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(true)]
+		[CompatibleTypes(null, true)]
 		public string v_SearchItem { get; set; }
 
 		[Required]

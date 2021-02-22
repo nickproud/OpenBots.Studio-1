@@ -34,6 +34,7 @@ namespace OpenBots.Commands.Task
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_TaskPath { get; set; }
 
 		[Required]
@@ -50,6 +51,7 @@ namespace OpenBots.Commands.Task
 		[Remarks("For inputs, set ArgumentDirection to *In*. For outputs, set ArgumentDirection to *Out*. " +
 				 "Failure to assign an ArgumentDirection value will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(object) }, true)]
 		public DataTable v_ArgumentAssignments { get; set; }
 
 		[JsonIgnore]
@@ -79,9 +81,11 @@ namespace OpenBots.Commands.Task
 
 			v_ArgumentAssignments = new DataTable();
 			v_ArgumentAssignments.Columns.Add("ArgumentName");
+			v_ArgumentAssignments.Columns.Add("ArgumentType");
 			v_ArgumentAssignments.Columns.Add("ArgumentValue");
 			v_ArgumentAssignments.Columns.Add("ArgumentDirection");
 			v_ArgumentAssignments.TableName = "RunTaskCommandInputParameters" + DateTime.Now.ToString("MMddyyhhmmss");
+			v_ArgumentAssignments.Columns[1].DataType = typeof(Type);
 
 			_assignmentsGridViewHelper = new DataGridView();
 			_assignmentsGridViewHelper.AllowUserToAddRows = false;
@@ -270,17 +274,25 @@ namespace OpenBots.Commands.Task
 
 					DataRow[] foundArguments  = v_ArgumentAssignments.Select("ArgumentName = '" + "{" + argument.ArgumentName + "}" + "'");
 					if (foundArguments.Length == 0)
-						v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentValue, argument.Direction.ToString());                   
+                    {
+					    v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentType, argument.ArgumentValue, argument.Direction.ToString());
+					}
 				}               
 
 				for (int i = 0; i < _assignmentsGridViewHelper.Rows.Count; i++)
 				{
+					DataGridViewComboBoxCell typeComboBox = new DataGridViewComboBoxCell();
+					typeComboBox.Items.Add(arguments[i].ArgumentType);
+					typeComboBox.Tag = arguments[i].ArgumentType;
+					_assignmentsGridViewHelper.Rows[i].Cells[1] = typeComboBox;
+					_assignmentsGridViewHelper.Rows[i].Cells[1].ReadOnly = true;
+
 					DataGridViewComboBoxCell returnComboBox = new DataGridViewComboBoxCell();
 					returnComboBox.Items.Add("In");
 					returnComboBox.Items.Add("Out");
-					_assignmentsGridViewHelper.Rows[i].Cells[2] = returnComboBox;
+					_assignmentsGridViewHelper.Rows[i].Cells[3] = returnComboBox;
 					//make read only until theres a way to cleanly synchronize changes made 
-					_assignmentsGridViewHelper.Rows[i].Cells[2].ReadOnly = true;
+					_assignmentsGridViewHelper.Rows[i].Cells[3].ReadOnly = true;					
 				}
 			}
 			else if (!Sender.Checked)
@@ -335,23 +347,24 @@ namespace OpenBots.Commands.Task
 			foreach (DataRow rw in v_ArgumentAssignments.Rows)
 			{
 				var argumentName = (string)rw.ItemArray[0];
+				var argumentType = (Type)rw.ItemArray[1];
 				object argumentValue = null;
-				var argumentDirection = (string)rw.ItemArray[2];
+				var argumentDirection = (string)rw.ItemArray[3];
 
 				if (argumentDirection == "In")
                 {
-					if (((string)rw.ItemArray[1]).StartsWith("{") && ((string)rw.ItemArray[1]).EndsWith("}"))
-						argumentValue = ((string)rw.ItemArray[1]).ConvertUserVariableToObject(parentAutomationEngineInstance, typeof(object));
+					if (((string)rw.ItemArray[2]).StartsWith("{") && ((string)rw.ItemArray[2]).EndsWith("}"))
+						argumentValue = ((string)rw.ItemArray[2]).ConvertUserVariableToObject(parentAutomationEngineInstance, typeof(object));
 
 					if (argumentValue is string || argumentValue == null)
-						argumentValue = ((string)rw.ItemArray[1]).ConvertUserVariableToString(parentAutomationEngineInstance);
+						argumentValue = ((string)rw.ItemArray[2]).ConvertUserVariableToString(parentAutomationEngineInstance);
 
 					_argumentList.Add(new ScriptArgument
 					{
 						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
 						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
 						ArgumentValue = argumentValue,
-						ArgumentType = argumentValue.GetType()
+						ArgumentType = argumentType
 					});
 				}
 
@@ -362,7 +375,8 @@ namespace OpenBots.Commands.Task
 					{
 						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
 						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
-						AssignedVariable = ((string)rw.ItemArray[1]).Replace("{", "").Replace("}", ""),
+						AssignedVariable = ((string)rw.ItemArray[2]).Replace("{", "").Replace("}", ""),
+						ArgumentType = argumentType
 					});
                 }
             }

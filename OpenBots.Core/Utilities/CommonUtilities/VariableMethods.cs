@@ -43,8 +43,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             variableSearchList.AddRange(argumentsAsVariablesList);
 
             //variable markers
-            var startVariableMarker = "{";
-            var endVariableMarker = "}";
+            string startVariableMarker = "{";
+            string endVariableMarker = "}";
 
             if ((!userInputString.Contains(startVariableMarker) || !userInputString.Contains(endVariableMarker)) && requiresMarkers)
             {
@@ -70,9 +70,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 var varCheck = variableSearchList.Where(v => v.VariableName == varcheckname)
                                                  .FirstOrDefault();
 
-                if (varCheck != null && !varCheck.VariableType.IsPrimitive)
-                    throw new ArgumentException($"Variable/Argument {varCheck.VariableName} is not a valid primitive type.");
-                    
                 if (potentialVariable == "OpenBots.EngineContext") 
                     varCheck.VariableValue = engine.GetEngineContext();
 
@@ -82,9 +79,9 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
                     if (userInputString.Contains(searchVariable))
                     {
-                        if (varCheck.VariableValue is string)
+                        if (varCheck.VariableType == typeof(string) || varCheck.VariableType.IsPrimitive)
                         {
-                            userInputString = userInputString.Replace(searchVariable, (string)varCheck.VariableValue);
+                            userInputString = userInputString.Replace(searchVariable, varCheck.VariableValue.ToString());
                         }
                         else if (varCheck.VariableValue is List<string> && potentialVariable.Split('.').Length == 2)
                         {
@@ -156,15 +153,23 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                         if (varCheck.VariableValue is string)
                             userInputString = userInputString.Replace(potentialVariable, (string)varCheck.VariableValue);
                     }
-                }                           
+                } 
+                else if (varCheck == null && userInputString.Contains(startVariableMarker + varcheckname + endVariableMarker))
+                    throw new ArgumentNullException($"No variable/argument with the name '{varcheckname}' was found.");
             }
+
             return userInputString.CalculateVariables(engine);
         }
 
         public static object ConvertUserVariableToObject(this string varArgName, IAutomationEngineInstance engine, string parameterName, ScriptCommand parent)
         {
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
-            var compatibleTypes = ((CompatibleTypes[])variableProperties.GetCustomAttributes(typeof(CompatibleTypes), true))[0].CompTypes;
+            var compatibleTypesAttribute = variableProperties.GetCustomAttributes(typeof(CompatibleTypes), true);
+           
+            Type[] compatibleTypes = null;
+
+            if (compatibleTypesAttribute.Length > 0)
+                compatibleTypes = ((CompatibleTypes[])compatibleTypesAttribute)[0].CompTypes;
 
             ScriptVariable requiredVariable;
             ScriptArgument requiredArgument;
@@ -178,24 +183,23 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                                 .Where(var => var.VariableName == reformattedVarArg)
                                                 .FirstOrDefault();
 
-                if (requiredVariable != null && compatibleTypes!= null && !compatibleTypes.Any(x => x == requiredVariable.VariableType))
+                if (requiredVariable != null && compatibleTypes!= null && !compatibleTypes.Any(x => x.IsAssignableFrom(requiredVariable.VariableType)))
                     throw new ArgumentException($"The type of variable '{requiredVariable.VariableName}' is not compatible.");
 
                 requiredArgument = engine.AutomationEngineContext.Arguments
                                                 .Where(arg => arg.ArgumentName == reformattedVarArg)
                                                 .FirstOrDefault();
 
-                if (requiredArgument != null && compatibleTypes != null && !compatibleTypes.Any(x => x == requiredArgument.ArgumentType))
+                if (requiredArgument != null && compatibleTypes != null && !compatibleTypes.Any(x => x.IsAssignableFrom(requiredArgument.ArgumentType)))
                     throw new ArgumentException($"The type of argument '{requiredArgument.ArgumentName}' is not compatible.");
             }
             else
                 throw new Exception("Variable/Argument markers '{}' missing. Variable/Argument '" + varArgName + "' could not be found.");
 
-            Type varType = requiredVariable.VariableType;
             if (requiredVariable != null)
-                return Convert.ChangeType(requiredVariable.VariableValue, requiredVariable.VariableType);
+                return requiredVariable.VariableValue;
             else if (requiredArgument != null)
-                return Convert.ChangeType(requiredArgument.ArgumentValue, requiredArgument.ArgumentType);
+                return requiredArgument.ArgumentValue;
             else
                 return null;
         }
@@ -208,23 +212,29 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             if (varArgName.StartsWith("{") && varArgName.EndsWith("}"))
             {
                 //reformat and attempt
-                var reformattedVariable = varArgName.Replace("{", "").Replace("}", "");
+                var reformattedVarArg = varArgName.Replace("{", "").Replace("}", "");
 
                 requiredVariable = engine.AutomationEngineContext.Variables
-                                                .Where(var => var.VariableName == reformattedVariable && var.VariableType == compatibleType)
+                                                .Where(var => var.VariableName == reformattedVarArg)
                                                 .FirstOrDefault();
+
+                if (requiredVariable != null && !compatibleType.IsAssignableFrom(requiredVariable.VariableType))
+                    throw new ArgumentException($"The type of variable '{requiredVariable.VariableName}' is not compatible.");
+
                 requiredArgument = engine.AutomationEngineContext.Arguments
-                                                .Where(arg => arg.ArgumentName == reformattedVariable && arg.ArgumentType == compatibleType)
+                                                .Where(arg => arg.ArgumentName == reformattedVarArg)
                                                 .FirstOrDefault();
+
+                if (requiredArgument != null && !compatibleType.IsAssignableFrom(requiredArgument.ArgumentType))
+                    throw new ArgumentException($"The type of argument '{requiredArgument.ArgumentName}' is not compatible.");
             }
             else
                 throw new Exception("Variable/Argument markers '{}' missing. Variable/Argument '" + varArgName + "' could not be found.");
 
-            Type varType = requiredVariable.VariableType;
             if (requiredVariable != null)
-                return Convert.ChangeType(requiredVariable.VariableValue, requiredVariable.VariableType);
+                return requiredVariable.VariableValue;
             else if (requiredArgument != null)
-                return Convert.ChangeType(requiredArgument.ArgumentValue, requiredArgument.ArgumentType);
+                return requiredArgument.ArgumentValue;
             else
                 return null;
         }
@@ -278,10 +288,15 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         /// </summary>
         /// <param name="sender">The script engine instance (AutomationEngineInstance) which contains session variables.</param>
         /// <param name="targetVariable">the name of the user-defined variable to override with new value</param>
-        public static void StoreInUserVariable(this object varArgValue, IAutomationEngineInstance engine, string varArgName, string propertyName, ScriptCommand parent)
+        public static void StoreInUserVariable(this object varArgValue, IAutomationEngineInstance engine, string varArgName, string parameterName, ScriptCommand parent)
         {
-            var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == propertyName).FirstOrDefault();
-            var compatibleTypes = ((CompatibleTypes[])variableProperties.GetCustomAttributes(typeof(CompatibleTypes), true))[0].CompTypes;
+            var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
+            var compatibleTypesAttribute = variableProperties.GetCustomAttributes(typeof(CompatibleTypes), true);
+
+            Type[] compatibleTypes = null;
+
+            if (compatibleTypesAttribute.Length > 0)
+                compatibleTypes = ((CompatibleTypes[])compatibleTypesAttribute)[0].CompTypes;
 
             if (varArgName.StartsWith("{") && varArgName.EndsWith("}"))
                 varArgName = varArgName.Replace("{", "").Replace("}", "");           
@@ -292,7 +307,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                                .Where(var => var.VariableName == varArgName)
                                                .FirstOrDefault();
 
-            if (existingVariable != null && compatibleTypes != null && !compatibleTypes.Any(x => x == existingVariable.VariableType))
+            if (existingVariable != null && compatibleTypes != null && !compatibleTypes.Any(x => x.IsAssignableFrom(existingVariable.VariableType)))
                 throw new ArgumentException($"The type of variable '{existingVariable.VariableName}' is not compatible.");
             else if (existingVariable != null)
             {
@@ -304,7 +319,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                             .Where(arg => arg.ArgumentName == varArgName)
                                             .FirstOrDefault();
 
-            if (existingArgument != null && compatibleTypes != null && !compatibleTypes.Any(x => x == existingArgument.ArgumentType))
+            if (existingArgument != null && compatibleTypes != null && !compatibleTypes.Any(x => x.IsAssignableFrom(existingArgument.ArgumentType)))
                 throw new ArgumentException($"The type of argument '{existingArgument.ArgumentName}' is not compatible.");
             else if (existingArgument != null)
             {
@@ -312,7 +327,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 return;
             }
 
-            throw new ArgumentException($"No variable/argument with the name '{varArgName}' was found.");
+            throw new ArgumentNullException($"No variable/argument with the name '{varArgName}' was found.");
         }
 
         public static void StoreInUserVariable(this object varArgValue, IAutomationEngineInstance engine, string varArgName, Type compatibleType)
@@ -326,7 +341,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                                .Where(var => var.VariableName == varArgName)
                                                .FirstOrDefault();
 
-            if (existingVariable != null && existingVariable.VariableType != compatibleType)
+            if (existingVariable != null && !compatibleType.IsAssignableFrom(existingVariable.VariableType))
                 throw new ArgumentException($"The type of variable '{existingVariable.VariableName}' is not compatible.");
             else if (existingVariable != null)
             {
@@ -338,7 +353,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                             .Where(arg => arg.ArgumentName == varArgName)
                                             .FirstOrDefault();
 
-            if (existingArgument != null && existingArgument.ArgumentType != compatibleType)
+            if (existingArgument != null && !compatibleType.IsAssignableFrom(existingArgument.ArgumentType))
                 throw new ArgumentException($"The type of argument '{existingArgument.ArgumentName}' is not compatible.");
             else if (existingArgument != null)
             {
@@ -346,7 +361,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 return;
             }
 
-            throw new ArgumentException($"No variable/argument with the name '{varArgName}' was found.");
+            throw new ArgumentNullException($"No variable/argument with the name '{varArgName}' was found.");
         }
 
         /// <summary>
