@@ -48,10 +48,10 @@ namespace OpenBots.Commands.DataTable
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			OBDataTable dataTable = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine);
+			OBDataTable dataTable = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
 			var count = dataTable.Columns.Count.ToString();
 
-			count.StoreInUserVariable(engine, v_OutputUserVariableName);
+			count.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
