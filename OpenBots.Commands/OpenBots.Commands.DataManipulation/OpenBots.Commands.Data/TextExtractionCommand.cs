@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("Sample text to perform text extraction on || {vTextData}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputText { get; set; }
 
 		[Required]
@@ -47,6 +48,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("A substring from input text || {vSubstring}")]
 		[Remarks("Set parameter values for each parameter name based on the extraction type.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public OBDataTable v_TextExtractionTable { get; set; }
 
 		[Required]
@@ -55,6 +57,7 @@ namespace OpenBots.Commands.Data
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]

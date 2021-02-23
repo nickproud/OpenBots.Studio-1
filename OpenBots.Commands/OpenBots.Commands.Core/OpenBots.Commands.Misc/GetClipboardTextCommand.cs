@@ -25,6 +25,7 @@ namespace OpenBots.Commands.Misc
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("{vUserVariable}")]
         [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_OutputUserVariableName { get; set; }
 
         public GetClipboardTextCommand()

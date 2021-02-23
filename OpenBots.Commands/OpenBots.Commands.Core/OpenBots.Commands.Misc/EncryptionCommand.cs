@@ -35,6 +35,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("Hello || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputValue { get; set; }
 
 		[Required]
@@ -43,6 +44,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("OPENBOTS || {vPassPhrase}")]
 		[Remarks("If decrypting, provide the pass phrase used to encypt the original text.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_PassPhrase { get; set; }
 
 		[Required]
@@ -51,6 +53,7 @@ namespace OpenBots.Commands.Misc
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public EncryptionCommand()

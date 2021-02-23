@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("Sample text, to be splitted by comma delimiter || {vTextData}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputText { get; set; }
 
 		[Required]
@@ -35,6 +36,7 @@ namespace OpenBots.Commands.Data
 		[Remarks("[crLF] can be used for line breaks and [chars] can be used to split each character." +
 				 "To use multiple delimeters, create a List variable of delimeter characters to use as the input.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(List<>)})]
 		public string v_SplitCharacter { get; set; }
 
 		[Required]
@@ -43,6 +45,7 @@ namespace OpenBots.Commands.Data
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public SplitTextCommand()

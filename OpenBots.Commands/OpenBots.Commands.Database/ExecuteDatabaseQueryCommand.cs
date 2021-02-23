@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Database
 		[Description("Enter the unique instance that was specified in the **Define Database Connection** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Define Database Connection** command will cause an error.")]
+		[CompatibleTypes(null, true)]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -47,6 +48,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("SELECT OrderID, CustomerID FROM Orders || {vQuery}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Query { get; set; }
 
 		[Required]
@@ -55,6 +57,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("[STRING | @name | {vNameValue}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_QueryParameters { get; set; }
 
 		[Required]
@@ -63,6 +66,7 @@ namespace OpenBots.Commands.Database
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(DataTable), typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]

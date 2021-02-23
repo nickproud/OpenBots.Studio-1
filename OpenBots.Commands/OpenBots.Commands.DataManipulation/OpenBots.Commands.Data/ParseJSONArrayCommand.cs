@@ -25,6 +25,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("[{\"rect\":{\"length\":10, \"width\":5}}] || {vArrayVariable}")]
 		[Remarks("Providing data of a type other than a 'JSON Array' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_JsonArrayName { get; set; }
 
 		[Required]
@@ -33,6 +34,7 @@ namespace OpenBots.Commands.Data
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ParseJSONArrayCommand()

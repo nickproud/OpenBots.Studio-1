@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("{\"rect\":{\"length\":10, \"width\":5}} || {vJsonObject}")]
 		[Remarks("Providing data of a type other than a 'JSON Object' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_JsonObject { get; set; }
 
 		[Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("[$.rect.length | vOutputList] || [{Selector} | {vOutputList}]")]
 		[Remarks("'$.rect.length' is a JSON Selector to query on an inputted JSON Object and store its results in {vOutputList}.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public OBDataTable v_ParseObjects { get; set; }
 
 		[JsonIgnore]
