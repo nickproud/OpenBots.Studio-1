@@ -28,6 +28,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("{vDictionary}")]
 		[Remarks("Any type of variable other than Dictionary will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_DictionaryName { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("Hello || {vKey}")]
 		[Remarks("Providing a non existing key will produce an exception.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Key { get; set; }
 
 		[Required]
@@ -44,6 +46,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("Hello || {vValue}")]
 		[Remarks("Value can only be a String, DataTable, MailItem or IWebElement.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement), typeof(object) }, true)]
 		public string v_Value { get; set; }
 
 		public UpdateDictionaryValueCommand()

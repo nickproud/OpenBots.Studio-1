@@ -31,6 +31,7 @@ namespace OpenBots.Commands.IEBrowser
         [Description("Enter the unique instance that was specified in the **IE Create Browser** command.")]
         [SampleUsage("MyIEBrowserInstance")]
         [Remarks("Failure to enter the correct instance name or failure to first call the **IE Create Browser** command will cause an error.")]
+        [CompatibleTypes(null, true)]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -39,6 +40,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public DataTable v_WebSearchParameter { get; set; }
 
         [Required]
@@ -64,6 +66,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("{vParameterValue}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public DataTable v_WebActionParameterTable { get; set; }
 
         [JsonIgnore]

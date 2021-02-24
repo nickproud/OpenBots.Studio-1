@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("{vDictionary}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_InputDictionary { get; set; }
 
 		[Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("SomeKey || {vKey}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Key { get; set; }
 
 		[Required]

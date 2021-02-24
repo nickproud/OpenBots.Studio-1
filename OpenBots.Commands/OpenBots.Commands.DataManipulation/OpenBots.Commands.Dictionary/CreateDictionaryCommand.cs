@@ -41,6 +41,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("[FirstName | John] || [{vKey} | {vValue}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(object) }, true)]
 		public OBDataTable v_ColumnNameDataTable { get; set; }
 
 		[Required]
@@ -49,6 +50,7 @@ namespace OpenBots.Commands.Dictionary
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public CreateDictionaryCommand()

@@ -27,6 +27,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("MyIEBrowserInstance")]
         [Remarks("This unique name allows you to refer to the instance by name in future commands, " +
                  "ensuring that the commands you specify run against the correct application.")]
+        [CompatibleTypes(null, true)]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -35,6 +36,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("https://example.com/ || {vURL}")]
         [Remarks("This input is optional.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_URL { get; set; }
 
         [Required]

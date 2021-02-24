@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("{vMyDictionary}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>)})]
 		public string v_DictionaryName { get; set; }
 
 		[Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("[FirstName | John] || [{vKey} | {vValue}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement), typeof(object) }, true)]
 		public OBDataTable v_ColumnNameDataTable { get; set; }
 
 		public AddDictionaryItemCommand()

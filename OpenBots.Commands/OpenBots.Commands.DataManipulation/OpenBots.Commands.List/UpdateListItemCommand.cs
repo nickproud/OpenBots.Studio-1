@@ -28,6 +28,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("{vList}")]
 		[Remarks("Any type of variable other than List will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_ListName { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("Hello || {vItem}")]
 		[Remarks("List item can only be a String, DataTable, MailItem or IWebElement.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable), typeof(MailItem), typeof(IWebElement)}, true)]
 		public string v_ListItem { get; set; }
 
 		[Required]
@@ -44,6 +46,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("0 || {vIndex}")]
 		[Remarks("Providing an out of range index will produce an exception.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ListIndex { get; set; }
 
 		public UpdateListItemCommand()

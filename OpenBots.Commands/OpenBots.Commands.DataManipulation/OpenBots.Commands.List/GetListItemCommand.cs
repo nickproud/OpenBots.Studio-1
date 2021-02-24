@@ -27,8 +27,9 @@ namespace OpenBots.Commands.List
 		[DisplayName("List")]
 		[Description("Provide a List variable.")]
 		[SampleUsage("{vList}")]
-		[Remarks("Any type of variable other than List will cause error.")]
+		[Remarks("Any type of variable other than a List or JSON array string will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(List<>) }, true)]
 		public string v_ListName { get; set; }
 
 		[Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("0 || {vIndex}")]
 		[Remarks("'0' is the index of the first item in a List. Providing an invalid or out-of-bounds index will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ItemIndex { get; set; }
 
 		[Required]
@@ -45,6 +47,7 @@ namespace OpenBots.Commands.List
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(IWebElement)})]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetListItemCommand()

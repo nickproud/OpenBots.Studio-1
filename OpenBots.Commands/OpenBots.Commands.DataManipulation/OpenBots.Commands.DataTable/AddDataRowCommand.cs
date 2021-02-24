@@ -41,6 +41,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("[ First Name | John ] || [ {vColumn} | {vData} ]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public OBDataTable v_DataRowDataTable { get; set; }
 
 		[JsonIgnore]

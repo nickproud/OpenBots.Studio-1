@@ -31,6 +31,7 @@ namespace OpenBots.Commands.Excel
 		[Remarks("This command does not require Excel to be opened. A snapshot will be taken of the workbook as it exists at the time this command runs.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -39,6 +40,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Sheet1 || {vSheet}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SheetName { get; set; }
 
 		[Required]
@@ -47,6 +49,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Name || {vKeyColumn}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_KeyColumn { get; set; }
 
 		[Required]
@@ -55,6 +58,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Value || {vValueColumn}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ValueColumn { get; set; }
 
 		[Required]
@@ -63,6 +67,7 @@ namespace OpenBots.Commands.Excel
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public LoadDictionaryCommand()
