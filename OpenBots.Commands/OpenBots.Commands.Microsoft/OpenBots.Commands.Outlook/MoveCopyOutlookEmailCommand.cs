@@ -28,6 +28,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("{vMailItem}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(MailItem) })]
 		public string v_MailItem { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("New Folder || {vFolderName}")]
 		[Remarks("Destination folder cannot be a subfolder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_DestinationFolder { get; set; }
 
 		[Required]

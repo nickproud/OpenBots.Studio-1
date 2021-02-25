@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Process
 				 "If you do not want to stop while the script executes, consider using *Start Process* instead.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ScriptPath { get; set; }
 
 		[Required]
@@ -46,6 +47,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("-message Hello -t 2 || {vArguments}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ScriptArgs { get; set; }
 
 		public RunScriptCommand()

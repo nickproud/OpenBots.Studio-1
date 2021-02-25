@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Outlook
         [SampleUsage("{vMailItem}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(MailItem) })]
         public string v_MailItem { get; set; }
 
         [Required]
@@ -35,6 +36,7 @@ namespace OpenBots.Commands.Outlook
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_AttachmentDirectory { get; set; }
 
         [Required]
@@ -52,6 +54,7 @@ namespace OpenBots.Commands.Outlook
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("{vUserVariable}")]
         [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+        [CompatibleTypes(new Type[] { typeof(List<>) })]
         public string v_OutputUserVariableName { get; set; }
         
         public GetOutlookEmailAttachmentsCommand()

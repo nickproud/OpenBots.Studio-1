@@ -31,6 +31,7 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("MyWordInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
+		[CompatibleTypes(null, true)]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -49,6 +50,7 @@ namespace OpenBots.Commands.Word
 		[Remarks("This input should only be used for opening existing Documents.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]

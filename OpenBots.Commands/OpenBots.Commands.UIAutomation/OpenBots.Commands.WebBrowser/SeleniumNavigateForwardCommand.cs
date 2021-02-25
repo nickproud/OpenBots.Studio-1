@@ -23,6 +23,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
+		[CompatibleTypes(null, true)]
 		public string v_InstanceName { get; set; }
 
 		public SeleniumNavigateForwardCommand()

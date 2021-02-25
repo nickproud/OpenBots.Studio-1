@@ -24,10 +24,11 @@ namespace OpenBots.Commands.Email
     {
         [Required]
         [DisplayName("MimeMessage")]
-        [Description("Enter the MimeMessage to delete.")]
+        [Description("Enter the MimeMessage to retrieve attachments from.")]
         [SampleUsage("{vMimeMessage}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(MimeMessage) })]
         public string v_IMAPMimeMessage { get; set; }
 
         [Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.Email
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_IMAPAttachmentDirectory { get; set; }
 
         [Required]
@@ -54,6 +56,7 @@ namespace OpenBots.Commands.Email
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("vUserVariable")]
         [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+        [CompatibleTypes(new Type[] { typeof(List<>) })]
         public string v_OutputUserVariableName { get; set; }
 
         public GetIMAPEmailAttachmentsCommand()

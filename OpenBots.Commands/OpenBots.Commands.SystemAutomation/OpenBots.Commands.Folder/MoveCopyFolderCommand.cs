@@ -34,7 +34,8 @@ namespace OpenBots.Commands.Folder
 		[SampleUsage(@"C:\temp\myfolder || {ProjectPath}\myfolder || {vOriginalFolderPath}")]
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))] 
+		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SourceFolderPath { get; set; }
 
 		[Required]
@@ -43,7 +44,8 @@ namespace OpenBots.Commands.Folder
 		[SampleUsage(@"C:\temp\DestinationFolder || {ProjectPath}\DestinationFolder || {vDestinationFolderPath}")]
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))] 
+		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_DestinationDirectory { get; set; }
 
 		[Required]

@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Word
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyWordInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
+		[CompatibleTypes(null, true)]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -34,6 +35,7 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("{vDataTable}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(DataTable) })]
 		public string v_DataTable { get; set; }
 
 		public WordAppendDataTableCommand()

@@ -27,6 +27,7 @@ namespace OpenBots.Commands.System
 		[Description("Select an OS variable from one of the options.")]
 		[SampleUsage("")]
 		[Remarks("")]
+		[CompatibleTypes(null, true)]
 		public string v_OSVariableName { get; set; }
 
 		[Required]
@@ -35,6 +36,7 @@ namespace OpenBots.Commands.System
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]

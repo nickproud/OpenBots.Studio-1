@@ -30,6 +30,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("smtp.gmail.com || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPHost { get; set; }
 
 		[Required]
@@ -38,6 +39,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("465 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPPort { get; set; }
 
 		[Required]
@@ -46,6 +48,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPUserName { get; set; }
 
 		[Required]
@@ -54,6 +57,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("password || {vPassword}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPPassword { get; set; }
 
 		[Required]
@@ -62,6 +66,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
 		[Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPRecipients { get; set; }
 
 		[Required]
@@ -70,6 +75,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Hello || {vSubject}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPSubject { get; set; }
 
 		[Required]
@@ -78,6 +84,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Dear John, ... || {vBody}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPBody { get; set; }
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
@@ -86,6 +93,7 @@ namespace OpenBots.Commands.Email
 		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPAttachments { get; set; }
 
 		public SendSMTPEmailCommand()

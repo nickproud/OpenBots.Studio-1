@@ -28,6 +28,7 @@ namespace OpenBots.Commands.Outlook
         [SampleUsage("{vMailItem}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(MailItem) })]
         public string v_MailItem { get; set; }
 
         [Required]
@@ -106,6 +107,7 @@ namespace OpenBots.Commands.Outlook
         [SampleUsage("{vUserVariable}")]
         [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_OutputUserVariableName { get; set; }
 
         public GetOutlookEmailPropertyCommand()

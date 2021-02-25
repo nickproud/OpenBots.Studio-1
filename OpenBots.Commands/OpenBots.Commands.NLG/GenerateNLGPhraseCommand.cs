@@ -23,6 +23,7 @@ namespace OpenBots.Commands.NLG
 		[Description("Enter the unique instance that was specified in the **Create NLG Instance** command.")]
 		[SampleUsage("MyNLGInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create NLG Instance** command will cause an error.")]
+		[CompatibleTypes(null, true)]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -31,6 +32,7 @@ namespace OpenBots.Commands.NLG
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GenerateNLGPhraseCommand()

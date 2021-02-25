@@ -30,6 +30,7 @@ namespace OpenBots.Commands.Input
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.Input
 		[Description("Define the parameters for the keystroke actions.")]
 		[SampleUsage("[Enter [Return] | Key Press (Down + Up)]")]
 		[Remarks("")]
+		[CompatibleTypes(null, true)]
 		public DataTable v_KeyActions { get; set; }
 
 		[Required]

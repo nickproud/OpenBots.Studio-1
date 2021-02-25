@@ -59,6 +59,7 @@ namespace OpenBots.Commands.Image
 		[SampleUsage("data || {vData}")]
 		[Remarks("Additional Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_ImageActionParameterTable { get; set; }
 
 		[Required]
@@ -67,6 +68,7 @@ namespace OpenBots.Commands.Image
 		[SampleUsage("0.8 || 1 || {vAccuracy}")]
 		[Remarks("Accuracy must be a value between 0 and 1.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_MatchAccuracy { get; set; }
 
 		[JsonIgnore]

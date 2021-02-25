@@ -27,6 +27,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("myMachine || {vMachineName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_MachineName { get; set; }
 
 		[Required]
@@ -35,6 +36,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_UserName { get; set; }
 
 		[Required]
@@ -43,6 +45,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("password || {vPassword}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Password { get; set; }
 
 		[Required]
@@ -51,6 +54,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("1000 || {vWidth}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_RDPWidth { get; set; }
 
 		[Required]
@@ -59,6 +63,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("800 || {vHeight}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_RDPHeight { get; set; }
 
 		public LaunchRemoteDesktopCommand()

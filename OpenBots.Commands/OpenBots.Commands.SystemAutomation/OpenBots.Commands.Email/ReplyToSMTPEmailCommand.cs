@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("{vMimeMessage}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(MimeMessage) })]
 		public string v_SMTPMimeMessage { get; set; }
 
 		[Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("smtp.gmail.com || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPHost { get; set; }
 
 		[Required]
@@ -45,6 +47,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("465 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPPort { get; set; }
 
 		[Required]
@@ -53,6 +56,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPUserName { get; set; }
 
 		[Required]
@@ -61,6 +65,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("password || {vPassword}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPPassword { get; set; }
 
 		[Required]
@@ -78,6 +83,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Everything ran ok at {DateTime.Now}  || {vBody}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPBody { get; set; }
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
@@ -86,6 +92,7 @@ namespace OpenBots.Commands.Email
 		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPAttachments { get; set; }
 
 		public ReplyToSMTPEmailCommand()

@@ -25,6 +25,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("ShowHTMLBuilder", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputHTML { get; set; }
 
 		[Required]

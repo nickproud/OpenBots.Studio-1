@@ -25,6 +25,7 @@ namespace OpenBots.Commands.Folder
 		[SampleUsage("myFolderName || {vFolderName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_NewFolderName { get; set; }
 
 		[Required]
@@ -33,7 +34,8 @@ namespace OpenBots.Commands.Folder
 		[SampleUsage(@"C:\temp\myfolder || {ProjectPath}\myfolder || {vTextFolderPath}")]
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))] 
+		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_DestinationDirectory { get; set; }
 
 		[Required]

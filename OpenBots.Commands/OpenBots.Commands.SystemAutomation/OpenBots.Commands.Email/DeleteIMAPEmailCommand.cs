@@ -31,6 +31,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("{vMimeMessage}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(MimeMessage) })]
 		public string v_IMAPMimeMessage { get; set; }
 
 		[Required]
@@ -39,6 +40,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("imap.gmail.com || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPHost { get; set; }
 
 		[Required]
@@ -47,6 +49,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("993 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPPort { get; set; }
 
 		[Required]
@@ -55,6 +58,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPUserName { get; set; }
 
 		[Required]
@@ -63,6 +67,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("password || {vPassword}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPPassword { get; set; }
 
 		[Required]

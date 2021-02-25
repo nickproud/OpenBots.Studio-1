@@ -32,6 +32,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
+		[CompatibleTypes(null, true)]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -51,6 +52,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("https://mycompany.com/orders || {vURL}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_URL { get; set; }
 
 		[Required]
@@ -79,6 +81,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("user-data-dir=c:\\users\\public\\SeleniumOpenBotsProfile || {vOptions}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SeleniumOptions { get; set; }
 
 		public SeleniumCreateBrowserCommand()

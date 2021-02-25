@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("{vMailItem}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(MailItem) })]
 		public string v_MailItem { get; set; }
 
 		[Required]

@@ -35,6 +35,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("imap.gmail.com || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPHost { get; set; }
 
 		[Required]
@@ -43,6 +44,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("993 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPPort { get; set; }
 
 		[Required]
@@ -51,6 +53,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPUserName { get; set; }
 
 		[Required]
@@ -59,6 +62,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("password || {vPassword}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPPassword { get; set; }
 
 		[Required]
@@ -67,6 +71,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Inbox || {vFolderName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPSourceFolder { get; set; }
 
 		[Required]
@@ -75,6 +80,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Hello World || myRobot@company.com || {vFilter} || None")]
 		[Remarks("*Warning* Using 'None' as the Filter will return every email in the selected Mail Folder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPFilter { get; set; }
 
 		[Required]
@@ -120,6 +126,7 @@ namespace OpenBots.Commands.Email
 		[Remarks("This input is optional and will only be used if *Save MimeMessages and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPMessageDirectory { get; set; }
 
 		[Required]
@@ -129,6 +136,7 @@ namespace OpenBots.Commands.Email
 		[Remarks("This input is optional and will only be used if *Save MimeMessages and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPAttachmentDirectory { get; set; }
 
 		[Required]
@@ -137,6 +145,7 @@ namespace OpenBots.Commands.Email
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("vUserVariable")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]

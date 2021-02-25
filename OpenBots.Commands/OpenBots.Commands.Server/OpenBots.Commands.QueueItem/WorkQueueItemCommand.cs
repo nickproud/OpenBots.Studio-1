@@ -34,6 +34,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("QueueItem Text/Json values are store in the 'DataJson' key of a QueueItem Dictionary.\n" +
 				 "If a Queue has no workable items, the output value will be set to null.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueueName { get; set; }
 
 		[Required]
@@ -42,6 +43,7 @@ namespace OpenBots.Commands.QueueItem
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[Required]
@@ -60,6 +62,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("This input is optional and will only be used if *Save Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_AttachmentDirectory { get; set; }
 
 		[JsonIgnore]

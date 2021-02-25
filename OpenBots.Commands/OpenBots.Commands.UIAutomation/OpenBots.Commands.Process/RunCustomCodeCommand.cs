@@ -35,6 +35,7 @@ namespace OpenBots.Commands.Process
 		[Remarks("This command only supports the standard framework classes.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowCodeBuilder", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Code { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -42,6 +43,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("hello || {vArg} || hello,world || {vArg1},{vArg2}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Args { get; set; }
 
 		[Required]
@@ -50,6 +52,7 @@ namespace OpenBots.Commands.Process
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(object) }, true)]
 		public string v_OutputUserVariableName { get; set; }
 
 		public RunCustomCodeCommand()

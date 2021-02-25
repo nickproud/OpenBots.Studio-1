@@ -36,6 +36,7 @@ namespace OpenBots.Commands.Input
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -58,6 +59,7 @@ namespace OpenBots.Commands.Input
 		[Description("Use the Element Recorder to generate a listing of potential search parameters.")]
 		[SampleUsage("AutomationId || Name")]
 		[Remarks("Once you have clicked on a valid window the search parameters will be populated. Select a single parameter to find the element.")]
+		[CompatibleTypes(null, true)]
 		public DataTable v_UIASearchParameters { get; set; }
 
 		[Required]
@@ -66,6 +68,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("data || {vData} || *Variable Name*: {vNewVariable}")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_UIAActionParameters { get; set; }
 
 		[Required]
@@ -74,6 +77,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]

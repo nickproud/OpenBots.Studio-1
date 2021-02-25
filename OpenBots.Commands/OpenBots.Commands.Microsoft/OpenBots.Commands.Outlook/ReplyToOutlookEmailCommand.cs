@@ -27,6 +27,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("{vMailItem}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(MailItem) })]
 		public string v_MailItem { get; set; }
 
 		[Required]
@@ -44,6 +45,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("Dear John, ... || {vBody}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Body { get; set; }
 
 		[Required]
@@ -60,6 +62,7 @@ namespace OpenBots.Commands.Outlook
 		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Attachments { get; set; }
 
 		public ReplyToOutlookEmailCommand()
