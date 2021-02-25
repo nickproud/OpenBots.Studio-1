@@ -30,8 +30,8 @@ namespace OpenBots.Commands.DataTable.Test
             row["col2"] = "c2r1";
             inputTable.Rows.Add(row);
 
-            inputTable.CreateTestVariable(_engine, "inputTable");
-            "unassigned".CreateTestVariable(_engine, "outputRow");
+            inputTable.CreateTestVariable(_engine, "inputTable", typeof(OBData.DataTable));
+            "unassigned".CreateTestVariable(_engine, "outputRow", typeof(string));
             
             _getDataRow.v_DataTable = "{inputTable}";
             _getDataRow.v_DataRowIndex = "0";
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _getDataRow.RunCommand(_engine);
 
-            Assert.Equal(inputTable.Rows[0], (DataRow)_getDataRow.v_OutputUserVariableName.ConvertUserVariableToObject(_engine));
+            Assert.Equal(inputTable.Rows[0], (DataRow)_getDataRow.v_OutputUserVariableName.ConvertUserVariableToObject(_engine, typeof(OBData.DataRow)));
         }
     }
 }

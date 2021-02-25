@@ -19,7 +19,7 @@ namespace OpenBots.Commands.Dictionary.Test
             _engine = new AutomationEngineInstance(null);
 
             Dictionary<string, string> inputDict = new Dictionary<string, string>();
-            inputDict.CreateTestVariable(_engine, "inputDict");
+            inputDict.CreateTestVariable(_engine, "inputDict", typeof(Dictionary<,>));
 
             OBData.DataTable inputTable = new OBData.DataTable();
             inputTable.Columns.Add("Keys");
@@ -28,10 +28,10 @@ namespace OpenBots.Commands.Dictionary.Test
             row1["Keys"] = "key1";
             row1["Values"] = "val1";
             inputTable.Rows.Add(row1);
-            inputTable.CreateTestVariable(_engine, "inputTable");
+            inputTable.CreateTestVariable(_engine, "inputTable", typeof(OBData.DataTable));
 
             _addDictionaryItem.v_DictionaryName = "{inputDict}";
-            _addDictionaryItem.v_ColumnNameDataTable = (OBData.DataTable)"{inputTable}".ConvertUserVariableToObject(_engine);
+            _addDictionaryItem.v_ColumnNameDataTable = (OBData.DataTable)"{inputTable}".ConvertUserVariableToObject(_engine, typeof(OBData.DataTable));
 
             _addDictionaryItem.RunCommand(_engine);
 

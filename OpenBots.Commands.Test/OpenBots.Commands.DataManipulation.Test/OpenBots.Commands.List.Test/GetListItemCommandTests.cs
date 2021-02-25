@@ -21,8 +21,8 @@ namespace OpenBots.Commands.List.Test
             List<string> list = new List<string>();
             list.Add("item1");
             list.Add("item2");
-            list.CreateTestVariable(_engine, "inputList");
-            "unassigned".CreateTestVariable(_engine, "output");
+            list.CreateTestVariable(_engine, "inputList", typeof(List<>));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _getListItem.v_ListName = "{inputList}";
             _getListItem.v_ItemIndex = "1";
@@ -46,8 +46,8 @@ namespace OpenBots.Commands.List.Test
             item2.Columns.Add("d2col");
             list.Add(item1);
             list.Add(item2);
-            list.CreateTestVariable(_engine, "inputList");
-            "unassigned".CreateTestVariable(_engine, "output");
+            list.CreateTestVariable(_engine, "inputList", typeof(List<>));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(OBDataTable));
 
             _getListItem.v_ListName = "{inputList}";
             _getListItem.v_ItemIndex = "1";
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.List.Test
 
             _getListItem.RunCommand(_engine);
 
-            Assert.Equal(item2, (OBDataTable)"{output}".ConvertUserVariableToObject(_engine));
+            Assert.Equal(item2, (OBDataTable)"{output}".ConvertUserVariableToObject(_engine, typeof(OBDataTable)));
         }
     }
 }

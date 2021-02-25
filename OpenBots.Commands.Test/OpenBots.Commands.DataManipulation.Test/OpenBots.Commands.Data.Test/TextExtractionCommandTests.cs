@@ -30,9 +30,9 @@ namespace OpenBots.Commands.Data.Test
             row2["Parameter Value"] = "0";
             extractParams.Rows.Add(row2);
 
-            "This is an ".CreateTestVariable(_engine, "leadingText");
-            input.CreateTestVariable(_engine, "input");
-            "unassigned".CreateTestVariable(_engine, "output");
+            "This is an ".CreateTestVariable(_engine, "leadingText", typeof(string));
+            input.CreateTestVariable(_engine, "input", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _textExtraction.v_InputText = "{input}";
             _textExtraction.v_TextExtractionType = "Extract All After Text";
@@ -63,9 +63,9 @@ namespace OpenBots.Commands.Data.Test
             row2["Parameter Value"] = "0";
             extractParams.Rows.Add(row2);
 
-            " an example sentence".CreateTestVariable(_engine, "trailingText");
-            input.CreateTestVariable(_engine, "input");
-            "unassigned".CreateTestVariable(_engine, "output");
+            " an example sentence".CreateTestVariable(_engine, "trailingText", typeof(string));
+            input.CreateTestVariable(_engine, "input", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _textExtraction.v_InputText = "{input}";
             _textExtraction.v_TextExtractionType = "Extract All Before Text";
@@ -100,10 +100,10 @@ namespace OpenBots.Commands.Data.Test
             row3["Parameter Value"] = "0";
             extractParams.Rows.Add(row3);
 
-            "This is an ".CreateTestVariable(_engine, "leadingText");
-            " sentence".CreateTestVariable(_engine, "trailingText");
-            input.CreateTestVariable(_engine, "input");
-            "unassigned".CreateTestVariable(_engine, "output");
+            "This is an ".CreateTestVariable(_engine, "leadingText", typeof(string));
+            " sentence".CreateTestVariable(_engine, "trailingText", typeof(string));
+            input.CreateTestVariable(_engine, "input", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _textExtraction.v_InputText = "{input}";
             _textExtraction.v_TextExtractionType = "Extract All Between Text";
