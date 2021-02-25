@@ -96,7 +96,7 @@ namespace OpenBots.Commands.Excel
 
 			if (splitRange[1] == "")
             {
-				var cell = excelInstance.GetLastCell(excelSheet);
+				var cell = excelInstance.GetAddressOfLastCell(excelSheet);
 
 				if (cell == "")
 					throw new Exception("No data found in sheet.");
