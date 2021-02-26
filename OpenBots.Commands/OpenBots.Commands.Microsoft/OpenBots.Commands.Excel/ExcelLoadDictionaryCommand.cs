@@ -91,10 +91,10 @@ namespace OpenBots.Commands.Excel
 			var excelInstance = (Application)excelObject;
 
 			var excelWorkbook = newExcelSession.Workbooks.Open(vFilePath);
-			var excelSheet = excelWorkbook.Sheets[vSheetName];
+			Worksheet excelSheet = excelWorkbook.Sheets[vSheetName];
 
 			Range sourceRange = excelSheet.UsedRange;
-			var last = excelInstance.GetLastIndexOfNonEmptyCell(sourceRange, sourceRange.Range["A1"]);
+			var last = excelInstance.GetAddressOfLastCell(excelSheet);
 			Range cellValue = excelSheet.Range["A1", last];
 			
 			int rw = cellValue.Rows.Count;
