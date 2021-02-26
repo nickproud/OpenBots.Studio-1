@@ -32,9 +32,9 @@ namespace OpenBots.Commands.Credential.Test
 
             string credentialName = "CommandTestCreds";
 
-            credentialName.CreateTestVariable(_engine, "credName");
-            "unassigned".CreateTestVariable(_engine, "username");
-            "unassigned".CreateTestVariable(_engine, "password");
+            credentialName.CreateTestVariable(_engine, "credName", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "username", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "password", typeof(SecureString));
 
             _getCredential.v_CredentialName = "{credName}";
             _getCredential.v_OutputUserVariableName = "{username}";
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Credential.Test
 
             SecureString expectedPass = plainPassword.GetSecureString();
             Assert.Equal(username, "{username}".ConvertUserVariableToString(_engine));
-            Assert.Equal(expectedPass.ToString(),"{password}".ConvertUserVariableToObject(_engine).ToString());
+            Assert.Equal(expectedPass.ToString(),"{password}".ConvertUserVariableToObject(_engine, typeof(SecureString)).ToString());
         }
     }
 }
