@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(Application) })]
 		public string v_InstanceName { get; set; }
 
 		public ExcelSaveWorkbookCommand()

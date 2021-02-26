@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("password || {vPassword}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ConnectionStringPassword { get; set; }
 
 		[Required]

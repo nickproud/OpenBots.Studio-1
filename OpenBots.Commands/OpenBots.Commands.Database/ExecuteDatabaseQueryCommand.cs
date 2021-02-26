@@ -29,7 +29,7 @@ namespace OpenBots.Commands.Database
 		[Description("Enter the unique instance that was specified in the **Define Database Connection** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Define Database Connection** command will cause an error.")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(OleDbConnection) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]

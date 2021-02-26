@@ -25,7 +25,7 @@ namespace OpenBots.Commands.NLG
 		[Description("Enter the unique instance that was specified in the **Create NLG Instance** command.")]
 		[SampleUsage("MyNLGInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create NLG Instance** command will cause an error.")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(Application) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]

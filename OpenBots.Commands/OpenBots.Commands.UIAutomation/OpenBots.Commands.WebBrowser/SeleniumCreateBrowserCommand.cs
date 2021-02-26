@@ -32,7 +32,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
