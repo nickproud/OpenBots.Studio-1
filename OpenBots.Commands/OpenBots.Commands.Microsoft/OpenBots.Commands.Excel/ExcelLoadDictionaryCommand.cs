@@ -1,4 +1,5 @@
 ﻿using Microsoft.Office.Interop.Excel;
+using OpenBots.Commands.Microsoft.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
@@ -90,9 +91,10 @@ namespace OpenBots.Commands.Excel
 			var excelInstance = (Application)excelObject;
 
 			var excelWorkbook = newExcelSession.Workbooks.Open(vFilePath);
-			var excelSheet = excelWorkbook.Sheets[vSheetName];
- 
-			Range last = excelSheet.Cells.SpecialCells(XlCellType.xlCellTypeLastCell, Type.Missing);
+			Worksheet excelSheet = excelWorkbook.Sheets[vSheetName];
+
+			Range sourceRange = excelSheet.UsedRange;
+			var last = excelInstance.GetAddressOfLastCell(excelSheet);
 			Range cellValue = excelSheet.Range["A1", last];
 			
 			int rw = cellValue.Rows.Count;

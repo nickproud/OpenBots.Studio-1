@@ -41,6 +41,12 @@ namespace OpenBots.Core.Command
 		[Remarks("")]
 		public bool v_IsPrivate { get; set; }
 
+		[DisplayName("Error Handling")]
+		[Description("Optional field for how to handle errors encountered.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_ErrorHandling { get; set; }
+
 		[DisplayName("Comment Field (Optional)")]
 		[Description("Optional field to enter a custom comment which could potentially describe this command or the need for this command, if required.")]
 		[SampleUsage("I am using this command to ...")]
@@ -71,6 +77,7 @@ namespace OpenBots.Core.Command
 		{
 			CommandEnabled = false;
 			IsCommented = false;
+			v_ErrorHandling = "None";
 			GenerateID();
 		}
 

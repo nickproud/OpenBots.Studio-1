@@ -11,7 +11,7 @@
     ", OpenBots\\.Commands\\.File": ", OpenBots.Commands.SystemAutomation",
     ", OpenBots\\.Commands\\.Folder": ", OpenBots.Commands.SystemAutomation",
     ", OpenBots\\.Commands\\.TextFile": ", OpenBots.Commands.SystemAutomation",
-    ", OpenBots\\.Commands\\.System": ", OpenBots.Commands.SystemAutomation",
+    ", OpenBots\\.Commands\\.System\"": ", OpenBots.Commands.SystemAutomation\"",
 
     ", OpenBots\\.Commands\\.Image": ", OpenBots.Commands.UIAutomation",
     ", OpenBots\\.Commands\\.Input": ", OpenBots.Commands.UIAutomation",

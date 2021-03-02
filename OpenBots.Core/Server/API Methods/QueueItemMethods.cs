@@ -130,5 +130,21 @@ namespace OpenBots.Core.Server.API_Methods
             if (!response.IsSuccessful)
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
         }
+
+        public static List<QueueItemAttachment> GetAttachments(RestClient client, Guid? queueItemId)
+        {
+            var request = new RestRequest($"api/v1/QueueItems/{queueItemId}/QueueItemAttachments", Method.GET);
+            request.RequestFormat = DataFormat.Json;
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+
+            var deserializer = new JsonDeserializer();
+            var output = deserializer.Deserialize<Dictionary<string, string>>(response);
+            var items = output["items"];
+            return JsonConvert.DeserializeObject<List<QueueItemAttachment>>(items);
+        }
     }
 }

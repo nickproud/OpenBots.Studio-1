@@ -8,6 +8,6 @@ namespace OpenBots.Core.Server.Models
         public string TextValue { get; set; }
         public double? NumberValue { get; set; }
         public string JsonValue { get; set; }
-        public Guid? BinaryObjectID { get; set; }
+        public Guid? FileID { get; set; }
     }
 }

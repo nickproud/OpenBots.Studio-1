@@ -453,7 +453,7 @@ namespace OpenBots.Nuget
                                                              .ToList();
             foreach(var dep in dependencies)
             {
-                string existingDirectory = existingOpenBotsPackages.Where(x => new DirectoryInfo(x).Name.StartsWith(dep.Key))
+                string existingDirectory = existingOpenBotsPackages.Where(x => new DirectoryInfo(x).Name.Equals($"{dep.Key}.{dep.Value}"))
                                                                    .FirstOrDefault();
                 if (existingDirectory == null)
                 {
