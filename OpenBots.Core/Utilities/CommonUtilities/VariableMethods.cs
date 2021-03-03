@@ -255,7 +255,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         /// Converts a string to SecureString
         /// </summary>
         /// <param name="value">The string to be converted to SecureString</param>
-        public static SecureString GetSecureString(this string value)
+        public static SecureString ConvertStringToSecureString(this string value)
         {
             SecureString secureString = new NetworkCredential(string.Empty, value).SecurePassword;
             return secureString;
