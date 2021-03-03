@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using System.IO;
+using CSScriptLibrary;
 using Diagnostics = System.Diagnostics;
 
 namespace OpenBots.Commands.Process
@@ -36,6 +38,7 @@ namespace OpenBots.Commands.Process
 		[PropertyUISelectionOption("Default")]
 		[PropertyUISelectionOption("Powershell")]
 		[PropertyUISelectionOption("Python")]
+		[PropertyUISelectionOption("C#")]
 		[Description("Select the type of script you want to execute.")]
 		[SampleUsage("")]
 		[Remarks("Default executes with the system default for that file type.")]
@@ -44,7 +47,7 @@ namespace OpenBots.Commands.Process
 		[DisplayName("Arguments (Optional)")]
 		[Description("Enter any arguments as a single string.")]
 		[SampleUsage("-message Hello -t 2 || {vArguments}")]
-		[Remarks("This input is optional.")]
+		[Remarks("This input is optional. Use format {arg1},{arg2} for C# scripts.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		public string v_ScriptArgs { get; set; }
 
@@ -100,6 +103,22 @@ namespace OpenBots.Commands.Process
 					};
 					break;
 			}
+			if (v_ScriptType == "C#")
+            {
+				string code = File.ReadAllText(scriptPath);
+				var scriptMethod = CSScript.LoadDelegate<Action<object[]>>(code);
+
+				string[] argVars = v_ScriptArgs.Split(',');
+				object[] args = new object[argVars.Length];
+				for (int i=0; i<argVars.Length;i++)
+                {
+					argVars[i] = argVars[i].Trim();
+					args[i] = argVars[i].ConvertUserVariableToObject(engine);
+                }
+
+				scriptMethod(args);
+				return;
+            }
 			scriptProc.Start();
 			scriptProc.WaitForExit();
 

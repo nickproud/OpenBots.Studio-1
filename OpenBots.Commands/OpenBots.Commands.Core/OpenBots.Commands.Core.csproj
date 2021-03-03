@@ -146,7 +146,6 @@
     <Compile Include="OpenBots.Commands.Misc\AddCodeCommentCommand.cs" />
     <Compile Include="OpenBots.Commands.Misc\EncryptionCommand.cs" />
     <Compile Include="OpenBots.Commands.Misc\GetClipboardTextCommand.cs" />
-    <Compile Include="OpenBots.Commands.Misc\RunCSharpScriptCommand.cs" />
     <Compile Include="OpenBots.Commands.Misc\SequenceCommand.cs" />
     <Compile Include="OpenBots.Commands.Misc\SetClipboardTextCommand.cs" />
     <Compile Include="OpenBots.Commands.Misc\ShowMessageCommand.cs" />
