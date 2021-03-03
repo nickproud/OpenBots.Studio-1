@@ -24,22 +24,13 @@ namespace OpenBots.Commands.Excel
 	[Description("This command reads an Excel Config Worksheet and stores it in a Dictionary.")]
 	public class LoadDictionaryCommand : ScriptCommand
 	{
-		[Required]
-		[DisplayName("Workbook File Path")]
-		[Description("Enter or Select the path to the Workbook file.")]
-		[SampleUsage(@"C:\temp\myfile.xlsx || {vFilePath} || {ProjectPath}\myfile.xlsx")]
-		[Remarks("This command does not require Excel to be opened. A snapshot will be taken of the workbook as it exists at the time this command runs.")]
-		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		public string v_FilePath { get; set; }
 
 		[Required]
-		[DisplayName("Worksheet")]
-		[Description("Indicate the Worksheet to be retrieved.")]
-		[SampleUsage("Sheet1 || {vSheet}")]
-		[Remarks("")]
-		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		public string v_SheetName { get; set; }
+		[DisplayName("Excel Instance Name")]
+		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
+		[SampleUsage("MyExcelInstance")]
+		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
+		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Key Column Name")]
@@ -72,29 +63,24 @@ namespace OpenBots.Commands.Excel
 			CommandEnabled = true;
 			CommandIcon = Resources.command_spreadsheet;
 
+			v_InstanceName = "DefaultExcel";
 			v_KeyColumn = "Name";
 			v_ValueColumn = "Value";
 		}
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vInstance = DateTime.Now.ToString();
-			var vFilePath = v_FilePath.ConvertUserVariableToString(engine);
-			var vSheetName = v_SheetName.ConvertUserVariableToString(engine);
+			
 			var vKeyColumn = v_KeyColumn.ConvertUserVariableToString(engine);
 			var vValueColumn = v_ValueColumn.ConvertUserVariableToString(engine);
 
-			var newExcelSession = new Application{ Visible = false };
-			newExcelSession.AddAppInstance(engine, vInstance);
-
-			var excelObject = vInstance.GetAppInstance(engine);
+			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
 
-			var excelWorkbook = newExcelSession.Workbooks.Open(vFilePath);
-			var excelSheet = excelWorkbook.Sheets[vSheetName];
+			Worksheet excelSheet = excelInstance.ActiveSheet;
 
 			Range sourceRange = excelSheet.UsedRange;
-			var last = excelInstance.GetLastIndexOfNonEmptyCell(sourceRange, sourceRange.Range["A1"]);
+			var last = excelInstance.GetAddressOfLastCell(excelSheet);
 			Range cellValue = excelSheet.Range["A1", last];
 			
 			int rw = cellValue.Rows.Count;
@@ -138,12 +124,6 @@ namespace OpenBots.Commands.Excel
 				outputDictionary.Add(dict.keys, dict.values);
 			}
 
-			//close excel
-			excelInstance.Quit();
-
-			//remove instance
-			vInstance.RemoveAppInstance(engine);
-
 			outputDictionary.StoreInUserVariable(engine, v_OutputUserVariableName);
 		}
 
@@ -151,8 +131,7 @@ namespace OpenBots.Commands.Excel
 		{
 			base.Render(editor, commandControls);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SheetName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_KeyColumn", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ValueColumn", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
@@ -162,7 +141,7 @@ namespace OpenBots.Commands.Excel
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Load Keys '{v_KeyColumn}' and Values '{v_ValueColumn}' From '{v_FilePath}' - Store Dictionary in '{v_OutputUserVariableName}']";
+			return base.GetDisplayValue() + $" [Load Keys '{v_KeyColumn}' and Values '{v_ValueColumn}' - Store Dictionary in '{v_OutputUserVariableName}' - Instance Name '{v_InstanceName}']";
 		}
 	}
 }

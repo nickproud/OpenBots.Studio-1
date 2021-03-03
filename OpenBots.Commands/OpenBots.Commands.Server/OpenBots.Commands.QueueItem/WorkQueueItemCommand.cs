@@ -36,14 +36,6 @@ namespace OpenBots.Commands.QueueItem
 		public string v_QueueName { get; set; }
 
 		[Required]
-		[Editable(false)]
-		[DisplayName("Output QueueItem Dictionary Variable")]
-		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
-		public string v_OutputUserVariableName { get; set; }
-
-		[Required]
 		[DisplayName("Save Attachments")]
 		[PropertyUISelectionOption("Yes")]
 		[PropertyUISelectionOption("No")]
@@ -60,6 +52,14 @@ namespace OpenBots.Commands.QueueItem
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
 		public string v_AttachmentDirectory { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output QueueItem Dictionary Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
@@ -143,9 +143,9 @@ namespace OpenBots.Commands.QueueItem
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueueName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_OutputUserVariableName", this, editor));
+			
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SaveAttachments", this, editor));
-			((ComboBox)RenderedControls[6]).SelectedIndexChanged += SaveQueueItemFilesComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += SaveQueueItemFilesComboBox_SelectedValueChanged;
 
 			_savingControls = new List<Control>();
 			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AttachmentDirectory", this, editor));
@@ -154,6 +154,7 @@ namespace OpenBots.Commands.QueueItem
 				ctrl.Visible = false;
 
 			RenderedControls.AddRange(_savingControls);
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
@@ -168,7 +169,7 @@ namespace OpenBots.Commands.QueueItem
 
 		private void SaveQueueItemFilesComboBox_SelectedValueChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[6]).Text == "Yes")
+			if (((ComboBox)RenderedControls[4]).Text == "Yes")
 			{
 				foreach (var ctrl in _savingControls)
 					ctrl.Visible = true;
