@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using System.IO;
 using CSScriptLibrary;
 using Diagnostics = System.Diagnostics;
-
+using OBFile = System.IO.File;
 namespace OpenBots.Commands.Process
 {
 	[Serializable]
@@ -105,7 +105,7 @@ namespace OpenBots.Commands.Process
 			}
 			if (v_ScriptType == "C#")
             {
-				string code = File.ReadAllText(scriptPath);
+				string code = OBFile.ReadAllText(scriptPath);
 				var scriptMethod = CSScript.LoadDelegate<Action<object[]>>(code);
 
 				string[] argVars = v_ScriptArgs.Split(',');
