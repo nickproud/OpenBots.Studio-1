@@ -4,8 +4,10 @@ using RestSharp;
 using RestSharp.Serialization.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using IOFile = System.IO.File;
 
 namespace OpenBots.Core.Server.API_Methods
 {
@@ -145,6 +147,23 @@ namespace OpenBots.Core.Server.API_Methods
             var output = deserializer.Deserialize<Dictionary<string, string>>(response);
             var items = output["items"];
             return JsonConvert.DeserializeObject<List<QueueItemAttachment>>(items);
+        }
+
+        public static void DownloadFile(RestClient client, QueueItemAttachment attachment, string directoryPath)
+        {
+            var file = FileMethods.GetFile(client, attachment.FileId);
+            var request = new RestRequest("api/v1/QueueItems/{queueItemId}/QueueItemAttachments/{queueItemAttachmentId}/Export", Method.GET);
+            request.AddUrlSegment("queueItemId", attachment.QueueItemId.ToString());
+            request.AddUrlSegment("queueItemAttachmentId", attachment.Id.ToString());
+            request.RequestFormat = DataFormat.Json;
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+
+            byte[] fileBytes = response.RawBytes;
+            IOFile.WriteAllBytes(Path.Combine(directoryPath, file.Name), fileBytes);
         }
     }
 }
