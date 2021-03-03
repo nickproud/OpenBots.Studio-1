@@ -24,10 +24,19 @@ namespace OpenBots.Commands.If
 	public class BeginMultiIfCommand : ScriptCommand
 	{
 		[Required]
+		[DisplayName("Logic Type")]
+		[PropertyUISelectionOption("And")]
+		[PropertyUISelectionOption("Or")]
+		[Description("Select the logic to use when evaluating multiple Ifs.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_LogicType { get; set; }
+
+		[Required]
 		[DisplayName("Multiple If Conditions")]
 		[Description("Add new If condition(s).")]
 		[SampleUsage("")]
-		[Remarks("All of the conditions must be true to execute the If block.")]
+		[Remarks("")]
 		[Editor("ShowIfBuilder", typeof(UIAdditionalHelperType))]
 		public DataTable v_IfConditionsTable { get; set; }
 
@@ -54,6 +63,7 @@ namespace OpenBots.Commands.If
 			CommandEnabled = true;
 			CommandIcon = Resources.command_begin_multi_if;
 
+			v_LogicType = "And";
 			v_IfConditionsTable = new DataTable();
 			v_IfConditionsTable.TableName = DateTime.Now.ToString("MultiIfConditionTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 			v_IfConditionsTable.Columns.Add("Statement");
@@ -71,11 +81,17 @@ namespace OpenBots.Commands.If
 				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
 				var statementResult = CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
 
-				if (!statementResult)
+				if (!statementResult && v_LogicType == "And")
 				{
 					isTrueStatement = false;
 					break;
 				}
+
+				if(statementResult && v_LogicType == "Or")
+                {
+					isTrueStatement = true;
+					break;
+                }
 			}
 
 			//report evaluation
@@ -131,6 +147,8 @@ namespace OpenBots.Commands.If
 			_scriptVariables = editor.ScriptEngineContext.Variables;
 			_scriptArguments = editor.ScriptEngineContext.Arguments;
 			_scriptElements = editor.ScriptEngineContext.Elements;
+
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_LogicType", this, editor));
 
 			//create controls
 			var controls = commandControls.CreateDataGridViewGroupFor("v_IfConditionsTable", this, editor);
