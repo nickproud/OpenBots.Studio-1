@@ -31,6 +31,7 @@ namespace OpenBots.Commands.Process
 				 "If you do not want to stop while the script executes, consider using *Start Process* instead.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ScriptPath { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -38,6 +39,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("{argument1},{variable2},valueString")]
 		[Remarks("This input is passed to your function as an object[].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ScriptArgs { get; set; }
 
 		public RunCSharpScriptCommand()
@@ -64,7 +66,7 @@ namespace OpenBots.Commands.Process
 			{
 				argVars[i] = argVars[i].Trim();
 				if (argVars[i].Contains("{"))
-					args[i] = argVars[i].ConvertUserVariableToObject(engine);
+					args[i] = argVars[i].ConvertUserVariableToString(engine);
 				else
 					args[i] = argVars[i];
 			}

@@ -22,6 +22,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Description("Enter the unique instance that was specified in the **Create BZ Terminal Session** command.")]
 		[SampleUsage("MyBZTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create BZ Terminal Session** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(BZTerminalContext) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -30,6 +31,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public BZTerminalGetScreenTextCommand()
@@ -50,7 +52,7 @@ namespace OpenBots.Commands.BZTerminal
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
 			terminalContext.BZTerminalObj.ReadScreen(out object screentext, 2000, 1, 1);
-			screentext.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+			screentext.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

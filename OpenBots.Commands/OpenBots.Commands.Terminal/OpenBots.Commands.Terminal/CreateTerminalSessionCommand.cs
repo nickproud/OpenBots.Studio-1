@@ -27,6 +27,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("MyTerminalInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -35,6 +36,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("12.345.678.910 || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Host { get; set; }
 
 		[Required]
@@ -43,6 +45,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("3270 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Port { get; set; }
 
 		[Required]
@@ -51,6 +54,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("IBM-3278-2-E || {vTerminalType}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_TerminalType { get; set; }
 
 		[Required]

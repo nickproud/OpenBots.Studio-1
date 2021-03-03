@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Terminal
 		[Description("Enter the unique instance that was specified in the **Create Terminal Session** command.")]
 		[SampleUsage("MyTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Terminal Session** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(OpenEmulator) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -43,6 +44,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vRowPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_YMousePosition { get; set; }
 
 		[Required]
@@ -51,6 +53,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vColPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_XMousePosition { get; set; }
 
 		[Required]
@@ -59,6 +62,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("Hello, World! || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FieldText { get; set; }
 
 		[Required]
@@ -67,6 +71,7 @@ namespace OpenBots.Commands.Terminal
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -115,7 +120,7 @@ namespace OpenBots.Commands.Terminal
 			if (field != null)
 				fieldIndex = Array.IndexOf(terminalObject.TN3270.CurrentScreenXML.Fields, field);
 
-			fieldIndex.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+			fieldIndex.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
