@@ -30,6 +30,7 @@ using System.Threading;
 using System.Windows.Forms;
 using IContainer = Autofac.IContainer;
 using OpenBots.Core.Script;
+using OpenBots.UI.CustomControls.CustomUIControls;
 
 namespace OpenBots.UI.CustomControls
 {
@@ -229,11 +230,12 @@ namespace OpenBots.UI.CustomControls
 
         public Control CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300)
         {
-            var inputBox = new TextBox();
+            var inputBox = new UITextBox();
             inputBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
             inputBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             inputBox.Height = height;
             inputBox.Width = width;
+            inputBox.BorderColor = Color.Red;
 
             if (height > 30)
             {
@@ -316,12 +318,13 @@ namespace OpenBots.UI.CustomControls
 
         public Control CreateDropdownFor(string parameterName, ScriptCommand parent)
         {
-            var dropdownBox = new ComboBox();
+            var dropdownBox = new UIComboBox();
             dropdownBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
             dropdownBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             dropdownBox.Height = 30;
             dropdownBox.Width = 300;
             dropdownBox.Name = parameterName;
+            dropdownBox.BorderColor = Color.Red;
 
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
             var propertyAttributesAssigned = variableProperties.GetCustomAttributes(typeof(PropertyUISelectionOption), true);
@@ -440,7 +443,7 @@ namespace OpenBots.UI.CustomControls
 
         public DataGridView CreateDataGridView(object sourceCommand, string dataSourceName)
         {
-            var gridView = new DataGridView();
+            var gridView = new UIDataGridView();
             gridView.AllowUserToAddRows = true;
             gridView.AllowUserToDeleteRows = true;
             gridView.Size = new Size(400, 250);
@@ -448,6 +451,9 @@ namespace OpenBots.UI.CustomControls
             gridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             gridView.DataBindings.Add("DataSource", sourceCommand, dataSourceName, false, DataSourceUpdateMode.OnPropertyChanged);
             gridView.AllowUserToResizeRows = false;
+            gridView.BorderColor = Color.Red;
+            //gridView.BorderStyle = BorderStyle.Fixed3D;
+            //gridView.GridColor = Color.Red;
             return gridView;
         }
 

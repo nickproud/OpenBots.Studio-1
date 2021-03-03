@@ -397,6 +397,24 @@
       <DependentUpon>UIRatingBar.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\CustomControls\CustomUIControls\UIListBoxItemColorSchemes.cs" />
+    <Compile Include="UI\CustomControls\CustomUIControls\UIComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomControls\CustomUIControls\UIComboBox.Designer.cs">
+      <DependentUpon>UIComboBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\CustomControls\CustomUIControls\UIDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomControls\CustomUIControls\UIDataGridView.Designer.cs">
+      <DependentUpon>UIDataGridView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\CustomControls\CustomUIControls\UITextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomControls\CustomUIControls\UITextBox.Designer.cs">
+      <DependentUpon>UITextBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\CustomControls\CustomUIControls\UITransparentPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
