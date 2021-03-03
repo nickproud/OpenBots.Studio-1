@@ -551,7 +551,7 @@ namespace OpenBots.Commands.WebBrowser
 				v_SeleniumSearchParameters.Rows.Add(false, "Link Text", "");
 				v_SeleniumSearchParameters.Rows.Add(false, "CSS Selector", "");
 			}
-			
+			_searchParametersGridViewHelper.DataSource = v_SeleniumSearchParameters;
 			//create search parameters   
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_SeleniumSearchParameters", this));
 			RenderedControls.Add(helperControl);

@@ -209,7 +209,7 @@ namespace OpenBots.Core.Script
             }
 
             //if deserialized Script version is lower than than the current application version
-            if (deserializedScriptVersion.CompareTo(new Version(Application.ProductVersion)) < 0 && !engineContext.IsTest)
+            if (!engineContext.IsTest && deserializedScriptVersion.CompareTo(new Version(Application.ProductVersion)) < 0)
             {
                 var dialogResult = MessageBox.Show($"Attempting to open a Script file from OpenBots Studio {deserializedScriptVersion}. " +
                                                    $"Would you like to attempt to convert this Script to {Application.ProductVersion}? " + 

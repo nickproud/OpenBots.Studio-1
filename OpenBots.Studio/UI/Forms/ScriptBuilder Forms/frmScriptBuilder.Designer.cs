@@ -34,7 +34,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmScriptBuilder));
-            OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.cmsProjectFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCopyFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDeleteFolder = new System.Windows.Forms.ToolStripMenuItem();
@@ -94,8 +93,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnAddVariable = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.pnlStatus = new System.Windows.Forms.Panel();
             this.splitContainerStudioControls = new OpenBots.UI.CustomControls.CustomUIControls.UISplitContainer();
-            this.pnlPaneTabs = new OpenBots.UI.CustomControls.CustomUIControls.UIPanel();
-            this.tpbLoadingSpinner = new OpenBots.UI.CustomControls.CustomUIControls.UITransparentPictureBox();
             this.uiPaneTabs = new System.Windows.Forms.TabControl();
             this.tpProject = new System.Windows.Forms.TabPage();
             this.tlpProject = new System.Windows.Forms.TableLayoutPanel();
@@ -230,8 +227,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.splitContainerStudioControls.Panel1.SuspendLayout();
             this.splitContainerStudioControls.Panel2.SuspendLayout();
             this.splitContainerStudioControls.SuspendLayout();
-            this.pnlPaneTabs.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tpbLoadingSpinner)).BeginInit();
             this.uiPaneTabs.SuspendLayout();
             this.tpProject.SuspendLayout();
             this.tlpProject.SuspendLayout();
@@ -1112,7 +1107,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // splitContainerStudioControls.Panel1
             // 
             this.splitContainerStudioControls.Panel1.BackColor = System.Drawing.Color.Transparent;
-            this.splitContainerStudioControls.Panel1.Controls.Add(this.pnlPaneTabs);
+            this.splitContainerStudioControls.Panel1.Controls.Add(this.uiPaneTabs);
             // 
             // splitContainerStudioControls.Panel2
             // 
@@ -1123,33 +1118,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.splitContainerStudioControls.SplitterDistance = 328;
             this.splitContainerStudioControls.SplitterWidth = 6;
             this.splitContainerStudioControls.TabIndex = 4;
-            // 
-            // pnlPaneTabs
-            // 
-            this.pnlPaneTabs.Controls.Add(this.tpbLoadingSpinner);
-            this.pnlPaneTabs.Controls.Add(this.uiPaneTabs);
-            this.pnlPaneTabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlPaneTabs.Location = new System.Drawing.Point(0, 0);
-            this.pnlPaneTabs.Name = "pnlPaneTabs";
-            this.pnlPaneTabs.Size = new System.Drawing.Size(328, 728);
-            this.pnlPaneTabs.TabIndex = 2;
-            theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.pnlPaneTabs.Theme = theme1;
-            // 
-            // tpbLoadingSpinner
-            // 
-            this.tpbLoadingSpinner.BackColor = System.Drawing.Color.Transparent;
-            this.tpbLoadingSpinner.ErrorImage = null;
-            this.tpbLoadingSpinner.Image = global::OpenBots.Properties.Resources.loading_spinner;
-            this.tpbLoadingSpinner.InitialImage = null;
-            this.tpbLoadingSpinner.Location = new System.Drawing.Point(34, 242);
-            this.tpbLoadingSpinner.Name = "tpbLoadingSpinner";
-            this.tpbLoadingSpinner.Size = new System.Drawing.Size(230, 214);
-            this.tpbLoadingSpinner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.tpbLoadingSpinner.TabIndex = 44;
-            this.tpbLoadingSpinner.TabStop = false;
-            this.tpbLoadingSpinner.Visible = false;
             // 
             // uiPaneTabs
             // 
@@ -1194,6 +1162,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tlpProject.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpProject.Size = new System.Drawing.Size(316, 688);
             this.tlpProject.TabIndex = 1;
+            this.tlpProject.EnabledChanged += new System.EventHandler(this.tlpProject_EnabledChanged);
             // 
             // tvProject
             // 
@@ -1342,6 +1311,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tlpCommands.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpCommands.Size = new System.Drawing.Size(316, 688);
             this.tlpCommands.TabIndex = 10;
+            this.tlpCommands.EnabledChanged += new System.EventHandler(this.tlpCommands_EnabledChanged);
             // 
             // tvCommands
             // 
@@ -1559,9 +1529,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvVariablesArguments_DataBindingComplete);
             this.dgvArguments.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvArguments_DefaultValuesNeeded);
             this.dgvArguments.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
+            this.dgvArguments.SelectionChanged += new System.EventHandler(this.dgvArguments_SelectionChanged);
             this.dgvArguments.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
             this.dgvArguments.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
-            this.dgvArguments.SelectionChanged += new System.EventHandler(this.dgvArguments_SelectionChanged);
             // 
             // argumentName
             // 
@@ -2332,8 +2302,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.splitContainerStudioControls.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerStudioControls)).EndInit();
             this.splitContainerStudioControls.ResumeLayout(false);
-            this.pnlPaneTabs.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tpbLoadingSpinner)).EndInit();
             this.uiPaneTabs.ResumeLayout(false);
             this.tpProject.ResumeLayout(false);
             this.tlpProject.ResumeLayout(false);
@@ -2510,8 +2478,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private ToolStripMenuItem packageManagerToolStripMenuItem;
         private Core.UI.Controls.UIPictureButton uiBtnPackageManager;
         private ToolStripMenuItem toolStripMenuItem1;
-        private CustomControls.CustomUIControls.UIPanel pnlPaneTabs;
-        private CustomControls.CustomUIControls.UITransparentPictureBox tpbLoadingSpinner;
         private CustomControls.CustomUIControls.UIIconButton uiBtnReloadCommands;
         private ToolStripMenuItem tsmiReloadTab;
         private ToolTip ttScriptBuilder;

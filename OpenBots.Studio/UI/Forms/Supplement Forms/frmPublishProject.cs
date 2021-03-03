@@ -1,4 +1,7 @@
 ﻿using NuGet;
+using NuGet.Protocol.Core.Types;
+using NuGet.Versioning;
+using OpenBots.Nuget; 
 using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
 using OpenBots.Core.Project;
@@ -8,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using OBNuget = OpenBots.Nuget;
 
 namespace OpenBots.UI.Supplement_Forms
 {
@@ -27,7 +31,7 @@ namespace OpenBots.UI.Supplement_Forms
         }
 
         private void frmPublishProject_Load(object sender, EventArgs e)
-        {
+        { 
             txtLocation.Text = Folders.GetFolder(FolderType.PublishedFolder);
             lblPublish.Text = $"publish {_projectName}";
             Text = $"publish {_projectName}";
@@ -165,6 +169,52 @@ namespace OpenBots.UI.Supplement_Forms
                 return false;
             }
             else return true;
+        }
+
+        private async void txtLocation_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!Directory.Exists(txtLocation.Text))
+                {
+                    return;
+                }
+                else
+                {
+                    lblError.Text = "";
+                }
+                List<IPackageSearchMetadata> packageList = await OBNuget.NugetPackageManager.SearchPackages(_projectName, txtLocation.Text, false);
+                if (packageList.Count > 0)
+                {
+                    NuGetVersion newestVersion = packageList[0].Identity.Version;
+                    for (int i = 1; i < packageList.Count; i++)
+                    {
+                        if (packageList[i].Identity.Version.Major > newestVersion.Major)
+                        {
+                            newestVersion = packageList[i].Identity.Version;
+                        }
+                        else if (packageList[i].Identity.Version.Major == newestVersion.Major && packageList[i].Identity.Version.Minor > newestVersion.Minor)
+                        {
+                            newestVersion = packageList[i].Identity.Version;
+                        }
+                        else if (packageList[i].Identity.Version.Major == newestVersion.Major && packageList[i].Identity.Version.Minor == newestVersion.Minor && packageList[i].Identity.Version.Revision > newestVersion.Revision)
+                        {
+                            newestVersion = packageList[i].Identity.Version;
+                        }
+                    }
+                    NuGetVersion currentVersion = newestVersion;
+                    string newVersion = currentVersion.Major + "." + (currentVersion.Minor + 1) + "." + currentVersion.Revision;
+                    txtVersion.Text = newVersion;
+                }
+                else
+                {
+                    txtVersion.Text = "1.0.0";
+                }
+            }
+            catch (Exception ex)
+            {
+                lblError.Text = ex.Message;
+            }
         }
     }
 }

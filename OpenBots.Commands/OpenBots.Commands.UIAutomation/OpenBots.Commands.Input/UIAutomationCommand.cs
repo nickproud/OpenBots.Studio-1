@@ -380,7 +380,11 @@ namespace OpenBots.Commands.Input
 					//store data
 					searchResult.StoreInUserVariable(engine, applyToVariable);
 					break;
-				case "Wait For Element To Exist":					
+				case "Wait For Element To Exist":
+					if (requiredHandle == null)
+					{
+						throw new Exception($"Element was not found in the allotted time!");
+					}
 					break;
 
 				case "Get Value From Element":

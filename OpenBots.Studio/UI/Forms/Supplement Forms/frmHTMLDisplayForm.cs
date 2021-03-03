@@ -57,6 +57,9 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                         else
                         {
                             var inputValue = collection[i].GetAttribute("value");
+                            if(collection[i].GetAttribute("type").ToString().ToLower() =="password")
+                                varList.Add(new ScriptVariable() { VariableName = variableName, VariableValue = inputValue, IsSecureString=true });
+                            else
                             varList.Add(new ScriptVariable() { VariableName = variableName, VariableValue = inputValue });
                         }
                     }
