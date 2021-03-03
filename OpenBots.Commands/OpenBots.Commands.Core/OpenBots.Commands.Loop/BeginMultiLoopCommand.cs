@@ -31,7 +31,6 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("")]
 		[Remarks("All of the conditions must be true to execute the loop block.")]
 		[Editor("ShowLoopBuilder", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
 		public DataTable v_LoopConditionsTable { get; set; }
 
 		[JsonIgnore]

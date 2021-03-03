@@ -50,7 +50,6 @@ namespace OpenBots.Commands.ErrorHandling
 		[SampleUsage("")]
 		[Remarks("Items in the retry scope will be executed if the condition doesn't satisfy.")]
 		[Editor("ShowIfBuilder", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
 		public DataTable v_IfConditionsTable { get; set; }
 
 		[JsonIgnore]
