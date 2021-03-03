@@ -47,7 +47,7 @@ namespace OpenBots.Commands.SecureData
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			SecureString secureStringValue = v_Input.ConvertUserVariableToString(engine).GetSecureString();
+			SecureString secureStringValue = v_Input.ConvertUserVariableToString(engine).ConvertStringToSecureString();
 
 			secureStringValue.StoreInUserVariable(engine, v_OutputUserVariableName);           
 		}

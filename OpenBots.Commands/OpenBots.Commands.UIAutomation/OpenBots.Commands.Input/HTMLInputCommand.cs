@@ -73,7 +73,7 @@ namespace OpenBots.Commands.Input
 					//store each one into context
 					foreach (var variable in variables)
                         if (variable.IsSecureString)
-							variable.VariableValue.ToString().GetSecureString().StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName));
+							variable.VariableValue.ToString().ConvertStringToSecureString().StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName));
 						else
 							variable.VariableValue.ToString().StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName));
 				}

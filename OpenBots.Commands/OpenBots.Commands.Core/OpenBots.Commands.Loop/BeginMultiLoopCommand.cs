@@ -24,12 +24,20 @@ namespace OpenBots.Commands.Loop
 		"until the result of the logical statements becomes false.")]
 	public class BeginMultiLoopCommand : ScriptCommand
 	{
+		[Required]
+		[DisplayName("Logic Type")]
+		[PropertyUISelectionOption("And")]
+		[PropertyUISelectionOption("Or")]
+		[Description("Select the logic to use when evaluating multiple Ifs.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_LogicType { get; set; }
 
 		[Required]
 		[DisplayName("Multiple Loop Conditions")]
 		[Description("Add new Loop condition(s).")]
 		[SampleUsage("")]
-		[Remarks("All of the conditions must be true to execute the loop block.")]
+		[Remarks("")]
 		[Editor("ShowLoopBuilder", typeof(UIAdditionalHelperType))]
 		public DataTable v_LoopConditionsTable { get; set; }
 
@@ -56,6 +64,7 @@ namespace OpenBots.Commands.Loop
 			CommandEnabled = true;
 			CommandIcon = Resources.command_startloop;
 
+			v_LogicType = "And";
 			v_LoopConditionsTable = new DataTable();
 			v_LoopConditionsTable.TableName = DateTime.Now.ToString("MultiLoopConditionTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 			v_LoopConditionsTable.Columns.Add("Statement");
@@ -103,6 +112,8 @@ namespace OpenBots.Commands.Loop
 			_scriptVariables = editor.ScriptEngineContext.Variables;
 			_scriptArguments = editor.ScriptEngineContext.Arguments;
 			_scriptElements = editor.ScriptEngineContext.Elements;
+
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_LogicType", this, editor));
 
 			//create controls
 			var controls = commandControls.CreateDataGridViewGroupFor("v_LoopConditionsTable", this, editor);
@@ -153,11 +164,17 @@ namespace OpenBots.Commands.Loop
 				var loopCommand = JsonConvert.DeserializeObject<BeginLoopCommand>(commandData);
 				var statementResult = CommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable);
 
-				if (!statementResult)
+				if (!statementResult && v_LogicType == "And")
 				{
 					isTrueStatement = false;
 					break;
 				}
+
+				if(statementResult && v_LogicType == "Or")
+                {
+					isTrueStatement = true;
+					break;
+                }
 			}
 			return isTrueStatement;
 		}

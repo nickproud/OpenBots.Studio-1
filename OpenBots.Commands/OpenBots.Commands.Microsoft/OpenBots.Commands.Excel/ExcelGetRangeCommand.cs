@@ -107,8 +107,6 @@ namespace OpenBots.Commands.Excel
 				cellRange = excelSheet.Range[splitRange[0], splitRange[1]];
 			}
 
-			;
-
 			int rowStart =1, rowEnd = 0, columnEnd = cellRange.Columns.Count, movingRangeSize = 3000;
 
 			using (DataTable DT = new DataTable())
