@@ -1,5 +1,6 @@
 ﻿using Microsoft.Office.Interop.Outlook;
 using MimeKit;
+using Open3270.TN3270;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -113,6 +114,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                         return ConvertIWebElementToString((IWebElement)obj);
                     case "System.Drawing.Bitmap":
                         return ConvertBitmapToString((Bitmap)obj);
+                    case "Open3270.TN3270.XMLScreenField":
+                        return ConvertXMLScreenFieldToString((XMLScreenField)obj);
                     case string a when a.Contains("System.Collections.Generic.List`1"):
                         return ConvertListToString(obj);
                     case string a when a.Contains("System.Collections.Generic.Dictionary`2"):
@@ -262,6 +265,20 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return stringBuilder.ToString();
         }
 
+        public static string ConvertXMLScreenFieldToString(XMLScreenField field, int index = -1)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append($"[Row: {field.Location.top}, Col: {field.Location.left}, \n" +
+                                 $"Field Length: {field.Location.length}, \n" +
+                                 $"Field Text: {field.Text}");
+            if (index != -1)
+                stringBuilder.Append($", \nField Index: {index}");
+
+            stringBuilder.Append("]");
+
+            return stringBuilder.ToString();
+        }
+
         public static string ConvertListToString(object list)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -330,6 +347,20 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
                 if (elementList.Count > 0)
                     stringBuilder.AppendFormat("{0}]", ConvertIWebElementToString(elementList[elementList.Count - 1]));
+                else
+                    stringBuilder.Length = stringBuilder.Length - 3;
+            }
+            else if (type == typeof(XMLScreenField))
+            {
+                List<XMLScreenField> fieldList = ((List<XMLScreenField>)list).ToList();
+
+                stringBuilder.Append($"Count({fieldList.Count}) \n[");
+
+                for (int i = 0; i < fieldList.Count - 1; i++)
+                    stringBuilder.AppendFormat("{0}, \n", ConvertXMLScreenFieldToString(fieldList[i], i));
+
+                if (fieldList.Count > 0)
+                    stringBuilder.AppendFormat("{0}]", ConvertXMLScreenFieldToString(fieldList[fieldList.Count - 1], fieldList.Count - 1));
                 else
                     stringBuilder.Length = stringBuilder.Length - 3;
             }

@@ -27,7 +27,8 @@ namespace OpenBots.Core.Project
             "DataManipulation",
             "Microsoft",
             "SystemAutomation",
-            "UIAutomation"
+            "UIAutomation",
+            "Terminal"
         };
 
         public Project(string projectName)
@@ -96,7 +97,7 @@ namespace OpenBots.Core.Project
                     dialogMessageFirstLine = $"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.0.0.";
                 }
                 //if project version is lower than than 1.3.0.0
-                else if (new Version(project.Version).CompareTo(new Version("1.3.1.0")) < 0)
+                else if (new Version(project.Version).CompareTo(new Version("1.4.0.0")) < 0)
                 {
                     dialogMessageFirstLine = $"Attempting to open a 'project.config' from OpenBots Studio version {project.Version}.";
 

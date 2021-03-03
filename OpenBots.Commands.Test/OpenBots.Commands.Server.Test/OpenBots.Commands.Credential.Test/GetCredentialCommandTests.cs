@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Credential.Test
             string username = Resources.testCredUsername;
             string plainPassword = Resources.testCredPassword;
 
-            SecureString expectedPass = plainPassword.GetSecureString();
+            SecureString expectedPass = plainPassword.ConvertStringToSecureString();
             Assert.Equal(username, "{username}".ConvertUserVariableToString(_engine));
             Assert.Equal(expectedPass.ToString(),"{password}".ConvertUserVariableToObject(_engine, typeof(SecureString)).ToString());
         }

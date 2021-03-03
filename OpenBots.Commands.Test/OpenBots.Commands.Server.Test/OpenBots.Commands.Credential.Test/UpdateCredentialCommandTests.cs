@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Credential.Test
 
 
             Assert.Equal(newUsername, "{storedUsername}".ConvertUserVariableToString(_engine));
-            Assert.Equal(newPassword.GetSecureString().ToString(), "{storedPassword}".ConvertUserVariableToObject(_engine, typeof(SecureString)).ToString());
+            Assert.Equal(newPassword.ConvertStringToSecureString().ToString(), "{storedPassword}".ConvertUserVariableToObject(_engine, typeof(SecureString)).ToString());
         }
 
         public string[] resetCredential()

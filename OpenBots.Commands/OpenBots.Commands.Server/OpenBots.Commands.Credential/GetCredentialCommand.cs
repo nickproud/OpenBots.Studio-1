@@ -69,7 +69,7 @@ namespace OpenBots.Commands.Credential
 				throw new Exception($"No Credential was found for '{vCredentialName}'");
 
 			string username = credential.UserName;
-			SecureString password = credential.PasswordSecret.GetSecureString();
+			SecureString password = credential.PasswordSecret.ConvertStringToSecureString();
 
 			username.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			password.StoreInUserVariable(engine, v_OutputUserVariableName2, nameof(v_OutputUserVariableName2), this);

@@ -135,8 +135,7 @@ namespace OpenBots.Commands.QueueItem
 					foreach (var attachment in attachments)
 					{
 						//export (save) in appropriate directory
-						var file = FileMethods.GetFile(client, attachment.FileId);
-						FileMethods.DownloadFile(client, file.Id, vAttachmentDirectory, file.Name);
+						QueueItemMethods.DownloadFile(client, attachment, vAttachmentDirectory);
 					}
 				}
 			}
