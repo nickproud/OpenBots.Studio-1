@@ -39,8 +39,8 @@ namespace OpenBots.Commands.Process
 
 		public RunScriptCommand()
 		{
-			CommandName = "RunScriptCommand";
-			SelectionName = "Run Script";
+			CommandName = "RunPowershellScriptCommand";
+			SelectionName = "Run Powershell Script";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_script;
 		}

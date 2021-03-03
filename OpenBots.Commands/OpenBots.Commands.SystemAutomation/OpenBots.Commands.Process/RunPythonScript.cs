@@ -42,8 +42,8 @@ namespace OpenBots.Commands.Process
 
 		public RunPythonScriptCommand()
 		{
-			CommandName = "RunScriptCommand";
-			SelectionName = "Run Script";
+			CommandName = "RunPythonScriptCommand";
+			SelectionName = "Run Python Script";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_script;
 		}
