@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Windows.Forms;
+using OBProcess = System.Diagnostics.Process;
 
 namespace OpenBots.Commands.System
 {
@@ -44,10 +45,10 @@ namespace OpenBots.Commands.System
 			switch (v_ActionName)
 			{
 				case "Shutdown":
-					Process.Start("shutdown", "/s /t 0");
+					OBProcess.Start("shutdown", "/s /t 0");
 					break;
 				case "Restart":
-					Process.Start("shutdown", "/r /t 0");
+					OBProcess.Start("shutdown", "/r /t 0");
 					break;
 				case "Logoff":
 					User32Functions.WindowsLogOff();

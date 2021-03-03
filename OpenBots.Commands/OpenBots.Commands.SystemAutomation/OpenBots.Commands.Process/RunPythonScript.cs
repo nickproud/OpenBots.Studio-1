@@ -10,15 +10,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using System.IO;
+using CSScriptLibrary;
 using Diagnostics = System.Diagnostics;
-
+using OBFile = System.IO.File;
 namespace OpenBots.Commands.Process
 {
 	[Serializable]
 	[Category("Programs/Process Commands")]
-	[Description("This command runs a script or program and waits for it to exit before proceeding.")]
+	[Description("This command runs a Python script or program and waits for it to exit before proceeding.")]
 
-	public class RunScriptCommand : ScriptCommand
+	public class RunPythonScriptCommand : ScriptCommand
 	{
 
 		[Required]
@@ -31,16 +33,6 @@ namespace OpenBots.Commands.Process
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
 		public string v_ScriptPath { get; set; }
 
-		[Required]
-		[DisplayName("Script Type")]
-		[PropertyUISelectionOption("Default")]
-		[PropertyUISelectionOption("Powershell")]
-		[PropertyUISelectionOption("Python")]
-		[Description("Select the type of script you want to execute.")]
-		[SampleUsage("")]
-		[Remarks("Default executes with the system default for that file type.")]
-		public string v_ScriptType { get; set; }
-
 		[DisplayName("Arguments (Optional)")]
 		[Description("Enter any arguments as a single string.")]
 		[SampleUsage("-message Hello -t 2 || {vArguments}")]
@@ -48,14 +40,12 @@ namespace OpenBots.Commands.Process
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		public string v_ScriptArgs { get; set; }
 
-		public RunScriptCommand()
+		public RunPythonScriptCommand()
 		{
-			CommandName = "RunScriptCommand";
-			SelectionName = "Run Script";
+			CommandName = "RunPythonScriptCommand";
+			SelectionName = "Run Python Script";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_script;
-
-			v_ScriptType = "Default";
 		}
 
 		public override void RunCommand(object sender)
@@ -66,40 +56,16 @@ namespace OpenBots.Commands.Process
 			string scriptPath = v_ScriptPath.ConvertUserVariableToString(engine);
 			string scriptArgs = v_ScriptArgs.ConvertUserVariableToString(engine);
 
-			switch(v_ScriptType)
+			scriptProc.StartInfo = new Diagnostics.ProcessStartInfo()
 			{
-				case "Powershell":
-					scriptProc.StartInfo = new Diagnostics.ProcessStartInfo()
-					{
-						FileName = "powershell.exe",
-						Arguments = $"-NoProfile -ExecutionPolicy unrestricted -file \"{scriptPath}\" " + scriptArgs,
-						CreateNoWindow = true,
-						UseShellExecute = false,
-						RedirectStandardOutput = true,
-						RedirectStandardError = true
-					};
-					break;
-				case "Python":
-					scriptProc.StartInfo = new Diagnostics.ProcessStartInfo()
-					{
-						FileName = "python.exe",
-						Arguments = $"\"{scriptPath}\" " + scriptArgs,
-						CreateNoWindow = true,
-						UseShellExecute = false,
-						RedirectStandardOutput = true,
-						RedirectStandardError = true
-					};
-					break;
-				default:
-					scriptProc.StartInfo = new Diagnostics.ProcessStartInfo()
-					{
-						FileName = scriptPath,
-						WindowStyle = Diagnostics.ProcessWindowStyle.Hidden,
-						RedirectStandardOutput = true,
-						RedirectStandardError = true
-					};
-					break;
-			}
+				FileName = "python.exe",
+				Arguments = $"\"{scriptPath}\" " + scriptArgs,
+				CreateNoWindow = true,
+				UseShellExecute = false,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true
+			};
+
 			scriptProc.Start();
 			scriptProc.WaitForExit();
 
@@ -113,7 +79,6 @@ namespace OpenBots.Commands.Process
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ScriptPath", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_ScriptType", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ScriptArgs", this, editor));
 
 			return RenderedControls;
@@ -121,7 +86,7 @@ namespace OpenBots.Commands.Process
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Script Path '{v_ScriptPath}']";
+			return base.GetDisplayValue() + $" [Python Script Path '{v_ScriptPath}']";
 		}
 	}
 }

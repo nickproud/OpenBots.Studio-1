@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
+using OBFile = System.IO.File;
 
 namespace OpenBots.Commands.Process
 {
@@ -54,7 +55,7 @@ namespace OpenBots.Commands.Process
 			var engine = (IAutomationEngineInstance)sender;
 			string vProgramName = v_ProgramName.ConvertUserVariableToString(engine);
 
-			if (File.Exists(vProgramName))
+			if (OBFile.Exists(vProgramName))
 				vProgramName = Path.GetFileNameWithoutExtension(vProgramName);
 
 			var processes = Diagnostics.Process.GetProcessesByName(vProgramName);
