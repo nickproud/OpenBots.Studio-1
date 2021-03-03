@@ -107,7 +107,7 @@ namespace OpenBots.Commands.Outlook
         [SampleUsage("{vUserVariable}")]
         [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(new Type[] { typeof(string) })]
+        [CompatibleTypes(new Type[] { typeof(string), typeof(DateTime), typeof(bool), typeof(int) })]
         public string v_OutputUserVariableName { get; set; }
 
         public GetOutlookEmailPropertyCommand()
@@ -129,7 +129,7 @@ namespace OpenBots.Commands.Outlook
             switch (v_Property)
             {
                 case "AlternateRecipientAllowed":
-                    item.AlternateRecipientAllowed.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.AlternateRecipientAllowed.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "Attachments":
                     foreach(Attachment attachment in item.Attachments)
@@ -139,7 +139,7 @@ namespace OpenBots.Commands.Outlook
                     output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "AutoForwarded":
-                    item.AutoForwarded.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.AutoForwarded.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "BCC":
                     item.BCC.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -178,7 +178,7 @@ namespace OpenBots.Commands.Outlook
                     item.DeferredDeliveryTime.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "DeleteAfterSubmit":
-                    item.DeleteAfterSubmit.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.DeleteAfterSubmit.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "DownloadState":
                     item.DownloadState.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -199,10 +199,10 @@ namespace OpenBots.Commands.Outlook
                     item.InternetCodepage.ToString().Length.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "IsConflict":
-                    item.IsConflict.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.IsConflict.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "IsMarkedAsTask":
-                    item.IsMarkedAsTask.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.IsMarkedAsTask.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "LastModificationTime":
                     item.LastModificationTime.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -217,10 +217,10 @@ namespace OpenBots.Commands.Outlook
                     item.Mileage.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "NoAging":
-                    item.NoAging.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.NoAging.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "OriginatorDeliveryReportRequested":
-                    item.OriginatorDeliveryReportRequested.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.OriginatorDeliveryReportRequested.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "Permission":
                     item.Permission.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -232,7 +232,7 @@ namespace OpenBots.Commands.Outlook
                     item.PermissionTemplateGuid.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "ReadReceiptRequested":
-                    item.ReadReceiptRequested.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ReadReceiptRequested.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "ReceivedByEntryID":
                     item.ReceivedByEntryID.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -306,13 +306,13 @@ namespace OpenBots.Commands.Outlook
                     item.SentOnBehalfOfName.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "Size":
-                    item.Size.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Size.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "Subject":
                     item.Subject.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "Submitted":
-                    item.Submitted.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Submitted.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "TaskCompletedDate":
                     item.TaskCompletedDate.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -330,7 +330,7 @@ namespace OpenBots.Commands.Outlook
                     item.To.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "UnRead":
-                    item.UnRead.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.UnRead.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 default:
                     throw new NotImplementedException($"Property '{v_Property}' has not been implemented.");

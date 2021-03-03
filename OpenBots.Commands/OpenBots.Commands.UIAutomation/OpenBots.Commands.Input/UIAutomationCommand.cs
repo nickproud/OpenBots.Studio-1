@@ -8,7 +8,6 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -68,7 +67,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("data || {vData} || *Variable Name*: {vNewVariable}")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(string), typeof(bool) }, true)]
 		public DataTable v_UIAActionParameters { get; set; }
 
 		[Required]

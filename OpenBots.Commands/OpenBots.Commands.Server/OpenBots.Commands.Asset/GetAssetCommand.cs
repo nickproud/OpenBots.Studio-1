@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Asset
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(double) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -93,14 +93,14 @@ namespace OpenBots.Commands.Asset
 			if (asset == null)
 				throw new DataException($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
 
-			string assetValue = string.Empty;
+			dynamic assetValue;
 			switch (v_AssetType)
 			{
 				case "Text":
 					assetValue = asset.TextValue;
 					break;
 				case "Number":
-					assetValue = asset.NumberValue.ToString();
+					assetValue = asset.NumberValue;
 					break;
 				case "JSON":
 					assetValue = asset.JsonValue;
@@ -109,6 +109,7 @@ namespace OpenBots.Commands.Asset
 					var binaryObjectID = asset.BinaryObjectID;
 					BinaryObject binaryObject = BinaryObjectMethods.GetBinaryObject(client, binaryObjectID);      
 					AssetMethods.DownloadFileAsset(client, asset.Id, vOutputDirectoryPath, binaryObject.Name);
+					assetValue = string.Empty;
 					break;
 				default:
 					assetValue = string.Empty;
@@ -116,7 +117,7 @@ namespace OpenBots.Commands.Asset
 			}
 			
 			if (v_AssetType != "File")
-				assetValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				((object)assetValue).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

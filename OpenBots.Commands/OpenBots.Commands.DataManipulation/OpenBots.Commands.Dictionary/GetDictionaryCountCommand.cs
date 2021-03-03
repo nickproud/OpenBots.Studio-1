@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Dictionary
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetDictionaryCountCommand()
@@ -77,7 +77,7 @@ namespace OpenBots.Commands.Dictionary
 			else
 				throw new DataException("Invalid dictionary type, please provide valid dictionary type.");
 
-			string count = DictionaryToCount.Count.ToString();
+			int count = DictionaryToCount.Count;
 			count.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 

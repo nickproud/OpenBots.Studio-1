@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Security;
 using System.Windows.Forms;
 using IO = System.IO;
 
@@ -33,10 +34,10 @@ namespace OpenBots.Commands.File
 
 		[DisplayName("Password (Optional)")]
 		[Description("Define the password to use for file compression.")]
-		[SampleUsage("password || {vPassword}")]
-		[Remarks("")]
+		[SampleUsage("{vPassword}")]
+		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_Password { get; set; }
 
 		[Required]
@@ -77,7 +78,7 @@ namespace OpenBots.Commands.File
 			var vFilePathDestination = v_PathDestination.ConvertUserVariableToString(engine);
 
 			// get password to extract files
-			var vPassword = v_Password.ConvertUserVariableToString(engine);
+			var vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
 
             if (IO.File.Exists(vSourceDirectoryPathOrigin))
             {
@@ -148,7 +149,7 @@ namespace OpenBots.Commands.File
 
 			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DirectoryPathOrigin", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultPasswordInputGroupFor("v_Password", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Password", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_PathDestination", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

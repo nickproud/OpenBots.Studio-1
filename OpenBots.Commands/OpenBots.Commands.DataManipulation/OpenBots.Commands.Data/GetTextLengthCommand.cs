@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Data
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetTextLengthCommand()
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Data
 			var stringLength = stringRequiringLength.Length;
 
 			//store word count into variable
-			stringLength.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			stringLength.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

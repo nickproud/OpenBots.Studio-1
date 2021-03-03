@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Dictionary
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement), typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetValueFromKeyValuePairCommand()

@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("MyDatabaseInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("password || {vPassword}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(null, true)]
 		public string v_ConnectionStringPassword { get; set; }
 
 		[Required]

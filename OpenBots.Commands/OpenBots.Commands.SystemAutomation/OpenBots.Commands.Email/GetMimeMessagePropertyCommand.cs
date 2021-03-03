@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using System.IO;
 using OpenBots.Core.Properties;
+using System.Linq;
 
 namespace OpenBots.Commands.Email
 {
@@ -71,7 +72,7 @@ namespace OpenBots.Commands.Email
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("{vUserVariable}")]
         [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
-        [CompatibleTypes(new Type[] { typeof(string) })]
+        [CompatibleTypes(new Type[] { typeof(string), typeof(DateTime), typeof(List<>) })]
         public string v_OutputUserVariableName { get; set; }
 
         public GetMimeMessagePropertyCommand()
@@ -97,7 +98,7 @@ namespace OpenBots.Commands.Email
             switch (v_Property)
             {
                 case "Attachments":
-                    email.Attachments.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    email.Attachments.ToList().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "Bcc":
                     output = "";

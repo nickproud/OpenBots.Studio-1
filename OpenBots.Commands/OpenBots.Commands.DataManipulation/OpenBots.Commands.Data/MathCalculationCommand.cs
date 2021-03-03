@@ -87,7 +87,7 @@ namespace OpenBots.Commands.Data
 			if (variableMath == "∞")
 			{
 				if (v_AcceptUndefined == "No")
-					throw new DivideByZeroException("Expression calculation resulted inifinty");
+					throw new DivideByZeroException("Expression calculation resulted in inifinty.");
 				else
 					typeof(Nullable).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
@@ -122,7 +122,7 @@ namespace OpenBots.Commands.Data
 				}
 
 				//store string in variable
-				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 
 		}

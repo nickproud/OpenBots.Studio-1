@@ -66,7 +66,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("{vParameterValue}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) }, true)]
         public DataTable v_WebActionParameterTable { get; set; }
 
         [JsonIgnore]
@@ -152,7 +152,7 @@ namespace OpenBots.Commands.IEBrowser
             searchTable.Columns.Add(matchFoundColumn);
 
             var elementSearchProperties = from rws in searchTable.AsEnumerable()
-                                          where rws.Field<Boolean>("Enabled").ToString() == "True"
+                                          where rws.Field<bool>("Enabled").ToString() == "True"
                                           select rws;
             foreach (DataRow seachCriteria in elementSearchProperties)
             {
@@ -254,11 +254,11 @@ namespace OpenBots.Commands.IEBrowser
                             HTMLAnchorElement anchor = (HTMLAnchorElement)element;
                             if (anchor.href.Contains(searchPropertyValue))
                             {
-                                seachCriteria.SetField<string>("Match Found", "True");
+                                seachCriteria.SetField("Match Found", "True");
                             }
                             else
                             {
-                                seachCriteria.SetField<string>("Match Found", "False");
+                                seachCriteria.SetField("Match Found", "False");
                             }
                         }
                         catch (Exception ex)
@@ -275,11 +275,11 @@ namespace OpenBots.Commands.IEBrowser
                             int elementValue = (int)element.getAttribute(searchPropertyName);
                             if (elementValue == searchValue)
                             {
-                                seachCriteria.SetField<string>("Match Found", "True");
+                                seachCriteria.SetField("Match Found", "True");
                             }
                             else
                             {
-                                seachCriteria.SetField<string>("Match Found", "False");
+                                seachCriteria.SetField("Match Found", "False");
                             }
                         }
                         else
@@ -288,11 +288,11 @@ namespace OpenBots.Commands.IEBrowser
                             string elementValue = (string)element.getAttribute(searchPropertyName);
                             if ((elementValue != null) && (elementValue == searchPropertyValue))
                             {
-                                seachCriteria.SetField<string>("Match Found", "True");
+                                seachCriteria.SetField("Match Found", "True");
                             }
                             else
                             {
-                                seachCriteria.SetField<string>("Match Found", "False");
+                                seachCriteria.SetField("Match Found", "False");
                             }
                         }
                     }
@@ -314,7 +314,7 @@ namespace OpenBots.Commands.IEBrowser
         private void ElementActionDropdown_SelectionChangeCommitted(object sender, EventArgs e)
         {
 
-            IEElementActionCommand cmd = (IEElementActionCommand)this;
+            IEElementActionCommand cmd = this;
             DataTable actionParameters = cmd.v_WebActionParameterTable;
 
             if (sender != null)

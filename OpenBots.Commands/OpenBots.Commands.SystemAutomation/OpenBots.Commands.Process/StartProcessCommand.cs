@@ -4,20 +4,19 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
+using OBFile = System.IO.File;
 
 namespace OpenBots.Commands.Process
 {
-	[Serializable]
+    [Serializable]
 	[Category("Programs/Process Commands")]
 	[Description("This command starts a program or process.")]
 
@@ -69,7 +68,7 @@ namespace OpenBots.Commands.Process
 			string vProgramArgs = v_ProgramArgs.ConvertUserVariableToString(engine);
 			Diagnostics.Process newProcess;
 
-			if (File.Exists(vProgramName))
+			if (OBFile.Exists(vProgramName))
 				vProgramName = Path.GetFileNameWithoutExtension(vProgramName);
 
 			if (string.IsNullOrEmpty(v_ProgramArgs))

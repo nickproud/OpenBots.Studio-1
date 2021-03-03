@@ -4,7 +4,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,7 +26,6 @@ namespace OpenBots.Commands.System
 		[Description("Select an OS variable from one of the options.")]
 		[SampleUsage("")]
 		[Remarks("")]
-		[CompatibleTypes(null, true)]
 		public string v_OSVariableName { get; set; }
 
 		[Required]

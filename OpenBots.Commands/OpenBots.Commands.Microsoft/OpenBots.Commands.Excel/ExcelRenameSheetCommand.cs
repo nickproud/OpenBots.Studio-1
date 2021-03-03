@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Excel
 
 		[Required]
 		[DisplayName("Original Worksheet Name")]
-		[Description("Specify the name of the new Worksheet to rename.")]
+		[Description("Specify the original name of the Worksheet to rename.")]
 		[SampleUsage("Sheet1 || {vSheet}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Excel
 
 		[Required]
 		[DisplayName("New Worksheet Name")]
-		[Description("Specify the new name of the new Worksheet.")]
+		[Description("Specify the new name of the Worksheet.")]
 		[SampleUsage("Sheet1 || {vSheet}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]

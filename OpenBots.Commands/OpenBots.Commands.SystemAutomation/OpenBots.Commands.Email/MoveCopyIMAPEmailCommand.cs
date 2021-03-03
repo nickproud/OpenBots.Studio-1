@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security;
 using System.Security.Authentication;
 using System.Threading;
 using System.Windows.Forms;
@@ -62,10 +63,10 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Password")]
 		[Description("Define the password to use when contacting the IMAP service.")]
-		[SampleUsage("password || {vPassword}")]
-		[Remarks("")]
+		[SampleUsage("{vPassword}")]
+		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_IMAPPassword { get; set; }
 
 		[Required]
@@ -113,7 +114,7 @@ namespace OpenBots.Commands.Email
 			string vIMAPHost = v_IMAPHost.ConvertUserVariableToString(engine);
 			string vIMAPPort = v_IMAPPort.ConvertUserVariableToString(engine);
 			string vIMAPUserName = v_IMAPUserName.ConvertUserVariableToString(engine);
-			string vIMAPPassword = v_IMAPPassword.ConvertUserVariableToString(engine);
+			string vIMAPPassword = ((SecureString)v_IMAPPassword.ConvertUserVariableToObject(engine, nameof(v_IMAPPassword), this)).ConvertSecureStringToString();
 			var vIMAPDestinationFolder = v_IMAPDestinationFolder.ConvertUserVariableToString(engine);
 
 			using (var client = new ImapClient())
@@ -189,7 +190,7 @@ namespace OpenBots.Commands.Email
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPHost", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPPort", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPUserName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultPasswordInputGroupFor("v_IMAPPassword", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPPassword", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPDestinationFolder", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_IMAPOperationType", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_IMAPMoveCopyUnreadOnly", this, editor));

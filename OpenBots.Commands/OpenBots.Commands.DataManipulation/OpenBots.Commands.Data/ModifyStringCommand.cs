@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Data
 					break;
 				case "From Base64 String":
 					byte[] encodedDataAsBytes = Convert.FromBase64String(stringValue);
-					stringValue = ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
+					stringValue = Encoding.ASCII.GetString(encodedDataAsBytes);
 					break;
 				default:
 					throw new NotImplementedException("Conversion Type '" + v_TextOperation + "' not implemented!");

@@ -14,7 +14,7 @@
     <description>OpenBots Command group containing system automation commands (Email, File, Folder, System, TextFile).</description>
     <releaseNotes>https://openbots.ai/category/release-notes/</releaseNotes>
     <copyright>(C) OpenBots Inc 2020-2021</copyright>
-    <tags>OpenBots Studio SystemAutomation Commands Email File Folder System TextFile</tags>
+    <tags>OpenBots Studio SystemAutomation Commands Email File Folder Process System TextFile</tags>
     <dependencies>
       <group targetFramework="net48">
       </group>

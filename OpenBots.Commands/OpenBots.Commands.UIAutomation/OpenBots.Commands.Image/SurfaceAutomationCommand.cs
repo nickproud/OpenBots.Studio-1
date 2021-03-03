@@ -54,12 +54,12 @@ namespace OpenBots.Commands.Image
 		public string v_ImageAction { get; set; }
 
 		[Required]
-		[DisplayName("Additional Parameters")]
-		[Description("Additional Parameters will be required based on the action settings selected.")]
+		[DisplayName("Action Parameters")]
+		[Description("Action Parameters will be required based on the action settings selected.")]
 		[SampleUsage("data || {vData}")]
-		[Remarks("Additional Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
+		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(bool) }, true)]
 		public DataTable v_ImageActionParameterTable { get; set; }
 
 		[Required]

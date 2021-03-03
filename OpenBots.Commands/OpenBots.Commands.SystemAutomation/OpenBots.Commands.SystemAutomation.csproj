@@ -56,6 +56,9 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SharpSimpleNLG, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpSimpleNLG.1.2.1\lib\net462\SharpSimpleNLG.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -72,6 +75,11 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.XmlDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpSimpleNLG.1.2.1\lib\net462\System.Xml.XmlDocument.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Forms\frmDisplayManager.cs">
@@ -106,6 +114,10 @@
     <Compile Include="OpenBots.Commands.Folder\GetFoldersCommand.cs" />
     <Compile Include="OpenBots.Commands.Folder\MoveCopyFolderCommand.cs" />
     <Compile Include="OpenBots.Commands.Folder\RenameFolderCommand.cs" />
+    <Compile Include="OpenBots.Commands.Process\RunCustomCodeCommand.cs" />
+    <Compile Include="OpenBots.Commands.Process\RunScriptCommand.cs" />
+    <Compile Include="OpenBots.Commands.Process\StartProcessCommand.cs" />
+    <Compile Include="OpenBots.Commands.Process\StopProcessCommand.cs" />
     <Compile Include="OpenBots.Commands.System\EnvironmentVariableCommand.cs" />
     <Compile Include="OpenBots.Commands.System\LaunchRemoteDesktopCommand.cs" />
     <Compile Include="OpenBots.Commands.System\OSVariableCommand.cs" />

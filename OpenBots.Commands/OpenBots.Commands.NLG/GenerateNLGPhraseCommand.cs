@@ -3,7 +3,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using SimpleNLG;
 using System;
 using System.Collections.Generic;
@@ -23,7 +22,7 @@ namespace OpenBots.Commands.NLG
 		[Description("Enter the unique instance that was specified in the **Create NLG Instance** command.")]
 		[SampleUsage("MyNLGInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create NLG Instance** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[CompatibleTypes(new Type[] { typeof(SPhraseSpec) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]

@@ -24,7 +24,6 @@ namespace OpenBots.Commands.System
 		[Description("Select an evironment variable from one of the options.")]
 		[SampleUsage("")]
 		[Remarks("")]
-		[CompatibleTypes(null, true)]
 		public string v_EnvVariableName { get; set; }
 
 		[Required]

@@ -148,7 +148,7 @@ namespace OpenBots.Commands.Dictionary
 					throw new NotSupportedException("Dictionary type not supported");
 				}
 
-			((object)dictionaryVariable).StoreInUserVariable(engine, v_DictionaryName, nameof(v_DictionaryName), this);
+			dictionaryVariable.StoreInUserVariable(engine, v_DictionaryName, nameof(v_DictionaryName), this);
 			}
 			else
 			{

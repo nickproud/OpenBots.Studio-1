@@ -38,7 +38,6 @@ namespace OpenBots.Commands.Input
 		[Description("Define the parameters for the keystroke actions.")]
 		[SampleUsage("[Enter [Return] | Key Press (Down + Up)]")]
 		[Remarks("")]
-		[CompatibleTypes(null, true)]
 		public DataTable v_KeyActions { get; set; }
 
 		[Required]

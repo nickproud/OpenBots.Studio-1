@@ -60,7 +60,7 @@ namespace OpenBots.Commands.IEBrowser
             var shellWindows = new ShellWindows();
             foreach (IWebBrowser2 shellWindow in shellWindows)
             {
-                if ((shellWindow.Document is HTMLDocument) && (v_IEBrowserName==null || shellWindow.Document.Title == v_IEBrowserName))
+                if ((shellWindow.Document is HTMLDocument) && (v_IEBrowserName == null || shellWindow.Document.Title == v_IEBrowserName))
                 {
                     ((object)shellWindow.Application).AddAppInstance(engine, v_InstanceName);
                     browserFound = true;

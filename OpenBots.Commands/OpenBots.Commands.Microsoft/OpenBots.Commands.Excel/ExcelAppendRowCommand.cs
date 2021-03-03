@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Hello,World || {vData1},{vData2} || {vDataRow}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(DataRow) }, true)]
 		public string v_RowToSet { get; set; }
 
 		public ExcelAppendRowCommand()

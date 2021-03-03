@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Excel
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ExcelGetLastRowIndexCommand()
@@ -68,7 +68,7 @@ namespace OpenBots.Commands.Excel
 			var excelSheet = excelInstance.ActiveSheet;
 			var lastRow = (int)excelSheet.Cells(excelSheet.Rows.Count, vColumnLetter).End(XlDirection.xlUp).Row;
 
-			lastRow.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);   
+			lastRow.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);   
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

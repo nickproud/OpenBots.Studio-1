@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("Param Value || {vParamValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string) }, true)]
 		public DataTable v_ActionParameterTable { get; set; }
 
 		[JsonIgnore]

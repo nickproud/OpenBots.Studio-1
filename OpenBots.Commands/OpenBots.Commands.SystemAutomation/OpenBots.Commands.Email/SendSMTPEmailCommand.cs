@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Security;
 using System.Security.Authentication;
 using System.Threading;
 using System.Windows.Forms;
@@ -54,10 +55,10 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Password")]
 		[Description("Define the password to use when contacting the SMTP service.")]
-		[SampleUsage("password || {vPassword}")]
-		[Remarks("")]
+		[SampleUsage("{vPassword}")]
+		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_SMTPPassword { get; set; }
 
 		[Required]
@@ -112,7 +113,7 @@ namespace OpenBots.Commands.Email
 			string vSMTPHost = v_SMTPHost.ConvertUserVariableToString(engine);
 			string vSMTPPort = v_SMTPPort.ConvertUserVariableToString(engine);
 			string vSMTPUserName = v_SMTPUserName.ConvertUserVariableToString(engine);
-			string vSMTPPassword = v_SMTPPassword.ConvertUserVariableToString(engine);
+			string vSMTPPassword = ((SecureString)v_SMTPPassword.ConvertUserVariableToObject(engine, nameof(v_SMTPPassword), this)).ConvertSecureStringToString();
 			string vSMTPRecipients = v_SMTPRecipients.ConvertUserVariableToString(engine);
 			string vSMTPSubject = v_SMTPSubject.ConvertUserVariableToString(engine);
 			string vSMTPBody = v_SMTPBody.ConvertUserVariableToString(engine);
@@ -175,7 +176,7 @@ namespace OpenBots.Commands.Email
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPHost", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPPort", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPUserName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultPasswordInputGroupFor("v_SMTPPassword", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPPassword", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPRecipients", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPSubject", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPBody", this, editor, 100, 300));

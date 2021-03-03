@@ -69,7 +69,7 @@ namespace OpenBots.Commands.Dictionary
 			else
 				throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 
-			((object)keyValuePair.Key).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((string)keyValuePair.Key).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("[FirstName | John] || [{vKey} | {vValue}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement), typeof(object) }, true)]
 		public OBDataTable v_ColumnNameDataTable { get; set; }
 
 		[Required]

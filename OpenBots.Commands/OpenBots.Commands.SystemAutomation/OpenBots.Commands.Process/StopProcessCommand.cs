@@ -4,19 +4,18 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
+using OBFile = System.IO.File;
 
 namespace OpenBots.Commands.Process
 {
-	[Serializable]
+    [Serializable]
 	[Category("Programs/Process Commands")]
 	[Description("This command stops a program or process.")]
 	public class StopProcessCommand : ScriptCommand
@@ -55,7 +54,7 @@ namespace OpenBots.Commands.Process
 			var engine = (IAutomationEngineInstance)sender;
 			string vProgramName = v_ProgramName.ConvertUserVariableToString(engine);
 
-			if (File.Exists(vProgramName))
+			if (OBFile.Exists(vProgramName))
 				vProgramName = Path.GetFileNameWithoutExtension(vProgramName);
 
 			var processes = Diagnostics.Process.GetProcessesByName(vProgramName);

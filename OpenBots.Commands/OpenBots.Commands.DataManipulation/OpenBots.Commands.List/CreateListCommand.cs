@@ -40,7 +40,7 @@ namespace OpenBots.Commands.List
 		[Remarks("List item can only be a String, DataTable, MailItem or IWebElement.\n" +
 				 "Multiple items should be delimited by a comma(,). This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement) })]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement) }, true)]
 		public string v_ListItems { get; set; }
 
 		[Required]

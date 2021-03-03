@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Loop
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
-		[CompatibleTypes(new Type[] { typeof(object) })]
+		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(IWebElement), typeof(MailItem), typeof(MimeMessage), typeof(KeyValuePair<,>), typeof(string)})]
 		public string v_OutputUserVariableName { get; set; }
 
 		public LoopCollectionCommand()

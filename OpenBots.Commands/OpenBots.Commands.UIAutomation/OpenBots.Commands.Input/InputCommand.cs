@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Input
 					 "[ComboBox | Gender | 500,30 | Male,Female,Other | {vGender}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) }, true)]
 		public DataTable v_UserInputConfig { get; set; }
 
 		[JsonIgnore]
@@ -137,7 +137,7 @@ namespace OpenBots.Commands.Input
 
 						//store user data in variable
 						if (!string.IsNullOrEmpty(targetVariable))
-							((string)userInputs[i]).StoreInUserVariable(engine, targetVariable, typeof(string));
+							(userInputs[i]).StoreInUserVariable(engine, targetVariable, typeof(string));
 					}
 				}
 			}));

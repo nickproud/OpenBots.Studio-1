@@ -9,7 +9,6 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
@@ -101,7 +100,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.\n"+
 				 "Advanced keystrokes may be set the following way: Hello[tab]World[enter]")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(IWebElement) }, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(IWebElement), typeof(List<>), typeof(DataTable), typeof(string), typeof(bool) }, true)]
 		public DataTable v_WebActionParameterTable { get; set; }
 
 		[Required]

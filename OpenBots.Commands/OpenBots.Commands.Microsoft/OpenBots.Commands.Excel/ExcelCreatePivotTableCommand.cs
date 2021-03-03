@@ -29,7 +29,7 @@ namespace OpenBots.Commands.Excel
 
         [Required]
         [DisplayName("Excel Table Name")]
-        [Description("Enter the Excel Table name to extract data for Pivot Table.")]
+        [Description("Enter the name of the Excel Table to extract data from for the Pivot Table.")]
         [SampleUsage("Table || {vTable}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
@@ -38,16 +38,16 @@ namespace OpenBots.Commands.Excel
 
         [Required]
         [DisplayName("Excel Table Worksheet")]
-        [Description("Enter the Excel Table Worksheet name within the Workbook to extract Range and create Pivot Table.")]
+        [Description("Enter the name of the Worksheet containing the Excel Table being used to create the Pivot Table.")]
         [SampleUsage("Sheet1 || {vSheet}")]
-        [Remarks("Error will be thrown in case of invalid Sheet Name.")]
+        [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(null, true)]
         public string v_SheetNameExcelTable { get; set; }
 
         [Required]
         [DisplayName("Cell Location")]
-        [Description("Enter the location where Pivot Table will be created.")]
+        [Description("Enter the location where the Pivot Table will be set.")]
         [SampleUsage("A1 || {vCellLocation}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
@@ -65,9 +65,9 @@ namespace OpenBots.Commands.Excel
 
         [Required]
         [DisplayName("Pivot Table Worksheet")]
-        [Description("Enter the Worksheet name within the Workbook to write Pivot Table.")]
+        [Description("Enter the name of the Worksheet where the Pivot Table will be set.")]
         [SampleUsage("Sheet1 || {vSheet}")]
-        [Remarks("Error will be thrown in case of invalid Sheet Name.")]
+        [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(null, true)]
         public string v_SheetNamePivotTable { get; set; }

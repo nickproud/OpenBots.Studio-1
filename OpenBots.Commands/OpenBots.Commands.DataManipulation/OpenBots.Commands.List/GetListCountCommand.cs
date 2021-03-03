@@ -38,7 +38,7 @@ namespace OpenBots.Commands.List
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetListCountCommand()
@@ -93,7 +93,7 @@ namespace OpenBots.Commands.List
 			else
 				throw new System.Exception("Complex Variable List Type<T> Not Supported");
 
-			string count = listToCount.Count.ToString();
+			int count = listToCount.Count;
 			count.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
