@@ -183,12 +183,27 @@ namespace OpenBots.UI.CustomControls
             var inputSpecificationAttributesAssigned = variableProperties.GetCustomAttributes(typeof(DescriptionAttribute), true);
             var sampleUsageAttributesAssigned = variableProperties.GetCustomAttributes(typeof(SampleUsage), true);
             var remarksAttributesAssigned = variableProperties.GetCustomAttributes(typeof(Remarks), true);
+            var compatibleTypesAttributesAssigned = variableProperties.GetCustomAttributes(typeof(CompatibleTypes), true);
 
             string toolTipText = "";
             if (inputSpecificationAttributesAssigned.Length > 0)
             {
                 var attribute = (DescriptionAttribute)inputSpecificationAttributesAssigned[0];
                 toolTipText = attribute.Description;
+            }
+            if (compatibleTypesAttributesAssigned.Length > 0)
+            {
+                var attribute = (CompatibleTypes)compatibleTypesAttributesAssigned[0];
+                toolTipText += "\nType(s): ";
+                if (attribute.CompTypes != null)
+                {                   
+                    foreach (var type in attribute.CompTypes)
+                        toolTipText += $"{type.Name}, ";
+                }
+                if (attribute.IsStringOrPrimitive)
+                    toolTipText += "any primitive/string";
+                else
+                    toolTipText = toolTipText.Substring(0, (toolTipText.Length - 2));
             }
             if (sampleUsageAttributesAssigned.Length > 0)
             {
