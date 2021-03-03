@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using IOFile = System.IO.File;
 
 namespace OpenBots.Core.Server.API_Methods
 {
@@ -44,7 +45,7 @@ namespace OpenBots.Core.Server.API_Methods
 
         public static void DownloadFileAsset(RestClient client, Guid? assetID, string directoryPath, string fileName)
         {
-            var request = new RestRequest("api/v1/assets/{id}/Export", Method.GET);
+            var request = new RestRequest("api/v1/Assets/{id}/Export", Method.GET);
             request.AddUrlSegment("id", assetID.ToString());
             request.RequestFormat = DataFormat.Json;
 
@@ -54,7 +55,7 @@ namespace OpenBots.Core.Server.API_Methods
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
 
             byte[] file = response.RawBytes;
-            File.WriteAllBytes(Path.Combine(directoryPath, fileName), file);
+            IOFile.WriteAllBytes(Path.Combine(directoryPath, fileName), file);
         }
 
         public static void UpdateFileAsset(RestClient client, Asset asset, string filePath)
@@ -65,6 +66,8 @@ namespace OpenBots.Core.Server.API_Methods
 
             request.AddHeader("Content-Type", "multipart/form-data");
             request.AddFile("File", filePath.Trim());
+            request.AddParameter("Type", "File");
+            request.AddParameter("Name", asset.Name);
 
             var response = client.Execute(request);
 

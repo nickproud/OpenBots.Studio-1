@@ -242,7 +242,7 @@
     <Compile Include="Server\API Methods\AgentMethods.cs" />
     <Compile Include="Server\API Methods\AssetMethods.cs" />
     <Compile Include="Server\API Methods\AuthMethods.cs" />
-    <Compile Include="Server\API Methods\BinaryObjectMethods.cs" />
+    <Compile Include="Server\API Methods\FileMethods.cs" />
     <Compile Include="Server\API Methods\CredentialMethods.cs" />
     <Compile Include="Server\API Methods\JobMethods.cs" />
     <Compile Include="Server\API Methods\AutomationMethods.cs" />
@@ -254,7 +254,7 @@
     <Compile Include="Server\Interfaces\INameIDPair.cs" />
     <Compile Include="Server\Models\Agent.cs" />
     <Compile Include="Server\Models\Asset.cs" />
-    <Compile Include="Server\Models\BinaryObject.cs" />
+    <Compile Include="Server\Models\File.cs" />
     <Compile Include="Server\Models\Credential.cs" />
     <Compile Include="Server\Models\EmailAddress.cs" />
     <Compile Include="Server\Models\EmailMessage.cs" />

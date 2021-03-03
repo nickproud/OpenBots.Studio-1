@@ -3,7 +3,6 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Utilities;
 using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -106,9 +105,9 @@ namespace OpenBots.Commands.Asset
 					assetValue = asset.JsonValue;
 					break;
 				case "File":
-					var binaryObjectID = asset.BinaryObjectID;
-					BinaryObject binaryObject = BinaryObjectMethods.GetBinaryObject(client, binaryObjectID);      
-					AssetMethods.DownloadFileAsset(client, asset.Id, vOutputDirectoryPath, binaryObject.Name);
+					var fileID = asset.FileID;
+					File file = FileMethods.GetFile(client, fileID);     
+					AssetMethods.DownloadFileAsset(client, asset.Id, vOutputDirectoryPath, file.Name);
 					assetValue = string.Empty;
 					break;
 				default:
