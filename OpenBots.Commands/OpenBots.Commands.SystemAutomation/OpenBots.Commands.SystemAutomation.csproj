@@ -258,8 +258,10 @@
     <Compile Include="OpenBots.Commands.Folder\GetFoldersCommand.cs" />
     <Compile Include="OpenBots.Commands.Folder\MoveCopyFolderCommand.cs" />
     <Compile Include="OpenBots.Commands.Folder\RenameFolderCommand.cs" />
+    <Compile Include="OpenBots.Commands.Process\RunCSharpScript.cs" />
     <Compile Include="OpenBots.Commands.Process\RunCustomCodeCommand.cs" />
-    <Compile Include="OpenBots.Commands.Process\RunScriptCommand.cs" />
+    <Compile Include="OpenBots.Commands.Process\RunPythonScript.cs" />
+    <Compile Include="OpenBots.Commands.Process\RunPowershellScriptCommand.cs" />
     <Compile Include="OpenBots.Commands.Process\StartProcessCommand.cs" />
     <Compile Include="OpenBots.Commands.Process\StopProcessCommand.cs" />
     <Compile Include="OpenBots.Commands.System\EnvironmentVariableCommand.cs" />
