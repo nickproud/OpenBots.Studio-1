@@ -235,7 +235,6 @@ namespace OpenBots.UI.CustomControls
             inputBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             inputBox.Height = height;
             inputBox.Width = width;
-            inputBox.BorderColor = Color.Red;
 
             if (height > 30)
             {
@@ -324,7 +323,6 @@ namespace OpenBots.UI.CustomControls
             dropdownBox.Height = 30;
             dropdownBox.Width = 300;
             dropdownBox.Name = parameterName;
-            dropdownBox.BorderColor = Color.Red;
 
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
             var propertyAttributesAssigned = variableProperties.GetCustomAttributes(typeof(PropertyUISelectionOption), true);
@@ -451,9 +449,7 @@ namespace OpenBots.UI.CustomControls
             gridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             gridView.DataBindings.Add("DataSource", sourceCommand, dataSourceName, false, DataSourceUpdateMode.OnPropertyChanged);
             gridView.AllowUserToResizeRows = false;
-            gridView.BorderColor = Color.Red;
-            //gridView.BorderStyle = BorderStyle.Fixed3D;
-            //gridView.GridColor = Color.Red;
+            gridView.BorderStyle = BorderStyle.Fixed3D;
             return gridView;
         }
 
