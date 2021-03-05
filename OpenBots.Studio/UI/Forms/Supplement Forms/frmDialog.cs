@@ -29,7 +29,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             InitializeComponent();
 
-            lblMessage.Text = message;
+            if (message.Length > 10000)
+                lblMessage.Text = message.Substring(0, 60000) + "\nFull text not displayed";
+            else
+                lblMessage.Text = message;
             lblMessage.MaximumSize = new Size(pnlMessage.Size.Width - 30, 0);
 
             Text = title;
