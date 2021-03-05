@@ -290,7 +290,8 @@ namespace OpenBots.Engine
             {
                 ScriptFinished(ScriptFinishedResult.Error, ex.ToString());
             }
-            AutomationEngineContext.EngineLogger.Dispose();
+            if((AutomationEngineContext.ScriptEngine != null && !AutomationEngineContext.ScriptEngine.IsChildEngine) || (IsServerExecution && !IsServerChildExecution))
+                AutomationEngineContext.EngineLogger.Dispose();
         }
 
         public void ExecuteCommand(ScriptAction command)
