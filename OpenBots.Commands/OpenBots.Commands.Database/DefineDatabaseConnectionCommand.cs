@@ -128,7 +128,7 @@ namespace OpenBots.Commands.Database
 			helperControl.CommandDisplay = "Build Connection String";
 			helperControl.Click += (sender, e) => Button_Click(sender, e);
 
-			_connectionString = (TextBox)commandControls.CreateDefaultInputFor("v_ConnectionString", this);
+			_connectionString = commandControls.CreateDefaultInputFor("v_ConnectionString", this);
 
 			var connectionLabel = commandControls.CreateDefaultLabelFor("v_ConnectionString", this);
 			var connectionHelpers = commandControls.CreateUIHelpersFor("v_ConnectionString", this, new[] { _connectionString }, editor);
@@ -147,7 +147,7 @@ namespace OpenBots.Commands.Database
 			RenderedControls.Add(testConnectionControl);
 			RenderedControls.Add(_connectionString);
 
-			_connectionStringPassword = (TextBox)commandControls.CreateDefaultInputFor("v_ConnectionStringPassword", this);
+			_connectionStringPassword = commandControls.CreateDefaultInputFor("v_ConnectionStringPassword", this);
 
 			var connectionPassLabel = commandControls.CreateDefaultLabelFor("v_ConnectionStringPassword", this);
 			var connectionPassHelpers = commandControls.CreateUIHelpersFor("v_ConnectionStringPassword", this, new[] { _connectionStringPassword }, editor);

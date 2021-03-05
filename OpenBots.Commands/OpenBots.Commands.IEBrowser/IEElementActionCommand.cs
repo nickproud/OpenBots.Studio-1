@@ -71,19 +71,11 @@ namespace OpenBots.Commands.IEBrowser
 
         [JsonIgnore]
         [Browsable(false)]
-        private DataGridView _elementsGridViewHelper;
-
-        [JsonIgnore]
-        [Browsable(false)]
         private ComboBox _elementActionDropdown;
 
         [JsonIgnore]
         [Browsable(false)]
         private List<Control> _searchParameterControls;
-
-        [JsonIgnore]
-        [Browsable(false)]
-        private DataGridView _searchGridViewHelper;
 
         [JsonIgnore]
         [Browsable(false)]
@@ -116,22 +108,6 @@ namespace OpenBots.Commands.IEBrowser
             v_WebActionParameterTable.TableName = DateTime.Now.ToString("WebActionParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
             v_WebActionParameterTable.Columns.Add("Parameter Name");
             v_WebActionParameterTable.Columns.Add("Parameter Value");
-
-            _searchGridViewHelper = new DataGridView();
-            _searchGridViewHelper.AllowUserToAddRows = true;
-            _searchGridViewHelper.AllowUserToDeleteRows = true;
-            _searchGridViewHelper.Size = new Size(400, 250);
-            _searchGridViewHelper.ColumnHeadersHeight = 30;
-            _searchGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            _searchGridViewHelper.DataBindings.Add("DataSource", this, "v_WebSearchParameter", false, DataSourceUpdateMode.OnPropertyChanged);
-
-            _elementsGridViewHelper = new DataGridView();
-            _elementsGridViewHelper.AllowUserToAddRows = true;
-            _elementsGridViewHelper.AllowUserToDeleteRows = true;
-            _elementsGridViewHelper.Size = new Size(400, 250);
-            _elementsGridViewHelper.ColumnHeadersHeight = 30;
-            _elementsGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            _elementsGridViewHelper.DataBindings.Add("DataSource", this, "v_WebActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         [STAThread]
@@ -189,24 +165,16 @@ namespace OpenBots.Commands.IEBrowser
             base.Render(editor, commandControls);
 
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
+            RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_WebSearchParameter", this, editor));
 
-            _searchParameterControls = new List<Control>();
-            _searchParameterControls.Add(commandControls.CreateDefaultLabelFor("v_WebSearchParameter", this));
-            _searchParameterControls.AddRange(commandControls.CreateUIHelpersFor("v_WebSearchParameter", this, new Control[] { _searchGridViewHelper }, editor));
 
-            _searchParameterControls.Add(_searchGridViewHelper);
-            RenderedControls.AddRange(_searchParameterControls);
-
-            _elementActionDropdown = (ComboBox)commandControls.CreateDropdownFor("v_WebAction", this);
+            _elementActionDropdown = commandControls.CreateDropdownFor("v_WebAction", this);
             RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_WebAction", this));
             RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_WebAction", this, new Control[] { _elementActionDropdown }, editor));
             _elementActionDropdown.SelectionChangeCommitted += ElementActionDropdown_SelectionChangeCommitted;
             RenderedControls.Add(_elementActionDropdown);
 
-            _elementParameterControls = new List<Control>();
-            _elementParameterControls.Add(commandControls.CreateDefaultLabelFor("v_WebActionParameterTable", this));
-            _elementParameterControls.AddRange(commandControls.CreateUIHelpersFor("v_WebActionParameterTable", this, new Control[] { _elementsGridViewHelper }, editor));
-            _elementParameterControls.Add(_elementsGridViewHelper);
+            RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_WebActionParameterTable", this, editor));
             RenderedControls.AddRange(_elementParameterControls);
 
             return RenderedControls;
@@ -389,8 +357,6 @@ namespace OpenBots.Commands.IEBrowser
                 default:
                     break;
             }
-
-            _elementsGridViewHelper.DataSource = v_WebActionParameterTable;
         }
 
         private void RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)
@@ -503,7 +469,7 @@ namespace OpenBots.Commands.IEBrowser
             return curtop;
         }
 
-        private Boolean InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, InternetExplorer browserInstance)
+        private bool InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, InternetExplorer browserInstance)
         {
             bool qualifyingElementFound = false;
             foreach (IHTMLElement element in elementCollection)

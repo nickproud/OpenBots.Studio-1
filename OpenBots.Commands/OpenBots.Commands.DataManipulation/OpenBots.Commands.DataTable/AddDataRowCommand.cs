@@ -88,7 +88,7 @@ namespace OpenBots.Commands.DataTable
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataTable", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDataGridViewGroupFor("v_DataRowDataTable", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_DataRowDataTable", this, editor));
 
 			CommandItemControl loadSchemaControl = new CommandItemControl();
 			loadSchemaControl.ForeColor = Color.White;

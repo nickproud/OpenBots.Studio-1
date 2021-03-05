@@ -291,8 +291,6 @@ namespace OpenBots.UI.Forms
         {
             bool isAllValid = true;
             AutomationEngineInstance testEngine = new AutomationEngineInstance(ScriptEngineContext);
-            CommandControlValidationContext validationContext;
-            string validatingText;
             dynamic currentControl;
 
             foreach (Control ctrl in flw_InputVariables.Controls)
@@ -365,7 +363,7 @@ namespace OpenBots.UI.Forms
             foreach (var match in varArgMatches)
             {
                 Type varArgType = match.ToString().GetVarArgType(testEngine);
-                if (!(validationContext.IsStringOrPrimitive && (varArgType == typeof(string) || varArgType.IsPrimitive)))
+                if (varArgType != null && !(validationContext.IsStringOrPrimitive && (varArgType == typeof(string) || varArgType.IsPrimitive)))
                 {
                     if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType))))
                     {

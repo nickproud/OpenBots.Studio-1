@@ -147,9 +147,8 @@ namespace OpenBots.Commands.Input
 		{
 			base.Render(editor, commandControls);
 
-			_userInputGridViewHelper = new DataGridView();
+			_userInputGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_UserInputConfig", this);
 			_userInputGridViewHelper.KeyDown += UserInputDataGridView_KeyDown;
-			_userInputGridViewHelper.DataBindings.Add("DataSource", this, "v_UserInputConfig", false, DataSourceUpdateMode.OnPropertyChanged);
 
 			var typefield = new DataGridViewComboBoxColumn();
 			typefield.Items.Add("TextBox");
@@ -179,10 +178,7 @@ namespace OpenBots.Commands.Input
 			field.DataPropertyName = "StoreInVariable";
 			_userInputGridViewHelper.Columns.Add(field);
 
-			_userInputGridViewHelper.ColumnHeadersHeight = 30;
-			_userInputGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 			_userInputGridViewHelper.AllowUserToAddRows = false;
-			_userInputGridViewHelper.AllowUserToDeleteRows = true;
 			_userInputGridViewHelper.AllowDrop = true;
 			_userInputGridViewHelper.MouseDown += UserInputGridViewHelper_MouseDown;
 			_userInputGridViewHelper.MouseUp += UserInputGridViewHelper_MouseUp;

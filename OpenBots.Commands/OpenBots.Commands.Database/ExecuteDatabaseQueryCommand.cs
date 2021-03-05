@@ -211,12 +211,7 @@ namespace OpenBots.Commands.Database
 			RenderedControls.AddRange(queryControls);
 
 			//set up query parameter controls
-			_queryParametersGridView = new DataGridView();
-			_queryParametersGridView.AllowUserToAddRows = true;
-			_queryParametersGridView.AllowUserToDeleteRows = true;
-			_queryParametersGridView.Size = new Size(400, 250);
-			_queryParametersGridView.ColumnHeadersHeight = 30;
-			_queryParametersGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			_queryParametersGridView = commandControls.CreateDefaultDataGridViewFor("v_QueryParameters", this);
 			_queryParametersGridView.AutoGenerateColumns = false;
 		
 			var selectColumn = new DataGridViewComboBoxColumn();
@@ -236,8 +231,6 @@ namespace OpenBots.Commands.Database
 			paramValueColumn.HeaderText = "Value";
 			paramValueColumn.DataPropertyName = "Parameter Value";
 			_queryParametersGridView.Columns.Add(paramValueColumn);
-
-			_queryParametersGridView.DataBindings.Add("DataSource", this, "v_QueryParameters", false, DataSourceUpdateMode.OnPropertyChanged);
 		 
 			_queryParametersControls = new List<Control>();
 			_queryParametersControls.Add(commandControls.CreateDefaultLabelFor("v_QueryParameters", this));

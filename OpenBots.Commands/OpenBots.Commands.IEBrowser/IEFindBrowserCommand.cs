@@ -96,7 +96,7 @@ namespace OpenBots.Commands.IEBrowser
 
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
-            _ieBrowerNameDropdown = (ComboBox)commandControls.CreateDropdownFor("v_IEBrowserName", this);
+            _ieBrowerNameDropdown = commandControls.CreateDropdownFor("v_IEBrowserName", this);
             var shellWindows = new ShellWindows();
             foreach (IWebBrowser2 shellWindow in shellWindows)
             {

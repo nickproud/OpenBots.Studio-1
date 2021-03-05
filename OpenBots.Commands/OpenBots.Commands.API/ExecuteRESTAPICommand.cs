@@ -254,11 +254,7 @@ namespace OpenBots.Commands.API
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_RequestFormat", this, editor));
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_RESTParameters", this));
 
-			_RESTParametersGridViewHelper = new DataGridView();
-			_RESTParametersGridViewHelper.Width = 500;
-			_RESTParametersGridViewHelper.Height = 140;
-			_RESTParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_RESTParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			_RESTParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_RESTParameters", this);
 			_RESTParametersGridViewHelper.AutoGenerateColumns = false;
 
 			var selectColumn = new DataGridViewComboBoxColumn();
@@ -277,17 +273,12 @@ namespace OpenBots.Commands.API
 			paramValueColumn.DataPropertyName = "Parameter Value";
 			_RESTParametersGridViewHelper.Columns.Add(paramValueColumn);
 
-			_RESTParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_RESTParameters", false, DataSourceUpdateMode.OnPropertyChanged);
 			RenderedControls.Add(_RESTParametersGridViewHelper);
 
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_AdvancedParameters", this));
 
 			//advanced parameters
-			_advancedRESTParametersGridViewHelper = new DataGridView();
-			_advancedRESTParametersGridViewHelper.Width = 500;
-			_advancedRESTParametersGridViewHelper.Height = 140;
-			_advancedRESTParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_advancedRESTParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			_advancedRESTParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_AdvancedParameters", this);
 			_advancedRESTParametersGridViewHelper.AutoGenerateColumns = false;
 
 			var advParamNameColumn = new DataGridViewTextBoxColumn();
@@ -309,9 +300,7 @@ namespace OpenBots.Commands.API
 			advParamType.HeaderText = "Parameter Type";
 			advParamType.DataPropertyName = "Parameter Type";
 			advParamType.DataSource = new string[] { "Cookie", "GetOrPost", "HttpHeader", "QueryString", "RequestBody", "URLSegment", "QueryStringWithoutEncode" };
-			_advancedRESTParametersGridViewHelper.Columns.Add(advParamType);
-
-			_advancedRESTParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_AdvancedParameters", false, DataSourceUpdateMode.OnPropertyChanged);
+			_advancedRESTParametersGridViewHelper.Columns.Add(advParamType);			
 			RenderedControls.Add(_advancedRESTParametersGridViewHelper);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));

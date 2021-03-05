@@ -85,16 +85,7 @@ namespace OpenBots.Commands.Task
 			v_ArgumentAssignments.Columns.Add("ArgumentValue");
 			v_ArgumentAssignments.Columns.Add("ArgumentDirection");
 			v_ArgumentAssignments.TableName = "RunTaskCommandInputParameters" + DateTime.Now.ToString("MMddyyhhmmss");
-			v_ArgumentAssignments.Columns[1].DataType = typeof(Type);
-
-			_assignmentsGridViewHelper = new DataGridView();
-			_assignmentsGridViewHelper.AllowUserToAddRows = false;
-			_assignmentsGridViewHelper.AllowUserToDeleteRows = false;
-			_assignmentsGridViewHelper.Size = new Size(400, 250);
-			_assignmentsGridViewHelper.ColumnHeadersHeight = 30;
-			_assignmentsGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_assignmentsGridViewHelper.DataSource = v_ArgumentAssignments;
-			_assignmentsGridViewHelper.Hide();
+			v_ArgumentAssignments.Columns[1].DataType = typeof(Type);			
 		}
 
 		public override void RunCommand(object sender)
@@ -228,6 +219,13 @@ namespace OpenBots.Commands.Task
 			RenderedControls.Add(_passParameters);
 
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ArgumentAssignments", this));
+			_assignmentsGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ArgumentAssignments", this);
+			_assignmentsGridViewHelper.AllowUserToAddRows = false;
+			_assignmentsGridViewHelper.AllowUserToDeleteRows = false;
+
+			if (!_passParameters.Checked)
+				_assignmentsGridViewHelper.Hide();
+
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ArgumentAssignments", this, new Control[] { _assignmentsGridViewHelper }, editor));
 			RenderedControls.Add(_assignmentsGridViewHelper);
 

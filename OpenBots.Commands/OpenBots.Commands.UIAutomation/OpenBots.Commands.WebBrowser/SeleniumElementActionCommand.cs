@@ -151,46 +151,7 @@ namespace OpenBots.Commands.WebBrowser
 			v_SeleniumSearchParameters.Columns.Add("Enabled");
 			v_SeleniumSearchParameters.Columns.Add("Parameter Name");
 			v_SeleniumSearchParameters.Columns.Add("Parameter Value");
-			v_SeleniumSearchParameters.TableName = DateTime.Now.ToString("v_SeleniumSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));
-
-			//create search param grid
-			_searchParametersGridViewHelper = new DataGridView();
-			_searchParametersGridViewHelper.Width = 400;
-			_searchParametersGridViewHelper.Height = 250;
-			_searchParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_SeleniumSearchParameters", false, DataSourceUpdateMode.OnPropertyChanged);
-
-			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
-			enabled.HeaderText = "Enabled";
-			enabled.DataPropertyName = "Enabled";
-			enabled.FillWeight = 30;
-			_searchParametersGridViewHelper.Columns.Add(enabled);
-
-			DataGridViewTextBoxColumn propertyName = new DataGridViewTextBoxColumn();
-			propertyName.HeaderText = "Parameter Name";
-			propertyName.DataPropertyName = "Parameter Name";
-			propertyName.FillWeight = 40;
-			_searchParametersGridViewHelper.Columns.Add(propertyName);
-
-			DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
-			propertyValue.HeaderText = "Parameter Value";
-			propertyValue.DataPropertyName = "Parameter Value";
-			_searchParametersGridViewHelper.Columns.Add(propertyValue);
-			_searchParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_searchParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_searchParametersGridViewHelper.AllowUserToAddRows = true;
-			_searchParametersGridViewHelper.AllowUserToDeleteRows = true;
-
-			_actionParametersGridViewHelper = new DataGridView();
-			_actionParametersGridViewHelper.AllowUserToAddRows = true;
-			_actionParametersGridViewHelper.AllowUserToDeleteRows = true;
-			_actionParametersGridViewHelper.Size = new Size(400, 150);
-			_actionParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_actionParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_actionParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_WebActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
-			_actionParametersGridViewHelper.AllowUserToAddRows = false;
-			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
-			_actionParametersGridViewHelper.AllowUserToResizeRows = false;
-			_actionParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
+			v_SeleniumSearchParameters.TableName = DateTime.Now.ToString("v_SeleniumSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));		
 		}
 
 		public override void RunCommand(object sender)
@@ -554,16 +515,36 @@ namespace OpenBots.Commands.WebBrowser
 				v_SeleniumSearchParameters.Rows.Add(false, "Link Text", "");
 				v_SeleniumSearchParameters.Rows.Add(false, "CSS Selector", "");
 			}
-			_searchParametersGridViewHelper.DataSource = v_SeleniumSearchParameters;
 			//create search parameters   
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_SeleniumSearchParameters", this));
 			RenderedControls.Add(helperControl);
+
+			//create search param grid
+			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_SeleniumSearchParameters", this);
+
+			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
+			enabled.HeaderText = "Enabled";
+			enabled.DataPropertyName = "Enabled";
+			enabled.FillWeight = 30;
+			_searchParametersGridViewHelper.Columns.Add(enabled);
+
+			DataGridViewTextBoxColumn propertyName = new DataGridViewTextBoxColumn();
+			propertyName.HeaderText = "Parameter Name";
+			propertyName.DataPropertyName = "Parameter Name";
+			propertyName.FillWeight = 40;
+			_searchParametersGridViewHelper.Columns.Add(propertyName);
+
+			DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
+			propertyValue.HeaderText = "Parameter Value";
+			propertyValue.DataPropertyName = "Parameter Value";
+			_searchParametersGridViewHelper.Columns.Add(propertyValue);
+
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_SeleniumSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
 			RenderedControls.Add(_searchParametersGridViewHelper);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SeleniumSearchOption", this, editor));
 
-			_elementActionDropdown = (ComboBox)commandControls.CreateDropdownFor("v_SeleniumElementAction", this);
+			_elementActionDropdown = commandControls.CreateDropdownFor("v_SeleniumElementAction", this);
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_SeleniumElementAction", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_SeleniumElementAction", this, new Control[] { _elementActionDropdown }, editor));
 			_elementActionDropdown.SelectionChangeCommitted += SeleniumAction_SelectionChangeCommitted;
@@ -571,6 +552,12 @@ namespace OpenBots.Commands.WebBrowser
 
 			_actionParametersControls = new List<Control>();
 			_actionParametersControls.Add(commandControls.CreateDefaultLabelFor("v_WebActionParameterTable", this));
+
+			_actionParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_WebActionParameterTable", this);
+			_actionParametersGridViewHelper.AllowUserToAddRows = false;
+			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
+			_actionParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
+
 			_actionParametersControls.AddRange(commandControls.CreateUIHelpersFor("v_WebActionParameterTable", this, new Control[] { _actionParametersGridViewHelper }, editor));
 			_actionParametersControls.Add(_actionParametersGridViewHelper);
 			RenderedControls.AddRange(_actionParametersControls);

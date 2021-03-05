@@ -126,13 +126,13 @@ namespace OpenBots.UI.CustomControls
             return controlList;
         }
 
-        public List<Control> CreateDataGridViewGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor)
+        public List<Control> CreateDefaultDataGridViewGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor)
         {
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
-            var gridview = CreateDataGridView(parameterName, parent);
+            var gridview = CreateDefaultDataGridViewFor(parameterName, parent);
             var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { gridview }, editor);
-
+            
             controlList.Add(label);
             controlList.AddRange(helpers);
             controlList.Add(gridview);
@@ -154,7 +154,7 @@ namespace OpenBots.UI.CustomControls
             return controlList;
         }
 
-        public Control CreateDefaultLabelFor(string parameterName, ScriptCommand parent)
+        public Label CreateDefaultLabelFor(string parameterName, ScriptCommand parent)
         {
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
 
@@ -238,7 +238,7 @@ namespace OpenBots.UI.CustomControls
             inputToolTip.SetToolTip(label, toolTipText);
         }
 
-        public Control CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300)
+        public TextBox CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300)
         {
             var inputBox = new UITextBox();
             inputBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
@@ -326,7 +326,7 @@ namespace OpenBots.UI.CustomControls
             return checkBox;
         }
 
-        public Control CreateDropdownFor(string parameterName, ScriptCommand parent)
+        public ComboBox CreateDropdownFor(string parameterName, ScriptCommand parent)
         {
             var dropdownBox = new UIComboBox();
             dropdownBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
@@ -452,7 +452,7 @@ namespace OpenBots.UI.CustomControls
             ((HandledMouseEventArgs)e).Handled = true;
         }
 
-        public DataGridView CreateDataGridView(string parameterName, ScriptCommand parent)
+        public DataGridView CreateDefaultDataGridViewFor(string parameterName, ScriptCommand parent)
         {
             var gridView = new UIDataGridView();
             gridView.AllowUserToAddRows = true;

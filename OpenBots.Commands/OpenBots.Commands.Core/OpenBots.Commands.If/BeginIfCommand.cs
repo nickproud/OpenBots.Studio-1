@@ -84,17 +84,6 @@ namespace OpenBots.Commands.If
 			v_ActionParameterTable.Columns.Add("Parameter Name");
 			v_ActionParameterTable.Columns.Add("Parameter Value");
 
-			_ifGridViewHelper = new DataGridView();
-			_ifGridViewHelper.AllowUserToAddRows = true;
-			_ifGridViewHelper.AllowUserToDeleteRows = true;
-			_ifGridViewHelper.Size = new Size(400, 250);
-			_ifGridViewHelper.ColumnHeadersHeight = 30;
-			_ifGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_ifGridViewHelper.DataBindings.Add("DataSource", this, "v_ActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
-			_ifGridViewHelper.AllowUserToAddRows = false;
-			_ifGridViewHelper.AllowUserToDeleteRows = false;
-			_ifGridViewHelper.MouseEnter += IfGridViewHelper_MouseEnter;
-
 			_recorderControl = new CommandItemControl();
 			_recorderControl.Padding = new Padding(10, 0, 0, 0);
 			_recorderControl.ForeColor = Color.AliceBlue;
@@ -161,8 +150,15 @@ namespace OpenBots.Commands.If
 
 			_recorderControl.Click += (sender, e) => ShowIfElementRecorder(sender, e, editor, commandControls);
 			_parameterControls.Add(_recorderControl);
+
+			_ifGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ActionParameterTable", this);
+			_ifGridViewHelper.AllowUserToAddRows = false;
+			_ifGridViewHelper.AllowUserToDeleteRows = false;
+			_ifGridViewHelper.MouseEnter += IfGridViewHelper_MouseEnter;
+
 			_parameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ActionParameterTable", this, new Control[] { _ifGridViewHelper }, editor));
 			_parameterControls.Add(_ifGridViewHelper);
+
 			RenderedControls.AddRange(_parameterControls);
 
 			return RenderedControls;

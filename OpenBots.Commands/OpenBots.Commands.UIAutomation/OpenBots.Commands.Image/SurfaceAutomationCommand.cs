@@ -101,19 +101,7 @@ namespace OpenBots.Commands.Image
 				TableName = "ImageActionParamTable" + DateTime.Now.ToString("MMddyy.hhmmss")
 			};
 			v_ImageActionParameterTable.Columns.Add("Parameter Name");
-			v_ImageActionParameterTable.Columns.Add("Parameter Value");
-
-			_imageGridViewHelper = new DataGridView();
-			_imageGridViewHelper.AllowUserToAddRows = true;
-			_imageGridViewHelper.AllowUserToDeleteRows = true;
-			_imageGridViewHelper.Size = new Size(400, 250);
-			_imageGridViewHelper.ColumnHeadersHeight = 30;
-			_imageGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_imageGridViewHelper.DataBindings.Add("DataSource", this, "v_ImageActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
-			_imageGridViewHelper.AllowUserToAddRows = false;
-			_imageGridViewHelper.AllowUserToDeleteRows = false;
-			//_imageGridViewHelper.AllowUserToResizeRows = false;
-			_imageGridViewHelper.MouseEnter += ImageGridViewHelper_MouseEnter;
+			v_ImageActionParameterTable.Columns.Add("Parameter Value");			
 		}
 
 		public override void RunCommand(object sender)
@@ -303,7 +291,7 @@ namespace OpenBots.Commands.Image
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageCapture", this, new Control[] { imageCapture }, editor));
 			RenderedControls.Add(imageCapture);
 
-			_imageActionDropdown = (ComboBox)commandControls.CreateDropdownFor("v_ImageAction", this);
+			_imageActionDropdown = commandControls.CreateDropdownFor("v_ImageAction", this);
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ImageAction", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageAction", this, new Control[] { _imageActionDropdown }, editor));
 			_imageActionDropdown.SelectionChangeCommitted += ImageAction_SelectionChangeCommitted;
@@ -311,6 +299,13 @@ namespace OpenBots.Commands.Image
 
 			_imageParameterControls = new List<Control>();
 			_imageParameterControls.Add(commandControls.CreateDefaultLabelFor("v_ImageActionParameterTable", this));
+
+			_imageGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ImageActionParameterTable", this);
+			_imageGridViewHelper.AllowUserToAddRows = false;
+			_imageGridViewHelper.AllowUserToDeleteRows = false;
+			//_imageGridViewHelper.AllowUserToResizeRows = false;
+			_imageGridViewHelper.MouseEnter += ImageGridViewHelper_MouseEnter;
+
 			_imageParameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageActionParameterTable", this, new Control[] { _imageGridViewHelper }, editor));
 			_imageParameterControls.Add(_imageGridViewHelper);
 			RenderedControls.AddRange(_imageParameterControls);

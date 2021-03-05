@@ -422,10 +422,7 @@ namespace OpenBots.Commands.Input
 			base.Render(editor, commandControls);
 
 			//create search param grid
-			_searchParametersGridViewHelper = new DataGridView();
-			_searchParametersGridViewHelper.Width = 500;
-			_searchParametersGridViewHelper.Height = 140;
-			_searchParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_UIASearchParameters", false, DataSourceUpdateMode.OnPropertyChanged);
+			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_UIASearchParameters", this);
 
 			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
 			enabled.HeaderText = "Enabled";
@@ -440,21 +437,15 @@ namespace OpenBots.Commands.Input
 			DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
 			propertyValue.HeaderText = "Parameter Value";
 			propertyValue.DataPropertyName = "Parameter Value";
+
 			_searchParametersGridViewHelper.Columns.Add(propertyValue);
-			_searchParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_searchParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 			_searchParametersGridViewHelper.AllowUserToAddRows = false;
 			_searchParametersGridViewHelper.AllowUserToDeleteRows = false;
 
 			//create actions
-			_actionParametersGridViewHelper = new DataGridView();
-			_actionParametersGridViewHelper.Size = new Size(400, 150);
-			_actionParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_actionParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_actionParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_UIAActionParameters", false, DataSourceUpdateMode.OnPropertyChanged);
+			_actionParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_UIAActionParameters", this);
 			_actionParametersGridViewHelper.AllowUserToAddRows = false;
 			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
-			_actionParametersGridViewHelper.AllowUserToResizeRows = false;
 			_actionParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 
 			propertyName = new DataGridViewTextBoxColumn();
@@ -466,11 +457,6 @@ namespace OpenBots.Commands.Input
 			propertyValue.HeaderText = "Parameter Value";
 			propertyValue.DataPropertyName = "Parameter Value";
 			_actionParametersGridViewHelper.Columns.Add(propertyValue);
-
-			_actionParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_actionParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_actionParametersGridViewHelper.AllowUserToAddRows = false;
-			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
 
 			//create helper control
 			CommandItemControl helperControl = new CommandItemControl();

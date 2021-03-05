@@ -169,7 +169,7 @@ namespace OpenBots.Commands.ErrorHandling
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_LogicType", this, editor));
 
 			//create controls
-			var controls = commandControls.CreateDataGridViewGroupFor("v_IfConditionsTable", this, editor);
+			var controls = commandControls.CreateDefaultDataGridViewGroupFor("v_IfConditionsTable", this, editor);
 			_ifConditionHelper = controls[2] as DataGridView;
 
 			//handle helper click

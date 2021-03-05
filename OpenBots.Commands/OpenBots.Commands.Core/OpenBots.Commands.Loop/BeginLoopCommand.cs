@@ -87,17 +87,6 @@ namespace OpenBots.Commands.Loop
 			v_ActionParameterTable.Columns.Add("Parameter Name");
 			v_ActionParameterTable.Columns.Add("Parameter Value");
 
-			_loopGridViewHelper = new DataGridView();
-			_loopGridViewHelper.AllowUserToAddRows = true;
-			_loopGridViewHelper.AllowUserToDeleteRows = true;
-			_loopGridViewHelper.Size = new Size(400, 250);
-			_loopGridViewHelper.ColumnHeadersHeight = 30;
-			_loopGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_loopGridViewHelper.DataBindings.Add("DataSource", this, "v_ActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
-			_loopGridViewHelper.AllowUserToAddRows = false;
-			_loopGridViewHelper.AllowUserToDeleteRows = false;
-			_loopGridViewHelper.MouseEnter += LoopGridViewHelper_MouseEnter;
-
 			_recorderControl = new CommandItemControl();
 			_recorderControl.Padding = new Padding(10, 0, 0, 0);
 			_recorderControl.ForeColor = Color.AliceBlue;
@@ -155,8 +144,15 @@ namespace OpenBots.Commands.Loop
 			_parameterControls.Add(commandControls.CreateDefaultLabelFor("v_ActionParameterTable", this));
 			_recorderControl.Click += (sender, e) => ShowLoopElementRecorder(sender, e, editor, commandControls);
 			_parameterControls.Add(_recorderControl);
+
+			_loopGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ActionParameterTable", this);
+			_loopGridViewHelper.AllowUserToAddRows = false;
+			_loopGridViewHelper.AllowUserToDeleteRows = false;
+			_loopGridViewHelper.MouseEnter += LoopGridViewHelper_MouseEnter;
+
 			_parameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ActionParameterTable", this, new Control[] { _loopGridViewHelper }, editor));
 			_parameterControls.Add(_loopGridViewHelper);
+
 			RenderedControls.AddRange(_parameterControls);
 
 			return RenderedControls;

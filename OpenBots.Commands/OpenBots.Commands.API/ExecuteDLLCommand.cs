@@ -68,10 +68,6 @@ namespace OpenBots.Commands.API
 		[CompatibleTypes(new Type[] { typeof(string)} )]
 		public string v_OutputUserVariableName { get; set; }
 
-		[JsonIgnore]
-		[Browsable(false)]
-		private DataGridView _parametersGridViewHelper;
-
 		public ExecuteDLLCommand()
 		{
 			CommandName = "ExecuteDLLCommand";
@@ -82,15 +78,7 @@ namespace OpenBots.Commands.API
 			v_MethodParameters = new DataTable();
 			v_MethodParameters.Columns.Add("Parameter Name");
 			v_MethodParameters.Columns.Add("Parameter Value");
-			v_MethodParameters.TableName = DateTime.Now.ToString("MethodParameterTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
-
-			_parametersGridViewHelper = new DataGridView();
-			_parametersGridViewHelper.AllowUserToAddRows = true;
-			_parametersGridViewHelper.AllowUserToDeleteRows = true;
-			_parametersGridViewHelper.Size = new Size(350, 125);
-			_parametersGridViewHelper.ColumnHeadersHeight = 30;
-			_parametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_parametersGridViewHelper.DataBindings.Add("DataSource", this, "v_MethodParameters", false, DataSourceUpdateMode.OnPropertyChanged);
+			v_MethodParameters.TableName = DateTime.Now.ToString("MethodParameterTable" + DateTime.Now.ToString("MMddyy.hhmmss"));			
 		}
 
 		public override void RunCommand(object sender)
@@ -230,11 +218,7 @@ namespace OpenBots.Commands.API
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ClassName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_MethodName", this, editor));
-
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_MethodParameters", this));
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_MethodParameters", this, new Control[] { _parametersGridViewHelper }, editor));
-			RenderedControls.Add(_parametersGridViewHelper);
-
+			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_MethodParameters", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;

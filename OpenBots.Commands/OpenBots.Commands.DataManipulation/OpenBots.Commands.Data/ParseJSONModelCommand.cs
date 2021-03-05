@@ -41,10 +41,6 @@ namespace OpenBots.Commands.Data
 		[CompatibleTypes(null, true)]
 		public OBDataTable v_ParseObjects { get; set; }
 
-		[JsonIgnore]
-		[Browsable(false)]
-		private DataGridView _parseObjectsGridViewHelper;
-
 		public ParseJSONModelCommand()
 		{
 			CommandName = "ParseJSONModelCommand";
@@ -56,14 +52,6 @@ namespace OpenBots.Commands.Data
 			v_ParseObjects.Columns.Add("Json Selector");
 			v_ParseObjects.Columns.Add("Output Variable");
 			v_ParseObjects.TableName = $"ParseJsonObjectsTable{DateTime.Now.ToString("MMddyyhhmmss")}";
-
-			_parseObjectsGridViewHelper = new DataGridView();
-			_parseObjectsGridViewHelper.AllowUserToAddRows = true;
-			_parseObjectsGridViewHelper.AllowUserToDeleteRows = true;
-			_parseObjectsGridViewHelper.Size = new Size(400, 250);
-			_parseObjectsGridViewHelper.ColumnHeadersHeight = 30;
-			_parseObjectsGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_parseObjectsGridViewHelper.DataBindings.Add("DataSource", this, "v_ParseObjects", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		public override void RunCommand(object sender)
@@ -119,11 +107,8 @@ namespace OpenBots.Commands.Data
 
 			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_JsonObject", this, editor));
-
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ParseObjects", this));
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ParseObjects", this, new[] { _parseObjectsGridViewHelper }, editor));
-			RenderedControls.Add(_parseObjectsGridViewHelper);
-
+			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_ParseObjects", this, editor));
+			
 			return RenderedControls;
 		}
 
