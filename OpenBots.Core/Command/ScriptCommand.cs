@@ -7,6 +7,7 @@ using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -41,6 +42,7 @@ namespace OpenBots.Core.Command
 		[Remarks("")]
 		public bool v_IsPrivate { get; set; }
 
+		[Required]
 		[DisplayName("Error Handling")]
 		[Description("Optional field for how to handle errors encountered.")]
 		[SampleUsage("")]
@@ -51,6 +53,7 @@ namespace OpenBots.Core.Command
 		[Description("Optional field to enter a custom comment which could potentially describe this command or the need for this command, if required.")]
 		[SampleUsage("I am using this command to ...")]
 		[Remarks("Optional")]
+		[CompatibleTypes(null, true)]
 		public string v_Comment { get; set; }
 
 		[JsonIgnore]

@@ -403,6 +403,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UI\CustomControls\CommandControls.cs" />
+    <Compile Include="UI\CustomControls\CommandControlValidationContext.cs" />
     <Compile Include="UI\CustomControls\CustomUIControls\UIListBox.cs">
       <SubType>UserControl</SubType>
     </Compile>

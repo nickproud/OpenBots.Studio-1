@@ -22,13 +22,16 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Engine;
 using OpenBots.UI.CustomControls;
+using OpenBots.UI.CustomControls.CustomUIControls;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms
@@ -279,7 +282,70 @@ namespace OpenBots.UI.Forms
                     }
                 }
             }
-            DialogResult = DialogResult.OK;
+
+            if (ValidateInputs())
+                DialogResult = DialogResult.OK;
+        }
+
+        private bool ValidateInputs()
+        {
+            bool isAllValid = true;
+            AutomationEngineInstance testEngine = new AutomationEngineInstance(ScriptEngineContext);
+            CommandControlValidationContext validationContext;
+            string validatingText;
+            dynamic currentControl;
+
+            foreach (Control ctrl in flw_InputVariables.Controls)
+            {
+                //if (ctrl is UIDataGridView)
+                //{
+                //    currentControl = (UIDataGridView)ctrl;
+                //    currentControl.BorderColor = Color.Transparent;
+                //}
+                if (ctrl is UITextBox)
+                    currentControl = (UITextBox)ctrl;
+                else if (ctrl is UIComboBox)
+                    currentControl = (UIComboBox)ctrl;
+                else
+                    continue;
+
+                currentControl.BorderColor = Color.Transparent;
+                validationContext = (CommandControlValidationContext)currentControl.Tag;
+                validatingText = currentControl.Text;
+
+                if (string.IsNullOrEmpty(currentControl.Text) && validationContext.IsRequired == true)
+                {
+                    currentControl.BorderColor = Color.Red;
+                    isAllValid = false;
+                    continue;
+                }
+
+                var varArgMatches = Regex.Matches(validatingText, @"\{\w+\}");
+
+                if (varArgMatches.Count == 0 && validationContext.IsStringOrPrimitive)
+                    continue;
+                else if (varArgMatches.Count == 0 && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
+                {
+                    currentControl.BorderColor = Color.Red;
+                    isAllValid = false;
+                    continue;
+                }
+
+                foreach (var match in varArgMatches)
+                {
+                    Type varArgType = match.ToString().GetVarArgType(testEngine);
+                    if (!(validationContext.IsStringOrPrimitive && (varArgType == typeof(string) || varArgType.IsPrimitive)))
+                    {
+                        if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType))))
+                        {
+                            currentControl.BorderColor = Color.Red;
+                            isAllValid = false;
+                            continue;
+                        }
+                    }
+                }
+            }
+            return isAllValid;
         }
 
         private void uiBtnCancel_Click(object sender, EventArgs e)

@@ -18,7 +18,7 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
         static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
         [DllImport("user32.dll")]
         static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprc, IntPtr hrgn, uint flags);
-        Color borderColor = Color.Black;
+        Color borderColor = Color.Transparent;
 
         public Color BorderColor
         {
@@ -33,7 +33,7 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
-            if ((m.Msg == WM_NCPAINT || m.Msg == WM_PAINT) && BorderColor != Color.Transparent && BorderStyle == BorderStyle.Fixed3D)
+            if ((m.Msg == WM_NCPAINT || m.Msg == WM_PAINT) && BorderStyle == BorderStyle.Fixed3D)
             {
                 var hdc = GetWindowDC(this.Handle);
                 using (var g = Graphics.FromHdcInternal(hdc))

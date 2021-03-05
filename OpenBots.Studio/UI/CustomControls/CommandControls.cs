@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using IContainer = Autofac.IContainer;
 using OpenBots.Core.Script;
 using OpenBots.UI.CustomControls.CustomUIControls;
+using System.ComponentModel.DataAnnotations;
 
 namespace OpenBots.UI.CustomControls
 {
@@ -181,10 +182,15 @@ namespace OpenBots.UI.CustomControls
         public void CreateDefaultToolTipFor(string parameterName, ScriptCommand parent, Control label)
         {
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
+            var requiredAttributesAssigned = variableProperties.GetCustomAttributes(typeof(RequiredAttribute), true);
             var inputSpecificationAttributesAssigned = variableProperties.GetCustomAttributes(typeof(DescriptionAttribute), true);
             var sampleUsageAttributesAssigned = variableProperties.GetCustomAttributes(typeof(SampleUsage), true);
             var remarksAttributesAssigned = variableProperties.GetCustomAttributes(typeof(Remarks), true);
             var compatibleTypesAttributesAssigned = variableProperties.GetCustomAttributes(typeof(CompatibleTypes), true);
+
+            bool isRequired = false;
+            if (requiredAttributesAssigned.Length > 0)
+                isRequired = true;
 
             string toolTipText = "";
             if (inputSpecificationAttributesAssigned.Length > 0)
@@ -223,7 +229,11 @@ namespace OpenBots.UI.CustomControls
             inputToolTip.ToolTipIcon = ToolTipIcon.Info;
             inputToolTip.IsBalloon = true;
             inputToolTip.ShowAlways = true;
-            inputToolTip.ToolTipTitle = label.Text;
+
+            if (isRequired)
+                label.Text = label.Text + "*";
+
+            inputToolTip.ToolTipTitle = label.Text;         
             inputToolTip.AutoPopDelay = 15000;
             inputToolTip.SetToolTip(label, toolTipText);
         }
@@ -235,6 +245,7 @@ namespace OpenBots.UI.CustomControls
             inputBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             inputBox.Height = height;
             inputBox.Width = width;
+            inputBox.Tag = new CommandControlValidationContext(parameterName, parent);
 
             if (height > 30)
             {
@@ -323,6 +334,7 @@ namespace OpenBots.UI.CustomControls
             dropdownBox.Height = 30;
             dropdownBox.Width = 300;
             dropdownBox.Name = parameterName;
+            dropdownBox.Tag = new CommandControlValidationContext(parameterName, parent);
 
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
             var propertyAttributesAssigned = variableProperties.GetCustomAttributes(typeof(PropertyUISelectionOption), true);
@@ -365,12 +377,13 @@ namespace OpenBots.UI.CustomControls
 
         public ComboBox CreateStandardComboboxFor(string parameterName, ScriptCommand parent)
         {
-            var standardComboBox = new ComboBox();
+            var standardComboBox = new UIComboBox();
             standardComboBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
             standardComboBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             standardComboBox.Height = 30;
             standardComboBox.Width = 300;
             standardComboBox.Name = parameterName;
+            standardComboBox.Tag = new CommandControlValidationContext(parameterName, parent);
             standardComboBox.Click += StandardComboBox_Click;
             standardComboBox.KeyDown += StandardComboBox_KeyDown;
             standardComboBox.KeyPress += StandardComboBox_KeyPress;
