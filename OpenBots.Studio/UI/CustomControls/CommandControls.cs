@@ -130,7 +130,7 @@ namespace OpenBots.UI.CustomControls
         {
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
-            var gridview = CreateDataGridView(parent, parameterName);
+            var gridview = CreateDataGridView(parameterName, parent);
             var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { gridview }, editor);
 
             controlList.Add(label);
@@ -452,7 +452,7 @@ namespace OpenBots.UI.CustomControls
             ((HandledMouseEventArgs)e).Handled = true;
         }
 
-        public DataGridView CreateDataGridView(object sourceCommand, string dataSourceName)
+        public DataGridView CreateDataGridView(string parameterName, ScriptCommand parent)
         {
             var gridView = new UIDataGridView();
             gridView.AllowUserToAddRows = true;
@@ -460,9 +460,10 @@ namespace OpenBots.UI.CustomControls
             gridView.Size = new Size(400, 250);
             gridView.ColumnHeadersHeight = 30;
             gridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            gridView.DataBindings.Add("DataSource", sourceCommand, dataSourceName, false, DataSourceUpdateMode.OnPropertyChanged);
+            gridView.DataBindings.Add("DataSource", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             gridView.AllowUserToResizeRows = false;
             gridView.BorderStyle = BorderStyle.Fixed3D;
+            gridView.Tag = new CommandControlValidationContext(parameterName, parent);
             return gridView;
         }
 

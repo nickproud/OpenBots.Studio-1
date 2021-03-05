@@ -297,51 +297,81 @@ namespace OpenBots.UI.Forms
 
             foreach (Control ctrl in flw_InputVariables.Controls)
             {
-                //if (ctrl is UIDataGridView)
-                //{
-                //    currentControl = (UIDataGridView)ctrl;
-                //    currentControl.BorderColor = Color.Transparent;
-                //}
-                if (ctrl is UITextBox)
-                    currentControl = (UITextBox)ctrl;
-                else if (ctrl is UIComboBox)
-                    currentControl = (UIComboBox)ctrl;
-                else
-                    continue;
-
-                currentControl.BorderColor = Color.Transparent;
-                validationContext = (CommandControlValidationContext)currentControl.Tag;
-                validatingText = currentControl.Text;
-
-                if (string.IsNullOrEmpty(currentControl.Text) && validationContext.IsRequired == true)
+                if (ctrl.Visible)
                 {
-                    currentControl.BorderColor = Color.Red;
-                    isAllValid = false;
-                    continue;
-                }
-
-                var varArgMatches = Regex.Matches(validatingText, @"\{\w+\}");
-
-                if (varArgMatches.Count == 0 && validationContext.IsStringOrPrimitive)
-                    continue;
-                else if (varArgMatches.Count == 0 && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
-                {
-                    currentControl.BorderColor = Color.Red;
-                    isAllValid = false;
-                    continue;
-                }
-
-                foreach (var match in varArgMatches)
-                {
-                    Type varArgType = match.ToString().GetVarArgType(testEngine);
-                    if (!(validationContext.IsStringOrPrimitive && (varArgType == typeof(string) || varArgType.IsPrimitive)))
+                    if (ctrl is UIDataGridView)
                     {
-                        if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType))))
+                        currentControl = (UIDataGridView)ctrl;
+                        currentControl.BorderColor = Color.Transparent;
+
+                        foreach(DataGridViewRow row in currentControl.Rows)
                         {
-                            currentControl.BorderColor = Color.Red;
-                            isAllValid = false;
-                            continue;
+                            if (!row.IsNewRow)
+                            {
+                                foreach (DataGridViewCell cell in row.Cells)
+                                {
+                                    isAllValid = ValidateInput(isAllValid, cell.Value?.ToString(), currentControl, testEngine);
+                                    if (!isAllValid)
+                                        break;
+                                }
+                            }                          
                         }
+                    }
+                    if (ctrl is UITextBox)
+                    {
+                        currentControl = (UITextBox)ctrl;
+
+                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                    }
+                    else if (ctrl is UIComboBox)
+                    {
+                        currentControl = (UIComboBox)ctrl;
+                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                    }
+                    else
+                        continue;
+                }              
+            }
+            return isAllValid;
+        }
+
+        private bool ValidateInput(bool isAllValid, string validatingText, dynamic currentControl, AutomationEngineInstance testEngine)
+        {
+            currentControl.BorderColor = Color.Transparent;
+            var validationContext = (CommandControlValidationContext)currentControl.Tag;
+
+            if (string.IsNullOrEmpty(validatingText) && validationContext.IsRequired == true)
+            {
+                currentControl.BorderColor = Color.Red;
+                isAllValid = false;
+                return isAllValid;
+            }
+
+            //TODO: Create an Instance tab with assigned Instance Types. For now, only requirement is some set value
+            if (validationContext.IsInstance)
+                return isAllValid;
+
+            var varArgMatches = Regex.Matches(validatingText, @"\{\w+\}");
+
+            if (varArgMatches.Count == 0 && validationContext.IsStringOrPrimitive)
+                return isAllValid;
+            else if (varArgMatches.Count == 0 && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
+            {
+                currentControl.BorderColor = Color.Red;
+                isAllValid = false;
+                return isAllValid;
+            }
+
+            foreach (var match in varArgMatches)
+            {
+                Type varArgType = match.ToString().GetVarArgType(testEngine);
+                if (!(validationContext.IsStringOrPrimitive && (varArgType == typeof(string) || varArgType.IsPrimitive)))
+                {
+                    if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType))))
+                    {
+                        currentControl.BorderColor = Color.Red;
+                        isAllValid = false;
+                        return isAllValid;
                     }
                 }
             }

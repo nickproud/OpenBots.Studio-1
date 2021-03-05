@@ -12,6 +12,7 @@ namespace OpenBots.UI.CustomControls
         public bool IsStringOrPrimitive { get; set; }
         public bool IsRequired { get; set; }
         public bool IsDropDown { get; set; }
+        public bool IsInstance { get; set; }
         public string ParameterName { get; set; }
         public ScriptCommand Command { get; set; }
 
@@ -31,14 +32,13 @@ namespace OpenBots.UI.CustomControls
                 IsStringOrPrimitive = attribute.IsStringOrPrimitive;
             }
             else
-            {
                 IsDropDown = true;
-            }
 
             if (requiredAttributesAssigned.Length > 0)
-            {
                 IsRequired = true;
-            }
+
+            if (parameterName == "v_InstanceName")
+                IsInstance = true;
         }
     }
 }
