@@ -61,10 +61,12 @@ namespace OpenBots.Commands.Database
 		public DataTable v_QueryParameters { get; set; }
 
 		[Required]
-		[DisplayName("Query Timeout (seconds)")]
-		[Description("Enter the wait time before terminating an attempt to execute a query and generate an error.")]
-		[SampleUsage("30 || {vTimeout}")]
+		[DisplayName("Timeout (Seconds)")]
+		[Description("Specify how many seconds to wait before throwing an exception.")]
+		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueryTimeout { get; set; }
 
 		[Required]
