@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using OpenBots.Commands.UIAutomation.Forms;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
@@ -92,18 +93,9 @@ namespace OpenBots.Commands.Input
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-
-			if (engine.AutomationEngineContext.ScriptEngine == null)
-			{
-				engine.ReportProgress("UserInput Supported With UI Only");
-				MessageBox.Show("UserInput Supported With UI Only", "UserInput Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				return;
-			}
-
 			var header = v_InputHeader.ConvertUserVariableToString(engine);
 			var directions = v_InputDirections.ConvertUserVariableToString(engine);
 			
-
 			//translate variables for each label
 			foreach (DataRow rw in v_UserInputConfig.Rows)
 			{
@@ -119,14 +111,36 @@ namespace OpenBots.Commands.Input
 				}
 			}
 
-			//invoke ui for data collection
-			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
-			{
-				//get input from user
-			  var userInputs = engine.AutomationEngineContext.ScriptEngine.ShowInput(header, directions, v_UserInputConfig);
+			//get input from user
+			List<object> userInputs = new List<object>();
 
-				//check if user provided input
-				if (userInputs != null)
+			var inputForm = new frmUserInput(header, directions, v_UserInputConfig);
+
+			var dialogResult = inputForm.ShowDialog();
+
+			if (dialogResult == DialogResult.OK)
+			{
+				foreach (var ctrl in inputForm.InputControls)
+				{
+					if (ctrl is CheckBox)
+					{
+						var checkboxCtrl = (CheckBox)ctrl;
+						userInputs.Add(checkboxCtrl.Checked);
+					}
+					else
+						userInputs.Add(ctrl.Text);
+				}
+				inputForm.Dispose();
+
+			}
+			else
+			{
+				inputForm.Dispose();
+				userInputs = null;
+			}
+
+			//check if user provided input
+			if (userInputs != null)
 				{
 					//loop through each input and assign
 					for (int i = 0; i < userInputs.Count; i++)
@@ -139,7 +153,6 @@ namespace OpenBots.Commands.Input
 							userInputs[i].StoreInUserVariable(engine, targetVariable, nameof(v_UserInputConfig), this);
 					}
 				}
-			}));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

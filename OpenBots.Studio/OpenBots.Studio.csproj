@@ -552,12 +552,6 @@
     <Compile Include="UI\Forms\Supplement Forms\frmUpdating.Designer.cs">
       <DependentUpon>frmUpdating.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Forms\Supplement Forms\frmUserInput.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Forms\Supplement Forms\frmUserInput.Designer.cs">
-      <DependentUpon>frmUserInput.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\Forms\Supplement Forms\frmWebElementRecorderSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -863,9 +857,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmUpdating.resx">
       <DependentUpon>frmUpdating.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Forms\Supplement Forms\frmUserInput.resx">
-      <DependentUpon>frmUserInput.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmWebElementRecorderSettings.resx">
       <DependentUpon>frmWebElementRecorderSettings.cs</DependentUpon>

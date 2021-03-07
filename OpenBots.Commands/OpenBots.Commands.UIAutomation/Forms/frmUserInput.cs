@@ -5,7 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace OpenBots.UI.Forms.Supplement_Forms
+namespace OpenBots.Commands.UIAutomation.Forms
 {
     public partial class frmUserInput : UIForm
     {

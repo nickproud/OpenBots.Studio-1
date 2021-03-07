@@ -679,46 +679,6 @@ namespace OpenBots.UI.Forms
             }
         }
 
-
-        public delegate List<string> ShowInputDelegate(string header, string directions, DataTable inputTable);
-        public List<string> ShowInput(string header, string directions, DataTable inputTable)
-        {
-            if (InvokeRequired)
-            {
-                var d = new ShowInputDelegate(ShowInput);
-                Invoke(d, new object[] { header, directions, inputTable });
-                return null;
-            }
-            else
-            {
-                var inputForm = new frmUserInput(header, directions, inputTable);
-
-                var dialogResult = inputForm.ShowDialog();
-
-                if (dialogResult == DialogResult.OK)
-                {
-                    var responses = new List<string>();
-                    foreach (var ctrl in inputForm.InputControls)
-                    {
-                        if (ctrl is CheckBox)
-                        {
-                            var checkboxCtrl = (CheckBox)ctrl;
-                            responses.Add(checkboxCtrl.Checked.ToString());
-                        }
-                        else
-                            responses.Add(ctrl.Text);
-                    }
-                    inputForm.Dispose();
-                    return responses;
-                }
-                else
-                {
-                    inputForm.Dispose();
-                    return null;
-                }
-            }
-        }
-
         public delegate void UpdateLineNumberDelegate(int lineNumber);
         public void UpdateLineNumber(int lineNumber)
         {

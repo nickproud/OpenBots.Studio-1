@@ -1,4 +1,4 @@
-﻿namespace OpenBots.UI.Forms.Supplement_Forms
+﻿namespace OpenBots.Commands.UIAutomation.Forms
 {
     partial class frmUserInput
     {
