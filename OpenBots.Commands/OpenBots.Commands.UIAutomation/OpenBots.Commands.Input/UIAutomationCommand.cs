@@ -557,8 +557,11 @@ namespace OpenBots.Commands.Input
 			v_UIASearchParameters.Rows.Clear();
 
 			foreach (DataRow rw in newElementRecorder.SearchParameters.Rows)
-				v_UIASearchParameters.ImportRow(rw);
-
+            {
+				if (!string.IsNullOrEmpty(rw.ItemArray[2]?.ToString()))
+					v_UIASearchParameters.ImportRow(rw);
+			}
+				
 			_searchParametersGridViewHelper.DataSource = v_UIASearchParameters;
 			_searchParametersGridViewHelper.Refresh();
 		}

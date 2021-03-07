@@ -302,6 +302,14 @@ namespace OpenBots.UI.Forms
                     {
                         currentControl = (UIDataGridView)ctrl;
                         currentControl.BorderColor = Color.Transparent;
+                        var validationContext = (CommandControlValidationContext)currentControl.Tag;
+
+                        if (currentControl.Rows.Count == 0 && validationContext.IsRequired)
+                        {
+                            currentControl.BorderColor = Color.Red;
+                            isAllValid = false;
+                            continue;
+                        }
 
                         foreach (DataGridViewRow row in currentControl.Rows)
                         {
