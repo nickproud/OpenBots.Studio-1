@@ -1,6 +1,5 @@
 ﻿using Microsoft.Office.Interop.Outlook;
 using MimeKit;
-using Open3270.TN3270;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -115,7 +114,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                     case "System.Drawing.Bitmap":
                         return ConvertBitmapToString((Bitmap)obj);
                     case "Open3270.TN3270.XMLScreenField":
-                        return ConvertXMLScreenFieldToString((XMLScreenField)obj);
+                        return ConvertXMLScreenFieldToString(obj);
                     case string a when a.Contains("System.Collections.Generic.List`1"):
                         return ConvertListToString(obj);
                     case string a when a.Contains("System.Collections.Generic.Dictionary`2"):
@@ -265,7 +264,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return stringBuilder.ToString();
         }
 
-        public static string ConvertXMLScreenFieldToString(XMLScreenField field, int index = -1)
+        public static string ConvertXMLScreenFieldToString(dynamic field, int index = -1)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append($"[Row: {field.Location.top}, Col: {field.Location.left}, \n" +
@@ -350,9 +349,9 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 else
                     stringBuilder.Length = stringBuilder.Length - 3;
             }
-            else if (type == typeof(XMLScreenField))
+            else if (type.FullName == "Open3270.TN3270.XMLScreenField")
             {
-                List<XMLScreenField> fieldList = ((List<XMLScreenField>)list).ToList();
+                List<dynamic> fieldList = ((List<dynamic>)list).ToList();
 
                 stringBuilder.Append($"Count({fieldList.Count}) \n[");
 

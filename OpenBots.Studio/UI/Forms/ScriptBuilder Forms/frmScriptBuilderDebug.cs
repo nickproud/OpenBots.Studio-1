@@ -124,10 +124,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     if (foundVariables.Length == 0)
                     {
                         string type = variable.VariableType.FullName;
-                        if (variable.VariableValue != null && StringMethods.ConvertObjectToString(variable.VariableValue).Length > 40000)
-                            variableValues.Rows.Add(variable.VariableName, type, StringMethods.ConvertObjectToString(variable.VariableValue).Substring(0, 40000));
+                        if (variable.VariableValue != null && StringMethods.ConvertObjectToString(variable.VariableValue, variable.VariableType).Length > 40000)
+                            variableValues.Rows.Add(variable.VariableName, type, StringMethods.ConvertObjectToString(variable.VariableValue, variable.VariableType).Substring(0, 40000));
                         else
-                            variableValues.Rows.Add(variable.VariableName, type, StringMethods.ConvertObjectToString(variable.VariableValue));                     
+                            variableValues.Rows.Add(variable.VariableName, type, StringMethods.ConvertObjectToString(variable.VariableValue, variable.VariableType));                     
                     }
                 }
 

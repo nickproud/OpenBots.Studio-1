@@ -160,7 +160,7 @@ namespace OpenBots.Commands.Terminal
 			var terminalForm = new frmTerminal(host, port, terminalType, useSsl);
 			terminalForm.Show();
 
-			if (!terminalForm.TN3270.IsConnected)
+			if (terminalForm.TN3270 == null && !terminalForm.TN3270.IsConnected)
 				throw new Exception($"Unable to connect to Host: '{host}', Port: '{port}'");
 
 			_emulator = terminalForm.OpenEmulator;
