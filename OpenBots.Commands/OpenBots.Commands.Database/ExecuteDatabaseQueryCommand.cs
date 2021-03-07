@@ -61,6 +61,13 @@ namespace OpenBots.Commands.Database
 		public DataTable v_QueryParameters { get; set; }
 
 		[Required]
+		[DisplayName("Query Timeout (seconds)")]
+		[Description("Enter the wait time before terminating an attempt to execute a query and generate an error.")]
+		[SampleUsage("30 || {vTimeout}")]
+		[Remarks("")]
+		public string v_QueryTimeout { get; set; }
+
+		[Required]
 		[Editable(false)]
 		[DisplayName("Output Dataset Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
@@ -96,6 +103,7 @@ namespace OpenBots.Commands.Database
 			v_QueryParameters.Columns.Add("Parameter Type");
 
 			v_QueryType = "Return Dataset";
+			v_QueryTimeout = "30";
 		}
 
 		public override void RunCommand(object sender)
@@ -103,12 +111,14 @@ namespace OpenBots.Commands.Database
 			//create engine, instance, query
 			var engine = (IAutomationEngineInstance)sender;
 			var query = v_Query.ConvertUserVariableToString(engine);
+			var vQueryTimeout = v_QueryTimeout.ConvertUserVariableToString(engine);
 
 			//define connection
 			var databaseConnection = (OleDbConnection)v_InstanceName.GetAppInstance(engine);
 
 			//define commad
 			var oleCommand = new OleDbCommand(query, databaseConnection);
+			oleCommand.CommandTimeout = Convert.ToInt32(vQueryTimeout);
 
 			//add parameters
 			foreach (DataRow rw in v_QueryParameters.Rows)
@@ -185,7 +195,7 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Close();
 				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
-			else if(v_QueryType == "Execute Stored Procedure")
+			else if (v_QueryType == "Execute Stored Procedure")
 			{
 				oleCommand.CommandType = CommandType.StoredProcedure;
 				databaseConnection.Open();
@@ -249,6 +259,7 @@ namespace OpenBots.Commands.Database
 			_queryParametersControls.Add(_queryParametersGridView);
 			RenderedControls.AddRange(_queryParametersControls);
 
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueryTimeout", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 			return RenderedControls;
 		}
