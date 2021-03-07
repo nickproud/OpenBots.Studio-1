@@ -52,7 +52,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             CommandName = "IECreateBrowserCommand";
             SelectionName = "Create IE Browser";           
-            CommandEnabled = false;
+            CommandEnabled = true;
             CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";

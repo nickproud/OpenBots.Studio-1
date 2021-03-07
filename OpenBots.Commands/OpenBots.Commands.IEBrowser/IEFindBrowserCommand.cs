@@ -46,7 +46,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             CommandName = "IEFindBrowserCommand";
             SelectionName = "Find IE Browser";          
-            CommandEnabled = false;
+            CommandEnabled = true;
             CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";

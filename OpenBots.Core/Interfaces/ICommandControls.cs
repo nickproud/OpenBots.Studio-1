@@ -2,7 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
-using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.UI.Controls;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
@@ -18,6 +18,7 @@ namespace OpenBots.Core.Infrastructure
         List<Control> CreateDefaultDropdownGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         List<Control> CreateDefaultDataGridViewGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         DataGridView CreateDefaultDataGridViewFor(string parameterName, ScriptCommand parent);
+        PictureBox CreateDefaultPictureBoxFor(string parameterName, ScriptCommand parent);
         List<Control> CreateDefaultWindowControlGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         Label CreateDefaultLabelFor(string parameterName, ScriptCommand parent);
         void CreateDefaultToolTipFor(string parameterName, ScriptCommand parent, Control label);

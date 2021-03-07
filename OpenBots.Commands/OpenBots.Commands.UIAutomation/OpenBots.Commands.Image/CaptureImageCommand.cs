@@ -63,10 +63,8 @@ namespace OpenBots.Commands.Image
 		{
 			base.Render(editor, commandControls);
 
-			UIPictureBox imageCapture = new UIPictureBox();
-			imageCapture.Width = 200;
-			imageCapture.Height = 200;
-			imageCapture.DataBindings.Add("EncodedImage", this, "v_ImageCapture", false, DataSourceUpdateMode.OnPropertyChanged);
+			var imageCapture = commandControls.CreateDefaultPictureBoxFor("v_ImageCapture", this);
+			
 
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ImageCapture", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageCapture", this, new Control[] { imageCapture }, editor));

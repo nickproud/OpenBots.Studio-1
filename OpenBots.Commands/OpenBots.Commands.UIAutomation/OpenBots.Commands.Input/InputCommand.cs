@@ -40,15 +40,14 @@ namespace OpenBots.Commands.Input
 		[CompatibleTypes(null, true)]
 		public string v_InputDirections { get; set; }
 
-		[Required]
-		[DisplayName("Input Parameters")]
+		[DisplayName("Input Parameters (Optional)")]
 		[Description("Define the required input parameters.")]
 		[SampleUsage("[TextBox | Name | 500,100 | John | {vName}]\n" +
 					 "[CheckBox | Developer | 500,30 | True | {vDeveloper}]\n" +
 					 "[ComboBox | Gender | 500,30 | Male,Female,Other | {vGender}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) }, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(bool) }, true)]
 		public DataTable v_UserInputConfig { get; set; }
 
 		[JsonIgnore]
@@ -109,7 +108,7 @@ namespace OpenBots.Commands.Input
 			foreach (DataRow rw in v_UserInputConfig.Rows)
 			{
 				rw["DefaultValue"] = rw["DefaultValue"].ToString().ConvertUserVariableToString(engine);
-				var targetVariable = rw["StoreInVariable"] as string;
+				string targetVariable = rw["StoreInVariable"].ToString();
 
 				if (string.IsNullOrEmpty(targetVariable))
 				{
@@ -133,11 +132,11 @@ namespace OpenBots.Commands.Input
 					for (int i = 0; i < userInputs.Count; i++)
 					{                       
 						//get target variable
-						var targetVariable = v_UserInputConfig.Rows[i]["StoreInVariable"] as string;
+						string targetVariable = v_UserInputConfig.Rows[i]["StoreInVariable"].ToString();
 
 						//store user data in variable
 						if (!string.IsNullOrEmpty(targetVariable))
-							(userInputs[i]).StoreInUserVariable(engine, targetVariable, typeof(string));
+							userInputs[i].StoreInUserVariable(engine, targetVariable, nameof(v_UserInputConfig), this);
 					}
 				}
 			}));

@@ -277,10 +277,7 @@
     <Compile Include="UI\Controls\CommandItemControl.Designer.cs">
       <DependentUpon>CommandItemControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Controls\CustomControls\AutomationCommand.cs" />
-    <Compile Include="UI\Controls\UIPictureBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="UI\Controls\AutomationCommand.cs" />
     <Compile Include="UI\Controls\UIPictureButton.cs">
       <SubType>Component</SubType>
     </Compile>

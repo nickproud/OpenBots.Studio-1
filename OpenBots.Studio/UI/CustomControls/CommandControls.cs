@@ -1,25 +1,26 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Properties;
+using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using OpenBots.Studio.Utilities;
+using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -29,9 +30,6 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using IContainer = Autofac.IContainer;
-using OpenBots.Core.Script;
-using OpenBots.UI.CustomControls.CustomUIControls;
-using System.ComponentModel.DataAnnotations;
 
 namespace OpenBots.UI.CustomControls
 {
@@ -465,6 +463,17 @@ namespace OpenBots.UI.CustomControls
             gridView.BorderStyle = BorderStyle.Fixed3D;
             gridView.Tag = new CommandControlValidationContext(parameterName, parent);
             return gridView;
+        }
+
+        public PictureBox CreateDefaultPictureBoxFor(string parameterName, ScriptCommand parent)
+        {
+            var pictureBox =  new UIPictureBox();
+            pictureBox.Width = 200;
+            pictureBox.Height = 200;
+            pictureBox.BorderStyle = BorderStyle.Fixed3D;
+            pictureBox.DataBindings.Add("EncodedImage", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
+            pictureBox.Tag = new CommandControlValidationContext(parameterName, parent);
+            return pictureBox;
         }
 
 

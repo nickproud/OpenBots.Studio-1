@@ -40,7 +40,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             CommandName = "IENavigateToURLCommand";
             SelectionName = "IE Navigate to URL";           
-            CommandEnabled = false;
+            CommandEnabled = true;
             CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";

@@ -5,8 +5,21 @@ using System.Windows.Forms;
 
 namespace OpenBots.UI.CustomControls.CustomUIControls
 {
-    public partial class UIComboBox : ComboBox
+    public class UIPictureBox : PictureBox
     {
+        private string _encodedimage;
+        public string EncodedImage
+        {
+            get
+            {
+                return _encodedimage;
+            }
+            set
+            {
+                _encodedimage = value;
+            }
+        }
+
         const int WM_NCPAINT = 0x85;
         const int WM_PAINT = 0xf;
         const uint RDW_INVALIDATE = 0x1;
@@ -33,13 +46,13 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
-            if (m.Msg == WM_NCPAINT || m.Msg == WM_PAINT)
+            if ((m.Msg == WM_NCPAINT || m.Msg == WM_PAINT) && BorderStyle == BorderStyle.Fixed3D)
             {
-                var hdc = GetWindowDC(this.Handle);
+                var hdc = GetWindowDC(Handle);
                 using (var g = Graphics.FromHdcInternal(hdc))
                 using (var p = new Pen(BorderColor, 5))
                     g.DrawRectangle(p, new Rectangle(0, 0, Width - 1, Height - 1));
-                ReleaseDC(this.Handle, hdc);
+                ReleaseDC(Handle, hdc);
             }
         }
         protected override void OnSizeChanged(EventArgs e)

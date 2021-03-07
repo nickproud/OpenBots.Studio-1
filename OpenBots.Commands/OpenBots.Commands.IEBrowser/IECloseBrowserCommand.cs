@@ -30,7 +30,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             CommandName = "IECloseBrowserCommand";
             SelectionName = "Close IE Browser";
-            CommandEnabled = false;
+            CommandEnabled = true;
             CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";

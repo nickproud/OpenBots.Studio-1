@@ -44,8 +44,7 @@ namespace OpenBots.Commands.Task
 		[Remarks("If selected, arguments will be automatically generated from the Task's *Argument Manager*.")]
 		public bool v_AssignArguments { get; set; }
 
-		[Required]
-		[DisplayName("Task Arguments")]
+		[DisplayName("Task Arguments (Optional)")]
 		[Description("Enter an ArgumentValue for each input argument.")]
 		[SampleUsage("Hello World || {vArgumentValue}")]
 		[Remarks("For inputs, set ArgumentDirection to *In*. For outputs, set ArgumentDirection to *Out*. " +

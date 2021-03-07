@@ -66,6 +66,7 @@ namespace OpenBots.Commands.Data
 			SelectionName = "Text Extraction";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
+			v_TextExtractionType = "Extract All After Text";
 
 			//define parameter table
 			v_TextExtractionTable = new OBDataTable
@@ -130,7 +131,7 @@ namespace OpenBots.Commands.Data
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_TextExtractionType", this));
 			var selectionControl = commandControls.CreateDropdownFor("v_TextExtractionType", this);
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_TextExtractionType", this, new Control[] { selectionControl }, editor));
-			selectionControl.SelectionChangeCommitted += TextExtraction_SelectionChangeCommitted;
+			selectionControl.SelectedIndexChanged += TextExtraction_SelectedIndexChanged;
 			RenderedControls.Add(selectionControl);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_TextExtractionTable", this, editor));
@@ -144,7 +145,7 @@ namespace OpenBots.Commands.Data
 			return base.GetDisplayValue() + $" [Extract Text From '{v_InputText}' - Store Text in '{v_OutputUserVariableName}']";
 		}
 
-		private void TextExtraction_SelectionChangeCommitted(object sender, EventArgs e)
+		private void TextExtraction_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			ComboBox extractionAction = (ComboBox)sender;
 			v_TextExtractionTable.Rows.Clear();

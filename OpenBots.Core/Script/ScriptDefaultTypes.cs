@@ -17,6 +17,9 @@ namespace OpenBots.Core.Script
             { "More Options...", typeof(MoreOptions) },
             { typeof(string).ToString(), typeof(string) },
             { typeof(int).ToString(), typeof(int) },
+            { typeof(bool).ToString(), typeof(bool) },
+            { typeof(List<>).ToString(), typeof(List<>) },
+            { typeof(Dictionary<,>).ToString(), typeof(Dictionary<,>) },
             { typeof(DataTable).ToString(), typeof(DataTable) },
             { typeof(DataRow).ToString(), typeof(DataRow) }         
         };

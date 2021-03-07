@@ -35,10 +35,10 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Parameters")]
 		[Description("Specify JSON Selector(s) (JPath) and Output Variable(s).")]
-		[SampleUsage("[$.rect.length | vOutputList] || [{Selector} | {vOutputList}]")]
+		[SampleUsage("[$.rect.length | {vOutputList}] || [{Selector} | {vOutputList}]")]
 		[Remarks("'$.rect.length' is a JSON Selector to query on an inputted JSON Object and store its results in {vOutputList}.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(List<>) }, true)]
 		public OBDataTable v_ParseObjects { get; set; }
 
 		public ParseJSONModelCommand()
@@ -93,11 +93,9 @@ namespace OpenBots.Commands.Data
 
 				//add results to result list since list<string> is supported
 				foreach (var result in searchResults)
-				{
 					resultList.Add(result.ToString());
-				}
 
-				resultList.StoreInUserVariable(engine, targetVariableName, typeof(List<string>));               
+				resultList.StoreInUserVariable(engine, targetVariableName, nameof(v_ParseObjects), this);               
 			}
 		}
 

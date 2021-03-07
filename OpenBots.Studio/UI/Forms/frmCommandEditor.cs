@@ -19,7 +19,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
@@ -304,7 +303,7 @@ namespace OpenBots.UI.Forms
                         currentControl = (UIDataGridView)ctrl;
                         currentControl.BorderColor = Color.Transparent;
 
-                        foreach(DataGridViewRow row in currentControl.Rows)
+                        foreach (DataGridViewRow row in currentControl.Rows)
                         {
                             if (!row.IsNewRow)
                             {
@@ -317,7 +316,7 @@ namespace OpenBots.UI.Forms
                             }                          
                         }
                     }
-                    if (ctrl is UITextBox)
+                    else if (ctrl is UITextBox)
                     {
                         currentControl = (UITextBox)ctrl;
 
@@ -327,6 +326,11 @@ namespace OpenBots.UI.Forms
                     {
                         currentControl = (UIComboBox)ctrl;
                         isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                    }
+                    else if(ctrl is UIPictureBox)
+                    {
+                        currentControl = (UIPictureBox)ctrl;
+                        isAllValid = ValidateInput(isAllValid, currentControl.EncodedImage, currentControl, testEngine);
                     }
                     else
                         continue;
@@ -347,8 +351,11 @@ namespace OpenBots.UI.Forms
                 return isAllValid;
             }
 
-            //TODO: Create an Instance tab with assigned Instance Types. For now, only requirement is some set value
+            //TODO: Create an Instance tab with assigned Instance Types. For now, only requirement is some set some value
             if (validationContext.IsInstance)
+                return isAllValid;
+
+            if (validationContext.IsImageCapture)
                 return isAllValid;
 
             var varArgMatches = Regex.Matches(validatingText, @"\{\w+\}");

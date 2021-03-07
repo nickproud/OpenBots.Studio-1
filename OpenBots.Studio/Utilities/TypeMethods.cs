@@ -2,7 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Settings;
-using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;

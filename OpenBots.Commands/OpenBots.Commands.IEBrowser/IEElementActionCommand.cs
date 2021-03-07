@@ -89,7 +89,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             CommandName = "IEElementActionCommand";
             SelectionName = "IE Element Action";
-            CommandEnabled = false;
+            CommandEnabled = true;
             CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";
@@ -171,6 +171,7 @@ namespace OpenBots.Commands.IEBrowser
             RenderedControls.Add(_elementActionDropdown);
 
             _elementParameterControls = commandControls.CreateDefaultDataGridViewGroupFor("v_WebActionParameterTable", this, editor);
+            ((DataGridView)_elementParameterControls[2]).AllowUserToAddRows = false;
             RenderedControls.AddRange(_elementParameterControls);
 
             return RenderedControls;

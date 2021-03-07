@@ -18,7 +18,7 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
         static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
         [DllImport("user32.dll")]
         static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprc, IntPtr hrgn, uint flags);
-        Color borderColor = Color.Transparent;
+        Color borderColor;
 
         public Color BorderColor
         {

@@ -130,7 +130,6 @@ namespace OpenBots.Commands.Database
 				var parameterType = rw.Field<string>("Parameter Type").ConvertUserVariableToString(engine);
 
 				object convertedValue = null;
-				//"STRING", "BOOLEAN", "DECIMAL", "INT16", "INT32", "INT64", "DATETIME", "DOUBLE", "SINGLE", "GUID", "BYTE", "BYTE[]"
 				switch (parameterType)
 				{
 					case "STRING":
@@ -225,7 +224,8 @@ namespace OpenBots.Commands.Database
 			//set up query parameter controls
 			_queryParametersGridView = commandControls.CreateDefaultDataGridViewFor("v_QueryParameters", this);
 			_queryParametersGridView.AutoGenerateColumns = false;
-		
+			_queryParametersGridView.AllowUserToAddRows = false;
+
 			var selectColumn = new DataGridViewComboBoxColumn();
 			selectColumn.HeaderText = "Type";
 			selectColumn.DataPropertyName = "Parameter Type";

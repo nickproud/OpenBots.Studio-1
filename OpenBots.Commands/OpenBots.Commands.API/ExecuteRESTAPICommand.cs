@@ -59,17 +59,15 @@ namespace OpenBots.Commands.API
 		[Remarks("")]
 		public string v_RequestFormat { get; set; }
 
-		[Required]
-		[DisplayName("Basic REST Parameters")]
+		[DisplayName("Basic REST Parameters (Optional)")]
 		[Description("Specify default search parameters.")]
 		[SampleUsage("")]
-		[Remarks("Once you have clicked on a valid window the search parameters will be populated." +
-				 " Enable only the ones required to be a match at runtime.")]
+		[Remarks("Once you have clicked on a valid window the search parameters will be populated.\n" +
+				 "Enable only the ones required to be a match at runtime.")]
 		[CompatibleTypes(null, true)]
 		public DataTable v_RESTParameters { get; set; }
 
-		[Required]
-		[DisplayName("Advanced REST Parameters")]
+		[DisplayName("Advanced REST Parameters (Optional)")]
 		[Description("Specify a list of advanced parameters.")]
 		[SampleUsage("")]
 		[Remarks("")]
