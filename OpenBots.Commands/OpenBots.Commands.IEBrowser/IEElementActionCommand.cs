@@ -75,10 +75,6 @@ namespace OpenBots.Commands.IEBrowser
 
         [JsonIgnore]
         [Browsable(false)]
-        private List<Control> _searchParameterControls;
-
-        [JsonIgnore]
-        [Browsable(false)]
         private List<Control> _elementParameterControls;
 
         [JsonIgnore]
@@ -174,7 +170,7 @@ namespace OpenBots.Commands.IEBrowser
             _elementActionDropdown.SelectionChangeCommitted += ElementActionDropdown_SelectionChangeCommitted;
             RenderedControls.Add(_elementActionDropdown);
 
-            RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_WebActionParameterTable", this, editor));
+            _elementParameterControls = commandControls.CreateDefaultDataGridViewGroupFor("v_WebActionParameterTable", this, editor);
             RenderedControls.AddRange(_elementParameterControls);
 
             return RenderedControls;
