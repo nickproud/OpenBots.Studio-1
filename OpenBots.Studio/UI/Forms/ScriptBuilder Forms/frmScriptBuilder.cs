@@ -231,7 +231,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             _builder = new ContainerBuilder();
             var groupedTypes = new Dictionary<string, List<Type>>();
 
-            var defaultTypes = ScriptDefaultTypes.DefaultTypes;
+            var defaultTypes = ScriptDefaultTypes.DefaultVarArgTypes;
             _typeContext = new TypeContext(groupedTypes, defaultTypes);
             var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
 
