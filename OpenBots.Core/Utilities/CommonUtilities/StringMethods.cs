@@ -351,8 +351,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             }
             else if (type.FullName == "Open3270.TN3270.XMLScreenField")
             {
-                List<dynamic> fieldList = ((List<dynamic>)list).ToList();
-
+                dynamic fieldList = list;
                 stringBuilder.Append($"Count({fieldList.Count}) \n[");
 
                 for (int i = 0; i < fieldList.Count - 1; i++)
@@ -373,7 +372,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             StringBuilder stringBuilder = new StringBuilder();
             Type type = dictionary.GetType().GetGenericArguments()[1];
-            dynamic stringDictionary = null;
+            dynamic stringDictionary;
 
             if (type == typeof(string))
             {
