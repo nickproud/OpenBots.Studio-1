@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Attributes.PropertyAttributes;
+﻿using Newtonsoft.Json;
+using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -34,13 +35,44 @@ namespace OpenBots.Commands.Process
 		[CompatibleTypes(null, true)]
 		public string v_ScriptPath { get; set; }
 
+		[Required]
+		[DisplayName("Argument Style")]
+		[PropertyUISelectionOption("In-Studio Variables")]
+		[PropertyUISelectionOption("Command Line")]
+		[Description("The type of arguments expected by the script")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_ArgumentType { get; set; }
+
 		[DisplayName("Arguments (Optional)")]
 		[Description("Enter any arguments as a single string.")]
-		[SampleUsage("{argument1},{variable2},valueString")]
-		[Remarks("This input is passed to your function as an object[].")]
+		[SampleUsage("{argument1},{variable2},valueString || -message Hello -t 2")]
+		[Remarks("This input is passed to your function as either an object[] or string[].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
 		public string v_ScriptArgs { get; set; }
+
+		[Required]
+		[DisplayName("Script Has Output")]
+		[PropertyUISelectionOption("Yes")]
+		[PropertyUISelectionOption("No")]
+		[Description("Whether the Main function of the script returns a value.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_HasOutput { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output Script Result Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("vUserVariable")]
+		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(object) })]
+		public string v_OutputUserVariableName { get; set; }
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private List<Control> _outputControls;
 
 		public RunCSharpScriptCommand()
 		{
@@ -48,6 +80,8 @@ namespace OpenBots.Commands.Process
 			SelectionName = "Run C# Script";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_script;
+
+			v_HasOutput = "No";
 		}
 
 		public override void RunCommand(object sender)
@@ -58,20 +92,41 @@ namespace OpenBots.Commands.Process
 			string scriptArgs = v_ScriptArgs.ConvertUserVariableToString(engine);
 
 			string code = OBFile.ReadAllText(scriptPath);
-			var scriptMethod = CSScript.LoadDelegate<Action<object[]>>(code);
+			dynamic script = CSScript.LoadCode(code).CreateObject("*");
 
-			string[] argVars = v_ScriptArgs.Split(',');
-			object[] args = new object[argVars.Length];
-			for (int i = 0; i < argVars.Length; i++)
+			if (v_ArgumentType == "In-Studio Variables")
 			{
-				argVars[i] = argVars[i].Trim();
-				if (argVars[i].Contains("{"))
-					args[i] = argVars[i].ConvertUserVariableToString(engine);
-				else
-					args[i] = argVars[i];
-			}
+				string[] argVars = v_ScriptArgs.Split(',');
+				object[] args = new object[argVars.Length];
+				for (int i = 0; i < argVars.Length; i++)
+				{
+					argVars[i] = argVars[i].Trim();
+					if (argVars[i].Contains("{"))
+						args[i] = argVars[i].ConvertUserVariableToObject(engine, typeof(object));
+					else
+						args[i] = argVars[i];
+				}
 
-			scriptMethod(args);
+				if (v_HasOutput == "No")
+					script.Main(args);
+				else
+				{
+					object result = script.Main(args);
+					
+					result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				}
+			}
+			else if (v_ArgumentType == "Command Line")
+			{
+				string[] argStrings = v_ScriptArgs.Trim().Split(' ');
+				if (v_HasOutput == "No")
+					script.Main(argStrings);
+				else
+				{
+					object result = script.Main(argStrings);
+					result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				}
+			}
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -79,7 +134,18 @@ namespace OpenBots.Commands.Process
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ScriptPath", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_ArgumentType", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ScriptArgs", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_HasOutput", this, editor));
+			((ComboBox)RenderedControls[10]).SelectedIndexChanged += HasOutputComboBox_SelectedIndexChanged;
+
+			_outputControls = new List<Control>();
+			_outputControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
+
+			foreach (var ctrl in _outputControls)
+				ctrl.Visible = false;
+
+			RenderedControls.AddRange(_outputControls);
 
 			return RenderedControls;
 		}
@@ -87,6 +153,24 @@ namespace OpenBots.Commands.Process
 		public override string GetDisplayValue()
 		{
 			return base.GetDisplayValue() + $" [C# Script Path '{v_ScriptPath}']";
+		}
+
+		private void HasOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[10]).Text == "Yes")
+			{
+				foreach (var ctrl in _outputControls)
+					ctrl.Visible = true;
+			}
+			else
+			{
+				foreach (var ctrl in _outputControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is TextBox)
+						((TextBox)ctrl).Clear();
+				}
+			}
 		}
 	}
 }
