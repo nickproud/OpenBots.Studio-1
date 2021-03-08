@@ -8,7 +8,6 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -555,6 +554,7 @@ namespace OpenBots.Commands.Input
 			IfrmAdvancedUIElementRecorder newElementRecorder = commandControls.CreateAdvancedUIElementRecorderForm();
 			newElementRecorder.WindowName = RenderedControls[3].Text;
 			newElementRecorder.SearchParameters = v_UIASearchParameters;
+			newElementRecorder.chkStopOnClick.Checked = true;
 
 			//show form
 			((Form)newElementRecorder).ShowDialog();
