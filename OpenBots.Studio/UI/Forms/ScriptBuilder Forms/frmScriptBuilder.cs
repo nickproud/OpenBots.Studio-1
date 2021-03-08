@@ -765,7 +765,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else
                 Notify($"Could not find 'project.config' for {senderLink.Tag}", Color.Red);
         }
-        #endregion       
+        #endregion
     }
 }
 
