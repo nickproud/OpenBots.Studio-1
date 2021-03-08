@@ -714,6 +714,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnPublishProject.TabIndex = 16;
             this.uiBtnPublishProject.TabStop = false;
             this.uiBtnPublishProject.Text = "Publish";
+            this.uiBtnPublishProject.Click += new System.EventHandler(this.uiBtnPublishProject_Click);
             // 
             // uiBtnProject
             // 
