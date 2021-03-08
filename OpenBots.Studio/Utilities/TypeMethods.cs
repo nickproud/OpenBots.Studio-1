@@ -8,7 +8,7 @@ using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
+using System.Reflection;
 
 namespace OpenBots.Studio.Utilities
 {
@@ -61,12 +61,11 @@ namespace OpenBots.Studio.Utilities
             return commandClasses;
         }
 
-        public static Dictionary<string, List<Type>> GenerateAllVariableTypes(IContainer container)
+        public static void GenerateAllVariableTypes(List<Assembly> assemblyList, Dictionary<string, List<Type>> groupedTypes)
         {
-            Dictionary<string, List<Type>> groupedTypes = new Dictionary<string, List<Type>>();
-            var assemList = AppDomain.CurrentDomain.GetAssemblies().ToList();
+            groupedTypes.Clear();
 
-            foreach (var assem in assemList)
+            foreach (var assem in assemblyList)
             {
                 try
                 {
@@ -83,8 +82,6 @@ namespace OpenBots.Studio.Utilities
                     Console.WriteLine(ex);
                 }
             }
-
-            return groupedTypes;
         }
 
         public static Type GetTypeByName(IContainer container, string typeName)

@@ -733,9 +733,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             NotifySync("Loading package assemblies...", Color.White);
             string configPath = Path.Combine(ScriptProjectPath, "project.config");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-            _builder = AppDomainSetupManager.LoadBuilder(assemblyList);            
+            _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);            
             AContainer = _builder.Build();
-            _typeContext.GroupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
             LoadCommands(this);
             ReloadAllFiles();
         }

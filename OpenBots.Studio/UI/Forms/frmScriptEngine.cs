@@ -261,7 +261,8 @@ namespace OpenBots.UI.Forms
             if (_isParentScheduledTask)
             {
                 List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, true);
-                var builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                Dictionary<string, List<Type>> groupedTypes = new Dictionary<string, List<Type>>();
+                var builder = AppDomainSetupManager.LoadBuilder(assemblyList, groupedTypes);
                 ScriptEngineContext.Container = builder.Build();
             }
 

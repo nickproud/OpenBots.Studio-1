@@ -68,9 +68,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 NotifySync("Loading package assemblies...", Color.White);               
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-                _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
                 AContainer = _builder.Build();
-                _typeContext.GroupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
 
                 string mainScriptPath = Path.Combine(ScriptProjectPath, "Main.json");
                 string mainScriptName = Path.GetFileNameWithoutExtension(mainScriptPath);
@@ -144,9 +143,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     NotifySync("Loading package assemblies...", Color.White);
 
                     var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
-                    _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                    _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
                     AContainer = _builder.Build();
-                    _typeContext.GroupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
 
                     ScriptProject = project;
                     _mainFileName = mainFileName;                 
@@ -222,9 +220,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     throw new Exception("Main script not found");
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-                _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
                 AContainer = _builder.Build();
-                _typeContext.GroupedTypes = TypeMethods.GenerateAllVariableTypes(AContainer);
 
                 _mainFileName = mainFileName;
                 ScriptProject = project;
