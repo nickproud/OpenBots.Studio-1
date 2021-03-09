@@ -24,7 +24,7 @@ namespace OpenBots.Commands.DataTable.Test
             DataRow row = inputTable.NewRow();
             row["firstname"] = "john";
             inputTable.Rows.Add(row);
-            row.CreateTestVariable(_engine, "inputRow", typeof(DataRow));
+            VariableMethods.CreateTestVariable(row, _engine, "inputRow", typeof(DataRow));
 
             _updateDataRowValue.v_DataRow = "{inputRow}";
             _updateDataRowValue.v_Option = option;

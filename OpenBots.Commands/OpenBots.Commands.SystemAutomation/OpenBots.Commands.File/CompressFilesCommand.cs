@@ -77,8 +77,10 @@ namespace OpenBots.Commands.File
 			// get file path to destination files
 			var vFilePathDestination = v_PathDestination.ConvertUserVariableToString(engine);
 
+			var vPassword = "";
 			// get password to extract files
-			var vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+			if (v_Password != null)
+				vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
 
             if (IO.File.Exists(vSourceDirectoryPathOrigin))
             {

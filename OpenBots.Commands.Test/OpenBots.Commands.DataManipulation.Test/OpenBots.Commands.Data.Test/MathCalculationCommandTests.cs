@@ -19,9 +19,9 @@ namespace OpenBots.Commands.Data.Test
             _mathCalculation = new MathCalculationCommand();
             _engine = new AutomationEngineInstance(null);
 
-            num1.CreateTestVariable(_engine, "num1");
-            num2.CreateTestVariable(_engine, "num2");
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(num1, _engine, "num1", typeof(string));
+            VariableMethods.CreateTestVariable(num2, _engine, "num2", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _mathCalculation.v_MathExpression = "{num1}" + operation + "{num2}";
             _mathCalculation.v_OutputUserVariableName = "{output}";
@@ -39,10 +39,10 @@ namespace OpenBots.Commands.Data.Test
             string num1 = "10.000";
             string num2 = "1.000";
             string thouSeparator = ".";
-            num1.CreateTestVariable(_engine, "num1");
-            num2.CreateTestVariable(_engine, "num2");
-            thouSeparator.CreateTestVariable(_engine, "thouSeparator", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(num1, _engine, "num1", typeof(string));
+            VariableMethods.CreateTestVariable(num2, _engine, "num2", typeof(string));
+            VariableMethods.CreateTestVariable(thouSeparator, _engine, "thouSeparator", typeof(string));
+            VariableMethods.CreateTestVariable("", _engine, "output", typeof(string));
 
             string mathExpression = "{num1} + {num2}";
 
@@ -64,10 +64,10 @@ namespace OpenBots.Commands.Data.Test
             string num1 = "1:10";
             string num2 = "0:50";
             string decSeparator = ":";
-            num1.CreateTestVariable(_engine, "num1", typeof(string));
-            num2.CreateTestVariable(_engine, "num2", typeof(string));
-            decSeparator.CreateTestVariable(_engine, "decSeparator", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(num1, _engine, "num1", typeof(string));
+            VariableMethods.CreateTestVariable(num2, _engine, "num2", typeof(string));
+            VariableMethods.CreateTestVariable(decSeparator, _engine, "decSeparator", typeof(string));
+            VariableMethods.CreateTestVariable("", _engine, "output", typeof(string));
 
             string mathExpression = "{num1} + {num2}";
 

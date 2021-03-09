@@ -19,7 +19,7 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toDelete");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             Directory.CreateDirectory(inputPath);
             

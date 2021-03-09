@@ -23,8 +23,8 @@ namespace OpenBots.Commands.DataTable.Test
             DataRow row1 = inputTable.NewRow();
             row1["Column1"] = "data1";
             inputTable.Rows.Add(row1);
-            inputTable.CreateTestVariable(_engine, "inputTable", typeof(OBData.DataTable));
-            "unassigned".CreateTestVariable(_engine, "outputCount", typeof(string));
+            VariableMethods.CreateTestVariable(inputTable, _engine, "inputTable", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(null, _engine, "outputCount", typeof(int));
 
             _getDataRowCount.v_DataTable = "{inputTable}";
             _getDataRowCount.v_OutputUserVariableName = "{outputCount}";

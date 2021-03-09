@@ -24,8 +24,8 @@ namespace OpenBots.Commands.Dictionary.Test
             row1["Keys"] = "key1";
             row1["Values"] = "val1";
             inputDt.Rows.Add(row1);
-            inputDt.CreateTestVariable(_engine, "inputDt", typeof(OBData.DataTable));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(inputDt, _engine, "inputDt", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(Dictionary<,>));
 
             _createDictionary.v_ColumnNameDataTable = (OBData.DataTable)"{inputDt}".ConvertUserVariableToObject(_engine, typeof(OBData.DataTable));
             _createDictionary.v_OutputUserVariableName = "{output}";

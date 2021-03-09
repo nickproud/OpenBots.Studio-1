@@ -22,8 +22,8 @@ namespace OpenBots.Commands.QueueItem.Test
             _workQueueItem = new WorkQueueItemCommand();
             _extendQueueItem = new ExtendQueueItemCommand();
 
-            "unassigned".CreateTestVariable(_engine, "output", typeof(Dictionary<,>));
-            "unassigned".CreateTestVariable(_engine, "vQueueItem", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
 
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "ExtendQueueItemTest";
@@ -75,7 +75,7 @@ namespace OpenBots.Commands.QueueItem.Test
                 { "LockedUntilUTC", DateTime.UtcNow.AddHours(1) }
             };
 
-            "unassigned".CreateTestVariable(_engine, "vQueueItem", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _extendQueueItem.v_QueueItem = "{vQueueItem}";
             queueItemDict.StoreInUserVariable(_engine, _extendQueueItem.v_QueueItem, typeof(Dictionary<,>));
 

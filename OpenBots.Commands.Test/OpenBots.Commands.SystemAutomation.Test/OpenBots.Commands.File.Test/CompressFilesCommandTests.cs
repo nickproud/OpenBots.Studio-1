@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
+using System.Security;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -27,11 +28,11 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toCompress");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             string outputPath = Environment.CurrentDirectory;
-            outputPath.CreateTestVariable(_engine, "outputPath", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(outputPath, _engine, "outputPath", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
             
             _compressFiles.v_DirectoryPathOrigin = "{inputPath}";
             _compressFiles.v_PathDestination = "{outputPath}";
@@ -52,14 +53,14 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toCompressWithPassword");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             string outputPath = Environment.CurrentDirectory;
-            outputPath.CreateTestVariable(_engine, "outputPath", typeof(string));
+            VariableMethods.CreateTestVariable(outputPath, _engine, "outputPath", typeof(string));
 
             string password = "testPassword";
-            password.CreateTestVariable(_engine, "testPassword", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(password.ConvertStringToSecureString(), _engine, "testPassword", typeof(SecureString));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _compressFiles.v_DirectoryPathOrigin = "{inputPath}";
             _compressFiles.v_Password = "{testPassword}";
@@ -81,11 +82,11 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\writetest.txt");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             string outputPath = Environment.CurrentDirectory;
-            outputPath.CreateTestVariable(_engine, "outputPath", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(outputPath, _engine, "outputPath", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _compressFiles.v_DirectoryPathOrigin = "{inputPath}";
             _compressFiles.v_PathDestination = "{outputPath}";

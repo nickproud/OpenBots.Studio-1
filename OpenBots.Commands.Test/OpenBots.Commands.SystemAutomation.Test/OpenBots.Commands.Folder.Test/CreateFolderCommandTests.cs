@@ -18,11 +18,11 @@ namespace OpenBots.Commands.Folder.Test
             _createFolder = new CreateFolderCommand();
 
             string folderName = "newFolder";
-            folderName.CreateTestVariable(_engine, "folderName", typeof(string));
+            VariableMethods.CreateTestVariable(folderName, _engine, "folderName", typeof(string));
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             _createFolder.v_NewFolderName = "{folderName}";
             _createFolder.v_DestinationDirectory = "{inputPath}";
@@ -44,11 +44,11 @@ namespace OpenBots.Commands.Folder.Test
             _createFolder = new CreateFolderCommand();
 
             string folderName = "newFolder";
-            folderName.CreateTestVariable(_engine, "folderName", typeof(string));
+            VariableMethods.CreateTestVariable(folderName, _engine, "folderName", typeof(string));
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = "notADirectoryPath";
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             _createFolder.v_NewFolderName = "{folderName}";
             _createFolder.v_DestinationDirectory = "{inputPath}";

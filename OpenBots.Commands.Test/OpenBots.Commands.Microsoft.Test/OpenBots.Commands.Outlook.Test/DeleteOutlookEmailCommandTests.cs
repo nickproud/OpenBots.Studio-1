@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Outlook.Test
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
 
-            "unassigned".CreateTestVariable(_engine, "emails", typeof(List<>));
+            VariableMethods.CreateTestVariable(null, _engine, "emails", typeof(List<>));
 
             _getOutlookEmails.v_SourceFolder = "Inbox";
             _getOutlookEmails.v_Filter = "[Subject] = 'toDelete'";
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Outlook.Test
                 throw new System.ArgumentException("Test email 'toDelete' was not found");
             }
             MailItem email = emails[0];
-            email.CreateTestVariable(_engine, "email", typeof(MailItem));
+            VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";

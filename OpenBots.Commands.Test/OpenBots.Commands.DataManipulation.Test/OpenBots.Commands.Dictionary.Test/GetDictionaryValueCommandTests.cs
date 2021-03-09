@@ -18,8 +18,8 @@ namespace OpenBots.Commands.Dictionary.Test
 
             Dictionary<string, string> inputDictionary = new Dictionary<string, string>();
             inputDictionary.Add("key1", "val1");
-            inputDictionary.CreateTestVariable(_engine, "inputDictionary", typeof(Dictionary<,>));
-            "unassigned".CreateTestVariable(_engine, "outputValue", typeof(string));
+            VariableMethods.CreateTestVariable(inputDictionary, _engine, "inputDictionary", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(null, _engine, "outputValue", typeof(string));
 
             _getDictionaryValue.v_InputDictionary = "{inputDictionary}";
             _getDictionaryValue.v_Key = "key1";

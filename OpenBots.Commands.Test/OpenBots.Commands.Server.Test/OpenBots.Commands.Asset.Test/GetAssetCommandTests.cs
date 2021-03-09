@@ -26,7 +26,7 @@ namespace OpenBots.Commands.Asset.Test
             _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
 
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _getAsset.v_AssetName = "testTextAsset";
             _getAsset.v_AssetType = "Text";
@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Asset.Test
             _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
 
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _getAsset.v_AssetName = "testNumberAsset";
             _getAsset.v_AssetType = "Number";
@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Asset.Test
             _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
 
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _getAsset.v_AssetName = "testJSONAsset";
             _getAsset.v_AssetType = "JSON";
@@ -105,7 +105,7 @@ namespace OpenBots.Commands.Asset.Test
             _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
 
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _getAsset.v_AssetName = "noAsset";
             _getAsset.v_AssetType = "Text";

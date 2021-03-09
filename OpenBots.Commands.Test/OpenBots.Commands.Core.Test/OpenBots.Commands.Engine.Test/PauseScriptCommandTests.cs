@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Engine.Test
             _pauseScript = new PauseScriptCommand();
 
             int pauseLength = 1000;
-            pauseLength.ToString().CreateTestVariable(_engine, "pauseLength", typeof(string));
+            VariableMethods.CreateTestVariable(pauseLength.ToString(), _engine, "pauseLength", typeof(string));
             _pauseScript.v_PauseLength = "{pauseLength}";
 
             DateTime startTime = DateTime.Now;

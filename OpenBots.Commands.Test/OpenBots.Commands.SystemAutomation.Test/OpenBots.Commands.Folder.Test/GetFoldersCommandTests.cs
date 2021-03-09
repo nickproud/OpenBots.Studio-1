@@ -20,8 +20,8 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
-            "undefined".CreateTestVariable(_engine, "output", typeof(List<>));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
             Directory.CreateDirectory(Path.Combine(inputPath, @"toGet"));
 
@@ -43,8 +43,8 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\doesNotExist");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
-            "undefined".CreateTestVariable(_engine, "output", typeof(List<>));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
             _getFolders.v_SourceFolderPath = "{inputPath}";
             _getFolders.v_OutputUserVariableName = "{output}";

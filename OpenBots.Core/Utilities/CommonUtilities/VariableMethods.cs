@@ -410,7 +410,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         }
 
         //TODO: add type. Set to null as default for now
-        public static void CreateTestVariable(this object variableValue, IAutomationEngineInstance engine, string variableName, Type variableType = null)
+        public static void CreateTestVariable(object variableValue, IAutomationEngineInstance engine, string variableName, Type variableType = null)
         {
             ScriptVariable newVar = new ScriptVariable();
             newVar.VariableName = variableName;

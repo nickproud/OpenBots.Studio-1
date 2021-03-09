@@ -29,8 +29,8 @@ namespace OpenBots.Commands.List.Test
             List<string> stringList = new List<string>();
             string itemToAdd = "item1";
 
-            stringList.CreateTestVariable(_engine, "list", typeof(List<>));
-            itemToAdd.CreateTestVariable(_engine, "itemToAdd", typeof(string));
+            VariableMethods.CreateTestVariable(stringList, _engine, "list", typeof(List<>));
+            VariableMethods.CreateTestVariable(itemToAdd, _engine, "itemToAdd", typeof(string));
 
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";
@@ -51,8 +51,8 @@ namespace OpenBots.Commands.List.Test
             OBDataTable itemToAdd = new OBDataTable();
             itemToAdd.Columns.Add("first column");
 
-            stringList.CreateTestVariable(_engine, "list", typeof(List<>));
-            itemToAdd.CreateTestVariable(_engine, "itemToAdd", typeof(OBDataTable));
+            VariableMethods.CreateTestVariable(stringList, _engine, "list", typeof(List<>));
+            VariableMethods.CreateTestVariable(itemToAdd, _engine, "itemToAdd", typeof(OBDataTable));
 
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";
@@ -72,8 +72,8 @@ namespace OpenBots.Commands.List.Test
             List<OBDataTable> stringList = new List<OBDataTable>();
             string itemToAdd = "newitem";
 
-            stringList.CreateTestVariable(_engine, "list", typeof(List<>));
-            itemToAdd.CreateTestVariable(_engine, "itemToAdd", typeof(string));
+            VariableMethods.CreateTestVariable(stringList, _engine, "list", typeof(List<>));
+            VariableMethods.CreateTestVariable(itemToAdd, _engine, "itemToAdd", typeof(string));
 
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";

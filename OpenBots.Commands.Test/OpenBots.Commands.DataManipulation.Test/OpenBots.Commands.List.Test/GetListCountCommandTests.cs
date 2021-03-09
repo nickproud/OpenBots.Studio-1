@@ -22,8 +22,8 @@ namespace OpenBots.Commands.List.Test
             inputList.Add("2");
             inputList.Add("3");
 
-            inputList.CreateTestVariable(_engine, "inputList", typeof(List<>));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(inputList, _engine, "inputList", typeof(List<>));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(int));
 
             _getListCount.v_ListName = "{inputList}";
             _getListCount.v_OutputUserVariableName = "{output}";

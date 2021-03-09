@@ -19,11 +19,11 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toRename");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             Directory.CreateDirectory(inputPath);
 
-            "newName".CreateTestVariable(_engine, "newName", typeof(string));
+            VariableMethods.CreateTestVariable("newName", _engine, "newName", typeof(string));
 
             _renameFolder.v_SourceFolderPath = "{inputPath}";
             _renameFolder.v_NewName = "{newName}";
@@ -43,9 +43,9 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\doesNotExist");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
-            "newName".CreateTestVariable(_engine, "newName", typeof(string));
+            VariableMethods.CreateTestVariable("newName", _engine, "newName", typeof(string));
 
             _renameFolder.v_SourceFolderPath = "{inputPath}";
             _renameFolder.v_NewName = "{newName}";
@@ -60,9 +60,9 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\newName");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
-            "toRename".CreateTestVariable(_engine, "newName", typeof(string));
+            VariableMethods.CreateTestVariable("toRename", _engine, "newName", typeof(string));
 
             _renameFolder.v_SourceFolderPath = "{inputPath}";
             _renameFolder.v_NewName = "{newName}";

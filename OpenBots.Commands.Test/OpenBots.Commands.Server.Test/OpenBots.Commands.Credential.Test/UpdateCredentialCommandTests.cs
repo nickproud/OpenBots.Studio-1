@@ -24,11 +24,11 @@ namespace OpenBots.Commands.Credential.Test
             string newUsername = "newTestUser";
             string newPassword = "newTestPassword";
 
-            credentialName.CreateTestVariable(_engine, "credName", typeof(string));
-            newUsername.CreateTestVariable(_engine, "username", typeof(string));
-            newPassword.CreateTestVariable(_engine, "password", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "storedUsername", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "storedPassword", typeof(SecureString));
+            VariableMethods.CreateTestVariable(credentialName, _engine, "credName", typeof(string));
+            VariableMethods.CreateTestVariable(newUsername, _engine, "username", typeof(string));
+            VariableMethods.CreateTestVariable(newPassword, _engine, "password", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "storedUsername", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "storedPassword", typeof(SecureString));
 
             _updateCredential.v_CredentialName = "{credName}";
             _updateCredential.v_CredentialUsername = "{username}";

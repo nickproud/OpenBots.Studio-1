@@ -21,9 +21,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testIncrementNumberAsset";
             string newAsset = "50";
-            assetName.CreateTestVariable(_engine, "assetName", typeof(string));
-            newAsset.CreateTestVariable(_engine, "newAsset", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(assetName, _engine, "assetName", typeof(string));
+            VariableMethods.CreateTestVariable(newAsset, _engine, "newAsset", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _calculateAsset.v_AssetName = "{assetName}";
             _calculateAsset.v_AssetActionType = "Increment";
@@ -52,9 +52,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testIncrementNumberAsset";
             string newAsset = "48";
-            assetName.CreateTestVariable(_engine, "assetName", typeof(string));
-            newAsset.CreateTestVariable(_engine, "newAsset", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(assetName, _engine, "assetName", typeof(string));
+            VariableMethods.CreateTestVariable(newAsset, _engine, "newAsset", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _calculateAsset.v_AssetName = "{assetName}";
             _calculateAsset.v_AssetActionType = "Decrement";
@@ -83,9 +83,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testIncrementNumberAsset";
             string newAsset = "54";
-            assetName.CreateTestVariable(_engine, "assetName", typeof(string));
-            newAsset.CreateTestVariable(_engine, "newAsset", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(assetName, _engine, "assetName", typeof(string));
+            VariableMethods.CreateTestVariable(newAsset, _engine, "newAsset", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _calculateAsset.v_AssetName = "{assetName}";
             _calculateAsset.v_AssetActionType = "Add";
@@ -114,9 +114,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testIncrementNumberAsset";
             string newAsset = "43";
-            assetName.CreateTestVariable(_engine, "assetName", typeof(string));
-            newAsset.CreateTestVariable(_engine, "newAsset", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(assetName, _engine, "assetName", typeof(string));
+            VariableMethods.CreateTestVariable(newAsset, _engine, "newAsset", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _calculateAsset.v_AssetName = "{assetName}";
             _calculateAsset.v_AssetActionType = "Subtract";
@@ -145,8 +145,8 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "noAsset";
             string newAsset = "50";
-            assetName.CreateTestVariable(_engine, "{assetName}", typeof(string));
-            newAsset.CreateTestVariable(_engine, "{assetName}", typeof(string));
+            VariableMethods.CreateTestVariable(assetName, _engine, "{assetName}", typeof(string));
+            VariableMethods.CreateTestVariable(newAsset, _engine, "{assetName}", typeof(string));
 
             _calculateAsset.v_AssetName = "{assetName}";
             _calculateAsset.v_AssetActionType = "Increment";

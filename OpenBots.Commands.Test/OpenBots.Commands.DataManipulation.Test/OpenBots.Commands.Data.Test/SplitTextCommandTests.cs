@@ -18,9 +18,9 @@ namespace OpenBots.Commands.Data.Test
 
             string inputText = "test text";
             string splitCharacter = " ";
-            inputText.CreateTestVariable(_engine, "input", typeof(string));
-            splitCharacter.CreateTestVariable(_engine, "splitChar", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(inputText, _engine, "input", typeof(string));
+            VariableMethods.CreateTestVariable(splitCharacter, _engine, "splitChar", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
             _splitText.v_InputText = "{input}";
             _splitText.v_SplitCharacter = "{splitChar}";
@@ -45,9 +45,9 @@ namespace OpenBots.Commands.Data.Test
             splitCharacters.Add(":");
             splitCharacters.Add("!");
             splitCharacters.Add(";");
-            inputText.CreateTestVariable(_engine, "input", typeof(string));
-            splitCharacters.CreateTestVariable(_engine, "splitChar", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(inputText, _engine, "input", typeof(string));
+            VariableMethods.CreateTestVariable(splitCharacters, _engine, "splitChar", typeof(List<>));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
             _splitText.v_InputText = "{input}";
             _splitText.v_SplitCharacter = "{splitChar}";

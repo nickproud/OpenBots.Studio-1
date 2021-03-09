@@ -22,8 +22,8 @@ namespace OpenBots.Commands.DataTable.Test
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.CreateTestVariable(_engine, "dt1", typeof(OBData.DataTable));
-            dt2.CreateTestVariable(_engine, "dt2", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(dt1, _engine, "dt1", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(dt2, _engine, "dt2", typeof(OBData.DataTable));
 
             _mergeDataTable.v_SourceDataTable = "{dt1}";
             _mergeDataTable.v_DestinationDataTable = "{dt2}";
@@ -39,8 +39,8 @@ namespace OpenBots.Commands.DataTable.Test
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.CreateTestVariable(_engine, "dt1", typeof(OBData.DataTable));
-            dt2.CreateTestVariable(_engine, "dt2", typeof(int));
+            VariableMethods.CreateTestVariable(dt1, _engine, "dt1", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(dt2, _engine, "dt2", typeof(int));
 
             _mergeDataTable.v_SourceDataTable = "{dt1}";
             _mergeDataTable.v_DestinationDataTable = "{dt2}";
@@ -56,8 +56,8 @@ namespace OpenBots.Commands.DataTable.Test
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.CreateTestVariable(_engine, "dt1", typeof(OBData.DataTable));
-            dt2.CreateTestVariable(_engine, "dt2", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(dt1, _engine, "dt1", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(dt2, _engine, "dt2", typeof(OBData.DataTable));
 
             switch (schema)
             {
