@@ -130,7 +130,7 @@ namespace OpenBots.Commands.Process
 
 					if (input == var && input.StartsWith("{") && input.EndsWith("}"))
 					{
-						if (var.ConvertUserVariableToObject(engine, typeof(object)) != null)
+						if (var.ConvertUserVariableToObject(engine, nameof(v_VariableArgumentsDataTable), this) != null)
 							input = var.ConvertUserVariableToObject(engine, typeof(object));
 					}
 					args[i] = input;
