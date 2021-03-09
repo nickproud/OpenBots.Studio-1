@@ -128,7 +128,10 @@ namespace OpenBots.Commands.Process
                 {
 					string var = varColumn.Field<string>("Argument Values").Trim();
 					if (var.Contains("{"))
-						args[i] = var.ConvertUserVariableToObject(engine, typeof(object));
+						if (var.ConvertUserVariableToObject(engine, typeof(object)) != null)
+							args[i] = var.ConvertUserVariableToObject(engine, typeof(object));
+						else
+							args[i] = var.ConvertUserVariableToString(engine);
 					else
 						args[i] = var;
 					i++;
