@@ -35,7 +35,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         private void OpenVariableManager()
         {
-            frmScriptVariables scriptVariableEditor = new frmScriptVariables
+            frmScriptVariables scriptVariableEditor = new frmScriptVariables(TypeContext)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
                 ScriptVariables = ScriptVariables,
@@ -48,7 +48,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
 
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
+                ResetVariableArgumentBindings();
             }
 
             scriptVariableEditor.Dispose();
@@ -61,7 +61,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         private void OpenArgumentManager()
         {
-            frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+            frmScriptArguments scriptArgumentEditor = new frmScriptArguments(TypeContext)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
                 ScriptArguments = ScriptArguments,
@@ -74,7 +74,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
 
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
+                ResetVariableArgumentBindings();
             }
 
             scriptArgumentEditor.Dispose();

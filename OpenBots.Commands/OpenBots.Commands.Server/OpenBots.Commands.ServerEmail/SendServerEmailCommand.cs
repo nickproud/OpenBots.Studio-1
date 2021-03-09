@@ -25,6 +25,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("myRobot || {vAccountName}")]
         [Remarks("If no account name is specified, the default account will be used.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_AccountName { get; set; }
 
         [Required]
@@ -33,6 +34,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
         [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_ToRecipients { get; set; }
 
         [Required]
@@ -41,6 +43,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
         [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_CCRecipients { get; set; }
 
         [Required]
@@ -49,6 +52,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
         [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_BCCRecipients { get; set; }
 
         [Required]
@@ -57,6 +61,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("Hello || {vSubject}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_Subject { get; set; }
 
         [Required]
@@ -65,6 +70,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("Dear John, ... || {vBody}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_Body { get; set; }
 
         [DisplayName("Attachment File Path(s) (Optional)")]
@@ -73,6 +79,7 @@ namespace OpenBots.Commands.ServerEmail
         [Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_Attachments { get; set; }
 
         public SendServerEmailCommand()

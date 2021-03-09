@@ -25,6 +25,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("{vQueueItem}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_QueueItem { get; set; }
 
 		public ExtendQueueItemCommand()
@@ -40,7 +41,7 @@ namespace OpenBots.Commands.QueueItem
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueItem = (Dictionary<string, object>)v_QueueItem.ConvertUserVariableToObject(engine);
+			var vQueueItem = (Dictionary<string, object>)v_QueueItem.ConvertUserVariableToObject(engine, nameof(v_QueueItem), this);
 
 			var client = AuthMethods.GetAuthToken();
 

@@ -22,10 +22,10 @@ namespace OpenBots.Commands.Asset.Test
             string assetName = "testUpdateTextAsset";
             string toAppend = "textToAppend";
 
-            assetName.CreateTestVariable(_engine, "assetName");
-            toAppend.CreateTestVariable(_engine, "toAppend");
-            "unassigned".CreateTestVariable(_engine, "initialText");
-            "unassigned".CreateTestVariable(_engine, "updatedAsset");
+            assetName.CreateTestVariable(_engine, "assetName", typeof(string));
+            toAppend.CreateTestVariable(_engine, "toAppend", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "initialText", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "updatedAsset", typeof(string));
 
             _getAsset.v_AssetName = assetName;
             _getAsset.v_AssetType = "Text";
@@ -61,8 +61,8 @@ namespace OpenBots.Commands.Asset.Test
             string assetName = "doesNotExist";
             string toAppend = "textToAppend";
 
-            assetName.CreateTestVariable(_engine, "{assetName}");
-            toAppend.CreateTestVariable(_engine, "{toAppend}");
+            assetName.CreateTestVariable(_engine, "{assetName}", typeof(string));
+            toAppend.CreateTestVariable(_engine, "{toAppend}", typeof(string));
 
             Assert.Throws<DataException>(() => _appendTextAsset.RunCommand(_engine));
         }

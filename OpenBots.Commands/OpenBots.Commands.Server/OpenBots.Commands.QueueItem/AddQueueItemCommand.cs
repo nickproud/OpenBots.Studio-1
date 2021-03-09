@@ -29,6 +29,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Name || {vQueueName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueueName { get; set; }
 
 		[Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Name || {vQueueItemName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueueItemName { get; set; }
 
 		[DisplayName("Source (Optional)")]
@@ -45,6 +47,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Loan Origination System || Lead Generation System ||{vSource}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Source { get; set; }
 
 		[DisplayName("Event (Optional)")]
@@ -53,6 +56,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Payment Rejected || New Employee Onboarded || {vEvent}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Event { get; set; }
 
 		[Required]
@@ -70,6 +74,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Company || {vJsonType}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_JsonType { get; set; }
 
 		[Required]
@@ -78,6 +83,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Value || {vQueueItemValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueueItemTextValue { get; set; }
 
 		[Required]
@@ -87,6 +93,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("Priority determines the order in which QueueItems will be worked.\n" +
 				 "If no priority is set, QueueItems will be ordered by time of creation.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Priority { get; set; }
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
@@ -95,6 +102,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Attachments { get; set; }
 
 		[JsonIgnore]

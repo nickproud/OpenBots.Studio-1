@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using OpenBots.Commands.UIAutomation.Forms;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
@@ -28,6 +29,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("Please Provide Input || {vHeader}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputHeader { get; set; }
 
 		[Required]
@@ -36,16 +38,17 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("Directions: Please fill in the following fields || {vDirections}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputDirections { get; set; }
 
-		[Required]
-		[DisplayName("Input Parameters")]
+		[DisplayName("Input Parameters (Optional)")]
 		[Description("Define the required input parameters.")]
 		[SampleUsage("[TextBox | Name | 500,100 | John | {vName}]\n" +
 					 "[CheckBox | Developer | 500,30 | True | {vDeveloper}]\n" +
 					 "[ComboBox | Gender | 500,30 | Male,Female,Other | {vGender}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(bool) }, true)]
 		public DataTable v_UserInputConfig { get; set; }
 
 		[JsonIgnore]
@@ -90,23 +93,14 @@ namespace OpenBots.Commands.Input
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-
-			if (engine.AutomationEngineContext.ScriptEngine == null)
-			{
-				engine.ReportProgress("UserInput Supported With UI Only");
-				MessageBox.Show("UserInput Supported With UI Only", "UserInput Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				return;
-			}
-
 			var header = v_InputHeader.ConvertUserVariableToString(engine);
 			var directions = v_InputDirections.ConvertUserVariableToString(engine);
 			
-
 			//translate variables for each label
 			foreach (DataRow rw in v_UserInputConfig.Rows)
 			{
 				rw["DefaultValue"] = rw["DefaultValue"].ToString().ConvertUserVariableToString(engine);
-				var targetVariable = rw["StoreInVariable"] as string;
+				string targetVariable = rw["StoreInVariable"].ToString();
 
 				if (string.IsNullOrEmpty(targetVariable))
 				{
@@ -117,36 +111,56 @@ namespace OpenBots.Commands.Input
 				}
 			}
 
-			//invoke ui for data collection
-			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
-			{
-				//get input from user
-			  var userInputs = engine.AutomationEngineContext.ScriptEngine.ShowInput(header, directions, v_UserInputConfig);
+			//get input from user
+			List<object> userInputs = new List<object>();
 
-				//check if user provided input
-				if (userInputs != null)
+			var inputForm = new frmUserInput(header, directions, v_UserInputConfig);
+
+			var dialogResult = inputForm.ShowDialog();
+
+			if (dialogResult == DialogResult.OK)
+			{
+				foreach (var ctrl in inputForm.InputControls)
+				{
+					if (ctrl is CheckBox)
+					{
+						var checkboxCtrl = (CheckBox)ctrl;
+						userInputs.Add(checkboxCtrl.Checked);
+					}
+					else
+						userInputs.Add(ctrl.Text);
+				}
+				inputForm.Dispose();
+
+			}
+			else
+			{
+				inputForm.Dispose();
+				userInputs = null;
+			}
+
+			//check if user provided input
+			if (userInputs != null)
 				{
 					//loop through each input and assign
 					for (int i = 0; i < userInputs.Count; i++)
 					{                       
 						//get target variable
-						var targetVariable = v_UserInputConfig.Rows[i]["StoreInVariable"] as string;
+						string targetVariable = v_UserInputConfig.Rows[i]["StoreInVariable"].ToString();
 
 						//store user data in variable
 						if (!string.IsNullOrEmpty(targetVariable))
-							((object)userInputs[i]).StoreInUserVariable(engine, targetVariable);
+							userInputs[i].StoreInUserVariable(engine, targetVariable, nameof(v_UserInputConfig), this);
 					}
 				}
-			}));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
 
-			_userInputGridViewHelper = new DataGridView();
+			_userInputGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_UserInputConfig", this);
 			_userInputGridViewHelper.KeyDown += UserInputDataGridView_KeyDown;
-			_userInputGridViewHelper.DataBindings.Add("DataSource", this, "v_UserInputConfig", false, DataSourceUpdateMode.OnPropertyChanged);
 
 			var typefield = new DataGridViewComboBoxColumn();
 			typefield.Items.Add("TextBox");
@@ -176,10 +190,7 @@ namespace OpenBots.Commands.Input
 			field.DataPropertyName = "StoreInVariable";
 			_userInputGridViewHelper.Columns.Add(field);
 
-			_userInputGridViewHelper.ColumnHeadersHeight = 30;
-			_userInputGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 			_userInputGridViewHelper.AllowUserToAddRows = false;
-			_userInputGridViewHelper.AllowUserToDeleteRows = true;
 			_userInputGridViewHelper.AllowDrop = true;
 			_userInputGridViewHelper.MouseDown += UserInputGridViewHelper_MouseDown;
 			_userInputGridViewHelper.MouseUp += UserInputGridViewHelper_MouseUp;

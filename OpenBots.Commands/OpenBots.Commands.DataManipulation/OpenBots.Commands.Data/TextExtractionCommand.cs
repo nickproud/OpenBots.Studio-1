@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("Sample text to perform text extraction on || {vTextData}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputText { get; set; }
 
 		[Required]
@@ -47,6 +48,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("A substring from input text || {vSubstring}")]
 		[Remarks("Set parameter values for each parameter name based on the extraction type.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public OBDataTable v_TextExtractionTable { get; set; }
 
 		[Required]
@@ -55,11 +57,8 @@ namespace OpenBots.Commands.Data
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
-
-		[JsonIgnore]
-		[Browsable(false)]
-		private DataGridView _parametersGridViewHelper;
 
 		public TextExtractionCommand()
 		{
@@ -67,6 +66,7 @@ namespace OpenBots.Commands.Data
 			SelectionName = "Text Extraction";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
+			v_TextExtractionType = "Extract All After Text";
 
 			//define parameter table
 			v_TextExtractionTable = new OBDataTable
@@ -119,7 +119,7 @@ namespace OpenBots.Commands.Data
 			}
 
 			//store variable
-			extractedText.StoreInUserVariable(engine, v_OutputUserVariableName);
+			extractedText.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -129,22 +129,12 @@ namespace OpenBots.Commands.Data
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputText", this, editor));
 
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_TextExtractionType", this));
-			var selectionControl = (ComboBox)commandControls.CreateDropdownFor("v_TextExtractionType", this);
+			var selectionControl = commandControls.CreateDropdownFor("v_TextExtractionType", this);
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_TextExtractionType", this, new Control[] { selectionControl }, editor));
-			selectionControl.SelectionChangeCommitted += TextExtraction_SelectionChangeCommitted;
+			selectionControl.SelectedIndexChanged += TextExtraction_SelectedIndexChanged;
 			RenderedControls.Add(selectionControl);
 
-			_parametersGridViewHelper = new DataGridView();
-			_parametersGridViewHelper.AllowUserToAddRows = true;
-			_parametersGridViewHelper.AllowUserToDeleteRows = true;
-			_parametersGridViewHelper.Size = new Size(350, 125);
-			_parametersGridViewHelper.ColumnHeadersHeight = 30;
-			_parametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_parametersGridViewHelper.DataBindings.Add("DataSource", this, "v_TextExtractionTable", false, DataSourceUpdateMode.OnPropertyChanged);
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_TextExtractionTable", this));
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_TextExtractionTable", this, new Control[] { _parametersGridViewHelper }, editor));
-			RenderedControls.Add(_parametersGridViewHelper);
-
+			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_TextExtractionTable", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
@@ -155,32 +145,25 @@ namespace OpenBots.Commands.Data
 			return base.GetDisplayValue() + $" [Extract Text From '{v_InputText}' - Store Text in '{v_OutputUserVariableName}']";
 		}
 
-		private void TextExtraction_SelectionChangeCommitted(object sender, EventArgs e)
+		private void TextExtraction_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			ComboBox extractionAction = (ComboBox)sender;
-
-			if ((_parametersGridViewHelper == null) || 
-				(extractionAction == null) || 
-				(_parametersGridViewHelper.DataSource == null))
-				return;
-
-			var textParameters = (OBDataTable)_parametersGridViewHelper.DataSource;
-			textParameters.Rows.Clear();
+			v_TextExtractionTable.Rows.Clear();
 
 			switch (extractionAction.SelectedItem)
 			{
 				case "Extract All After Text":
-					textParameters.Rows.Add("Leading Text", "");
-					textParameters.Rows.Add("Skip Past Occurences", "0");
+					v_TextExtractionTable.Rows.Add("Leading Text", "");
+					v_TextExtractionTable.Rows.Add("Skip Past Occurences", "0");
 					break;
 				case "Extract All Before Text":
-					textParameters.Rows.Add("Trailing Text", "");
-					textParameters.Rows.Add("Skip Past Occurences", "0");
+					v_TextExtractionTable.Rows.Add("Trailing Text", "");
+					v_TextExtractionTable.Rows.Add("Skip Past Occurences", "0");
 					break;
 				case "Extract All Between Text":
-					textParameters.Rows.Add("Leading Text", "");
-					textParameters.Rows.Add("Trailing Text", "");
-					textParameters.Rows.Add("Skip Past Occurences", "0");
+					v_TextExtractionTable.Rows.Add("Leading Text", "");
+					v_TextExtractionTable.Rows.Add("Trailing Text", "");
+					v_TextExtractionTable.Rows.Add("Skip Past Occurences", "0");
 					break;
 				default:
 					break;

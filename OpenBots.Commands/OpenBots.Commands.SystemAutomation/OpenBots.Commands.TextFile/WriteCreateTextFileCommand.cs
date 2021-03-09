@@ -27,6 +27,7 @@ namespace OpenBots.Commands.TextFile
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -34,7 +35,8 @@ namespace OpenBots.Commands.TextFile
 		[Description("Indicate the Text to write.")]
 		[SampleUsage("Hello World! || {vText}")]
 		[Remarks("[crLF] inserts a newline.")]
-		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]       
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_TextToWrite { get; set; }
 
 		[Required]

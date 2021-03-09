@@ -23,6 +23,7 @@ namespace OpenBots.Commands.Terminal
 		[Description("Enter the unique instance that was specified in the **Create Terminal Session** command.")]
 		[SampleUsage("MyTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Terminal Session** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(OpenEmulator) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -31,6 +32,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("Hello, World! || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_TextToWaitFor { get; set; }
 
 		[Required]
@@ -39,6 +41,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Timeout { get; set; }
 
 		public TerminalWaitForTextCommand()

@@ -24,6 +24,7 @@ namespace OpenBots.Commands.Microsoft
         [Description("Enter the unique instance that was specified in the **Create Application** command.")]
         [SampleUsage("MyExcelInstance")]
         [Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
+        [CompatibleTypes(new Type[] { typeof(Application) })]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -32,6 +33,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("TableName || {vTableName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_TableName { get; set; }
 
         [Required]
@@ -40,6 +42,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_SheetNameExcelTable { get; set; }
 
         [Required]
@@ -48,6 +51,7 @@ namespace OpenBots.Commands.Microsoft
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("{vUserVariable}")]
         [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_OutputUserVariableName { get; set; }
 
         public ExcelGetTableRangeCommand()
@@ -71,7 +75,7 @@ namespace OpenBots.Commands.Microsoft
             var excelTable = workSheetExcelTable.ListObjects[vTableName];
 
             //Extract a range of Excel Table and store in Output Range Variable
-            excelTable.Range.Address.Replace(@"$", string.Empty).StoreInUserVariable(engine, v_OutputUserVariableName);
+            excelTable.Range.Address.Replace(@"$", string.Empty).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

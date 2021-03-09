@@ -26,6 +26,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("{vDataRow}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(DataRow) })]
 		public string v_DataRow { get; set; }
 
 		[Required]
@@ -43,6 +44,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("0 || {vIndex} || Column1 || {vColumnName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_DataValueIndex { get; set; }
 
 		[Required]
@@ -51,6 +53,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("value || {vValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_DataRowValue { get; set; }
 
 		public UpdateDataRowValueCommand()
@@ -68,7 +71,7 @@ namespace OpenBots.Commands.DataTable
 			var engine = (IAutomationEngineInstance)sender;
 			var dataRowValue = v_DataRowValue.ConvertUserVariableToString(engine);
 
-			var dataRowVariable = v_DataRow.ConvertUserVariableToObject(engine);
+			var dataRowVariable = v_DataRow.ConvertUserVariableToObject(engine, nameof(v_DataRow), this);
 			DataRow dataRow = (DataRow)dataRowVariable;
 
 			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);

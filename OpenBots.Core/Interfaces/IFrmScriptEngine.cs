@@ -30,7 +30,6 @@ namespace OpenBots.Core.Infrastructure
         void ShowMessage(string message, string title, DialogType dialogType, int closeAfter);
         void ShowEngineContext(string context, int closeAfter);
         List<ScriptVariable> ShowHTMLInput(string htmlTemplate);
-        List<string> ShowInput(string header, string directions, DataTable inputTable);
         void AddStatus(string text, Color? statusColor = null);
         void uiBtnPause_Click(object sender, EventArgs e);
         void uiBtnCancel_Click(object sender, EventArgs e);

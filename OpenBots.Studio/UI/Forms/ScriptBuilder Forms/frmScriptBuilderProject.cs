@@ -68,9 +68,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 NotifySync("Loading package assemblies...", Color.White);               
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-                _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
-                AContainer = _builder.Build();                
-                        
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
+                AContainer = _builder.Build();
+
                 string mainScriptPath = Path.Combine(ScriptProjectPath, "Main.json");
                 string mainScriptName = Path.GetFileNameWithoutExtension(mainScriptPath);
                 UIListView mainScriptActions = NewLstScriptActions(mainScriptName);
@@ -143,7 +143,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     NotifySync("Loading package assemblies...", Color.White);
 
                     var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
-                    _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                    _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
                     AContainer = _builder.Build();
 
                     ScriptProject = project;
@@ -220,7 +220,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     throw new Exception("Main script not found");
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-                _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
                 AContainer = _builder.Build();
 
                 _mainFileName = mainFileName;

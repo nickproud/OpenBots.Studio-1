@@ -229,6 +229,7 @@ namespace OpenBots.Core.Script
             projectPathVariable = new ScriptVariable
             {
                 VariableName = "ProjectPath",
+                VariableType = typeof(string),
                 VariableValue = "Value Provided at Runtime"
             };
             deserializedData.Variables.Add(projectPathVariable);

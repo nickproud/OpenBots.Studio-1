@@ -25,6 +25,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("MyBZTerminalInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
+		[CompatibleTypes(new Type[] { typeof(BZTerminalContext) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -45,6 +46,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Remarks("This input should only be used for BlueZone Session files.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SessionFilePath { get; set; }
 
 		[Required]

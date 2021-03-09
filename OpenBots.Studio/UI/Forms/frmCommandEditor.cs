@@ -17,17 +17,20 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
+using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Engine;
 using OpenBots.UI.CustomControls;
+using OpenBots.UI.CustomControls.CustomUIControls;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms
@@ -54,12 +57,15 @@ namespace OpenBots.UI.Forms
 
         private ICommandControls _commandControls;
 
+        private TypeContext _typeContext;
+
         #region Form Events
         //handle events for the form
 
-        public frmCommandEditor(List<AutomationCommand> commands, List<ScriptCommand> existingCommands)
+        public frmCommandEditor(List<AutomationCommand> commands, List<ScriptCommand> existingCommands, TypeContext typeContext)
         {
             InitializeComponent();
+            _typeContext = typeContext;
             CommandList = commands;
             ConfiguredCommands = existingCommands;
         }
@@ -67,7 +73,7 @@ namespace OpenBots.UI.Forms
         private void frmNewCommand_Load(object sender, EventArgs e)
         {
             // Initialize CommandControls with Current Editor
-            _commandControls = new CommandControls(this, ScriptEngineContext);
+            _commandControls = new CommandControls(this, ScriptEngineContext, _typeContext);
 
             //order list
             CommandList = CommandList.OrderBy(itm => itm.FullName).ToList();
@@ -277,7 +283,114 @@ namespace OpenBots.UI.Forms
                     }
                 }
             }
-            DialogResult = DialogResult.OK;
+
+            if (ValidateInputs())
+                DialogResult = DialogResult.OK;
+        }
+
+        private bool ValidateInputs()
+        {
+            bool isAllValid = true;
+            AutomationEngineInstance testEngine = new AutomationEngineInstance(ScriptEngineContext);
+            dynamic currentControl;
+
+            foreach (Control ctrl in flw_InputVariables.Controls)
+            {
+                if (ctrl.Visible)
+                {
+                    if (ctrl is UIDataGridView)
+                    {
+                        currentControl = (UIDataGridView)ctrl;
+                        currentControl.BorderColor = Color.Transparent;
+                        var validationContext = (CommandControlValidationContext)currentControl.Tag;
+
+                        if (currentControl.Rows.Count == 0 && validationContext.IsRequired)
+                        {
+                            currentControl.BorderColor = Color.Red;
+                            isAllValid = false;
+                            continue;
+                        }
+
+                        foreach (DataGridViewRow row in currentControl.Rows)
+                        {
+                            if (!row.IsNewRow)
+                            {
+                                foreach (DataGridViewCell cell in row.Cells)
+                                {
+                                    isAllValid = ValidateInput(isAllValid, cell.Value?.ToString(), currentControl, testEngine);
+                                    if (!isAllValid)
+                                        break;
+                                }
+                            }                          
+                        }
+                    }
+                    else if (ctrl is UITextBox)
+                    {
+                        currentControl = (UITextBox)ctrl;
+
+                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                    }
+                    else if (ctrl is UIComboBox)
+                    {
+                        currentControl = (UIComboBox)ctrl;
+                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                    }
+                    else if(ctrl is UIPictureBox)
+                    {
+                        currentControl = (UIPictureBox)ctrl;
+                        isAllValid = ValidateInput(isAllValid, currentControl.EncodedImage, currentControl, testEngine);
+                    }
+                    else
+                        continue;
+                }              
+            }
+            return isAllValid;
+        }
+
+        private bool ValidateInput(bool isAllValid, string validatingText, dynamic currentControl, AutomationEngineInstance testEngine)
+        {
+            currentControl.BorderColor = Color.Transparent;
+            var validationContext = (CommandControlValidationContext)currentControl.Tag;
+
+            if (string.IsNullOrEmpty(validatingText) && validationContext.IsRequired == true)
+            {
+                currentControl.BorderColor = Color.Red;
+                isAllValid = false;
+                return isAllValid;
+            }
+
+            //TODO: Create an Instance tab with assigned Instance Types. For now, only requirement is some set some value
+            if (validationContext.IsInstance)
+                return isAllValid;
+
+            if (validationContext.IsImageCapture)
+                return isAllValid;
+
+            var varArgMatches = Regex.Matches(validatingText, @"\{\w+\}");
+
+            if (varArgMatches.Count == 0 && validationContext.IsStringOrPrimitive)
+                return isAllValid;
+            else if (varArgMatches.Count == 0 && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
+            {
+                currentControl.BorderColor = Color.Red;
+                isAllValid = false;
+                return isAllValid;
+            }
+
+            foreach (var match in varArgMatches)
+            {
+                Type varArgType = match.ToString().GetVarArgType(testEngine);
+                if (varArgType != null && !(validationContext.IsStringOrPrimitive && (varArgType == typeof(string) || varArgType.IsPrimitive)))
+                {
+                    if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType))))
+                    {
+                        currentControl.BorderColor = Color.Red;
+                        isAllValid = false;
+                        return isAllValid;
+                    }
+                }
+            }
+            return isAllValid;
         }
 
         private void uiBtnCancel_Click(object sender, EventArgs e)

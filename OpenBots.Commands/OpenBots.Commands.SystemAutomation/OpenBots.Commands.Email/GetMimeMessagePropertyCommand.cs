@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using System.IO;
 using OpenBots.Core.Properties;
+using System.Linq;
 
 namespace OpenBots.Commands.Email
 {
@@ -27,6 +28,7 @@ namespace OpenBots.Commands.Email
         [SampleUsage("{vMimeMessage}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(MimeMessage) })]
         public string v_MimeMessage { get; set; }
 
         [Required]
@@ -70,6 +72,7 @@ namespace OpenBots.Commands.Email
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("{vUserVariable}")]
         [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+        [CompatibleTypes(new Type[] { typeof(string), typeof(DateTime), typeof(List<>) })]
         public string v_OutputUserVariableName { get; set; }
 
         public GetMimeMessagePropertyCommand()
@@ -86,7 +89,7 @@ namespace OpenBots.Commands.Email
         {
             var engine = (IAutomationEngineInstance)sender;
 
-            MimeMessage email = (MimeMessage)v_MimeMessage.ConvertUserVariableToObject(engine);
+            MimeMessage email = (MimeMessage)v_MimeMessage.ConvertUserVariableToObject(engine, nameof(v_MimeMessage), this);
 
             Stream itemStream = new MemoryStream();
             StreamReader reader = new StreamReader(itemStream);
@@ -95,7 +98,7 @@ namespace OpenBots.Commands.Email
             switch (v_Property)
             {
                 case "Attachments":
-                    email.Attachments.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.Attachments.ToList().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "Bcc":
                     output = "";
@@ -105,16 +108,16 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                         break;
                 case "Body":
                     email.Body.WriteToAsync(itemStream);
-                    reader.ReadToEnd().StoreInUserVariable(engine, v_OutputUserVariableName);
+                    reader.ReadToEnd().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "BodyParts":
                     output = "";
@@ -123,7 +126,7 @@ namespace OpenBots.Commands.Email
                         item.WriteToAsync(itemStream);
                         output = output + reader.ReadToEnd() + "\n";
                     }
-                    output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "Cc":
                     output = "";
@@ -133,15 +136,15 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "Date":
-                    email.Date.UtcDateTime.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.Date.UtcDateTime.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "From":
                     output = "";
@@ -151,11 +154,11 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "Headers":
@@ -164,25 +167,25 @@ namespace OpenBots.Commands.Email
                     {
                         output = output + item.ToString() + "\n";
                     }
-                    output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "HtmlBody":
-                    email.HtmlBody.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.HtmlBody.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "Importance":
-                    email.Importance.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.Importance.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "InReplyTo":
-                    email.InReplyTo.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.InReplyTo.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "MessageId":
-                    email.MessageId.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.MessageId.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "MimeVersion":
-                    email.MimeVersion.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.MimeVersion.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "Priority":
-                    email.Priority.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.Priority.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "References":
                     output = "";
@@ -192,11 +195,11 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "ReplyTo":
@@ -207,11 +210,11 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "ResentBcc":
@@ -222,11 +225,11 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "ResentCc":
@@ -237,15 +240,15 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "ResentDate":
-                    email.ResentDate.UtcDateTime.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.ResentDate.UtcDateTime.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "ResentFrom":
                     output = "";
@@ -255,15 +258,15 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "ResentMessageId":
-                    email.ResentMessageId.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.ResentMessageId.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "ResentReplyTo":
                     output = "";
@@ -273,21 +276,21 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "ResentSender":
                     if (email.ResentSender == null)
                     {
-                        "null".StoreInUserVariable(engine, v_OutputUserVariableName);
+                        "null".StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        email.ResentSender.Address.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        email.ResentSender.Address.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "ResentTo":
@@ -298,28 +301,28 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "Sender":
                     if (email.Sender == null)
                     {
-                        "null".StoreInUserVariable(engine, v_OutputUserVariableName);
+                        "null".StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        email.Sender.Address.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        email.Sender.Address.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "Subject":
-                    email.Subject.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.Subject.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "TextBody":
-                    email.TextBody.StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.TextBody.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "To":
                     output = "";
@@ -329,15 +332,15 @@ namespace OpenBots.Commands.Email
                     }
                     if (output != "")
                     {
-                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.Substring(0, output.Length - 1).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     else
                     {
-                        output.StoreInUserVariable(engine, v_OutputUserVariableName);
+                        output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     }
                     break;
                 case "XPriority":
-                    email.XPriority.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+                    email.XPriority.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 default:
                     throw new NotImplementedException($"Property '{v_Property}' has not been implemented.");

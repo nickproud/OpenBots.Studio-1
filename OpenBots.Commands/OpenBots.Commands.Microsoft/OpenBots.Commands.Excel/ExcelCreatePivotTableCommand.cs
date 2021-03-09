@@ -24,31 +24,35 @@ namespace OpenBots.Commands.Excel
         [Description("Enter the unique instance that was specified in the **Create Application** command.")]
         [SampleUsage("MyExcelInstance")]
         [Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
+        [CompatibleTypes(new Type[] { typeof(Application) })]
         public string v_InstanceName { get; set; }
 
         [Required]
-        [DisplayName("Excel Table Name")]
-        [Description("Enter the Excel Table name to extract data for Pivot Table.")]
-        [SampleUsage("Table || {vTable}")]
-        [Remarks("")]
-        [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        public string v_TableName { get; set; }
-
-        [Required]
         [DisplayName("Excel Table Worksheet")]
-        [Description("Enter the Excel Table Worksheet name within the Workbook to extract Range and create Pivot Table.")]
+        [Description("Enter the name of the Worksheet containing the Excel Table being used to create the Pivot Table.")]
         [SampleUsage("Sheet1 || {vSheet}")]
-        [Remarks("Error will be thrown in case of invalid Sheet Name.")]
+        [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_SheetNameExcelTable { get; set; }
 
         [Required]
-        [DisplayName("Cell Location")]
-        [Description("Enter the location where Pivot Table will be created.")]
-        [SampleUsage("A1 || {vCellLocation}")]
+        [DisplayName("Excel Table Name")]
+        [Description("Enter the name of the Excel Table to extract data from for the Pivot Table.")]
+        [SampleUsage("Table || {vTable}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        public string v_CellLocation { get; set; }
+        [CompatibleTypes(null, true)]
+        public string v_TableName { get; set; }
+
+        [Required]
+        [DisplayName("Pivot Table Worksheet")]
+        [Description("Enter the name of the Worksheet where the Pivot Table will be set.")]
+        [SampleUsage("Sheet1 || {vSheet}")]
+        [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
+        [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
+        public string v_SheetNamePivotTable { get; set; }
 
         [Required]
         [DisplayName("Pivot Table Name")]
@@ -56,15 +60,17 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("PivotTable || {vPivotTable}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_PivotTable { get; set; }
 
         [Required]
-        [DisplayName("Pivot Table Worksheet")]
-        [Description("Enter the Worksheet name within the Workbook to write Pivot Table.")]
-        [SampleUsage("Sheet1 || {vSheet}")]
-        [Remarks("Error will be thrown in case of invalid Sheet Name.")]
+        [DisplayName("Cell Location")]
+        [Description("Enter the location where the Pivot Table will be set.")]
+        [SampleUsage("A1 || {vCellLocation}")]
+        [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        public string v_SheetNamePivotTable { get; set; }
+        [CompatibleTypes(null, true)]
+        public string v_CellLocation { get; set; }
 
         public ExcelCreatePivotTableCommand()
         {
@@ -117,11 +123,11 @@ namespace OpenBots.Commands.Excel
             base.Render(editor, commandControls);
 
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
-            RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TableName", this, editor));
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SheetNameExcelTable", this, editor));
-            RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_CellLocation", this, editor));
-            RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_PivotTable", this, editor));
+            RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TableName", this, editor));
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SheetNamePivotTable", this, editor));
+            RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_PivotTable", this, editor));
+            RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_CellLocation", this, editor));
 
             return RenderedControls;
         }

@@ -19,8 +19,8 @@ namespace OpenBots.Commands.Data.Test
             _modifyString = new ModifyStringCommand();
             _engine = new AutomationEngineInstance(null);
 
-            input.CreateTestVariable(_engine, "input");
-            "unassigned".CreateTestVariable(_engine, "output");
+            input.CreateTestVariable(_engine, "input", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _modifyString.v_InputText = "{input}";
             _modifyString.v_TextOperation = operation;

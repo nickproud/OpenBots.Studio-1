@@ -23,6 +23,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Description("Enter the unique instance that was specified in the **Create BZ Terminal Session** command.")]
 		[SampleUsage("MyBZTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create BZ Terminal Session** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(BZTerminalContext) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -31,6 +32,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("1 || {vRowPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_YMousePosition { get; set; }
 
 		[Required]
@@ -39,6 +41,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("1 || {vColPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_XMousePosition { get; set; }
 
 		public BZTerminalSetCursorCommand()

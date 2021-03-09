@@ -28,6 +28,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
+		[CompatibleTypes(new Type[] { typeof(Application) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -46,6 +47,7 @@ namespace OpenBots.Commands.Excel
 		[Remarks("This input should only be used for opening existing Workbooks.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]

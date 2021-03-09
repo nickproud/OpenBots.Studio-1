@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Outlook.Test
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
 
-            "unassigned".CreateTestVariable(_engine, "emails");
+            "unassigned".CreateTestVariable(_engine, "emails", typeof(List<>));
 
             _getOutlookEmails.v_SourceFolder = "Inbox";
             _getOutlookEmails.v_Filter = "[Subject] = 'toDelete'";
@@ -36,9 +36,13 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            if(emails.Count == 0)
+            {
+                throw new System.ArgumentException("Test email 'toDelete' was not found");
+            }
             MailItem email = emails[0];
-            email.CreateTestVariable(_engine, "email");
+            email.CreateTestVariable(_engine, "email", typeof(MailItem));
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";
@@ -54,7 +58,7 @@ namespace OpenBots.Commands.Outlook.Test
             _getOutlookEmails.v_OutputUserVariableName = "{emails}";
 
             _getOutlookEmails.RunCommand(_engine);
-            List<MailItem> postEmails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+            List<MailItem> postEmails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
             resetEmail(_engine);
             Assert.Empty(postEmails);
         }

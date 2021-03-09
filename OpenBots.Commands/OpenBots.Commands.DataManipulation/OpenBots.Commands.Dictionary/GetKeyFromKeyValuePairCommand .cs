@@ -28,6 +28,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("{vKeyValuePair}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(KeyValuePair<,>) })]
 		public string v_InputKeyValuePair { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.Dictionary
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetKeyFromKeyValuePairCommand()
@@ -52,22 +54,22 @@ namespace OpenBots.Commands.Dictionary
 			var engine = (IAutomationEngineInstance)sender;
 
 			dynamic keyValuePair;
-			if (v_InputKeyValuePair.ConvertUserVariableToObject(engine) is KeyValuePair<string, string>)
-				keyValuePair = (KeyValuePair<string, string>)v_InputKeyValuePair.ConvertUserVariableToObject(engine);
-			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine) is KeyValuePair<string, OBDataTable>)
-				keyValuePair = (KeyValuePair<string, OBDataTable>)v_InputKeyValuePair.ConvertUserVariableToObject(engine);
-			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine) is KeyValuePair<string, MailItem>)
-				keyValuePair = (KeyValuePair<string, MailItem>)v_InputKeyValuePair.ConvertUserVariableToObject(engine);
-			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine) is KeyValuePair<string, MimeMessage>)
-				keyValuePair = (KeyValuePair<string, MimeMessage>)v_InputKeyValuePair.ConvertUserVariableToObject(engine);
-			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine) is KeyValuePair<string, IWebElement>)
-				keyValuePair = (KeyValuePair<string, IWebElement>)v_InputKeyValuePair.ConvertUserVariableToObject(engine);
-			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine) is KeyValuePair<string, object>)
-				keyValuePair = (KeyValuePair<string, object>)v_InputKeyValuePair.ConvertUserVariableToObject(engine);
+			if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, string>)
+				keyValuePair = (KeyValuePair<string, string>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
+			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, OBDataTable>)
+				keyValuePair = (KeyValuePair<string, OBDataTable>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
+			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, MailItem>)
+				keyValuePair = (KeyValuePair<string, MailItem>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
+			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, MimeMessage>)
+				keyValuePair = (KeyValuePair<string, MimeMessage>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
+			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, IWebElement>)
+				keyValuePair = (KeyValuePair<string, IWebElement>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
+			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, object>)
+				keyValuePair = (KeyValuePair<string, object>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
 			else
 				throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 
-			((object)keyValuePair.Key).StoreInUserVariable(engine, v_OutputUserVariableName);
+			((string)keyValuePair.Key).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -25,22 +25,25 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(Application) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Original Worksheet Name")]
-		[Description("Specify the name of the new Worksheet to rename.")]
+		[Description("Specify the original name of the Worksheet to rename.")]
 		[SampleUsage("Sheet1 || {vSheet}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_OriginalSheetName { get; set; }
 
 		[Required]
 		[DisplayName("New Worksheet Name")]
-		[Description("Specify the new name of the new Worksheet.")]
+		[Description("Specify the new name of the Worksheet.")]
 		[SampleUsage("Sheet1 || {vSheet}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_NewSheetName { get; set; }
 
 		public ExcelRenameSheetCommand()

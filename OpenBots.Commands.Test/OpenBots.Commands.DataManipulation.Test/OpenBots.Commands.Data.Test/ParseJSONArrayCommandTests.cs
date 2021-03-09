@@ -25,14 +25,14 @@ namespace OpenBots.Commands.Data.Test
 
             string jsonArray = "[\"val1\",\"val2\",\"val3\"]";
             string[] expectedResult = {"val1","val2","val3"};
-            jsonArray.CreateTestVariable(_engine, "input");
-            "unassigned".CreateTestVariable(_engine, "output");
+            jsonArray.CreateTestVariable(_engine, "input", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _parseJSONArray.v_JsonArrayName = "{input}";
             _parseJSONArray.v_OutputUserVariableName = "{output}";
 
             _parseJSONArray.RunCommand(_engine);
-            List<string> outputList = (List<string>)_parseJSONArray.v_OutputUserVariableName.ConvertUserVariableToObject(_engine);
+            List<string> outputList = (List<string>)_parseJSONArray.v_OutputUserVariableName.ConvertUserVariableToObject(_engine, typeof(List<>));
             for (int i = 0;i < outputList.Count; i++)
             {
                 Assert.Equal(expectedResult[i], outputList[i]);

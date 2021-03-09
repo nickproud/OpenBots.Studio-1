@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("1/1/2000 || {vDate} || {DateTime.Now}")]
 		[Remarks("You can use known text or variables.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(DateTime), typeof(string) })]
 		public string v_InputDate { get; set; }
 
 		[Required]
@@ -59,6 +60,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("15 || {vIncrement}")]
 		[Remarks("You can use negative numbers which will do the opposite, ex. Subtract Days and an increment of -5 will Add Days.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Increment { get; set; }
 
 		[DisplayName("Date Format (Optional)")]
@@ -66,6 +68,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("MM/dd/yy hh:mm:ss || MM/dd/yyyy || {vDateFormat}")]
 		[Remarks("You can specify either a valid DateTime, Date or Time Format; an invalid format will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ToStringFormat { get; set; }
 
 		[Required]
@@ -74,6 +77,7 @@ namespace OpenBots.Commands.Data
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -102,7 +106,7 @@ namespace OpenBots.Commands.Data
 			dynamic input = v_InputDate.ConvertUserVariableToString(engine);
 
 			if (input == v_InputDate && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_InputDate.ConvertUserVariableToObject(engine);
+				input = v_InputDate.ConvertUserVariableToObject(engine, nameof(v_InputDate), this);
 
 			DateTime variableDate;
 
@@ -193,7 +197,7 @@ namespace OpenBots.Commands.Data
 				stringDateFormatted = ((object)dateTimeValue).ToString();
 
 			//store string (Result) in variable
-			stringDateFormatted.StoreInUserVariable(engine, v_OutputUserVariableName);
+			stringDateFormatted.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

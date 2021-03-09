@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace OpenBots.Core.UI.Controls.CustomControls
+namespace OpenBots.Core.UI.Controls
 {
     public class AutomationCommand
     {
@@ -54,7 +54,7 @@ namespace OpenBots.Core.UI.Controls.CustomControls
             if (!continueComboBoxControlExists)
             {
                 UIControls.Add(commandControls.CreateDefaultLabelFor("v_ErrorHandling", Command));
-                ComboBox continueBox = (ComboBox)commandControls.CreateDropdownFor("v_ErrorHandling", Command);
+                ComboBox continueBox = commandControls.CreateDropdownFor("v_ErrorHandling", Command);
                 continueBox.Items.Add("None");
                 continueBox.Items.Add("Report Error");
                 continueBox.Items.Add("Ignore Error");
@@ -73,11 +73,7 @@ namespace OpenBots.Core.UI.Controls.CustomControls
 
         public void Bind(IfrmCommandEditor editor, ICommandControls commandControls)
         {
-            //preference to preload is false
-            //if (UIControls is null)
-            //{
             RenderUIComponents(editor, commandControls);
-            //}
 
             foreach (var ctrl in UIControls)
             {
@@ -118,22 +114,6 @@ namespace OpenBots.Core.UI.Controls.CustomControls
                             break;
                         default:
                             break;
-                    }
-                }
-
-                //if (ctrl is UIPictureBox)
-                //{
-                //    var typedControl = (UIPictureBox)InputControl;
-                //}
-
-                //Todo: helper for loading variables, move to attribute
-                if ((ctrl.Name == "v_userVariableName") && (ctrl is ComboBox))
-                {
-                    var variableCbo = (ComboBox)ctrl;
-                    variableCbo.Items.Clear();
-                    foreach (var var in editor.ScriptEngineContext.Variables)
-                    {
-                        variableCbo.Items.Add(var.VariableName);
                     }
                 }
             }

@@ -6,7 +6,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommandUtilities;
 using System;
 using System.Collections.Generic;
@@ -151,7 +150,7 @@ namespace OpenBots.Commands.If
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_LogicType", this, editor));
 
 			//create controls
-			var controls = commandControls.CreateDataGridViewGroupFor("v_IfConditionsTable", this, editor);
+			var controls = commandControls.CreateDefaultDataGridViewGroupFor("v_IfConditionsTable", this, editor);
 			_ifConditionHelper = controls[2] as DataGridView;
 
 			//handle helper click

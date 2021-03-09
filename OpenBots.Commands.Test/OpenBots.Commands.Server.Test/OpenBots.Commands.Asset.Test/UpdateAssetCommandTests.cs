@@ -23,9 +23,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testTextAsset";
             string newAsset = "newText";
-            assetName.CreateTestVariable(_engine, "assetName");
-            newAsset.CreateTestVariable(_engine, "newAsset");
-            "unassigned".CreateTestVariable(_engine, "output");
+            assetName.CreateTestVariable(_engine, "assetName", typeof(string));
+            newAsset.CreateTestVariable(_engine, "newAsset", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = "Text";
@@ -55,9 +55,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testNumberAsset";
             string newAsset = "70";
-            assetName.CreateTestVariable(_engine, "assetName");
-            newAsset.CreateTestVariable(_engine, "newAsset");
-            "unassigned".CreateTestVariable(_engine, "output");
+            assetName.CreateTestVariable(_engine, "assetName", typeof(string));
+            newAsset.CreateTestVariable(_engine, "newAsset", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = "Number";
@@ -87,9 +87,9 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "testJSONAsset";
             string newAsset = "{ \"text\": \"newText\" }";
-            assetName.CreateTestVariable(_engine, "assetName");
-            newAsset.CreateTestVariable(_engine, "newAsset");
-            "unassigned".CreateTestVariable(_engine, "output");
+            assetName.CreateTestVariable(_engine, "assetName", typeof(string));
+            newAsset.CreateTestVariable(_engine, "newAsset", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = "JSON";
@@ -121,8 +121,8 @@ namespace OpenBots.Commands.Asset.Test
             string filepath = Path.Combine(projectDirectory, @"Resources\");
             string assetName = "testUpdateFileAsset";
             string newAsset = filepath + @"Upload\newtest.txt";
-            assetName.CreateTestVariable(_engine, "assetName");
-            newAsset.CreateTestVariable(_engine, "newAsset");
+            assetName.CreateTestVariable(_engine, "assetName", typeof(string));
+            newAsset.CreateTestVariable(_engine, "newAsset", typeof(string));
 
             _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = "File";
@@ -154,8 +154,8 @@ namespace OpenBots.Commands.Asset.Test
 
             string assetName = "noAsset";
             string newAsset = "newText";
-            assetName.CreateTestVariable(_engine, "{assetName}");
-            newAsset.CreateTestVariable(_engine, "{newAsset}");
+            assetName.CreateTestVariable(_engine, "{assetName}", typeof(string));
+            newAsset.CreateTestVariable(_engine, "{newAsset}", typeof(string));
 
             _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = "Text";

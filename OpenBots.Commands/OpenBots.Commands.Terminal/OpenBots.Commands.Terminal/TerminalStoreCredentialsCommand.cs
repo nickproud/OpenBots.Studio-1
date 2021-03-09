@@ -25,6 +25,7 @@ namespace OpenBots.Commands.Terminal
 		[Description("Enter the unique instance that was specified in the **Create Terminal Session** command.")]
 		[SampleUsage("MyTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Terminal Session** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(OpenEmulator) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -33,6 +34,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Username { get; set; }
 
 		[Required]
@@ -41,6 +43,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("{vPassword}")]
 		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_Password { get; set; }
 
 		public TerminalStoreCredentialsCommand()
@@ -56,7 +59,7 @@ namespace OpenBots.Commands.Terminal
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vUserName = v_Username.ConvertUserVariableToString(engine);
-			var vPassword = (SecureString)v_Password.ConvertUserVariableToObject(engine);
+			var vPassword = (SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this);
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)

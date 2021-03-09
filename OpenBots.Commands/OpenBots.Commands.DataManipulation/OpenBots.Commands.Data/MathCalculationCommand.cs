@@ -24,6 +24,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("(2 + 5) * 3 || ({vNumber1} + {vNumber2}) * {vNumber3}")]
 		[Remarks("You can use known numbers or variables.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_MathExpression { get; set; }
 
 		[DisplayName("Thousand Separator (Optional)")]
@@ -31,6 +32,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage(", || . || {vThousandSeparator}")]
 		[Remarks("Typically a comma or a decimal point (period), like in 100,000, ',' is a thousand separator.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ThousandSeparator { get; set; }
 
 		[DisplayName("Decimal Separator (Optional)")]
@@ -38,6 +40,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage(". || , || {vDecimalSeparator}")]
 		[Remarks("Typically a comma or a decimal point (period), like in 60.99, '.' is a decimal separator.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_DecimalSeparator { get; set; }
 
 		[Required]
@@ -55,6 +58,7 @@ namespace OpenBots.Commands.Data
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public MathCalculationCommand()
@@ -83,9 +87,9 @@ namespace OpenBots.Commands.Data
 			if (variableMath == "∞")
 			{
 				if (v_AcceptUndefined == "No")
-					throw new DivideByZeroException("Expression calculation resulted inifinty");
+					throw new DivideByZeroException("Expression calculation resulted in inifinty.");
 				else
-					typeof(Nullable).StoreInUserVariable(engine, v_OutputUserVariableName);
+					typeof(Nullable).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else
 			{
@@ -118,7 +122,7 @@ namespace OpenBots.Commands.Data
 				}
 
 				//store string in variable
-				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+				result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 
 		}

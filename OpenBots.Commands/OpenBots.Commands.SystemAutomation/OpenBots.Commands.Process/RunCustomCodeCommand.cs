@@ -1,6 +1,5 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
@@ -20,7 +19,7 @@ using Diagnostics = System.Diagnostics;
 
 namespace OpenBots.Commands.Process
 {
-	[Serializable]
+    [Serializable]
 	[Category("Programs/Process Commands")]
 	[Description("This command runs custom C# code. The code in this command is compiled and run at runtime when this command is invoked.")]
 
@@ -35,6 +34,7 @@ namespace OpenBots.Commands.Process
 		[Remarks("This command only supports the standard framework classes.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowCodeBuilder", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Code { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -42,6 +42,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("hello || {vArg} || hello,world || {vArg1},{vArg2}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Args { get; set; }
 
 		[Required]
@@ -50,6 +51,7 @@ namespace OpenBots.Commands.Process
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(object) }, true)]
 		public string v_OutputUserVariableName { get; set; }
 
 		public RunCustomCodeCommand()
@@ -120,7 +122,7 @@ namespace OpenBots.Commands.Process
 
 				if(v_OutputUserVariableName.Length != 0)
 				{
-					((object)result).StoreInUserVariable(engine, v_OutputUserVariableName);
+					((object)result).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 				}
 			}
 		}
@@ -178,7 +180,7 @@ namespace OpenBots.Commands.Process
 					if (v_OutputUserVariableName != "")
 					{
 						var output = scriptProc.StandardOutput.ReadToEnd();
-						output.StoreInUserVariable(engine, v_OutputUserVariableName);
+						output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 					}
 				}
 			}

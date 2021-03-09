@@ -27,6 +27,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("MyIEBrowserInstance")]
         [Remarks("This unique name allows you to refer to the instance by name in future commands, " +
                  "ensuring that the commands you specify run against the correct application.")]
+        [CompatibleTypes(new Type[] { typeof(InternetExplorer) })]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -45,7 +46,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             CommandName = "IEFindBrowserCommand";
             SelectionName = "Find IE Browser";          
-            CommandEnabled = false;
+            CommandEnabled = true;
             CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";
@@ -59,7 +60,7 @@ namespace OpenBots.Commands.IEBrowser
             var shellWindows = new ShellWindows();
             foreach (IWebBrowser2 shellWindow in shellWindows)
             {
-                if ((shellWindow.Document is HTMLDocument) && (v_IEBrowserName==null || shellWindow.Document.Title == v_IEBrowserName))
+                if ((shellWindow.Document is HTMLDocument) && (v_IEBrowserName == null || shellWindow.Document.Title == v_IEBrowserName))
                 {
                     ((object)shellWindow.Application).AddAppInstance(engine, v_InstanceName);
                     browserFound = true;
@@ -95,7 +96,7 @@ namespace OpenBots.Commands.IEBrowser
 
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
-            _ieBrowerNameDropdown = (ComboBox)commandControls.CreateDropdownFor("v_IEBrowserName", this);
+            _ieBrowerNameDropdown = commandControls.CreateDropdownFor("v_IEBrowserName", this);
             var shellWindows = new ShellWindows();
             foreach (IWebBrowser2 shellWindow in shellWindows)
             {

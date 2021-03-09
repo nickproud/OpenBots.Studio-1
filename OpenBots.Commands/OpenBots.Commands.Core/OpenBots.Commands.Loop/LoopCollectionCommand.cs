@@ -33,6 +33,7 @@ namespace OpenBots.Commands.Loop
 		[Remarks("If the collection is a DataTable then the output item will be a DataRow and its column value can be accessed using the " +
 			"dot operator like {vDataRow.ColumnName}.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(DataTable), typeof(List<>), typeof(Dictionary<,>), typeof(string) })]
 		public string v_LoopParameter { get; set; }
 
 		[Required]
@@ -41,6 +42,7 @@ namespace OpenBots.Commands.Loop
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(IWebElement), typeof(MailItem), typeof(MimeMessage), typeof(KeyValuePair<,>), typeof(string)})]
 		public string v_OutputUserVariableName { get; set; }
 
 		public LoopCollectionCommand()
@@ -57,7 +59,7 @@ namespace OpenBots.Commands.Loop
 			var engine = (IAutomationEngineInstance)sender;
 
 			int loopTimes;
-			var complexVariable = v_LoopParameter.ConvertUserVariableToObject(engine);           
+			var complexVariable = v_LoopParameter.ConvertUserVariableToObject(engine, nameof(v_LoopParameter), this);           
 
 			//if still null then throw exception
 			if (complexVariable == null)
@@ -125,7 +127,7 @@ namespace OpenBots.Commands.Loop
 					itemList.Add(value.ToString());
 				}
 
-				itemList.StoreInUserVariable(engine, v_LoopParameter);
+				itemList.StoreInUserVariable(engine, v_LoopParameter, nameof(v_LoopParameter), this);
 				listToLoop = itemList;
 			}
 			else
@@ -137,7 +139,7 @@ namespace OpenBots.Commands.Loop
 			{
 				engine.ReportProgress("Starting Loop Number " + (i + 1) + "/" + loopTimes + " From Line " + loopCommand.LineNumber);
 				
-				((object)listToLoop[i]).StoreInUserVariable(engine, v_OutputUserVariableName);
+				((object)listToLoop[i]).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 				foreach (var cmd in parentCommand.AdditionalScriptCommands)
 				{

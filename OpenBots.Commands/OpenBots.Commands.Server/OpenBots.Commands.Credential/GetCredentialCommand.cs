@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Credential
 		[SampleUsage("Name || {vCredentialName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_CredentialName { get; set; }
 
 		[Required]
@@ -34,6 +35,7 @@ namespace OpenBots.Commands.Credential
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[Required]
@@ -42,6 +44,7 @@ namespace OpenBots.Commands.Credential
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_OutputUserVariableName2 { get; set; }
 
 		public GetCredentialCommand()
@@ -68,8 +71,8 @@ namespace OpenBots.Commands.Credential
 			string username = credential.UserName;
 			SecureString password = credential.PasswordSecret.ConvertStringToSecureString();
 
-			username.StoreInUserVariable(engine, v_OutputUserVariableName);
-			password.StoreInUserVariable(engine, v_OutputUserVariableName2);
+			username.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			password.StoreInUserVariable(engine, v_OutputUserVariableName2, nameof(v_OutputUserVariableName2), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

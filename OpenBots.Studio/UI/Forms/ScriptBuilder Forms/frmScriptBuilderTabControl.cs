@@ -27,8 +27,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     if (!_isRunTaskCommand)
                     {
-                        dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                        dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                        ResetVariableArgumentBindings();
                     }                             
                 }               
             }

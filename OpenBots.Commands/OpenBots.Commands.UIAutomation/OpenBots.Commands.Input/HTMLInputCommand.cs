@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Security;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
@@ -24,6 +25,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("ShowHTMLBuilder", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputHTML { get; set; }
 
 		[Required]
@@ -73,9 +75,9 @@ namespace OpenBots.Commands.Input
 					//store each one into context
 					foreach (var variable in variables)
                         if (variable.IsSecureString)
-							variable.VariableValue.ToString().ConvertStringToSecureString().StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName));
+							variable.VariableValue.ToString().ConvertStringToSecureString().StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName), typeof(SecureString));
 						else
-							variable.VariableValue.ToString().StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName));
+							variable.VariableValue.ToString().StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName), variable.VariableType);
 				}
 				else if (v_ErrorOnClose == "Yes")
 					throw new Exception("Input Form was closed by the user");

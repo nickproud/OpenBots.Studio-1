@@ -33,6 +33,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("QueueItem Text/Json values are store in the 'DataJson' key of a QueueItem Dictionary.\n" +
 				 "If a Queue has no workable items, the output value will be set to null.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueueName { get; set; }
 
 		[Required]
@@ -51,6 +52,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("This input is optional and will only be used if *Save Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_AttachmentDirectory { get; set; }
 
 		[Required]
@@ -59,6 +61,7 @@ namespace OpenBots.Commands.QueueItem
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -101,7 +104,7 @@ namespace OpenBots.Commands.QueueItem
 			if (queueItem == null)
 			{
 				queueItemDict = null;
-				queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName);
+				queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 				return;
 			}
 
@@ -119,7 +122,7 @@ namespace OpenBots.Commands.QueueItem
 													   kvp.Key == "LockedUntilUTC")
 										 .ToDictionary(i => i.Key, i => i.Value);
 
-			queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName);
+			queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 			if (v_SaveAttachments == "Yes")
 			{
@@ -143,7 +146,6 @@ namespace OpenBots.Commands.QueueItem
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueueName", this, editor));
-			
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SaveAttachments", this, editor));
 			((ComboBox)RenderedControls[4]).SelectedIndexChanged += SaveQueueItemFilesComboBox_SelectedValueChanged;
 
@@ -155,6 +157,7 @@ namespace OpenBots.Commands.QueueItem
 
 			RenderedControls.AddRange(_savingControls);
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
+
 
 			return RenderedControls;
 		}

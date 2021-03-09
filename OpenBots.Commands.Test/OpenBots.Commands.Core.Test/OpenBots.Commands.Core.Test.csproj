@@ -67,7 +67,6 @@
     <Compile Include="OpenBots.Commands.Engine.Test\PauseScriptCommandTests.cs" />
     <Compile Include="OpenBots.Commands.Switch.Test\SwitchCommandTests.cs" />
     <Compile Include="OpenBots.Commands.Task.Test\RunTaskCommandTests.cs" />
-    <Compile Include="OpenBots.Commands.Variable.Test\NewVariableCommandTests.cs" />
     <Compile Include="OpenBots.Commands.Variable.Test\SetVariableCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OpenBots.Commands.Engine.Test\SetEngineDelayCommandTests.cs" />

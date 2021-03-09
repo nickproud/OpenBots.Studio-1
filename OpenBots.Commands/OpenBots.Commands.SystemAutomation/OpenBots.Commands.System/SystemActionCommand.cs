@@ -7,13 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Windows.Forms;
 using OBProcess = System.Diagnostics.Process;
 
 namespace OpenBots.Commands.System
 {
-	[Serializable]
+    [Serializable]
 	[Category("System Commands")]
 	[Description("This command performs a system action.")]
 	public class SystemActionCommand : ScriptCommand

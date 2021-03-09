@@ -54,11 +54,12 @@ namespace OpenBots.Commands.Image
 		public string v_ImageAction { get; set; }
 
 		[Required]
-		[DisplayName("Additional Parameters")]
-		[Description("Additional Parameters will be required based on the action settings selected.")]
+		[DisplayName("Action Parameters")]
+		[Description("Action Parameters will be required based on the action settings selected.")]
 		[SampleUsage("data || {vData}")]
-		[Remarks("Additional Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
+		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(bool) }, true)]
 		public DataTable v_ImageActionParameterTable { get; set; }
 
 		[Required]
@@ -67,6 +68,7 @@ namespace OpenBots.Commands.Image
 		[SampleUsage("0.8 || 1 || {vAccuracy}")]
 		[Remarks("Accuracy must be a value between 0 and 1.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_MatchAccuracy { get; set; }
 
 		[JsonIgnore]
@@ -99,19 +101,7 @@ namespace OpenBots.Commands.Image
 				TableName = "ImageActionParamTable" + DateTime.Now.ToString("MMddyy.hhmmss")
 			};
 			v_ImageActionParameterTable.Columns.Add("Parameter Name");
-			v_ImageActionParameterTable.Columns.Add("Parameter Value");
-
-			_imageGridViewHelper = new DataGridView();
-			_imageGridViewHelper.AllowUserToAddRows = true;
-			_imageGridViewHelper.AllowUserToDeleteRows = true;
-			_imageGridViewHelper.Size = new Size(400, 250);
-			_imageGridViewHelper.ColumnHeadersHeight = 30;
-			_imageGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_imageGridViewHelper.DataBindings.Add("DataSource", this, "v_ImageActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
-			_imageGridViewHelper.AllowUserToAddRows = false;
-			_imageGridViewHelper.AllowUserToDeleteRows = false;
-			//_imageGridViewHelper.AllowUserToResizeRows = false;
-			_imageGridViewHelper.MouseEnter += ImageGridViewHelper_MouseEnter;
+			v_ImageActionParameterTable.Columns.Add("Parameter Value");			
 		}
 
 		public override void RunCommand(object sender)
@@ -244,7 +234,7 @@ namespace OpenBots.Commands.Image
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
 
-						var secureStrVariable = secureString.ConvertUserVariableToObject(engine);
+						var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
 
 						if (secureStrVariable is SecureString)
 							secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
@@ -269,9 +259,9 @@ namespace OpenBots.Commands.Image
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 						if (element != null)
-							"True".StoreInUserVariable(engine, outputVariable);
+							true.StoreInUserVariable(engine, outputVariable, typeof(bool));
 						else
-							"False".StoreInUserVariable(engine, outputVariable);
+							false.StoreInUserVariable(engine, outputVariable, typeof(bool));
 						break;
 					default:
 						break;
@@ -292,16 +282,12 @@ namespace OpenBots.Commands.Image
 		{
 			base.Render(editor, commandControls);
 
-			UIPictureBox imageCapture = new UIPictureBox();
-			imageCapture.Width = 200;
-			imageCapture.Height = 200;
-			imageCapture.DataBindings.Add("EncodedImage", this, "v_ImageCapture", false, DataSourceUpdateMode.OnPropertyChanged);
-
+			var imageCapture = commandControls.CreateDefaultPictureBoxFor("v_ImageCapture", this);
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ImageCapture", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageCapture", this, new Control[] { imageCapture }, editor));
 			RenderedControls.Add(imageCapture);
 
-			_imageActionDropdown = (ComboBox)commandControls.CreateDropdownFor("v_ImageAction", this);
+			_imageActionDropdown = commandControls.CreateDropdownFor("v_ImageAction", this);
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ImageAction", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageAction", this, new Control[] { _imageActionDropdown }, editor));
 			_imageActionDropdown.SelectionChangeCommitted += ImageAction_SelectionChangeCommitted;
@@ -309,6 +295,13 @@ namespace OpenBots.Commands.Image
 
 			_imageParameterControls = new List<Control>();
 			_imageParameterControls.Add(commandControls.CreateDefaultLabelFor("v_ImageActionParameterTable", this));
+
+			_imageGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ImageActionParameterTable", this);
+			_imageGridViewHelper.AllowUserToAddRows = false;
+			_imageGridViewHelper.AllowUserToDeleteRows = false;
+			//_imageGridViewHelper.AllowUserToResizeRows = false;
+			_imageGridViewHelper.MouseEnter += ImageGridViewHelper_MouseEnter;
+
 			_imageParameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageActionParameterTable", this, new Control[] { _imageGridViewHelper }, editor));
 			_imageParameterControls.Add(_imageGridViewHelper);
 			RenderedControls.AddRange(_imageParameterControls);

@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Database
 		[Description("Enter the unique instance that was specified in the **Define Database Connection** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Define Database Connection** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(OleDbConnection) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -47,6 +48,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("SELECT OrderID, CustomerID FROM Orders || {vQuery}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Query { get; set; }
 
 		[Required]
@@ -55,13 +57,16 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("[STRING | @name | {vNameValue}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_QueryParameters { get; set; }
 
 		[Required]
-		[DisplayName("Query Timeout (seconds)")]
-		[Description("Enter the wait time before terminating an attempt to execute a query and generate an error.")]
-		[SampleUsage("30 || {vTimeout}")]
+		[DisplayName("Timeout (Seconds)")]
+		[Description("Specify how many seconds to wait before throwing an exception.")]
+		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueryTimeout { get; set; }
 
 		[Required]
@@ -70,6 +75,7 @@ namespace OpenBots.Commands.Database
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(DataTable), typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -124,7 +130,6 @@ namespace OpenBots.Commands.Database
 				var parameterType = rw.Field<string>("Parameter Type").ConvertUserVariableToString(engine);
 
 				object convertedValue = null;
-				//"STRING", "BOOLEAN", "DECIMAL", "INT16", "INT32", "INT64", "DATETIME", "DOUBLE", "SINGLE", "GUID", "BYTE", "BYTE[]"
 				switch (parameterType)
 				{
 					case "STRING":
@@ -182,14 +187,14 @@ namespace OpenBots.Commands.Database
 				dataTable.TableName = v_OutputUserVariableName;
 				engine.DataTables.Add(dataTable);
 
-				dataTable.StoreInUserVariable(engine, v_OutputUserVariableName);
+				dataTable.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else if (v_QueryType == "Execute NonQuery")
 			{
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else if (v_QueryType == "Execute Stored Procedure")
 			{
@@ -197,7 +202,7 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else
 				throw new NotImplementedException($"Query Execution Type '{v_QueryType}' not implemented.");
@@ -217,14 +222,10 @@ namespace OpenBots.Commands.Database
 			RenderedControls.AddRange(queryControls);
 
 			//set up query parameter controls
-			_queryParametersGridView = new DataGridView();
-			_queryParametersGridView.AllowUserToAddRows = true;
-			_queryParametersGridView.AllowUserToDeleteRows = true;
-			_queryParametersGridView.Size = new Size(400, 250);
-			_queryParametersGridView.ColumnHeadersHeight = 30;
-			_queryParametersGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			_queryParametersGridView = commandControls.CreateDefaultDataGridViewFor("v_QueryParameters", this);
 			_queryParametersGridView.AutoGenerateColumns = false;
-		
+			_queryParametersGridView.AllowUserToAddRows = false;
+
 			var selectColumn = new DataGridViewComboBoxColumn();
 			selectColumn.HeaderText = "Type";
 			selectColumn.DataPropertyName = "Parameter Type";
@@ -242,8 +243,6 @@ namespace OpenBots.Commands.Database
 			paramValueColumn.HeaderText = "Value";
 			paramValueColumn.DataPropertyName = "Parameter Value";
 			_queryParametersGridView.Columns.Add(paramValueColumn);
-
-			_queryParametersGridView.DataBindings.Add("DataSource", this, "v_QueryParameters", false, DataSourceUpdateMode.OnPropertyChanged);
 		 
 			_queryParametersControls = new List<Control>();
 			_queryParametersControls.Add(commandControls.CreateDefaultLabelFor("v_QueryParameters", this));

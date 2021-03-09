@@ -24,6 +24,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("A sample text || {vStringVariable}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputText { get; set; }
 
 		[Required]
@@ -43,6 +44,7 @@ namespace OpenBots.Commands.Data
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ModifyStringCommand()
@@ -74,13 +76,13 @@ namespace OpenBots.Commands.Data
 					break;
 				case "From Base64 String":
 					byte[] encodedDataAsBytes = Convert.FromBase64String(stringValue);
-					stringValue = ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
+					stringValue = Encoding.ASCII.GetString(encodedDataAsBytes);
 					break;
 				default:
 					throw new NotImplementedException("Conversion Type '" + v_TextOperation + "' not implemented!");
 			}
 
-			stringValue.StoreInUserVariable(engine, v_OutputUserVariableName);
+			stringValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

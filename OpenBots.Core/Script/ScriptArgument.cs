@@ -15,6 +15,12 @@ namespace OpenBots.Core.Script
         /// </summary>
         public ScriptArgumentDirection Direction { get; set; }
 
+
+        /// <summary>
+        /// type of the argument or current index
+        /// </summary>
+        public Type ArgumentType { get; set; }
+
         /// <summary>
         /// value of the argument or current index
         /// </summary>

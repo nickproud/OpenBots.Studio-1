@@ -25,6 +25,7 @@ namespace OpenBots.Commands.NLG
 		[SampleUsage("MyNLGInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
+		[CompatibleTypes(new Type[] { typeof(SPhraseSpec) })]
 		public string v_InstanceName { get; set; }
 
 		public CreateNLGInstanceCommand()

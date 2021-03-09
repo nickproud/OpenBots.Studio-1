@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("{vMyDictionary}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>)})]
 		public string v_DictionaryName { get; set; }
 
 		[Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("[FirstName | John] || [{vKey} | {vValue}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement), typeof(object) }, true)]
 		public OBDataTable v_ColumnNameDataTable { get; set; }
 
 		public AddDictionaryItemCommand()
@@ -59,7 +61,7 @@ namespace OpenBots.Commands.Dictionary
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var dictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine);
+			var dictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
 			if (dictionaryVariable != null)
 			{
 				if (dictionaryVariable is Dictionary<string, string>)
@@ -76,7 +78,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						OBDataTable dataTable;
-						var dataTableVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var dataTableVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(OBDataTable));
 						if (dataTableVariable != null && dataTableVariable is OBDataTable)
 							dataTable = (OBDataTable)dataTableVariable;
 						else
@@ -90,7 +92,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						MailItem mailItem;
-						var mailItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var mailItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(MailItem));
 						if (mailItemVariable != null && mailItemVariable is MailItem)
 							mailItem = (MailItem)mailItemVariable;
 						else
@@ -104,7 +106,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						MimeMessage mimeMessage;
-						var mimeMessageVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var mimeMessageVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(MimeMessage));
 						if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 							mimeMessage = (MimeMessage)mimeMessageVariable;
 						else
@@ -118,7 +120,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						IWebElement webElement;
-						var webElementVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var webElementVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(IWebElement));
 						if (webElementVariable != null && webElementVariable is IWebElement)
 							webElement = (IWebElement)webElementVariable;
 						else
@@ -132,7 +134,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						object objectItem;
-						var objectItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var objectItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(object));
 						if (objectItemVariable != null && objectItemVariable is object)
 							objectItem = (object)objectItemVariable;
 						else
@@ -146,7 +148,7 @@ namespace OpenBots.Commands.Dictionary
 					throw new NotSupportedException("Dictionary type not supported");
 				}
 
-			((object)dictionaryVariable).StoreInUserVariable(engine, v_DictionaryName);
+			dictionaryVariable.StoreInUserVariable(engine, v_DictionaryName, nameof(v_DictionaryName), this);
 			}
 			else
 			{
@@ -159,7 +161,7 @@ namespace OpenBots.Commands.Dictionary
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DictionaryName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDataGridViewGroupFor("v_ColumnNameDataTable", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_ColumnNameDataTable", this, editor));
 
 			return RenderedControls;
 		}

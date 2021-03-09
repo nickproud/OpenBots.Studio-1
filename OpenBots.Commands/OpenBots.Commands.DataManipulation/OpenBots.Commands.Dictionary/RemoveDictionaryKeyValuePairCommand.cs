@@ -28,6 +28,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("{vDictionary}")]
 		[Remarks("Any type of variable other than Dictionary will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_DictionaryName { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("Hello || {vKey}")]
 		[Remarks("Providing a non existing key will produce an exception.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Key { get; set; }
 
 		public RemoveDictionaryKeyValuePairCommand()
@@ -51,7 +53,7 @@ namespace OpenBots.Commands.Dictionary
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vDictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine);
+			var vDictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
 			var vKey = v_Key.ConvertUserVariableToString(engine);
 
 			if (vDictionaryVariable != null)

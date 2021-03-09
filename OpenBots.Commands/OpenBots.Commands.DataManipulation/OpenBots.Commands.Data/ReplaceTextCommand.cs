@@ -24,6 +24,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("Hello John || {vTextData}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputText { get; set; }
 
 		[Required]
@@ -32,6 +33,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("Hello || {vOldText}")]
 		[Remarks("'Hello' in 'Hello John' would be targeted for replacement.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_OldText { get; set; }
 
 		[Required]
@@ -40,6 +42,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("Hi || {vNewText}")]
 		[Remarks("'Hi' would be replaced with 'Hello' to form 'Hi John'.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_NewText { get; set; }
 
 		[Required]
@@ -48,6 +51,7 @@ namespace OpenBots.Commands.Data
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ReplaceTextCommand()
@@ -73,7 +77,7 @@ namespace OpenBots.Commands.Data
 			replacementVariable = replacementVariable.Replace(replacementText, replacementValue);
 
 			//store in variable
-			replacementVariable.StoreInUserVariable(engine, v_OutputUserVariableName);
+			replacementVariable.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

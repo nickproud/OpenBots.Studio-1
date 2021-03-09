@@ -23,13 +23,14 @@ namespace OpenBots.Commands.IEBrowser
         [Description("Enter the unique instance that was specified in the **IE Create Browser** command.")]
         [SampleUsage("MyIEBrowserInstance")]
         [Remarks("Failure to enter the correct instance name or failure to first call the **IE Create Browser** command will cause an error.")]
+        [CompatibleTypes(new Type[] { typeof(InternetExplorer) })]
         public string v_InstanceName { get; set; }
 
         public IECloseBrowserCommand()
         {
             CommandName = "IECloseBrowserCommand";
             SelectionName = "Close IE Browser";
-            CommandEnabled = false;
+            CommandEnabled = true;
             CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";

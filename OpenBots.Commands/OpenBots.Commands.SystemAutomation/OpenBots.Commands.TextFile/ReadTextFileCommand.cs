@@ -26,6 +26,7 @@ namespace OpenBots.Commands.TextFile
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -34,6 +35,7 @@ namespace OpenBots.Commands.TextFile
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ReadTextFileCommand()
@@ -53,7 +55,7 @@ namespace OpenBots.Commands.TextFile
 			//read text from file
 			var textFromFile = OBFile.ReadAllText(filePath);
 			//assign text to user variable
-			textFromFile.StoreInUserVariable(engine, v_OutputUserVariableName);
+			textFromFile.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
