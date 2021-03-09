@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Process
 
 		[DisplayName("Command Line Arguments (Optional)")]
 		[Description("Enter any arguments as a single string.")]
-		[SampleUsage("-message Hello -t 2 || {vArguments}")]
+		[SampleUsage("-message Hello -t 2 || {vArguments} || -message {vMessage} -t 2")]
 		[Remarks("This input is passed to your script as a string[].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
