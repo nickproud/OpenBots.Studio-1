@@ -200,7 +200,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private int _reqdIndex;
         private List<int> _matchingSearchIndex = new List<int>();
         private int _currentIndex = -1;
-        private UIListView _selectedTabScriptActions;
+        private dynamic _selectedTabScriptActions;
         private Point _lastClickPosition;
         private float _slimBarHeight;
         private float _thickBarHeight;

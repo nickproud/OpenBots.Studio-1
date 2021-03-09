@@ -1184,7 +1184,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 searchCriteria = tsSearchBox.Text;
             }
 
-            var matchingItems = _selectedTabScriptActions.Items.OfType<ListViewItem>()
+            var matchingItems = ((ListView)_selectedTabScriptActions).Items.OfType<ListViewItem>()
                                                                .Where(x => x.Text.Contains(searchCriteria))
                                                                .ToList();
 

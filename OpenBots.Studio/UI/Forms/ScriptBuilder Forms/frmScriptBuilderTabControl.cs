@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Script;
 using OpenBots.UI.CustomControls.CustomUIControls;
+using ScintillaNET;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,20 +18,33 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (uiScriptTabControl.TabCount > 0)
             {
                 ScriptFilePath = uiScriptTabControl.SelectedTab.ToolTipText.ToString();
-                _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
-                ScriptObject scriptObject = (ScriptObject)uiScriptTabControl.SelectedTab.Tag;
-                if (scriptObject != null)
-                {
-                    _scriptVariables = scriptObject.ScriptVariables;
-                    _scriptArguments = scriptObject.ScriptArguments;
-                    _scriptElements = scriptObject.ScriptElements;
+                string extention = Path.GetExtension(ScriptFilePath);
 
-                    if (!_isRunTaskCommand)
-                    {
-                        dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                        dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-                    }                             
-                }               
+                switch (extention.ToLower())
+                {
+                    case ".json":
+                        _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
+                        ScriptObject scriptObject = (ScriptObject)uiScriptTabControl.SelectedTab.Tag;
+                        if (scriptObject != null)
+                        {
+                            _scriptVariables = scriptObject.ScriptVariables;
+                            _scriptArguments = scriptObject.ScriptArguments;
+                            _scriptElements = scriptObject.ScriptElements;
+
+                            if (!_isRunTaskCommand)
+                            {
+                                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
+                                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                            }
+                        }
+                        break;
+                    case ".py":
+                    case ".tag":
+                    case ".cs":
+                        _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
+                        break;
+                }
+                          
             }
         }
 
