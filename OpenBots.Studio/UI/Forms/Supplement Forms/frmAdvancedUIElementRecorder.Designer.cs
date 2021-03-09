@@ -197,6 +197,6 @@
         private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.PictureBox pbRefresh;
         public System.Windows.Forms.ComboBox cboWindowTitle;
-        public System.Windows.Forms.CheckBox chkStopOnClick;
+        public System.Windows.Forms.CheckBox chkStopOnClick { get; set; }
     }
 }

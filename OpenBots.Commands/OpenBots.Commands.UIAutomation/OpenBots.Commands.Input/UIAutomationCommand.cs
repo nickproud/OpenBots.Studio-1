@@ -547,6 +547,7 @@ namespace OpenBots.Commands.Input
 			IfrmAdvancedUIElementRecorder newElementRecorder = commandControls.CreateAdvancedUIElementRecorderForm();
 			newElementRecorder.WindowName = RenderedControls[3].Text;
 			newElementRecorder.SearchParameters = v_UIASearchParameters;
+			newElementRecorder.chkStopOnClick.Checked = true;
 
 			//show form
 			((Form)newElementRecorder).ShowDialog();
