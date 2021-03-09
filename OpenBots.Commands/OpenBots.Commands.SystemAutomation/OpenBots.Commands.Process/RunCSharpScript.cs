@@ -40,15 +40,14 @@ namespace OpenBots.Commands.Process
 		[DisplayName("Argument Style")]
 		[PropertyUISelectionOption("In-Studio Variables")]
 		[PropertyUISelectionOption("Command Line")]
-		[Description("The type of arguments expected by the script")]
+		[Description("Whether to pass a string[] (command line) or object[] (variables) to your script.")]
 		[SampleUsage("")]
 		[Remarks("")]
 		public string v_ArgumentType { get; set; }
 
-		[Required]
-		[DisplayName("Variable Arguments (Optional)")]
-		[Description("Enter the Variables to pass into the script.")]
-		[SampleUsage("MyColumn || {vColumn}")]
+		[DisplayName("Argument Values (Optional)")]
+		[Description("Enter the values to pass into the script.")]
+		[SampleUsage("hello || {vValue}")]
 		[Remarks("This input is passed to your script as a object[].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(object) }, true)]
@@ -128,10 +127,9 @@ namespace OpenBots.Commands.Process
                 {
 					string var = varColumn.Field<string>("Argument Values").Trim();
 					if (var.Contains("{"))
+						args[i] = var.ConvertUserVariableToString(engine);
 						if (var.ConvertUserVariableToObject(engine, typeof(object)) != null)
 							args[i] = var.ConvertUserVariableToObject(engine, typeof(object));
-						else
-							args[i] = var.ConvertUserVariableToString(engine);
 					else
 						args[i] = var;
 					i++;
@@ -148,7 +146,8 @@ namespace OpenBots.Commands.Process
 			}
 			else if (v_ArgumentType == "Command Line")
 			{
-				string[] argStrings = v_ScriptArgs.Trim().Split(' ');
+				string scriptArgs = v_ScriptArgs.ConvertUserVariableToString(engine);
+				string[] argStrings = scriptArgs.Trim().Split(' ');
 				if (v_HasOutput == "No")
 					script.Main(argStrings);
 				else
@@ -169,14 +168,11 @@ namespace OpenBots.Commands.Process
 			((ComboBox)RenderedControls[7]).SelectedIndexChanged += HasOutputComboBox_SelectedIndexChanged;
 			((ComboBox)RenderedControls[5]).SelectedIndexChanged += ArgumentTypeComboBox_SelectedIndexChanged;
 
-			_variableInputControls = new List<Control>();
-			_variableInputControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_VariableArgumentsDataTable", this, editor));
+			_variableInputControls = commandControls.CreateDefaultDataGridViewGroupFor("v_VariableArgumentsDataTable", this, editor);
 
-			_commandLineInputControls = new List<Control>();
-			_commandLineInputControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ScriptArgs", this, editor));
+			_commandLineInputControls = commandControls.CreateDefaultInputGroupFor("v_ScriptArgs", this, editor);
 
-			_outputControls = new List<Control>();
-			_outputControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
+			_outputControls = commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor);
 
 			foreach (var ctrl in _outputControls)
 				ctrl.Visible = false;
@@ -204,19 +200,23 @@ namespace OpenBots.Commands.Process
 				foreach (var ctrl in _variableInputControls)
 					ctrl.Visible = true;
 
-				foreach (var ctrl in _commandLineInputControls)
+				foreach (var ctrl in _commandLineInputControls) {
 					ctrl.Visible = false;
+					if (ctrl is TextBox)
+						((TextBox)ctrl).Clear();
+				}
 			}
 			else
 			{
 				foreach (var ctrl in _variableInputControls)
+				{
 					ctrl.Visible = false;
-
+					if (ctrl is DataGridView)
+						((DataGridView)ctrl).ClearSelection();
+				}
 				foreach (var ctrl in _commandLineInputControls)
 				{
 					ctrl.Visible = true;
-					if (ctrl is TextBox)
-						((TextBox)ctrl).Clear();
 				}
 			}
 		}
