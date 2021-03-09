@@ -13,6 +13,7 @@ using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.UI.Supplement_Forms;
+using ScintillaNET;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -94,7 +95,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 //open file
-                OpenFile(openFileDialog.FileName);
+                OpenOpenBotsFile(openFileDialog.FileName);
             }
         }
 
@@ -112,16 +113,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 //open file
-                OpenFile(openFileDialog.FileName);
+                OpenOpenBotsFile(openFileDialog.FileName);
             }
         }
 
         public delegate void OpenFileDelegate(string filepath, bool isRunTaskCommand);
-        public void OpenFile(string filePath, bool isRunTaskCommand = false)
+        public void OpenOpenBotsFile(string filePath, bool isRunTaskCommand = false)
         {
             if (InvokeRequired)
             {
-                var d = new OpenFileDelegate(OpenFile);
+                var d = new OpenFileDelegate(OpenOpenBotsFile);
                 Invoke(d, new object[] { filePath, isRunTaskCommand });
             }
             else
@@ -214,7 +215,51 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         //helper method for RunTaskCommand
         public void OpenScriptFile(string scriptFilePath, bool isRunTaskCommand = true)
         {
-            OpenFile(scriptFilePath, isRunTaskCommand);
+            OpenOpenBotsFile(scriptFilePath, isRunTaskCommand);
+        }
+
+        public void OpenTextEditorFile(string filePath, ProjectType projectType)
+        {
+            try
+            {
+                //create or switch to TabPage
+                string fileName = Path.GetFileNameWithoutExtension(filePath);
+                var foundTab = uiScriptTabControl.TabPages.Cast<TabPage>().Where(t => t.ToolTipText == filePath)
+                                                                          .FirstOrDefault();
+                if (foundTab == null)
+                {
+                    TabPage newtabPage = new TabPage(fileName)
+                    {
+                        Name = fileName,
+                        ToolTipText = filePath
+                    };
+
+                    uiScriptTabControl.TabPages.Add(newtabPage);
+
+                    newtabPage.Controls.Add(NewTextEditorActions(projectType, fileName));
+                 
+                    uiScriptTabControl.SelectedTab = newtabPage;
+                    ((Scintilla)uiScriptTabControl.SelectedTab.Controls[0]).Text = File.ReadAllText(filePath);
+                }
+                else
+                {
+                    uiScriptTabControl.SelectedTab = foundTab;
+                    return;
+                }
+
+                _selectedTabScriptActions = null;
+
+                //update file path and reflect in title bar
+                ScriptFilePath = filePath;
+
+                FileInfo scriptFileInfo = new FileInfo(_scriptFilePath);
+                uiScriptTabControl.SelectedTab.Text = scriptFileInfo.Name.Replace(".py", "");
+            }
+            catch (Exception ex)
+            {
+                //signal an error has happened
+                Notify("An Error Occured: " + ex.Message, Color.Red);
+            }
         }
 
         private void uiBtnSave_Click(object sender, EventArgs e)
@@ -475,9 +520,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void publishProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!SaveAllFiles())
-                return;
-
+            switch (ScriptProject.ProjectType)
+            {
+                case ProjectType.OpenBots:
+                    if (!SaveAllFiles())
+                        return;
+                    break;
+            }
+            
             frmPublishProject publishProject = new frmPublishProject(ScriptProjectPath, ScriptProject);
             publishProject.ShowDialog();
 

@@ -16,6 +16,7 @@ namespace OpenBots.Core.Project
     {
         public Guid ProjectID { get; set; }
         public string ProjectName { get; set; }
+        public ProjectType ProjectType { get; set; }
         public string Main { get; set; }
         public string Version { get; set; }
         public Dictionary<string, string> Dependencies { get; set; }
@@ -30,15 +31,34 @@ namespace OpenBots.Core.Project
             "UIAutomation"
         };
 
-        public Project(string projectName)
+        public Project(string projectName, ProjectType projectType)
         {
             ProjectID = Guid.NewGuid();
             ProjectName = projectName;
-            Main = "Main.json";
             Version = Application.ProductVersion;
+            ProjectType = projectType;
 
             var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
-            Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+            
+            switch (ProjectType)
+            {
+                case ProjectType.OpenBots:
+                    Main = "Main.json";
+                    Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+                    break;
+                case ProjectType.Python:
+                    Main = "Main.py";
+                    Dependencies = new Dictionary<string, string>();
+                    break;
+                case ProjectType.TagUI:
+                    Main = "Main.tag";
+                    Dependencies = new Dictionary<string, string>();
+                    break;
+                case ProjectType.CSScript:
+                    Main = "Main.cs";
+                    Dependencies = new Dictionary<string, string>();
+                    break;
+            }
         }
 
         public void SaveProject(string scriptPath)
@@ -89,31 +109,35 @@ namespace OpenBots.Core.Project
             {
                 string projectJSONString = File.ReadAllText(configFilePath);
                 var project = JsonConvert.DeserializeObject<Project>(projectJSONString);
-                string dialogMessageFirstLine = "";
 
-                if (!projectJSONString.Contains("Version"))
+                if (project.ProjectType == ProjectType.OpenBots)
                 {
-                    dialogMessageFirstLine = $"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.0.0.";
-                }
-                //if project version is lower than than 1.3.0.0
-                else if (new Version(project.Version).CompareTo(new Version("1.4.0.0")) < 0)
-                {
-                    dialogMessageFirstLine = $"Attempting to open a 'project.config' from OpenBots Studio version {project.Version}.";
+                    string dialogMessageFirstLine = "";
 
-                    var dialogResult = MessageBox.Show($"{dialogMessageFirstLine} " +
-                                                   $"Would you like to attempt to convert this config file to {Application.ProductVersion}? " +
-                                                   "\n\nWarning: Once a 'project.config' has been converted, it cannot be undone.",
-                                                   "Convert 'project.config'", MessageBoxButtons.YesNo);
-
-                    if (dialogResult == DialogResult.Yes)
+                    if (!projectJSONString.Contains("Version"))
                     {
-                        project.Version = Application.ProductVersion;
-                        var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
-                        project.Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
-                        File.WriteAllText(configFilePath, JsonConvert.SerializeObject(project));
-                    }                        
+                        dialogMessageFirstLine = $"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.0.0.";
+                    }
+                    //if project version is lower than than 1.3.0.0
+                    else if (new Version(project.Version).CompareTo(new Version("1.4.0.0")) < 0)
+                    {
+                        dialogMessageFirstLine = $"Attempting to open a 'project.config' from OpenBots Studio version {project.Version}.";
+
+                        var dialogResult = MessageBox.Show($"{dialogMessageFirstLine} " +
+                                                       $"Would you like to attempt to convert this config file to {Application.ProductVersion}? " +
+                                                       "\n\nWarning: Once a 'project.config' has been converted, it cannot be undone.",
+                                                       "Convert 'project.config'", MessageBoxButtons.YesNo);
+
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            project.Version = Application.ProductVersion;
+                            var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
+                            project.Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+                            File.WriteAllText(configFilePath, JsonConvert.SerializeObject(project));
+                        }
+                    }
                 }
-                    
+                                  
                 return project;
             }
             else

@@ -196,6 +196,7 @@
     <Compile Include="Attributes\PropertyAttributes\SampleUsage.cs" />
     <Compile Include="Command\BrokenCodeCommentCommand.cs" />
     <Compile Include="Command\ScriptCommand.cs" />
+    <Compile Include="Project\ProjectType.cs" />
     <Compile Include="Utilities\CommonUtilities\CommonMethods.cs" />
     <Compile Include="Enums\Enums.cs" />
     <Compile Include="Interfaces\Commands\IConditionCommand.cs" />

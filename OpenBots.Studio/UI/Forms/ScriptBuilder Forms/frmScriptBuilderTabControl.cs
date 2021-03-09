@@ -124,7 +124,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
             }
 
-            OpenFile(tabFilePath);
+            OpenOpenBotsFile(tabFilePath);
         }
 
         private void reloadAllTabsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -150,7 +150,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             foreach (string path in tabFilePaths)
-                OpenFile(path);
+                OpenOpenBotsFile(path);
 
             uiScriptTabControl.SelectedIndex = currentTabIndex;
         }

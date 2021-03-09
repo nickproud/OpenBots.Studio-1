@@ -48,7 +48,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 return DialogResult.Abort;
             }
 
-            //create new OpenBots project
+            //create new project
             else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.CreateProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
@@ -59,7 +59,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ScriptProjectPath = projectBuilder.NewProjectPath;
 
                 //create new project
-                ScriptProject = new Project(projectBuilder.NewProjectName);
+                ScriptProject = new Project(projectBuilder.NewProjectName, projectBuilder.NewProjectType);
                 string configPath = Path.Combine(ScriptProjectPath, "project.config");
 
                 //create config file
@@ -71,56 +71,23 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();                
                         
-                string mainScriptPath = Path.Combine(ScriptProjectPath, "Main.json");
+                string mainScriptPath = Path.Combine(ScriptProjectPath, ScriptProject.Main);
                 string mainScriptName = Path.GetFileNameWithoutExtension(mainScriptPath);
-                UIListView mainScriptActions = NewLstScriptActions(mainScriptName);
 
-                List<ScriptVariable> mainScriptVariables = new List<ScriptVariable>();
-                List<ScriptArgument> mainScriptArguments = new List<ScriptArgument>();
-                List<ScriptElement> mainScriptElements = new List<ScriptElement>();
-
-                try
+                switch (ScriptProject.ProjectType)
                 {
-                    dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
-                    helloWorldCommand.v_Message = "Hello World";
-                    mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
+                    case ProjectType.OpenBots:
+                        CreateOpenBotsProject(mainScriptName, mainScriptPath);
+                        break;
+                    case ProjectType.Python:
+                    case ProjectType.TagUI:
+                    case ProjectType.CSScript:
+                        CreateTextEditorProject(mainScriptName, mainScriptPath);
+                        break;
                 }
-                catch (Exception)
-                {
-                    var brokenHelloWorldCommand = new BrokenCodeCommentCommand();
-                    brokenHelloWorldCommand.v_Comment = "Hello World";
-                    mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(brokenHelloWorldCommand));
-                }
-                
-                //begin saving as main.xml
-                ClearSelectedListViewItems();
 
-                try
-                {
-                    //serialize main script
-                    EngineContext engineContext = new EngineContext
-                    {
-                        Variables = mainScriptVariables,
-                        Arguments = mainScriptArguments,
-                        Elements = mainScriptElements,
-                        FilePath = mainScriptPath,
-                        Container = AContainer
-                    };
-
-                    var mainScript = Script.SerializeScript(mainScriptActions.Items, engineContext);
-                    
-                    _mainFileName = ScriptProject.Main;
-                   
-                    OpenFile(mainScriptPath);
-                    ScriptFilePath = mainScriptPath;
-
-                    //show success dialog
-                    Notify("Project has been created successfully!", Color.White);
-                }
-                catch (Exception ex)
-                {
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
-                }
+                //show success dialog
+                Notify("Project has been created successfully!", Color.White);
             }
 
             //open existing OpenBots project
@@ -152,8 +119,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     uiScriptTabControl.TabPages.Clear();
 
                     //open Main
-                    OpenFile(mainFilePath);
-
+                    switch (ScriptProject.ProjectType)
+                    {
+                        case ProjectType.OpenBots:
+                            OpenOpenBotsFile(mainFilePath);
+                            break;
+                        case ProjectType.Python:
+                        case ProjectType.TagUI:
+                        case ProjectType.CSScript:
+                            OpenTextEditorFile(mainFilePath, ScriptProject.ProjectType);
+                            break;
+                    }
+                                  
                     //show success dialog
                     Notify("Project has been opened successfully!", Color.White);
                 }
@@ -199,6 +176,88 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             return DialogResult.OK;
         }
 
+        public void CreateOpenBotsProject(string mainScriptName, string mainScriptPath)
+        {
+            //create OpenBots specific project
+            UIListView mainScriptActions = NewLstScriptActions(mainScriptName);
+
+            List<ScriptVariable> mainScriptVariables = new List<ScriptVariable>();
+            List<ScriptArgument> mainScriptArguments = new List<ScriptArgument>();
+            List<ScriptElement> mainScriptElements = new List<ScriptElement>();
+
+            try
+            {
+                dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
+                helloWorldCommand.v_Message = "Hello World";
+                mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
+            }
+            catch (Exception)
+            {
+                var brokenHelloWorldCommand = new BrokenCodeCommentCommand();
+                brokenHelloWorldCommand.v_Comment = "Hello World";
+                mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(brokenHelloWorldCommand));
+            }
+
+            //begin saving as main.xml
+            ClearSelectedListViewItems();
+
+            try
+            {
+                //serialize main script
+                EngineContext engineContext = new EngineContext
+                {
+                    Variables = mainScriptVariables,
+                    Arguments = mainScriptArguments,
+                    Elements = mainScriptElements,
+                    FilePath = mainScriptPath,
+                    Container = AContainer
+                };
+
+                var mainScript = Script.SerializeScript(mainScriptActions.Items, engineContext);
+
+                _mainFileName = ScriptProject.Main;
+
+                OpenOpenBotsFile(mainScriptPath);
+                ScriptFilePath = mainScriptPath;               
+            }
+            catch (Exception ex)
+            {
+                Notify("An Error Occured: " + ex.Message, Color.Red);
+            }
+        }
+
+        public void CreateTextEditorProject(string mainScriptName, string mainScriptPath)
+        {
+            try
+            {
+                _mainFileName = ScriptProject.Main;
+                string helloWorldText = "";
+
+                switch (ScriptProject.ProjectType)
+                {
+                    case ProjectType.Python:
+                        helloWorldText = "print('Hello World')";
+                        File.Create(Path.Combine(new FileInfo(mainScriptPath).Directory.FullName, "requirements.txt"));
+                        break;
+                    case ProjectType.TagUI:
+                        helloWorldText = "echo \"Hello World\"";
+                        break;
+                    case ProjectType.CSScript:
+                        helloWorldText = "namespace HelloWorld\n{\n\tclass Hello {\n\t\tstatic void Main(string[] args)" + 
+                                         "\n\t\t{\n\t\t\tSystem.Console.WriteLine(\"Hello World!\");\n\t\t}\n\t}\n}";
+                        break;                       
+                }
+
+                File.WriteAllText(mainScriptPath, helloWorldText);
+                OpenTextEditorFile(mainScriptPath, ScriptProject.ProjectType);
+                ScriptFilePath = mainScriptPath;
+            }
+            catch (Exception ex)
+            {
+                Notify("An Error Occured: " + ex.Message, Color.Red);
+            }
+        }
+
         private void OpenProject(string projectPath)
         {
             tvProject.Nodes.Clear();
@@ -229,7 +288,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 uiScriptTabControl.TabPages.Clear();
 
                 //open Main
-                OpenFile(mainFilePath);
+                OpenOpenBotsFile(mainFilePath);
 
                 //show success dialog
                 Notify("Project has been opened successfully!", Color.White);
@@ -372,10 +431,28 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
                     string currentOpenScriptFilePath = _scriptFilePath;
 
-                    if (File.Exists(selectedNodePath) && selectedNodePath.ToLower().Contains(".json"))
-                        OpenFile(selectedNodePath);
-                    else if (File.Exists(selectedNodePath))
-                        Process.Start(selectedNodePath);
+                    string extention = Path.GetExtension(selectedNodePath);
+                    if (File.Exists(selectedNodePath))
+                    {
+                        switch (extention.ToLower())
+                        {
+                            case ".json":
+                                OpenOpenBotsFile(selectedNodePath);
+                                break;
+                            case ".py":
+                                OpenTextEditorFile(selectedNodePath, ProjectType.Python);
+                                break;
+                            case ".tag":
+                                OpenTextEditorFile(selectedNodePath, ProjectType.TagUI);
+                                break;
+                            case ".cs":
+                                OpenTextEditorFile(selectedNodePath, ProjectType.CSScript);
+                                break;
+                            default:
+                                Process.Start(selectedNodePath);
+                                break;
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -631,7 +708,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     }
 
                     string mainFilePath = Path.Combine(ScriptProjectPath, ScriptProject.Main);
-                    OpenFile(mainFilePath);
+                    OpenOpenBotsFile(mainFilePath);
                 }               
             }
             catch (Exception ex)
@@ -687,7 +764,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     Script.SerializeScript(newScriptActions.Items, engineContext);
                     NewNode(tvProject.SelectedNode, newFilePath, "file");
-                    OpenFile(newFilePath);
+                    OpenOpenBotsFile(newFilePath);
                 }
                 else
                 {
@@ -704,7 +781,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     engineContext.FilePath = newerFilePath;
                     Script.SerializeScript(newScriptActions.Items, engineContext);
                     NewNode(tvProject.SelectedNode, newerFilePath, "file");
-                    OpenFile(newerFilePath);
+                    OpenOpenBotsFile(newerFilePath);
                 }
 
             }
