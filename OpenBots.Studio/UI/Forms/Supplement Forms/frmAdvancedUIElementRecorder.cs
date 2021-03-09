@@ -139,7 +139,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 {
                     lblDescription.Text = _recordingMessage;
                     MoveFormToBottomRight(this);
-                    TopMost = true;
                 }
                 else
                     WindowState = FormWindowState.Minimized;
@@ -236,7 +235,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 //invoke UIA
                 try
                 {
-                    if (_isRecording)
+                    if (_isRecording && e.Key.ToString() != GlobalHook.StopHookKey)
                     {
                         var windowName = GetWindowName((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
 
@@ -253,7 +252,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                         lblDescription.Text = _recordingMessage;
                     }
 
-                    if (IsRecordingSequence && _isRecording)
+                    if (IsRecordingSequence && _isRecording && e.Key.ToString() != GlobalHook.StopHookKey)
                     {
                         BuildElementSetTextActionCommand(e.Key);
                     }

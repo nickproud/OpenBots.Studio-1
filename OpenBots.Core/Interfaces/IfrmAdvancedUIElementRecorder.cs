@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Windows.Forms;
 
 namespace OpenBots.Core.Infrastructure
 {
@@ -9,5 +10,6 @@ namespace OpenBots.Core.Infrastructure
         bool IsRecordingSequence { get; set; }
         bool IsCommandItemSelected { get; set; }
         string WindowName { get; set; }
+        CheckBox chkStopOnClick { get; set; }
     }
 }
