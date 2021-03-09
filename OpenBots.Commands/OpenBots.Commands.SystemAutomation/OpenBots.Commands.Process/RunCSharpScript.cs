@@ -132,10 +132,9 @@ namespace OpenBots.Commands.Process
 					{
 						if (var.ConvertUserVariableToObject(engine, typeof(object)) != null)
 							input = var.ConvertUserVariableToObject(engine, typeof(object));
-						args[i] = input;
 					}
-					else
-						args[i] = var;
+
+					args[i] = input;
 					i++;
 				}
 
