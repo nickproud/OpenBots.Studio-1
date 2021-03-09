@@ -126,10 +126,14 @@ namespace OpenBots.Commands.Process
 				foreach (DataRow varColumn in v_VariableArgumentsDataTable.Rows)
                 {
 					string var = varColumn.Field<string>("Argument Values").Trim();
-					if (var.Contains("{"))
-						args[i] = var.ConvertUserVariableToString(engine);
+					dynamic input = var.ConvertUserVariableToString(engine);
+
+					if (input == var && input.StartsWith("{") && input.EndsWith("}"))
+					{
 						if (var.ConvertUserVariableToObject(engine, typeof(object)) != null)
-							args[i] = var.ConvertUserVariableToObject(engine, typeof(object));
+							input = var.ConvertUserVariableToObject(engine, typeof(object));
+						args[i] = input;
+					}
 					else
 						args[i] = var;
 					i++;
@@ -163,27 +167,21 @@ namespace OpenBots.Commands.Process
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ScriptPath", this, editor));
+
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_ArgumentType", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_HasOutput", this, editor));
-			((ComboBox)RenderedControls[7]).SelectedIndexChanged += HasOutputComboBox_SelectedIndexChanged;
 			((ComboBox)RenderedControls[5]).SelectedIndexChanged += ArgumentTypeComboBox_SelectedIndexChanged;
 
-			_variableInputControls = commandControls.CreateDefaultDataGridViewGroupFor("v_VariableArgumentsDataTable", this, editor);
-
 			_commandLineInputControls = commandControls.CreateDefaultInputGroupFor("v_ScriptArgs", this, editor);
+			RenderedControls.AddRange(_commandLineInputControls);
+
+			_variableInputControls = commandControls.CreateDefaultDataGridViewGroupFor("v_VariableArgumentsDataTable", this, editor);
+			RenderedControls.AddRange(_variableInputControls);
+
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_HasOutput", this, editor));
+			((ComboBox)RenderedControls[13]).SelectedIndexChanged += HasOutputComboBox_SelectedIndexChanged;
 
 			_outputControls = commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor);
-
-			foreach (var ctrl in _outputControls)
-				ctrl.Visible = false;
-
-			foreach (var ctrl in _commandLineInputControls)
-				ctrl.Visible = false;
-
-			RenderedControls.AddRange(_variableInputControls);
-			RenderedControls.AddRange(_commandLineInputControls);
 			RenderedControls.AddRange(_outputControls);
-
 
 			return RenderedControls;
 		}
@@ -212,7 +210,9 @@ namespace OpenBots.Commands.Process
 				{
 					ctrl.Visible = false;
 					if (ctrl is DataGridView)
-						((DataGridView)ctrl).ClearSelection();
+					{
+						v_VariableArgumentsDataTable.Rows.Clear();
+					}
 				}
 				foreach (var ctrl in _commandLineInputControls)
 				{
@@ -223,7 +223,7 @@ namespace OpenBots.Commands.Process
 
 		private void HasOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[7]).Text == "Yes")
+			if (((ComboBox)RenderedControls[13]).Text == "Yes")
 			{
 				foreach (var ctrl in _outputControls)
 					ctrl.Visible = true;
