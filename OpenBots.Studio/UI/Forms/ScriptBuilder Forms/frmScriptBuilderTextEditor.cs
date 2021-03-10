@@ -43,7 +43,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             scintilla.Dock = DockStyle.Fill;
             scintilla.KeyDown += new KeyEventHandler(newTextEditorActions_KeyDown);
-           
+            scintilla.TextChanged += new EventHandler(newTextEditorActions_TextChanged);
+
 
             // Reset the styles
             scintilla.StyleResetDefault();
@@ -135,6 +136,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             return scintilla;
+        }
+
+        private void newTextEditorActions_TextChanged(object sender, EventArgs e)
+        {
+            if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
+                uiScriptTabControl.SelectedTab.Text += " *";
         }
 
         #region TextEdtior Copy, Paste, Edit, Delete

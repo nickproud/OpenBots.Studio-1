@@ -239,10 +239,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private DialogResult CheckForUnsavedScript(TabPage tab)
         {
             DialogResult result = new DialogResult();
-            if (tab.Text.Contains(" *"))
+            if (tab.Text.EndsWith(" *"))
             {
-                result = MessageBox.Show($"Would you like to save '{tab.Text}' before closing this tab?",
-                                         $"Save '{tab.Text}'", MessageBoxButtons.YesNoCancel);
+                string tabName = tab.Text.Replace(" *", "");
+                result = MessageBox.Show($"Would you like to save '{tabName}' before closing this tab?",
+                                         $"Save '{tabName}'", MessageBoxButtons.YesNoCancel);
 
                 if (result == DialogResult.Yes)
                 {

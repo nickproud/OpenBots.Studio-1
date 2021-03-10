@@ -332,6 +332,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
 
                 File.WriteAllText(ScriptFilePath, ((Scintilla)_selectedTabScriptActions).Text);
+                uiScriptTabControl.SelectedTab.Text = uiScriptTabControl.SelectedTab.Text.Replace(" *", "");
+
                 Notify("File has been saved successfully!", Color.White);
                 isSuccessfulSave = true;
             }

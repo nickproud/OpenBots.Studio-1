@@ -730,8 +730,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {               
                 string newName = "";
-                var newNameForm = new frmInputBox("Enter the name of the new file with extension", "New File");
-                newNameForm.txtInput.Text = tvProject.SelectedNode.Text;
+                var newNameForm = new frmInputBox("Enter the name of the new file WITH extension", "New File");
                 newNameForm.ShowDialog();
 
                 if (newNameForm.DialogResult == DialogResult.OK)
@@ -873,20 +872,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
                 string selectedNodeName = tvProject.SelectedNode.Text.ToString();
                 string selectedNodeNameWithoutExtension = Path.GetFileNameWithoutExtension(selectedNodeName);
-                string selectedNodeFileExtension = Path.GetExtension(selectedNodePath);
 
                 if (selectedNodeName != "project.obconfig")
                 {
                     FileInfo selectedNodeDirectoryInfo = new FileInfo(selectedNodePath);
 
-                    string newNameWithoutExtension = "";
-                    var newNameForm = new frmInputBox("Enter the new name of the file without extension", "Rename File");
-                    newNameForm.txtInput.Text = Path.GetFileNameWithoutExtension(selectedNodeDirectoryInfo.Name);
+                    string newName = "";
+                    var newNameForm = new frmInputBox("Enter the new name of the file WITH extension", "Rename File");
+                    newNameForm.txtInput.Text = selectedNodeDirectoryInfo.Name;
                     newNameForm.ShowDialog();
 
                     if (newNameForm.DialogResult == DialogResult.OK)
                     {
-                        newNameWithoutExtension = newNameForm.txtInput.Text;
+                        newName = newNameForm.txtInput.Text;
                         newNameForm.Dispose();
                     }
                     else if (newNameForm.DialogResult == DialogResult.Cancel)
@@ -895,10 +893,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         return;
                     }
 
-                    string newName = newNameWithoutExtension + selectedNodeFileExtension;
                     string newPath = Path.Combine(selectedNodeDirectoryInfo.DirectoryName, newName);
 
-                    bool isInvalidProjectName = new[] { @"/", @"\" }.Any(c => newNameWithoutExtension.Contains(c));
+                    bool isInvalidProjectName = new[] { @"/", @"\" }.Any(c => newName.Contains(c));
                     if (isInvalidProjectName)
                         throw new Exception("Illegal characters in path");
 
