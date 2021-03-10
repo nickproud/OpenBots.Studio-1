@@ -417,7 +417,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)
         {
-            _selectedTabScriptActions.Columns[2].Width = Width - 340;
+            if (_selectedTabScriptActions is ListView)
+                _selectedTabScriptActions.Columns[2].Width = Width - 340;
         }
 
         private void frmScriptBuilder_Resize(object sender, EventArgs e)
