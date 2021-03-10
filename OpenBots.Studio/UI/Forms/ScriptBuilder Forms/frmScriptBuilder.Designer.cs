@@ -180,7 +180,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsmiCopyFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDeleteFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiRenameFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.imgListTabControl = new System.Windows.Forms.ImageList(this.components);
             this.cmsScriptTabActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCloseTab = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCloseAllButThis = new System.Windows.Forms.ToolStripMenuItem();
@@ -1195,6 +1194,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.imgListProjectPane.Images.SetKeyName(3, "microsoft-excel-icon.png");
             this.imgListProjectPane.Images.SetKeyName(4, "microsoft-word-icon.png");
             this.imgListProjectPane.Images.SetKeyName(5, "pdf-icon.png");
+            this.imgListProjectPane.Images.SetKeyName(6, "python-icon.png");
+            this.imgListProjectPane.Images.SetKeyName(7, "tagui-icon.png");
+            this.imgListProjectPane.Images.SetKeyName(8, "c-sharp-icon.png");
             // 
             // pnlProjectButtons
             // 
@@ -2177,12 +2179,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsmiRenameFile.Text = "Rename";
             this.tsmiRenameFile.Click += new System.EventHandler(this.tsmiRenameFile_Click);
             // 
-            // imgListTabControl
-            // 
-            this.imgListTabControl.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgListTabControl.ImageStream")));
-            this.imgListTabControl.TransparentColor = System.Drawing.Color.Transparent;
-            this.imgListTabControl.Images.SetKeyName(0, "close-button.png");
-            // 
             // cmsScriptTabActions
             // 
             this.cmsScriptTabActions.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
@@ -2438,7 +2434,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private ColumnHeader columnHeader1;
         private ColumnHeader columnHeader2;
         private ColumnHeader clmCommand;
-        private ImageList imgListTabControl;
         private ContextMenuStrip cmsScriptTabActions;
         private ToolStripMenuItem tsmiCloseTab;
         private ToolStripMenuItem tsmiCloseAllButThis;

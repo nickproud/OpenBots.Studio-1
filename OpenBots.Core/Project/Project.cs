@@ -43,7 +43,7 @@ namespace OpenBots.Core.Project
             switch (ProjectType)
             {
                 case ProjectType.OpenBots:
-                    Main = "Main.json";
+                    Main = "Main.obscript";
                     Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
                     break;
                 case ProjectType.Python:
@@ -75,11 +75,11 @@ namespace OpenBots.Core.Project
                     projectPath = Path.GetDirectoryName(scriptPath);
                     DirectoryInfo dirInfo = new DirectoryInfo(projectPath);
                     dirName = dirInfo.Name;
-                    configPath = Path.Combine(projectPath, "project.config");
+                    configPath = Path.Combine(projectPath, "project.obconfig");
                     scriptPath = projectPath;
                 } while (dirName != ProjectName || !File.Exists(configPath));
 
-                //If requirements are met, a project.config is created/updated
+                //If requirements are met, a project.obconfig is created/updated
                 if (dirName == ProjectName && File.Exists(configPath))
                 {
                     Version = Application.ProductVersion;
@@ -94,17 +94,17 @@ namespace OpenBots.Core.Project
 
         public static void RenameProject(Project newProject, string newProjectPath)
         {
-            string configPath = Path.Combine(newProjectPath, "project.config");
+            string configPath = Path.Combine(newProjectPath, "project.obconfig");
 
             if (File.Exists(configPath))
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(newProject));
             else
-                throw new FileNotFoundException("project.config not found. Unable to save project.");
+                throw new FileNotFoundException("project.obconfig not found. Unable to save project.");
         }
 
         public static Project OpenProject(string configFilePath)
         {
-            //Loads project from project.config
+            //Loads project from project.obconfig
             if (File.Exists(configFilePath))
             {
                 string projectJSONString = File.ReadAllText(configFilePath);
@@ -116,17 +116,17 @@ namespace OpenBots.Core.Project
 
                     if (!projectJSONString.Contains("Version"))
                     {
-                        dialogMessageFirstLine = $"Attempting to open a 'project.config' from a version of OpenBots Studio older than 1.2.0.0.";
+                        dialogMessageFirstLine = $"Attempting to open a 'project.obconfig' from a version of OpenBots Studio older than 1.2.0.0.";
                     }
                     //if project version is lower than than 1.3.0.0
                     else if (new Version(project.Version).CompareTo(new Version("1.4.0.0")) < 0)
                     {
-                        dialogMessageFirstLine = $"Attempting to open a 'project.config' from OpenBots Studio version {project.Version}.";
+                        dialogMessageFirstLine = $"Attempting to open a 'project.obconfig' from OpenBots Studio version {project.Version}.";
 
                         var dialogResult = MessageBox.Show($"{dialogMessageFirstLine} " +
                                                        $"Would you like to attempt to convert this config file to {Application.ProductVersion}? " +
-                                                       "\n\nWarning: Once a 'project.config' has been converted, it cannot be undone.",
-                                                       "Convert 'project.config'", MessageBoxButtons.YesNo);
+                                                       "\n\nWarning: Once a 'project.obconfig' has been converted, it cannot be undone.",
+                                                       "Convert 'project.obconfig'", MessageBoxButtons.YesNo);
 
                         if (dialogResult == DialogResult.Yes)
                         {
@@ -142,7 +142,7 @@ namespace OpenBots.Core.Project
             }
             else
             {
-                throw new Exception("project.config Not Found");
+                throw new Exception("project.obconfig Not Found");
             }
         }
 
@@ -165,7 +165,7 @@ namespace OpenBots.Core.Project
             File.Delete(processNugetFilePath);
 
             //get config file and rename project
-            string configFilePath = Directory.GetFiles(projectDirectory, "project.config", SearchOption.AllDirectories).First();
+            string configFilePath = Directory.GetFiles(projectDirectory, "project.obconfig", SearchOption.AllDirectories).First();
             var config = JObject.Parse(File.ReadAllText(configFilePath));
             config["ProjectName"] = new DirectoryInfo(projectDirectory).Name;
             File.WriteAllText(configFilePath, JsonConvert.SerializeObject(config));

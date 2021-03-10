@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -88,33 +89,39 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 InitialDirectory = ScriptProjectPath,
                 RestoreDirectory = true,
-                Filter = "Json (*.json)|*.json"
             };
 
             //if user selected file
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                string extension = Path.GetExtension(openFileDialog.FileName);
+
                 //open file
-                OpenOpenBotsFile(openFileDialog.FileName);
+                switch (extension.ToLower())
+                {
+                    case ".obscript":
+                        OpenOpenBotsFile(openFileDialog.FileName);
+                        break;
+                    case ".py":
+                        OpenTextEditorFile(openFileDialog.FileName, ProjectType.Python);
+                        break;
+                    case ".tag":
+                        OpenTextEditorFile(openFileDialog.FileName, ProjectType.TagUI);
+                        break;
+                    case ".cs":
+                        OpenTextEditorFile(openFileDialog.FileName, ProjectType.CSScript);
+                        break;
+                    default:
+                        Process.Start(openFileDialog.FileName);
+                        break;
+                }
+                
             }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //show ofd
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                InitialDirectory = ScriptProjectPath,
-                RestoreDirectory = true,
-                Filter = "Json (*.json)|*.json"
-            };
-
-            //if user selected file
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                //open file
-                OpenOpenBotsFile(openFileDialog.FileName);
-            }
+            uiBtnOpen_Click(sender, e);
         }
 
         public delegate void OpenFileDelegate(string filepath, bool isRunTaskCommand);
@@ -191,8 +198,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //populate commands
                     PopulateExecutionCommands(deserializedScript.Commands);
 
-                    FileInfo scriptFileInfo = new FileInfo(_scriptFilePath);
-                    uiScriptTabControl.SelectedTab.Text = scriptFileInfo.Name.Replace(".json", "");
+                    uiScriptTabControl.SelectedTab.Text = scriptFileName;
 
                     if (!isRunTaskCommand)
                     {
@@ -247,13 +253,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return;
                 }
 
-                _selectedTabScriptActions = null;
+                _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
 
                 //update file path and reflect in title bar
                 ScriptFilePath = filePath;
+                string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
 
-                FileInfo scriptFileInfo = new FileInfo(_scriptFilePath);
-                uiScriptTabControl.SelectedTab.Text = scriptFileInfo.Name.Replace(".py", "");
+                uiScriptTabControl.SelectedTab.Text = scriptFileName;
             }
             catch (Exception ex)
             {
@@ -264,33 +270,80 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void uiBtnSave_Click(object sender, EventArgs e)
         {
-            //clear selected items
-            ClearSelectedListViewItems();
-            SaveToFile(false);
-        }
-
-        private void uiBtnSaveAs_Click(object sender, EventArgs e)
-        {
-            //clear selected items
-            ClearSelectedListViewItems();
-            SaveToFile(true);
+            if (_selectedTabScriptActions is ListView)
+            {
+                //clear selected items
+                ClearSelectedListViewItems();
+                SaveToOpenBotsFile(false);
+            }
+            else
+                SaveToTextEditorFile(false);
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //clear selected items
-            ClearSelectedListViewItems();
-            SaveToFile(false);
+            uiBtnSave_Click(sender, e);
+        }
+
+        private void uiBtnSaveAs_Click(object sender, EventArgs e)
+        {
+            if (_selectedTabScriptActions is ListView)
+            {
+                //clear selected items
+                ClearSelectedListViewItems();
+                SaveToOpenBotsFile(true);
+            }
+            else
+                SaveToTextEditorFile(true);
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //clear selected items
-            ClearSelectedListViewItems();
-            SaveToFile(true);
+            uiBtnSaveAs_Click(sender, e);
         }
 
-        private bool SaveToFile(bool saveAs)
+        private bool SaveToTextEditorFile(bool saveAs)
+        {
+            bool isSuccessfulSave = false;
+            try
+            {
+                //define default output path
+                if (string.IsNullOrEmpty(ScriptFilePath) || saveAs)
+                {
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        InitialDirectory = ScriptProjectPath,
+                        RestoreDirectory = true,
+                    };
+
+                    if (saveFileDialog.ShowDialog() != DialogResult.OK)
+                        return isSuccessfulSave;
+
+                    if (!saveFileDialog.FileName.Contains(ScriptProjectPath))
+                    {
+                        Notify("An Error Occured: Attempted to save script outside of project directory", Color.Red);
+                        return isSuccessfulSave;
+                    }
+
+                    ScriptFilePath = saveFileDialog.FileName;
+                    string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
+                    if (uiScriptTabControl.SelectedTab.Text != scriptFileName)
+                        UpdateTabPage(uiScriptTabControl.SelectedTab, ScriptFilePath);
+                }
+
+                File.WriteAllText(ScriptFilePath, ((Scintilla)_selectedTabScriptActions).Text);
+                Notify("File has been saved successfully!", Color.White);
+                isSuccessfulSave = true;
+            }
+            catch (Exception ex)
+            {
+                Notify("An Error Occured: " + ex.Message, Color.Red);
+            }
+
+            return isSuccessfulSave;
+        }
+
+        private bool SaveToOpenBotsFile(bool saveAs)
         {
             bool isSuccessfulSave = false;
 
@@ -425,13 +478,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //define default output path
-            if (string.IsNullOrEmpty(ScriptFilePath) || (saveAs))
+            if (string.IsNullOrEmpty(ScriptFilePath) || saveAs)
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog
                 {
                     InitialDirectory = ScriptProjectPath,
                     RestoreDirectory = true,
-                    Filter = "Json (*.json)|*.json"
                 };
 
                 if (saveFileDialog.ShowDialog() != DialogResult.OK)
@@ -493,7 +545,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //clear selected items
                 ClearSelectedListViewItems();
 
-                if (!SaveToFile(false))
+                if (_selectedTabScriptActions is ListView)
+                    isSuccessfulSaveAll = SaveToOpenBotsFile(false);
+                else
+                    isSuccessfulSaveAll = SaveToTextEditorFile(false);
+
+                if (!isSuccessfulSaveAll)
                     return isSuccessfulSaveAll;
             }
             uiScriptTabControl.SelectedTab = currentTab;
@@ -514,8 +571,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void ClearSelectedListViewItems()
         {
-            _selectedTabScriptActions.SelectedItems.Clear();
-            _selectedTabScriptActions.Invalidate();
+            if (_selectedTabScriptActions is ListView)
+            {
+                _selectedTabScriptActions.SelectedItems.Clear();
+                _selectedTabScriptActions.Invalidate();
+            }               
         }
 
         private void publishProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -559,7 +619,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 InitialDirectory = Folders.GetFolder(FolderType.ScriptsFolder),
                 RestoreDirectory = true,
-                Filter = "Json (*.json)|*.json"
+                Filter = "obscript (*.obscript)|*.obscript"
             };
 
             //if user selected file
@@ -848,7 +908,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 return;
             }
 
-            string configPath = Path.Combine(ScriptProjectPath, "project.config");
+            string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
             frmGalleryPackageManager frmManager = new frmGalleryPackageManager(ScriptProject.Dependencies);
             frmManager.ShowDialog();
 
@@ -908,7 +968,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         Folders.GetFolder(FolderType.ProgramFilesPackagesFolder));
 
                 //load existing command assemblies
-                string configPath = Path.Combine(ScriptProjectPath, "project.config");
+                string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
                 AContainer = _builder.Build();

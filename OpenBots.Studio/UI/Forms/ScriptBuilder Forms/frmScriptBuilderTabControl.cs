@@ -22,7 +22,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 switch (extention.ToLower())
                 {
-                    case ".json":
+                    case ".obscript":
                         _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
                         ScriptObject scriptObject = (ScriptObject)uiScriptTabControl.SelectedTab.Tag;
                         if (scriptObject != null)
@@ -56,7 +56,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             try
             {
-                Image closeImage = new Bitmap(imgListTabControl.Images[0]);
+                Image closeImage = null; // new Bitmap(imgListTabControl.Images[0]);
                 Rectangle tabRect = tabControl.GetTabRect(e.Index);
                 tabRect.Offset(2, 2);
                 string title = tabControl.TabPages[e.Index].Text + "  ";
@@ -241,19 +241,30 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             DialogResult result = new DialogResult();
             if (tab.Text.Contains(" *"))
             {
-                result = MessageBox.Show($"Would you like to save {tab.Name}.json before closing this tab?",
-                                         $"Save {tab.Name}.json", MessageBoxButtons.YesNoCancel);
+                result = MessageBox.Show($"Would you like to save '{tab.Text}' before closing this tab?",
+                                         $"Save '{tab.Text}'", MessageBoxButtons.YesNoCancel);
 
                 if (result == DialogResult.Yes)
                 {
                     ClearSelectedListViewItems();
                     uiScriptTabControl.SelectedTab = tab;
 
-                    if (!SaveToFile(false))
+                    if (_selectedTabScriptActions is ListView)
                     {
-                        result = DialogResult.Cancel;
-                        return result;
+                        if (!SaveToOpenBotsFile(false))
+                        {
+                            result = DialogResult.Cancel;
+                            return result;
+                        }
                     }
+                    else
+                    {
+                        if (!SaveToTextEditorFile(false))
+                        {
+                            result = DialogResult.Cancel;
+                            return result;
+                        }
+                    }                  
                 }
                 else if (result == DialogResult.Cancel)
                     return result;

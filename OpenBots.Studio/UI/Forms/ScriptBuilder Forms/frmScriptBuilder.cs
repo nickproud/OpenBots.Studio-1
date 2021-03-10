@@ -717,7 +717,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void uiBtnReloadCommands_Click(object sender, EventArgs e)
         {
             NotifySync("Loading package assemblies...", Color.White);
-            string configPath = Path.Combine(ScriptProjectPath, "project.config");
+            string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
             _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
             AContainer = _builder.Build();
@@ -760,10 +760,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void NewProjectLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             LinkLabel senderLink = (LinkLabel)sender;
-            if (File.Exists(Path.Combine(senderLink.Tag.ToString(), "project.config")))
+            if (File.Exists(Path.Combine(senderLink.Tag.ToString(), "project.obconfig")))
                 OpenProject(senderLink.Tag.ToString());
             else
-                Notify($"Could not find 'project.config' for {senderLink.Tag}", Color.Red);
+                Notify($"Could not find 'project.obconfig' for {senderLink.Tag}", Color.Red);
         }
         #endregion       
     }

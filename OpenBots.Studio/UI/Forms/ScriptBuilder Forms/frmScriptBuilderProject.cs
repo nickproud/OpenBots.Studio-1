@@ -60,7 +60,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 //create new project
                 ScriptProject = new Project(projectBuilder.NewProjectName, projectBuilder.NewProjectType);
-                string configPath = Path.Combine(ScriptProjectPath, "project.config");
+                string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
 
                 //create config file
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
@@ -268,7 +268,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             try
             {
-                string configPath = Path.Combine(projectPath, "project.config");
+                string configPath = Path.Combine(projectPath, "project.obconfig");
 
                 //open project
                 Project project = Project.OpenProject(configPath);
@@ -372,35 +372,46 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 fileNode.Text = childFileInfo.Name;
                 fileNode.Tag = childFileInfo.FullName;
                 
-                if (fileNode.Name != "project.config")
+                if (fileNode.Name != "project.obconfig")
                     fileNode.ContextMenuStrip = cmsProjectFileActions;
 
-                if (fileNode.Tag.ToString().ToLower().Contains(".json"))
+                string fileExtension = Path.GetExtension(fileNode.Tag.ToString()).ToLower();
+                switch (fileExtension)
                 {
-                    fileNode.ImageIndex = 1; //script file icon
-                    fileNode.SelectedImageIndex = 1;
-                }
-                else if (fileNode.Tag.ToString().ToLower().Contains(".xlsx") ||
-                         fileNode.Tag.ToString().ToLower().Contains(".csv"))
-                {
-                    fileNode.ImageIndex = 3; //excel file icon
-                    fileNode.SelectedImageIndex = 3;
-                }
-                else if (fileNode.Tag.ToString().ToLower().Contains(".docx"))
-                {
-                    fileNode.ImageIndex = 4; //word file icon
-                    fileNode.SelectedImageIndex = 4;
-                }
-                else if (fileNode.Tag.ToString().ToLower().Contains(".pdf"))
-                {
-                    fileNode.ImageIndex = 5; //pdf file icon
-                    fileNode.SelectedImageIndex = 5;
-                }
-                else
-                {
-                    fileNode.ImageIndex = 2; //default file icon
-                    fileNode.SelectedImageIndex = 2;
-                }
+                    case ".obscript":
+                        fileNode.ImageIndex = 1; //script file icon
+                        fileNode.SelectedImageIndex = 1;
+                        break;
+                    case ".xlsx":
+                    case ".csv":
+                        fileNode.ImageIndex = 3; //excel file icon
+                        fileNode.SelectedImageIndex = 3;
+                        break;
+                    case ".docx":
+                        fileNode.ImageIndex = 4; //word file icon
+                        fileNode.SelectedImageIndex = 4;
+                        break;
+                    case ".pdf":
+                        fileNode.ImageIndex = 5; //pdf file icon
+                        fileNode.SelectedImageIndex = 5;
+                        break;
+                    case ".py":
+                        fileNode.ImageIndex = 6; //python file icon
+                        fileNode.SelectedImageIndex = 6;
+                        break;
+                    case ".tag":
+                        fileNode.ImageIndex = 7; //tagUI file icon
+                        fileNode.SelectedImageIndex = 7;
+                        break;
+                    case ".cs":
+                        fileNode.ImageIndex = 8; //c-sharp file icon
+                        fileNode.SelectedImageIndex = 8;
+                        break;
+                    default:
+                        fileNode.ImageIndex = 2; //default file icon
+                        fileNode.SelectedImageIndex = 2;
+                        break;
+                }               
 
                 parentNode.Nodes.Add(fileNode);
             }
@@ -436,7 +447,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         switch (extention.ToLower())
                         {
-                            case ".json":
+                            case ".obscript":
                                 OpenOpenBotsFile(selectedNodePath);
                                 break;
                             case ".py":
@@ -558,9 +569,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return;
                 }
 
-                if (newName.EndsWith(".json"))
-                    throw new Exception("Invalid folder name");
-
                 string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
                 string newFolderPath = Path.Combine(selectedNodePath, newName);
 
@@ -621,7 +629,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     if (File.Exists(Path.Combine(selectedNodePath, copiedNodeFileInfo.Name)))
                         throw new Exception("A file with this name already exists in this location");
 
-                    else if (copiedNodeFileInfo.Name == "project.config")
+                    else if (copiedNodeFileInfo.Name == "project.obconfig")
                         throw new Exception("This file cannot be copied or moved");
 
                     else
@@ -722,8 +730,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {               
                 string newName = "";
-                var newNameForm = new frmInputBox("Enter the name of the new file without extension", "New File");
-                newNameForm.txtInput.Text = tvProject.SelectedNode.Name;
+                var newNameForm = new frmInputBox("Enter the name of the new file with extension", "New File");
+                newNameForm.txtInput.Text = tvProject.SelectedNode.Text;
                 newNameForm.ShowDialog();
 
                 if (newNameForm.DialogResult == DialogResult.OK)
@@ -737,36 +745,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return;
                 }
 
-                if (newName.EndsWith(".json"))
-                    throw new Exception("Invalid file name");
-
                 string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
-                string newFilePath = Path.Combine(selectedNodePath, newName + ".json");
-                UIListView newScriptActions = NewLstScriptActions();
-                List<ScriptVariable> newScriptVariables = new List<ScriptVariable>();
-                List<ScriptArgument> newScriptArguments = new List<ScriptArgument>();
-                List<ScriptElement> newScriptElements = new List<ScriptElement>();
+                string newFilePath = Path.Combine(selectedNodePath, newName);
 
-                dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
-                helloWorldCommand.v_Message = "Hello World";
-                newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
+                string extension = Path.GetExtension(newFilePath);
+                string helloWorldText = "";
 
-                EngineContext engineContext = new EngineContext
-                {
-                    Variables = newScriptVariables,
-                    Arguments = newScriptArguments,
-                    Elements = newScriptElements,
-                    FilePath = newFilePath,
-                    Container = AContainer
-                };
-
-                if (!File.Exists(newFilePath))
-                {
-                    Script.SerializeScript(newScriptActions.Items, engineContext);
-                    NewNode(tvProject.SelectedNode, newFilePath, "file");
-                    OpenOpenBotsFile(newFilePath);
-                }
-                else
+                if (File.Exists(newFilePath))
                 {
                     int count = 1;
                     string newerFilePath = newFilePath;
@@ -774,16 +759,62 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         string newDirectoryPath = Path.GetDirectoryName(newFilePath);
                         string newFileNameWithoutExtension = Path.GetFileNameWithoutExtension(newFilePath);
-                        newerFilePath = Path.Combine(newDirectoryPath, $"{newFileNameWithoutExtension} ({count}).json");
+                        newerFilePath = Path.Combine(newDirectoryPath, $"{newFileNameWithoutExtension} ({count}){extension}");
                         count += 1;
                     }
 
-                    engineContext.FilePath = newerFilePath;
-                    Script.SerializeScript(newScriptActions.Items, engineContext);
-                    NewNode(tvProject.SelectedNode, newerFilePath, "file");
-                    OpenOpenBotsFile(newerFilePath);
+                    newFilePath = newerFilePath;
                 }
 
+                switch (extension.ToLower())
+                {
+                    case ".obscript":
+                        UIListView newScriptActions = NewLstScriptActions();
+                        List<ScriptVariable> newScriptVariables = new List<ScriptVariable>();
+                        List<ScriptArgument> newScriptArguments = new List<ScriptArgument>();
+                        List<ScriptElement> newScriptElements = new List<ScriptElement>();
+
+                        dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
+                        helloWorldCommand.v_Message = "Hello World";
+                        newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
+
+                        EngineContext engineContext = new EngineContext
+                        {
+                            Variables = newScriptVariables,
+                            Arguments = newScriptArguments,
+                            Elements = newScriptElements,
+                            FilePath = newFilePath,
+                            Container = AContainer
+                        };
+
+                        Script.SerializeScript(newScriptActions.Items, engineContext);
+                        NewNode(tvProject.SelectedNode, newFilePath, "file");
+                        OpenOpenBotsFile(newFilePath);
+                        break;
+                    case ".py":
+                        helloWorldText = "print('Hello World')";
+                        File.WriteAllText(newFilePath, helloWorldText);
+                        NewNode(tvProject.SelectedNode, newFilePath, "file");
+                        OpenTextEditorFile(newFilePath, ProjectType.Python);
+                        break;
+                    case ".tag":
+                        helloWorldText = "echo \"Hello World\"";
+                        File.WriteAllText(newFilePath, helloWorldText);
+                        NewNode(tvProject.SelectedNode, newFilePath, "file");
+                        OpenTextEditorFile(newFilePath, ProjectType.TagUI);
+                        break;
+                    case ".cs":
+                        helloWorldText = "namespace HelloWorld\n{\n\tclass Hello {\n\t\tstatic void Main(string[] args)" +
+                                         "\n\t\t{\n\t\t\tSystem.Console.WriteLine(\"Hello World!\");\n\t\t}\n\t}\n}";
+                        File.WriteAllText(newFilePath, helloWorldText);
+                        NewNode(tvProject.SelectedNode, newFilePath, "file");
+                        OpenTextEditorFile(newFilePath, ProjectType.CSScript);
+                        break;
+                    default:
+                        File.Create(newFilePath);
+                        NewNode(tvProject.SelectedNode, newFilePath, "file");
+                        return;
+                }
             }
             catch (Exception ex)
             {
@@ -804,7 +835,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
                 string selectedNodeName = tvProject.SelectedNode.Text.ToString();
-                if (selectedNodeName != "project.config")
+                if (selectedNodeName != "project.obconfig")
                 {
                     var result = MessageBox.Show($"Are you sure you would like to delete {selectedNodeName}?",
                                              $"Delete {selectedNodeName}", MessageBoxButtons.YesNo);
@@ -844,7 +875,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 string selectedNodeNameWithoutExtension = Path.GetFileNameWithoutExtension(selectedNodeName);
                 string selectedNodeFileExtension = Path.GetExtension(selectedNodePath);
 
-                if (selectedNodeName != "project.config")
+                if (selectedNodeName != "project.obconfig")
                 {
                     FileInfo selectedNodeDirectoryInfo = new FileInfo(selectedNodePath);
 

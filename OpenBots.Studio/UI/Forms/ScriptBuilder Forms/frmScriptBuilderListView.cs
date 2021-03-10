@@ -246,7 +246,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             break;
                         case Keys.S:
                             ClearSelectedListViewItems();
-                            SaveToFile(false);
+                            SaveToOpenBotsFile(false);
                             break;
                         case Keys.E:
                             SetSelectedCodeToCommented(false);

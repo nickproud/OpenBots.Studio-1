@@ -129,9 +129,9 @@ namespace OpenBots.UI.Forms
             lblError.Text = "";
             ExistingConfigPath = txtExistingProjectLocation.Text.Trim();
             if (ExistingConfigPath == string.Empty || !File.Exists(ExistingConfigPath) ||
-                Path.GetFileName(ExistingConfigPath) != "project.config")
+                Path.GetFileName(ExistingConfigPath) != "project.obconfig")
             {
-                lblError.Text = "Error: Please enter a valid project.config path";
+                lblError.Text = "Error: Please enter a valid project.obconfig path";
             }
             else
             {
@@ -199,7 +199,7 @@ namespace OpenBots.UI.Forms
 
             if (recent.DialogResult == DialogResult.OK)
             {
-                string configPath = Path.Combine(recent.RecentProjectPath, "project.config");
+                string configPath = Path.Combine(recent.RecentProjectPath, "project.obconfig");
                 if (File.Exists(configPath))
                 {
                     lblError.Text = "";
@@ -207,7 +207,7 @@ namespace OpenBots.UI.Forms
                     btnOpenProject_Click(null, null);
                 }
                 else
-                    lblError.Text = "Error: Unable to find 'project.config' for selected Project";
+                    lblError.Text = "Error: Unable to find 'project.obconfig' for selected Project";
             }
 
             recent.Dispose();

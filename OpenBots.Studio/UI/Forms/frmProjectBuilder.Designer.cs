@@ -98,7 +98,7 @@
             this.lblOpenProjectDescription.Name = "lblOpenProjectDescription";
             this.lblOpenProjectDescription.Size = new System.Drawing.Size(326, 28);
             this.lblOpenProjectDescription.TabIndex = 20;
-            this.lblOpenProjectDescription.Text = "Open project.config of Existing Project";
+            this.lblOpenProjectDescription.Text = "Open project.obconfig of Existing Project";
             // 
             // txtExistingProjectLocation
             // 

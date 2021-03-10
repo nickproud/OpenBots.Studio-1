@@ -147,7 +147,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     switch (e.KeyCode)
                     {
                         case Keys.S:
-                            //SaveAllFiles();
+                            SaveAllFiles();
                             break;
                     }
                 }
@@ -156,7 +156,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     switch (e.KeyCode)
                     {
                         case Keys.S:
-                            SaveToTextFile();
+                            SaveToTextEditorFile(false);
                             break;
                         case Keys.O:
                             aboutOpenBotsToolStripMenuItem_Click(null, null);

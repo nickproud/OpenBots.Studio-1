@@ -58,7 +58,7 @@ namespace OpenBots.UI.Supplement_Forms
         {
             try
             {
-                string[] scriptFiles = Directory.GetFiles(_projectPath, "*.json", SearchOption.AllDirectories);
+                string[] scriptFiles = Directory.GetFiles(_projectPath, "*.*", SearchOption.AllDirectories);
                 List<ManifestContentFiles> manifestFiles = new List<ManifestContentFiles>();
                 foreach (string file in scriptFiles)
                 {

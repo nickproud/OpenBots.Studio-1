@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Task
 		[Required]
 		[DisplayName("Task File Path")]
 		[Description("Enter or select a valid path to the Task file.")]
-		[SampleUsage(@"C:\temp\mytask.json || {vScriptPath} || {ProjectPath}\mytask.json")]
+		[SampleUsage(@"C:\temp\mytask.obscript || {vScriptPath} || {ProjectPath}\mytask.obscript")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]

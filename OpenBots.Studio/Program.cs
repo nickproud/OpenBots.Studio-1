@@ -63,7 +63,7 @@ namespace OpenBots
                     {
                         eventLog.Source = "Application";
                         eventLog.WriteEntry($"An attempt was made to run an OpenBots project from '{new DirectoryInfo(configPath).Parent}'" +
-                            "but the 'project.config' file was not found. Please verify that the file exists at the path indicated.",
+                            "but the 'project.obconfig' file was not found. Please verify that the file exists at the path indicated.",
                             EventLogEntryType.Error, 101, 1);
                     }
 
