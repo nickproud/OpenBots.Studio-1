@@ -1,5 +1,9 @@
 {
   "Replace": {
-    "1\\.3\\.1\\.0": "1.4.0.0"
+    "1\\.3\\.1\\.0": "1.4.0.0",
+    "OpenBots\\.Commands\\.RunCustomCodeCommand, OpenBots\\.Commands\\.UIAutomation": "OpenBots.Commands.Process.RunCustomCodeCommand, OpenBots.Commands.SystemAutomation",
+    "OpenBots\\.Commands\\.RunScriptCommand, OpenBots\\.Commands\\.UIAutomation": "OpenBots.Commands.Process.RunScriptCommand, OpenBots.Commands.SystemAutomation",
+    "OpenBots\\.Commands\\.StartProcessCommand, OpenBots\\.Commands\\.UIAutomation": "OpenBots.Commands.Process.StartProcessCommand, OpenBots.Commands.SystemAutomation",
+    "OpenBots\\.Commands\\.StopProcessCommand, OpenBots\\.Commands\\.UIAutomation": "OpenBots.Commands.Process.StopProcessCommand, OpenBots.Commands.SystemAutomation"
   }
 }

@@ -30,6 +30,7 @@ namespace OpenBots.Commands.API
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowDLLExplorer", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -38,6 +39,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("myNamespace.myClassName || {vClassName}")]
 		[Remarks("Namespace should be included")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ClassName { get; set; }
 
 		[Required]
@@ -46,6 +48,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("GetSomething || {vMethodName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_MethodName { get; set; }
 
 		[DisplayName("Parameters (Optional)")]
@@ -53,6 +56,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("GenerateDLLParameters", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_MethodParameters { get; set; }
 
 		[Required]
@@ -61,11 +65,8 @@ namespace OpenBots.Commands.API
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string)} )]
 		public string v_OutputUserVariableName { get; set; }
-
-		[JsonIgnore]
-		[Browsable(false)]
-		private DataGridView _parametersGridViewHelper;
 
 		public ExecuteDLLCommand()
 		{
@@ -77,15 +78,7 @@ namespace OpenBots.Commands.API
 			v_MethodParameters = new DataTable();
 			v_MethodParameters.Columns.Add("Parameter Name");
 			v_MethodParameters.Columns.Add("Parameter Value");
-			v_MethodParameters.TableName = DateTime.Now.ToString("MethodParameterTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
-
-			_parametersGridViewHelper = new DataGridView();
-			_parametersGridViewHelper.AllowUserToAddRows = true;
-			_parametersGridViewHelper.AllowUserToDeleteRows = true;
-			_parametersGridViewHelper.Size = new Size(350, 125);
-			_parametersGridViewHelper.ColumnHeadersHeight = 30;
-			_parametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_parametersGridViewHelper.DataBindings.Add("DataSource", this, "v_MethodParameters", false, DataSourceUpdateMode.OnPropertyChanged);
+			v_MethodParameters.TableName = DateTime.Now.ToString("MethodParameterTable" + DateTime.Now.ToString("MMddyy.hhmmss"));			
 		}
 
 		public override void RunCommand(object sender)
@@ -215,7 +208,7 @@ namespace OpenBots.Commands.API
 			}
 
 			//store result in variable
-			result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+			result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -225,11 +218,7 @@ namespace OpenBots.Commands.API
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ClassName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_MethodName", this, editor));
-
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_MethodParameters", this));
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_MethodParameters", this, new Control[] { _parametersGridViewHelper }, editor));
-			RenderedControls.Add(_parametersGridViewHelper);
-
+			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_MethodParameters", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;

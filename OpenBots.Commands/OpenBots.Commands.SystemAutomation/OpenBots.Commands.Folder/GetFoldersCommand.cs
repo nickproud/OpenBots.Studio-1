@@ -27,6 +27,7 @@ namespace OpenBots.Commands.Folder
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SourceFolderPath { get; set; }
 
 		[Required]
@@ -35,6 +36,7 @@ namespace OpenBots.Commands.Folder
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetFoldersCommand()
@@ -60,7 +62,7 @@ namespace OpenBots.Commands.Folder
 			//Get Subdirectories List
 			var directoriesList = Directory.GetDirectories(sourceFolder).ToList();
 
-			directoriesList.StoreInUserVariable(engine, v_OutputUserVariableName);
+			directoriesList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

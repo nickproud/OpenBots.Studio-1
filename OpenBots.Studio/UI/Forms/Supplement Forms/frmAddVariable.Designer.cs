@@ -39,6 +39,9 @@
             this.uiBtnOk = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnCancel = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.lblVariableNameError = new System.Windows.Forms.Label();
+            this.lblDefineDefaultTypeDescriptor = new System.Windows.Forms.Label();
+            this.cbxDefaultType = new System.Windows.Forms.ComboBox();
+            this.lblDefineDefaultType = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnOk)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).BeginInit();
             this.SuspendLayout();
@@ -49,7 +52,7 @@
             this.lblDefineName.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineName.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineName.ForeColor = System.Drawing.Color.White;
-            this.lblDefineName.Location = new System.Drawing.Point(16, 59);
+            this.lblDefineName.Location = new System.Drawing.Point(16, 60);
             this.lblDefineName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineName.Name = "lblDefineName";
             this.lblDefineName.Size = new System.Drawing.Size(210, 28);
@@ -75,7 +78,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtVariableName.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtVariableName.ForeColor = System.Drawing.Color.SteelBlue;
-            this.txtVariableName.Location = new System.Drawing.Point(21, 167);
+            this.txtVariableName.Location = new System.Drawing.Point(21, 168);
             this.txtVariableName.Margin = new System.Windows.Forms.Padding(4);
             this.txtVariableName.Name = "txtVariableName";
             this.txtVariableName.Size = new System.Drawing.Size(566, 32);
@@ -86,7 +89,7 @@
             this.lblDefineNameDescription.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineNameDescription.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineNameDescription.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDefineNameDescription.Location = new System.Drawing.Point(16, 85);
+            this.lblDefineNameDescription.Location = new System.Drawing.Point(16, 86);
             this.lblDefineNameDescription.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineNameDescription.Name = "lblDefineNameDescription";
             this.lblDefineNameDescription.Size = new System.Drawing.Size(571, 79);
@@ -99,7 +102,7 @@
             this.lblDefineDefaultValueDescriptor.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineDefaultValueDescriptor.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineDefaultValueDescriptor.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDefineDefaultValueDescriptor.Location = new System.Drawing.Point(16, 262);
+            this.lblDefineDefaultValueDescriptor.Location = new System.Drawing.Point(16, 406);
             this.lblDefineDefaultValueDescriptor.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineDefaultValueDescriptor.Name = "lblDefineDefaultValueDescriptor";
             this.lblDefineDefaultValueDescriptor.Size = new System.Drawing.Size(571, 53);
@@ -113,7 +116,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDefaultValue.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDefaultValue.ForeColor = System.Drawing.Color.SteelBlue;
-            this.txtDefaultValue.Location = new System.Drawing.Point(21, 319);
+            this.txtDefaultValue.Location = new System.Drawing.Point(21, 463);
             this.txtDefaultValue.Margin = new System.Windows.Forms.Padding(4);
             this.txtDefaultValue.Name = "txtDefaultValue";
             this.txtDefaultValue.Size = new System.Drawing.Size(566, 32);
@@ -125,7 +128,7 @@
             this.lblDefineDefaultValue.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineDefaultValue.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineDefaultValue.ForeColor = System.Drawing.Color.White;
-            this.lblDefineDefaultValue.Location = new System.Drawing.Point(16, 236);
+            this.lblDefineDefaultValue.Location = new System.Drawing.Point(16, 380);
             this.lblDefineDefaultValue.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineDefaultValue.Name = "lblDefineDefaultValue";
             this.lblDefineDefaultValue.Size = new System.Drawing.Size(278, 28);
@@ -142,7 +145,7 @@
             this.uiBtnOk.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnOk.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOk.Image")));
             this.uiBtnOk.IsMouseOver = false;
-            this.uiBtnOk.Location = new System.Drawing.Point(10, 375);
+            this.uiBtnOk.Location = new System.Drawing.Point(10, 514);
             this.uiBtnOk.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnOk.Name = "uiBtnOk";
             this.uiBtnOk.Size = new System.Drawing.Size(60, 60);
@@ -161,7 +164,7 @@
             this.uiBtnCancel.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnCancel.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCancel.Image")));
             this.uiBtnCancel.IsMouseOver = false;
-            this.uiBtnCancel.Location = new System.Drawing.Point(70, 375);
+            this.uiBtnCancel.Location = new System.Drawing.Point(70, 514);
             this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnCancel.Name = "uiBtnCancel";
             this.uiBtnCancel.Size = new System.Drawing.Size(60, 60);
@@ -181,11 +184,55 @@
             this.lblVariableNameError.Size = new System.Drawing.Size(571, 36);
             this.lblVariableNameError.TabIndex = 23;
             // 
+            // lblDefineDefaultTypeDescriptor
+            // 
+            this.lblDefineDefaultTypeDescriptor.BackColor = System.Drawing.Color.Transparent;
+            this.lblDefineDefaultTypeDescriptor.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDefineDefaultTypeDescriptor.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.lblDefineDefaultTypeDescriptor.Location = new System.Drawing.Point(16, 266);
+            this.lblDefineDefaultTypeDescriptor.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblDefineDefaultTypeDescriptor.Name = "lblDefineDefaultTypeDescriptor";
+            this.lblDefineDefaultTypeDescriptor.Size = new System.Drawing.Size(571, 53);
+            this.lblDefineDefaultTypeDescriptor.TabIndex = 32;
+            this.lblDefineDefaultTypeDescriptor.Text = "Define a default type for the variable. The type of the variable cannot be change" +
+    "d during the execution of a Script.";
+            // 
+            // cbxDefaultType
+            // 
+            this.cbxDefaultType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxDefaultType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxDefaultType.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbxDefaultType.ForeColor = System.Drawing.Color.SteelBlue;
+            this.cbxDefaultType.Location = new System.Drawing.Point(21, 323);
+            this.cbxDefaultType.Margin = new System.Windows.Forms.Padding(4);
+            this.cbxDefaultType.Name = "cbxDefaultType";
+            this.cbxDefaultType.Size = new System.Drawing.Size(566, 33);
+            this.cbxDefaultType.TabIndex = 31;
+            this.cbxDefaultType.Tag = typeof(string);
+            this.cbxDefaultType.SelectionChangeCommitted += new System.EventHandler(this.cbxDefaultType_SelectionChangeCommitted);
+            // 
+            // lblDefineDefaultType
+            // 
+            this.lblDefineDefaultType.AutoSize = true;
+            this.lblDefineDefaultType.BackColor = System.Drawing.Color.Transparent;
+            this.lblDefineDefaultType.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDefineDefaultType.ForeColor = System.Drawing.Color.White;
+            this.lblDefineDefaultType.Location = new System.Drawing.Point(16, 240);
+            this.lblDefineDefaultType.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblDefineDefaultType.Name = "lblDefineDefaultType";
+            this.lblDefineDefaultType.Size = new System.Drawing.Size(271, 28);
+            this.lblDefineDefaultType.TabIndex = 30;
+            this.lblDefineDefaultType.Text = "Define Variable Default Type";
+            // 
             // frmAddVariable
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(609, 449);
+            this.ClientSize = new System.Drawing.Size(609, 588);
+            this.Controls.Add(this.lblDefineDefaultTypeDescriptor);
+            this.Controls.Add(this.cbxDefaultType);
+            this.Controls.Add(this.lblDefineDefaultType);
             this.Controls.Add(this.lblVariableNameError);
             this.Controls.Add(this.uiBtnOk);
             this.Controls.Add(this.uiBtnCancel);
@@ -222,5 +269,8 @@
         public System.Windows.Forms.TextBox txtVariableName;
         public System.Windows.Forms.TextBox txtDefaultValue;
         private System.Windows.Forms.Label lblVariableNameError;
+        private System.Windows.Forms.Label lblDefineDefaultTypeDescriptor;
+        public System.Windows.Forms.ComboBox cbxDefaultType;
+        private System.Windows.Forms.Label lblDefineDefaultType;
     }
 }

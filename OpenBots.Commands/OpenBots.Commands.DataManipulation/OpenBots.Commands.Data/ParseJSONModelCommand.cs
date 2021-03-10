@@ -29,19 +29,17 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("{\"rect\":{\"length\":10, \"width\":5}} || {vJsonObject}")]
 		[Remarks("Providing data of a type other than a 'JSON Object' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_JsonObject { get; set; }
 
 		[Required]
 		[DisplayName("Parameters")]
 		[Description("Specify JSON Selector(s) (JPath) and Output Variable(s).")]
-		[SampleUsage("[$.rect.length | vOutputList] || [{Selector} | {vOutputList}]")]
+		[SampleUsage("[$.rect.length | {vOutputList}] || [{Selector} | {vOutputList}]")]
 		[Remarks("'$.rect.length' is a JSON Selector to query on an inputted JSON Object and store its results in {vOutputList}.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(List<>) }, true)]
 		public OBDataTable v_ParseObjects { get; set; }
-
-		[JsonIgnore]
-		[Browsable(false)]
-		private DataGridView _parseObjectsGridViewHelper;
 
 		public ParseJSONModelCommand()
 		{
@@ -54,14 +52,6 @@ namespace OpenBots.Commands.Data
 			v_ParseObjects.Columns.Add("Json Selector");
 			v_ParseObjects.Columns.Add("Output Variable");
 			v_ParseObjects.TableName = $"ParseJsonObjectsTable{DateTime.Now.ToString("MMddyyhhmmss")}";
-
-			_parseObjectsGridViewHelper = new DataGridView();
-			_parseObjectsGridViewHelper.AllowUserToAddRows = true;
-			_parseObjectsGridViewHelper.AllowUserToDeleteRows = true;
-			_parseObjectsGridViewHelper.Size = new Size(400, 250);
-			_parseObjectsGridViewHelper.ColumnHeadersHeight = 30;
-			_parseObjectsGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_parseObjectsGridViewHelper.DataBindings.Add("DataSource", this, "v_ParseObjects", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		public override void RunCommand(object sender)
@@ -103,11 +93,9 @@ namespace OpenBots.Commands.Data
 
 				//add results to result list since list<string> is supported
 				foreach (var result in searchResults)
-				{
 					resultList.Add(result.ToString());
-				}
 
-				resultList.StoreInUserVariable(engine, targetVariableName);               
+				resultList.StoreInUserVariable(engine, targetVariableName, nameof(v_ParseObjects), this);               
 			}
 		}
 
@@ -117,11 +105,8 @@ namespace OpenBots.Commands.Data
 
 			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_JsonObject", this, editor));
-
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ParseObjects", this));
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ParseObjects", this, new[] { _parseObjectsGridViewHelper }, editor));
-			RenderedControls.Add(_parseObjectsGridViewHelper);
-
+			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_ParseObjects", this, editor));
+			
 			return RenderedControls;
 		}
 

@@ -25,6 +25,7 @@ namespace OpenBots.Commands.RegEx
 		[SampleUsage("Hello || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputText { get; set; }
 
 		[Required]
@@ -33,14 +34,16 @@ namespace OpenBots.Commands.RegEx
 		[SampleUsage(@"^([\w\-]+) || {vPattern}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Regex { get; set; }
 
 		[Required]
 		[DisplayName("Replacement Text")]
-		[Description("Selevt or provide text to replace the matches.")]
+		[Description("Select or provide text to replace the matches.")]
 		[SampleUsage("Goodbye || {vReplacement}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 
 		public string v_ReplacementText { get; set; }
 
@@ -50,6 +53,7 @@ namespace OpenBots.Commands.RegEx
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public RegexReplaceCommand()
@@ -69,7 +73,7 @@ namespace OpenBots.Commands.RegEx
 			string vReplaceData = v_ReplacementText.ConvertUserVariableToString(engine);
 			string resultData = Regex.Replace(vInputData, vRegex, vReplaceData);
 
-			resultData.StoreInUserVariable(engine, v_OutputUserVariableName);
+			resultData.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

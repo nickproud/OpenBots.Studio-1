@@ -2,19 +2,20 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Settings;
-using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace OpenBots.Studio.Utilities
 {
     public static class TypeMethods
     {       
         public static List<AutomationCommand> GenerateAutomationCommands(IContainer container)
-        {
+        {          
             var commandList = new List<AutomationCommand>();
             var commandClasses = new List<Type>();
                       
@@ -58,6 +59,29 @@ namespace OpenBots.Studio.Utilities
             }
             
             return commandClasses;
+        }
+
+        public static void GenerateAllVariableTypes(List<Assembly> assemblyList, Dictionary<string, List<Type>> groupedTypes)
+        {
+            groupedTypes.Clear();
+
+            foreach (var assem in assemblyList)
+            {
+                try
+                {
+                    var newTypes = assem.GetTypes()?
+                                        .Where(x => x.IsClass && x.IsVisible && x.IsPublic && !x.IsInterface && !x.IsAbstract 
+                                                              && x.Namespace != null && !x.Namespace.StartsWith("OpenBots"))
+                                        .ToList();
+
+                    if (newTypes.Count > 0 && !groupedTypes.ContainsKey($"{assem.GetName().Name} [{assem.GetName().Version}]"))
+                        groupedTypes.Add($"{assem.GetName().Name} [{assem.GetName().Version}]", newTypes);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
         }
 
         public static Type GetTypeByName(IContainer container, string typeName)

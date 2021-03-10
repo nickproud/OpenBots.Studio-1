@@ -22,11 +22,11 @@ namespace OpenBots.Commands.Data.Test
             string time = "1:10";
             string AMorPM = "PM";
 
-            year.CreateTestVariable(_engine, "year");
-            month.CreateTestVariable(_engine, "month");
-            day.CreateTestVariable(_engine, "day");
-            time.CreateTestVariable(_engine, "time");
-            "unassigned".CreateTestVariable(_engine, "outputVar");
+            year.CreateTestVariable(_engine, "year", typeof(string));
+            month.CreateTestVariable(_engine, "month", typeof(string));
+            day.CreateTestVariable(_engine, "day", typeof(string));
+            time.CreateTestVariable(_engine, "time", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "outputVar", typeof(DateTime));
 
             _createDateTime.v_Year = "{year}";
             _createDateTime.v_Month = "{month}";
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Data.Test
 
             _createDateTime.RunCommand(_engine);
 
-            Object output = _createDateTime.v_OutputUserVariableName.ConvertUserVariableToObject(_engine);
+            Object output = _createDateTime.v_OutputUserVariableName.ConvertUserVariableToObject(_engine, typeof(DateTime));
             Assert.IsType<DateTime>(output);
             DateTime dateOutput = (DateTime)output;
             Assert.Equal(Int32.Parse(year), dateOutput.Year);

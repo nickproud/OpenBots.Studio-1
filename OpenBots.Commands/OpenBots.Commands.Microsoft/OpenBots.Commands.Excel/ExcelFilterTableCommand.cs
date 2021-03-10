@@ -24,6 +24,7 @@ namespace OpenBots.Commands.Microsoft
         [Description("Enter the unique instance that was specified in the **Create Application** command.")]
         [SampleUsage("MyExcelInstance")]
         [Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
+        [CompatibleTypes(new Type[] { typeof(Application) })]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -32,6 +33,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("{vFilterList}")]
         [Remarks("The filter List must be of type string.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(List<>) })]
         public string v_FilterList { get; set; }
 
         [Required]
@@ -49,6 +51,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("1 || {vIndex} || Column1 || {vColumnName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_DataValueIndex { get; set; }
 
         [Required]
@@ -57,6 +60,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("TableName || {vTableName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_TableName { get; set; }
 
         [Required]
@@ -65,6 +69,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_SheetNameExcelTable { get; set; }
 
         public ExcelFilterTableCommand()
@@ -84,12 +89,12 @@ namespace OpenBots.Commands.Microsoft
             string vSheetExcelTable = v_SheetNameExcelTable.ConvertUserVariableToString(engine);
             var vTableName = v_TableName.ConvertUserVariableToString(engine);
             var vColumnValue = v_DataValueIndex.ConvertUserVariableToString(engine);
-            var vFilterList = v_FilterList.ConvertUserVariableToObject(engine);
+            var vFilterList = v_FilterList.ConvertUserVariableToObject(engine, nameof(v_FilterList), this);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
             var excelTable = workSheetExcelTable.ListObjects[vTableName];
-            var filterArray = ((List<String>)vFilterList).ToArray();
+            var filterArray = ((List<string>)vFilterList).ToArray();
 
             int index;
             if (v_Option == "Column Index")

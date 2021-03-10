@@ -23,6 +23,7 @@ namespace OpenBots.Commands.Data
         [SampleUsage("Text which contains string || {vFullText}")]
         [Remarks("Providing data of a type other than a 'String' will result in an error.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_FullText { get; set; }
 
         [Required]
@@ -31,6 +32,7 @@ namespace OpenBots.Commands.Data
         [SampleUsage("Text to be compared from a string || {vComparisonText}")]
         [Remarks("Providing data of a type other than a 'String' will result in an error.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_ComparisonText { get; set; }
 
         [Required]
@@ -39,6 +41,7 @@ namespace OpenBots.Commands.Data
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("{vUserVariable}")]
         [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+        [CompatibleTypes(new Type[] { typeof(bool) })]
         public string v_OutputUserVariableName { get; set; }
 
         public StringContainsCommand()
@@ -54,7 +57,8 @@ namespace OpenBots.Commands.Data
             var engine = (IAutomationEngineInstance)sender;
             var fullText = v_FullText.ConvertUserVariableToString(engine);
             var comparisonText = v_ComparisonText.ConvertUserVariableToString(engine);
-            string outputUserVar = fullText.Contains(comparisonText).ToString(); outputUserVar.StoreInUserVariable(engine, v_OutputUserVariableName);
+            bool outputUserVar = fullText.Contains(comparisonText);
+            outputUserVar.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
         {

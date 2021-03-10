@@ -41,6 +41,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("[FirstName | John] || [{vKey} | {vValue}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement), typeof(object) }, true)]
 		public OBDataTable v_ColumnNameDataTable { get; set; }
 
 		[Required]
@@ -49,6 +50,7 @@ namespace OpenBots.Commands.Dictionary
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public CreateDictionaryCommand()
@@ -91,7 +93,7 @@ namespace OpenBots.Commands.Dictionary
 						foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 						{
 							OBDataTable dataTable;
-							var dataTableVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+							var dataTableVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(OBDataTable));
 							if (dataTableVariable != null && dataTableVariable is OBDataTable)
 								dataTable = (OBDataTable)dataTableVariable;
 							else
@@ -105,7 +107,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 						{
 							MailItem mailItem;
-							var mailItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+							var mailItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(MailItem));
 							if (mailItemVariable != null && mailItemVariable is MailItem)
 								mailItem = (MailItem)mailItemVariable;
 							else
@@ -119,7 +121,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 						{
 							MimeMessage mimeMessage;
-							var mimeMessageVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+							var mimeMessageVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(MimeMessage));
 							if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 								mimeMessage = (MimeMessage)mimeMessageVariable;
 							else
@@ -133,7 +135,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 						{
 							IWebElement webElement;
-							var webElementVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+							var webElementVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(IWebElement));
 							if (webElementVariable != null && webElementVariable is IWebElement)
 								webElement = (IWebElement)webElementVariable;
 							else
@@ -147,7 +149,7 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						object objectItem;
-						var objectItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine);
+						var objectItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(object));
 						if (objectItemVariable != null && objectItemVariable is object)
 							objectItem = (object)objectItemVariable;
 						else
@@ -158,7 +160,7 @@ namespace OpenBots.Commands.Dictionary
 					break;
 			}
 
-			((object)outputDictionary).StoreInUserVariable(engine, v_OutputUserVariableName);
+			((object)outputDictionary).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -166,7 +168,7 @@ namespace OpenBots.Commands.Dictionary
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_DictionaryType", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDataGridViewGroupFor("v_ColumnNameDataTable", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_ColumnNameDataTable", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;

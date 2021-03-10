@@ -23,6 +23,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Description("Enter the unique instance that was specified in the **Create BZ Terminal Session** command.")]
 		[SampleUsage("MyBZTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create BZ Terminal Session** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(BZTerminalContext) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -31,6 +32,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("1 || {vRowPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_YMousePosition { get; set; }
 
 		[Required]
@@ -39,6 +41,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("1 || {vColPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_XMousePosition { get; set; }
 
 		[Required]
@@ -47,6 +50,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("20 || {vLength}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Length { get; set; }
 
 		[Required]
@@ -55,6 +59,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public BZTerminalGetTextCommand()
@@ -78,7 +83,7 @@ namespace OpenBots.Commands.BZTerminal
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
 			string extractedText = terminalContext.BZTerminalObj.GetFieldText[mouseY, mouseX, length];
-			extractedText.StoreInUserVariable(engine, v_OutputUserVariableName);
+			extractedText.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

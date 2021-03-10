@@ -24,6 +24,7 @@ namespace OpenBots.Commands.Microsoft
         [Description("Enter the unique instance that was specified in the **Create Application** command.")]
         [SampleUsage("MyExcelInstance")]
         [Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
+        [CompatibleTypes(new Type[] { typeof(Application) })]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -32,6 +33,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("1 || {vIndex}")]
         [Remarks("The column will be added at the last index if a column index is not provided.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_ColumnIndex { get; set; }
 
         [Required]
@@ -40,6 +42,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("Column1 || {vColumnName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_ColumnName { get; set; }
 
         [Required]
@@ -48,6 +51,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("TableName || {vTableName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_TableName { get; set; }
 
         [Required]
@@ -56,6 +60,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_SheetNameExcelTable { get; set; }
 
         public ExcelAddTableColumnCommand()

@@ -25,6 +25,7 @@ namespace OpenBots.Commands.Credential
 		[SampleUsage("Name || {vCredentialName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_CredentialName { get; set; }
 
 		[Required]
@@ -33,6 +34,7 @@ namespace OpenBots.Commands.Credential
 		[SampleUsage("john@openbots.com || {vCredentialUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_CredentialUsername { get; set; }
 
 		[Required]
@@ -41,6 +43,7 @@ namespace OpenBots.Commands.Credential
 		[SampleUsage("john@openbots.com || {vCredentialPassword}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_CredentialPassword { get; set; }
 
 		public UpdateCredentialCommand()

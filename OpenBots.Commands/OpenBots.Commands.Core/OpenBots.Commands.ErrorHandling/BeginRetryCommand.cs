@@ -7,7 +7,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -32,6 +31,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[SampleUsage("3 || {vRetryCount}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_RetryCount { get; set; }
 
 		[Required]
@@ -40,6 +40,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[SampleUsage("5 || {vRetryInterval}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_RetryInterval { get; set; }
 
 		[Required]
@@ -167,7 +168,7 @@ namespace OpenBots.Commands.ErrorHandling
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_LogicType", this, editor));
 
 			//create controls
-			var controls = commandControls.CreateDataGridViewGroupFor("v_IfConditionsTable", this, editor);
+			var controls = commandControls.CreateDefaultDataGridViewGroupFor("v_IfConditionsTable", this, editor);
 			_ifConditionHelper = controls[2] as DataGridView;
 
 			//handle helper click

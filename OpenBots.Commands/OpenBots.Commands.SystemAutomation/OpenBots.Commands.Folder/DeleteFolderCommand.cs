@@ -25,7 +25,8 @@ namespace OpenBots.Commands.Folder
 		[SampleUsage(@"C:\temp\myfolder || {ProjectPath}\myfolder  || {vTextFolderPath}")]
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))] 
+		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SourceFolderPath { get; set; }
 
 		public DeleteFolderCommand()

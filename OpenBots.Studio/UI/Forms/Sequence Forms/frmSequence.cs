@@ -4,12 +4,12 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
-using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.UI.Controls;
 using OpenBots.Studio.Utilities;
+using OpenBots.UI.CustomControls.Controls;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -44,10 +44,13 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         //package manager variables
         public IContainer AContainer { get; set; }
+        private Dictionary<string, List<Type>> _groupedTypes { get; set; }
 
         //variable/argument tab variables
         private List<string> _existingVarArgSearchList;
         private string _preEditVarArgName;
+        private Type _preEditVarArgType;
+        public TypeContext TypeContext { get; set; }
 
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
@@ -260,7 +263,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void AddNewCommand(string specificCommand = "")
         {
             //bring up new command configuration form
-            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands())
+            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), TypeContext)
             {
                 CreationModeInstance = CreationMode.Add
             };
@@ -285,9 +288,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
                 ScriptVariables = newCommandForm.ScriptEngineContext.Variables;
                 ScriptArguments = newCommandForm.ScriptEngineContext.Arguments;
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
-             }
+                ResetVariableArgumentBindings();
+            }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
             {
@@ -440,7 +442,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             txtCommandSearch.Clear();
         }
-        #endregion      
+        #endregion
     }
 }
 

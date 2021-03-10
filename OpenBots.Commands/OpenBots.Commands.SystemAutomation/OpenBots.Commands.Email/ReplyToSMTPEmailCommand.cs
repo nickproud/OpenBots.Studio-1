@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Security;
 using System.Security.Authentication;
 using System.Threading;
 using System.Windows.Forms;
@@ -29,6 +30,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("{vMimeMessage}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(MimeMessage) })]
 		public string v_SMTPMimeMessage { get; set; }
 
 		[Required]
@@ -37,6 +39,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("smtp.gmail.com || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPHost { get; set; }
 
 		[Required]
@@ -45,6 +48,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("465 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPPort { get; set; }
 
 		[Required]
@@ -53,14 +57,16 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPUserName { get; set; }
 
 		[Required]
 		[DisplayName("Password")]
 		[Description("Define the password to use when contacting the SMTP service.")]
-		[SampleUsage("password || {vPassword}")]
-		[Remarks("")]
+		[SampleUsage("{vPassword}")]
+		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_SMTPPassword { get; set; }
 
 		[Required]
@@ -78,6 +84,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Everything ran ok at {DateTime.Now}  || {vBody}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPBody { get; set; }
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
@@ -86,6 +93,7 @@ namespace OpenBots.Commands.Email
 		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SMTPAttachments { get; set; }
 
 		public ReplyToSMTPEmailCommand()
@@ -101,11 +109,11 @@ namespace OpenBots.Commands.Email
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MimeMessage vMimeMessageToReply = (MimeMessage)v_SMTPMimeMessage.ConvertUserVariableToObject(engine);
+			MimeMessage vMimeMessageToReply = (MimeMessage)v_SMTPMimeMessage.ConvertUserVariableToObject(engine, nameof(v_SMTPMimeMessage), this);
 			string vSMTPHost = v_SMTPHost.ConvertUserVariableToString(engine);
 			string vSMTPPort = v_SMTPPort.ConvertUserVariableToString(engine);
 			string vSMTPUserName = v_SMTPUserName.ConvertUserVariableToString(engine);
-			string vSMTPPassword = v_SMTPPassword.ConvertUserVariableToString(engine);
+			string vSMTPPassword = ((SecureString)v_SMTPPassword.ConvertUserVariableToObject(engine, nameof(v_SMTPPassword), this)).ConvertSecureStringToString();
 			string vSMTPBody = v_SMTPBody.ConvertUserVariableToString(engine);
 			string vSMTPAttachments = v_SMTPAttachments.ConvertUserVariableToString(engine);
 
@@ -176,7 +184,7 @@ namespace OpenBots.Commands.Email
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPHost", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPPort", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPUserName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultPasswordInputGroupFor("v_SMTPPassword", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPPassword", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SMTPOperationType", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPBody", this, editor, 100, 300));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SMTPAttachments", this, editor));

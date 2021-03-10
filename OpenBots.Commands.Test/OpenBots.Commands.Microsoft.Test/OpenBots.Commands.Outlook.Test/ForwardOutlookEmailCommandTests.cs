@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Outlook.Test
             _forwardOutlookEmail = new ForwardOutlookEmailCommand();
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
 
-            "unassigned".CreateTestVariable(_engine, "emails");
+            "unassigned".CreateTestVariable(_engine, "emails", typeof(List<>));
 
             _getOutlookEmails.v_SourceFolder = "TestInput";
             _getOutlookEmails.v_Filter = "[Subject] = 'toForward'";
@@ -37,11 +37,11 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
             MailItem email = emails[0];
-            email.CreateTestVariable(_engine, "email");
+            email.CreateTestVariable(_engine, "email", typeof(MailItem));
             string forwardAddress = "openbots.test@outlook.com";
-            forwardAddress.CreateTestVariable(_engine, "forwardEmail");
+            forwardAddress.CreateTestVariable(_engine, "forwardEmail", typeof(string));
 
             _forwardOutlookEmail.v_MailItem = "{email}";
             _forwardOutlookEmail.v_Recipients = "{forwardEmail}";
@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Outlook.Test
 
                 _getOutlookEmails.RunCommand(_engine);
 
-                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
                 attempts++;
             } while (emails.Count < 1 & attempts < 5);
             email = emails[0];
@@ -79,7 +79,7 @@ namespace OpenBots.Commands.Outlook.Test
         {
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
 
-            email.CreateTestVariable(_engine, "email");
+            email.CreateTestVariable(_engine, "email", typeof(MailItem));
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";

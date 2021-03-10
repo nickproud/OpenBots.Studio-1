@@ -11,6 +11,11 @@ namespace OpenBots.Core.Script
         public string VariableName { get; set; }
 
         /// <summary>
+        /// type of the variable or current index
+        /// </summary>
+        public Type VariableType { get; set; }
+        
+        /// <summary>
         /// value of the variable or current index
         /// </summary>
         public object VariableValue { get; set; }

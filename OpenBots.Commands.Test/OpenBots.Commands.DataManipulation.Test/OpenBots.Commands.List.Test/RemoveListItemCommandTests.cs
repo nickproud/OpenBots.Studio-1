@@ -23,14 +23,14 @@ namespace OpenBots.Commands.List.Test
             inputList.Add("item2");
             string index = "0";
 
-            inputList.CreateTestVariable(_engine, "inputList");
-            index.CreateTestVariable(_engine, "index");
+            inputList.CreateTestVariable(_engine, "inputList", typeof(List<>));
+            index.CreateTestVariable(_engine, "index", typeof(string));
 
             _removeListItem.v_ListName = "{inputList}";
             _removeListItem.v_ListIndex = "{index}";
 
             _removeListItem.RunCommand(_engine);
-            List<string> outputList = (List<string>)"{inputList}".ConvertUserVariableToObject(_engine);
+            List<string> outputList = (List<string>)"{inputList}".ConvertUserVariableToObject(_engine, typeof(List<>));
             Assert.Equal("item2", outputList[0]);
         }
 
@@ -49,14 +49,14 @@ namespace OpenBots.Commands.List.Test
             inputList.Add(item2);
             string index = "0";
 
-            inputList.CreateTestVariable(_engine, "inputList");
-            index.CreateTestVariable(_engine, "index");
+            inputList.CreateTestVariable(_engine, "inputList", typeof(List<>));
+            index.CreateTestVariable(_engine, "index", typeof(string));
 
             _removeListItem.v_ListName = "{inputList}";
             _removeListItem.v_ListIndex = "{index}";
 
             _removeListItem.RunCommand(_engine);
-            List<OBDataTable> outputList = (List<OBDataTable>)"{inputList}".ConvertUserVariableToObject(_engine);
+            List<OBDataTable> outputList = (List<OBDataTable>)"{inputList}".ConvertUserVariableToObject(_engine, typeof(OBDataTable));
             Assert.Equal(item2, outputList[0]);
         }
     }

@@ -24,7 +24,7 @@ namespace OpenBots.Commands.DataTable.Test
             DataRow row = inputTable.NewRow();
             row["firstname"] = "john";
             inputTable.Rows.Add(row);
-            row.CreateTestVariable(_engine, "inputRow");
+            row.CreateTestVariable(_engine, "inputRow", typeof(DataRow));
 
             _updateDataRowValue.v_DataRow = "{inputRow}";
             _updateDataRowValue.v_Option = option;
@@ -32,7 +32,7 @@ namespace OpenBots.Commands.DataTable.Test
             _updateDataRowValue.v_DataRowValue = updateVal;
 
             _updateDataRowValue.RunCommand(_engine);
-            DataRow outputRow = (DataRow)_updateDataRowValue.v_DataRow.ConvertUserVariableToObject(_engine);
+            DataRow outputRow = (DataRow)_updateDataRowValue.v_DataRow.ConvertUserVariableToObject(_engine, typeof(DataRow));
             Assert.Equal(updateVal, outputRow["firstname"]);
         }
     }

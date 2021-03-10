@@ -17,8 +17,8 @@ namespace OpenBots.Commands.Data.Test
             _engine = new AutomationEngineInstance(null);
 
             string textToMeasure = "testText";
-            textToMeasure.CreateTestVariable(_engine, "inputText");
-            "unassigned".CreateTestVariable(_engine, "output");
+            textToMeasure.CreateTestVariable(_engine, "inputText", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _getTextLength.v_InputValue = "{inputText}";
             _getTextLength.v_OutputUserVariableName = "{output}";

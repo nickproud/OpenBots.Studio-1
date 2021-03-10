@@ -20,8 +20,8 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources");
-            inputPath.CreateTestVariable(_engine, "inputPath");
-            "undefined".CreateTestVariable(_engine, "output");
+            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            "undefined".CreateTestVariable(_engine, "output", typeof(List<>));
 
             Directory.CreateDirectory(Path.Combine(inputPath, @"toGet"));
 
@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Folder.Test
 
             _getFolders.RunCommand(_engine);
 
-            List<string> folderList = (List<string>)"{output}".ConvertUserVariableToObject(_engine);
+            List<string> folderList = (List<string>)"{output}".ConvertUserVariableToObject(_engine, typeof(List<>));
 
             Assert.Contains(Path.Combine(inputPath, @"toGet"), folderList);
         }
@@ -43,8 +43,8 @@ namespace OpenBots.Commands.Folder.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\doesNotExist");
-            inputPath.CreateTestVariable(_engine, "inputPath");
-            "undefined".CreateTestVariable(_engine, "output");
+            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            "undefined".CreateTestVariable(_engine, "output", typeof(List<>));
 
             _getFolders.v_SourceFolderPath = "{inputPath}";
             _getFolders.v_OutputUserVariableName = "{output}";

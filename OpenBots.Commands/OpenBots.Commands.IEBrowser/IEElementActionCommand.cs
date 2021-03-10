@@ -31,6 +31,7 @@ namespace OpenBots.Commands.IEBrowser
         [Description("Enter the unique instance that was specified in the **IE Create Browser** command.")]
         [SampleUsage("MyIEBrowserInstance")]
         [Remarks("Failure to enter the correct instance name or failure to first call the **IE Create Browser** command will cause an error.")]
+        [CompatibleTypes(new Type[] { typeof(InternetExplorer) })]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -39,6 +40,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public DataTable v_WebSearchParameter { get; set; }
 
         [Required]
@@ -64,23 +66,12 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("{vParameterValue}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(string) }, true)]
         public DataTable v_WebActionParameterTable { get; set; }
 
         [JsonIgnore]
         [Browsable(false)]
-        private DataGridView _elementsGridViewHelper;
-
-        [JsonIgnore]
-        [Browsable(false)]
         private ComboBox _elementActionDropdown;
-
-        [JsonIgnore]
-        [Browsable(false)]
-        private List<Control> _searchParameterControls;
-
-        [JsonIgnore]
-        [Browsable(false)]
-        private DataGridView _searchGridViewHelper;
 
         [JsonIgnore]
         [Browsable(false)]
@@ -98,7 +89,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             CommandName = "IEElementActionCommand";
             SelectionName = "IE Element Action";
-            CommandEnabled = false;
+            CommandEnabled = true;
             CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";
@@ -113,22 +104,6 @@ namespace OpenBots.Commands.IEBrowser
             v_WebActionParameterTable.TableName = DateTime.Now.ToString("WebActionParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
             v_WebActionParameterTable.Columns.Add("Parameter Name");
             v_WebActionParameterTable.Columns.Add("Parameter Value");
-
-            _searchGridViewHelper = new DataGridView();
-            _searchGridViewHelper.AllowUserToAddRows = true;
-            _searchGridViewHelper.AllowUserToDeleteRows = true;
-            _searchGridViewHelper.Size = new Size(400, 250);
-            _searchGridViewHelper.ColumnHeadersHeight = 30;
-            _searchGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            _searchGridViewHelper.DataBindings.Add("DataSource", this, "v_WebSearchParameter", false, DataSourceUpdateMode.OnPropertyChanged);
-
-            _elementsGridViewHelper = new DataGridView();
-            _elementsGridViewHelper.AllowUserToAddRows = true;
-            _elementsGridViewHelper.AllowUserToDeleteRows = true;
-            _elementsGridViewHelper.Size = new Size(400, 250);
-            _elementsGridViewHelper.ColumnHeadersHeight = 30;
-            _elementsGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            _elementsGridViewHelper.DataBindings.Add("DataSource", this, "v_WebActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         [STAThread]
@@ -149,7 +124,7 @@ namespace OpenBots.Commands.IEBrowser
             searchTable.Columns.Add(matchFoundColumn);
 
             var elementSearchProperties = from rws in searchTable.AsEnumerable()
-                                          where rws.Field<Boolean>("Enabled").ToString() == "True"
+                                          where rws.Field<bool>("Enabled").ToString() == "True"
                                           select rws;
             foreach (DataRow seachCriteria in elementSearchProperties)
             {
@@ -186,24 +161,17 @@ namespace OpenBots.Commands.IEBrowser
             base.Render(editor, commandControls);
 
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
+            RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_WebSearchParameter", this, editor));
 
-            _searchParameterControls = new List<Control>();
-            _searchParameterControls.Add(commandControls.CreateDefaultLabelFor("v_WebSearchParameter", this));
-            _searchParameterControls.AddRange(commandControls.CreateUIHelpersFor("v_WebSearchParameter", this, new Control[] { _searchGridViewHelper }, editor));
 
-            _searchParameterControls.Add(_searchGridViewHelper);
-            RenderedControls.AddRange(_searchParameterControls);
-
-            _elementActionDropdown = (ComboBox)commandControls.CreateDropdownFor("v_WebAction", this);
+            _elementActionDropdown = commandControls.CreateDropdownFor("v_WebAction", this);
             RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_WebAction", this));
             RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_WebAction", this, new Control[] { _elementActionDropdown }, editor));
             _elementActionDropdown.SelectionChangeCommitted += ElementActionDropdown_SelectionChangeCommitted;
             RenderedControls.Add(_elementActionDropdown);
 
-            _elementParameterControls = new List<Control>();
-            _elementParameterControls.Add(commandControls.CreateDefaultLabelFor("v_WebActionParameterTable", this));
-            _elementParameterControls.AddRange(commandControls.CreateUIHelpersFor("v_WebActionParameterTable", this, new Control[] { _elementsGridViewHelper }, editor));
-            _elementParameterControls.Add(_elementsGridViewHelper);
+            _elementParameterControls = commandControls.CreateDefaultDataGridViewGroupFor("v_WebActionParameterTable", this, editor);
+            ((DataGridView)_elementParameterControls[2]).AllowUserToAddRows = false;
             RenderedControls.AddRange(_elementParameterControls);
 
             return RenderedControls;
@@ -251,11 +219,11 @@ namespace OpenBots.Commands.IEBrowser
                             HTMLAnchorElement anchor = (HTMLAnchorElement)element;
                             if (anchor.href.Contains(searchPropertyValue))
                             {
-                                seachCriteria.SetField<string>("Match Found", "True");
+                                seachCriteria.SetField("Match Found", "True");
                             }
                             else
                             {
-                                seachCriteria.SetField<string>("Match Found", "False");
+                                seachCriteria.SetField("Match Found", "False");
                             }
                         }
                         catch (Exception ex)
@@ -272,11 +240,11 @@ namespace OpenBots.Commands.IEBrowser
                             int elementValue = (int)element.getAttribute(searchPropertyName);
                             if (elementValue == searchValue)
                             {
-                                seachCriteria.SetField<string>("Match Found", "True");
+                                seachCriteria.SetField("Match Found", "True");
                             }
                             else
                             {
-                                seachCriteria.SetField<string>("Match Found", "False");
+                                seachCriteria.SetField("Match Found", "False");
                             }
                         }
                         else
@@ -285,11 +253,11 @@ namespace OpenBots.Commands.IEBrowser
                             string elementValue = (string)element.getAttribute(searchPropertyName);
                             if ((elementValue != null) && (elementValue == searchPropertyValue))
                             {
-                                seachCriteria.SetField<string>("Match Found", "True");
+                                seachCriteria.SetField("Match Found", "True");
                             }
                             else
                             {
-                                seachCriteria.SetField<string>("Match Found", "False");
+                                seachCriteria.SetField("Match Found", "False");
                             }
                         }
                     }
@@ -311,7 +279,7 @@ namespace OpenBots.Commands.IEBrowser
         private void ElementActionDropdown_SelectionChangeCommitted(object sender, EventArgs e)
         {
 
-            IEElementActionCommand cmd = (IEElementActionCommand)this;
+            IEElementActionCommand cmd = this;
             DataTable actionParameters = cmd.v_WebActionParameterTable;
 
             if (sender != null)
@@ -386,8 +354,6 @@ namespace OpenBots.Commands.IEBrowser
                 default:
                     break;
             }
-
-            _elementsGridViewHelper.DataSource = v_WebActionParameterTable;
         }
 
         private void RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)
@@ -465,7 +431,7 @@ namespace OpenBots.Commands.IEBrowser
 
                     string convertedAttribute = Convert.ToString(element.getAttribute(attributeName));
 
-                    convertedAttribute.StoreInUserVariable(engine, variableName);
+                    convertedAttribute.StoreInUserVariable(engine, variableName, typeof(string));
                     break;
             }
         }
@@ -500,7 +466,7 @@ namespace OpenBots.Commands.IEBrowser
             return curtop;
         }
 
-        private Boolean InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, InternetExplorer browserInstance)
+        private bool InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, InternetExplorer browserInstance)
         {
             bool qualifyingElementFound = false;
             foreach (IHTMLElement element in elementCollection)

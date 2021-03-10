@@ -26,6 +26,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("{vQueueItem}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_QueueItem { get; set; }
 
 		[Required]
@@ -43,6 +44,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("400 || {vStatusCode}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueueItemErrorCode { get; set; }
 
 		[DisplayName("QueueItem Error Message (Optional)")]
@@ -50,6 +52,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("File not found || {vStatusMessage}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueueItemErrorMessage { get; set; }
 
 		[JsonIgnore]
@@ -70,7 +73,7 @@ namespace OpenBots.Commands.QueueItem
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueItem = (Dictionary<string, object>)v_QueueItem.ConvertUserVariableToObject(engine);
+			var vQueueItem = (Dictionary<string, object>)v_QueueItem.ConvertUserVariableToObject(engine, nameof(v_QueueItem), this);
 			var vQueueItemErrorMessage = v_QueueItemErrorMessage.ConvertUserVariableToString(engine);
 			var vQueueItemErrorCode = v_QueueItemErrorCode.ConvertUserVariableToString(engine);
 

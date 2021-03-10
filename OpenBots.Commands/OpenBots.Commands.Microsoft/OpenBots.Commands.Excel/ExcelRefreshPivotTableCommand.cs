@@ -16,7 +16,7 @@ namespace OpenBots.Commands.Excel
 {
     [Serializable]
     [Category("Excel Commands")]
-    [Description("This command refresh a Pivot Table.")]
+    [Description("This command refreshes a Pivot Table.")]
     public class ExcelRefreshPivotTableCommand : ScriptCommand
     {
         [Required]
@@ -24,14 +24,16 @@ namespace OpenBots.Commands.Excel
         [Description("Enter the unique instance that was specified in the **Create Application** command.")]
         [SampleUsage("MyExcelInstance")]
         [Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
+        [CompatibleTypes(new Type[] { typeof(Application) })]
         public string v_InstanceName { get; set; }
 
         [Required]
         [DisplayName("Worksheet Name")]
-        [Description("Specify the Worksheet within the Workbook to refresh Pivot Table.")]
+        [Description("Specify the name of the Worksheet containing the Pivot Table.")]
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_SheetName { get; set; }
 
         [Required]
@@ -40,6 +42,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("PivotTable || {vPivotTable}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_PivotTable { get; set; }
 
         public ExcelRefreshPivotTableCommand()

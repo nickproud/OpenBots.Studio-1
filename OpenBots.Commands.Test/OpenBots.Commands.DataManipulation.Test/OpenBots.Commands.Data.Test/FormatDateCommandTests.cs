@@ -20,9 +20,9 @@ namespace OpenBots.Commands.Data.Test
             DateTime inputDate = DateTime.Now;
             string dateFormat = "MM/dd/yy, hh:mm:ss";
 
-            inputDate.CreateTestVariable(_engine, "inputDate");
-            dateFormat.CreateTestVariable(_engine, "dateFormat");
-            "unassigned".CreateTestVariable(_engine, "output");
+            inputDate.CreateTestVariable(_engine, "inputDate", typeof(string));
+            dateFormat.CreateTestVariable(_engine, "dateFormat", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _formatDate.v_InputData = "{inputDate}";
             _formatDate.v_ToStringFormat = "{dateFormat}";
@@ -43,8 +43,8 @@ namespace OpenBots.Commands.Data.Test
             int inputDate = 1;
             string dateFormat = "MM/dd/yy, hh:mm:ss";
 
-            inputDate.CreateTestVariable(_engine, "{inputDate}");
-            dateFormat.CreateTestVariable(_engine, "{dateFormat}");
+            inputDate.CreateTestVariable(_engine, "{inputDate}", typeof(string));
+            dateFormat.CreateTestVariable(_engine, "{dateFormat}", typeof(string));
 
             _formatDate.v_InputData = "{inputDate}";
             _formatDate.v_ToStringFormat = "{dateFormat}";

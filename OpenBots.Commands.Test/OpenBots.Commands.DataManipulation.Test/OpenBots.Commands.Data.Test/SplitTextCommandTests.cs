@@ -18,9 +18,9 @@ namespace OpenBots.Commands.Data.Test
 
             string inputText = "test text";
             string splitCharacter = " ";
-            inputText.CreateTestVariable(_engine, "input");
-            splitCharacter.CreateTestVariable(_engine, "splitChar");
-            "unassigned".CreateTestVariable(_engine, "output");
+            inputText.CreateTestVariable(_engine, "input", typeof(string));
+            splitCharacter.CreateTestVariable(_engine, "splitChar", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _splitText.v_InputText = "{input}";
             _splitText.v_SplitCharacter = "{splitChar}";
@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Data.Test
 
             _splitText.RunCommand(_engine);
 
-            List<string> splitText = (List<string>)"{output}".ConvertUserVariableToObject(_engine);
+            List<string> splitText = (List<string>)"{output}".ConvertUserVariableToObject(_engine, typeof(List<>));
             Assert.Equal("test", splitText[0]);
             Assert.Equal("text", splitText[1]);
         }
@@ -45,9 +45,9 @@ namespace OpenBots.Commands.Data.Test
             splitCharacters.Add(":");
             splitCharacters.Add("!");
             splitCharacters.Add(";");
-            inputText.CreateTestVariable(_engine, "input");
-            splitCharacters.CreateTestVariable(_engine, "splitChar");
-            "unassigned".CreateTestVariable(_engine, "output");
+            inputText.CreateTestVariable(_engine, "input", typeof(string));
+            splitCharacters.CreateTestVariable(_engine, "splitChar", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _splitText.v_InputText = "{input}";
             _splitText.v_SplitCharacter = "{splitChar}";
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Data.Test
 
             _splitText.RunCommand(_engine);
 
-            List<string> splitText = (List<string>)"{output}".ConvertUserVariableToObject(_engine);
+            List<string> splitText = (List<string>)"{output}".ConvertUserVariableToObject(_engine, typeof(List<>));
             Assert.Equal("test", splitText[0]);
             Assert.Equal("text", splitText[1]);
             Assert.Equal("with", splitText[2]);

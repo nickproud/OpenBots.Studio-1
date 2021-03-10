@@ -29,6 +29,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("{vList}")]
 		[Remarks("Providing any type of variable other than a List will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_ListName { get; set; }
 
 		[Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.List
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetListCountCommand()
@@ -52,7 +54,7 @@ namespace OpenBots.Commands.List
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable by regular name
-			var listVariable = v_ListName.ConvertUserVariableToObject(engine);
+			var listVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
 
 			//if still null then throw exception
 			if (listVariable == null)
@@ -85,14 +87,14 @@ namespace OpenBots.Commands.List
 					itemList.Add(value.ToString());
 				}
 
-				itemList.StoreInUserVariable(engine, v_ListName);
+				itemList.StoreInUserVariable(engine, v_ListName, nameof(v_ListName), this);
 				listToCount = itemList;
 			}
 			else
 				throw new System.Exception("Complex Variable List Type<T> Not Supported");
 
-			string count = listToCount.Count.ToString();
-			count.StoreInUserVariable(engine, v_OutputUserVariableName);
+			int count = listToCount.Count;
+			count.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

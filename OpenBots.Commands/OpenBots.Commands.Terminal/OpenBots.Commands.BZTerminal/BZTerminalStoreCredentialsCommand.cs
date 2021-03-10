@@ -24,6 +24,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Description("Enter the unique instance that was specified in the **Create BZ Terminal Session** command.")]
 		[SampleUsage("MyBZTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create BZ Terminal Session** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(BZTerminalContext) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -32,6 +33,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Username { get; set; }
 
 		[Required]
@@ -40,6 +42,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("{vPassword}")]
 		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_Password { get; set; }
 
 		public BZTerminalStoreCredentialsCommand()
@@ -55,7 +58,7 @@ namespace OpenBots.Commands.BZTerminal
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vUserName = v_Username.ConvertUserVariableToString(engine);
-			var vPassword = (SecureString)v_Password.ConvertUserVariableToObject(engine);
+			var vPassword = (SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)

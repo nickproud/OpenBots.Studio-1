@@ -24,6 +24,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(IWebDriver) })]
 		public string v_InstanceName { get; set; } 
 
 		[Required]
@@ -32,6 +33,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("arguments[0].click(); || alert('Welcome to OpenBots'); || {vScript}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ScriptCode { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -39,6 +41,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("button || {vArguments}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Arguments { get; set; }
 
 		[Required]
@@ -47,6 +50,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public SeleniumExecuteScriptCommand()
@@ -76,7 +80,7 @@ namespace OpenBots.Commands.WebBrowser
 
 			//apply result to variable
 			if ((result != null) && (!string.IsNullOrEmpty(v_OutputUserVariableName)))
-				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -21,7 +21,7 @@ namespace OpenBots.Commands.Data.Test
 
             num1.CreateTestVariable(_engine, "num1");
             num2.CreateTestVariable(_engine, "num2");
-            "unassigned".CreateTestVariable(_engine, "output");
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             _mathCalculation.v_MathExpression = "{num1}" + operation + "{num2}";
             _mathCalculation.v_OutputUserVariableName = "{output}";
@@ -41,8 +41,8 @@ namespace OpenBots.Commands.Data.Test
             string thouSeparator = ".";
             num1.CreateTestVariable(_engine, "num1");
             num2.CreateTestVariable(_engine, "num2");
-            thouSeparator.CreateTestVariable(_engine, "thouSeparator");
-            "unassigned".CreateTestVariable(_engine, "output");
+            thouSeparator.CreateTestVariable(_engine, "thouSeparator", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             string mathExpression = "{num1} + {num2}";
 
@@ -64,10 +64,10 @@ namespace OpenBots.Commands.Data.Test
             string num1 = "1:10";
             string num2 = "0:50";
             string decSeparator = ":";
-            num1.CreateTestVariable(_engine, "num1");
-            num2.CreateTestVariable(_engine, "num2");
-            decSeparator.CreateTestVariable(_engine, "decSeparator");
-            "unassigned".CreateTestVariable(_engine, "output");
+            num1.CreateTestVariable(_engine, "num1", typeof(string));
+            num2.CreateTestVariable(_engine, "num2", typeof(string));
+            decSeparator.CreateTestVariable(_engine, "decSeparator", typeof(string));
+            "unassigned".CreateTestVariable(_engine, "output", typeof(string));
 
             string mathExpression = "{num1} + {num2}";
 

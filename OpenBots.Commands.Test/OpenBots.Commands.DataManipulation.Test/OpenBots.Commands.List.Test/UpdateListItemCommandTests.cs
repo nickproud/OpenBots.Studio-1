@@ -25,9 +25,9 @@ namespace OpenBots.Commands.List.Test
             string index = "0";
             string item = "item3";
 
-            inputList.CreateTestVariable(_engine, "inputList");
-            index.CreateTestVariable(_engine, "index");
-            item.CreateTestVariable(_engine, "item");
+            inputList.CreateTestVariable(_engine, "inputList", typeof(List<>));
+            index.CreateTestVariable(_engine, "index", typeof(string));
+            item.CreateTestVariable(_engine, "item", typeof(string));
 
             _updateListItem.v_ListName = "{inputList}";
             _updateListItem.v_ListIndex = "{index}";
@@ -35,7 +35,7 @@ namespace OpenBots.Commands.List.Test
 
             _updateListItem.RunCommand(_engine);
 
-            List<string> outputList = (List<string>)"{inputList}".ConvertUserVariableToObject(_engine);
+            List<string> outputList = (List<string>)"{inputList}".ConvertUserVariableToObject(_engine, typeof(List<>));
             Assert.Equal("item3", outputList[0]);
         }
 
@@ -56,9 +56,9 @@ namespace OpenBots.Commands.List.Test
             OBDataTable newitem = new OBDataTable();
             newitem.Columns.Add("d3col");
 
-            inputList.CreateTestVariable(_engine, "inputList");
-            index.CreateTestVariable(_engine, "index");
-            newitem.CreateTestVariable(_engine, "newitem");
+            inputList.CreateTestVariable(_engine, "inputList", typeof(List<>));
+            index.CreateTestVariable(_engine, "index", typeof(string));
+            newitem.CreateTestVariable(_engine, "newitem", typeof(OBDataTable));
 
             _updateListItem.v_ListName = "{inputList}";
             _updateListItem.v_ListIndex = "{index}";
@@ -66,7 +66,7 @@ namespace OpenBots.Commands.List.Test
 
             _updateListItem.RunCommand(_engine);
 
-            List<OBDataTable> outputList = (List<OBDataTable>)"{inputList}".ConvertUserVariableToObject(_engine);
+            List<OBDataTable> outputList = (List<OBDataTable>)"{inputList}".ConvertUserVariableToObject(_engine, typeof(List<>));
             Assert.Equal(newitem, outputList[0]);
         }
 
@@ -82,9 +82,9 @@ namespace OpenBots.Commands.List.Test
             inputList.Add(item1);
             string index = "0";
 
-            inputList.CreateTestVariable(_engine, "inputList");
-            index.CreateTestVariable(_engine, "index");
-            newItem.CreateTestVariable(_engine, "item");
+            inputList.CreateTestVariable(_engine, "inputList", typeof(List<>));
+            index.CreateTestVariable(_engine, "index", typeof(string));
+            newItem.CreateTestVariable(_engine, "item", typeof(string));
 
             _updateListItem.v_ListName = "{inputList}";
             _updateListItem.v_ListIndex = "{index}";

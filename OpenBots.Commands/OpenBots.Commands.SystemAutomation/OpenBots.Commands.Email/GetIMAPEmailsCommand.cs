@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Security.Authentication;
 using System.Threading;
 using System.Windows.Forms;
@@ -35,6 +36,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("imap.gmail.com || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPHost { get; set; }
 
 		[Required]
@@ -43,6 +45,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("993 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPPort { get; set; }
 
 		[Required]
@@ -51,14 +54,16 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPUserName { get; set; }
 
 		[Required]
 		[DisplayName("Password")]
 		[Description("Define the password to use when contacting the IMAP service.")]
-		[SampleUsage("password || {vPassword}")]
-		[Remarks("")]
+		[SampleUsage("{vPassword}")]
+		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_IMAPPassword { get; set; }
 
 		[Required]
@@ -67,6 +72,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Inbox || {vFolderName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPSourceFolder { get; set; }
 
 		[Required]
@@ -75,6 +81,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Hello World || myRobot@company.com || {vFilter} || None")]
 		[Remarks("*Warning* Using 'None' as the Filter will return every email in the selected Mail Folder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPFilter { get; set; }
 
 		[Required]
@@ -120,6 +127,7 @@ namespace OpenBots.Commands.Email
 		[Remarks("This input is optional and will only be used if *Save MimeMessages and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPMessageDirectory { get; set; }
 
 		[Required]
@@ -129,6 +137,7 @@ namespace OpenBots.Commands.Email
 		[Remarks("This input is optional and will only be used if *Save MimeMessages and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_IMAPAttachmentDirectory { get; set; }
 
 		[Required]
@@ -137,6 +146,7 @@ namespace OpenBots.Commands.Email
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("vUserVariable")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -164,7 +174,7 @@ namespace OpenBots.Commands.Email
 			string vIMAPHost = v_IMAPHost.ConvertUserVariableToString(engine);
 			string vIMAPPort = v_IMAPPort.ConvertUserVariableToString(engine);
 			string vIMAPUserName = v_IMAPUserName.ConvertUserVariableToString(engine);
-			string vIMAPPassword = v_IMAPPassword.ConvertUserVariableToString(engine);
+			string vIMAPPassword = ((SecureString)v_IMAPPassword.ConvertUserVariableToObject(engine, nameof(v_IMAPPassword), this)).ConvertSecureStringToString();
 			string vIMAPSourceFolder = v_IMAPSourceFolder.ConvertUserVariableToString(engine);
 			string vIMAPFilter = v_IMAPFilter.ConvertUserVariableToString(engine);
 			string vIMAPMessageDirectory = v_IMAPMessageDirectory.ConvertUserVariableToString(engine);
@@ -234,7 +244,7 @@ namespace OpenBots.Commands.Email
 						outMail.Add(message);
 
 					}
-					outMail.StoreInUserVariable(engine, v_OutputUserVariableName);
+					outMail.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 					client.Disconnect(true, cancel.Token);
 					client.ServerCertificateValidationCallback = null;
@@ -249,7 +259,7 @@ namespace OpenBots.Commands.Email
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPHost", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPPort", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPUserName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultPasswordInputGroupFor("v_IMAPPassword", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPPassword", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPSourceFolder", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_IMAPFilter", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_IMAPGetUnreadOnly", this, editor));

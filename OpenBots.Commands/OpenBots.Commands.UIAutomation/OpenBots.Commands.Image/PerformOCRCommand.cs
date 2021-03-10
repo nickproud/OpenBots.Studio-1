@@ -28,6 +28,7 @@ namespace OpenBots.Commands.Image
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.Image
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public PerformOCRCommand()
@@ -59,7 +61,7 @@ namespace OpenBots.Commands.Image
 			foreach (var text in ocrTextArray)
 				endResult += text.Text;
 
-			endResult.StoreInUserVariable(engine, v_OutputUserVariableName);
+			endResult.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

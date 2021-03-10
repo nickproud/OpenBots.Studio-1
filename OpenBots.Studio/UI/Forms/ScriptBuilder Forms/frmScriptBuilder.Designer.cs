@@ -116,10 +116,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.variables = new System.Windows.Forms.TabPage();
             this.dgvVariables = new System.Windows.Forms.DataGridView();
             this.variableName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VariableType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.variableValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.arguments = new System.Windows.Forms.TabPage();
             this.dgvArguments = new System.Windows.Forms.DataGridView();
             this.argumentName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ArgumentType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.argumentValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.direction = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.pnlCommandHelper = new System.Windows.Forms.Panel();
@@ -711,6 +713,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnPublishProject.TabIndex = 16;
             this.uiBtnPublishProject.TabStop = false;
             this.uiBtnPublishProject.Text = "Publish";
+            this.uiBtnPublishProject.Click += new System.EventHandler(this.uiBtnPublishProject_Click);
             // 
             // uiBtnProject
             // 
@@ -1219,7 +1222,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnCollapse.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnCollapse.Image = global::OpenBots.Properties.Resources.project_collapse;
             this.uiBtnCollapse.IsMouseOver = false;
-            this.uiBtnCollapse.Location = new System.Drawing.Point(57, 2);
+            this.uiBtnCollapse.Location = new System.Drawing.Point(56, 2);
             this.uiBtnCollapse.Margin = new System.Windows.Forms.Padding(2);
             this.uiBtnCollapse.Name = "uiBtnCollapse";
             this.uiBtnCollapse.Size = new System.Drawing.Size(25, 25);
@@ -1237,7 +1240,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnOpenDirectory.DisplayTextBrush = System.Drawing.Color.White;
             this.uiBtnOpenDirectory.Image = global::OpenBots.Properties.Resources.project_open_directory;
             this.uiBtnOpenDirectory.IsMouseOver = false;
-            this.uiBtnOpenDirectory.Location = new System.Drawing.Point(85, 2);
+            this.uiBtnOpenDirectory.Location = new System.Drawing.Point(84, 2);
             this.uiBtnOpenDirectory.Margin = new System.Windows.Forms.Padding(2);
             this.uiBtnOpenDirectory.Name = "uiBtnOpenDirectory";
             this.uiBtnOpenDirectory.Size = new System.Drawing.Size(25, 25);
@@ -1468,6 +1471,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvVariables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvVariables.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.variableName,
+            this.VariableType,
             this.variableValue});
             this.dgvVariables.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvVariables.Location = new System.Drawing.Point(3, 3);
@@ -1478,7 +1482,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvVariables.TabIndex = 0;
             this.dgvVariables.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEndEdit);
             this.dgvVariables.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEnter);
+            this.dgvVariables.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellValueChanged);
+            this.dgvVariables.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvVariablesArguments_CurrentCellDirtyStateChanged);
             this.dgvVariables.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvVariablesArguments_DataBindingComplete);
+            this.dgvVariables.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvVariablesArguments_DefaultValuesNeeded);
             this.dgvVariables.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvVariables.SelectionChanged += new System.EventHandler(this.dgvVariables_SelectionChanged);
             this.dgvVariables.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
@@ -1490,6 +1497,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.variableName.HeaderText = "Variable Name";
             this.variableName.MinimumWidth = 6;
             this.variableName.Name = "variableName";
+            // 
+            // VariableType
+            // 
+            this.VariableType.DataPropertyName = "VariableType";
+            this.VariableType.HeaderText = "Variable Type";
+            this.VariableType.MinimumWidth = 6;
+            this.VariableType.Name = "VariableType";
+            this.VariableType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // variableValue
             // 
@@ -1515,6 +1530,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvArguments.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.argumentName,
+            this.ArgumentType,
             this.argumentValue,
             this.direction});
             this.dgvArguments.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1526,10 +1542,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.TabIndex = 2;
             this.dgvArguments.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEndEdit);
             this.dgvArguments.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEnter);
-            this.dgvArguments.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvArguments_CellValueChanged);
-            this.dgvArguments.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvArguments_CurrentCellDirtyStateChanged);
+            this.dgvArguments.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellValueChanged);
+            this.dgvArguments.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvVariablesArguments_CurrentCellDirtyStateChanged);
             this.dgvArguments.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvVariablesArguments_DataBindingComplete);
-            this.dgvArguments.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvArguments_DefaultValuesNeeded);
+            this.dgvArguments.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvVariablesArguments_DefaultValuesNeeded);
             this.dgvArguments.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvArguments.SelectionChanged += new System.EventHandler(this.dgvArguments_SelectionChanged);
             this.dgvArguments.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
@@ -1541,6 +1557,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.argumentName.HeaderText = "Argument Name";
             this.argumentName.MinimumWidth = 6;
             this.argumentName.Name = "argumentName";
+            // 
+            // ArgumentType
+            // 
+            this.ArgumentType.DataPropertyName = "ArgumentType";
+            this.ArgumentType.HeaderText = "Argument Type";
+            this.ArgumentType.MinimumWidth = 6;
+            this.ArgumentType.Name = "ArgumentType";
+            this.ArgumentType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // argumentValue
             // 
@@ -2485,13 +2509,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private TabPage variables;
         private TabPage arguments;
         private DataGridView dgvVariables;
-        private DataGridViewTextBoxColumn variableName;
-        private DataGridViewTextBoxColumn variableValue;
         private DataGridView dgvArguments;
+        private Core.UI.Controls.UIPictureButton uiBtnAddArgument;
         private DataGridViewTextBoxColumn argumentName;
+        private DataGridViewComboBoxColumn ArgumentType;
         private DataGridViewTextBoxColumn argumentValue;
         private DataGridViewComboBoxColumn direction;
-        private Core.UI.Controls.UIPictureButton uiBtnAddArgument;
+        private DataGridViewTextBoxColumn variableName;
+        private DataGridViewComboBoxColumn VariableType;
+        private DataGridViewTextBoxColumn variableValue;
     }
 }
 

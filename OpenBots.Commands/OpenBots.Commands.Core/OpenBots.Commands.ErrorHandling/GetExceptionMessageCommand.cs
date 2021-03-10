@@ -25,6 +25,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetExceptionMessageCommand()
@@ -44,7 +45,7 @@ namespace OpenBots.Commands.ErrorHandling
 			if (error != null)
 				errorMessage = $"Source: {error.SourceFile}, Line: {error.LineNumber}, " +
 					$"Exception Type: {error.ErrorType}, Exception Message: {error.ErrorMessage}";
-			errorMessage.StoreInUserVariable(engine, v_OutputUserVariableName);
+			errorMessage.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

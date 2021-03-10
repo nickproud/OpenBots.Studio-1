@@ -29,15 +29,15 @@ namespace OpenBots.Commands.List.Test
             List<string> stringList = new List<string>();
             string itemToAdd = "item1";
 
-            stringList.CreateTestVariable(_engine, "list");
-            itemToAdd.CreateTestVariable(_engine, "itemToAdd");
+            stringList.CreateTestVariable(_engine, "list", typeof(List<>));
+            itemToAdd.CreateTestVariable(_engine, "itemToAdd", typeof(string));
 
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";
 
             _addListItem.RunCommand(_engine);
 
-            List<string> outputList = (List<string>)"{list}".ConvertUserVariableToObject(_engine);
+            List<string> outputList = (List<string>)"{list}".ConvertUserVariableToObject(_engine, typeof(List<>));
             Assert.Equal(itemToAdd, outputList[0]);
         }
 
@@ -51,15 +51,15 @@ namespace OpenBots.Commands.List.Test
             OBDataTable itemToAdd = new OBDataTable();
             itemToAdd.Columns.Add("first column");
 
-            stringList.CreateTestVariable(_engine, "list");
-            itemToAdd.CreateTestVariable(_engine, "itemToAdd");
+            stringList.CreateTestVariable(_engine, "list", typeof(List<>));
+            itemToAdd.CreateTestVariable(_engine, "itemToAdd", typeof(OBDataTable));
 
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";
 
             _addListItem.RunCommand(_engine);
 
-            List<OBDataTable> outputList = (List<OBDataTable>)"{list}".ConvertUserVariableToObject(_engine);
+            List<OBDataTable> outputList = (List<OBDataTable>)"{list}".ConvertUserVariableToObject(_engine, typeof(List<>));
             Assert.Equal(itemToAdd, outputList[0]);
         }
 
@@ -72,8 +72,8 @@ namespace OpenBots.Commands.List.Test
             List<OBDataTable> stringList = new List<OBDataTable>();
             string itemToAdd = "newitem";
 
-            stringList.CreateTestVariable(_engine, "list");
-            itemToAdd.CreateTestVariable(_engine, "itemToAdd");
+            stringList.CreateTestVariable(_engine, "list", typeof(List<>));
+            itemToAdd.CreateTestVariable(_engine, "itemToAdd", typeof(string));
 
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";

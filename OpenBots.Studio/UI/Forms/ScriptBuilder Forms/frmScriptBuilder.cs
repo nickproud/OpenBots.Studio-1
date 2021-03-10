@@ -20,15 +20,15 @@ using OpenBots.Core.IO;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
-using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.UI.Controls;
 using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
+using OpenBots.UI.CustomControls.Controls;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -151,8 +151,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         //do after execution stops and right before the variable/argument tabs are made visible
                         if (!uiVariableArgumentTabs.Visible)
                         {
-                            dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                            dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                            ResetVariableArgumentBindings();
+
                             splitContainerScript.Panel2Collapsed = false;                           
                             tpProject.Controls[0].Enabled = true;
                             tpCommands.Controls[0].Enabled = true;
@@ -190,6 +190,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         //variable/argument tab variables
         private List<string> _existingVarArgSearchList;
         private string _preEditVarArgName;
+        private Type _preEditVarArgType;
+        private TypeContext _typeContext;
 
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
@@ -226,7 +228,20 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (!Directory.Exists(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder)))
                 Directory.CreateDirectory(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder));
 
-            _builder = new ContainerBuilder();            
+            _builder = new ContainerBuilder();
+            var groupedTypes = new Dictionary<string, List<Type>>();
+
+            var defaultTypes = ScriptDefaultTypes.DefaultVarArgTypes;
+            _typeContext = new TypeContext(groupedTypes, defaultTypes);
+            var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
+
+            VariableType.DataSource = defaultTypesBinding;
+            VariableType.DisplayMember = "Key";
+            VariableType.ValueMember = "Value";
+
+            ArgumentType.DataSource = defaultTypesBinding;
+            ArgumentType.DisplayMember = "Key";
+            ArgumentType.ValueMember = "Value";
         }
 
         private void UpdateWindowTitle()
@@ -534,7 +549,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void AddNewCommand(string specificCommand = "")
         {
             //bring up new command configuration form
-            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands())
+            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), _typeContext)
             {
                 CreationModeInstance = CreationMode.Add
             };
@@ -559,9 +574,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 _scriptVariables = newCommandForm.ScriptEngineContext.Variables;
                 _scriptArguments = newCommandForm.ScriptEngineContext.Arguments;
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-             }
+                ResetVariableArgumentBindings();
+            }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
             {
@@ -720,7 +734,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             NotifySync("Loading package assemblies...", Color.White);
             string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-            _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+            _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);            
             AContainer = _builder.Build();
             LoadCommands(this);
             ReloadAllFiles();
@@ -766,7 +780,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else
                 Notify($"Could not find 'project.obconfig' for {senderLink.Tag}", Color.Red);
         }
-        #endregion       
+        #endregion
     }
 }
 

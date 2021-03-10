@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Model.EngineModel;
-using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.UI.Controls;
 using System.Collections.Generic;
 
 namespace OpenBots.Core.Infrastructure

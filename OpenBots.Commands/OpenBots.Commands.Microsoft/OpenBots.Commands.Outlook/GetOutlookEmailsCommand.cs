@@ -30,6 +30,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("Inbox || {vFolderName}")]
 		[Remarks("Source folder cannot be a subfolder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SourceFolder { get; set; }
 
 		[Required]
@@ -38,6 +39,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("[Subject] = 'Hello' || [Subject] = 'Hello' and [SenderName] = 'Jane Doe' || {vFilter} || None")]
 		[Remarks("*Warning* Using 'None' as the Filter will return every email in the selected Mail Folder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Filter { get; set; }
 
 		[Required]
@@ -83,6 +85,7 @@ namespace OpenBots.Commands.Outlook
 		[Remarks("This input is optional and will only be used if *Save MailItems and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_MessageDirectory { get; set; }
 
 		[Required]
@@ -92,6 +95,7 @@ namespace OpenBots.Commands.Outlook
 		[Remarks("This input is optional and will only be used if *Save MailItems and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_AttachmentDirectory { get; set; }
 
 		[Required]
@@ -100,6 +104,7 @@ namespace OpenBots.Commands.Outlook
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -180,7 +185,7 @@ namespace OpenBots.Commands.Outlook
 					}
 				}
 
-				outMail.StoreInUserVariable(engine, v_OutputUserVariableName);
+				outMail.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 		}
 

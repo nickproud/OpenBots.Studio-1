@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Switch
 		[SampleUsage("{vSwitch}")]
 		[Remarks("This value must be a variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SwitchValue { get; set; }
 
 		public BeginSwitchCommand()
