@@ -91,6 +91,10 @@ namespace OpenBots.Commands.If
 					isTrueStatement = true;
 					break;
                 }
+				else if (v_LogicType == "Or")
+                {
+					isTrueStatement = false;
+                }
 			}
 
 			//report evaluation
@@ -182,10 +186,15 @@ namespace OpenBots.Commands.If
 			{
 				return "If <Not Configured>";
 			}
-			else
+			else if (v_LogicType == "And")
 			{
 				var statements = v_IfConditionsTable.AsEnumerable().Select(f => f.Field<string>("Statement")).ToList();
 				return string.Join(" && ", statements);
+			}
+			else
+            {
+				var statements = v_IfConditionsTable.AsEnumerable().Select(f => f.Field<string>("Statement")).ToList();
+				return string.Join(" || ", statements);
 			}
 		}
 

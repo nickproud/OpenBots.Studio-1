@@ -288,6 +288,10 @@ namespace OpenBots.Commands.ErrorHandling
 					isTrueStatement = true;
 					break;
                 }
+				else if (v_LogicType == "Or")
+				{
+					isTrueStatement = false;
+				}
 			}
 			return isTrueStatement;
 		}

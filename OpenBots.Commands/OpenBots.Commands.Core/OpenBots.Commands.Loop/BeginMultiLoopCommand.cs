@@ -147,10 +147,15 @@ namespace OpenBots.Commands.Loop
 			{
 				return "Loop <Not Configured>";
 			}
-			else
+			else if (v_LogicType == "And")
 			{
 				var statements = v_LoopConditionsTable.AsEnumerable().Select(f => f.Field<string>("Statement")).ToList();
 				return string.Join(" && ", statements);
+			}
+			else
+            {
+				var statements = v_LoopConditionsTable.AsEnumerable().Select(f => f.Field<string>("Statement")).ToList();
+				return string.Join(" || ", statements);
 			}
 		}
 
@@ -174,6 +179,10 @@ namespace OpenBots.Commands.Loop
 					isTrueStatement = true;
 					break;
                 }
+				else if (v_LogicType == "Or")
+				{
+					isTrueStatement = false;
+				}
 			}
 			return isTrueStatement;
 		}
