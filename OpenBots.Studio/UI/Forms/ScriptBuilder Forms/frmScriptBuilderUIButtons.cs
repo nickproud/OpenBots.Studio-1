@@ -635,6 +635,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void BeginImportProcess()
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             //show ofd
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -746,23 +749,26 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         }
 
         #region Restart And Close Buttons
-        private void restartApplicationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Application.Restart();
-        }
+        
        
         private void uiBtnRestart_Click(object sender, EventArgs e)
         {
             Application.Restart();
         }
-        private void closeApplicationToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void restartApplicationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            uiBtnRestart_Click(sender, e);
         }
 
         private void uiBtnClose_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void closeApplicationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            uiBtnClose_Click(sender, e);
         }
         #endregion
         #endregion
@@ -780,6 +786,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void OpenVariableManager()
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
@@ -812,6 +821,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void OpenArgumentManager()
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
@@ -843,6 +855,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void OpenElementManager()
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             frmScriptElements scriptElementEditor = new frmScriptElements
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
@@ -911,6 +926,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void uiBtnClearAll_Click(object sender, EventArgs e)
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             CreateUndoSnapshot();
             HideSearchInfo();
             _selectedTabScriptActions.Items.Clear();
@@ -1029,8 +1047,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         }
 
         private void debugToolStripMenuItem_Click(object sender, EventArgs e)
-        {            
-            if (IsScriptRunning)
+        {
+            if (!(_selectedTabScriptActions is ListView) || IsScriptRunning)
                 return;
            
             _isDebugMode = true;
@@ -1106,6 +1124,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //TODO: Return if script is not an OBScript for now. Will implement other engines soon.
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             if (IsScriptRunning)
                 return;
 
@@ -1120,7 +1142,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void breakpointToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddRemoveBreakpoint();
+            uiBtnBreakpoint_Click(sender, e);
         }
 
         private void uiBtnBreakpoint_Click(object sender, EventArgs e)
@@ -1132,6 +1154,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region Recorder Buttons
         private void elementRecorderToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             frmWebElementRecorder elementRecorder = new frmWebElementRecorder(AContainer, HTMLElementRecorderURL)
             {
                 CallBackForm = this,
@@ -1168,6 +1193,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void RecordSequence()
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             Hide();
             frmScreenRecorder sequenceRecorder = new frmScreenRecorder(AContainer)
             {
@@ -1186,6 +1214,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void uiAdvancedRecorderToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             Hide();
 
             frmAdvancedUIElementRecorder appElementRecorder = new frmAdvancedUIElementRecorder(AContainer)
@@ -1208,24 +1239,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void uiBtnRecordAdvancedUISequence_Click(object sender, EventArgs e)
         {
             uiAdvancedRecorderToolStripMenuItem_Click(sender, e);
-        }
-
-        private void uiBtnSaveSequence_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-            Close();
-        }
-
-        private void uiBtnRenameSequence_Click(object sender, EventArgs e)
-        {
-            frmInputBox renameSequence = new frmInputBox("New Sequence Name", "Rename Sequence");
-            renameSequence.txtInput.Text = Text;
-            renameSequence.ShowDialog();
-
-            if (renameSequence.DialogResult == DialogResult.OK)
-                Text = renameSequence.txtInput.Text;
-
-            renameSequence.Dispose();
         }
 
         private void shortcutMenuToolStripMenuItem_Click(object sender, EventArgs e)
