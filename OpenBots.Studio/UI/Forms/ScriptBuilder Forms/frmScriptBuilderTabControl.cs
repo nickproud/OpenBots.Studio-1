@@ -1,9 +1,9 @@
-﻿using OpenBots.Core.Script;
+﻿using OpenBots.Core.Project;
+using OpenBots.Core.Script;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using ScintillaNET;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -18,11 +18,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (uiScriptTabControl.TabCount > 0)
             {
                 ScriptFilePath = uiScriptTabControl.SelectedTab.ToolTipText.ToString();
-                string extention = Path.GetExtension(ScriptFilePath);
+                string fileExtension = Path.GetExtension(ScriptFilePath).ToLower();
 
-                switch (extention.ToLower())
+                switch (fileExtension)
                 {
                     case ".obscript":
+                        if (!_isScriptRunning)
+                            splitContainerScript.Panel2Collapsed = false;
+
                         _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
                         ScriptObject scriptObject = (ScriptObject)uiScriptTabControl.SelectedTab.Tag;
                         if (scriptObject != null)
@@ -41,6 +44,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     case ".tag":
                     case ".cs":
                         _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
+                        splitContainerScript.Panel2Collapsed = true;
                         break;
                 }
                           
@@ -163,7 +167,23 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             foreach (string path in tabFilePaths)
-                OpenOpenBotsFile(path);
+            {
+                switch (Path.GetExtension(path).ToLower())
+                {
+                    case ".obscript":
+                        OpenOpenBotsFile(path);
+                        break;
+                    case ".py":
+                        OpenTextEditorFile(path, ProjectType.Python);
+                        break;
+                    case ".tag":
+                        OpenTextEditorFile(path, ProjectType.TagUI);
+                        break;
+                    case ".cs":
+                        OpenTextEditorFile(path, ProjectType.CSScript);
+                        break;
+                }
+            }               
 
             uiScriptTabControl.SelectedIndex = currentTabIndex;
         }

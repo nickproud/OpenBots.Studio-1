@@ -24,7 +24,6 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.Controls;
-using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using Serilog.Core;
 using System;
@@ -153,7 +152,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         {
                             ResetVariableArgumentBindings();
 
-                            splitContainerScript.Panel2Collapsed = false;                           
+                            if (_selectedTabScriptActions is ListView)
+                                splitContainerScript.Panel2Collapsed = false; 
+                            
                             tpProject.Controls[0].Enabled = true;
                             tpCommands.Controls[0].Enabled = true;
                             tlpControls.Controls[0].Enabled = true;
@@ -206,6 +207,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private Point _lastClickPosition;
         private float _slimBarHeight;
         private float _thickBarHeight;
+
+        //hello world
+        private const string _helloWorldTextPython = "print('Hello World')";
+        private const string _helloWorldTextTagUI = "echo \"Hello World\"";
+        private const string _helloWorldTextCSScript = "namespace HelloWorld\n{\n\tclass Hello\n\t\t{\n\t\tstatic void Main(string[] args)" +
+                                                       "\n\t\t{\n\t\t\tSystem.Console.WriteLine(\"Hello World!\");\n\t\t}\n\t}\n}";
         #endregion
 
         #region Form Events
@@ -247,13 +254,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void UpdateWindowTitle()
         {
             if (ScriptProject.ProjectName != null)
-            {
-                Text = "OpenBots Studio - " + ScriptProject.ProjectName;
-            }
+                Text = $"OpenBots Studio - {ScriptProject.ProjectName} - {ScriptProject.ProjectType}";
             else
-            {
                 Text = "OpenBots Studio";
-            }
         }
 
         private async void frmScriptBuilder_LoadAsync(object sender, EventArgs e)
@@ -348,7 +351,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //instantiate and populate display icons for commands
             scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
 
-            var groupedCommands = scriptBuilder._automationCommands.GroupBy(f => f.DisplayGroup);
+            var groupedCommands = scriptBuilder._automationCommands.Where(x => x.Command.CommandName != "BrokenCodeCommentCommand")
+                                                                   .GroupBy(f => f.DisplayGroup);
 
             scriptBuilder.tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)

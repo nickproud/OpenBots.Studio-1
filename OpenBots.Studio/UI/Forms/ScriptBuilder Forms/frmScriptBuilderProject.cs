@@ -1,9 +1,10 @@
 ﻿using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using OpenBots.Core.Command;
-using OpenBots.Nuget;
+using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
+using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
@@ -15,9 +16,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using VBFileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
-using OpenBots.Core.Model.EngineModel;
-using OpenBots.Core.Enums;
-using OpenBots.Core.IO;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -231,24 +229,20 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {
                 _mainFileName = ScriptProject.Main;
-                string helloWorldText = "";
-
                 switch (ScriptProject.ProjectType)
                 {
                     case ProjectType.Python:
-                        helloWorldText = "print('Hello World')";
+                        File.WriteAllText(mainScriptPath, _helloWorldTextPython);
                         File.Create(Path.Combine(new FileInfo(mainScriptPath).Directory.FullName, "requirements.txt"));
                         break;
                     case ProjectType.TagUI:
-                        helloWorldText = "echo \"Hello World\"";
+                        File.WriteAllText(mainScriptPath, _helloWorldTextTagUI);
                         break;
                     case ProjectType.CSScript:
-                        helloWorldText = "namespace HelloWorld\n{\n\tclass Hello {\n\t\tstatic void Main(string[] args)" + 
-                                         "\n\t\t{\n\t\t\tSystem.Console.WriteLine(\"Hello World!\");\n\t\t}\n\t}\n}";
+                        File.WriteAllText(mainScriptPath, _helloWorldTextCSScript);
                         break;                       
                 }
-
-                File.WriteAllText(mainScriptPath, helloWorldText);
+                
                 OpenTextEditorFile(mainScriptPath, ScriptProject.ProjectType);
                 ScriptFilePath = mainScriptPath;
             }
@@ -442,10 +436,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
                     string currentOpenScriptFilePath = _scriptFilePath;
 
-                    string extention = Path.GetExtension(selectedNodePath);
+                    string fileExtension = Path.GetExtension(selectedNodePath).ToLower();
                     if (File.Exists(selectedNodePath))
                     {
-                        switch (extention.ToLower())
+                        switch (fileExtension)
                         {
                             case ".obscript":
                                 OpenOpenBotsFile(selectedNodePath);
@@ -746,9 +740,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
                 string newFilePath = Path.Combine(selectedNodePath, newName);
-
                 string extension = Path.GetExtension(newFilePath);
-                string helloWorldText = "";
 
                 if (File.Exists(newFilePath))
                 {
@@ -773,9 +765,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         List<ScriptArgument> newScriptArguments = new List<ScriptArgument>();
                         List<ScriptElement> newScriptElements = new List<ScriptElement>();
 
-                        dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
-                        helloWorldCommand.v_Message = "Hello World";
-                        newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
+                        try
+                        {
+                            dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
+                            helloWorldCommand.v_Message = "Hello World";
+                            newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
+                        }
+                        catch (Exception)
+                        {
+                            var brokenHelloWorldCommand = new BrokenCodeCommentCommand();
+                            brokenHelloWorldCommand.v_Comment = "Hello World";
+                            newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(brokenHelloWorldCommand));
+                        }
 
                         EngineContext engineContext = new EngineContext
                         {
@@ -791,21 +792,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         OpenOpenBotsFile(newFilePath);
                         break;
                     case ".py":
-                        helloWorldText = "print('Hello World')";
-                        File.WriteAllText(newFilePath, helloWorldText);
+                        File.WriteAllText(newFilePath, _helloWorldTextPython);
                         NewNode(tvProject.SelectedNode, newFilePath, "file");
                         OpenTextEditorFile(newFilePath, ProjectType.Python);
                         break;
                     case ".tag":
-                        helloWorldText = "echo \"Hello World\"";
-                        File.WriteAllText(newFilePath, helloWorldText);
+                        File.WriteAllText(newFilePath, _helloWorldTextTagUI);
                         NewNode(tvProject.SelectedNode, newFilePath, "file");
                         OpenTextEditorFile(newFilePath, ProjectType.TagUI);
                         break;
                     case ".cs":
-                        helloWorldText = "namespace HelloWorld\n{\n\tclass Hello {\n\t\tstatic void Main(string[] args)" +
-                                         "\n\t\t{\n\t\t\tSystem.Console.WriteLine(\"Hello World!\");\n\t\t}\n\t}\n}";
-                        File.WriteAllText(newFilePath, helloWorldText);
+                        File.WriteAllText(newFilePath, _helloWorldTextCSScript);
                         NewNode(tvProject.SelectedNode, newFilePath, "file");
                         OpenTextEditorFile(newFilePath, ProjectType.CSScript);
                         break;

@@ -18,8 +18,7 @@ namespace OpenBots.Studio.Utilities
         {          
             var commandList = new List<AutomationCommand>();
             var commandClasses = new List<Type>();
-                      
-
+                               
             using (var scope = container.BeginLifetimeScope())
             {
                     var types = scope.ComponentRegistry.Registrations

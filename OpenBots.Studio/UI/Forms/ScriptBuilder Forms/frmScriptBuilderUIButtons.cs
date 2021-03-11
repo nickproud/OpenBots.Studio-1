@@ -49,37 +49,56 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             TabPage newTabPage = new TabPage(title)
             {
                 Name = title,
-                Tag = new ScriptObject(new List<ScriptVariable>(), new List<ScriptArgument>(), new List<ScriptElement>()),
                 ToolTipText = ""
             };
             uiScriptTabControl.Controls.Add(newTabPage);
-            newTabPage.Controls.Add(NewLstScriptActions(title));
-            newTabPage.Controls.Add(pnlCommandHelper);
 
-            uiScriptTabControl.SelectedTab = newTabPage;
-
-            _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
-            _selectedTabScriptActions.Items.Clear();
-            HideSearchInfo();
-
-            _scriptVariables = new List<ScriptVariable>();
-
-            //assign ProjectPath variable
-            var projectPathVariable = new ScriptVariable
+            switch (ScriptProject.ProjectType)
             {
-                VariableName = "ProjectPath",
-                VariableType = typeof(string),
-                VariableValue = "Value Provided at Runtime"
-            };
-            _scriptVariables.Add(projectPathVariable);
+                case ProjectType.OpenBots:
+                    newTabPage.Tag = new ScriptObject(new List<ScriptVariable>(), new List<ScriptArgument>(), new List<ScriptElement>());                   
+                    newTabPage.Controls.Add(NewLstScriptActions(title));
+                    newTabPage.Controls.Add(pnlCommandHelper);
 
-            _scriptArguments = new List<ScriptArgument>();
+                    uiScriptTabControl.SelectedTab = newTabPage;
 
-            ResetVariableArgumentBindings();
+                    _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
+                    _selectedTabScriptActions.Items.Clear();
+                    HideSearchInfo();
 
-            GenerateRecentProjects();
-            newTabPage.Controls[0].Hide();
-            pnlCommandHelper.Show();
+                    _scriptVariables = new List<ScriptVariable>();
+
+                    //assign ProjectPath variable
+                    var projectPathVariable = new ScriptVariable
+                    {
+                        VariableName = "ProjectPath",
+                        VariableType = typeof(string),
+                        VariableValue = "Value Provided at Runtime"
+                    };
+                    _scriptVariables.Add(projectPathVariable);
+
+                    _scriptArguments = new List<ScriptArgument>();
+
+                    ResetVariableArgumentBindings();
+
+                    GenerateRecentProjects();
+                    newTabPage.Controls[0].Hide();
+                    pnlCommandHelper.Show();
+                    break;
+                case ProjectType.Python:
+                    newTabPage.Controls.Add(NewTextEditorActions(ProjectType.Python, title));
+                    uiScriptTabControl.SelectedTab = newTabPage;
+                    break;
+                case ProjectType.TagUI:
+                    newTabPage.Controls.Add(NewTextEditorActions(ProjectType.TagUI, title));
+                    uiScriptTabControl.SelectedTab = newTabPage;
+                    break;
+                case ProjectType.CSScript:
+                    newTabPage.Controls.Add(NewTextEditorActions(ProjectType.CSScript, title));
+                    uiScriptTabControl.SelectedTab = newTabPage;
+                    break;
+            }
+            
         }
 
         private void uiBtnOpen_Click(object sender, EventArgs e)
@@ -259,6 +278,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
 
                 uiScriptTabControl.SelectedTab.Text = scriptFileName;
+                splitContainerScript.Panel2Collapsed = true;
             }
             catch (Exception ex)
             {
