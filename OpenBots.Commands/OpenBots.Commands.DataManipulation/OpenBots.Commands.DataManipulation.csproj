@@ -105,7 +105,9 @@
     <Compile Include="Forms\frmDataTableVariableSelector.Designer.cs">
       <DependentUpon>frmDataTableVariableSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="OpenBots.Commands.DataTable\AddDataColumnCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\AddDataRowCommand.cs" />
+    <Compile Include="OpenBots.Commands.DataTable\ClearDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\CreateDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\FilterDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\GetDataRowCommand.cs" />
@@ -114,6 +116,7 @@
     <Compile Include="OpenBots.Commands.DataTable\GetColumnCountCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\GroupDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\MergeDataTableCommand.cs" />
+    <Compile Include="OpenBots.Commands.DataTable\RemoveDataColumnCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\RemoveDataRowCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\SortDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\UpdateDataRowValueCommand.cs" />
