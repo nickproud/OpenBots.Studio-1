@@ -89,7 +89,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     scintilla.Styles[Style.Python.DefName].ForeColor = Color.FromArgb(0x00, 0x7F, 0x7F);
                     scintilla.Styles[Style.Python.DefName].Bold = true;
                     scintilla.Styles[Style.Python.Operator].Bold = true;
-                    // scintilla.Styles[Style.Python.Identifier] ... your keywords styled here
                     scintilla.Styles[Style.Python.CommentBlock].ForeColor = Color.FromArgb(0x7F, 0x7F, 0x7F);
                     scintilla.Styles[Style.Python.CommentBlock].Italic = true;
                     scintilla.Styles[Style.Python.StringEol].ForeColor = Color.FromArgb(0x00, 0x00, 0x00);
@@ -170,11 +169,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     }
                 }
             }
-        }
-
-        private void SaveToTextFile()
-        {
-
         }
         #endregion      
         #endregion

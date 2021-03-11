@@ -211,7 +211,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         //hello world
         private const string _helloWorldTextPython = "print('Hello World')";
         private const string _helloWorldTextTagUI = "echo \"Hello World\"";
-        private const string _helloWorldTextCSScript = "namespace HelloWorld\n{\n\tclass Hello\n\t\t{\n\t\tstatic void Main(string[] args)" +
+        private const string _helloWorldTextCSScript = "namespace HelloWorld\n{\n\tclass Hello\n\t{\n\t\tstatic void Main(string[] args)" +
                                                        "\n\t\t{\n\t\t\tSystem.Console.WriteLine(\"Hello World!\");\n\t\t}\n\t}\n}";
         #endregion
 
