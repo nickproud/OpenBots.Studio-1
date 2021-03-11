@@ -29,27 +29,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private Scintilla NewTextEditorActions(ProjectType projecttype, string title = "newTextEditorActions")
         {
             Scintilla scintilla = new Scintilla();
-            //scintilla.AllowDrop = true;
-            //scintilla.BackColor = Color.WhiteSmoke;
-            //scintilla.BorderStyle = BorderStyle.None;
-            
-            //scintilla.Font = new Font("Segoe UI", 11, FontStyle.Regular, GraphicsUnit.Point, 0);
-            //scintilla.Location = new Point(3, 3);
-            //scintilla.Margin = new Padding(6);
-            //scintilla.Name = title;
-            //scintilla.Size = new Size(1063, 411);
-            //scintilla.TabIndex = 6;
-            //scintilla.IndentationGuides = IndentView.LookBoth;
-
             scintilla.Dock = DockStyle.Fill;
             scintilla.KeyDown += new KeyEventHandler(newTextEditorActions_KeyDown);
             scintilla.TextChanged += new EventHandler(newTextEditorActions_TextChanged);
 
-
             // Reset the styles
             scintilla.StyleResetDefault();
             scintilla.Styles[Style.Default].Font = "Consolas";
-            scintilla.Styles[Style.Default].Size = 10;
+            scintilla.Styles[Style.Default].Size = 11;
             scintilla.StyleClearAll();
 
             scintilla.SetProperty("tab.timmy.whinge.level", "1");
@@ -115,6 +102,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     scintilla.ViewWhitespace = WhitespaceMode.VisibleAlways;
                     break;
                 case ProjectType.CSScript:
+                case ProjectType.TagUI:
+                    scintilla.Lexer = Lexer.Cpp;
                     scintilla.Styles[Style.Cpp.Default].ForeColor = Color.Silver;
                     scintilla.Styles[Style.Cpp.Comment].ForeColor = Color.FromArgb(0, 128, 0); // Green
                     scintilla.Styles[Style.Cpp.CommentLine].ForeColor = Color.FromArgb(0, 128, 0); // Green
@@ -128,11 +117,21 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     scintilla.Styles[Style.Cpp.StringEol].BackColor = Color.Pink;
                     scintilla.Styles[Style.Cpp.Operator].ForeColor = Color.Purple;
                     scintilla.Styles[Style.Cpp.Preprocessor].ForeColor = Color.Maroon;
-                    scintilla.Lexer = Lexer.Cpp;
                     break;
-
-                    
-                    
+                
+                //Could be useful later if we decide to allow users to open/edit the config file
+                //case Json:
+                //    // Configure the JSON lexer styles
+                //    scintilla.Lexer = Lexer.Json;
+                //    scintilla.Styles[Style.Json.Default].ForeColor = Color.Silver;
+                //    scintilla.Styles[Style.Json.BlockComment].ForeColor = Color.FromArgb(0, 128, 0); // Green
+                //    scintilla.Styles[Style.Json.LineComment].ForeColor = Color.FromArgb(0, 128, 0); // Green
+                //    scintilla.Styles[Style.Json.Number].ForeColor = Color.Olive;
+                //    scintilla.Styles[Style.Json.PropertyName].ForeColor = Color.Blue;
+                //    scintilla.Styles[Style.Json.String].ForeColor = Color.FromArgb(163, 21, 21); // Red
+                //    scintilla.Styles[Style.Json.StringEol].BackColor = Color.Pink;
+                //    scintilla.Styles[Style.Json.Operator].ForeColor = Color.Purple;
+                //    break;
             }
 
             return scintilla;
