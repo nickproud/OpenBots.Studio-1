@@ -209,10 +209,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private float _thickBarHeight;
 
         //hello world
-        private const string _helloWorldTextPython = "print('Hello World')";
+        private const string _helloWorldTextPython = "import ctypes\nctypes.windll.user32.MessageBoxW(0, \"Hello World\", \"Hello World\", 1)";//"print('Hello World')";
         private const string _helloWorldTextTagUI = "echo \"Hello World\"";
         private const string _helloWorldTextCSScript = "namespace HelloWorld\n{\n\tclass Hello\n\t{\n\t\tstatic void Main(string[] args)" +
-                                                       "\n\t\t{\n\t\t\tSystem.Console.WriteLine(\"Hello World!\");\n\t\t}\n\t}\n}";
+                                                       "\n\t\t{\n\t\t\tSystem.Windows.Forms.MessageBox.Show(\"Hello World\");\n\t\t}\n\t}\n}";
         #endregion
 
         #region Form Events

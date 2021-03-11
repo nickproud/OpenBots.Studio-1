@@ -4,11 +4,11 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
 namespace OpenBots.Commands.Process
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Process
 			string scriptPath = v_ScriptPath.ConvertUserVariableToString(engine);
 			string scriptArgs = v_ScriptArgs.ConvertUserVariableToString(engine);
 
-			scriptProc.StartInfo = new Diagnostics.ProcessStartInfo()
+			scriptProc.StartInfo = new ProcessStartInfo()
 			{
 				FileName = "powershell.exe",
 				Arguments = $"-NoProfile -ExecutionPolicy unrestricted -file \"{scriptPath}\" " + scriptArgs,

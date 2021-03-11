@@ -75,7 +75,7 @@ namespace OpenBots.Commands.Database
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
-		[CompatibleTypes(new Type[] { typeof(DataTable), typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(DataTable), typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -185,8 +185,6 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Close();
 				
 				dataTable.TableName = v_OutputUserVariableName;
-				engine.DataTables.Add(dataTable);
-
 				dataTable.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else if (v_QueryType == "Execute NonQuery")
@@ -194,7 +192,7 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else if (v_QueryType == "Execute Stored Procedure")
 			{
@@ -202,7 +200,7 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else
 				throw new NotImplementedException($"Query Execution Type '{v_QueryType}' not implemented.");

@@ -13,10 +13,10 @@ using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.UI.Supplement_Forms;
+using OpenBots.Utilities;
 using ScintillaNET;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -1056,7 +1056,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 return;
            
             _isDebugMode = true;
-            RunScript();
+            RunOBScript();
         }
 
         private void uiBtnDebugScript_Click(object sender, EventArgs e)
@@ -1064,7 +1064,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             debugToolStripMenuItem_Click(sender, e);
         }
 
-        private void RunScript()
+        private void RunOBScript()
         {
             if (_selectedTabScriptActions.Items.Count == 0)
             {
@@ -1126,17 +1126,48 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             ((frmScriptEngine)CurrentEngine).Show();
         }
 
-        private void runToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //TODO: Return if script is not an OBScript for now. Will implement other engines soon.
-            if (!(_selectedTabScriptActions is ListView))
-                return;
+        
 
+
+        private void runToolStripMenuItem_Click(object sender, EventArgs e)
+        {         
             if (IsScriptRunning)
                 return;
 
             _isDebugMode = false;
-            RunScript();
+
+            string fileExtension = Path.GetExtension(_scriptFilePath).ToLower();
+
+            switch (fileExtension)
+            {
+                case ".obscript":
+                    RunOBScript();
+                    break;
+                default:
+                    if (!SaveAllFiles())
+                        return;
+                    try
+                    {
+                        //arguments and outputs not yet implemented
+                        switch (fileExtension)
+                        {
+                            case ".py":
+                                ExecutionManager.RunPythonAutomation(_scriptFilePath, new object[] { });
+                                break;
+                            case ".tag":
+                                Notify("Error: TagUI script execution not yet implemented.", Color.Yellow);
+                                break;
+                            case ".cs":
+                                ExecutionManager.RunCSharpAutomation(_scriptFilePath, new object[] { "Hello" });
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Notify("Error: " + ex.Message, Color.Red);
+                    }
+                    break; 
+            }          
         }
 
         private void uiBtnRunScript_Click(object sender, EventArgs e)
