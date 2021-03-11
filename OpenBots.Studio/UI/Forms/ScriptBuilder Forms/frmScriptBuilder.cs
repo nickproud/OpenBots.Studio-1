@@ -605,6 +605,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region TreeView Events
         private void tvCommands_DoubleClick(object sender, EventArgs e)
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             //handle double clicks outside
             if (tvCommands.SelectedNode == null)
                 return;
