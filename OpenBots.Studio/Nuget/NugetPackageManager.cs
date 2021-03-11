@@ -199,7 +199,7 @@ namespace OpenBots.Nuget
 
                 var resolver = new PackageResolver();
 
-                //installation failure happens here if package isn't found
+                //TODO: Installation failure happens here if package isn't found. Failure is being caught but not reported because it's asynchronous 
                 var packagesToInstall = resolver.Resolve(resolverContext, CancellationToken.None)
                     .Select(p => availablePackages.Single(x => PackageIdentityComparer.Default.Equals(x, p)));
                 

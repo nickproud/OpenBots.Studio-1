@@ -39,7 +39,7 @@ namespace OpenBots.Nuget
                 }
             }
 
-            //currently getting all assemblies instead of just the ones in existingAssemblies because mscorlib was missing
+            //TODO: limit types to one in loaded assemblies. Previously getting all assemblies instead of just the ones in existingAssemblies because mscorlib was missing
             TypeMethods.GenerateAllVariableTypes(AppDomain.CurrentDomain.GetAssemblies().ToList(), groupedTypes);
 
             //if no commands have been loaded, at least include OpenBots.Core to access the BrokenCodeCommand
