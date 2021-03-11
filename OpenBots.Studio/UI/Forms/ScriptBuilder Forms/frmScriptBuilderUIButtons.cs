@@ -641,7 +641,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //show ofd
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                InitialDirectory = Folders.GetFolder(FolderType.ScriptsFolder),
+                InitialDirectory = ScriptProjectPath,
                 RestoreDirectory = true,
                 Filter = "obscript (*.obscript)|*.obscript"
             };
@@ -659,7 +659,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void Import(string filePath)
         {
             try
-            {
+            {              
                 //deserialize file
                 EngineContext engineContext = new EngineContext()
                 {
@@ -676,6 +676,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //variables for comments
                 var fileName = new FileInfo(filePath).Name;
                 var dateTimeNow = DateTime.Now.ToString();
+
+                CreateUndoSnapshot();
 
                 //comment
                 dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
@@ -707,6 +709,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         _scriptElements.Add(elem);
                     }
                 }
+
+                ResetVariableArgumentBindings();
 
                 //comment
                 dynamic codeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");

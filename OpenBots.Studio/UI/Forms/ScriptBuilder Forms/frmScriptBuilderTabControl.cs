@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Project;
 using OpenBots.Core.Script;
+using OpenBots.Properties;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using ScintillaNET;
 using System;
@@ -59,7 +60,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             try
             {
-                Image closeImage = null; // new Bitmap(imgListTabControl.Images[0]);
+                Image closeImage = Resources.close_button;
                 Rectangle tabRect = tabControl.GetTabRect(e.Index);
                 tabRect.Offset(2, 2);
                 string title = tabControl.TabPages[e.Index].Text + "  ";
