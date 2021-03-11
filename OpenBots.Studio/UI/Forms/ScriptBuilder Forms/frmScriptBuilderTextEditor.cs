@@ -153,6 +153,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         case Keys.S:
                             SaveAllFiles();
+                            e.SuppressKeyPress = true;
                             break;
                     }
                 }
@@ -162,9 +163,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         case Keys.S:
                             SaveToTextEditorFile(false);
+                            e.SuppressKeyPress = true;
                             break;
                         case Keys.O:
                             aboutOpenBotsToolStripMenuItem_Click(null, null);
+                            e.SuppressKeyPress = true;
                             break;
                     }
                 }
