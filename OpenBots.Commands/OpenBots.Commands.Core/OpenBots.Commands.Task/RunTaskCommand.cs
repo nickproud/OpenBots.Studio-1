@@ -357,7 +357,7 @@ namespace OpenBots.Commands.Task
 					_argumentList.Add(new ScriptArgument
 					{
 						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
-						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
+						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection), 
 						ArgumentValue = argumentValue,
 						ArgumentType = argumentType
 					});
