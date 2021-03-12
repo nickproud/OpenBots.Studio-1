@@ -1155,16 +1155,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                                 ExecutionManager.RunPythonAutomation(_scriptFilePath, new object[] { });
                                 break;
                             case ".tag":
-                                Notify("Error: TagUI script execution not yet implemented.", Color.Yellow);
+                                ExecutionManager.RunTagUIAutomation(_scriptFilePath, ScriptProjectPath, new object[] { });
                                 break;
                             case ".cs":
-                                ExecutionManager.RunCSharpAutomation(_scriptFilePath, new object[] { "Hello" });
+                                ExecutionManager.RunCSharpAutomation(_scriptFilePath, new object[] { });
                                 break;
                         }
                     }
                     catch (Exception ex)
                     {
-                        Notify("Error: " + ex.Message, Color.Red);
+                        frmDialog errorMessageBox = new frmDialog(ex.Message, "Error", DialogType.OkOnly, 0);
+                        errorMessageBox.ShowDialog();
                     }
                     break; 
             }          

@@ -1,14 +1,13 @@
-﻿using Microsoft.Win32;
+﻿using CSScriptLibrary;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
-using CSScriptLibrary;
-using System.IO;
-using System.Runtime.InteropServices;
-using OpenBots.Core.Server.User;
 
 namespace OpenBots.Utilities
 {
@@ -21,6 +20,7 @@ namespace OpenBots.Utilities
 
         public static void RunPythonAutomation(string scriptPath, object[] scriptArgs)
         {
+            string error = "";
             string pythonExecutable = GetPythonPath(Environment.UserName, "");
 
             if (!string.IsNullOrEmpty(pythonExecutable))
@@ -41,9 +41,12 @@ namespace OpenBots.Utilities
                 scriptProc.WaitForExit();
 
                 scriptProc.StandardOutput.ReadToEnd();
-                scriptProc.StandardError.ReadToEnd();
+                error = scriptProc.StandardError.ReadToEnd();
                 scriptProc.Close();
             }
+
+            if (!string.IsNullOrEmpty(error))
+                throw new Exception(error);
         }
 
         private static string GetPythonPath(string username, string requiredVersion = "")
@@ -124,11 +127,99 @@ namespace OpenBots.Utilities
             string code = File.ReadAllText(scriptPath);
             dynamic script = CSScript.LoadCode(code).CreateObject("*");
             script.Main(scriptArgs);
+        }
 
-            //string exePath = GetFullPathFromWindows("cscs.exe");
-            //if (exePath == null)
-            //    throw new Exception("CS-Script installation was not detected on the machine. Please perform the installation as outlined in the official documentation.");
+        public static void RunTagUIAutomation(string scriptPath, string projectPath, object[] scriptArgs)
+        {
+            string error = "";
+            string tagUIexePath = GetFullPathFromWindows("tagui");
+            if (tagUIexePath == null)
+                throw new Exception("TagUI installation was not detected on the machine. Please perform the installation as outlined in the official documentation.\n"+
+                                    "https://tagui.readthedocs.io/en/latest/setup.html");
 
+            // Copy Script Folder/Files to ".\tagui\flows" Directory
+            string destinationDirectory = Path.Combine(new DirectoryInfo(tagUIexePath).Parent.Parent.FullName, "flows", new DirectoryInfo(projectPath).Name);
+            if (Directory.Exists(destinationDirectory))
+                Directory.Delete(destinationDirectory, true);
+
+            Directory.CreateDirectory(destinationDirectory);
+            DirectoryCopy(projectPath, destinationDirectory, true);
+
+            string newScriptPath = destinationDirectory + scriptPath.Replace(projectPath, "");
+
+            if (!string.IsNullOrEmpty(tagUIexePath))
+            {
+                Process scriptProc = new Process();
+
+                scriptProc.StartInfo = new ProcessStartInfo()
+                {
+                    FileName = tagUIexePath + ".cmd",
+                    Arguments = $"\"{newScriptPath}\"", //+ scriptArgs,
+                    CreateNoWindow = false,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+
+                scriptProc.Start();
+                scriptProc.WaitForExit();
+
+                scriptProc.StandardOutput.ReadToEnd();
+                error = scriptProc.StandardError.ReadToEnd();
+                scriptProc.Close();
+            }
+
+            // Delete TagUI Execution Directory
+            Directory.Delete(destinationDirectory, true);
+
+            if (!string.IsNullOrEmpty(error))
+                throw new Exception(error);
+        }
+
+        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+            // If the destination directory doesn't exist, create it.
+            Directory.GetParent(destDirName);
+            if (!Directory.GetParent(destDirName).Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Destination directory does not exist or could not be found: "
+                    + Directory.GetParent(destDirName));
+            }
+
+            if (!Directory.Exists(destDirName))
+            {
+                Directory.CreateDirectory(destDirName);
+            }
+
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string temppath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(temppath, false);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string temppath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+                }
+            }
         }
 
         private static string GetFullPathFromWindows(string exeName)
@@ -151,7 +242,7 @@ namespace OpenBots.Utilities
                 return exePath;
 
             // Get System Environment Variable "Path"
-            envPathValue = Environment.GetEnvironmentVariable("Path");
+            envPathValue = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
             exePath = FindAppPath(envPathValue, exeName);
             if (!string.IsNullOrEmpty(exePath))
                 return exePath;
