@@ -73,7 +73,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 case ProjectType.Python:
                     scintilla.Lexer = Lexer.Python;
-
                     scintilla.Styles[Style.Python.Default].ForeColor = Color.FromArgb(0x80, 0x80, 0x80);
                     scintilla.Styles[Style.Python.CommentLine].ForeColor = Color.FromArgb(0x00, 0x7F, 0x00);
                     scintilla.Styles[Style.Python.CommentLine].Italic = true;
@@ -96,7 +95,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     scintilla.Styles[Style.Python.StringEol].FillLine = true;
                     scintilla.Styles[Style.Python.Word2].ForeColor = Color.FromArgb(0x40, 0x70, 0x90);
                     scintilla.Styles[Style.Python.Decorator].ForeColor = Color.FromArgb(0x80, 0x50, 0x00);
-
                     // Important for Python
                     scintilla.ViewWhitespace = WhitespaceMode.VisibleAlways;
                     break;
@@ -118,19 +116,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     scintilla.Styles[Style.Cpp.Preprocessor].ForeColor = Color.Maroon;
                     break;
                 
-                //Could be useful later if we decide to allow users to open/edit the config file
-                //case Json:
-                //    // Configure the JSON lexer styles
-                //    scintilla.Lexer = Lexer.Json;
-                //    scintilla.Styles[Style.Json.Default].ForeColor = Color.Silver;
-                //    scintilla.Styles[Style.Json.BlockComment].ForeColor = Color.FromArgb(0, 128, 0); // Green
-                //    scintilla.Styles[Style.Json.LineComment].ForeColor = Color.FromArgb(0, 128, 0); // Green
-                //    scintilla.Styles[Style.Json.Number].ForeColor = Color.Olive;
-                //    scintilla.Styles[Style.Json.PropertyName].ForeColor = Color.Blue;
-                //    scintilla.Styles[Style.Json.String].ForeColor = Color.FromArgb(163, 21, 21); // Red
-                //    scintilla.Styles[Style.Json.StringEol].BackColor = Color.Pink;
-                //    scintilla.Styles[Style.Json.Operator].ForeColor = Color.Purple;
-                //    break;
+                    //Could be useful later if we decide to allow users to open/edit the config file
+                    //case Json:
+                    //    // Configure the JSON lexer styles
+                    //    scintilla.Lexer = Lexer.Json;
+                    //    scintilla.Styles[Style.Json.Default].ForeColor = Color.Silver;
+                    //    scintilla.Styles[Style.Json.BlockComment].ForeColor = Color.FromArgb(0, 128, 0); // Green
+                    //    scintilla.Styles[Style.Json.LineComment].ForeColor = Color.FromArgb(0, 128, 0); // Green
+                    //    scintilla.Styles[Style.Json.Number].ForeColor = Color.Olive;
+                    //    scintilla.Styles[Style.Json.PropertyName].ForeColor = Color.Blue;
+                    //    scintilla.Styles[Style.Json.String].ForeColor = Color.FromArgb(163, 21, 21); // Red
+                    //    scintilla.Styles[Style.Json.StringEol].BackColor = Color.Pink;
+                    //    scintilla.Styles[Style.Json.Operator].ForeColor = Color.Purple;
+                    //    break;
             }
 
             return scintilla;

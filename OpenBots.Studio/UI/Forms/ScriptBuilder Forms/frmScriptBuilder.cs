@@ -210,7 +210,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         //hello world
         private const string _helloWorldTextPython = "import ctypes\nctypes.windll.user32.MessageBoxW(0, \"Hello World\", \"Hello World\", 1)";
-        private const string _helloWorldTextTagUI = "echo \"Hello World\"";
+        private const string _helloWorldTextTagUI = "https://openbots.ai/\nclick Register\nwait 5";
         private const string _helloWorldTextCSScript = "using System;\nusing System.Windows.Forms;\n\npublic class Script\n{\n\t" + 
                                                 "public void Main(object[] args)\n\t{\n\t\tMessageBox.Show(\"Hello World\");\n\t}\n}";
         #endregion

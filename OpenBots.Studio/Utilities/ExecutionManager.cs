@@ -155,7 +155,7 @@ namespace OpenBots.Utilities
                 {
                     FileName = tagUIexePath + ".cmd",
                     Arguments = $"\"{newScriptPath}\"", //+ scriptArgs,
-                    CreateNoWindow = false,
+                    CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true
