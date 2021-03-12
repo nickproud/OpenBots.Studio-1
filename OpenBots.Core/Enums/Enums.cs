@@ -104,4 +104,18 @@ namespace OpenBots.Core.Enums
         WmMButtonDown = 0x0207,
         WmMButtonUp = 0x0208,
     }
+
+    public enum ProjectType
+    {
+        OpenBots,
+        Python,
+        TagUI,
+        CSScript
+    }
+
+    public enum ScriptArgumentDirection
+    {
+        In,
+        Out
+    }
 }

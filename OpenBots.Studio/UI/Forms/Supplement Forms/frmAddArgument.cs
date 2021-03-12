@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Script;
+﻿using OpenBots.Core.Enums;
+using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
 using System;
 using System.Collections.Generic;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using OpenBots.Core.Command;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;

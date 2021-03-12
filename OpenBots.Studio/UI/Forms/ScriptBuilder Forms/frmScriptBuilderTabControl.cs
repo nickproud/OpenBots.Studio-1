@@ -1,4 +1,4 @@
-﻿using OpenBots.Core.Project;
+﻿using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
 using OpenBots.Properties;
 using OpenBots.UI.CustomControls.CustomUIControls;
