@@ -20,8 +20,8 @@ namespace OpenBots.Commands.Variable.Test
             _engine = new AutomationEngineInstance(null);
             _setVariable = new SetVariableCommand();
 
-            "valueToSet".CreateTestVariable(_engine, "testValue", typeof(string));
-            "undefined".CreateTestVariable(_engine, "setVariable", typeof(string));
+            VariableMethods.CreateTestVariable("valueToSet", _engine, "testValue", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "setVariable", typeof(string));
 
             _setVariable.v_Input = "{testValue}";
             _setVariable.v_OutputUserVariableName = "{setVariable}";
@@ -37,8 +37,8 @@ namespace OpenBots.Commands.Variable.Test
             _engine = new AutomationEngineInstance(null);
             _setVariable = new SetVariableCommand();
 
-            "1".CreateTestVariable(_engine, "testValue", typeof(string));
-            "undefined".CreateTestVariable(_engine, "setVariable", typeof(string));
+            VariableMethods.CreateTestVariable("1", _engine, "testValue", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "setVariable", typeof(string));
 
             _setVariable.v_Input = "{testValue}+1";
             _setVariable.v_OutputUserVariableName = "{setVariable}";

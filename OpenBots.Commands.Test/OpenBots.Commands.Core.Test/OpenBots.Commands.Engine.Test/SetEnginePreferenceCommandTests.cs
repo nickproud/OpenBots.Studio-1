@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Engine.Test
 
             Assert.False(_engine.AutoCalculateVariables);
 
-            "undefined".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _setVariable = new Variable.SetVariableCommand();
             _setVariable.v_Input = "1+1";

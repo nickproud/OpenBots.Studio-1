@@ -22,11 +22,11 @@ namespace OpenBots.Commands.Data.Test
             string time = "1:10";
             string AMorPM = "PM";
 
-            year.CreateTestVariable(_engine, "year", typeof(string));
-            month.CreateTestVariable(_engine, "month", typeof(string));
-            day.CreateTestVariable(_engine, "day", typeof(string));
-            time.CreateTestVariable(_engine, "time", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "outputVar", typeof(DateTime));
+            VariableMethods.CreateTestVariable(year, _engine, "year", typeof(string));
+            VariableMethods.CreateTestVariable(month, _engine, "month", typeof(string));
+            VariableMethods.CreateTestVariable(day, _engine, "day", typeof(string));
+            VariableMethods.CreateTestVariable(time, _engine, "time", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "outputVar", typeof(DateTime));
 
             _createDateTime.v_Year = "{year}";
             _createDateTime.v_Month = "{month}";

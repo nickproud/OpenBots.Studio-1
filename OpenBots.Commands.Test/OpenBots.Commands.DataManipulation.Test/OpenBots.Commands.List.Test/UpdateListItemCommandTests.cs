@@ -25,9 +25,9 @@ namespace OpenBots.Commands.List.Test
             string index = "0";
             string item = "item3";
 
-            inputList.CreateTestVariable(_engine, "inputList", typeof(List<>));
-            index.CreateTestVariable(_engine, "index", typeof(string));
-            item.CreateTestVariable(_engine, "item", typeof(string));
+            VariableMethods.CreateTestVariable(inputList, _engine, "inputList", typeof(List<>));
+            VariableMethods.CreateTestVariable(index, _engine, "index", typeof(string));
+            VariableMethods.CreateTestVariable(item, _engine, "item", typeof(string));
 
             _updateListItem.v_ListName = "{inputList}";
             _updateListItem.v_ListIndex = "{index}";
@@ -56,9 +56,9 @@ namespace OpenBots.Commands.List.Test
             OBDataTable newitem = new OBDataTable();
             newitem.Columns.Add("d3col");
 
-            inputList.CreateTestVariable(_engine, "inputList", typeof(List<>));
-            index.CreateTestVariable(_engine, "index", typeof(string));
-            newitem.CreateTestVariable(_engine, "newitem", typeof(OBDataTable));
+            VariableMethods.CreateTestVariable(inputList, _engine, "inputList", typeof(List<>));
+            VariableMethods.CreateTestVariable(index, _engine, "index", typeof(string));
+            VariableMethods.CreateTestVariable(newitem, _engine, "newitem", typeof(OBDataTable));
 
             _updateListItem.v_ListName = "{inputList}";
             _updateListItem.v_ListIndex = "{index}";
@@ -82,9 +82,9 @@ namespace OpenBots.Commands.List.Test
             inputList.Add(item1);
             string index = "0";
 
-            inputList.CreateTestVariable(_engine, "inputList", typeof(List<>));
-            index.CreateTestVariable(_engine, "index", typeof(string));
-            newItem.CreateTestVariable(_engine, "item", typeof(string));
+            VariableMethods.CreateTestVariable(inputList, _engine, "inputList", typeof(List<>));
+            VariableMethods.CreateTestVariable(index, _engine, "index", typeof(string));
+            VariableMethods.CreateTestVariable(newItem, _engine, "item", typeof(string));
 
             _updateListItem.v_ListName = "{inputList}";
             _updateListItem.v_ListIndex = "{index}";

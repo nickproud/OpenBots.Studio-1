@@ -20,10 +20,10 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toWaitFor.txt");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             string waitTime = "5";
-            waitTime.CreateTestVariable(_engine, "waitTime", typeof(string));
+            VariableMethods.CreateTestVariable(waitTime, _engine, "waitTime", typeof(string));
 
             _waitForFile.v_FileName = "{inputPath}";
             _waitForFile.v_WaitTime = "{waitTime}";
@@ -41,10 +41,10 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\nofile.txt");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             string waitTime = "2";
-            waitTime.CreateTestVariable(_engine, "waitTime", typeof(string));
+            VariableMethods.CreateTestVariable(waitTime, _engine, "waitTime", typeof(string));
 
             _waitForFile.v_FileName = "{inputPath}";
             _waitForFile.v_WaitTime = "{waitTime}";

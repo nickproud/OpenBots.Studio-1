@@ -34,7 +34,7 @@ namespace OpenBots.Commands.List.Test
             _engine = new AutomationEngineInstance(null);
             _createList = new CreateListCommand();
 
-            "unassigned".CreateTestVariable(_engine, "output", typeof(List<>));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
             _createList.v_ListType = listType;
             _createList.v_OutputUserVariableName = "{output}";
@@ -76,15 +76,15 @@ namespace OpenBots.Commands.List.Test
 
             int item1 = 1;
             bool item2 = false;
-            item1.CreateTestVariable(_engine, "item1", typeof(int));
-            item2.CreateTestVariable(_engine, "item2", typeof(bool));
-            "unassigned".CreateTestVariable(_engine, "output");
+            VariableMethods.CreateTestVariable(item1, _engine, "item1", typeof(int));
+            VariableMethods.CreateTestVariable(item2, _engine, "item2", typeof(bool));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
             _createList.v_ListType = "DataTable";
             _createList.v_ListItems = "{item1},{item2}";
             _createList.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<System.Exception>(() => _createList.RunCommand(_engine));
+            Assert.Throws<System.ArgumentException>(() => _createList.RunCommand(_engine));
         }
     }
 }

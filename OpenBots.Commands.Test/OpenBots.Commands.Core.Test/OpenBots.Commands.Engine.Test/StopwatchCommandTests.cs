@@ -24,8 +24,8 @@ namespace OpenBots.Commands.Engine.Test
             _engine = new AutomationEngineInstance(null);
             _stopwatch = new StopwatchCommand();
 
-            "ss\\.fff".CreateTestVariable(_engine, "timeFormat", typeof(string));
-            "undefined".CreateTestVariable(_engine, "output", typeof(string));
+            VariableMethods.CreateTestVariable("ss\\.fff", _engine, "timeFormat", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _stopwatch.v_InstanceName = "testStopwatch";
             _stopwatch.v_StopwatchAction = "Start Stopwatch";

@@ -285,7 +285,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         public MailItem GetEmail(string filePath, string subject)
         {
             _getEmail = new GetOutlookEmailsCommand();
-            "unassigned".CreateTestVariable(_engine, "vTestEmail", typeof(List<>));
+            VariableMethods.CreateTestVariable(null, _engine, "vTestEmail", typeof(List<>));
 
             var emailMessageList = new List<MailItem>();
             Application outlookApp = new Application();
@@ -321,7 +321,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         {
             _deleteEmail = new DeleteOutlookEmailCommand();
 
-            "unassigned".CreateTestVariable(_engine, "vMailItem", typeof(MailItem));
+            VariableMethods.CreateTestVariable(null, _engine, "vMailItem", typeof(MailItem));
             _deleteEmail.v_MailItem = "{vMailItem}";
             emailMessage.StoreInUserVariable(_engine, _deleteEmail.v_MailItem, typeof(MailItem));
             _deleteEmail.v_DeleteReadOnly = "Yes";

@@ -125,9 +125,9 @@ namespace OpenBots.Commands.Task.Test
             ScriptAction runTaskAction = new ScriptAction();
             runTaskAction.ScriptCommand = _runTask;
 
-            "inputValue".CreateTestVariable(_engine, "taskInput", typeof(string));
-            "default".CreateTestVariable(_engine, "taskOutput", typeof(string));
-            "unassigned".CreateTestVariable(_engine, "outputVar", typeof(string));
+            VariableMethods.CreateTestVariable("inputValue", _engine, "taskInput", typeof(string));
+            VariableMethods.CreateTestVariable("default", _engine, "taskOutput", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "outputVar", typeof(string));
 
             _engine.ExecuteCommand(runTaskAction);
 

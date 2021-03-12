@@ -23,8 +23,8 @@ namespace OpenBots.Commands.File.Test
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toCompress.txt");
             string destinationPath = Path.Combine(projectDirectory, @"Resources\moveCopyDestination");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
-            destinationPath.CreateTestVariable(_engine, "destinationPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(destinationPath, _engine, "destinationPath", typeof(string));
 
             _moveCopyFile.v_OperationType = operation;
             _moveCopyFile.v_SourceFilePath = "{inputPath}";
@@ -54,8 +54,8 @@ namespace OpenBots.Commands.File.Test
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\nofile.txt");
             string destinationPath = Path.Combine(projectDirectory, @"Resources\moveCopyDestination");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
-            destinationPath.CreateTestVariable(_engine, "destinationPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(destinationPath, _engine, "destinationPath", typeof(string));
 
             _moveCopyFile.v_OperationType = "Copy File";
             _moveCopyFile.v_SourceFilePath = "{inputPath}";

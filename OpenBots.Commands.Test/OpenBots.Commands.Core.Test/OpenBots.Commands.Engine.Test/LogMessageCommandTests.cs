@@ -26,8 +26,8 @@ namespace OpenBots.Commands.Engine.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\" + logFile);
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
-            "testLogData".CreateTestVariable(_engine, "logText", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable("testLogData", _engine, "logText", typeof(string));
             
 
             _logMessage.v_LogFile = "{inputPath}";

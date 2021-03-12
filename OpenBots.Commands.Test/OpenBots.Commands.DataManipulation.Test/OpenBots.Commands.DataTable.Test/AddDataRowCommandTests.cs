@@ -31,7 +31,7 @@ namespace OpenBots.Commands.DataTable.Test
             DataRow inputrow = inputTable.NewRow();
             inputrow["firstname"] = "john";
             inputrow["lastname"] = "smith";
-            inputTable.CreateTestVariable(_engine, "inputTable", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(inputTable, _engine, "inputTable", typeof(OBData.DataTable));
             _addDataRow.v_DataTable = "{inputTable}";
             OBData.DataRow newrow = _addDataRow.v_DataRowDataTable.NewRow();
             newrow["Column Name"] = "firstname";

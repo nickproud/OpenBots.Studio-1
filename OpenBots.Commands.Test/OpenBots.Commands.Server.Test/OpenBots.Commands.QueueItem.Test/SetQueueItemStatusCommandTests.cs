@@ -28,7 +28,7 @@ namespace OpenBots.Commands.QueueItem.Test
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
-            "unassigned".CreateTestVariable(_engine, "vQueueItem", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
             _setQueueItem.v_QueueItemStatusType = "Successful";
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.QueueItem.Test
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
-            "unassigned".CreateTestVariable(_engine, "vQueueItem", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
             _setQueueItem.v_QueueItemStatusType = "Failed - Should Retry";
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.QueueItem.Test
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
-            "unassigned".CreateTestVariable(_engine, "vQueueItem", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
             _setQueueItem.v_QueueItemStatusType = "Failed - Fatal";
@@ -111,7 +111,7 @@ namespace OpenBots.Commands.QueueItem.Test
                 { "LockedUntilUTC", DateTime.UtcNow.AddHours(1) }
             };
 
-            "unassigned".CreateTestVariable(_engine, "vQueueItem", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             _setQueueItem.v_QueueItemStatusType = "Successful";
             queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
@@ -136,7 +136,7 @@ namespace OpenBots.Commands.QueueItem.Test
         public Dictionary<string, object> WorkQueueItem()
         {
             _workQueueItem = new WorkQueueItemCommand();
-            "unassigned".CreateTestVariable(_engine, "output", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(Dictionary<,>));
 
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";

@@ -20,10 +20,10 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toRename.txt");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             string newName = "newname.txt";
-            newName.CreateTestVariable(_engine, "newName", typeof(string));
+            VariableMethods.CreateTestVariable(newName, _engine, "newName", typeof(string));
 
             _renameFile.v_SourceFilePath = "{inputPath}";
             _renameFile.v_NewName = "{newName}";
@@ -45,10 +45,10 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\noFile.txt");
-            inputPath.CreateTestVariable(_engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
 
             string newName = "newname.txt";
-            newName.CreateTestVariable(_engine, "newName", typeof(string));
+            VariableMethods.CreateTestVariable(newName, _engine, "newName", typeof(string));
 
             _renameFile.v_SourceFilePath = "{inputPath}";
             _renameFile.v_NewName = "{newName}";

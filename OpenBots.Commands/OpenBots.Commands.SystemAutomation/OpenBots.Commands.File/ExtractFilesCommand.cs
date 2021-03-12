@@ -96,7 +96,9 @@ namespace OpenBots.Commands.File
 			Directory.CreateDirectory(vFilePathDestination);
 
 			// get password to extract files
-			var vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+			var vPassword = "";
+			if (v_Password != null)
+				vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
 			FileStream fs = IO.File.OpenRead(vSourceFilePathOrigin);
 			ZipFile file = new ZipFile(fs);
 
