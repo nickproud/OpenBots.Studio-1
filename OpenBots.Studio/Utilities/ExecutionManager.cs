@@ -67,7 +67,7 @@ namespace OpenBots.Utilities
             }
             catch
             {
-                throw new Exception("Unabled to retrieve SID for provided user credentials.");
+                throw new Exception("Unabled to retrieve SID for provided user.");
             }
 
             Version requestedVersion = new Version(requiredVersion == "" ? "0.0.1" : requiredVersion);
