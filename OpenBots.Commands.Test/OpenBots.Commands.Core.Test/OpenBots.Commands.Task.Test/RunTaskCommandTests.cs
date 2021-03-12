@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Script;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
