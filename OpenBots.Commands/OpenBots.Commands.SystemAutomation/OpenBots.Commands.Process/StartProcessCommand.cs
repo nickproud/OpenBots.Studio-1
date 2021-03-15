@@ -33,8 +33,7 @@ namespace OpenBots.Commands.Process
 		[CompatibleTypes(null, true)]
 		public string v_ProgramName { get; set; }
 
-		[Required]
-		[DisplayName("Arguments")]
+		[DisplayName("Arguments (Optional)")]
 		[Description("Enter any arguments or flags if applicable.")]
 		[SampleUsage("-a || -version || {vArg}")]
 		[Remarks("You will need to consult documentation to determine if your executable supports arguments or flags on startup.")]

@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("1/1/2000 || {vDate} || {DateTime.Now}")]
 		[Remarks("Utilize the *Create DateTime* command to provide a DateTime variable")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DateTime), typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(DateTime), typeof(string) }, true)]
 		public string v_InputData { get; set; }
 
 		[Required]
@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Data
 		[DisplayName("Output Text Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 

@@ -54,10 +54,10 @@ namespace OpenBots.UI.Forms
         //track existing commands for visibility
         public List<ScriptCommand> ConfiguredCommands { get; set; }
         public string HTMLElementRecorderURL { get; set; }
+        public TypeContext TypeContext { get; set; }
 
         private ICommandControls _commandControls;
-
-        private TypeContext _typeContext;
+        private ToolTip _errorToolTip;
 
         #region Form Events
         //handle events for the form
@@ -65,7 +65,7 @@ namespace OpenBots.UI.Forms
         public frmCommandEditor(List<AutomationCommand> commands, List<ScriptCommand> existingCommands, TypeContext typeContext)
         {
             InitializeComponent();
-            _typeContext = typeContext;
+            TypeContext = typeContext;
             CommandList = commands;
             ConfiguredCommands = existingCommands;
         }
@@ -73,7 +73,8 @@ namespace OpenBots.UI.Forms
         private void frmNewCommand_Load(object sender, EventArgs e)
         {
             // Initialize CommandControls with Current Editor
-            _commandControls = new CommandControls(this, ScriptEngineContext, _typeContext);
+            _commandControls = new CommandControls(this, ScriptEngineContext, TypeContext);
+            _errorToolTip = AddValidationErrorToolTip();
 
             //order list
             CommandList = CommandList.OrderBy(itm => itm.FullName).ToList();
@@ -293,6 +294,7 @@ namespace OpenBots.UI.Forms
             bool isAllValid = true;
             AutomationEngineInstance testEngine = new AutomationEngineInstance(ScriptEngineContext);
             dynamic currentControl;
+            _errorToolTip.RemoveAll();
 
             foreach (Control ctrl in flw_InputVariables.Controls)
             {
@@ -302,11 +304,13 @@ namespace OpenBots.UI.Forms
                     {
                         currentControl = (UIDataGridView)ctrl;
                         currentControl.BorderColor = Color.Transparent;
+
                         var validationContext = (CommandControlValidationContext)currentControl.Tag;
 
                         if (currentControl.Rows.Count == 0 && validationContext.IsRequired)
                         {
                             currentControl.BorderColor = Color.Red;
+                            _errorToolTip.SetToolTip(currentControl, "Input is required.");
                             isAllValid = false;
                             continue;
                         }
@@ -355,6 +359,7 @@ namespace OpenBots.UI.Forms
             if (string.IsNullOrEmpty(validatingText) && validationContext.IsRequired == true)
             {
                 currentControl.BorderColor = Color.Red;
+                _errorToolTip.SetToolTip(currentControl, "Input is required.");
                 isAllValid = false;
                 return isAllValid;
             }
@@ -366,13 +371,14 @@ namespace OpenBots.UI.Forms
             if (validationContext.IsImageCapture)
                 return isAllValid;
 
-            var varArgMatches = Regex.Matches(validatingText, @"\{\w+\}");
+            var varArgMatches = Regex.Matches(validatingText, @"\{.+\}");
 
             if (varArgMatches.Count == 0 && validationContext.IsStringOrPrimitive)
                 return isAllValid;
             else if (varArgMatches.Count == 0 && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
             {
                 currentControl.BorderColor = Color.Red;
+                _errorToolTip.SetToolTip(currentControl, "Input only accepts variables or arguments.");
                 isAllValid = false;
                 return isAllValid;
             }
@@ -385,12 +391,24 @@ namespace OpenBots.UI.Forms
                     if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType))))
                     {
                         currentControl.BorderColor = Color.Red;
+                        _errorToolTip.SetToolTip(currentControl, "Input value is not of a compatible Type.");
                         isAllValid = false;
                         return isAllValid;
                     }
                 }
             }
             return isAllValid;
+        }
+
+        public ToolTip AddValidationErrorToolTip()
+        {
+            ToolTip errorToolTip = new ToolTip();
+            errorToolTip.ToolTipIcon = ToolTipIcon.Error;
+            errorToolTip.IsBalloon = true;
+            errorToolTip.ShowAlways = true;
+            errorToolTip.ToolTipTitle = "Error";
+            errorToolTip.AutoPopDelay = 15000;
+            return errorToolTip;
         }
 
         private void uiBtnCancel_Click(object sender, EventArgs e)

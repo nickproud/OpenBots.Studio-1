@@ -41,6 +41,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             {
                 DataGridView dgv = (DataGridView)sender;
 
+                //variable/argument name column
                 if (e.ColumnIndex == 0)
                 {
                     var cellValue = dgv.Rows[e.RowIndex].Cells[0].Value;
@@ -65,6 +66,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     {
                         Notify($"A variable or argument with the name '{variableName}' already exists", Color.Red);
                         dgv.Rows.RemoveAt(e.RowIndex);
+                        return;
                     }
                     //if the variable/argument name is valid, set value cell's readonly as false
                     else
@@ -73,12 +75,24 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                             cell.ReadOnly = false;
 
                         dgv.Rows[e.RowIndex].Cells[0].Value = variableName.Trim();
-
-                        //marks the script as unsaved with changes
-                        if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
-                            uiScriptTabControl.SelectedTab.Text += " *";
                     }
                 }
+                //variable/argument type column
+                else if (e.ColumnIndex == 1)
+                {
+                    Type selectedType = (Type)dgv.Rows[e.RowIndex].Cells[1].Value;
+                    if (selectedType.IsPrimitive || selectedType == typeof(string))
+                        dgv.Rows[e.RowIndex].Cells[2].ReadOnly = false;
+                    else
+                    {
+                        dgv.Rows[e.RowIndex].Cells[2].Value = null;
+                        dgv.Rows[e.RowIndex].Cells[2].ReadOnly = true;
+                    }
+                }
+
+                //marks the script as unsaved with changes
+                if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
+                    uiScriptTabControl.SelectedTab.Text += " *";
             }
             catch (Exception ex)
             {

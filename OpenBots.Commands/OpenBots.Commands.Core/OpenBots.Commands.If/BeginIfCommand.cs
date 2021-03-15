@@ -139,7 +139,7 @@ namespace OpenBots.Commands.If
 		{
 			base.Render(editor, commandControls);
 
-			_actionDropdown = (ComboBox)commandControls.CreateDropdownFor("v_IfActionType", this);
+			_actionDropdown = commandControls.CreateDropdownFor("v_IfActionType", this);
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_IfActionType", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_IfActionType", this, new Control[] { _actionDropdown }, editor));
 			_actionDropdown.SelectionChangeCommitted += ifAction_SelectionChangeCommitted;
@@ -601,6 +601,8 @@ namespace OpenBots.Commands.If
 				default:
 					break;
 			}
+
+			ifActionParameterBox.Columns[0].ReadOnly = true;
 		}
 
 		private void IfGridViewHelper_MouseEnter(object sender, EventArgs e)

@@ -728,13 +728,25 @@ namespace OpenBots.Commands.WebBrowser
 					break;
 
 				case "Get Options":
-					actionParameters.Rows.Add("Attribute Name");
-					actionParameters.Rows.Add("Variable Name");
+					foreach (var ctrl in _actionParametersControls)
+						ctrl.Show();
+
+					if (sender != null)
+					{
+						actionParameters.Rows.Add("Attribute Name");
+						actionParameters.Rows.Add("Variable Name");
+					}
 					break;
 
 				case "Select Option":
-					actionParameters.Rows.Add("Selection Type");
-					actionParameters.Rows.Add("Selection Parameter");
+					foreach (var ctrl in _actionParametersControls)
+						ctrl.Show();
+
+					if (sender != null)
+					{
+						actionParameters.Rows.Add("Selection Type");
+						actionParameters.Rows.Add("Selection Parameter");
+					}
 
 					DataGridViewComboBoxCell selectionTypeBox = new DataGridViewComboBoxCell();
 					selectionTypeBox.Items.Add("Select By Index");
@@ -774,6 +786,8 @@ namespace OpenBots.Commands.WebBrowser
 				default:
 					break;
 			}
+
+			_actionParametersGridViewHelper.Columns[0].ReadOnly = true;
 			_actionParametersGridViewHelper.DataSource = v_WebActionParameterTable;
 		}
 

@@ -55,6 +55,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void tvTypes_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            //handle double clicks outside
+            if (tvTypes.SelectedNode == null)
+                return;
+
+            //exit if parent node is clicked
+            if (tvTypes.SelectedNode.Parent == null)
+                return;
+
             if (tvTypes.SelectedNode.Nodes.Count == 0)
             {
                 SelectedType = (Type)tvTypes.SelectedNode.Tag;

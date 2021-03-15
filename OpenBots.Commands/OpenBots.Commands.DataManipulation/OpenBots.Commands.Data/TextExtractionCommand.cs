@@ -56,7 +56,7 @@ namespace OpenBots.Commands.Data
 		[DisplayName("Output Text Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
@@ -134,7 +134,17 @@ namespace OpenBots.Commands.Data
 			selectionControl.SelectedIndexChanged += TextExtraction_SelectedIndexChanged;
 			RenderedControls.Add(selectionControl);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_TextExtractionTable", this, editor));
+			var textExtractionGridViewControls = new List<Control>();
+			textExtractionGridViewControls.Add(commandControls.CreateDefaultLabelFor("v_TextExtractionTable", this));
+
+			var textExtractionGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_TextExtractionTable", this);
+			textExtractionGridViewHelper.AllowUserToAddRows = false;
+			textExtractionGridViewHelper.AllowUserToDeleteRows = false;
+
+			textExtractionGridViewControls.AddRange(commandControls.CreateUIHelpersFor("v_TextExtractionTable", this, new Control[] { textExtractionGridViewHelper }, editor));
+			textExtractionGridViewControls.Add(textExtractionGridViewHelper);
+			RenderedControls.AddRange(textExtractionGridViewControls);
+
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
@@ -168,6 +178,8 @@ namespace OpenBots.Commands.Data
 				default:
 					break;
 			}
+
+			v_TextExtractionTable.Columns[0].ReadOnly = true;
 		}
 
 		private string GetParameterValue(string parameterName)

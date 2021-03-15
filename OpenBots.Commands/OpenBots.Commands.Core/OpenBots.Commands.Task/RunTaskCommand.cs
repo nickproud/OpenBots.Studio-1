@@ -221,6 +221,8 @@ namespace OpenBots.Commands.Task
 			_assignmentsGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ArgumentAssignments", this);
 			_assignmentsGridViewHelper.AllowUserToAddRows = false;
 			_assignmentsGridViewHelper.AllowUserToDeleteRows = false;
+			//refresh gridview
+            _assignmentsGridViewHelper.MouseEnter += (sender, e) => PassParametersCheckbox_CheckedChanged(_passParameters, null, editor, commandControls);
 
 			if (!_passParameters.Checked)
 				_assignmentsGridViewHelper.Hide();
@@ -231,7 +233,7 @@ namespace OpenBots.Commands.Task
 			return RenderedControls;
 		}
 
-		public override string GetDisplayValue()
+        public override string GetDisplayValue()
 		{
 			return base.GetDisplayValue() + $" [Run '{v_TaskPath}']";
 		}
@@ -272,7 +274,7 @@ namespace OpenBots.Commands.Task
 					DataRow[] foundArguments  = v_ArgumentAssignments.Select("ArgumentName = '" + "{" + argument.ArgumentName + "}" + "'");
 					if (foundArguments.Length == 0)
 					    v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentType, argument.ArgumentValue, argument.Direction.ToString());
-				}               
+				}
 
 				for (int i = 0; i < _assignmentsGridViewHelper.Rows.Count; i++)
 				{

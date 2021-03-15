@@ -429,6 +429,7 @@ namespace OpenBots.Commands.Image
 				default:
 					break;
 			}
+			_imageGridViewHelper.Columns[0].ReadOnly = true;
 		}
 
 		private void ImageGridViewHelper_CellContentClick(object sender, DataGridViewCellEventArgs e)

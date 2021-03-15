@@ -71,7 +71,7 @@ namespace OpenBots.Commands.Email
         [DisplayName("Output MimeMessage Property Variable")]
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("{vUserVariable}")]
-        [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+        [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
         [CompatibleTypes(new Type[] { typeof(string), typeof(DateTime), typeof(List<>) })]
         public string v_OutputUserVariableName { get; set; }
 

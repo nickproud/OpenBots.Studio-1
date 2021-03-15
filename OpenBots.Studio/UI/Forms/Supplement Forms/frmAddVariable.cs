@@ -118,6 +118,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 cbxDefaultType.Tag = cbxDefaultType.SelectedValue;
 
             _preEditType = (Type)cbxDefaultType.SelectedValue;
+
+            if (_preEditType == typeof(string) || _preEditType.IsPrimitive)
+                txtDefaultValue.ReadOnly = false;
+            else
+            {
+                txtDefaultValue.ReadOnly = true;
+                txtDefaultValue.Text = "";
+            }
         }
     }
 }

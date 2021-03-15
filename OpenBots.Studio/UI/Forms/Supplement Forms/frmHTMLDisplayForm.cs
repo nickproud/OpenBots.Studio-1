@@ -1,7 +1,9 @@
 ﻿using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.Supplement_Forms
@@ -43,7 +45,12 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                         {
                             if (item.GetAttribute("selected") == "True")
                             {
-                                varList.Add(new ScriptVariable() { VariableName = variableName, VariableValue = item.InnerText });
+                                varList.Add(new ScriptVariable() 
+                                { 
+                                    VariableName = variableName, 
+                                    VariableType = typeof(string), 
+                                    VariableValue = item.InnerText 
+                                });
                             }
                         }
                     }
@@ -51,16 +58,34 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     {
                         if (parentElement.GetAttribute("type") == "checkbox")
                         {
-                            var inputValue = collection[i].GetAttribute("checked");
-                            varList.Add(new ScriptVariable() { VariableName = variableName, VariableValue = inputValue });
+                            var inputValue = bool.Parse(collection[i].GetAttribute("checked"));
+                            varList.Add(new ScriptVariable() 
+                            { 
+                                VariableName = variableName, 
+                                VariableType = typeof(bool), 
+                                VariableValue = inputValue 
+                            });
                         }
                         else
                         {
                             var inputValue = collection[i].GetAttribute("value");
-                            if(collection[i].GetAttribute("type").ToString().ToLower() =="password")
-                                varList.Add(new ScriptVariable() { VariableName = variableName, VariableValue = inputValue, IsSecureString=true });
+                            if(collection[i].GetAttribute("type").ToString().ToLower() == "password")
+                            {
+                                var secureValue = inputValue.ConvertStringToSecureString();
+                                varList.Add(new ScriptVariable()
+                                {
+                                    VariableName = variableName,
+                                    VariableType = typeof(SecureString),
+                                    VariableValue = secureValue
+                                });
+                            }   
                             else
-                            varList.Add(new ScriptVariable() { VariableName = variableName, VariableValue = inputValue });
+                                varList.Add(new ScriptVariable() 
+                                { 
+                                    VariableName = variableName, 
+                                    VariableType = typeof(string), 
+                                    VariableValue = inputValue 
+                                });
                         }
                     }
                 }

@@ -134,7 +134,7 @@ namespace OpenBots.Commands.Loop
 		{
 			base.Render(editor, commandControls);
 
-			_actionDropdown = (ComboBox)commandControls.CreateDropdownFor("v_LoopActionType", this);
+			_actionDropdown = commandControls.CreateDropdownFor("v_LoopActionType", this);
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_LoopActionType", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_LoopActionType", this, new Control[] { _actionDropdown }, editor));
 			_actionDropdown.SelectionChangeCommitted += loopAction_SelectionChangeCommitted;
@@ -594,6 +594,7 @@ namespace OpenBots.Commands.Loop
 				default:
 					break;
 			}
+			loopActionParameterBox.Columns[0].ReadOnly = true;
 		}
 
 		private void LoopGridViewHelper_MouseEnter(object sender, EventArgs e)

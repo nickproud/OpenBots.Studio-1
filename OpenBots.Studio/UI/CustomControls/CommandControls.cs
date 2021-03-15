@@ -462,7 +462,15 @@ namespace OpenBots.UI.CustomControls
             gridView.AllowUserToResizeRows = false;
             gridView.BorderStyle = BorderStyle.Fixed3D;
             gridView.Tag = new CommandControlValidationContext(parameterName, parent);
+            gridView.DataBindingComplete += GridView_DataBindingComplete;
             return gridView;
+        }
+
+        private void GridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            var gridView = (DataGridView)sender;
+            for (int i = 0; i < gridView.Columns.Count; i++)
+                gridView.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
         }
 
         public PictureBox CreateDefaultPictureBoxFor(string parameterName, ScriptCommand parent)
@@ -762,7 +770,7 @@ namespace OpenBots.UI.CustomControls
                         return;
                     }
 
-                    if (targetDGV.SelectedCells[0].ColumnIndex == 0)
+                    if (targetDGV.SelectedCells[0].ReadOnly == true || targetDGV.SelectedCells[0] is DataGridViewComboBoxCell)
                     {
                         MessageBox.Show("Invalid Cell Selected!", "Invalid Cell Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
@@ -1127,6 +1135,15 @@ namespace OpenBots.UI.CustomControls
             var className = _currentEditor.flw_InputVariables.Controls["v_ClassName"].Text;
             var methodName = _currentEditor.flw_InputVariables.Controls["v_MethodName"].Text;
             DataGridView parameterBox = (DataGridView)_currentEditor.flw_InputVariables.Controls["v_MethodParameters"];
+
+            //TODO: Find a way to convert the input text if a variable is provided
+            if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(className) || string.IsNullOrEmpty(methodName))
+            {
+                MessageBox.Show("File Path, Class Name, or Method Name not provided", "Input Not Found", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+
+            }
 
             //clear all rows
             cmd.v_MethodParameters.Rows.Clear();

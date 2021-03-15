@@ -354,6 +354,8 @@ namespace OpenBots.Commands.IEBrowser
                 default:
                     break;
             }
+
+            ((DataGridView)_elementParameterControls[2]).Columns[0].ReadOnly = true;
         }
 
         private void RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)

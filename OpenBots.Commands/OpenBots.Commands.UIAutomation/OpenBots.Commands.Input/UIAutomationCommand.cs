@@ -722,6 +722,7 @@ namespace OpenBots.Commands.Input
 				default:
 					break;
 			}
+			_actionParametersGridViewHelper.Columns[0].ReadOnly = true;
 			_actionParametersGridViewHelper.DataSource = v_UIAActionParameters;
 		}
 
