@@ -246,7 +246,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             break;
                         case Keys.S:
                             ClearSelectedListViewItems();
-                            SaveToFile(false);
+                            SaveToOpenBotsFile(false);
                             break;
                         case Keys.E:
                             SetSelectedCodeToCommented(false);
@@ -943,21 +943,24 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void AddRemoveBreakpoint()
         {
-            //warn if nothing was selected
-            if (_selectedTabScriptActions.SelectedItems.Count == 0)
-                Notify("No code was selected!", Color.Yellow);
-            else
-                CreateUndoSnapshot();
-
-            //get each item and set appropriately
-            foreach (ListViewItem item in _selectedTabScriptActions.SelectedItems)
+            if (_selectedTabScriptActions is ListView)
             {
-                var selectedCommand = (ScriptCommand)item.Tag;
-                selectedCommand.PauseBeforeExecution = !selectedCommand.PauseBeforeExecution;
-            }
+                //warn if nothing was selected
+                if (_selectedTabScriptActions.SelectedItems.Count == 0)
+                    Notify("No code was selected!", Color.Yellow);
+                else
+                    CreateUndoSnapshot();
 
-            //recolor
-            _selectedTabScriptActions.Invalidate();
+                //get each item and set appropriately
+                foreach (ListViewItem item in _selectedTabScriptActions.SelectedItems)
+                {
+                    var selectedCommand = (ScriptCommand)item.Tag;
+                    selectedCommand.PauseBeforeExecution = !selectedCommand.PauseBeforeExecution;
+                }
+
+                //recolor
+                _selectedTabScriptActions.Invalidate();
+            }           
         }
 
         private void disableSelectedCodeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1128,7 +1131,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region ListView Search
         private void txtScriptSearch_TextChanged(object sender, EventArgs e)
         {
-            if (_selectedTabScriptActions.Items.Count == 0)
+            if (!(_selectedTabScriptActions is ListView) || _selectedTabScriptActions.Items.Count == 0)
                 return;
 
             _reqdIndex = 0;
@@ -1173,6 +1176,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void SearchForItemInListView()
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             var searchCriteria = txtScriptSearch.Text;
 
             if (searchCriteria == "")
@@ -1180,7 +1186,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 searchCriteria = tsSearchBox.Text;
             }
 
-            var matchingItems = _selectedTabScriptActions.Items.OfType<ListViewItem>()
+            var matchingItems = ((ListView)_selectedTabScriptActions).Items.OfType<ListViewItem>()
                                                                .Where(x => x.Text.Contains(searchCriteria))
                                                                .ToList();
 

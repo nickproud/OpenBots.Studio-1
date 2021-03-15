@@ -24,7 +24,6 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.Controls;
-using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using Serilog.Core;
 using System;
@@ -153,7 +152,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         {
                             ResetVariableArgumentBindings();
 
-                            splitContainerScript.Panel2Collapsed = false;                           
+                            if (_selectedTabScriptActions is ListView)
+                                splitContainerScript.Panel2Collapsed = false; 
+                            
                             tpProject.Controls[0].Enabled = true;
                             tpCommands.Controls[0].Enabled = true;
                             tlpControls.Controls[0].Enabled = true;
@@ -202,10 +203,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private int _reqdIndex;
         private List<int> _matchingSearchIndex = new List<int>();
         private int _currentIndex = -1;
-        private UIListView _selectedTabScriptActions;
+        private dynamic _selectedTabScriptActions;
         private Point _lastClickPosition;
         private float _slimBarHeight;
         private float _thickBarHeight;
+
+        //hello world
+        private const string _helloWorldTextPython = "import ctypes\nctypes.windll.user32.MessageBoxW(0, \"Hello World\", \"Hello World\", 1)";
+        private const string _helloWorldTextTagUI = "https://openbots.ai/\nclick Register\nwait 5";
+        private const string _helloWorldTextCSScript = "using System;\nusing System.Windows.Forms;\n\npublic class Script\n{\n\t" + 
+                                                "public void Main(object[] args)\n\t{\n\t\tMessageBox.Show(\"Hello World\");\n\t}\n}";
         #endregion
 
         #region Form Events
@@ -247,13 +254,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void UpdateWindowTitle()
         {
             if (ScriptProject.ProjectName != null)
-            {
-                Text = "OpenBots Studio - " + ScriptProject.ProjectName;
-            }
+                Text = $"OpenBots Studio - {ScriptProject.ProjectName} - {ScriptProject.ProjectType}";
             else
-            {
                 Text = "OpenBots Studio";
-            }
         }
 
         private async void frmScriptBuilder_LoadAsync(object sender, EventArgs e)
@@ -348,7 +351,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //instantiate and populate display icons for commands
             scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
 
-            var groupedCommands = scriptBuilder._automationCommands.GroupBy(f => f.DisplayGroup);
+            var groupedCommands = scriptBuilder._automationCommands.Where(x => x.Command.CommandName != "BrokenCodeCommentCommand")
+                                                                   .GroupBy(f => f.DisplayGroup);
 
             scriptBuilder.tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)
@@ -432,7 +436,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)
         {
-            _selectedTabScriptActions.Columns[2].Width = Width - 340;
+            if (_selectedTabScriptActions is ListView)
+                _selectedTabScriptActions.Columns[2].Width = Width - 340;
         }
 
         private void frmScriptBuilder_Resize(object sender, EventArgs e)
@@ -600,6 +605,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region TreeView Events
         private void tvCommands_DoubleClick(object sender, EventArgs e)
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             //handle double clicks outside
             if (tvCommands.SelectedNode == null)
                 return;
@@ -731,7 +739,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void uiBtnReloadCommands_Click(object sender, EventArgs e)
         {
             NotifySync("Loading package assemblies...", Color.White);
-            string configPath = Path.Combine(ScriptProjectPath, "project.config");
+            string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
             _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);            
             AContainer = _builder.Build();
@@ -774,10 +782,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void NewProjectLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             LinkLabel senderLink = (LinkLabel)sender;
-            if (File.Exists(Path.Combine(senderLink.Tag.ToString(), "project.config")))
+            if (File.Exists(Path.Combine(senderLink.Tag.ToString(), "project.obconfig")))
                 OpenProject(senderLink.Tag.ToString());
             else
-                Notify($"Could not find 'project.config' for {senderLink.Tag}", Color.Red);
+                Notify($"Could not find 'project.obconfig' for {senderLink.Tag}", Color.Red);
         }
         #endregion
     }

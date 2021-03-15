@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenBots.Core.Enums;
+using System;
 
 namespace OpenBots.Core.Script
 {

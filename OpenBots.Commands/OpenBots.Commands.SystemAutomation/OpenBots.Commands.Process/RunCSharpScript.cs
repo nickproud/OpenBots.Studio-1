@@ -1,24 +1,22 @@
-﻿using Newtonsoft.Json;
+﻿using CSScriptLibrary;
+using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Forms;
-using System.IO;
-using CSScriptLibrary;
-using Diagnostics = System.Diagnostics;
 using System.Data;
+using System.Windows.Forms;
 using OBFile = System.IO.File;
+
 namespace OpenBots.Commands.Process
 {
-	[Serializable]
+    [Serializable]
 	[Category("Programs/Process Commands")]
 	[Description("This command runs a C# script and waits for it to exit before proceeding.")]
 

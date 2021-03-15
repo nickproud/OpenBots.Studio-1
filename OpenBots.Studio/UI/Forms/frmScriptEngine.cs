@@ -290,7 +290,7 @@ namespace OpenBots.UI.Forms
 
                 //toggle running flag to allow for tab selection
                 ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-                ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenFile(ScriptEngineContext.FilePath, true);
+                ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenOpenBotsFile(ScriptEngineContext.FilePath, true);
                 ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
             }
 
@@ -500,7 +500,7 @@ namespace OpenBots.UI.Forms
                     {
                         //toggle running flag to allow for tab selection
                         ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-                        ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenFile(ScriptEngineContext.FilePath, true);
+                        ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenOpenBotsFile(ScriptEngineContext.FilePath, true);
                         ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
 
                         ScriptEngineContext.ScriptBuilder.CurrentEngine = this;
@@ -523,7 +523,7 @@ namespace OpenBots.UI.Forms
 
                         //toggle running flag to allow for tab selection
                         ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-                        ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenFile(ScriptEngineContext.FilePath, true);
+                        ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenOpenBotsFile(ScriptEngineContext.FilePath, true);
                         ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
 
                         IsNewTaskSteppedInto = true;

@@ -716,7 +716,7 @@ namespace OpenBots.UI.Forms
             this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "frmGalleryPackageManager";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
-            this.Text = "Gallery Project Manager";
+            this.Text = "Gallery Package Manager";
             this.Load += new System.EventHandler(this.frmGalleryProject_LoadAsync);
             this.tlpPackageLayout.ResumeLayout(false);
             this.pnlNugetPackages.ResumeLayout(false);

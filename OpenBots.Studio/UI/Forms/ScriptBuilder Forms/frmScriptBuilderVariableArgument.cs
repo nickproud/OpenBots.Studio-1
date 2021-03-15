@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Script;
+﻿using OpenBots.Core.Enums;
+using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
@@ -339,7 +340,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         case Keys.S:
                             ClearSelectedListViewItems();
-                            SaveToFile(false);
+                            SaveToOpenBotsFile(false);
                             break;
                         case Keys.J:
                             OpenArgumentManager();

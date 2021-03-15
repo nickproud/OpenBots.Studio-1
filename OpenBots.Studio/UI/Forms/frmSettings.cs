@@ -90,16 +90,6 @@ namespace OpenBots.UI.Forms
             bgwMetrics.RunWorkerAsync();
         }
 
-        private void btnAddAssembly_Click(object sender, EventArgs e)
-        {
-            //allow importing custom command assemblies
-            OpenFileDialog newOpenDialog = new OpenFileDialog();
-
-            if (newOpenDialog.ShowDialog() == DialogResult.OK)
-            {
-            }
-        }
-
         private void uiBtnOpen_Click(object sender, EventArgs e)
         {
             Keys key = (Keys)Enum.Parse(typeof(Keys), cbxCancellationKey.Text);

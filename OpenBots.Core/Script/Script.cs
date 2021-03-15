@@ -312,7 +312,7 @@ namespace OpenBots.Core.Script
                 scriptText = scriptText.Insert(scriptText.LastIndexOf('\r'), ",\r\n  \"Version\": \"1.1.0.0\"");
 
             var conversionFilePath = Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, 
-                                                  "Supplementary Files", "Script Conversion Files", version + ".json");
+                                                  "Supplementary Files", "Script Conversion Files", version + ".obscript");
 
             string conversionFileText = File.ReadAllText(conversionFilePath);
             JObject conversionObject = JObject.Parse(conversionFileText);

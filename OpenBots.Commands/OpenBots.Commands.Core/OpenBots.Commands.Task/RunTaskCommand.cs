@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Task
 		[Required]
 		[DisplayName("Task File Path")]
 		[Description("Enter or select a valid path to the Task file.")]
-		[SampleUsage(@"C:\temp\mytask.json || {vScriptPath} || {ProjectPath}\mytask.json")]
+		[SampleUsage(@"C:\temp\mytask.obscript || {vScriptPath} || {ProjectPath}\mytask.obscript")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
@@ -357,7 +357,7 @@ namespace OpenBots.Commands.Task
 					_argumentList.Add(new ScriptArgument
 					{
 						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
-						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
+						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection), 
 						ArgumentValue = argumentValue,
 						ArgumentType = argumentType
 					});

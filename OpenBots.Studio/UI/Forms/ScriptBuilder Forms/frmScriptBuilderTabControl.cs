@@ -1,8 +1,10 @@
-﻿using OpenBots.Core.Script;
+﻿using OpenBots.Core.Enums;
+using OpenBots.Core.Script;
+using OpenBots.Properties;
 using OpenBots.UI.CustomControls.CustomUIControls;
+using ScintillaNET;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -17,19 +19,36 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (uiScriptTabControl.TabCount > 0)
             {
                 ScriptFilePath = uiScriptTabControl.SelectedTab.ToolTipText.ToString();
-                _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
-                ScriptObject scriptObject = (ScriptObject)uiScriptTabControl.SelectedTab.Tag;
-                if (scriptObject != null)
-                {
-                    _scriptVariables = scriptObject.ScriptVariables;
-                    _scriptArguments = scriptObject.ScriptArguments;
-                    _scriptElements = scriptObject.ScriptElements;
+                string fileExtension = Path.GetExtension(ScriptFilePath).ToLower();
 
-                    if (!_isRunTaskCommand)
-                    {
-                        ResetVariableArgumentBindings();
-                    }                             
-                }               
+                switch (fileExtension)
+                {
+                    case ".obscript":
+                        if (!_isScriptRunning)
+                            splitContainerScript.Panel2Collapsed = false;
+
+                        _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
+                        ScriptObject scriptObject = (ScriptObject)uiScriptTabControl.SelectedTab.Tag;
+                        if (scriptObject != null)
+                        {
+                            _scriptVariables = scriptObject.ScriptVariables;
+                            _scriptArguments = scriptObject.ScriptArguments;
+                            _scriptElements = scriptObject.ScriptElements;
+
+                            if (!_isRunTaskCommand)
+                            {
+                                ResetVariableArgumentBindings();
+                            }
+                        }
+                        break;
+                    case ".py":
+                    case ".tag":
+                    case ".cs":
+                        _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
+                        splitContainerScript.Panel2Collapsed = true;
+                        break;
+                }
+                          
             }
         }
 
@@ -41,7 +60,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             try
             {
-                Image closeImage = new Bitmap(imgListTabControl.Images[0]);
+                Image closeImage = Resources.close_button;
                 Rectangle tabRect = tabControl.GetTabRect(e.Index);
                 tabRect.Offset(2, 2);
                 string title = tabControl.TabPages[e.Index].Text + "  ";
@@ -123,7 +142,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
             }
 
-            OpenFile(tabFilePath);
+            OpenOpenBotsFile(tabFilePath);
         }
 
         private void reloadAllTabsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -149,7 +168,23 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             foreach (string path in tabFilePaths)
-                OpenFile(path);
+            {
+                switch (Path.GetExtension(path).ToLower())
+                {
+                    case ".obscript":
+                        OpenOpenBotsFile(path);
+                        break;
+                    case ".py":
+                        OpenTextEditorFile(path, ProjectType.Python);
+                        break;
+                    case ".tag":
+                        OpenTextEditorFile(path, ProjectType.TagUI);
+                        break;
+                    case ".cs":
+                        OpenTextEditorFile(path, ProjectType.CSScript);
+                        break;
+                }
+            }               
 
             uiScriptTabControl.SelectedIndex = currentTabIndex;
         }
@@ -224,21 +259,33 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private DialogResult CheckForUnsavedScript(TabPage tab)
         {
             DialogResult result = new DialogResult();
-            if (tab.Text.Contains(" *"))
+            if (tab.Text.EndsWith(" *"))
             {
-                result = MessageBox.Show($"Would you like to save {tab.Name}.json before closing this tab?",
-                                         $"Save {tab.Name}.json", MessageBoxButtons.YesNoCancel);
+                string tabName = tab.Text.Replace(" *", "");
+                result = MessageBox.Show($"Would you like to save '{tabName}' before closing this tab?",
+                                         $"Save '{tabName}'", MessageBoxButtons.YesNoCancel);
 
                 if (result == DialogResult.Yes)
                 {
                     ClearSelectedListViewItems();
                     uiScriptTabControl.SelectedTab = tab;
 
-                    if (!SaveToFile(false))
+                    if (_selectedTabScriptActions is ListView)
                     {
-                        result = DialogResult.Cancel;
-                        return result;
+                        if (!SaveToOpenBotsFile(false))
+                        {
+                            result = DialogResult.Cancel;
+                            return result;
+                        }
                     }
+                    else
+                    {
+                        if (!SaveToTextEditorFile(false))
+                        {
+                            result = DialogResult.Cancel;
+                            return result;
+                        }
+                    }                  
                 }
                 else if (result == DialogResult.Cancel)
                     return result;
