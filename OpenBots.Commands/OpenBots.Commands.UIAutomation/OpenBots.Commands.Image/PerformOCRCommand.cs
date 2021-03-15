@@ -16,7 +16,7 @@ namespace OpenBots.Commands.Image
 {
 	[Serializable]
 	[Category("Image Commands")]
-	[Description("This command extracts text from an image file.")]
+	[Description("This command extracts text from an image file using Microsoft OneNote.")]
 	public class PerformOCRCommand : ScriptCommand
 	{
 
