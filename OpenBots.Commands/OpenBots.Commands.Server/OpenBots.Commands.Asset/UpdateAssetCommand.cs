@@ -67,6 +67,10 @@ namespace OpenBots.Commands.Asset
 		[Browsable(false)]
 		private List<Control> _assetValueControls;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public UpdateAssetCommand()
 		{
 			CommandName = "UpdateAssetCommand";
@@ -74,9 +78,7 @@ namespace OpenBots.Commands.Asset
 			CommandEnabled = true;
 			CommandIcon = Resources.command_asset;
 
-			v_AssetType = "Text";
 			CommonMethods.InitializeDefaultWebProtocol();
-
 		}
 
 		public override void RunCommand(object sender)
@@ -122,14 +124,11 @@ namespace OpenBots.Commands.Asset
 
 			_uploadPathControls = new List<Control>();
 			_uploadPathControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AssetFilePath", this, editor));
-			foreach (var ctrl in _uploadPathControls)
-				ctrl.Visible = false;
 			RenderedControls.AddRange(_uploadPathControls);
 
 			_assetValueControls = new List<Control>();
 			_assetValueControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AssetValue", this, editor));
-			foreach (var ctrl in _assetValueControls)
-				ctrl.Visible = false;
+
 			RenderedControls.AddRange(_assetValueControls);
 
 			return RenderedControls;
@@ -143,9 +142,20 @@ namespace OpenBots.Commands.Asset
 				return base.GetDisplayValue() + $" ['{v_AssetName}' of Type '{v_AssetType}' With File '{v_AssetFilePath}']";
 		}
 
+		public override void Shown()
+		{
+			base.Shown();
+			_hasRendered = true;
+			if (v_AssetType == null)
+			{
+				v_AssetType = "Text";
+				((ComboBox)RenderedControls[4]).Text = v_AssetType;
+			}
+		}
+
 		private void AssetTypeComboBox_SelectedValueChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[4]).Text == "File")
+			if (((ComboBox)RenderedControls[4]).Text == "File" && _hasRendered)
 			{
 				foreach (var ctrl in _uploadPathControls)
 					ctrl.Visible = true;
@@ -157,7 +167,7 @@ namespace OpenBots.Commands.Asset
 						((TextBox)ctrl).Clear();
 				}
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _uploadPathControls)
 				{
@@ -170,5 +180,5 @@ namespace OpenBots.Commands.Asset
 					ctrl.Visible = true;
 			}
 		}
-	}
+    }
 }

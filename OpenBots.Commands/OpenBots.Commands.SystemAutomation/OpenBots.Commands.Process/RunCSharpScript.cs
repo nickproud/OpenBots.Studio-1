@@ -89,6 +89,10 @@ namespace OpenBots.Commands.Process
 		[Browsable(false)]
 		private List<Control> _outputControls;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public RunCSharpScriptCommand()
 		{
 			CommandName = "RunCSharpScriptCommand";
@@ -102,9 +106,7 @@ namespace OpenBots.Commands.Process
 				TableName = "VariableArgumentsDataTable" + DateTime.Now.ToString("MMddyy.hhmmss")
 			};
 
-			v_ArgumentType = "In-Studio Variables";
 			v_HasOutput = "No";
-
 			v_VariableArgumentsDataTable.Columns.Add("Argument Values");
 		}
 
@@ -182,25 +184,37 @@ namespace OpenBots.Commands.Process
 			return RenderedControls;
 		}
 
-		public override string GetDisplayValue()
+        public override string GetDisplayValue()
 		{
 			return base.GetDisplayValue() + $" [C# Script Path '{v_ScriptPath}']";
 		}
 
+		public override void Shown()
+		{
+			base.Shown();
+			_hasRendered = true;
+			if (v_ArgumentType == null)
+			{
+				v_ArgumentType = "In-Studio Variables";
+				((ComboBox)RenderedControls[5]).Text = v_ArgumentType;
+			}
+		}
+
 		private void ArgumentTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[5]).Text == "In-Studio Variables")
+			if (((ComboBox)RenderedControls[5]).Text == "In-Studio Variables" && _hasRendered)
 			{
+
 				foreach (var ctrl in _variableInputControls)
 					ctrl.Visible = true;
-
-				foreach (var ctrl in _commandLineInputControls) {
+				foreach (var ctrl in _commandLineInputControls)
+				{
 					ctrl.Visible = false;
 					if (ctrl is TextBox)
 						((TextBox)ctrl).Clear();
 				}
 			}
-			else
+			else if (_hasRendered)
 			{
 				foreach (var ctrl in _variableInputControls)
 				{
@@ -211,9 +225,7 @@ namespace OpenBots.Commands.Process
 					}
 				}
 				foreach (var ctrl in _commandLineInputControls)
-				{
 					ctrl.Visible = true;
-				}
 			}
 		}
 

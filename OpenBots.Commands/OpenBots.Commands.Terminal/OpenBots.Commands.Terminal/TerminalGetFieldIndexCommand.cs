@@ -82,6 +82,10 @@ namespace OpenBots.Commands.Terminal
 		[Browsable(false)]
 		private List<Control> _fieldTextControls;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public TerminalGetFieldIndexCommand()
 		{
 			CommandName = "TerminalGetFieldIndexCommand";
@@ -90,7 +94,6 @@ namespace OpenBots.Commands.Terminal
 			CommandIcon = Resources.command_system;
 
 			v_InstanceName = "DefaultTerminal";
-			v_Option = "Row/Col Position";
 		}
 
 		public override void RunCommand(object sender)
@@ -163,9 +166,20 @@ namespace OpenBots.Commands.Terminal
 
 		}
 
+		public override void Shown()
+		{
+			base.Shown();
+			_hasRendered = true;
+			if (v_Option == null)
+			{
+				v_Option = "Row/Col Position";
+				((ComboBox)RenderedControls[3]).Text = v_Option;
+			}
+		}
+
 		private void searchOptionComboBox_SelectedValueChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Row/Col Position")
+			if (((ComboBox)RenderedControls[3]).Text == "Row/Col Position" && _hasRendered)
 			{
 				foreach (var ctrl in _rowColumnControls)
 					ctrl.Visible = true;
@@ -177,7 +191,7 @@ namespace OpenBots.Commands.Terminal
 						((TextBox)ctrl).Clear();
 				}
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _rowColumnControls)
 				{

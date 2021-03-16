@@ -154,6 +154,7 @@ namespace OpenBots.UI.Forms
         private void frmCommandEditor_Shown(object sender, EventArgs e)
         {
             FormBorderStyle = FormBorderStyle.Sizable;
+            SelectedCommand.Shown();
         }
 
         private void frmCommandEditor_Resize(object sender, EventArgs e)

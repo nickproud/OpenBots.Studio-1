@@ -68,6 +68,10 @@ namespace OpenBots.Commands.Asset
 		[Browsable(false)]
 		private List<Control> _outputVariableControls;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public GetAssetCommand()
 		{
 			CommandName = "GetAssetCommand";
@@ -75,9 +79,7 @@ namespace OpenBots.Commands.Asset
 			CommandEnabled = true;
 			CommandIcon = Resources.command_asset;
 
-			v_AssetType = "Text";
 			CommonMethods.InitializeDefaultWebProtocol();
-
 		}
 
 		public override void RunCommand(object sender)
@@ -151,9 +153,20 @@ namespace OpenBots.Commands.Asset
 
 		}
 
+		public override void Shown()
+		{
+			base.Shown();
+			_hasRendered = true;
+			if (v_AssetType == null)
+			{
+				v_AssetType = "Text";
+				((ComboBox)RenderedControls[4]).Text = v_AssetType;
+			}
+		}
+
 		private void AssetTypeComboBox_SelectedValueChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[4]).Text == "File")
+			if (((ComboBox)RenderedControls[4]).Text == "File" && _hasRendered)
 			{
 				foreach (var ctrl in _downloadPathControls)
 					ctrl.Visible = true;
@@ -165,7 +178,7 @@ namespace OpenBots.Commands.Asset
 						((TextBox)ctrl).Clear();
 				}
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _downloadPathControls)
 				{
