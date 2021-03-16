@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Task
 		[JsonIgnore]
 		[Browsable(false)]
 		private List<ScriptArgument> _argumentList;
-
+		 
 		[JsonIgnore]
 		[Browsable(false)]
 		private IfrmScriptEngine _childfrmScriptEngine;
@@ -363,9 +363,7 @@ namespace OpenBots.Commands.Task
 						ArgumentValue = argumentValue,
 						ArgumentType = argumentType
 					});
-				}
-
-					
+				}					
                 else if (argumentDirection == "Out")
                 {
 					_argumentList.Add(new ScriptArgument
