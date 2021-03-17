@@ -796,8 +796,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
-                ScriptVariables = _scriptVariables,
-                ScriptArguments = _scriptArguments
+                ScriptVariables = new List<ScriptVariable>(_scriptVariables),
+                ScriptArguments = new List<ScriptArgument>(_scriptArguments)
             };
 
             if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
@@ -805,11 +805,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 Invalidate();
                 _scriptVariables = scriptVariableEditor.ScriptVariables;
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
-                    uiScriptTabControl.SelectedTab.Text += " *";
-
-                ResetVariableArgumentBindings();
+                    uiScriptTabControl.SelectedTab.Text += " *"; 
             }
 
+            ResetVariableArgumentBindings();
             scriptVariableEditor.Dispose();
         }
 
@@ -831,8 +830,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
-                ScriptArguments = _scriptArguments,
-                ScriptVariables = _scriptVariables
+                ScriptVariables = new List<ScriptVariable>(_scriptVariables),
+                ScriptArguments = new List<ScriptArgument>(_scriptArguments)
             };
 
             if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
@@ -840,10 +839,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptArguments = scriptArgumentEditor.ScriptArguments;
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
-
-                ResetVariableArgumentBindings();
             }
 
+            ResetVariableArgumentBindings();
             scriptArgumentEditor.Dispose();
         }
 

@@ -54,6 +54,7 @@ namespace OpenBots.Commands.Data
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
 
+			v_TextOperation = "To Upper Case";
 		}
 
 		public override void RunCommand(object sender)
