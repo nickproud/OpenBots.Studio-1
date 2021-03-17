@@ -88,7 +88,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             frmScriptElements scriptElementEditor = new frmScriptElements
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
-                ScriptElements = ScriptElements
+                ScriptElements = new List<ScriptElement>(ScriptElements)
             };
 
             if (scriptElementEditor.ShowDialog() == DialogResult.OK)

@@ -417,7 +417,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void pbElements_Click(object sender, EventArgs e)
         {
             frmScriptElements scriptElementForm = new frmScriptElements();
-            scriptElementForm.ScriptElements = ScriptElements;
+            scriptElementForm.ScriptElements = new List<ScriptElement>(ScriptElements);
             scriptElementForm.ShowDialog();
 
             if (scriptElementForm.DialogResult == DialogResult.OK)

@@ -863,7 +863,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             frmScriptElements scriptElementEditor = new frmScriptElements
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
-                ScriptElements = _scriptElements
+                ScriptElements = new List<ScriptElement>(_scriptElements)
             };
 
             if (scriptElementEditor.ShowDialog() == DialogResult.OK)
