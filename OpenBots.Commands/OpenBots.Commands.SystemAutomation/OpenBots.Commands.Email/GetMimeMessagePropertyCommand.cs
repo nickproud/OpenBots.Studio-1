@@ -77,7 +77,7 @@ namespace OpenBots.Commands.Email
 
         public GetMimeMessagePropertyCommand()
         {
-            CommandName = "GetMimeEmailProperty";
+            CommandName = "GetMimeMessagePropertyCommand";
             SelectionName = "Get MimeMessage Property";
             CommandEnabled = true;
             CommandIcon = Resources.command_smtp;

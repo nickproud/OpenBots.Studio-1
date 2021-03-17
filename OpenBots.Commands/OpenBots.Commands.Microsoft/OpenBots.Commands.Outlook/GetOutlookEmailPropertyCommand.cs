@@ -5,7 +5,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -112,7 +111,7 @@ namespace OpenBots.Commands.Outlook
 
         public GetOutlookEmailPropertyCommand()
         {
-            CommandName = "GetOutlookEmailProperty";
+            CommandName = "GetOutlookEmailPropertyCommand";
             SelectionName = "Get Outlook Email Property";
             CommandEnabled = true;
             CommandIcon = Resources.command_smtp;
