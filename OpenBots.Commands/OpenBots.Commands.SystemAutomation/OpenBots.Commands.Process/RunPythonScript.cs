@@ -58,9 +58,11 @@ namespace OpenBots.Commands.Process
 			string scriptPath = v_ScriptPath.ConvertUserVariableToString(engine);
 			string scriptArgs = v_ScriptArgs.ConvertUserVariableToString(engine);
 
+			string pythonExecutable = CommonMethods.GetPythonPath(Environment.UserName, "");
+
 			scriptProc.StartInfo = new Diagnostics.ProcessStartInfo()
 			{
-				FileName = "python.exe",
+				FileName = pythonExecutable,
 				Arguments = $"\"{scriptPath}\" " + scriptArgs,
 				CreateNoWindow = true,
 				UseShellExecute = false,
