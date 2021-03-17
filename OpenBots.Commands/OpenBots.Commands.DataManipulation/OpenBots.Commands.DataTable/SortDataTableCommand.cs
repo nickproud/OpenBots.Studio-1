@@ -56,6 +56,15 @@ namespace OpenBots.Commands.DataTable
 		public string v_SortType { get; set; }
 
 		[Required]
+		[DisplayName("Sort Order")]
+		[PropertyUISelectionOption("Alphabetical")]
+		[PropertyUISelectionOption("Numeric")]
+		[Description("Select whether the DataTable should be sorted alphabetically or numerically.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_SortOrder { get; set; }
+
+		[Required]
 		[Editable(false)]
 		[DisplayName("Output Sorted DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
@@ -73,6 +82,7 @@ namespace OpenBots.Commands.DataTable
 
 			v_Option = "Column Index";
 			v_SortType = "Ascending";
+			v_SortOrder = "Alphabetical";
 		}
 
 		public override void RunCommand(object sender)
@@ -96,17 +106,29 @@ namespace OpenBots.Commands.DataTable
 				columnName = valueIndex;
 			}
 
-			DataView dataView = dataTable.DefaultView;
-
 			if (v_SortType == "Ascending")
 			{
-				dataView.Sort = columnName + " ASC";
+				if (v_SortOrder == "Alphabetical")
+					dataTable = (from row in dataTable.AsEnumerable()
+								 orderby row[columnName].ToString() ascending
+								 select row).CopyToDataTable();
+				else
+					dataTable = (from row in dataTable.AsEnumerable()
+								 orderby Convert.ToInt32(row[columnName]) ascending
+								 select row).CopyToDataTable();
 			}
 			else if (v_SortType == "Descending")
 			{
-				dataView.Sort = columnName + " DESC";
+				if (v_SortOrder == "Alphabetical")
+					dataTable = (from row in dataTable.AsEnumerable()
+								 orderby row[columnName].ToString() descending
+								 select row).CopyToDataTable();
+				else
+					dataTable = (from row in dataTable.AsEnumerable()
+								 orderby Convert.ToInt32(row[columnName]) descending
+								 select row).CopyToDataTable();
 			}
-			dataView.ToTable().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			dataTable.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -117,6 +139,7 @@ namespace OpenBots.Commands.DataTable
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataValueIndex", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SortType", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SortOrder", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
