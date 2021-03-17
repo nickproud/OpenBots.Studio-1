@@ -14,11 +14,13 @@
 //limitations under the License.
 using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
+using OpenBots.Core.Project;
 using OpenBots.Core.Settings;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.Forms;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
+using OpenBots.Utilities;
 using Serilog.Core;
 using System;
 using System.Diagnostics;
@@ -74,7 +76,19 @@ namespace OpenBots
                 //initialize Logger
                 string engineLoggerFilePath = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
                 Logger engineLogger = new Logging().CreateFileLogger(engineLoggerFilePath, Serilog.RollingInterval.Day);
-                Application.Run(new frmScriptEngine(configPath, engineLogger));
+
+                ProjectType projectType = Project.OpenProject(configPath).ProjectType;
+                switch (projectType)
+                {
+                    case ProjectType.OpenBots:
+                        Application.Run(new frmScriptEngine(configPath, engineLogger));
+                        break;
+                    case ProjectType.Python:
+                    case ProjectType.TagUI:
+                    case ProjectType.CSScript:
+                        ExecutionManager.RunTextEditorProject(configPath);
+                        break;
+                }                
             }
             else if (appSettings.ClientSettings.StartupMode == "Builder Mode")
             {

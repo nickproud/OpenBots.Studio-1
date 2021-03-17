@@ -197,7 +197,7 @@ namespace OpenBots.Core.Project
                 if (excludedFiles.Any(e => Path.GetExtension(zipEntry.Name) == e))
                     continue;
 
-                string entryFileName = zipEntry.Name;
+                string entryFileName = Uri.UnescapeDataString(zipEntry.Name);
 
                 // 4K is optimum
                 byte[] buffer = new byte[4096];

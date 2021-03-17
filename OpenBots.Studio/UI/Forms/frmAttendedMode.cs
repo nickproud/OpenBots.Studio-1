@@ -4,11 +4,11 @@ using OpenBots.Core.Project;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Utilities;
 using Serilog.Core;
 using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms
@@ -106,11 +106,13 @@ namespace OpenBots.UI.Forms
 
             string configPath;
             string projectPath;
+            ProjectType projectType;
 
             try
             {                
                 configPath = Project.ExtractGalleryProject(newProjectPath);
                 projectPath = Directory.GetParent(configPath).ToString();
+                projectType = Project.OpenProject(configPath).ProjectType;
             }
             catch (Exception ex)
             {
@@ -119,30 +121,39 @@ namespace OpenBots.UI.Forms
                 return;
             }
 
-            var projectName = new DirectoryInfo(projectPath).Name;
-            //initialize Logger
-            Logger engineLogger = null;
-            switch (_appSettings.EngineSettings.LoggingSinkType)
+            switch (projectType)
             {
-                case SinkType.File:
-                    if (string.IsNullOrEmpty(_appSettings.EngineSettings.LoggingValue1.Trim()))
-                        _appSettings.EngineSettings.LoggingValue1 = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
+                case ProjectType.OpenBots:
+                    var projectName = new DirectoryInfo(projectPath).Name;
+                    //initialize Logger
+                    Logger engineLogger = null;
+                    switch (_appSettings.EngineSettings.LoggingSinkType)
+                    {
+                        case SinkType.File:
+                            if (string.IsNullOrEmpty(_appSettings.EngineSettings.LoggingValue1.Trim()))
+                                _appSettings.EngineSettings.LoggingValue1 = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
 
-                    engineLogger = new Logging().CreateFileLogger(_appSettings.EngineSettings.LoggingValue1, Serilog.RollingInterval.Day,
-                        _appSettings.EngineSettings.MinLogLevel);
+                            engineLogger = new Logging().CreateFileLogger(_appSettings.EngineSettings.LoggingValue1, Serilog.RollingInterval.Day,
+                                _appSettings.EngineSettings.MinLogLevel);
+                            break;
+                        case SinkType.HTTP:
+                            engineLogger = new Logging().CreateHTTPLogger(projectName, _appSettings.EngineSettings.LoggingValue1, _appSettings.EngineSettings.MinLogLevel);
+                            break;
+                    }
+
+                    frmScriptEngine newEngine = new frmScriptEngine(configPath, engineLogger);
+                    newEngine.ShowDialog();
+                    newEngine.Dispose();
                     break;
-                case SinkType.HTTP:
-                    engineLogger = new Logging().CreateHTTPLogger(projectName, _appSettings.EngineSettings.LoggingValue1, _appSettings.EngineSettings.MinLogLevel);
-                    break;               
+                case ProjectType.Python:
+                case ProjectType.TagUI:
+                case ProjectType.CSScript:
+                    ExecutionManager.RunTextEditorProject(configPath);
+                    break;
             }
             
-            frmScriptEngine newEngine = new frmScriptEngine(configPath, engineLogger);
-            newEngine.ShowDialog();
-
             if (Directory.Exists(newProjectPath))
                 Directory.Delete(newProjectPath, true);
-
-            newEngine.Dispose();
         }
 
         private void attendedScriptWatcher_Created(object sender, FileSystemEventArgs e)

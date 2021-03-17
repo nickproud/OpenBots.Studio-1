@@ -1,5 +1,7 @@
 ﻿using CSScriptLibrary;
 using Microsoft.Win32;
+using OpenBots.Core.Enums;
+using OpenBots.Core.Project;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +19,24 @@ namespace OpenBots.Utilities
 
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = false)]
         public static extern bool PathFindOnPath([In, Out] StringBuilder pszFile, [In] string[] ppszOtherDirs);
+
+        public static void RunTextEditorProject(string configPath)
+        {
+            Project project = Project.OpenProject(configPath);
+            string mainPath = Path.Combine(new FileInfo(configPath).DirectoryName, project.Main);
+            switch (project.ProjectType)
+            {
+                case ProjectType.Python:
+                    RunPythonAutomation(mainPath, new object[] { });
+                    break;
+                case ProjectType.TagUI:
+                    RunTagUIAutomation(mainPath, new FileInfo(configPath).DirectoryName, new object[] { });
+                    break;
+                case ProjectType.CSScript:
+                    RunCSharpAutomation(mainPath, new object[] { });
+                    break;
+            }
+        }
 
         public static void RunPythonAutomation(string scriptPath, object[] scriptArgs)
         {
