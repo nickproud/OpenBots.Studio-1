@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -18,7 +17,7 @@ using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Data
 {
-	[Serializable]
+    [Serializable]
 	[Category("Data Commands")]
 	[Description("This command performs advanced text extraction.")]
 	public class TextExtractionCommand : ScriptCommand
@@ -66,7 +65,6 @@ namespace OpenBots.Commands.Data
 			SelectionName = "Text Extraction";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
-			v_TextExtractionType = "Extract All After Text";
 
 			//define parameter table
 			v_TextExtractionTable = new OBDataTable
@@ -131,7 +129,7 @@ namespace OpenBots.Commands.Data
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_TextExtractionType", this));
 			var selectionControl = commandControls.CreateDropdownFor("v_TextExtractionType", this);
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_TextExtractionType", this, new Control[] { selectionControl }, editor));
-			selectionControl.SelectedIndexChanged += TextExtraction_SelectedIndexChanged;
+			selectionControl.SelectionChangeCommitted += TextExtraction_SelectionChangeCommitted;
 			RenderedControls.Add(selectionControl);
 
 			var textExtractionGridViewControls = new List<Control>();
@@ -155,7 +153,7 @@ namespace OpenBots.Commands.Data
 			return base.GetDisplayValue() + $" [Extract Text From '{v_InputText}' - Store Text in '{v_OutputUserVariableName}']";
 		}
 
-		private void TextExtraction_SelectedIndexChanged(object sender, EventArgs e)
+		private void TextExtraction_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			ComboBox extractionAction = (ComboBox)sender;
 			v_TextExtractionTable.Rows.Clear();
