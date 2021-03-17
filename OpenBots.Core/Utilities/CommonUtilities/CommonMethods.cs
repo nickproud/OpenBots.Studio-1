@@ -473,7 +473,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public static string GetPythonPath(string username, string requiredVersion = "")
         {
-
             var possiblePythonLocations = new List<string>()
             {
                 @"HKLM\SOFTWARE\Python\PythonCore\",
