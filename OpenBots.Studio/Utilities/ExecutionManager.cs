@@ -1,14 +1,11 @@
 ﻿using CSScriptLibrary;
-using Microsoft.Win32;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Project;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
 using System.Text;
 
 namespace OpenBots.Utilities
@@ -41,7 +38,7 @@ namespace OpenBots.Utilities
         public static void RunPythonAutomation(string scriptPath, object[] scriptArgs)
         {
             string error = "";
-            string pythonExecutable = GetPythonPath(Environment.UserName, "");
+            string pythonExecutable = CommonMethods.GetPythonPath(Environment.UserName, "");
 
             if (!string.IsNullOrEmpty(pythonExecutable))
             {
@@ -67,79 +64,6 @@ namespace OpenBots.Utilities
 
             if (!string.IsNullOrEmpty(error))
                 throw new Exception(error);
-        }
-
-        private static string GetPythonPath(string username, string requiredVersion = "")
-        {
-
-            var possiblePythonLocations = new List<string>()
-            {
-                @"HKLM\SOFTWARE\Python\PythonCore\",
-                @"HKLM\SOFTWARE\Wow6432Node\Python\PythonCore\"
-            };
-
-            try
-            {
-                NTAccount f = new NTAccount(username);
-                SecurityIdentifier s = (SecurityIdentifier)f.Translate(typeof(SecurityIdentifier));
-                string sidString = s.ToString();
-                possiblePythonLocations.Add($@"HKU\{sidString}\SOFTWARE\Python\PythonCore\");
-            }
-            catch
-            {
-                throw new Exception("Unabled to retrieve SID for provided user.");
-            }
-
-            Version requestedVersion = new Version(requiredVersion == "" ? "0.0.1" : requiredVersion);
-
-            //Version number, install path
-            Dictionary<Version, string> pythonLocations = new Dictionary<Version, string>();
-
-            foreach (string possibleLocation in possiblePythonLocations)
-            {
-                var regVals = possibleLocation.Split(new[] { '\\' }, 2);
-                var rootKey = (regVals[0] == "HKLM" ? RegistryHive.LocalMachine : RegistryHive.Users);
-                var regView = (Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Registry32);
-                var hklm = RegistryKey.OpenBaseKey(rootKey, regView);
-                RegistryKey theValue = hklm.OpenSubKey(regVals[1]);
-
-                if (theValue == null)
-                    continue;
-
-                foreach (var version in theValue.GetSubKeyNames())
-                {
-                    RegistryKey productKey = theValue.OpenSubKey(version);
-                    if (productKey != null)
-                    {
-                        try
-                        {
-                            string pythonExePath = productKey.OpenSubKey("InstallPath").GetValue("ExecutablePath").ToString();
-                            if (pythonExePath != null && pythonExePath != "")
-                            {
-                                pythonLocations.Add(Version.Parse(version), pythonExePath);
-                            }
-                        }
-                        catch
-                        {
-                        }
-                    }
-                }
-            }
-
-            if (pythonLocations.Count == 0)
-                throw new Exception("No installed Python versions found.");
-
-            int max = pythonLocations.Max(x => x.Key.CompareTo(requestedVersion));
-            requestedVersion = pythonLocations.First(x => x.Key.CompareTo(requestedVersion) == max).Key;
-
-            if (pythonLocations.ContainsKey(requestedVersion))
-            {
-                return pythonLocations[requestedVersion];
-            }
-            else
-            {
-                throw new Exception($"Required Python version [{requiredVersion}] or higher was not found on the machine.");
-            }
         }
 
         public static void RunCSharpAutomation(string scriptPath, object[] scriptArgs)
