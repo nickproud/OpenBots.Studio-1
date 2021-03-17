@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Excel
 
 		[Required]
 		[DisplayName("Image Scale Percentage")]
-		[Description("Enter the scale image percentage to enlarge or reduce the pysical size of image.")]
+		[Description("Enter the image scale percentage to enlarge or reduce the size of the rendered image.")]
 		[SampleUsage("75 || {vImageScalePercentage}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
