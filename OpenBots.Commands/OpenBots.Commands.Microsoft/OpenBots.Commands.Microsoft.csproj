@@ -65,7 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OpenBots.Commands.Excel\ExcelAddImageToCell.cs" />
+    <Compile Include="OpenBots.Commands.Excel\ExcelWriteImageToCell.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelGetTableRangeCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelSortTableCommand.cs" />
     <Compile Include="Library\ExcelHelper.cs" />
