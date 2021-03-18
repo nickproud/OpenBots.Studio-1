@@ -69,9 +69,14 @@ namespace OpenBots.Studio.Utilities
                 try
                 {
                     var newTypes = assem.GetTypes()?
-                                        .Where(x => x.IsVisible && x.IsPublic && !x.IsInterface && !x.IsAbstract 
-                                                              && x.Namespace != null && !x.Namespace.StartsWith("OpenBots"))
+                                        .Where(x => x.IsVisible && x.IsPublic && !x.IsInterface && !x.IsAbstract &&
+                                                    x.Namespace != null && !x.Namespace.StartsWith("OpenBots"))
                                         .ToList();
+
+                    //special inclusion for MailItem and IWebElement interface types
+                    newTypes.AddRange(assem.GetTypes()?
+                                           .Where(x => x.Name == "MailItem" || x.Name == "IWebElement")
+                                           .ToList());
 
                     if (newTypes.Count > 0 && !groupedTypes.ContainsKey($"{assem.GetName().Name} [{assem.GetName().Version}]"))
                         groupedTypes.Add($"{assem.GetName().Name} [{assem.GetName().Version}]", newTypes);
