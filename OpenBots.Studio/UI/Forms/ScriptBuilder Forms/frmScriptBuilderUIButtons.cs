@@ -23,6 +23,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
@@ -557,12 +558,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private bool SaveAllFiles()
         {
-            bool isSuccessfulSaveAll = false;
+            bool isSuccessfulSaveAll;
             TabPage currentTab = uiScriptTabControl.SelectedTab;
             foreach (TabPage openTab in uiScriptTabControl.TabPages)
             {
                 uiScriptTabControl.SelectedTab = openTab;
-
                 //clear selected items
                 ClearSelectedListViewItems();
 
@@ -575,6 +575,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return isSuccessfulSaveAll;
             }
             uiScriptTabControl.SelectedTab = currentTab;
+            Thread.Sleep(100);
             isSuccessfulSaveAll = true;
 
             return isSuccessfulSaveAll;
