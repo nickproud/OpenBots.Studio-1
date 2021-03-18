@@ -38,7 +38,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("Hello || {vItem}")]
 		[Remarks("List item can only be a String, DataTable, MailItem or IWebElement.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement)})]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement)}, true)]
 		public string v_ListItem { get; set; }
 
 		public AddListItemCommand()

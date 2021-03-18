@@ -45,15 +45,13 @@ namespace OpenBots.Commands.WebBrowser
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." + 
 			"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("{vSearchParameter}" +
-					 "\n\tXPath : //*[@id=\"features\"]/div[2]/div/h2" +
-					 "\n\tID: 1" +
-					 "\n\tName: myName" +
-					 "\n\tTag Name: h1" +
-					 "\n\tClass Name: myClass" +
-					 "\n\tCSS Selector: [attribute=value]" +
-					 "\n\tLink Text: https://www.mylink.com/"
-					)]
+		[SampleUsage("XPath : //*[@id=\"features\"]/div[2]/div/h2/div[{var1}]/div" +
+				 "\n\tID: 1" +
+				 "\n\tName: my{var2}Name" +
+				 "\n\tTag Name: h1" +
+				 "\n\tClass Name: myClass" +
+				 "\n\tCSS Selector: [attribute=value]" +
+				 "\n\tLink Text: https://www.mylink.com/")]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
@@ -521,6 +519,7 @@ namespace OpenBots.Commands.WebBrowser
 
 			//create search param grid
 			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_SeleniumSearchParameters", this);
+			_searchParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 
 			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
 			enabled.HeaderText = "Enabled";

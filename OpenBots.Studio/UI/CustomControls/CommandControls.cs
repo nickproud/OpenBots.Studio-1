@@ -266,8 +266,8 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
                 {
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
                 };
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
@@ -284,8 +284,8 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
@@ -396,8 +396,8 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
                 {
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
                 };
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
@@ -414,8 +414,8 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments,
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
@@ -637,8 +637,8 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
                 {
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
                 };
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
@@ -655,8 +655,8 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments,
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)

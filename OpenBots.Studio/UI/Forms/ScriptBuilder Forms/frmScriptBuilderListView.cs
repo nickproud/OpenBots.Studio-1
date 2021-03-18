@@ -313,14 +313,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //create clone of current command so databinding does not affect if changes are not saved
                     editCommand.OriginalCommand = CommonMethods.Clone(currentCommand);
 
-                    //set variables
-                    editCommand.ScriptEngineContext.Variables = _scriptVariables;
-
-                    //set arguments 
-                    editCommand.ScriptEngineContext.Arguments = _scriptArguments;
-
-                    //set elements
-                    editCommand.ScriptEngineContext.Elements = _scriptElements;
+                    editCommand.ScriptEngineContext.Variables = new List<ScriptVariable>(_scriptVariables);
+                    editCommand.ScriptEngineContext.Arguments = new List<ScriptArgument>(_scriptArguments);
+                    editCommand.ScriptEngineContext.Elements = new List<ScriptElement>(_scriptElements);
 
                     editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
 
@@ -337,7 +332,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                         _scriptVariables = editCommand.ScriptEngineContext.Variables;
                         _scriptArguments = editCommand.ScriptEngineContext.Arguments;
-                        ResetVariableArgumentBindings();
                     }
 
                     if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
@@ -347,6 +341,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         HTMLElementRecorderURL = editCommand.HTMLElementRecorderURL;
                     }
 
+                    ResetVariableArgumentBindings();
                     editCommand.Dispose();
                 }
             }

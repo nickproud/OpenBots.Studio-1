@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Process
 
 		public StopProcessCommand()
 		{
-			CommandName = "StopProgramCommand";
+			CommandName = "StopProcessCommand";
 			SelectionName = "Stop Process";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_stop_process;

@@ -11,13 +11,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
+
 namespace OpenBots.Commands.Process
 {
     [Serializable]
 	[Category("Programs/Process Commands")]
 	[Description("This command runs a Powershell script or program and waits for it to exit before proceeding.")]
 
-	public class RunScriptCommand : ScriptCommand
+	public class RunPowershellScriptCommand : ScriptCommand
 	{
 
 		[Required]
@@ -39,7 +40,7 @@ namespace OpenBots.Commands.Process
 		[CompatibleTypes(null, true)]
 		public string v_ScriptArgs { get; set; }
 
-		public RunScriptCommand()
+		public RunPowershellScriptCommand()
 		{
 			CommandName = "RunPowershellScriptCommand";
 			SelectionName = "Run Powershell Script";

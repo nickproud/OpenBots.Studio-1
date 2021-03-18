@@ -281,11 +281,11 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             if (specificCommand != "")
                 newCommandForm.DefaultStartupCommand = specificCommand;
 
-            newCommandForm.ScriptEngineContext.Variables = ScriptVariables;
-            newCommandForm.ScriptEngineContext.Elements = ScriptElements;
-            newCommandForm.ScriptEngineContext.Arguments = ScriptArguments;
-            newCommandForm.ScriptEngineContext.Container = AContainer;
+            newCommandForm.ScriptEngineContext.Variables = new List<ScriptVariable>(ScriptVariables);
+            newCommandForm.ScriptEngineContext.Arguments = new List<ScriptArgument>(ScriptArguments);
+            newCommandForm.ScriptEngineContext.Elements = new List<ScriptElement>(ScriptElements);
 
+            newCommandForm.ScriptEngineContext.Container = AContainer;
             newCommandForm.ScriptEngineContext.ProjectPath = ScriptProjectPath;
             newCommandForm.HTMLElementRecorderURL = HTMLElementRecorderURL;
 
@@ -297,8 +297,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 AddCommandToListView(newCommandForm.SelectedCommand);
 
                 ScriptVariables = newCommandForm.ScriptEngineContext.Variables;
-                ScriptArguments = newCommandForm.ScriptEngineContext.Arguments;
-                ResetVariableArgumentBindings();
+                ScriptArguments = newCommandForm.ScriptEngineContext.Arguments;                
             }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
@@ -308,6 +307,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 HTMLElementRecorderURL = newCommandForm.HTMLElementRecorderURL;
             }
 
+            ResetVariableArgumentBindings();
             newCommandForm.Dispose();
         }
 
