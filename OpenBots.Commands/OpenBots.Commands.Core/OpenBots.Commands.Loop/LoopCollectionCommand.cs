@@ -51,6 +51,7 @@ namespace OpenBots.Commands.Loop
 			SelectionName = "Loop Collection";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_startloop;
+			ScopeStartCommand = true;
 		}
 
 		public override void RunCommand(object sender, ScriptAction parentCommand)

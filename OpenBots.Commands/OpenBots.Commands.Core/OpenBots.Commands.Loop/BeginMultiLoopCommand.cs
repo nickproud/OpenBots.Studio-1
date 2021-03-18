@@ -52,6 +52,7 @@ namespace OpenBots.Commands.Loop
 			SelectionName = "Begin Multi Loop";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_startloop;
+			ScopeStartCommand = true;
 
 			v_LogicType = "And";
 			v_LoopConditionsTable = new DataTable();

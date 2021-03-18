@@ -55,6 +55,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.deleteSelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openShortcutMenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runFromThisCommandToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyTray = new System.Windows.Forms.NotifyIcon(this.components);
             this.pnlControlContainer = new System.Windows.Forms.Panel();
             this.grpSearch = new OpenBots.UI.CustomControls.CustomUIControls.UIGroupBox();
@@ -367,9 +368,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.pasteSelectedCodeToolStripMenuItem,
             this.deleteSelectedCodeToolStripMenuItem,
             this.viewCodeToolStripMenuItem,
-            this.openShortcutMenuToolStripMenuItem});
+            this.openShortcutMenuToolStripMenuItem,
+            this.runFromThisCommandToolStripMenuItem});
             this.cmsScriptActions.Name = "cmsScriptActions";
-            this.cmsScriptActions.Size = new System.Drawing.Size(329, 256);
+            this.cmsScriptActions.Size = new System.Drawing.Size(329, 312);
             // 
             // enableSelectedCodeToolStripMenuItem
             // 
@@ -441,6 +443,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.openShortcutMenuToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
             this.openShortcutMenuToolStripMenuItem.Text = "Open Shortcut Menu";
             this.openShortcutMenuToolStripMenuItem.Click += new System.EventHandler(this.openShortcutMenuToolStripMenuItem_Click);
+            // 
+            // runFromThisCommandToolStripMenuItem
+            // 
+            this.runFromThisCommandToolStripMenuItem.Name = "runFromThisCommandToolStripMenuItem";
+            this.runFromThisCommandToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
+            this.runFromThisCommandToolStripMenuItem.Text = "Run From This Command";
+            this.runFromThisCommandToolStripMenuItem.Click += new System.EventHandler(this.runFromThisCommandToolStripMenuItem_Click);
             // 
             // notifyTray
             // 
@@ -1475,7 +1484,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.arguments.Location = new System.Drawing.Point(4, 4);
             this.arguments.Name = "arguments";
             this.arguments.Padding = new System.Windows.Forms.Padding(3);
-            this.arguments.Size = new System.Drawing.Size(1422, 197);
+            this.arguments.Size = new System.Drawing.Size(1358, 197);
             this.arguments.TabIndex = 1;
             this.arguments.Text = "Arguments";
             this.arguments.UseVisualStyleBackColor = true;
@@ -1494,7 +1503,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.Name = "dgvArguments";
             this.dgvArguments.RowHeadersWidth = 51;
             this.dgvArguments.RowTemplate.Height = 24;
-            this.dgvArguments.Size = new System.Drawing.Size(1416, 191);
+            this.dgvArguments.Size = new System.Drawing.Size(1352, 191);
             this.dgvArguments.TabIndex = 2;
             this.dgvArguments.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEndEdit);
             this.dgvArguments.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEnter);
@@ -2470,6 +2479,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private DataGridViewTextBoxColumn variableName;
         private DataGridViewComboBoxColumn VariableType;
         private DataGridViewTextBoxColumn variableValue;
+        private ToolStripMenuItem runFromThisCommandToolStripMenuItem;
     }
 }
 

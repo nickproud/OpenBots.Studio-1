@@ -1064,7 +1064,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             debugToolStripMenuItem_Click(sender, e);
         }
 
-        private void RunOBScript()
+        private void RunOBScript(int startLineNumber = 1)
         {
             if (_selectedTabScriptActions.Items.Count == 0)
             {
@@ -1109,7 +1109,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     break;
             }
 
-            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null);
+            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null, startLineNumber);
 
             //initialize Engine
             CurrentEngine = new frmScriptEngine(engineContext, false, _isDebugMode);
@@ -1119,8 +1119,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             ((frmScriptEngine)CurrentEngine).Show();
         }
 
-        
-
+        private void RunFromThisCommand()
+        {
+            if (_selectedTabScriptActions is ListView)
+            {
+                SaveToOpenBotsFile(false);
+                var commandLineNumber = ((ScriptCommand)_selectedTabScriptActions.SelectedItems[0].Tag).LineNumber;
+                RunOBScript(commandLineNumber);
+            }
+        }
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
         {         

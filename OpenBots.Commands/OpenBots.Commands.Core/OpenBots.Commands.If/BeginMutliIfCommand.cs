@@ -51,6 +51,7 @@ namespace OpenBots.Commands.If
 			SelectionName = "Begin Multi If";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_begin_multi_if;
+			ScopeStartCommand = true;
 
 			v_LogicType = "And";
 			v_IfConditionsTable = new DataTable();

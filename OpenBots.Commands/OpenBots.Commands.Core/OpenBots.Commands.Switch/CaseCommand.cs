@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Switch
 			SelectionName = "Case";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_case;
-
+			ScopeStartCommand = true;
 		}
 
 		public override void RunCommand(object sender)
