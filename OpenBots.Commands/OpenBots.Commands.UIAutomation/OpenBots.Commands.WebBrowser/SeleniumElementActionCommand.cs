@@ -46,9 +46,9 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." + 
 			"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
 		[SampleUsage("{vSearchParameter}" +
-					 "\n\tXPath : //*[@id=\"features\"]/div[2]/div/h2" +
+					 "\n\tXPath : //*[@id=\"features\"]/div[2]/div/h2/div[{var1}]/div" +
 					 "\n\tID: 1" +
-					 "\n\tName: myName" +
+					 "\n\tName: my{var2}Name" +
 					 "\n\tTag Name: h1" +
 					 "\n\tClass Name: myClass" +
 					 "\n\tCSS Selector: [attribute=value]" +
