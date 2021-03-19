@@ -28,7 +28,7 @@ namespace OpenBots.Commands.File.Test
 
             Assert.False(IO.File.Exists(inputPath));
 
-            IO.File.Create(Path.Combine(projectDirectory, @"Resources\toDelete.txt"));
+            IO.File.Create(Path.Combine(projectDirectory, @"Resources\toDelete.txt")).Close();
         }
 
         [Fact]

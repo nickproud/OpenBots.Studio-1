@@ -129,9 +129,10 @@ namespace OpenBots.UI.Forms
             lblError.Text = "";
             ExistingConfigPath = txtExistingProjectLocation.Text.Trim();
             if (ExistingConfigPath == string.Empty || !File.Exists(ExistingConfigPath) ||
-                Path.GetFileName(ExistingConfigPath) != "project.obconfig")
+                (Path.GetFileName(ExistingConfigPath) != "project.obconfig" &&
+                Path.GetFileName(ExistingConfigPath) != "project.config"))
             {
-                lblError.Text = "Error: Please enter a valid project.obconfig path";
+                lblError.Text = "Error: Please enter a valid config file path";
             }
             else
             {

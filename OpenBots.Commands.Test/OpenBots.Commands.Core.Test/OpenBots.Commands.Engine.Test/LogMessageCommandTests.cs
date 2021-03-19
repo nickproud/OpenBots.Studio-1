@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Engine.Test
             }
 
             OBIO.File.Delete(inputPath);
-            OBIO.File.Create(inputPath);
+            OBIO.File.Create(inputPath).Close();
         }
     }
 }

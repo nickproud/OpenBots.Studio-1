@@ -122,9 +122,9 @@ namespace OpenBots.Core.Project
                     {
                         dialogMessageFirstLine = $"Attempting to open a 'project.obconfig' from a version of OpenBots Studio older than 1.2.0.0.";
                     }
-                    //if project version is lower than than 1.3.0.0
-                    else if (new Version(project.Version).CompareTo(new Version("1.4.0.0")) < 0)
-                    {
+                    //if project version is lower than than 1.4.0.0
+                    else if (new Version(project.Version).CompareTo(new Version(Application.ProductVersion)) < 0)
+                    {                      
                         dialogMessageFirstLine = $"Attempting to open a 'project.obconfig' from OpenBots Studio version {project.Version}.";
 
                         var dialogResult = MessageBox.Show($"{dialogMessageFirstLine} " +
@@ -134,6 +134,9 @@ namespace OpenBots.Core.Project
 
                         if (dialogResult == DialogResult.Yes)
                         {
+                            if (new Version(project.Version).CompareTo(new Version("1.4.0.0")) < 0)
+                                configFilePath = ConvertProjectTo1400(configFilePath, project);
+
                             project.Version = Application.ProductVersion;
                             var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
                             project.Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
@@ -148,6 +151,26 @@ namespace OpenBots.Core.Project
             {
                 throw new Exception("project.obconfig Not Found");
             }
+        }
+
+        private static string ConvertProjectTo1400(string configFilePath, Project project)
+        {
+            //convert project to 1.4.0.0
+            string configExtension = Path.GetExtension(configFilePath);
+            if (configExtension == ".config")
+            {
+                FileInfo oldConfig = new FileInfo(configFilePath);
+                File.Move(configFilePath, configFilePath.Replace(".config", ".obconfig"));
+                configFilePath = Path.Combine(oldConfig.DirectoryName, "project.obconfig");
+
+                string projectJSONString = File.ReadAllText(configFilePath);
+                project.Main = project.Main.Replace(".json", ".obscript");
+
+                var projectScriptFiles = Directory.GetFiles(oldConfig.DirectoryName, "*.json", SearchOption.AllDirectories).ToList();
+                projectScriptFiles.ForEach(x => File.Move(x, x.Replace(".json", ".obscript")));
+            }
+
+            return configFilePath;
         }
 
         public static string ExtractGalleryProject(string projectDirectory)

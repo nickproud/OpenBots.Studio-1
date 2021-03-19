@@ -99,7 +99,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 try
                 {
                     //open project
-                    Project project = Project.OpenProject(projectBuilder.ExistingConfigPath);
+                    string existingConfigPath = projectBuilder.ExistingConfigPath;
+                    Project project = Project.OpenProject(existingConfigPath);
+
+                    if (existingConfigPath.EndsWith(".config"))
+                        existingConfigPath = existingConfigPath.Replace(".config", ".obconfig");
+
                     string mainFileName = project.Main;
 
                     string mainFilePath = Directory.GetFiles(projectBuilder.ExistingProjectPath, mainFileName, SearchOption.AllDirectories).FirstOrDefault();
@@ -108,7 +113,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     NotifySync("Loading package assemblies...", Color.White);
 
-                    var assemblyList = NugetPackageManager.LoadPackageAssemblies(projectBuilder.ExistingConfigPath);
+                    var assemblyList = NugetPackageManager.LoadPackageAssemblies(existingConfigPath);
                     _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
                     AContainer = _builder.Build();
 
@@ -234,7 +239,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     case ProjectType.Python:
                         File.WriteAllText(mainScriptPath, _helloWorldTextPython);
-                        File.Create(Path.Combine(new FileInfo(mainScriptPath).Directory.FullName, "requirements.txt"));
+                        File.Create(Path.Combine(new FileInfo(mainScriptPath).Directory.FullName, "requirements.txt")).Close();
                         break;
                     case ProjectType.TagUI:
                         File.WriteAllText(mainScriptPath, _helloWorldTextTagUI);
@@ -808,7 +813,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         OpenTextEditorFile(newFilePath, ProjectType.CSScript);
                         break;
                     default:
-                        File.Create(newFilePath);
+                        File.Create(newFilePath).Close();
                         NewNode(tvProject.SelectedNode, newFilePath, "file");
                         return;
                 }

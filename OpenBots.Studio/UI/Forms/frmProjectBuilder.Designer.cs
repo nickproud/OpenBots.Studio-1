@@ -96,9 +96,9 @@
             this.lblOpenProjectDescription.Location = new System.Drawing.Point(362, 198);
             this.lblOpenProjectDescription.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblOpenProjectDescription.Name = "lblOpenProjectDescription";
-            this.lblOpenProjectDescription.Size = new System.Drawing.Size(326, 28);
+            this.lblOpenProjectDescription.Size = new System.Drawing.Size(324, 28);
             this.lblOpenProjectDescription.TabIndex = 20;
-            this.lblOpenProjectDescription.Text = "Open project.obconfig of Existing Project";
+            this.lblOpenProjectDescription.Text = "Project Config File Path";
             // 
             // txtExistingProjectLocation
             // 
@@ -279,7 +279,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
-            this.ClientSize = new System.Drawing.Size(701, 380);
+            this.ClientSize = new System.Drawing.Size(703, 380);
             this.Controls.Add(this.lblProjectType);
             this.Controls.Add(this.cbxProjectType);
             this.Controls.Add(this.btnRecentProjects);

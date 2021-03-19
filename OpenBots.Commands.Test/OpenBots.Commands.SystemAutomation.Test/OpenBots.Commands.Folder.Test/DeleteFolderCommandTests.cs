@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Folder.Test
             Assert.False(Directory.Exists(inputPath));
 
             OBIO.Directory.CreateDirectory(inputPath);
-            OBIO.File.Create(Path.Combine(inputPath + @"\toDelete.txt"));
+            OBIO.File.Create(Path.Combine(inputPath + @"\toDelete.txt")).Close();
         }
     }
 }

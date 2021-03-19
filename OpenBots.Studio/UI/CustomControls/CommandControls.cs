@@ -392,6 +392,7 @@ namespace OpenBots.UI.CustomControls
 
         private void StandardComboBox_KeyDown(object sender, KeyEventArgs e)
         {
+            var comboBox = ((ComboBox)sender);
             if (e.Control && e.KeyCode == Keys.K)
             {
                 frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
@@ -405,7 +406,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
 
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        ((ComboBox)sender).Text = "{" + scriptVariableEditor.LastModifiedVariableName + "}";
+                        comboBox.Text = string.Concat("{", scriptVariableEditor.LastModifiedVariableName, "}");
                 }
 
                 scriptVariableEditor.Dispose();
@@ -423,7 +424,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
 
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        ((ComboBox)sender).Text = "{" + scriptArgumentEditor.LastModifiedArgumentName + "}";
+                        comboBox.Text = string.Concat("{", scriptArgumentEditor.LastModifiedArgumentName, "}");
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -463,7 +464,74 @@ namespace OpenBots.UI.CustomControls
             gridView.BorderStyle = BorderStyle.Fixed3D;
             gridView.Tag = new CommandControlValidationContext(parameterName, parent);
             gridView.DataBindingComplete += GridView_DataBindingComplete;
+            gridView.KeyDown += DataGridView_KeyDown;
+            gridView.KeyPress += DataGridView_KeyPress;
             return gridView;
+        }
+
+        private void DataGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            DataGridView targetDGV = (DataGridView)sender;
+
+            if (e.Control && e.KeyCode == Keys.K)
+            {
+                if (targetDGV.SelectedCells.Count == 0)
+                    return;
+
+                if (targetDGV.SelectedCells[0].ReadOnly == true || targetDGV.SelectedCells[0] is DataGridViewComboBoxCell)
+                    return;
+
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
+                {
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
+                };
+
+                if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
+                {
+                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
+
+                    if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
+                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + string.Concat("{", scriptVariableEditor.LastModifiedVariableName, "}");
+                }
+
+                scriptVariableEditor.Dispose();
+            }
+            else if (e.Control && e.KeyCode == Keys.J)
+            {
+                if (targetDGV.SelectedCells.Count == 0)
+                    return;
+
+                if (targetDGV.SelectedCells[0].ReadOnly == true || targetDGV.SelectedCells[0] is DataGridViewComboBoxCell)
+                    return;
+
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
+                {
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
+                };
+
+                if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
+                {
+                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
+
+                    if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
+                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + string.Concat("{", scriptArgumentEditor.LastModifiedArgumentName, "}");
+                }
+
+                scriptArgumentEditor.Dispose();
+            }
+            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
+                return;
+            else if (e.KeyCode == Keys.Enter)
+                _currentEditor.uiBtnAdd_Click(null, null);
+        }
+
+        private void DataGridView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //Control + K or Control + J
+            if (e.KeyChar == '\v' || e.KeyChar == '\n')
+                e.Handled = true;
         }
 
         private void GridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
@@ -621,65 +689,7 @@ namespace OpenBots.UI.CustomControls
                 controlList.Add(helperControl);
             }
 
-            if(targetControls.FirstOrDefault() is DataGridView)
-            {
-                targetControls.FirstOrDefault().KeyDown += DataGridView_KeyDown;
-                targetControls.FirstOrDefault().KeyPress += DataGridView_KeyPress;
-            }
-
             return controlList;
-        }
-
-        private void DataGridView_KeyDown(object sender, KeyEventArgs e)
-        {
-            DataGridView dataGridView = (DataGridView)sender;
-            if (e.Control && e.KeyCode == Keys.K)
-            {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
-                {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
-                };
-
-                if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
-                {
-                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-
-                    if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        dataGridView.CurrentCell.Value = "{" + scriptVariableEditor.LastModifiedVariableName + "}";                   
-                }
-
-                scriptVariableEditor.Dispose();
-            }
-            else if (e.Control && e.KeyCode == Keys.J)
-            {
-                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
-                {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
-                };
-
-                if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
-                {
-                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-
-                    if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        dataGridView.CurrentCell.Value = "{" + scriptArgumentEditor.LastModifiedArgumentName + "}";
-                }
-
-                scriptArgumentEditor.Dispose();
-            }
-            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
-                return;
-            else if (e.KeyCode == Keys.Enter)
-                _currentEditor.uiBtnAdd_Click(null, null);
-        }
-
-        private void DataGridView_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //Control + K or Control + J
-            if (e.KeyChar == '\v' || e.KeyChar == '\n')
-                e.Handled = true;
         }
 
         private void ShowCodeBuilder(object sender, EventArgs e)
@@ -776,16 +786,25 @@ namespace OpenBots.UI.CustomControls
                         return;
                     }
 
-                    targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value +
-                        string.Concat("{", newVariableSelector.ReturnVariableArgument, "}");
+                    int selectedCellRowIndex = targetDGV.SelectedCells[0].RowIndex;
+                    int selectedCellColumnIndex = targetDGV.SelectedCells[0].ColumnIndex;
 
+                    if (targetDGV.Rows.Count == targetDGV.SelectedCells[0].RowIndex + 1 && targetDGV.AllowUserToAddRows == true)
+                    {
+                        DataRow newRow = ((DataTable)targetDGV.DataSource).NewRow();
+                        ((DataTable)targetDGV.DataSource).Rows.Add(newRow);
+                        targetDGV.EndEdit();
+                    }
+
+                    targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value = 
+                        targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value + string.Concat("{", newVariableSelector.ReturnVariableArgument, "}");
+                    
                     //TODO - Insert variables at cursor position instead of at the end of a cell
                     //targetDGV.CurrentCell = targetDGV.SelectedCells[0];
                     //targetDGV.BeginEdit(false);
                     //TextBox editor = (TextBox)targetDGV.EditingControl;
                     //editor.Text = editor.Text.Insert(editor.SelectionStart, string.Concat("{",
                     //    newVariableSelector.lstVariables.SelectedItem.ToString(), "}"));
-
                 }
             }
 
