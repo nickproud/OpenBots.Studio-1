@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Switch
 			SelectionName = "Switch";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_begin_switch;
-
+			ScopeStartCommand = true;
 		}
 
 		public override void RunCommand(object sender, ScriptAction parentCommand)

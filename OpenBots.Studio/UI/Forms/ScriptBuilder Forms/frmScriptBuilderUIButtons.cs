@@ -23,6 +23,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
@@ -557,12 +558,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private bool SaveAllFiles()
         {
-            bool isSuccessfulSaveAll = false;
+            bool isSuccessfulSaveAll;
             TabPage currentTab = uiScriptTabControl.SelectedTab;
             foreach (TabPage openTab in uiScriptTabControl.TabPages)
             {
                 uiScriptTabControl.SelectedTab = openTab;
-
                 //clear selected items
                 ClearSelectedListViewItems();
 
@@ -575,6 +575,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return isSuccessfulSaveAll;
             }
             uiScriptTabControl.SelectedTab = currentTab;
+            Thread.Sleep(100);
             isSuccessfulSaveAll = true;
 
             return isSuccessfulSaveAll;
@@ -1062,7 +1063,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             debugToolStripMenuItem_Click(sender, e);
         }
 
-        private void RunOBScript()
+        private void RunOBScript(int startLineNumber = 1)
         {
             if (_selectedTabScriptActions.Items.Count == 0)
             {
@@ -1107,7 +1108,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     break;
             }
 
-            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null);
+            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null, startLineNumber);
 
             //initialize Engine
             CurrentEngine = new frmScriptEngine(engineContext, false, _isDebugMode);
@@ -1117,8 +1118,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             ((frmScriptEngine)CurrentEngine).Show();
         }
 
-        
-
+        private void RunFromThisCommand()
+        {
+            if (_selectedTabScriptActions is ListView)
+            {
+                SaveToOpenBotsFile(false);
+                var commandLineNumber = ((ScriptCommand)_selectedTabScriptActions.SelectedItems[0].Tag).LineNumber;
+                RunOBScript(commandLineNumber);
+            }
+        }
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
         {         

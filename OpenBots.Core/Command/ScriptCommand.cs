@@ -36,6 +36,9 @@ namespace OpenBots.Core.Command
 		[Browsable(false)]
 		public bool CommandEnabled { get; set; }
 
+		[Browsable(false)]
+		public bool ScopeStartCommand { get; set; }
+
 		[DisplayName("Private (Optional)")]
 		[Description("Optional field to mark the command as private (data sensitive) in order to avoid its logging.")]
 		[SampleUsage("")]

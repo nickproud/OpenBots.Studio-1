@@ -19,13 +19,16 @@ namespace OpenBots.Core.Model.EngineModel
         public Dictionary<string, object> AppInstances { get; set; }
         public IfrmScriptEngine ScriptEngine { get; set; }
         public bool IsTest { get; set; } = false;
+        public int StartFromLineNumber { get; set; } = 1;
+
         public EngineContext()
         {
 
         }
 
         public EngineContext(string filePath, string projectPath, IContainer container, IfrmScriptBuilder scriptBuilder, Logger engineLogger,
-            List<ScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, object> appInstances, IfrmScriptEngine scriptEngine)
+            List<ScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, object> appInstances, 
+            IfrmScriptEngine scriptEngine, int startFromLineNumber)
         {
             FilePath = filePath;
             ProjectPath = projectPath;
@@ -37,6 +40,7 @@ namespace OpenBots.Core.Model.EngineModel
             Elements = elements;
             AppInstances = appInstances;
             ScriptEngine = scriptEngine;
+            StartFromLineNumber = startFromLineNumber;
         }
     }
 }

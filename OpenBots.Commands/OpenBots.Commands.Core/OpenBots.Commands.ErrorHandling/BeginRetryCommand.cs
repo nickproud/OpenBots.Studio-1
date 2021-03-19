@@ -36,7 +36,7 @@ namespace OpenBots.Commands.ErrorHandling
 		public string v_RetryCount { get; set; }
 
 		[Required]
-		[DisplayName("Retry Interval")]
+		[DisplayName("Retry Interval (Seconds)")]
 		[Description("Enter or provide the amount of time (in seconds) between each retry.")]
 		[SampleUsage("5 || {vRetryInterval}")]
 		[Remarks("")]
@@ -76,7 +76,9 @@ namespace OpenBots.Commands.ErrorHandling
 			SelectionName = "Begin Retry";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_try;
+			ScopeStartCommand = true;
 
+			v_RetryInterval = "0";
 			v_LogicType = "And";
 			v_IfConditionsTable = new DataTable();
 			v_IfConditionsTable.TableName = DateTime.Now.ToString("MultiIfConditionTable" + DateTime.Now.ToString("MMddyy.hhmmss"));

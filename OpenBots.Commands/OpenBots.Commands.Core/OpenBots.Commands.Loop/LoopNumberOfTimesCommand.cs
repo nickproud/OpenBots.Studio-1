@@ -44,6 +44,7 @@ namespace OpenBots.Commands.Loop
 			SelectionName = "Loop Number Of Times";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_startloop;
+			ScopeStartCommand = true;
 
 			v_LoopStart = "0";
 		}

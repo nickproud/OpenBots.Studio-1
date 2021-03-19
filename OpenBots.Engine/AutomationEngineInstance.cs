@@ -264,7 +264,12 @@ namespace OpenBots.Engine
                 }
 
                 //execute commands
-                foreach (var executionCommand in automationScript.Commands)
+                ScriptAction startCommand = automationScript.Commands.Where(x => x.ScriptCommand.LineNumber <= AutomationEngineContext.StartFromLineNumber)
+                                                                         .Last();
+
+                int startCommandIndex = automationScript.Commands.FindIndex(x => x.ScriptCommand.LineNumber == startCommand.ScriptCommand.LineNumber);
+
+                while (startCommandIndex < automationScript.Commands.Count)
                 {
                     if (IsCancellationPending)
                     {
@@ -273,7 +278,8 @@ namespace OpenBots.Engine
                         return;
                     }
 
-                    ExecuteCommand(executionCommand);
+                    ExecuteCommand(automationScript.Commands[startCommandIndex]);
+                    startCommandIndex++;
                 }
 
                 if (IsCancellationPending)
@@ -302,6 +308,13 @@ namespace OpenBots.Engine
 
             if (parentCommand == null)
                 return;
+
+            //in RunFromThisCommand exection, determine if/loop logic. If logic returns true, skip until reaching the selected command
+            if (!parentCommand.ScopeStartCommand && parentCommand.LineNumber < AutomationEngineContext.StartFromLineNumber)
+                return;
+            //if the selected command is within a loop/retry, reset starting line number so that previous commands within the scope run in the following iteration
+            else if (!parentCommand.ScopeStartCommand && parentCommand.LineNumber == AutomationEngineContext.StartFromLineNumber)
+                AutomationEngineContext.StartFromLineNumber = 1;
 
             if (AutomationEngineContext.ScriptEngine != null && (parentCommand.CommandName == "RunTaskCommand" || parentCommand.CommandName == "ShowMessageCommand"))
                 parentCommand.CurrentScriptBuilder = AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder;

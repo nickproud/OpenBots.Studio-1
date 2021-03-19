@@ -21,7 +21,7 @@ namespace OpenBots.Commands.Loop
             SelectionName = "Loop Continuously";
             CommandEnabled = true;
             CommandIcon = Resources.command_startloop;
-
+            ScopeStartCommand = true;
         }
 
         public override void RunCommand(object sender, ScriptAction parentCommand)

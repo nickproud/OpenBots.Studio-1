@@ -993,6 +993,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             DeleteSelectedCode();
         }
 
+        private void runFromThisCommandToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RunFromThisCommand();
+        }
+
         private void viewCodeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var currentCommand = _selectedTabScriptActions.SelectedItems[0].Tag;
