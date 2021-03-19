@@ -15,8 +15,8 @@ namespace OpenBots.Commands.BZTerminal
 {
     [Serializable]
 	[Category("BlueZone Terminal Commands")]
-	[Description("This command gets text from a specified location on a targeted terminal screen.")]
-	public class BZTerminalGetTextCommand : ScriptCommand
+	[Description("This command gets text from a specified field on a targeted terminal screen.")]
+	public class BZTerminalGetFieldTextCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("BZ Terminal Instance Name")]
@@ -62,10 +62,10 @@ namespace OpenBots.Commands.BZTerminal
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
-		public BZTerminalGetTextCommand()
+		public BZTerminalGetFieldTextCommand()
 		{
-			CommandName = "BZTerminalGetTextCommand";
-			SelectionName = "BZ Get Text";
+			CommandName = "BZTerminalGetFieldTextCommand";
+			SelectionName = "BZ Get Field Text";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_system;
 			v_InstanceName = "DefaultBZTerminal";
@@ -82,10 +82,7 @@ namespace OpenBots.Commands.BZTerminal
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
-			terminalContext.BZTerminalObj.ReadScreen(out object screentext, 2000, 1, 1);
-
-			int startIndex = (mouseY - 1) * 80 + (mouseX - 1);
-			string extractedText = screentext.ToString().Substring(startIndex, length);
+			string extractedText = terminalContext.BZTerminalObj.GetFieldText[mouseY, mouseX, length];
 			extractedText.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 

@@ -80,9 +80,10 @@
     <Compile Include="Library\BZTerminalContext.cs" />
     <Compile Include="Library\GlobalHook.cs" />
     <Compile Include="Library\TerminalKeys.cs" />
+    <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalGetTextCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalGetScreenTextCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalPromptForPasswordCommand.cs" />
-    <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalGetTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalGetFieldTextCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalSetCursorCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalSetTextCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalSetPasswordCommand.cs" />
@@ -137,17 +138,6 @@
     <EmbeddedResource Include="Forms\OpenEmulator.resx">
       <DependentUpon>OpenEmulator.cs</DependentUpon>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="BZWHLLLib">
-      <Guid>{B04B8681-A2CE-11D5-903D-00105AABADD3}</Guid>
-      <VersionMajor>7</VersionMajor>
-      <VersionMinor>1</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
