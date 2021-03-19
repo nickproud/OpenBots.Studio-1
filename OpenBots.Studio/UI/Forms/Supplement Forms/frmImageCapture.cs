@@ -174,7 +174,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void uiAccept_Click(object sender, EventArgs e)
         {
 
-            if (_selectWidth == 0)
+            if (_selectWidth <= 0 || _selectHeight <= 0)
             {
                 MessageBox.Show("Please capture before accepting!");
                 return;
