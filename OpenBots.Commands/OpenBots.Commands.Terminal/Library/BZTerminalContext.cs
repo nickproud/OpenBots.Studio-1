@@ -1,4 +1,4 @@
-﻿//using BZWHLLLib;
+﻿using BZWHLLLib;
 using System;
 using System.IO;
 using System.Security;
@@ -7,8 +7,8 @@ namespace OpenBots.Commands.Terminal.Library
 {
     public class BZTerminalContext
     {
-        public dynamic BZTerminalObj { get; set; }
-        //public WhllObj BZTerminalObj { get; set; }
+        //public dynamic BZTerminalObj { get; set; }
+        public WhllObj BZTerminalObj { get; set; }
         public string Username { get; set; }
         public SecureString Password { get; set; }
 
@@ -18,8 +18,8 @@ namespace OpenBots.Commands.Terminal.Library
             if (!Directory.Exists(blueZonePath))
                 throw new DirectoryNotFoundException("Unable to find BlueZone in Program Files (x86).");
 
-            BZTerminalObj = Activator.CreateInstance(Type.GetTypeFromProgID("BZWhll.WhllObj"));
-            //BZTerminalObj = new WhllObj();
+            //BZTerminalObj = Activator.CreateInstance(Type.GetTypeFromProgID("BZWhll.WhllObj"));
+            BZTerminalObj = new WhllObj();
         }
     }
 }
