@@ -37,8 +37,7 @@ namespace OpenBots.Commands.ServerEmail
         [CompatibleTypes(null, true)]
         public string v_ToRecipients { get; set; }
 
-        [Required]
-        [DisplayName("CC Recipient(s)")]
+        [DisplayName("CC Recipient(s) (Optional)")]
         [Description("Enter the email address(es) of the 'CC' recipient(s).")]
         [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
         [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
@@ -46,8 +45,7 @@ namespace OpenBots.Commands.ServerEmail
         [CompatibleTypes(null, true)]
         public string v_CCRecipients { get; set; }
 
-        [Required]
-        [DisplayName("BCC Recipient(s)")]
+        [DisplayName("BCC Recipient(s) (Optional)")]
         [Description("Enter the email address(es) of the BCC recipient(s).")]
         [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
         [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
