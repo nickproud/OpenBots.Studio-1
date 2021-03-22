@@ -17,8 +17,8 @@ using OBFile = System.IO.File;
 namespace OpenBots.Commands.Email
 {
     [Serializable]
-    [Category("Outlook Commands")]
-    [Description("This command gets attachments from a selected email in Outlook.")]
+    [Category("Email Commands")]
+    [Description("This command gets attachments from a selected email using IMAP protocol.")]
 
     public class GetIMAPEmailAttachmentsCommand : ScriptCommand
     {
