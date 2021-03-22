@@ -201,19 +201,24 @@ namespace OpenBots.UI.Forms
             if (recent.DialogResult == DialogResult.OK)
             {
                 string configPath = Path.Combine(recent.RecentProjectPath, "project.obconfig");
+                string oldconfigPath = Path.Combine(recent.RecentProjectPath, "project.config");
                 if (File.Exists(configPath))
                 {
                     lblError.Text = "";
                     txtExistingProjectLocation.Text = configPath;
                     btnOpenProject_Click(null, null);
                 }
+                else if (File.Exists(oldconfigPath))
+                {
+                    lblError.Text = "";
+                    txtExistingProjectLocation.Text = oldconfigPath;
+                    btnOpenProject_Click(null, null);
+                }
                 else
-                    lblError.Text = "Error: Unable to find 'project.obconfig' for selected Project";
+                    lblError.Text = "Error: Unable to find Config file for selected Project";
             }
 
             recent.Dispose();
-        }
-
-        
+        }      
     }
 }
