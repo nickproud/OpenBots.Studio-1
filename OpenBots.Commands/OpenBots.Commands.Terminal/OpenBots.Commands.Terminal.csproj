@@ -80,14 +80,16 @@
     <Compile Include="Library\BZTerminalContext.cs" />
     <Compile Include="Library\GlobalHook.cs" />
     <Compile Include="Library\TerminalKeys.cs" />
+    <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalGetTextCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalGetScreenTextCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalPromptForPasswordCommand.cs" />
-    <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalGetTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalGetFieldTextCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalSetCursorCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalSetTextCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalSetPasswordCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalPromptForUsernameCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalStoreCredentialsCommand.cs" />
+    <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalWaitReadyCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\CloseBZTerminalSessionCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\CreateBZTerminalSessionCommand.cs" />
     <Compile Include="OpenBots.Commands.BZTerminal\BZTerminalSendKeyCommand.cs" />
