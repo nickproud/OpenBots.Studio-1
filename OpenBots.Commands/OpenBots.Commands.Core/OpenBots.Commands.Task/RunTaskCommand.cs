@@ -254,14 +254,16 @@ namespace OpenBots.Commands.Task
 
 			startFile = startFile.ConvertUserVariableToString(currentScriptEngine);
 			
-			var Sender = (CheckBox)sender;
+			var assignArgCheckBox = (CheckBox)sender;
 
-			_assignmentsGridViewHelper.Visible = Sender.Checked;
+			_assignmentsGridViewHelper.Visible = assignArgCheckBox.Checked;
 
 			//load arguments if selected and file exists
-			if (Sender.Checked && File.Exists(startFile))
+			if (assignArgCheckBox.Checked && File.Exists(startFile))
 			{
 				_assignmentsGridViewHelper.DataSource = v_ArgumentAssignments;
+				DataTable vArgumentAssignmentsCopy = v_ArgumentAssignments.Copy();
+				v_ArgumentAssignments.Clear();
 
 				JObject scriptObject = JObject.Parse(File.ReadAllText(startFile));
 				var arguments = scriptObject["Arguments"].ToObject<List<ScriptArgument>>();
@@ -271,16 +273,21 @@ namespace OpenBots.Commands.Task
 					if (argument.ArgumentName == "ProjectPath")
 						continue;
 
-					DataRow[] foundArguments  = v_ArgumentAssignments.Select("ArgumentName = '" + "{" + argument.ArgumentName + "}" + "'");
-					if (foundArguments.Length == 0)
-					    v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentType, argument.ArgumentValue, argument.Direction.ToString());
+					DataRow foundArguments  = vArgumentAssignmentsCopy.Select("ArgumentName = '" + "{" + argument.ArgumentName + "}" + "'").FirstOrDefault();
+					if (foundArguments != null)
+                    {
+						var foundArgumentValue = foundArguments[2];
+						v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentType, foundArgumentValue, argument.Direction.ToString());
+					}
+                    else
+						v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentType, argument.ArgumentValue, argument.Direction.ToString());
 				}
 
-				for (int i = 0; i < _assignmentsGridViewHelper.Rows.Count; i++)
+                for (int i = 0; i < _assignmentsGridViewHelper.Rows.Count; i++)
 				{
 					DataGridViewComboBoxCell typeComboBox = new DataGridViewComboBoxCell();
-					typeComboBox.Items.Add(arguments[i].ArgumentType);
-					typeComboBox.Tag = arguments[i].ArgumentType;
+					typeComboBox.Items.Add(v_ArgumentAssignments.Rows[i].ItemArray[1]);
+					typeComboBox.Tag = v_ArgumentAssignments.Rows[i].ItemArray[1];
 					_assignmentsGridViewHelper.Rows[i].Cells[1] = typeComboBox;
 					_assignmentsGridViewHelper.Rows[i].Cells[1].ReadOnly = true;
 
@@ -289,11 +296,10 @@ namespace OpenBots.Commands.Task
 					returnComboBox.Items.Add("Out");
 					returnComboBox.Items.Add("InOut");
 					_assignmentsGridViewHelper.Rows[i].Cells[3] = returnComboBox;
-					//make read only until theres a way to cleanly synchronize changes made 
 					_assignmentsGridViewHelper.Rows[i].Cells[3].ReadOnly = true;					
 				}
 			}
-			else if (!Sender.Checked)
+			else if (!assignArgCheckBox.Checked)
 			{
 				v_ArgumentAssignments.Clear();
 			}
