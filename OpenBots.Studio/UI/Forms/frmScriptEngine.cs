@@ -38,6 +38,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Autofac;
 using System.Data;
+using System.ComponentModel;
 
 namespace OpenBots.UI.Forms
 {
@@ -255,7 +256,8 @@ namespace OpenBots.UI.Forms
             {
                 List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, true);
                 Dictionary<string, List<Type>> groupedTypes = new Dictionary<string, List<Type>>();
-                var builder = AppDomainSetupManager.LoadBuilder(assemblyList, groupedTypes);
+                BindingList<string> allNamespaces = new BindingList<string>();
+                var builder = AppDomainSetupManager.LoadBuilder(assemblyList, groupedTypes, allNamespaces);
                 ScriptEngineContext.Container = builder.Build();
             }
 

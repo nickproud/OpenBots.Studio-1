@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using NuGet;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Settings;
@@ -7,14 +8,16 @@ using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using AContainer = Autofac.IContainer;
 
 namespace OpenBots.Studio.Utilities
 {
     public static class TypeMethods
     {       
-        public static List<AutomationCommand> GenerateAutomationCommands(IContainer container)
+        public static List<AutomationCommand> GenerateAutomationCommands(AContainer container)
         {          
             var commandList = new List<AutomationCommand>();
             var commandClasses = new List<Type>();
@@ -43,7 +46,7 @@ namespace OpenBots.Studio.Utilities
             return commandList.Distinct().ToList();
         }
 
-        public static List<Type> GenerateCommandTypes(IContainer container)
+        public static List<Type> GenerateCommandTypes(AContainer container)
         {
             var commandList = new List<AutomationCommand>();
             var commandClasses = new List<Type>();
@@ -88,7 +91,37 @@ namespace OpenBots.Studio.Utilities
             }
         }
 
-        public static Type GetTypeByName(IContainer container, string typeName)
+        public static void GenerateAllNamespaces(List<Assembly> assemblyList, BindingList<string> groupedNamespaces)
+        {
+            groupedNamespaces.Clear();
+
+            try
+            {
+                groupedNamespaces.AddRange(assemblyList
+                                 .SelectMany(a => 
+                                 {
+                                     try 
+                                     {
+                                         return a.GetTypes();
+                                     } 
+                                     catch (Exception) 
+                                     {
+                                         return new Type[] { };
+                                     } 
+                                 })?
+                                 .Select(t => t?.Namespace)
+                                 .Where(n => !string.IsNullOrEmpty(n) && !n.StartsWith("<"))
+                                 .Distinct()
+                                 .OrderBy(n => n)
+                                 .ToList());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }           
+        }
+
+        public static Type GetTypeByName(AContainer container, string typeName)
         {
             using (var scope = container.BeginLifetimeScope())
             {
@@ -117,7 +150,7 @@ namespace OpenBots.Studio.Utilities
             }
         }
 
-        public static object CreateTypeInstance(IContainer container, string typeName)
+        public static object CreateTypeInstance(AContainer container, string typeName)
         {
             var commandType = GetTypeByName(container, typeName);
             return Activator.CreateInstance(commandType);

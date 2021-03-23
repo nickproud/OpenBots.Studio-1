@@ -195,6 +195,7 @@
     <Compile Include="Attributes\PropertyAttributes\SampleUsage.cs" />
     <Compile Include="Command\BrokenCodeCommentCommand.cs" />
     <Compile Include="Command\ScriptCommand.cs" />
+    <Compile Include="Script\ScriptDefaultNamespaces.cs" />
     <Compile Include="Script\ScriptDefaultTypes.cs" />
     <Compile Include="Script\TypeContext.cs" />
     <Compile Include="Utilities\CommonUtilities\CommonMethods.cs" />

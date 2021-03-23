@@ -28,13 +28,14 @@ using OpenBots.UI.Forms.Supplement_Forms;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using IContainer = Autofac.IContainer;
+using AContainer = Autofac.IContainer;
 using Point = System.Drawing.Point;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
@@ -49,6 +50,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private List<ScriptVariable> _scriptVariables;
         private List<ScriptArgument> _scriptArguments;
         private List<ScriptElement> _scriptElements;
+        private List<string> _importedNamespaces;
+        private BindingList<string> _allNamespaces;
         private string _scriptFilePath;
         public string ScriptFilePath
         {
@@ -185,7 +188,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private string _txtCommandWatermark = "Type Here to Search";       
 
         //package manager variables
-        public IContainer AContainer { get; private set; }
+        public AContainer AContainer { get; private set; }
         private ContainerBuilder _builder;
 
         //variable/argument tab variables
@@ -239,7 +242,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             var groupedTypes = new Dictionary<string, List<Type>>();
 
             var defaultTypes = ScriptDefaultTypes.DefaultVarArgTypes;
-            _typeContext = new TypeContext(groupedTypes, defaultTypes);          
+            _typeContext = new TypeContext(groupedTypes, defaultTypes);
+            _importedNamespaces = new List<string>(ScriptDefaultNamespaces.DefaultNamespaces);
+            _allNamespaces = new BindingList<string>();
         }
 
         private void UpdateWindowTitle()
@@ -280,6 +285,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             ArgumentType.DataSource = defaultTypesBinding;
             ArgumentType.DisplayMember = "Key";
             ArgumentType.ValueMember = "Value";
+
+            lbxImportedNamespaces.DataSource = _importedNamespaces;
+            cbxAllNamespaces.DataSource = _allNamespaces;
 
             //set controls double buffered
             foreach (Control control in Controls)
@@ -742,7 +750,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             NotifySync("Loading package assemblies...", Color.White);
             string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-            _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);            
+            _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces);            
             AContainer = _builder.Build();
             LoadCommands(this);
             ReloadAllFiles();
@@ -788,6 +796,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else
                 Notify($"Could not find 'project.obconfig' for {senderLink.Tag}", Color.Red);
         }
+
         #endregion
     }
 }
