@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Windows.Forms.ListBox;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -378,6 +379,29 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
             }
         }
-        #endregion        
+        #endregion
+
+        #region Imported Namespaces
+        private void cbxAllNamespaces_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!_importedNamespaces.Contains(cbxAllNamespaces.SelectedItem.ToString()))
+            {
+                _importedNamespaces.Add(cbxAllNamespaces.SelectedItem.ToString());
+            }
+        }
+
+        private void lbxImportedNamespaces_KeyDown(object sender, KeyEventArgs e)
+        {
+            ListBox listBox = (ListBox)sender;
+            if (Keys.Delete == e.KeyCode)
+            {
+                List<string> removalList = new List<string>();
+                foreach(var item in listBox.SelectedItems)
+                    removalList.Add(item.ToString());
+
+                removalList.ForEach(x => _importedNamespaces.Remove(x));
+            }
+        }
+        #endregion
     }
 }
