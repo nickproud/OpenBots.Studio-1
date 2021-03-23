@@ -332,6 +332,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                         _scriptVariables = editCommand.ScriptEngineContext.Variables;
                         _scriptArguments = editCommand.ScriptEngineContext.Arguments;
+                        uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
                     }
 
                     if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
