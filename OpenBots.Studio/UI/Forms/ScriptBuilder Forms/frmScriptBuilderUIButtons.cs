@@ -531,6 +531,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     Variables = _scriptVariables.Where(x => !string.IsNullOrEmpty(x.VariableName)).ToList(),
                     Arguments = _scriptArguments.Where(x => !string.IsNullOrEmpty(x.ArgumentName)).ToList(),
                     Elements = _scriptElements.Where(x => !string.IsNullOrEmpty(x.ElementName)).ToList(),
+                    ImportedNamespaces = _importedNamespaces,
                     FilePath = ScriptFilePath,
                     Container = AContainer
                 };
@@ -1108,7 +1109,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     break;
             }
 
-            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null, startLineNumber);
+            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null, null, startLineNumber);
 
             //initialize Engine
             CurrentEngine = new frmScriptEngine(engineContext, false, _isDebugMode);

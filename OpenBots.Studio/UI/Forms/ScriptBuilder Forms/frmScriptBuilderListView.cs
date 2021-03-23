@@ -316,6 +316,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     editCommand.ScriptEngineContext.Variables = new List<ScriptVariable>(_scriptVariables);
                     editCommand.ScriptEngineContext.Arguments = new List<ScriptArgument>(_scriptArguments);
                     editCommand.ScriptEngineContext.Elements = new List<ScriptElement>(_scriptElements);
+                    editCommand.ScriptEngineContext.ImportedNamespaces = _importedNamespaces;
 
                     editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
 

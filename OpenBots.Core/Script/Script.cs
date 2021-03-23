@@ -48,6 +48,7 @@ namespace OpenBots.Core.Script
         /// Contains user-selected commands
         /// </summary>
         public List<ScriptAction> Commands;
+        public List<string> ImportedNamespaces;
         public string Version { get; set; }
 
         public Script()
@@ -56,6 +57,7 @@ namespace OpenBots.Core.Script
             Arguments = new List<ScriptArgument>();
             Elements = new List<ScriptElement>();
             Commands = new List<ScriptAction>();
+            ImportedNamespaces = new List<string>();
         }
 
         /// <summary>
@@ -83,6 +85,8 @@ namespace OpenBots.Core.Script
 
             //save elements to file
             script.Elements = engineContext.Elements;
+
+            script.ImportedNamespaces = engineContext.ImportedNamespaces;
 
             //set version to current application version
             script.Version = Application.ProductVersion;

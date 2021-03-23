@@ -50,7 +50,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private List<ScriptVariable> _scriptVariables;
         private List<ScriptArgument> _scriptArguments;
         private List<ScriptElement> _scriptElements;
-        private BindingList<string> _importedNamespaces;
+        private List<string> _importedNamespaces;
         private BindingList<string> _allNamespaces;
         private string _scriptFilePath;
         public string ScriptFilePath
@@ -243,7 +243,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             var defaultTypes = ScriptDefaultTypes.DefaultVarArgTypes;
             _typeContext = new TypeContext(groupedTypes, defaultTypes);
-            _importedNamespaces = new BindingList<string>(ScriptDefaultNamespaces.DefaultNamespaces);
+            _importedNamespaces = new List<string>(ScriptDefaultNamespaces.DefaultNamespaces);
             _allNamespaces = new BindingList<string>();
         }
 
@@ -573,6 +573,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newCommandForm.ScriptEngineContext.Variables = new List<ScriptVariable>(_scriptVariables);
             newCommandForm.ScriptEngineContext.Arguments = new List<ScriptArgument>(_scriptArguments);
             newCommandForm.ScriptEngineContext.Elements = new List<ScriptElement>(_scriptElements);
+            newCommandForm.ScriptEngineContext.ImportedNamespaces = _importedNamespaces;
 
             newCommandForm.ScriptEngineContext.Container = AContainer;
             newCommandForm.ScriptEngineContext.ProjectPath = ScriptProjectPath;
