@@ -578,7 +578,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 AddCommandToListView(newCommandForm.SelectedCommand);
 
                 _scriptVariables = newCommandForm.ScriptEngineContext.Variables;
-                _scriptArguments = newCommandForm.ScriptEngineContext.Arguments;                
+                _scriptArguments = newCommandForm.ScriptEngineContext.Arguments;
+                uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
             }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
