@@ -40,7 +40,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 if (engine.AutomationEngineContext.AppInstances.TryGetValue(instanceName, out object appObject))
                     return appObject;
 
-                throw new Exception("App Instance '" + instanceName + "' not found!");
+                throw new Exception($"App Instance '{instanceName}' not found!");
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 if (engine.AutomationEngineContext.AppInstances.ContainsKey(instanceName))
                     engine.AutomationEngineContext.AppInstances.Remove(instanceName);
                 else
-                    throw new Exception("App Instance '" + instanceName + "' not found!");
+                    throw new Exception($"App Instance '{instanceName}' not found!");
             }
             catch (Exception ex)
             {

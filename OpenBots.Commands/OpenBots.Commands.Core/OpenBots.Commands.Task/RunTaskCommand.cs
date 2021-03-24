@@ -323,9 +323,7 @@ namespace OpenBots.Commands.Task
 			{
 				FilePath = childTaskPath,
 				ProjectPath = parentAutomationEngineInstance.GetProjectPath(),
-
 				EngineLogger = (Logger)engineLogger,
-
 				Container = parentAutomationEngineInstance.AutomationEngineContext.Container,
 			};
 

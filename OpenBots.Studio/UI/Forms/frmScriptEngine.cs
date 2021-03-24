@@ -12,19 +12,20 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
+using Autofac;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
 using OpenBots.Core.Model.EngineModel;
-using OpenBots.Nuget;
 using OpenBots.Core.Project;
-using OpenBots.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.DTOs;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
+using OpenBots.Nuget;
+using OpenBots.Properties;
 using OpenBots.UI.CustomControls;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
@@ -32,13 +33,12 @@ using OpenBots.Utilities;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
-using Autofac;
-using System.Data;
-using System.ComponentModel;
 
 namespace OpenBots.UI.Forms
 {
@@ -256,7 +256,7 @@ namespace OpenBots.UI.Forms
             {
                 List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, true);
                 Dictionary<string, List<Type>> groupedTypes = new Dictionary<string, List<Type>>();
-                BindingList<string> allNamespaces = new BindingList<string>();
+                Dictionary<string, Assembly> allNamespaces = new Dictionary<string, Assembly>();
                 var builder = AppDomainSetupManager.LoadBuilder(assemblyList, groupedTypes, allNamespaces);
                 ScriptEngineContext.Container = builder.Build();
             }

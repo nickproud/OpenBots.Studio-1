@@ -28,7 +28,6 @@ using OpenBots.UI.Forms.Supplement_Forms;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -50,8 +49,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private List<ScriptVariable> _scriptVariables;
         private List<ScriptArgument> _scriptArguments;
         private List<ScriptElement> _scriptElements;
-        private List<string> _importedNamespaces;
-        private BindingList<string> _allNamespaces;
+        private Dictionary<string, Assembly> _importedNamespaces;
+        private Dictionary<string, Assembly> _allNamespaces;
         private string _scriptFilePath;
         public string ScriptFilePath
         {
@@ -243,8 +242,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             var defaultTypes = ScriptDefaultTypes.DefaultVarArgTypes;
             _typeContext = new TypeContext(groupedTypes, defaultTypes);
-            _importedNamespaces = new List<string>(ScriptDefaultNamespaces.DefaultNamespaces);
-            _allNamespaces = new BindingList<string>();
+            _importedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+            _allNamespaces = new Dictionary<string, Assembly>() { { "System", Assembly.GetAssembly(typeof(string)) } };
         }
 
         private void UpdateWindowTitle()
@@ -286,8 +285,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             ArgumentType.DisplayMember = "Key";
             ArgumentType.ValueMember = "Value";
 
-            lbxImportedNamespaces.DataSource = _importedNamespaces;
-            cbxAllNamespaces.DataSource = _allNamespaces;
+            var importedNameSpacesBinding = new BindingSource(_importedNamespaces, null);
+            lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
+            lbxImportedNamespaces.DisplayMember = "Key";
+            lbxImportedNamespaces.ValueMember = "Value";
+
+            var allNameSpacesBinding = new BindingSource(_allNamespaces, null);
+            cbxAllNamespaces.DataSource = allNameSpacesBinding;
+            cbxAllNamespaces.DisplayMember = "Key";
+            cbxAllNamespaces.ValueMember = "Value";
 
             //set controls double buffered
             foreach (Control control in Controls)
@@ -588,7 +594,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 _scriptVariables = newCommandForm.ScriptEngineContext.Variables;
                 _scriptArguments = newCommandForm.ScriptEngineContext.Arguments;
-                uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
+                uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements, _importedNamespaces);
             }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
@@ -798,7 +804,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else
                 Notify($"Could not find 'project.obconfig' for {senderLink.Tag}", Color.Red);
         }
-
         #endregion
     }
 }

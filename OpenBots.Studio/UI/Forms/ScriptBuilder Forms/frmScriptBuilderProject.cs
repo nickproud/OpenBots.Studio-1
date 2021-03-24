@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using VBFileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
 
@@ -188,6 +189,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             List<ScriptVariable> mainScriptVariables = new List<ScriptVariable>();
             List<ScriptArgument> mainScriptArguments = new List<ScriptArgument>();
             List<ScriptElement> mainScriptElements = new List<ScriptElement>();
+            Dictionary<string, Assembly> mainImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
 
             try
             {
@@ -213,6 +215,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     Variables = mainScriptVariables,
                     Arguments = mainScriptArguments,
                     Elements = mainScriptElements,
+                    ImportedNamespaces = mainImportedNamespaces,
                     FilePath = mainScriptPath,
                     Container = AContainer
                 };
@@ -790,6 +793,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         List<ScriptVariable> newScriptVariables = new List<ScriptVariable>();
                         List<ScriptArgument> newScriptArguments = new List<ScriptArgument>();
                         List<ScriptElement> newScriptElements = new List<ScriptElement>();
+                        Dictionary<string, Assembly> newScriptImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
 
                         try
                         {
@@ -809,6 +813,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             Variables = newScriptVariables,
                             Arguments = newScriptArguments,
                             Elements = newScriptElements,
+                            ImportedNamespaces = newScriptImportedNamespaces,
                             FilePath = newFilePath,
                             Container = AContainer
                         };

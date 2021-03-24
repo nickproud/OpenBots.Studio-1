@@ -1590,7 +1590,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.cbxAllNamespaces.Name = "cbxAllNamespaces";
             this.cbxAllNamespaces.Size = new System.Drawing.Size(1354, 31);
             this.cbxAllNamespaces.TabIndex = 1;
-            this.cbxAllNamespaces.SelectedIndexChanged += new System.EventHandler(this.cbxAllNamespaces_SelectedIndexChanged);
+            this.cbxAllNamespaces.SelectionChangeCommitted += new System.EventHandler(this.cbxAllNamespaces_SelectionChangeCommitted);
+            this.cbxAllNamespaces.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cbxAllNamespaces_KeyDown);
             // 
             // lbxImportedNamespaces
             // 

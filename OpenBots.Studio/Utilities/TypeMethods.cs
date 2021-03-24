@@ -91,29 +91,29 @@ namespace OpenBots.Studio.Utilities
             }
         }
 
-        public static void GenerateAllNamespaces(List<Assembly> assemblyList, BindingList<string> groupedNamespaces)
+        public static void GenerateAllNamespaces(List<Assembly> assemblyList, Dictionary<string, Assembly> allNamespaces)
         {
-            groupedNamespaces.Clear();
+            allNamespaces.Clear();
 
             try
             {
-                groupedNamespaces.AddRange(assemblyList
-                                 .SelectMany(a => 
+                allNamespaces.AddRange(assemblyList
+                             .SelectMany(a => 
+                             {
+                                 try 
                                  {
-                                     try 
-                                     {
-                                         return a.GetTypes();
-                                     } 
-                                     catch (Exception) 
-                                     {
-                                         return new Type[] { };
-                                     } 
-                                 })?
-                                 .Select(t => t?.Namespace)
-                                 .Where(n => !string.IsNullOrEmpty(n) && !n.StartsWith("<"))
-                                 .Distinct()
-                                 .OrderBy(n => n)
-                                 .ToList());
+                                     return a.GetTypes();
+                                 } 
+                                 catch (Exception) 
+                                 {
+                                     return new Type[] { };
+                                 } 
+                             })?
+                             .Select(t => new { Key = t?.Namespace, Value = t.Assembly })
+                             .Where(n => !string.IsNullOrEmpty(n.Key) && !n.Key.StartsWith("<"))
+                             .GroupBy(x => x.Key)
+                             .OrderBy(n => n.Key)
+                             .ToDictionary(x => x.Key, x => x.First().Value));
             }
             catch (Exception ex)
             {

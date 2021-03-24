@@ -3,6 +3,7 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
 using Serilog.Core;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace OpenBots.Core.Model.EngineModel
 {
@@ -17,19 +18,18 @@ namespace OpenBots.Core.Model.EngineModel
         public List<ScriptArgument> Arguments { get; set; }
         public List<ScriptElement> Elements { get; set; }
         public Dictionary<string, object> AppInstances { get; set; }
-        public List<string> ImportedNamespaces { get; set; }
+        public Dictionary<string, Assembly> ImportedNamespaces { get; set; }
         public IfrmScriptEngine ScriptEngine { get; set; }
         public bool IsTest { get; set; } = false;
         public int StartFromLineNumber { get; set; } = 1;
 
         public EngineContext()
         {
-
         }
 
         public EngineContext(string filePath, string projectPath, IContainer container, IfrmScriptBuilder scriptBuilder, Logger engineLogger,
             List<ScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, object> appInstances, 
-            List<string> importedNamespaces, IfrmScriptEngine scriptEngine, int startFromLineNumber)
+            Dictionary<string, Assembly> importedNamespaces, IfrmScriptEngine scriptEngine, int startFromLineNumber)
         {
             FilePath = filePath;
             ProjectPath = projectPath;

@@ -45,10 +45,13 @@ namespace OpenBots.Core.Script
         /// </summary>
         public List<ScriptElement> Elements { get; set; }
         /// <summary>
+        /// Contains user-selected assemblies
+        /// </summary>
+        public Dictionary<string, Assembly> ImportedNamespaces { get; set; }
+        /// <summary>
         /// Contains user-selected commands
         /// </summary>
-        public List<ScriptAction> Commands;
-        public List<string> ImportedNamespaces;
+        public List<ScriptAction> Commands;        
         public string Version { get; set; }
 
         public Script()
@@ -57,7 +60,7 @@ namespace OpenBots.Core.Script
             Arguments = new List<ScriptArgument>();
             Elements = new List<ScriptElement>();
             Commands = new List<ScriptAction>();
-            ImportedNamespaces = new List<string>();
+            ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
         }
 
         /// <summary>

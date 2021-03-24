@@ -11,7 +11,7 @@ namespace OpenBots.Nuget
 {
     public class AppDomainSetupManager
     {
-        public static ContainerBuilder LoadBuilder(List<string> assemblyPaths, Dictionary<string, List<Type>> groupedTypes, BindingList<string> groupedNamespaces)
+        public static ContainerBuilder LoadBuilder(List<string> assemblyPaths, Dictionary<string, List<Type>> groupedTypes, Dictionary<string, Assembly> allNamespaces)
         {
             List<Assembly> existingAssemblies = new List<Assembly>();
             foreach(var path in assemblyPaths)
@@ -42,7 +42,7 @@ namespace OpenBots.Nuget
 
             //TODO: limit types to one in loaded assemblies. Previously getting all assemblies instead of just the ones in existingAssemblies because mscorlib was missing
             TypeMethods.GenerateAllVariableTypes(AppDomain.CurrentDomain.GetAssemblies().ToList(), groupedTypes);
-            TypeMethods.GenerateAllNamespaces(AppDomain.CurrentDomain.GetAssemblies().ToList(), groupedNamespaces);
+            TypeMethods.GenerateAllNamespaces(AppDomain.CurrentDomain.GetAssemblies().ToList(), allNamespaces);
 
             //if no commands have been loaded, at least include OpenBots.Core to access the BrokenCodeCommand
             if (existingAssemblies.Count == 0)

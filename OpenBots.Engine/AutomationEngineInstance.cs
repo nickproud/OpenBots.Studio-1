@@ -97,7 +97,7 @@ namespace OpenBots.Engine
                 AutomationEngineContext.AppInstances = new Dictionary<string, object>();
 
             if (AutomationEngineContext.ImportedNamespaces == null)
-                AutomationEngineContext.ImportedNamespaces = new List<string>();
+                AutomationEngineContext.ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
 
             ServiceResponses = new List<IRestResponse>();
             DataTables = new List<DataTable>();
@@ -268,7 +268,7 @@ namespace OpenBots.Engine
 
                 if (AutomationEngineContext.ImportedNamespaces == null)
                 {
-                    AutomationEngineContext.ImportedNamespaces = new List<string>();
+                    AutomationEngineContext.ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
                 }
 
                 //execute commands
