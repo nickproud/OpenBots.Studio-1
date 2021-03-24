@@ -731,6 +731,23 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {               
                 string newName = "";
                 var newNameForm = new frmInputBox("Enter the name of the new file WITH extension", "New File");
+
+                switch (ScriptProject.ProjectType)
+                {
+                    case ProjectType.OpenBots:
+                        newNameForm.txtInput.Text = ".obscript";
+                        break;
+                    case ProjectType.Python:
+                        newNameForm.txtInput.Text = ".py";
+                        break;
+                    case ProjectType.TagUI:
+                        newNameForm.txtInput.Text = ".tag";
+                        break;
+                    case ProjectType.CSScript:
+                        newNameForm.txtInput.Text = ".cs";
+                        break;
+                }
+
                 newNameForm.ShowDialog();
 
                 if (newNameForm.DialogResult == DialogResult.OK)
@@ -743,6 +760,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newNameForm.Dispose();
                     return;
                 }
+
+                if (!Path.HasExtension(newName))
+                    throw new FileFormatException($"No extension provided for '{newName}'");
 
                 string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
                 string newFilePath = Path.Combine(selectedNodePath, newName);
@@ -895,6 +915,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         newNameForm.Dispose();
                         return;
                     }
+
+                    if (!Path.HasExtension(newName))
+                        throw new FileFormatException($"No extension provided for '{newName}'");
 
                     string newPath = Path.Combine(selectedNodeDirectoryInfo.DirectoryName, newName);
 

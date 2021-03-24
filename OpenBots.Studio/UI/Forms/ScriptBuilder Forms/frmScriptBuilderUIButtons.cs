@@ -213,7 +213,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _scriptVariables.AddRange(deserializedScript.Variables);
                     _scriptElements.AddRange(deserializedScript.Elements);
                     _scriptArguments.AddRange(deserializedScript.Arguments);
-                    uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements );                  
+                    uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);                  
 
                     //populate commands
                     PopulateExecutionCommands(deserializedScript.Commands);
@@ -806,6 +806,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 Invalidate();
                 _scriptVariables = scriptVariableEditor.ScriptVariables;
+                uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
+
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *"; 
             }
@@ -839,6 +841,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
             {
                 _scriptArguments = scriptArgumentEditor.ScriptArguments;
+                uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
+
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
             }
@@ -872,6 +876,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 CreateUndoSnapshot();
                 _scriptElements = scriptElementEditor.ScriptElements;
+                uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
             }
 
             scriptElementEditor.Dispose();
