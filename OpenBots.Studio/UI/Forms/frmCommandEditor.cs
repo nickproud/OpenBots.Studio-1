@@ -415,6 +415,13 @@ namespace OpenBots.UI.Forms
                         return isAllValid;
                     }
                 }
+                else if (varArgType == null && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
+                {
+                    currentControl.BorderColor = Color.Red;
+                    _errorToolTip.SetToolTip(currentControl, "Input provided is not an existing variable or argument.");
+                    isAllValid = false;
+                    return isAllValid;
+                }
             }
             return isAllValid;
         }
