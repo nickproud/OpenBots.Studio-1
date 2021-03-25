@@ -62,6 +62,10 @@ namespace OpenBots.Commands.Engine
 		[Browsable(false)]
 		private List<Control> _measureControls;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public StopwatchCommand()
 		{
 			CommandName = "StopwatchCommand";
@@ -124,14 +128,11 @@ namespace OpenBots.Commands.Engine
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_StopwatchAction", this, editor));
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += StopWatchComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[3]).SelectedIndexChanged += StopWatchComboBox_SelectedIndexChanged;
 
 			_measureControls = new List<Control>();
 			_measureControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ToStringFormat", this, editor));
 			_measureControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
-
-			foreach (var ctrl in _measureControls)
-				ctrl.Visible = false;
 
 			RenderedControls.AddRange(_measureControls);
 		  
@@ -146,20 +147,29 @@ namespace OpenBots.Commands.Engine
 				return base.GetDisplayValue() + $" [{v_StopwatchAction} - Instance Name '{v_InstanceName}']";
 		}
 
-		private void StopWatchComboBox_SelectedValueChanged(object sender, EventArgs e)
+		public override void Shown()
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Measure Stopwatch")
+			base.Shown();
+			_hasRendered = true;
+			StopWatchComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void StopWatchComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[3]).Text == "Measure Stopwatch" && _hasRendered)
 			{
 				foreach (var ctrl in _measureControls)
 					ctrl.Visible = true;
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _measureControls)
 				{
 					ctrl.Visible = false;
 					if (ctrl is TextBox)
 						((TextBox)ctrl).Clear();
+					else if (ctrl is ComboBox)
+						((ComboBox)ctrl).SelectedIndex = -1;
 				}
 			}
 		}

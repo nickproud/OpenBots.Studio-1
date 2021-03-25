@@ -53,6 +53,10 @@ namespace OpenBots.Commands.Asset
         [Browsable(false)]
         private List<Control> _assetActionValueControls;
 
+        [JsonIgnore]
+        [Browsable(false)]
+        private bool _hasRendered;
+
         public CalculateNumberAssetCommand()
         {
             CommandName = "CalculateNumberAssetCommand";
@@ -99,12 +103,11 @@ namespace OpenBots.Commands.Asset
 
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AssetName", this, editor));
             RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_AssetActionType", this, editor));
-            ((ComboBox)RenderedControls[4]).SelectedIndexChanged += AssetActionTypeComboBox_SelectedValueChanged;
+            ((ComboBox)RenderedControls[4]).SelectedIndexChanged += AssetActionTypeComboBox_SelectedIndexChanged;
 
             _assetActionValueControls = new List<Control>();
             _assetActionValueControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AssetActionValue", this, editor));
-            foreach (var ctrl in _assetActionValueControls)
-                ctrl.Visible = false;
+            
             RenderedControls.AddRange(_assetActionValueControls);
 
             return RenderedControls;
@@ -122,14 +125,21 @@ namespace OpenBots.Commands.Asset
                 return base.GetDisplayValue() + $" [Subtract {v_AssetActionValue} From '{v_AssetName}']";
         }
 
-        private void AssetActionTypeComboBox_SelectedValueChanged(object sender, EventArgs e)
+        public override void Shown()
         {
-            if (((ComboBox)RenderedControls[4]).Text == "Add" || ((ComboBox)RenderedControls[4]).Text == "Subtract")
+            base.Shown();
+            _hasRendered = true;
+            AssetActionTypeComboBox_SelectedIndexChanged(this, null);
+        }
+
+        private void AssetActionTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if ((((ComboBox)RenderedControls[4]).Text == "Add" || ((ComboBox)RenderedControls[4]).Text == "Subtract") && _hasRendered)
             {
                 foreach (var ctrl in _assetActionValueControls)
                     ctrl.Visible = true;
             }
-            else
+            else if(_hasRendered)
             {
                 foreach (var ctrl in _assetActionValueControls)
                 {

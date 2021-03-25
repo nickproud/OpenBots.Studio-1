@@ -68,6 +68,10 @@ namespace OpenBots.Commands.QueueItem
 		[Browsable(false)]
 		private List<Control> _savingControls;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public WorkQueueItemCommand()
 		{
 			CommandName = "WorkQueueItemCommand";
@@ -147,13 +151,10 @@ namespace OpenBots.Commands.QueueItem
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueueName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SaveAttachments", this, editor));
-			((ComboBox)RenderedControls[4]).SelectedIndexChanged += SaveQueueItemFilesComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += SaveQueueItemFilesComboBox_SelectedIndexChanged;
 
 			_savingControls = new List<Control>();
 			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AttachmentDirectory", this, editor));
-
-			foreach (var ctrl in _savingControls)
-				ctrl.Visible = false;
 
 			RenderedControls.AddRange(_savingControls);
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
@@ -170,14 +171,21 @@ namespace OpenBots.Commands.QueueItem
 				return base.GetDisplayValue() + $" [From Queue '{v_QueueName}' - Store QueueItem Dictionary in '{v_OutputUserVariableName}']";
 		}
 
-		private void SaveQueueItemFilesComboBox_SelectedValueChanged(object sender, EventArgs e)
+		public override void Shown()
 		{
-			if (((ComboBox)RenderedControls[4]).Text == "Yes")
+			base.Shown();
+			_hasRendered = true;
+			SaveQueueItemFilesComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void SaveQueueItemFilesComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[4]).Text == "Yes" && _hasRendered)
 			{
 				foreach (var ctrl in _savingControls)
 					ctrl.Visible = true;
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _savingControls)
 				{
