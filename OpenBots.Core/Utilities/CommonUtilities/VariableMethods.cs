@@ -31,10 +31,10 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
             var variableList = engine.AutomationEngineContext.Variables;
             var systemVariables = CommonMethods.GenerateSystemVariables();
-            var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new ScriptVariable { 
-                                                                                        VariableName = arg.ArgumentName, 
-                                                                                        VariableType = arg.ArgumentType,
-                                                                                        VariableValue = arg.ArgumentValue })
+            var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new ScriptVariable {
+                VariableName = arg.ArgumentName,
+                VariableType = arg.ArgumentType,
+                VariableValue = arg.ArgumentValue })
                                                                                     .ToList();
 
             var variableSearchList = new List<ScriptVariable>();
@@ -50,13 +50,13 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             {
                 return userInputString.CalculateVariables(engine);
             }
-                
+
             //split by custom markers
             string[] potentialVariables = userInputString.Split(new string[] { startVariableMarker, endVariableMarker }, StringSplitOptions.None);
 
             foreach (var potentialVariable in potentialVariables)
             {
-                if (potentialVariable.Length == 0) 
+                if (potentialVariable.Length == 0)
                     continue;
 
                 string varcheckname = potentialVariable;
@@ -70,7 +70,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 var varCheck = variableSearchList.Where(v => v.VariableName == varcheckname)
                                                  .FirstOrDefault();
 
-                if (potentialVariable == "OpenBots.EngineContext") 
+                if (potentialVariable == "OpenBots.EngineContext")
                     varCheck.VariableValue = engine.GetEngineContext();
 
                 if (varCheck != null)
@@ -120,7 +120,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                             string cellItem;
 
                             if (int.TryParse(rowIndexString, out int rowIndex))
-                            {                               
+                            {
                                 if (int.TryParse(columnName, out int columnIndex))
                                     cellItem = dt.Rows[rowIndex][columnIndex].ToString();
                                 else
@@ -141,7 +141,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                             pair = varCheck.VariableValue;
                             if (resultType.ToLower() == "key")
                                 resultItem = pair.Key;
-                            else if(resultType.ToLower() == "value")
+                            else if (resultType.ToLower() == "value")
                                 resultItem = StringMethods.ConvertObjectToString(pair.Value, pair.Value.GetType());
                             else
                                 throw new DataException("Only use of Key and Value is allowed using dot operater with KeyValuePair");
@@ -153,7 +153,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                         if (varCheck.VariableValue is string)
                             userInputString = userInputString.Replace(potentialVariable, (string)varCheck.VariableValue);
                     }
-                } 
+                }
                 else if (varCheck == null && userInputString.Contains(startVariableMarker + varcheckname + endVariableMarker))
                     throw new ArgumentNullException($"No variable/argument with the name '{varcheckname}' was found.");
             }
@@ -165,7 +165,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
             var compatibleTypesAttribute = variableProperties.GetCustomAttributes(typeof(CompatibleTypes), true);
-           
+
             Type[] compatibleTypes = null;
 
             if (compatibleTypesAttribute.Length > 0)
@@ -183,14 +183,16 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                                 .Where(var => var.VariableName == reformattedVarArg)
                                                 .FirstOrDefault();
 
-                if (requiredVariable != null && compatibleTypes!= null && !compatibleTypes.Any(x => x.IsAssignableFrom(requiredVariable.VariableType)))
+                if (requiredVariable != null && compatibleTypes != null && !compatibleTypes.Any(x => x.IsAssignableFrom(requiredVariable.VariableType)
+                                                                                                  || x == requiredVariable.VariableType))
                     throw new ArgumentException($"The type of variable '{requiredVariable.VariableName}' is not compatible.");
 
                 requiredArgument = engine.AutomationEngineContext.Arguments
                                                 .Where(arg => arg.ArgumentName == reformattedVarArg)
                                                 .FirstOrDefault();
 
-                if (requiredArgument != null && compatibleTypes != null && !compatibleTypes.Any(x => x.IsAssignableFrom(requiredArgument.ArgumentType)))
+                if (requiredArgument != null && compatibleTypes != null && !compatibleTypes.Any(x => x.IsAssignableFrom(requiredArgument.ArgumentType)
+                                                                                                  || x == requiredArgument.ArgumentType))
                     throw new ArgumentException($"The type of argument '{requiredArgument.ArgumentName}' is not compatible.");
             }
             else
@@ -218,14 +220,14 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                                 .Where(var => var.VariableName == reformattedVarArg)
                                                 .FirstOrDefault();
 
-                if (requiredVariable != null && !compatibleType.IsAssignableFrom(requiredVariable.VariableType))
+                if (requiredVariable != null && !compatibleType.IsAssignableFrom(requiredVariable.VariableType) && compatibleType != requiredVariable.VariableType)
                     throw new ArgumentException($"The type of variable '{requiredVariable.VariableName}' is not compatible.");
 
                 requiredArgument = engine.AutomationEngineContext.Arguments
                                                 .Where(arg => arg.ArgumentName == reformattedVarArg)
                                                 .FirstOrDefault();
 
-                if (requiredArgument != null && !compatibleType.IsAssignableFrom(requiredArgument.ArgumentType))
+                if (requiredArgument != null && !compatibleType.IsAssignableFrom(requiredArgument.ArgumentType) && compatibleType != requiredArgument.ArgumentType)
                     throw new ArgumentException($"The type of argument '{requiredArgument.ArgumentName}' is not compatible.");
             }
             else
@@ -251,11 +253,11 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 var variableList = engine.AutomationEngineContext.Variables;
                 var systemVariables = CommonMethods.GenerateSystemVariables();
                 var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new ScriptVariable
-                                                                                        {
-                                                                                            VariableName = arg.ArgumentName,
-                                                                                            VariableType = arg.ArgumentType,
-                                                                                            VariableValue = arg.ArgumentValue
-                                                                                        })
+                {
+                    VariableName = arg.ArgumentName,
+                    VariableType = arg.ArgumentType,
+                    VariableValue = arg.ArgumentValue
+                })
                                                                                         .ToList();
 
                 var variableSearchList = new List<ScriptVariable>();
@@ -263,7 +265,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 variableSearchList.AddRange(systemVariables);
                 variableSearchList.AddRange(argumentsAsVariablesList);
 
-                requiredVariable = variableSearchList.Where(var => var.VariableName == reformattedVarArg).FirstOrDefault();              
+                requiredVariable = variableSearchList.Where(var => var.VariableName == reformattedVarArg).FirstOrDefault();
             }
             else
                 throw new Exception("Variable/Argument markers '{}' missing. Variable/Argument '" + varArgName + "' could not be found.");
@@ -334,7 +336,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 compatibleTypes = ((CompatibleTypes[])compatibleTypesAttribute)[0].CompTypes;
 
             if (varArgName.StartsWith("{") && varArgName.EndsWith("}"))
-                varArgName = varArgName.Replace("{", "").Replace("}", "");           
+                varArgName = varArgName.Replace("{", "").Replace("}", "");
             else
                 throw new Exception("Variable markers '{}' missing. '" + varArgName + "' is an invalid output variable name.");
 
@@ -342,7 +344,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                                .Where(var => var.VariableName == varArgName)
                                                .FirstOrDefault();
 
-            if (existingVariable != null && compatibleTypes != null && !compatibleTypes.Any(x => x.IsAssignableFrom(existingVariable.VariableType)))
+            if (existingVariable != null && compatibleTypes != null && !compatibleTypes.Any(x => x.IsAssignableFrom(existingVariable.VariableType) 
+                                                                                              || x == existingVariable.VariableType))
                 throw new ArgumentException($"The type of variable '{existingVariable.VariableName}' is not compatible.");
             else if (existingVariable != null)
             {
@@ -354,7 +357,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                             .Where(arg => arg.ArgumentName == varArgName)
                                             .FirstOrDefault();
 
-            if (existingArgument != null && compatibleTypes != null && !compatibleTypes.Any(x => x.IsAssignableFrom(existingArgument.ArgumentType)))
+            if (existingArgument != null && compatibleTypes != null && !compatibleTypes.Any(x => x.IsAssignableFrom(existingArgument.ArgumentType) 
+                                                                                              || x == existingArgument.ArgumentType))
                 throw new ArgumentException($"The type of argument '{existingArgument.ArgumentName}' is not compatible.");
             else if (existingArgument != null)
             {
@@ -376,7 +380,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                                .Where(var => var.VariableName == varArgName)
                                                .FirstOrDefault();
 
-            if (existingVariable != null && !compatibleType.IsAssignableFrom(existingVariable.VariableType))
+            if (existingVariable != null && !compatibleType.IsAssignableFrom(existingVariable.VariableType) && compatibleType != existingVariable.VariableType)
                 throw new ArgumentException($"The type of variable '{existingVariable.VariableName}' is not compatible.");
             else if (existingVariable != null)
             {
@@ -388,7 +392,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                                             .Where(arg => arg.ArgumentName == varArgName)
                                             .FirstOrDefault();
 
-            if (existingArgument != null && !compatibleType.IsAssignableFrom(existingArgument.ArgumentType))
+            if (existingArgument != null && !compatibleType.IsAssignableFrom(existingArgument.ArgumentType) && compatibleType != existingArgument.ArgumentType)
                 throw new ArgumentException($"The type of argument '{existingArgument.ArgumentName}' is not compatible.");
             else if (existingArgument != null)
             {

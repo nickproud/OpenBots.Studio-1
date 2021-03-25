@@ -407,7 +407,7 @@ namespace OpenBots.UI.Forms
                 Type varArgType = match.ToString().GetVarArgType(testEngine);
                 if (varArgType != null && !(validationContext.IsStringOrPrimitive && (varArgType == typeof(string) || varArgType.IsPrimitive)))
                 {
-                    if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType))))
+                    if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType) || x == varArgType)))
                     {
                         currentControl.BorderColor = Color.Red;
                         _errorToolTip.SetToolTip(currentControl, "Input value is not of a compatible Type.");
