@@ -242,28 +242,34 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static Type GetVarArgType(this string varArgName, IAutomationEngineInstance engine)
         {
             ScriptVariable requiredVariable;
-            ScriptArgument requiredArgument;
 
             if (varArgName.StartsWith("{") && varArgName.EndsWith("}"))
             {
                 //reformat and attempt
                 var reformattedVarArg = varArgName.Replace("{", "").Replace("}", "");
 
-                requiredVariable = engine.AutomationEngineContext.Variables
-                                                .Where(var => var.VariableName == reformattedVarArg)
-                                                .FirstOrDefault();              
+                var variableList = engine.AutomationEngineContext.Variables;
+                var systemVariables = CommonMethods.GenerateSystemVariables();
+                var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new ScriptVariable
+                                                                                        {
+                                                                                            VariableName = arg.ArgumentName,
+                                                                                            VariableType = arg.ArgumentType,
+                                                                                            VariableValue = arg.ArgumentValue
+                                                                                        })
+                                                                                        .ToList();
 
-                requiredArgument = engine.AutomationEngineContext.Arguments
-                                                .Where(arg => arg.ArgumentName == reformattedVarArg)
-                                                .FirstOrDefault();
+                var variableSearchList = new List<ScriptVariable>();
+                variableSearchList.AddRange(variableList);
+                variableSearchList.AddRange(systemVariables);
+                variableSearchList.AddRange(argumentsAsVariablesList);
+
+                requiredVariable = variableSearchList.Where(var => var.VariableName == reformattedVarArg).FirstOrDefault();              
             }
             else
                 throw new Exception("Variable/Argument markers '{}' missing. Variable/Argument '" + varArgName + "' could not be found.");
 
             if (requiredVariable != null)
                 return requiredVariable.VariableType;
-            else if (requiredArgument != null)
-                return requiredArgument.ArgumentType;
             else
                 return null;
         }
