@@ -30,7 +30,7 @@ namespace OpenBots.Utilities
                     RunTagUIAutomation(mainPath, new FileInfo(configPath).DirectoryName, new object[] { });
                     break;
                 case ProjectType.CSScript:
-                    RunCSharpAutomation(mainPath, new object[] { });
+                    RunCSharpAutomation(mainPath, new object[] { null });
                     break;
             }
         }
@@ -69,8 +69,11 @@ namespace OpenBots.Utilities
         public static void RunCSharpAutomation(string scriptPath, object[] scriptArgs)
         {
             string code = File.ReadAllText(scriptPath);
-            dynamic script = CSScript.LoadCode(code).CreateObject("*");
-            script.Main(scriptArgs);
+            var mainMethod = CSScript.LoadCode(code).CreateObject("*").GetType().GetMethod("Main");
+            if (mainMethod.GetParameters().Length == 0)
+                mainMethod.Invoke(null, null);
+            else
+                mainMethod.Invoke(null, scriptArgs);
         }
 
         public static void RunTagUIAutomation(string scriptPath, string projectPath, object[] scriptArgs)

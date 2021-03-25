@@ -1162,7 +1162,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                                 ExecutionManager.RunTagUIAutomation(_scriptFilePath, ScriptProjectPath, new object[] { });
                                 break;
                             case ".cs":
-                                ExecutionManager.RunCSharpAutomation(_scriptFilePath, new object[] { });
+                                ExecutionManager.RunCSharpAutomation(_scriptFilePath, new object[] { null });
                                 break;
                         }
                     }

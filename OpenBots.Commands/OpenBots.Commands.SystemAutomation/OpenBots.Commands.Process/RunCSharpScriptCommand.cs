@@ -7,6 +7,7 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -96,7 +97,7 @@ namespace OpenBots.Commands.Process
 		public RunCSharpScriptCommand()
 		{
 			CommandName = "RunCSharpScriptCommand";
-			SelectionName = "Run C# Script";
+			SelectionName = "Run CSharp Script";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_script;
 
@@ -117,7 +118,7 @@ namespace OpenBots.Commands.Process
 			string scriptPath = v_ScriptPath.ConvertUserVariableToString(engine);
 
 			string code = OBFile.ReadAllText(scriptPath);
-			dynamic script = CSScript.LoadCode(code).CreateObject("*");
+			var mainMethod = CSScript.LoadCode(code).CreateObject("*").GetType().GetMethod("Main");
 
 			if (v_ArgumentType == "In-Studio Variables")
 			{
@@ -137,12 +138,21 @@ namespace OpenBots.Commands.Process
 					i++;
 				}
 
-				if (v_HasOutput == "No")
-					script.Main(args);
+				if (v_HasOutput == "No") 
+				{
+					if (mainMethod.GetParameters().Length == 0)
+						mainMethod.Invoke(null, null);
+					else
+						mainMethod.Invoke(null, new object[] { args });
+				}
 				else
 				{
-					object result = script.Main(args);
-					
+					object result;
+					if (mainMethod.GetParameters().Length == 0)
+						result = mainMethod.Invoke(null, null);
+					else
+						result = mainMethod.Invoke(null, new object[] { args });
+
 					result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 				}
 			}
@@ -151,10 +161,20 @@ namespace OpenBots.Commands.Process
 				string scriptArgs = v_ScriptArgs.ConvertUserVariableToString(engine);
 				string[] argStrings = scriptArgs.Trim().Split(' ');
 				if (v_HasOutput == "No")
-					script.Main(argStrings);
+                {
+					if (mainMethod.GetParameters().Length == 0)
+						mainMethod.Invoke(null, null);
+					else
+						mainMethod.Invoke(null, new object[] { argStrings });
+				}
 				else
 				{
-					object result = script.Main(argStrings);
+					object result;
+					if (mainMethod.GetParameters().Length == 0)
+						result = mainMethod.Invoke(null, null);
+					else
+						result = mainMethod.Invoke(null, new object[] { argStrings });
+
 					result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 				}
 			}
