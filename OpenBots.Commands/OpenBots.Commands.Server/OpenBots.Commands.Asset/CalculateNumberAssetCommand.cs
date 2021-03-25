@@ -75,7 +75,7 @@ namespace OpenBots.Commands.Asset
             var vAssetActionValue = v_AssetActionValue.ConvertUserVariableToString(engine);
 
             var client = AuthMethods.GetAuthToken();
-            var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq 'Number'");
+            var asset = AssetMethods.GetAsset(client, vAssetName, "Number");
 
             if (asset == null)
                 throw new DataException($"No Asset was found for '{vAssetName}' and type 'Number'");

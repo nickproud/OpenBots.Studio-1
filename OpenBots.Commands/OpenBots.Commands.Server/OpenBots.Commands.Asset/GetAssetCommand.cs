@@ -89,7 +89,7 @@ namespace OpenBots.Commands.Asset
 			var vOutputDirectoryPath = v_OutputDirectoryPath.ConvertUserVariableToString(engine);
 
 			var client = AuthMethods.GetAuthToken();
-			var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq '{v_AssetType}'");
+			var asset = AssetMethods.GetAsset(client, vAssetName, v_AssetType);
 
 			if (asset == null)
 				throw new DataException($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
