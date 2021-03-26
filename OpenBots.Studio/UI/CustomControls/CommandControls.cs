@@ -243,6 +243,7 @@ namespace OpenBots.UI.CustomControls
             inputBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             inputBox.Height = height;
             inputBox.Width = width;
+            inputBox.IsDoubleBuffered = true;
             inputBox.Tag = new CommandControlValidationContext(parameterName, parent);
 
             if (height > 30)
@@ -332,6 +333,7 @@ namespace OpenBots.UI.CustomControls
             dropdownBox.Height = 30;
             dropdownBox.Width = 300;
             dropdownBox.Name = parameterName;
+            dropdownBox.IsDoubleBuffered = true;
             dropdownBox.Tag = new CommandControlValidationContext(parameterName, parent);
 
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
@@ -381,12 +383,12 @@ namespace OpenBots.UI.CustomControls
             standardComboBox.Height = 30;
             standardComboBox.Width = 300;
             standardComboBox.Name = parameterName;
+            standardComboBox.IsDoubleBuffered = true;
             standardComboBox.Tag = new CommandControlValidationContext(parameterName, parent);
             standardComboBox.Click += StandardComboBox_Click;
             standardComboBox.KeyDown += StandardComboBox_KeyDown;
             standardComboBox.KeyPress += StandardComboBox_KeyPress;
             standardComboBox.MouseWheel += StandardComboBox_MouseWheel;
-
             return standardComboBox;
         }      
 
@@ -462,6 +464,7 @@ namespace OpenBots.UI.CustomControls
             gridView.DataBindings.Add("DataSource", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             gridView.AllowUserToResizeRows = false;
             gridView.BorderStyle = BorderStyle.Fixed3D;
+            gridView.IsDoubleBuffered = true;
             gridView.Tag = new CommandControlValidationContext(parameterName, parent);
             gridView.DataBindingComplete += GridView_DataBindingComplete;
             gridView.KeyDown += DataGridView_KeyDown;
@@ -548,6 +551,7 @@ namespace OpenBots.UI.CustomControls
             pictureBox.Height = 200;
             pictureBox.BorderStyle = BorderStyle.Fixed3D;
             pictureBox.DataBindings.Add("EncodedImage", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
+            pictureBox.IsDoubleBuffered = true;
             pictureBox.Tag = new CommandControlValidationContext(parameterName, parent);
             return pictureBox;
         }
