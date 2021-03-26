@@ -29,6 +29,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             InitializeComponent();
 
+            lblMessage.UseMnemonic = false;
+
             if (message.Length > 60000)
                 lblMessage.Text = message.Substring(0, 60000) + "\nFull text not displayed";
             else
