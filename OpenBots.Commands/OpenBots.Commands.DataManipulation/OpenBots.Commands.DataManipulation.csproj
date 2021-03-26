@@ -33,8 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Portable.BouncyCastle.1.8.9\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.10.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Portable.BouncyCastle.1.8.10\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Common.Logging.3.4.1\lib\net40\Common.Logging.dll</HintPath>
@@ -73,11 +73,11 @@
       <HintPath>..\..\packages\Microsoft.Office.Interop.Outlook.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Outlook.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="MimeKit, Version=2.10.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MimeKit.2.10.1\lib\net48\MimeKit.dll</HintPath>
+    <Reference Include="MimeKit, Version=2.11.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MimeKit.2.11.0\lib\net48\MimeKit.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -105,7 +105,9 @@
     <Compile Include="Forms\frmDataTableVariableSelector.Designer.cs">
       <DependentUpon>frmDataTableVariableSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="OpenBots.Commands.DataTable\AddDataColumnCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\AddDataRowCommand.cs" />
+    <Compile Include="OpenBots.Commands.DataTable\ClearDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\CreateDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\FilterDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\GetDataRowCommand.cs" />
@@ -114,6 +116,7 @@
     <Compile Include="OpenBots.Commands.DataTable\GetColumnCountCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\GroupDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\MergeDataTableCommand.cs" />
+    <Compile Include="OpenBots.Commands.DataTable\RemoveDataColumnCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\RemoveDataRowCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\SortDataTableCommand.cs" />
     <Compile Include="OpenBots.Commands.DataTable\UpdateDataRowValueCommand.cs" />

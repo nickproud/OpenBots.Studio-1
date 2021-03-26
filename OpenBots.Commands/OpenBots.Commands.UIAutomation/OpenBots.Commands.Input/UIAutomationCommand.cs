@@ -8,7 +8,6 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,6 +35,7 @@ namespace OpenBots.Commands.Input
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -58,6 +58,7 @@ namespace OpenBots.Commands.Input
 		[Description("Use the Element Recorder to generate a listing of potential search parameters.")]
 		[SampleUsage("AutomationId || Name")]
 		[Remarks("Once you have clicked on a valid window the search parameters will be populated. Select a single parameter to find the element.")]
+		[CompatibleTypes(null, true)]
 		public DataTable v_UIASearchParameters { get; set; }
 
 		[Required]
@@ -66,6 +67,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("data || {vData} || *Variable Name*: {vNewVariable}")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(string), typeof(bool) }, true)]
 		public DataTable v_UIAActionParameters { get; set; }
 
 		[Required]
@@ -74,6 +76,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
@@ -132,6 +135,9 @@ namespace OpenBots.Commands.Input
 			{
 				try
 				{
+					if (engine.IsCancellationPending)
+						break;
+
 					requiredHandle = CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
 
 					if (requiredHandle == null)
@@ -269,7 +275,7 @@ namespace OpenBots.Commands.Input
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = secureString.ConvertUserVariableToObject(engine);
+					var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
 
 					if (secureStrVariable is SecureString)
 						secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
@@ -355,7 +361,7 @@ namespace OpenBots.Commands.Input
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 					//declare search result
-					string searchResult = "";
+					dynamic searchResult;
 					if (v_AutomationType == "Get Text")
 					{
 						//string currentText;
@@ -367,18 +373,21 @@ namespace OpenBots.Commands.Input
 						}
 						else
 							searchResult = requiredHandle.Current.Name.ToString();
+
+						searchResult.StoreInUserVariable(engine, applyToVariable, typeof(string));
 					}
 
 					else if (v_AutomationType == "Element Exists")
 					{
 						//determine search result
 						if (requiredHandle == null)
-							searchResult = "False";
+							searchResult = false;
 						else
-							searchResult = "True";
+							searchResult = true;
+
+						searchResult.StoreInUserVariable(engine, applyToVariable, typeof(bool));
 					}
-					//store data
-					searchResult.StoreInUserVariable(engine, applyToVariable);
+					
 					break;
 				case "Wait For Element To Exist":
 					if (requiredHandle == null)
@@ -404,7 +413,7 @@ namespace OpenBots.Commands.Input
 					var requiredValue = requiredHandle.Current.GetType().GetRuntimeProperty(propertyName)?.GetValue(requiredHandle.Current).ToString();
 
 					//store into variable
-					((object)requiredValue).StoreInUserVariable(engine, applyToVariable2);
+					((object)requiredValue).StoreInUserVariable(engine, applyToVariable2, typeof(string));
 					break;
 				default:
 					throw new NotImplementedException("Automation type '" + v_AutomationType + "' not supported.");
@@ -416,10 +425,7 @@ namespace OpenBots.Commands.Input
 			base.Render(editor, commandControls);
 
 			//create search param grid
-			_searchParametersGridViewHelper = new DataGridView();
-			_searchParametersGridViewHelper.Width = 500;
-			_searchParametersGridViewHelper.Height = 140;
-			_searchParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_UIASearchParameters", false, DataSourceUpdateMode.OnPropertyChanged);
+			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_UIASearchParameters", this);
 
 			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
 			enabled.HeaderText = "Enabled";
@@ -434,21 +440,16 @@ namespace OpenBots.Commands.Input
 			DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
 			propertyValue.HeaderText = "Parameter Value";
 			propertyValue.DataPropertyName = "Parameter Value";
+
 			_searchParametersGridViewHelper.Columns.Add(propertyValue);
-			_searchParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_searchParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 			_searchParametersGridViewHelper.AllowUserToAddRows = false;
 			_searchParametersGridViewHelper.AllowUserToDeleteRows = false;
+			_searchParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 
 			//create actions
-			_actionParametersGridViewHelper = new DataGridView();
-			_actionParametersGridViewHelper.Size = new Size(400, 150);
-			_actionParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_actionParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_actionParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_UIAActionParameters", false, DataSourceUpdateMode.OnPropertyChanged);
+			_actionParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_UIAActionParameters", this);
 			_actionParametersGridViewHelper.AllowUserToAddRows = false;
 			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
-			_actionParametersGridViewHelper.AllowUserToResizeRows = false;
 			_actionParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 
 			propertyName = new DataGridViewTextBoxColumn();
@@ -460,11 +461,6 @@ namespace OpenBots.Commands.Input
 			propertyValue.HeaderText = "Parameter Value";
 			propertyValue.DataPropertyName = "Parameter Value";
 			_actionParametersGridViewHelper.Columns.Add(propertyValue);
-
-			_actionParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_actionParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_actionParametersGridViewHelper.AllowUserToAddRows = false;
-			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
 
 			//create helper control
 			CommandItemControl helperControl = new CommandItemControl();
@@ -492,6 +488,7 @@ namespace OpenBots.Commands.Input
 			//create action parameters
 			_actionParametersControls = new List<Control>();
 			_actionParametersControls.Add(commandControls.CreateDefaultLabelFor("v_UIAActionParameters", this));
+			_actionParametersControls.AddRange(commandControls.CreateUIHelpersFor("v_UIAActionParameters", this, new Control[] { _actionParametersGridViewHelper }, editor));
 			_actionParametersControls.Add(_actionParametersGridViewHelper);
 			RenderedControls.AddRange(_actionParametersControls);
 
@@ -552,6 +549,7 @@ namespace OpenBots.Commands.Input
 			IfrmAdvancedUIElementRecorder newElementRecorder = commandControls.CreateAdvancedUIElementRecorderForm();
 			newElementRecorder.WindowName = RenderedControls[3].Text;
 			newElementRecorder.SearchParameters = v_UIASearchParameters;
+			newElementRecorder.chkStopOnClick.Checked = true;
 
 			//show form
 			((Form)newElementRecorder).ShowDialog();
@@ -563,7 +561,7 @@ namespace OpenBots.Commands.Input
 
 			foreach (DataRow rw in newElementRecorder.SearchParameters.Rows)
 				v_UIASearchParameters.ImportRow(rw);
-
+				
 			_searchParametersGridViewHelper.DataSource = v_UIASearchParameters;
 			_searchParametersGridViewHelper.Refresh();
 		}
@@ -723,6 +721,7 @@ namespace OpenBots.Commands.Input
 				default:
 					break;
 			}
+			_actionParametersGridViewHelper.Columns[0].ReadOnly = true;
 			_actionParametersGridViewHelper.DataSource = v_UIAActionParameters;
 		}
 

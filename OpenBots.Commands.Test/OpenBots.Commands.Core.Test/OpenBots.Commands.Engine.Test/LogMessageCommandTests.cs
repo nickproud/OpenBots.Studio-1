@@ -26,8 +26,8 @@ namespace OpenBots.Commands.Engine.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\" + logFile);
-            inputPath.CreateTestVariable(_engine, "inputPath");
-            "testLogData".CreateTestVariable(_engine, "logText");
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable("testLogData", _engine, "logText", typeof(string));
             
 
             _logMessage.v_LogFile = "{inputPath}";
@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Engine.Test
             }
 
             OBIO.File.Delete(inputPath);
-            OBIO.File.Create(inputPath);
+            OBIO.File.Create(inputPath).Close();
         }
     }
 }

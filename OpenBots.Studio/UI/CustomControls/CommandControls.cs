@@ -1,25 +1,26 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Properties;
+using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using OpenBots.Studio.Utilities;
+using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -42,16 +43,18 @@ namespace OpenBots.UI.CustomControls
         private CommandItemControl _inputBox;
         private ApplicationSettings _settings;
         private bool _minimizePreference;
+        private TypeContext _typeContext;
 
         public CommandControls()
         {
         }
 
-        public CommandControls(frmCommandEditor editor, EngineContext engineContext)
+        public CommandControls(frmCommandEditor editor, EngineContext engineContext, TypeContext typeContext)
         {
             _currentEditor = editor;
             _container = engineContext.Container;
             _projectPath = engineContext.ProjectPath;
+            _typeContext = typeContext;
         }
 
         public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300)
@@ -121,13 +124,13 @@ namespace OpenBots.UI.CustomControls
             return controlList;
         }
 
-        public List<Control> CreateDataGridViewGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor)
+        public List<Control> CreateDefaultDataGridViewGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor)
         {
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
-            var gridview = CreateDataGridView(parent, parameterName);
+            var gridview = CreateDefaultDataGridViewFor(parameterName, parent);
             var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { gridview }, editor);
-
+            
             controlList.Add(label);
             controlList.AddRange(helpers);
             controlList.Add(gridview);
@@ -149,7 +152,7 @@ namespace OpenBots.UI.CustomControls
             return controlList;
         }
 
-        public Control CreateDefaultLabelFor(string parameterName, ScriptCommand parent)
+        public Label CreateDefaultLabelFor(string parameterName, ScriptCommand parent)
         {
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
 
@@ -177,15 +180,35 @@ namespace OpenBots.UI.CustomControls
         public void CreateDefaultToolTipFor(string parameterName, ScriptCommand parent, Control label)
         {
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
+            var requiredAttributesAssigned = variableProperties.GetCustomAttributes(typeof(RequiredAttribute), true);
             var inputSpecificationAttributesAssigned = variableProperties.GetCustomAttributes(typeof(DescriptionAttribute), true);
             var sampleUsageAttributesAssigned = variableProperties.GetCustomAttributes(typeof(SampleUsage), true);
             var remarksAttributesAssigned = variableProperties.GetCustomAttributes(typeof(Remarks), true);
+            var compatibleTypesAttributesAssigned = variableProperties.GetCustomAttributes(typeof(CompatibleTypes), true);
+
+            bool isRequired = false;
+            if (requiredAttributesAssigned.Length > 0)
+                isRequired = true;
 
             string toolTipText = "";
             if (inputSpecificationAttributesAssigned.Length > 0)
             {
                 var attribute = (DescriptionAttribute)inputSpecificationAttributesAssigned[0];
                 toolTipText = attribute.Description;
+            }
+            if (compatibleTypesAttributesAssigned.Length > 0)
+            {
+                var attribute = (CompatibleTypes)compatibleTypesAttributesAssigned[0];
+                toolTipText += "\nType(s): ";
+                if (attribute.CompTypes != null)
+                {                   
+                    foreach (var type in attribute.CompTypes)
+                        toolTipText += $"{type.Name}, ";
+                }
+                if (attribute.IsStringOrPrimitive)
+                    toolTipText += "any primitive/string";
+                else
+                    toolTipText = toolTipText.Substring(0, (toolTipText.Length - 2));
             }
             if (sampleUsageAttributesAssigned.Length > 0)
             {
@@ -204,18 +227,24 @@ namespace OpenBots.UI.CustomControls
             inputToolTip.ToolTipIcon = ToolTipIcon.Info;
             inputToolTip.IsBalloon = true;
             inputToolTip.ShowAlways = true;
-            inputToolTip.ToolTipTitle = label.Text;
+
+            if (isRequired)
+                label.Text = label.Text + "*";
+
+            inputToolTip.ToolTipTitle = label.Text;         
             inputToolTip.AutoPopDelay = 15000;
             inputToolTip.SetToolTip(label, toolTipText);
         }
 
-        public Control CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300)
+        public TextBox CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300)
         {
-            var inputBox = new TextBox();
+            var inputBox = new UITextBox();
             inputBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
             inputBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             inputBox.Height = height;
             inputBox.Width = width;
+            inputBox.IsDoubleBuffered = true;
+            inputBox.Tag = new CommandControlValidationContext(parameterName, parent);
 
             if (height > 30)
             {
@@ -236,10 +265,10 @@ namespace OpenBots.UI.CustomControls
             TextBox inputBox = (TextBox)sender;
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
                 {
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
                 };
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
@@ -254,10 +283,10 @@ namespace OpenBots.UI.CustomControls
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
-                frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
@@ -296,14 +325,16 @@ namespace OpenBots.UI.CustomControls
             return checkBox;
         }
 
-        public Control CreateDropdownFor(string parameterName, ScriptCommand parent)
+        public ComboBox CreateDropdownFor(string parameterName, ScriptCommand parent)
         {
-            var dropdownBox = new ComboBox();
+            var dropdownBox = new UIComboBox();
             dropdownBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
             dropdownBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             dropdownBox.Height = 30;
             dropdownBox.Width = 300;
             dropdownBox.Name = parameterName;
+            dropdownBox.IsDoubleBuffered = true;
+            dropdownBox.Tag = new CommandControlValidationContext(parameterName, parent);
 
             var variableProperties = parent.GetType().GetProperties().Where(f => f.Name == parameterName).FirstOrDefault();
             var propertyAttributesAssigned = variableProperties.GetCustomAttributes(typeof(PropertyUISelectionOption), true);
@@ -346,28 +377,30 @@ namespace OpenBots.UI.CustomControls
 
         public ComboBox CreateStandardComboboxFor(string parameterName, ScriptCommand parent)
         {
-            var standardComboBox = new ComboBox();
+            var standardComboBox = new UIComboBox();
             standardComboBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
             standardComboBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             standardComboBox.Height = 30;
             standardComboBox.Width = 300;
             standardComboBox.Name = parameterName;
+            standardComboBox.IsDoubleBuffered = true;
+            standardComboBox.Tag = new CommandControlValidationContext(parameterName, parent);
             standardComboBox.Click += StandardComboBox_Click;
             standardComboBox.KeyDown += StandardComboBox_KeyDown;
             standardComboBox.KeyPress += StandardComboBox_KeyPress;
             standardComboBox.MouseWheel += StandardComboBox_MouseWheel;
-
             return standardComboBox;
         }      
 
         private void StandardComboBox_KeyDown(object sender, KeyEventArgs e)
         {
+            var comboBox = ((ComboBox)sender);
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
                 {
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
                 };
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
@@ -375,17 +408,17 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
 
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        ((ComboBox)sender).Text = "{" + scriptVariableEditor.LastModifiedVariableName + "}";
+                        comboBox.Text = string.Concat("{", scriptVariableEditor.LastModifiedVariableName, "}");
                 }
 
                 scriptVariableEditor.Dispose();
             }
             else if (e.Control && e.KeyCode == Keys.J)
             {
-                frmScriptArguments scriptArgumentEditor = new frmScriptArguments
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments,
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
@@ -393,7 +426,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
 
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        ((ComboBox)sender).Text = "{" + scriptArgumentEditor.LastModifiedArgumentName + "}";
+                        comboBox.Text = string.Concat("{", scriptArgumentEditor.LastModifiedArgumentName, "}");
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -420,17 +453,107 @@ namespace OpenBots.UI.CustomControls
             ((HandledMouseEventArgs)e).Handled = true;
         }
 
-        public DataGridView CreateDataGridView(object sourceCommand, string dataSourceName)
+        public DataGridView CreateDefaultDataGridViewFor(string parameterName, ScriptCommand parent)
         {
-            var gridView = new DataGridView();
+            var gridView = new UIDataGridView();
             gridView.AllowUserToAddRows = true;
             gridView.AllowUserToDeleteRows = true;
             gridView.Size = new Size(400, 250);
             gridView.ColumnHeadersHeight = 30;
             gridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            gridView.DataBindings.Add("DataSource", sourceCommand, dataSourceName, false, DataSourceUpdateMode.OnPropertyChanged);
+            gridView.DataBindings.Add("DataSource", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             gridView.AllowUserToResizeRows = false;
+            gridView.BorderStyle = BorderStyle.Fixed3D;
+            gridView.IsDoubleBuffered = true;
+            gridView.Tag = new CommandControlValidationContext(parameterName, parent);
+            gridView.DataBindingComplete += GridView_DataBindingComplete;
+            gridView.KeyDown += DataGridView_KeyDown;
+            gridView.KeyPress += DataGridView_KeyPress;
             return gridView;
+        }
+
+        private void DataGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            DataGridView targetDGV = (DataGridView)sender;
+
+            if (e.Control && e.KeyCode == Keys.K)
+            {
+                if (targetDGV.SelectedCells.Count == 0)
+                    return;
+
+                if (targetDGV.SelectedCells[0].ReadOnly == true || targetDGV.SelectedCells[0] is DataGridViewComboBoxCell)
+                    return;
+
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
+                {
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
+                };
+
+                if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
+                {
+                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
+
+                    if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
+                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + string.Concat("{", scriptVariableEditor.LastModifiedVariableName, "}");
+                }
+
+                scriptVariableEditor.Dispose();
+            }
+            else if (e.Control && e.KeyCode == Keys.J)
+            {
+                if (targetDGV.SelectedCells.Count == 0)
+                    return;
+
+                if (targetDGV.SelectedCells[0].ReadOnly == true || targetDGV.SelectedCells[0] is DataGridViewComboBoxCell)
+                    return;
+
+                frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
+                {
+                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
+                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
+                };
+
+                if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
+                {
+                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
+
+                    if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
+                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + string.Concat("{", scriptArgumentEditor.LastModifiedArgumentName, "}");
+                }
+
+                scriptArgumentEditor.Dispose();
+            }
+            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
+                return;
+            else if (e.KeyCode == Keys.Enter)
+                _currentEditor.uiBtnAdd_Click(null, null);
+        }
+
+        private void DataGridView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //Control + K or Control + J
+            if (e.KeyChar == '\v' || e.KeyChar == '\n')
+                e.Handled = true;
+        }
+
+        private void GridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            var gridView = (DataGridView)sender;
+            for (int i = 0; i < gridView.Columns.Count; i++)
+                gridView.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+        }
+
+        public PictureBox CreateDefaultPictureBoxFor(string parameterName, ScriptCommand parent)
+        {
+            var pictureBox =  new UIPictureBox();
+            pictureBox.Width = 200;
+            pictureBox.Height = 200;
+            pictureBox.BorderStyle = BorderStyle.Fixed3D;
+            pictureBox.DataBindings.Add("EncodedImage", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
+            pictureBox.IsDoubleBuffered = true;
+            pictureBox.Tag = new CommandControlValidationContext(parameterName, parent);
+            return pictureBox;
         }
 
 
@@ -570,65 +693,7 @@ namespace OpenBots.UI.CustomControls
                 controlList.Add(helperControl);
             }
 
-            if(targetControls.FirstOrDefault() is DataGridView)
-            {
-                targetControls.FirstOrDefault().KeyDown += DataGridView_KeyDown;
-                targetControls.FirstOrDefault().KeyPress += DataGridView_KeyPress;
-            }
-
             return controlList;
-        }
-
-        private void DataGridView_KeyDown(object sender, KeyEventArgs e)
-        {
-            DataGridView dataGridView = (DataGridView)sender;
-            if (e.Control && e.KeyCode == Keys.K)
-            {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables
-                {
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments
-                };
-
-                if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
-                {
-                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-
-                    if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        dataGridView.CurrentCell.Value = "{" + scriptVariableEditor.LastModifiedVariableName + "}";                   
-                }
-
-                scriptVariableEditor.Dispose();
-            }
-            else if (e.Control && e.KeyCode == Keys.J)
-            {
-                frmScriptArguments scriptArgumentEditor = new frmScriptArguments
-                {
-                    ScriptArguments = _currentEditor.ScriptEngineContext.Arguments,
-                    ScriptVariables = _currentEditor.ScriptEngineContext.Variables,
-                };
-
-                if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
-                {
-                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-
-                    if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        dataGridView.CurrentCell.Value = "{" + scriptArgumentEditor.LastModifiedArgumentName + "}";
-                }
-
-                scriptArgumentEditor.Dispose();
-            }
-            else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
-                return;
-            else if (e.KeyCode == Keys.Enter)
-                _currentEditor.uiBtnAdd_Click(null, null);
-        }
-
-        private void DataGridView_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            //Control + K or Control + J
-            if (e.KeyChar == '\v' || e.KeyChar == '\n')
-                e.Handled = true;
         }
 
         private void ShowCodeBuilder(object sender, EventArgs e)
@@ -719,22 +784,31 @@ namespace OpenBots.UI.CustomControls
                         return;
                     }
 
-                    if (targetDGV.SelectedCells[0].ColumnIndex == 0)
+                    if (targetDGV.SelectedCells[0].ReadOnly == true || targetDGV.SelectedCells[0] is DataGridViewComboBoxCell)
                     {
                         MessageBox.Show("Invalid Cell Selected!", "Invalid Cell Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
-                    targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value +
-                        string.Concat("{", newVariableSelector.ReturnVariableArgument, "}");
+                    int selectedCellRowIndex = targetDGV.SelectedCells[0].RowIndex;
+                    int selectedCellColumnIndex = targetDGV.SelectedCells[0].ColumnIndex;
 
+                    if (targetDGV.Rows.Count == targetDGV.SelectedCells[0].RowIndex + 1 && targetDGV.AllowUserToAddRows == true)
+                    {
+                        DataRow newRow = ((DataTable)targetDGV.DataSource).NewRow();
+                        ((DataTable)targetDGV.DataSource).Rows.Add(newRow);
+                        targetDGV.EndEdit();
+                    }
+
+                    targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value = 
+                        targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value + string.Concat("{", newVariableSelector.ReturnVariableArgument, "}");
+                    
                     //TODO - Insert variables at cursor position instead of at the end of a cell
                     //targetDGV.CurrentCell = targetDGV.SelectedCells[0];
                     //targetDGV.BeginEdit(false);
                     //TextBox editor = (TextBox)targetDGV.EditingControl;
                     //editor.Text = editor.Text.Insert(editor.SelectionStart, string.Concat("{",
                     //    newVariableSelector.lstVariables.SelectedItem.ToString(), "}"));
-
                 }
             }
 
@@ -1084,6 +1158,15 @@ namespace OpenBots.UI.CustomControls
             var className = _currentEditor.flw_InputVariables.Controls["v_ClassName"].Text;
             var methodName = _currentEditor.flw_InputVariables.Controls["v_MethodName"].Text;
             DataGridView parameterBox = (DataGridView)_currentEditor.flw_InputVariables.Controls["v_MethodParameters"];
+
+            //TODO: Find a way to convert the input text if a variable is provided
+            if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(className) || string.IsNullOrEmpty(methodName))
+            {
+                MessageBox.Show("File Path, Class Name, or Method Name not provided", "Input Not Found", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+
+            }
 
             //clear all rows
             cmd.v_MethodParameters.Rows.Clear();
@@ -1441,7 +1524,7 @@ namespace OpenBots.UI.CustomControls
 
         public IfrmCommandEditor CreateCommandEditorForm(List<AutomationCommand> commands, List<ScriptCommand> existingCommands)
         {
-            frmCommandEditor editor = new frmCommandEditor(commands, existingCommands);
+            frmCommandEditor editor = new frmCommandEditor(commands, existingCommands, null);
             editor.ScriptEngineContext.Container = _container;
 
             return editor;

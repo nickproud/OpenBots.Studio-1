@@ -28,9 +28,9 @@ namespace OpenBots.Commands.QueueItem.Test
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
-            "unassigned".CreateTestVariable(_engine, "vQueueItem");
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem);
+            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
             _setQueueItem.v_QueueItemStatusType = "Successful";
 
             _setQueueItem.RunCommand(_engine);
@@ -54,9 +54,9 @@ namespace OpenBots.Commands.QueueItem.Test
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
-            "unassigned".CreateTestVariable(_engine, "vQueueItem");
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem);
+            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
             _setQueueItem.v_QueueItemStatusType = "Failed - Should Retry";
 
             _setQueueItem.RunCommand(_engine);
@@ -80,9 +80,9 @@ namespace OpenBots.Commands.QueueItem.Test
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
-            "unassigned".CreateTestVariable(_engine, "vQueueItem");
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem);
+            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
             _setQueueItem.v_QueueItemStatusType = "Failed - Fatal";
 
             _setQueueItem.RunCommand(_engine);
@@ -111,10 +111,10 @@ namespace OpenBots.Commands.QueueItem.Test
                 { "LockedUntilUTC", DateTime.UtcNow.AddHours(1) }
             };
 
-            "unassigned".CreateTestVariable(_engine, "vQueueItem");
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             _setQueueItem.v_QueueItemStatusType = "Successful";
-            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem);
+            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
 
             Assert.Throws<NullReferenceException>(() => _setQueueItem.RunCommand(_engine));
         }
@@ -136,7 +136,7 @@ namespace OpenBots.Commands.QueueItem.Test
         public Dictionary<string, object> WorkQueueItem()
         {
             _workQueueItem = new WorkQueueItemCommand();
-            "unassigned".CreateTestVariable(_engine, "output");
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(Dictionary<,>));
 
             _workQueueItem.v_QueueName = "UnitTestQueue";
             _workQueueItem.v_OutputUserVariableName = "{output}";
@@ -145,7 +145,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemDict = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine);
+            var queueItemDict = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
 
             return queueItemDict;
         }

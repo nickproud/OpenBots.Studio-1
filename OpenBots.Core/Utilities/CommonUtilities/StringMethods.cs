@@ -90,20 +90,15 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             }
         }
 
-        public static string ConvertObjectToString(object obj)
+        public static string ConvertObjectToString(object obj, Type type)
         {
-            string type = "";
-            if (obj != null)
-                type = obj.GetType().FullName;
+            if (obj == null)
+                return "null";
 
             try
             {
-                switch (type)
+                switch (type.FullName)
                 {
-                    case "System.String":
-                        return obj.ToString();
-                    case "System.DateTime":
-                        return obj.ToString();
                     case "System.Security.SecureString":
                         return "*Secure String*";
                     case "System.Data.DataTable":
@@ -118,37 +113,25 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                         return ConvertIWebElementToString((IWebElement)obj);
                     case "System.Drawing.Bitmap":
                         return ConvertBitmapToString((Bitmap)obj);
-                    case string a when a.Contains("System.Collections.Generic.List`1[[System.String"):
-                    case string b when b.Contains("System.Collections.Generic.List`1[[System.Data.DataTable"):
-                    case string c when c.Contains("System.Collections.Generic.List`1[[Microsoft.Office.Interop.Outlook.MailItem"):
-                    case string d when d.Contains("System.Collections.Generic.List`1[[MimeKit.MimeMessage"):
-                    case string e when e.Contains("System.Collections.Generic.List`1[[OpenQA.Selenium.IWebElement"):
+                    case "Open3270.TN3270.XMLScreenField":
+                        return ConvertXMLScreenFieldToString(obj);
+                    case string a when a.Contains("System.Collections.Generic.List`1"):
                         return ConvertListToString(obj);
-                    case string a when a.Contains("System.Collections.Generic.Dictionary`2[[System.String") && a.Contains("],[System.String"):
-                    case string b when b.Contains("System.Collections.Generic.Dictionary`2[[System.String") && b.Contains("],[System.Data.DataTable"):
-                    case string c when c.Contains("System.Collections.Generic.Dictionary`2[[System.String") && c.Contains("],[Microsoft.Office.Interop.Outlook.MailItem"):
-                    case string d when d.Contains("System.Collections.Generic.Dictionary`2[[System.String") && d.Contains("],[MimeKit.MimeMessage"):
-                    case string e when e.Contains("System.Collections.Generic.Dictionary`2[[System.String") && e.Contains("],[OpenQA.Selenium.IWebElement"):
-                    case string f when f.Contains("System.Collections.Generic.Dictionary`2[[System.String") && f.Contains("],[System.Object"):
+                    case string a when a.Contains("System.Collections.Generic.Dictionary`2"):
                         return ConvertDictionaryToString(obj);
-                    case string a when a.Contains("System.Collections.Generic.KeyValuePair`2[[System.String") && a.Contains("],[System.String"):
-                    case string b when b.Contains("System.Collections.Generic.KeyValuePair`2[[System.String") && b.Contains("],[System.Data.DataTable"):
-                    case string c when c.Contains("System.Collections.Generic.KeyValuePair`2[[System.String") && c.Contains("],[Microsoft.Office.Interop.Outlook.MailItem"):
-                    case string d when d.Contains("System.Collections.Generic.KeyValuePair`2[[System.String") && d.Contains("],[MimeKit.MimeMessage"):
-                    case string e when e.Contains("System.Collections.Generic.KeyValuePair`2[[System.String") && e.Contains("],[OpenQA.Selenium.IWebElement"):
+                    case string a when a.Contains("System.Collections.Generic.KeyValuePair`2"):
                         return ConvertKeyValuePairToString(obj);
                     case "":
                         return "null";
                     default:
-                        return "*Type Not Yet Supported*";
+                        return obj.ToString();
                 }
                 
             }
             catch (System.Exception ex)
             {
                 return $"Error converting {type} to string - {ex.Message}";
-            }
-            
+            }           
         }
 
         public static string ConvertDataTableToString(DataTable dt)
@@ -281,6 +264,20 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return stringBuilder.ToString();
         }
 
+        public static string ConvertXMLScreenFieldToString(dynamic field, int index = -1)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append($"[Row: {field.Location.top}, Col: {field.Location.left}, \n" +
+                                 $"Field Length: {field.Location.length}, \n" +
+                                 $"Field Text: {field.Text}");
+            if (index != -1)
+                stringBuilder.Append($", \nField Index: {index}");
+
+            stringBuilder.Append("]");
+
+            return stringBuilder.ToString();
+        }
+
         public static string ConvertListToString(object list)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -352,6 +349,21 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 else
                     stringBuilder.Length = stringBuilder.Length - 3;
             }
+            else if (type.FullName == "Open3270.TN3270.XMLScreenField")
+            {
+                dynamic fieldList = list;
+                stringBuilder.Append($"Count({fieldList.Count}) \n[");
+
+                for (int i = 0; i < fieldList.Count - 1; i++)
+                    stringBuilder.AppendFormat("{0}, \n", ConvertXMLScreenFieldToString(fieldList[i], i));
+
+                if (fieldList.Count > 0)
+                    stringBuilder.AppendFormat("{0}]", ConvertXMLScreenFieldToString(fieldList[fieldList.Count - 1], fieldList.Count - 1));
+                else
+                    stringBuilder.Length = stringBuilder.Length - 3;
+            }
+            else
+                return list.ToString();
 
             return stringBuilder.ToString();
         }
@@ -360,7 +372,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             StringBuilder stringBuilder = new StringBuilder();
             Type type = dictionary.GetType().GetGenericArguments()[1];
-            dynamic stringDictionary = null;
+            dynamic stringDictionary;
 
             if (type == typeof(string))
             {
@@ -411,6 +423,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                     stringBuilder.AppendFormat("[{0}, {1}], ", pair.Key, pair.Value == null ?
                                                 string.Empty : pair.Value.ToString());
             }
+            else
+                return dictionary.ToString();
 
             if (stringDictionary.Count > 0)
             {
@@ -422,6 +436,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
             return stringBuilder.ToString();
         }
+
         public static string ConvertKeyValuePairToString(object pair)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -452,6 +467,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 KeyValuePair<string, IWebElement> stringPair = (KeyValuePair<string, IWebElement>)pair;
                 stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertIWebElementToString(stringPair.Value));
             }
+            else
+                return pair.ToString();
 
             return stringBuilder.ToString();
         }

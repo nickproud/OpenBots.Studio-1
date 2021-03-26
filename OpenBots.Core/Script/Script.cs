@@ -209,16 +209,18 @@ namespace OpenBots.Core.Script
             }
 
             //if deserialized Script version is lower than than the current application version
-            if (!engineContext.IsTest && deserializedScriptVersion.CompareTo(new Version(Application.ProductVersion)) < 0)
+            if (!engineContext.IsTest && deserializedScriptVersion.CompareTo(new Version(Application.ProductVersion)) < 0 && !isDialogResultYes)
             {
                 var dialogResult = MessageBox.Show($"Attempting to open a Script file from OpenBots Studio {deserializedScriptVersion}. " +
                                                    $"Would you like to attempt to convert this Script to {Application.ProductVersion}? " + 
                                                    "\n\nWarning: Once a Script has been converted, it cannot be undone.", 
                                                    "Convert Script", MessageBoxButtons.YesNo);
 
-                if (dialogResult == DialogResult.Yes || isDialogResultYes)
+                if (dialogResult == DialogResult.Yes)
                     deserializedData = ConvertScriptToLatestVersion(engineContext.FilePath, engineContext.Container, deserializedScriptVersion.ToString());
             }
+            else if(!engineContext.IsTest && deserializedScriptVersion.CompareTo(new Version(Application.ProductVersion)) < 0 && isDialogResultYes)
+                deserializedData = ConvertScriptToLatestVersion(engineContext.FilePath, engineContext.Container, deserializedScriptVersion.ToString());
 
             //update ProjectPath variable
             var projectPathVariable = deserializedData.Variables.Where(v => v.VariableName == "ProjectPath").SingleOrDefault();
@@ -229,6 +231,7 @@ namespace OpenBots.Core.Script
             projectPathVariable = new ScriptVariable
             {
                 VariableName = "ProjectPath",
+                VariableType = typeof(string),
                 VariableValue = "Value Provided at Runtime"
             };
             deserializedData.Variables.Add(projectPathVariable);

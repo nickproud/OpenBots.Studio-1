@@ -31,6 +31,7 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("MyWordInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
+		[CompatibleTypes(new Type[] { typeof(Application) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -49,6 +50,7 @@ namespace OpenBots.Commands.Word
 		[Remarks("This input should only be used for opening existing Documents.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -72,6 +74,10 @@ namespace OpenBots.Commands.Word
 		[JsonIgnore]
 		[Browsable(false)]
 		private List<Control> _openFileControls;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
 
 		public WordCreateApplicationCommand()
 		{
@@ -131,13 +137,10 @@ namespace OpenBots.Commands.Word
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_NewOpenDocument", this, editor));
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += OpenFileComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[3]).SelectedIndexChanged += OpenFileComboBox_SelectedIndexChanged;
 
 			_openFileControls = new List<Control>();
 			_openFileControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
-
-			foreach (var ctrl in _openFileControls)
-				ctrl.Visible = false;
 
 			RenderedControls.AddRange(_openFileControls);
 
@@ -152,14 +155,21 @@ namespace OpenBots.Commands.Word
 			return base.GetDisplayValue() + $" [{v_NewOpenDocument} - Visible '{v_Visible}' - Close Instances '{v_CloseAllInstances}' - New Instance Name '{v_InstanceName}']";
 		}
 
-		private void OpenFileComboBox_SelectedValueChanged(object sender, EventArgs e)
+		public override void Shown()
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Open Document")
+			base.Shown();
+			_hasRendered = true;
+			OpenFileComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void OpenFileComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[3]).Text == "Open Document" && _hasRendered)
 			{
 				foreach (var ctrl in _openFileControls)
 					ctrl.Visible = true;
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _openFileControls)
 				{

@@ -29,6 +29,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Name || {vQueueName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueueName { get; set; }
 
 		[Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Name || {vQueueItemName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueueItemName { get; set; }
 
 		[DisplayName("Source (Optional)")]
@@ -45,6 +47,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Loan Origination System || Lead Generation System ||{vSource}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Source { get; set; }
 
 		[DisplayName("Event (Optional)")]
@@ -53,6 +56,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Payment Rejected || New Employee Onboarded || {vEvent}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Event { get; set; }
 
 		[Required]
@@ -70,6 +74,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Company || {vJsonType}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_JsonType { get; set; }
 
 		[Required]
@@ -78,15 +83,16 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Value || {vQueueItemValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_QueueItemTextValue { get; set; }
 
-		[Required]
 		[DisplayName("Priority (Optional)")]
 		[Description("Enter a priority value between 0-100.")]
 		[SampleUsage("100 || {vPriority}")]
 		[Remarks("Priority determines the order in which QueueItems will be worked.\n" +
 				 "If no priority is set, QueueItems will be ordered by time of creation.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Priority { get; set; }
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
@@ -95,11 +101,16 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Attachments { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
 		private List<Control> _jsonTypeControls;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
 
 		public AddQueueItemCommand()
 		{
@@ -164,12 +175,11 @@ namespace OpenBots.Commands.QueueItem
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Source", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Event", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_QueueItemType", this, editor));
-			((ComboBox)RenderedControls[13]).SelectedIndexChanged += QueueItemTypeComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[13]).SelectedIndexChanged += QueueItemTypeComboBox_SelectedIndexChanged;
 
 			_jsonTypeControls = new List<Control>();
 			_jsonTypeControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_JsonType", this, editor));
-			foreach (var ctrl in _jsonTypeControls)
-				ctrl.Visible = false;
+			
 			RenderedControls.AddRange(_jsonTypeControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueueItemTextValue", this, editor, 100, 300));
@@ -188,14 +198,21 @@ namespace OpenBots.Commands.QueueItem
 				return base.GetDisplayValue() + $" ['{v_QueueItemName}' of Type '{v_QueueItemType}' to Queue '{v_QueueName}' With {attachmentCount} File Attachment(s)]";
 		}
 
-		private void QueueItemTypeComboBox_SelectedValueChanged(object sender, EventArgs e)
+		public override void Shown()
 		{
-			if (((ComboBox)RenderedControls[13]).Text == "Json")
+			base.Shown();
+			_hasRendered = true;
+			QueueItemTypeComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void QueueItemTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[13]).Text == "Json" && _hasRendered)
 			{
 				foreach (var ctrl in _jsonTypeControls)
 					ctrl.Visible = true;
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _jsonTypeControls)
 				{

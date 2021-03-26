@@ -118,6 +118,42 @@ namespace OpenBots.Nuget
             }
         }
 
+        public static async Task DownloadPackage(string packageId, string version, string packageLocation, string packageName, List<SourceRepository> repositories)
+        {
+            ILogger logger = NullLogger.Instance;
+            CancellationToken cancellationToken = CancellationToken.None;
+
+            SourceCacheContext cache = new SourceCacheContext();
+
+            foreach (var repository in repositories)
+            {
+                FindPackageByIdResource resource = await repository.GetResourceAsync<FindPackageByIdResource>();
+
+                NuGetVersion packageVersion = new NuGetVersion(version);
+                using (MemoryStream packageStream = new MemoryStream())
+                {
+
+                    bool success = await resource.CopyNupkgToStreamAsync(
+                    packageId,
+                    packageVersion,
+                    packageStream,
+                    cache,
+                    logger,
+                    cancellationToken);
+
+                    if (success)
+                    {
+                        var path = Path.Combine(packageLocation, packageName + ".nupkg");
+                        using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
+                        {
+                            packageStream.WriteTo(fileStream);
+                        }
+                        break;
+                    }                   
+                }
+            }
+        }
+
         public static async Task InstallPackage(string packageId, string version, Dictionary<string, string> projectDependenciesDict, string installDefaultSource = "")
         {
             var packageSources = new ApplicationSettings().GetOrCreateApplicationSettings().ClientSettings.PackageSourceDT;
@@ -162,8 +198,11 @@ namespace OpenBots.Nuget
                     NullLogger.Instance);
 
                 var resolver = new PackageResolver();
+
+                //TODO: Installation failure happens here if package isn't found. Failure is being caught but not reported because it's asynchronous 
                 var packagesToInstall = resolver.Resolve(resolverContext, CancellationToken.None)
                     .Select(p => availablePackages.Single(x => PackageIdentityComparer.Default.Equals(x, p)));
+                
                 var packagePathResolver = new PackagePathResolver(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder));
                 var packageExtractionContext = new PackageExtractionContext(
                     PackageSaveMode.Defaultv3,
@@ -230,7 +269,7 @@ namespace OpenBots.Nuget
                 if (dependencyInfo == null) 
                     continue;
 
-                if (!(ignoreCommandPackages && dependencyInfo.Id.StartsWith("OpenBots")))
+                if (!(ignoreCommandPackages && (dependencyInfo.Id.StartsWith("OpenBots.Commands") || dependencyInfo.Id.StartsWith("OpenBots.Core"))))
                     availablePackages.Add(dependencyInfo);
    
                 foreach (var dependency in dependencyInfo.Dependencies)
@@ -387,30 +426,34 @@ namespace OpenBots.Nuget
             string programPackagesSource = Folders.GetFolder(FolderType.ProgramFilesPackagesFolder);
             List<string> newPackageFilePaths = MovePackagesToProgramFiles();
             string nugetSourcePath = "https://api.nuget.org/v3/index.json";
+            string gallerySourcePath = "https://gallery.openbots.io/v3/command.json";
 
             List<string> packageList = new List<string>();
+
+            var settings = Settings.LoadDefaultSettings(root: null);
+            var sourceRepositoryProvider = new SourceRepositoryProvider(new PackageSourceProvider(settings), Repository.Provider.GetCoreV3());
+            var repositories = new List<SourceRepository>();
+            var sourceRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(programPackagesSource, "Program Files", true));
+            var nugetRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(nugetSourcePath, "Nuget", true));
+            var galleryRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(gallerySourcePath, "Gallery", true));
+            repositories.Add(sourceRepo);
+            repositories.Add(nugetRepo);
+            repositories.Add(galleryRepo);
 
             try
             {
 
                 foreach (string packagePath in newPackageFilePaths)
                 {
-                    var matches = Regex.Matches(packagePath, @"(\w+\.\w+\.\w+)");
-                    string packageId = matches[1].ToString();
-                    string version = matches[0].ToString();
+                    var matches = Regex.Matches(packagePath, @"(\w+\.\w+\.*\w*)\.(\d+\.\d+\.\d+)");
+                    string packageId = matches[0].Groups[1].Value;
+                    string version = matches[0].Groups[2].Value;
 
                     var packageVersion = NuGetVersion.Parse(version);
-                    var nuGetFramework = NuGetFramework.ParseFolder("net48");
-                    var settings = Settings.LoadDefaultSettings(root: null);
-                    var sourceRepositoryProvider = new SourceRepositoryProvider(new PackageSourceProvider(settings), Repository.Provider.GetCoreV3());
-
+                    var nuGetFramework = NuGetFramework.ParseFolder("net48");                   
+                                   
                     using (var cacheContext = new SourceCacheContext())
-                    {
-                        var repositories = new List<SourceRepository>();
-                        var sourceRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(programPackagesSource, "Program Files", true));
-                        var nugetRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(nugetSourcePath, "Nuget", true));
-                        repositories.Add(sourceRepo);
-                        repositories.Add(nugetRepo);
+                    {                        
 
                         var availablePackages = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
                         await GetPackageDependencies(
@@ -430,7 +473,7 @@ namespace OpenBots.Nuget
             List<string> filteredPackageList = packageList.Distinct().ToList();
 
             foreach (var package in filteredPackageList)
-                await DownloadPackage(package.Split('*')[0], package.Split('*')[1], programPackagesSource, $"{package.Split('*')[0]}.{package.Split('*')[1]}", nugetSourcePath);
+                await DownloadPackage(package.Split('*')[0], package.Split('*')[1], programPackagesSource, $"{package.Split('*')[0]}.{package.Split('*')[1]}", repositories);
         }
         #endregion
 

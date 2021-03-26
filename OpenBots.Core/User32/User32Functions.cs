@@ -244,7 +244,7 @@ namespace OpenBots.Core.User32
         public static void BringWindowToFront(IntPtr hWnd)
         {
             uint foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
-            uint appThread = (uint)System.AppDomain.GetCurrentThreadId();
+            uint appThread = (uint)AppDomain.GetCurrentThreadId();
 
             if (foreThread != appThread)
             {

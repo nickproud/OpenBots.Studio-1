@@ -18,10 +18,10 @@ namespace OpenBots.Commands.Data.Test
             string input = "test text";
             string startIndex = "5";
             string length = "4";
-            input.CreateTestVariable(_engine, "input");
-            startIndex.CreateTestVariable(_engine, "start");
-            length.CreateTestVariable(_engine, "length");
-            "unassigned".CreateTestVariable(_engine, "output");
+            VariableMethods.CreateTestVariable(input, _engine, "input", typeof(string));
+            VariableMethods.CreateTestVariable(startIndex, _engine, "start", typeof(string));
+            VariableMethods.CreateTestVariable(length, _engine, "length", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _substringCommand.v_InputText = "{input}";
             _substringCommand.v_StartIndex = "{start}";

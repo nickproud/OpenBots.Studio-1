@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Outlook
         [SampleUsage("{vMailItem}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(MailItem) })]
         public string v_MailItem { get; set; }
 
         [Required]
@@ -35,6 +36,7 @@ namespace OpenBots.Commands.Outlook
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_AttachmentDirectory { get; set; }
 
         [Required]
@@ -51,7 +53,8 @@ namespace OpenBots.Commands.Outlook
         [DisplayName("Output Attachment List Variable")]
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("{vUserVariable}")]
-        [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+        [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+        [CompatibleTypes(new Type[] { typeof(List<>) })]
         public string v_OutputUserVariableName { get; set; }
         
         public GetOutlookEmailAttachmentsCommand()
@@ -65,7 +68,7 @@ namespace OpenBots.Commands.Outlook
         public override void RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            MailItem email = (MailItem)v_MailItem.ConvertUserVariableToObject(engine);
+            MailItem email = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
             bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.ConvertUserVariableToString(engine).Equals("Yes");
             string attDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
 
@@ -86,7 +89,7 @@ namespace OpenBots.Commands.Outlook
                 }
             }
 
-            attachmentList.StoreInUserVariable(engine, v_OutputUserVariableName);
+            attachmentList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

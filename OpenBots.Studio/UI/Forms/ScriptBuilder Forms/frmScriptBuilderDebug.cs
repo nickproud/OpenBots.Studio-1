@@ -123,11 +123,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     DataRow[] foundVariables = variableValues.Select("Name = '" + variable.VariableName + "'");
                     if (foundVariables.Length == 0)
                     {
-                        string type = "null";
-                        if (variable.VariableValue != null)
-                            type = variable.VariableValue.GetType().FullName;
-
-                        variableValues.Rows.Add(variable.VariableName, type, StringMethods.ConvertObjectToString(variable.VariableValue));                     
+                        string type = variable.VariableType.FullName;
+                        if (variable.VariableValue != null && StringMethods.ConvertObjectToString(variable.VariableValue, variable.VariableType).Length > 40000)
+                            variableValues.Rows.Add(variable.VariableName, type, StringMethods.ConvertObjectToString(variable.VariableValue, variable.VariableType).Substring(0, 40000));
+                        else
+                            variableValues.Rows.Add(variable.VariableName, type, StringMethods.ConvertObjectToString(variable.VariableValue, variable.VariableType));                     
                     }
                 }
 
@@ -138,11 +138,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     DataRow[] foundArguments = argumentValues.Select("Name = '" + argument.ArgumentName + "'");
                     if (foundArguments.Length == 0)
                     {
-                        string type = "null";
-                        if (argument.ArgumentValue != null)
-                            type = argument.ArgumentValue.GetType().FullName;
-
-                        argumentValues.Rows.Add(argument.ArgumentName, type, StringMethods.ConvertObjectToString(argument.ArgumentValue), argument.Direction.ToString());
+                        string type = argument.ArgumentType.FullName;
+                        argumentValues.Rows.Add(argument.ArgumentName, type, StringMethods.ConvertObjectToString(argument.ArgumentValue, argument.ArgumentType), 
+                            argument.Direction.ToString());
                     }
                 }
 
@@ -163,7 +161,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 string debugName = ((DataGridView)sender).Rows[e.RowIndex].Cells[0].Value.ToString();               
                 string debugValue = ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
 
-                frmDialog debugDialog = new frmDialog(debugValue, debugName, DialogType.OkCancel, 0);
+                frmDialog debugDialog = new frmDialog(debugValue, debugName, DialogType.CancelOnly, 0);
                 debugDialog.Show();
             }
         }

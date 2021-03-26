@@ -31,7 +31,8 @@ namespace OpenBots.Commands.System
 		[DisplayName("Output Environment Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -88,7 +89,7 @@ namespace OpenBots.Commands.System
 			if (string.IsNullOrEmpty(envValue))
 				envValue = "null";
 
-			envValue.StoreInUserVariable(engine, v_OutputUserVariableName);
+			envValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -133,7 +134,7 @@ namespace OpenBots.Commands.System
 			var variable = Environment.GetEnvironmentVariables();
 			var value = variable[selectedValue];
 
-			_variableValue.Text = value.ToString();
+			_variableValue.Text = value?.ToString();
 		}
 
 		public override string GetDisplayValue()

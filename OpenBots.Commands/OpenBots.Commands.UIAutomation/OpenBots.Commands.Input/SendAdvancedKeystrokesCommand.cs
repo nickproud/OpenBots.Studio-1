@@ -30,6 +30,7 @@ namespace OpenBots.Commands.Input
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -141,12 +142,10 @@ namespace OpenBots.Commands.Input
 
 			RenderedControls.AddRange(commandControls.CreateDefaultWindowControlGroupFor("v_WindowName", this, editor));
 
-			_keystrokeGridHelper = new DataGridView();
-			_keystrokeGridHelper.DataBindings.Add("DataSource", this, "v_KeyActions", false, DataSourceUpdateMode.OnPropertyChanged);
-			_keystrokeGridHelper.AllowUserToDeleteRows = true;
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_KeyActions", this));
+
+			_keystrokeGridHelper = commandControls.CreateDefaultDataGridViewFor("v_KeyActions", this);
 			_keystrokeGridHelper.AutoGenerateColumns = false;
-			_keystrokeGridHelper.Width = 500;
-			_keystrokeGridHelper.Height = 140;
 
 			DataGridViewComboBoxColumn propertyName = new DataGridViewComboBoxColumn();
 			propertyName.DataSource = CommonMethods.GetAvailableKeys();
@@ -160,12 +159,6 @@ namespace OpenBots.Commands.Input
 			propertyValue.DataPropertyName = "Action";
 			_keystrokeGridHelper.Columns.Add(propertyValue);
 
-			_keystrokeGridHelper.ColumnHeadersHeight = 30;
-			_keystrokeGridHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_keystrokeGridHelper.AllowUserToAddRows = true;
-			_keystrokeGridHelper.AllowUserToDeleteRows = true;
-
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_KeyActions", this));
 			RenderedControls.Add(_keystrokeGridHelper);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_KeyUpDefault", this, editor));

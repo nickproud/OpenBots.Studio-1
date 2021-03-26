@@ -29,7 +29,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             InitializeComponent();
 
-            lblMessage.Text = message;
+            if (message.Length > 60000)
+                lblMessage.Text = message.Substring(0, 60000) + "\nFull text not displayed";
+            else
+                lblMessage.Text = message;
             lblMessage.MaximumSize = new Size(pnlMessage.Size.Width - 30, 0);
 
             Text = title;
@@ -43,8 +46,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 case DialogType.OkOnly:
                     uiBtnCancel.Hide();
                     break;
-                //actually DialogType.CancelOnly if there were one
-                case DialogType.OkCancel:
+                case DialogType.CancelOnly:
                     uiBtnOk.Hide();
                     uiBtnCancel.Hide();
                     break;

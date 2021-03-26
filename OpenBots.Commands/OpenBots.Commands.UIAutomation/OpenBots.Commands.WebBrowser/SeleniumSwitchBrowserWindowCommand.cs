@@ -24,6 +24,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(IWebDriver) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -60,6 +61,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("http://www.url.com || Welcome to Homepage || {vSearchData}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_MatchParameter { get; set; }
 
 		public SeleniumSwitchBrowserWindowCommand()

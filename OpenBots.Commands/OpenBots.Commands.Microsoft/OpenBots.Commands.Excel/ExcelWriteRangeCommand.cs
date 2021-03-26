@@ -30,6 +30,7 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(Application) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -38,6 +39,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("{vDataTable}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(DataTable) })]
 		public string v_DataTableToSet { get; set; }
 
 		[Required]
@@ -46,6 +48,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A1 || {vCellLocation}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_CellLocation { get; set; }
 
 		[Required]
@@ -78,7 +81,7 @@ namespace OpenBots.Commands.Excel
 			var excelInstance = (Application)excelObject;
 			var excelSheet = (Worksheet)excelInstance.ActiveSheet;
 
-			DataTable Dt = (DataTable)v_DataTableToSet.ConvertUserVariableToObject(engine);
+			DataTable Dt = (DataTable)v_DataTableToSet.ConvertUserVariableToObject(engine, nameof(v_DataTableToSet), this);
 			if (string.IsNullOrEmpty(vTargetAddress) || vTargetAddress.Contains(":")) 
 				throw new Exception("Cell Location is invalid or empty");
 

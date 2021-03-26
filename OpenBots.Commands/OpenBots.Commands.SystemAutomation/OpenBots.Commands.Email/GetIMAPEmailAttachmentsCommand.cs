@@ -17,17 +17,18 @@ using OBFile = System.IO.File;
 namespace OpenBots.Commands.Email
 {
     [Serializable]
-    [Category("Outlook Commands")]
-    [Description("This command gets attachments from a selected email in Outlook.")]
+    [Category("Email Commands")]
+    [Description("This command gets attachments from a selected email using IMAP protocol.")]
 
     public class GetIMAPEmailAttachmentsCommand : ScriptCommand
     {
         [Required]
         [DisplayName("MimeMessage")]
-        [Description("Enter the MimeMessage to delete.")]
+        [Description("Enter the MimeMessage to retrieve attachments from.")]
         [SampleUsage("{vMimeMessage}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(MimeMessage) })]
         public string v_IMAPMimeMessage { get; set; }
 
         [Required]
@@ -37,6 +38,7 @@ namespace OpenBots.Commands.Email
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(null, true)]
         public string v_IMAPAttachmentDirectory { get; set; }
 
         [Required]
@@ -53,7 +55,8 @@ namespace OpenBots.Commands.Email
         [DisplayName("Output Attachment List Variable")]
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("vUserVariable")]
-        [Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+        [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+        [CompatibleTypes(new Type[] { typeof(List<>) })]
         public string v_OutputUserVariableName { get; set; }
 
         public GetIMAPEmailAttachmentsCommand()
@@ -67,7 +70,7 @@ namespace OpenBots.Commands.Email
         public override void RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            MimeMessage email = (MimeMessage)v_IMAPMimeMessage.ConvertUserVariableToObject(engine);
+            MimeMessage email = (MimeMessage)v_IMAPMimeMessage.ConvertUserVariableToObject(engine, nameof(v_IMAPMimeMessage), this);
             bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.ConvertUserVariableToString(engine).Equals("Yes");
             string attDirectory = v_IMAPAttachmentDirectory.ConvertUserVariableToString(engine);
 
@@ -104,7 +107,7 @@ namespace OpenBots.Commands.Email
                 }
             }
             
-            attachmentList.StoreInUserVariable(engine, v_OutputUserVariableName);
+            attachmentList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

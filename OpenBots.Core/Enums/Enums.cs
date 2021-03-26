@@ -83,14 +83,14 @@ namespace OpenBots.Core.Enums
     {
         YesNo,
         OkCancel,
-        OkOnly
+        OkOnly,
+        CancelOnly
     }
 
     public enum SinkType
     {
         File,
-        HTTP,
-        SignalR
+        HTTP
     }
     public enum MouseMessages
     {
@@ -102,5 +102,20 @@ namespace OpenBots.Core.Enums
         WmRButtonUp = 0x0205,
         WmMButtonDown = 0x0207,
         WmMButtonUp = 0x0208,
+    }
+
+    public enum ProjectType
+    {
+        OpenBots,
+        Python,
+        TagUI,
+        CSScript
+    }
+
+    public enum ScriptArgumentDirection
+    {
+        In,
+        Out,
+        InOut
     }
 }

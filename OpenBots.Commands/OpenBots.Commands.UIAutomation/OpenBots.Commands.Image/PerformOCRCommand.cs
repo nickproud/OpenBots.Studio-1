@@ -5,7 +5,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +16,7 @@ namespace OpenBots.Commands.Image
 {
 	[Serializable]
 	[Category("Image Commands")]
-	[Description("This command extracts text from an image file.")]
+	[Description("This command extracts text from an image file using Microsoft OneNote.")]
 	public class PerformOCRCommand : ScriptCommand
 	{
 
@@ -28,6 +27,7 @@ namespace OpenBots.Commands.Image
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -35,7 +35,8 @@ namespace OpenBots.Commands.Image
 		[DisplayName("Output OCR Result Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public PerformOCRCommand()
@@ -59,7 +60,7 @@ namespace OpenBots.Commands.Image
 			foreach (var text in ocrTextArray)
 				endResult += text.Text;
 
-			endResult.StoreInUserVariable(engine, v_OutputUserVariableName);
+			endResult.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

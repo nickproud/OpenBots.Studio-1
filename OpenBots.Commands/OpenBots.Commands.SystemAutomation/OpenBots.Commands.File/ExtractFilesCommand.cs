@@ -6,13 +6,13 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Windows.Forms;
 using IO = System.IO;
 
@@ -30,13 +30,15 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePathOrigin { get; set; }
 
 		[DisplayName("Password (Optional)")]
 		[Description("Define the password to use if required to extract files.")]
-		[SampleUsage("password || {vPassword}")]
-		[Remarks("")]
+		[SampleUsage("{vPassword}")]
+		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_Password { get; set; }
 
 		[Required]
@@ -46,6 +48,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_PathDestination { get; set; }
 
 		[Required]
@@ -53,7 +56,8 @@ namespace OpenBots.Commands.File
 		[DisplayName("Output Extracted File Path(s) List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ExtractFilesCommand()
@@ -92,7 +96,9 @@ namespace OpenBots.Commands.File
 			Directory.CreateDirectory(vFilePathDestination);
 
 			// get password to extract files
-			var vPassword = v_Password.ConvertUserVariableToString(engine);
+			var vPassword = "";
+			if (v_Password != null)
+				vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
 			FileStream fs = IO.File.OpenRead(vSourceFilePathOrigin);
 			ZipFile file = new ZipFile(fs);
 
@@ -139,7 +145,7 @@ namespace OpenBots.Commands.File
 				var filesList = Directory.GetFiles(vFilePathDestination, ".", SearchOption.AllDirectories).ToList();
 
 				//Add File Paths to the output variable
-				filesList.StoreInUserVariable(engine, v_OutputUserVariableName);
+				filesList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}           
 		}
 
@@ -149,7 +155,7 @@ namespace OpenBots.Commands.File
 
 			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePathOrigin", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultPasswordInputGroupFor("v_Password", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Password", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_PathDestination", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

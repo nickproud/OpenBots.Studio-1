@@ -17,17 +17,20 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
+using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Engine;
 using OpenBots.UI.CustomControls;
+using OpenBots.UI.CustomControls.CustomUIControls;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms
@@ -51,15 +54,18 @@ namespace OpenBots.UI.Forms
         //track existing commands for visibility
         public List<ScriptCommand> ConfiguredCommands { get; set; }
         public string HTMLElementRecorderURL { get; set; }
+        public TypeContext TypeContext { get; set; }
 
         private ICommandControls _commandControls;
+        private ToolTip _errorToolTip;
 
         #region Form Events
         //handle events for the form
 
-        public frmCommandEditor(List<AutomationCommand> commands, List<ScriptCommand> existingCommands)
+        public frmCommandEditor(List<AutomationCommand> commands, List<ScriptCommand> existingCommands, TypeContext typeContext)
         {
             InitializeComponent();
+            TypeContext = typeContext;
             CommandList = commands;
             ConfiguredCommands = existingCommands;
         }
@@ -67,7 +73,8 @@ namespace OpenBots.UI.Forms
         private void frmNewCommand_Load(object sender, EventArgs e)
         {
             // Initialize CommandControls with Current Editor
-            _commandControls = new CommandControls(this, ScriptEngineContext);
+            _commandControls = new CommandControls(this, ScriptEngineContext, TypeContext);
+            _errorToolTip = AddValidationErrorToolTip();
 
             //order list
             CommandList = CommandList.OrderBy(itm => itm.FullName).ToList();
@@ -147,6 +154,7 @@ namespace OpenBots.UI.Forms
         private void frmCommandEditor_Shown(object sender, EventArgs e)
         {
             FormBorderStyle = FormBorderStyle.Sizable;
+            SelectedCommand.Shown();
         }
 
         private void frmCommandEditor_Resize(object sender, EventArgs e)
@@ -227,6 +235,8 @@ namespace OpenBots.UI.Forms
                 try
                 {
                     PropertyInfo propFrom = fromObject.GetType().GetProperty(propTo.Name);
+                    if (propTo.Name == "SelectionName")
+                        continue;
                     if (propFrom != null && propFrom.CanWrite)
                         propTo.SetValue(toObject, propFrom.GetValue(fromObject, null), null);
                 }
@@ -275,7 +285,163 @@ namespace OpenBots.UI.Forms
                     }
                 }
             }
-            DialogResult = DialogResult.OK;
+
+            if (ValidateInputs())
+                DialogResult = DialogResult.OK;
+        }
+
+        private bool ValidateInputs()
+        {
+            bool isAllValid = true;
+            AutomationEngineInstance testEngine = new AutomationEngineInstance(ScriptEngineContext);
+            dynamic currentControl;
+            _errorToolTip.RemoveAll();
+
+            foreach (Control ctrl in flw_InputVariables.Controls)
+            {
+                if (ctrl.Visible)
+                {
+                    if (ctrl is UIDataGridView)
+                    {
+                        currentControl = (UIDataGridView)ctrl;
+                        currentControl.BorderColor = Color.Transparent;
+
+                        var validationContext = (CommandControlValidationContext)currentControl.Tag;
+
+                        if (currentControl.Rows.Count == 0 && validationContext.IsRequired)
+                        {
+                            currentControl.BorderColor = Color.Red;
+                            _errorToolTip.SetToolTip(currentControl, "Input is required.");
+                            isAllValid = false;
+                            continue;
+                        }
+
+                        foreach (DataGridViewRow row in currentControl.Rows)
+                        {
+                            if (!row.IsNewRow)
+                            {
+                                if (currentControl.Columns[0] is DataGridViewCheckBoxColumn)
+                                {
+                                    if (row.Cells[0].Value.ToString() == "True")
+                                    {
+                                        foreach (DataGridViewCell cell in row.Cells)
+                                        {
+                                            bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl, testEngine);
+                                            if (!isCellValid)
+                                            {
+                                                isAllValid = false;
+                                                break;
+                                            }                                               
+                                        }
+                                    }                                   
+                                }
+                                else
+                                {
+                                    foreach (DataGridViewCell cell in row.Cells)
+                                    {
+                                        bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl, testEngine);
+                                        if (!isCellValid)
+                                        {
+                                            isAllValid = false;
+                                            break;
+                                        }
+                                    }
+                                }                             
+                            }                          
+                        }
+                    }
+                    else if (ctrl is UITextBox)
+                    {
+                        currentControl = (UITextBox)ctrl;
+                        currentControl.BorderColor = Color.Transparent;
+                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                    }
+                    else if (ctrl is UIComboBox)
+                    {
+                        currentControl = (UIComboBox)ctrl;
+                        currentControl.BorderColor = Color.Transparent;
+                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                    }
+                    else if(ctrl is UIPictureBox)
+                    {
+                        currentControl = (UIPictureBox)ctrl;
+                        currentControl.BorderColor = Color.Transparent;
+                        isAllValid = ValidateInput(isAllValid, currentControl.EncodedImage, currentControl, testEngine);
+                    }
+                    else
+                        continue;
+                }              
+            }
+            return isAllValid;
+        }
+
+        private bool ValidateInput(bool isAllValid, string validatingText, dynamic currentControl, AutomationEngineInstance testEngine)
+        {
+            var validationContext = (CommandControlValidationContext)currentControl.Tag;
+
+            //check whether input is required
+            if (string.IsNullOrEmpty(validatingText) && validationContext.IsRequired == true)
+            {
+                currentControl.BorderColor = Color.Red;
+                _errorToolTip.SetToolTip(currentControl, "Input is required.");
+                isAllValid = false;
+                return isAllValid;
+            }
+            else if (string.IsNullOrEmpty(validatingText) && validationContext.IsRequired == false)
+                return isAllValid;
+
+            //TODO: Create an Instance tab with assigned Instance Types. For now, only requirement is some set some value
+            if (validationContext.IsInstance)
+                return isAllValid;
+
+            if (validationContext.IsImageCapture)
+                return isAllValid;
+
+            var varArgMatches = Regex.Matches(validatingText, @"\{.+\}");
+
+            if (varArgMatches.Count == 0 && validationContext.IsStringOrPrimitive)
+                return isAllValid;
+            else if (varArgMatches.Count == 0 && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
+            {
+                currentControl.BorderColor = Color.Red;
+                _errorToolTip.SetToolTip(currentControl, "Input only accepts variables or arguments.");
+                isAllValid = false;
+                return isAllValid;
+            }
+
+            foreach (var match in varArgMatches)
+            {
+                Type varArgType = match.ToString().GetVarArgType(testEngine);
+                if (varArgType != null && !(validationContext.IsStringOrPrimitive && (varArgType == typeof(string) || varArgType.IsPrimitive)))
+                {
+                    if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType) || x == varArgType)))
+                    {
+                        currentControl.BorderColor = Color.Red;
+                        _errorToolTip.SetToolTip(currentControl, "Input value is not of a compatible Type.");
+                        isAllValid = false;
+                        return isAllValid;
+                    }
+                }
+                else if (varArgType == null && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
+                {
+                    currentControl.BorderColor = Color.Red;
+                    _errorToolTip.SetToolTip(currentControl, "Input provided is not an existing variable or argument.");
+                    isAllValid = false;
+                    return isAllValid;
+                }
+            }
+            return isAllValid;
+        }
+
+        public ToolTip AddValidationErrorToolTip()
+        {
+            ToolTip errorToolTip = new ToolTip();
+            errorToolTip.ToolTipIcon = ToolTipIcon.Error;
+            errorToolTip.IsBalloon = true;
+            errorToolTip.ShowAlways = true;
+            errorToolTip.ToolTipTitle = "Error";
+            errorToolTip.AutoPopDelay = 15000;
+            return errorToolTip;
         }
 
         private void uiBtnCancel_Click(object sender, EventArgs e)

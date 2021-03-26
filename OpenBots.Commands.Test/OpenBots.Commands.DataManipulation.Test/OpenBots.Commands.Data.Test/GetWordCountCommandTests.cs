@@ -17,8 +17,8 @@ namespace OpenBots.Commands.Data.Test
             _engine = new AutomationEngineInstance(null);
 
             string input = "Test input sentence";
-            input.CreateTestVariable(_engine, "input");
-            "unassigned".CreateTestVariable(_engine, "output");
+            VariableMethods.CreateTestVariable(input, _engine, "input", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(int));
 
             _getWordCount.v_InputValue = "{input}";
             _getWordCount.v_OutputUserVariableName = "{output}";

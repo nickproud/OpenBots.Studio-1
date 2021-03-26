@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using Xunit;
+using System.Security;
 
 namespace OpenBots.Commands.Credential.Test
 {
@@ -23,11 +24,11 @@ namespace OpenBots.Commands.Credential.Test
             string newUsername = "newTestUser";
             string newPassword = "newTestPassword";
 
-            credentialName.CreateTestVariable(_engine, "credName");
-            newUsername.CreateTestVariable(_engine, "username");
-            newPassword.CreateTestVariable(_engine, "password");
-            "unassigned".CreateTestVariable(_engine, "storedUsername");
-            "unassigned".CreateTestVariable(_engine, "storedPassword");
+            VariableMethods.CreateTestVariable(credentialName, _engine, "credName", typeof(string));
+            VariableMethods.CreateTestVariable(newUsername, _engine, "username", typeof(string));
+            VariableMethods.CreateTestVariable(newPassword, _engine, "password", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "storedUsername", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "storedPassword", typeof(SecureString));
 
             _updateCredential.v_CredentialName = "{credName}";
             _updateCredential.v_CredentialUsername = "{username}";
@@ -43,7 +44,7 @@ namespace OpenBots.Commands.Credential.Test
 
 
             Assert.Equal(newUsername, "{storedUsername}".ConvertUserVariableToString(_engine));
-            Assert.Equal(newPassword.GetSecureString().ToString(), "{storedPassword}".ConvertUserVariableToObject(_engine).ToString());
+            Assert.Equal(newPassword.ConvertStringToSecureString().ToString(), "{storedPassword}".ConvertUserVariableToObject(_engine, typeof(SecureString)).ToString());
         }
 
         public string[] resetCredential()

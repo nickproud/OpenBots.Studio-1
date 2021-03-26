@@ -28,6 +28,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("https://example.com || {vMyUrl}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_BaseURL { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("/v2/getUser/1 || {vMyUrl}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_APIEndPoint { get; set; }
 
 		[Required]
@@ -57,19 +59,19 @@ namespace OpenBots.Commands.API
 		[Remarks("")]
 		public string v_RequestFormat { get; set; }
 
-		[Required]
-		[DisplayName("Basic REST Parameters")]
+		[DisplayName("Basic REST Parameters (Optional)")]
 		[Description("Specify default search parameters.")]
 		[SampleUsage("")]
-		[Remarks("Once you have clicked on a valid window the search parameters will be populated." +
-				 " Enable only the ones required to be a match at runtime.")]
+		[Remarks("Once you have clicked on a valid window the search parameters will be populated.\n" +
+				 "Enable only the ones required to be a match at runtime.")]
+		[CompatibleTypes(null, true)]
 		public DataTable v_RESTParameters { get; set; }
 
-		[Required]
-		[DisplayName("Advanced REST Parameters")]
+		[DisplayName("Advanced REST Parameters (Optional)")]
 		[Description("Specify a list of advanced parameters.")]
 		[SampleUsage("")]
 		[Remarks("")]
+		[CompatibleTypes(null, true)]
 		public DataTable v_AdvancedParameters { get; set; }
 
 		[Required]
@@ -77,7 +79,8 @@ namespace OpenBots.Commands.API
 		[DisplayName("Output Response Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -222,7 +225,7 @@ namespace OpenBots.Commands.API
 					restContent = content;
 				}
 
-				restContent.StoreInUserVariable(engine, v_OutputUserVariableName);
+				restContent.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			catch (Exception ex)
 			{
@@ -249,11 +252,7 @@ namespace OpenBots.Commands.API
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_RequestFormat", this, editor));
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_RESTParameters", this));
 
-			_RESTParametersGridViewHelper = new DataGridView();
-			_RESTParametersGridViewHelper.Width = 500;
-			_RESTParametersGridViewHelper.Height = 140;
-			_RESTParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_RESTParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			_RESTParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_RESTParameters", this);
 			_RESTParametersGridViewHelper.AutoGenerateColumns = false;
 
 			var selectColumn = new DataGridViewComboBoxColumn();
@@ -272,17 +271,12 @@ namespace OpenBots.Commands.API
 			paramValueColumn.DataPropertyName = "Parameter Value";
 			_RESTParametersGridViewHelper.Columns.Add(paramValueColumn);
 
-			_RESTParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_RESTParameters", false, DataSourceUpdateMode.OnPropertyChanged);
 			RenderedControls.Add(_RESTParametersGridViewHelper);
 
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_AdvancedParameters", this));
 
 			//advanced parameters
-			_advancedRESTParametersGridViewHelper = new DataGridView();
-			_advancedRESTParametersGridViewHelper.Width = 500;
-			_advancedRESTParametersGridViewHelper.Height = 140;
-			_advancedRESTParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_advancedRESTParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			_advancedRESTParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_AdvancedParameters", this);
 			_advancedRESTParametersGridViewHelper.AutoGenerateColumns = false;
 
 			var advParamNameColumn = new DataGridViewTextBoxColumn();
@@ -304,9 +298,7 @@ namespace OpenBots.Commands.API
 			advParamType.HeaderText = "Parameter Type";
 			advParamType.DataPropertyName = "Parameter Type";
 			advParamType.DataSource = new string[] { "Cookie", "GetOrPost", "HttpHeader", "QueryString", "RequestBody", "URLSegment", "QueryStringWithoutEncode" };
-			_advancedRESTParametersGridViewHelper.Columns.Add(advParamType);
-
-			_advancedRESTParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_AdvancedParameters", false, DataSourceUpdateMode.OnPropertyChanged);
+			_advancedRESTParametersGridViewHelper.Columns.Add(advParamType);			
 			RenderedControls.Add(_advancedRESTParametersGridViewHelper);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));

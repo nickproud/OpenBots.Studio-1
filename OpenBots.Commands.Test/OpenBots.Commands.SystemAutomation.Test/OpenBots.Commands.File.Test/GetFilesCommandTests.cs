@@ -27,15 +27,15 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources");
-            inputPath.CreateTestVariable(_engine, "inputPath");
-            "unassigned".CreateTestVariable(_engine, "output");
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
             _getFiles.v_SourceFolderPath = "{inputPath}";
             _getFiles.v_OutputUserVariableName = "{output}";
 
             _getFiles.RunCommand(_engine);
 
-            List<string> fileList = (List<string>)"{output}".ConvertUserVariableToObject(_engine);
+            List<string> fileList = (List<string>)"{output}".ConvertUserVariableToObject(_engine, typeof(List<>));
 
             List<string> filenames = new List<string>();
 
@@ -59,8 +59,8 @@ namespace OpenBots.Commands.File.Test
 
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
             string inputPath = Path.Combine(projectDirectory, @"Resources\toDelete.txt");
-            inputPath.CreateTestVariable(_engine, "inputPath");
-            "unassigned".CreateTestVariable(_engine, "output");
+            VariableMethods.CreateTestVariable(inputPath, _engine, "inputPath", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
             _getFiles.v_SourceFolderPath = "{inputPath}";
             _getFiles.v_OutputUserVariableName = "{output}";

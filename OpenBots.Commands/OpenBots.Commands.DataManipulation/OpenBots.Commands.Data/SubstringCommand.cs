@@ -24,6 +24,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("Sample text to extract substring from || {vTextData}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputText { get; set; }
 
 		[Required]
@@ -32,6 +33,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("0 || 1 || {vStartingIndex}")]
 		[Remarks("0 for beginning, 1 for first character, n for nth character")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_StartIndex { get; set; }
 
 		[DisplayName("Substring Length (Optional)")]
@@ -39,6 +41,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("1 || {vSubstringLength}")]
 		[Remarks("1 for 1 position after start index, etc.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_StringLength { get; set; }
 
 		[Required]
@@ -46,7 +49,8 @@ namespace OpenBots.Commands.Data
 		[DisplayName("Output Substring Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public SubstringCommand()
@@ -76,7 +80,7 @@ namespace OpenBots.Commands.Data
 				inputText = inputText.Substring(startIndex);
 			}
 
-			inputText.StoreInUserVariable(engine, v_OutputUserVariableName);
+			inputText.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

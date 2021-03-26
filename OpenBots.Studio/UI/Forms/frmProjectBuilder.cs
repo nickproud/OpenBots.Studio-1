@@ -13,6 +13,7 @@ namespace OpenBots.UI.Forms
     public partial class frmProjectBuilder : UIForm
     {
         public string NewProjectName { get; private set; }        
+        public ProjectType NewProjectType { get; private set; }        
         public string NewProjectPath { get; private set; }
         public string ExistingProjectPath { get; private set; }
         public string ExistingConfigPath { get; private set; }
@@ -33,6 +34,12 @@ namespace OpenBots.UI.Forms
             Action = ProjectAction.None;
         }
 
+        private void frmProjectBuilder_Load(object sender, EventArgs e)
+        {
+            cbxProjectType.DataSource = Enum.GetValues(typeof(ProjectType));
+            cbxProjectType.SelectedIndex = 0;
+        }
+
         private void btnCreateProject_Click(object sender, EventArgs e)
         {
             CreateProject(DialogResult.OK);            
@@ -40,8 +47,16 @@ namespace OpenBots.UI.Forms
 
         private void btnCreateGalleryProject_Click(object sender, EventArgs e)
         {
-            CreateProject(DialogResult.None);
+            if ((ProjectType)cbxProjectType.SelectedValue != ProjectType.OpenBots)
+            {
+                lblError.Text = "Gallery currently only supports OpenBots Projects.";
+                return;
+            }
+            else
+                lblError.Text = "";
 
+            CreateProject(DialogResult.None);
+          
             if (string.IsNullOrEmpty(lblError.Text))
             {
                 frmGalleryProjectManager gallery = new frmGalleryProjectManager(_newProjectLocation, NewProjectName);
@@ -78,6 +93,7 @@ namespace OpenBots.UI.Forms
             lblError.Text = "";
             _newProjectLocation = txtNewProjectLocation.Text.Trim();
             NewProjectName = txtNewProjectName.Text.Trim();
+            NewProjectType = (ProjectType)cbxProjectType.SelectedValue;
 
             if (string.IsNullOrEmpty(NewProjectName) || string.IsNullOrEmpty(_newProjectLocation) || !Directory.Exists(_newProjectLocation))
             {
@@ -113,9 +129,10 @@ namespace OpenBots.UI.Forms
             lblError.Text = "";
             ExistingConfigPath = txtExistingProjectLocation.Text.Trim();
             if (ExistingConfigPath == string.Empty || !File.Exists(ExistingConfigPath) ||
-                Path.GetFileName(ExistingConfigPath) != "project.config")
+                (Path.GetFileName(ExistingConfigPath) != "project.obconfig" &&
+                Path.GetFileName(ExistingConfigPath) != "project.config"))
             {
-                lblError.Text = "Error: Please enter a valid project.config path";
+                lblError.Text = "Error: Please enter a valid config file path";
             }
             else
             {
@@ -183,18 +200,25 @@ namespace OpenBots.UI.Forms
 
             if (recent.DialogResult == DialogResult.OK)
             {
-                string configPath = Path.Combine(recent.RecentProjectPath, "project.config");
+                string configPath = Path.Combine(recent.RecentProjectPath, "project.obconfig");
+                string oldconfigPath = Path.Combine(recent.RecentProjectPath, "project.config");
                 if (File.Exists(configPath))
                 {
                     lblError.Text = "";
                     txtExistingProjectLocation.Text = configPath;
                     btnOpenProject_Click(null, null);
                 }
+                else if (File.Exists(oldconfigPath))
+                {
+                    lblError.Text = "";
+                    txtExistingProjectLocation.Text = oldconfigPath;
+                    btnOpenProject_Click(null, null);
+                }
                 else
-                    lblError.Text = "Error: Unable to find 'project.config' for selected Project";
+                    lblError.Text = "Error: Unable to find Config file for selected Project";
             }
 
             recent.Dispose();
-        }
+        }      
     }
 }

@@ -25,6 +25,7 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("0 || 5 || {vSeconds})")]
 		[Remarks("Set value to 0 to remain open indefinitely.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_AutoCloseAfter { get; set; }
 
 		public ShowEngineContextCommand()

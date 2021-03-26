@@ -30,6 +30,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("MyDatabaseInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
+		[CompatibleTypes(new Type[] { typeof(OleDbConnection) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -38,6 +39,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("Provider=sqloledb;Data Source=myServerAddress;Initial Catalog=myDataBase;Integrated Security=SSPI; || {vConnectionString}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ConnectionString { get; set; }
 
 		[Required]
@@ -46,6 +48,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("password || {vPassword}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ConnectionStringPassword { get; set; }
 
 		[Required]
@@ -125,7 +128,7 @@ namespace OpenBots.Commands.Database
 			helperControl.CommandDisplay = "Build Connection String";
 			helperControl.Click += (sender, e) => Button_Click(sender, e);
 
-			_connectionString = (TextBox)commandControls.CreateDefaultInputFor("v_ConnectionString", this);
+			_connectionString = commandControls.CreateDefaultInputFor("v_ConnectionString", this);
 
 			var connectionLabel = commandControls.CreateDefaultLabelFor("v_ConnectionString", this);
 			var connectionHelpers = commandControls.CreateUIHelpersFor("v_ConnectionString", this, new[] { _connectionString }, editor);
@@ -144,7 +147,7 @@ namespace OpenBots.Commands.Database
 			RenderedControls.Add(testConnectionControl);
 			RenderedControls.Add(_connectionString);
 
-			_connectionStringPassword = (TextBox)commandControls.CreateDefaultInputFor("v_ConnectionStringPassword", this);
+			_connectionStringPassword = commandControls.CreateDefaultInputFor("v_ConnectionStringPassword", this);
 
 			var connectionPassLabel = commandControls.CreateDefaultLabelFor("v_ConnectionStringPassword", this);
 			var connectionPassHelpers = commandControls.CreateUIHelpersFor("v_ConnectionStringPassword", this, new[] { _connectionStringPassword }, editor);

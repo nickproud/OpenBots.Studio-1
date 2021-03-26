@@ -30,10 +30,11 @@ namespace OpenBots.Commands.Task
 		[Required]
 		[DisplayName("Task File Path")]
 		[Description("Enter or select a valid path to the Task file.")]
-		[SampleUsage(@"C:\temp\mytask.json || {vScriptPath} || {ProjectPath}\mytask.json")]
+		[SampleUsage(@"C:\temp\mytask.obscript || {vScriptPath} || {ProjectPath}\mytask.obscript")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_TaskPath { get; set; }
 
 		[Required]
@@ -43,13 +44,13 @@ namespace OpenBots.Commands.Task
 		[Remarks("If selected, arguments will be automatically generated from the Task's *Argument Manager*.")]
 		public bool v_AssignArguments { get; set; }
 
-		[Required]
-		[DisplayName("Task Arguments")]
+		[DisplayName("Task Arguments (Optional)")]
 		[Description("Enter an ArgumentValue for each input argument.")]
 		[SampleUsage("Hello World || {vArgumentValue}")]
 		[Remarks("For inputs, set ArgumentDirection to *In*. For outputs, set ArgumentDirection to *Out*. " +
 				 "Failure to assign an ArgumentDirection value will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(object) }, true)]
 		public DataTable v_ArgumentAssignments { get; set; }
 
 		[JsonIgnore]
@@ -63,7 +64,7 @@ namespace OpenBots.Commands.Task
 		[JsonIgnore]
 		[Browsable(false)]
 		private List<ScriptArgument> _argumentList;
-
+		 
 		[JsonIgnore]
 		[Browsable(false)]
 		private IfrmScriptEngine _childfrmScriptEngine;
@@ -79,18 +80,11 @@ namespace OpenBots.Commands.Task
 
 			v_ArgumentAssignments = new DataTable();
 			v_ArgumentAssignments.Columns.Add("ArgumentName");
+			v_ArgumentAssignments.Columns.Add("ArgumentType");
 			v_ArgumentAssignments.Columns.Add("ArgumentValue");
 			v_ArgumentAssignments.Columns.Add("ArgumentDirection");
 			v_ArgumentAssignments.TableName = "RunTaskCommandInputParameters" + DateTime.Now.ToString("MMddyyhhmmss");
-
-			_assignmentsGridViewHelper = new DataGridView();
-			_assignmentsGridViewHelper.AllowUserToAddRows = false;
-			_assignmentsGridViewHelper.AllowUserToDeleteRows = false;
-			_assignmentsGridViewHelper.Size = new Size(400, 250);
-			_assignmentsGridViewHelper.ColumnHeadersHeight = 30;
-			_assignmentsGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_assignmentsGridViewHelper.DataSource = v_ArgumentAssignments;
-			_assignmentsGridViewHelper.Hide();
+			v_ArgumentAssignments.Columns[1].DataType = typeof(Type);			
 		}
 
 		public override void RunCommand(object sender)
@@ -116,7 +110,7 @@ namespace OpenBots.Commands.Task
 			string projectPath = parentfrmScriptEngine.ScriptEngineContext.ProjectPath;
 
 			EngineContext childEngineContext = new EngineContext(childTaskPath, projectPath, parentAutomationEngineInstance.AutomationEngineContext.Container, CurrentScriptBuilder,
-				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, null, _argumentList, null, parentAutomationEngineInstance.AutomationEngineContext.AppInstances, null);
+				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, null, _argumentList, null, parentAutomationEngineInstance.AutomationEngineContext.AppInstances, null, 1);
 
 			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childEngineContext, false, parentfrmScriptEngine.IsDebugMode);
 
@@ -224,66 +218,91 @@ namespace OpenBots.Commands.Task
 			RenderedControls.Add(_passParameters);
 
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ArgumentAssignments", this));
+			_assignmentsGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ArgumentAssignments", this);
+			_assignmentsGridViewHelper.AllowUserToAddRows = false;
+			_assignmentsGridViewHelper.AllowUserToDeleteRows = false;
+			//refresh gridview
+            _assignmentsGridViewHelper.MouseEnter += (sender, e) => PassParametersCheckbox_CheckedChanged(_passParameters, null, editor, commandControls, true);
+
+			if (!_passParameters.Checked)
+				_assignmentsGridViewHelper.Hide();
+
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ArgumentAssignments", this, new Control[] { _assignmentsGridViewHelper }, editor));
 			RenderedControls.Add(_assignmentsGridViewHelper);
 
 			return RenderedControls;
 		}
 
-		public override string GetDisplayValue()
+        public override string GetDisplayValue()
 		{
 			return base.GetDisplayValue() + $" [Run '{v_TaskPath}']";
 		}
 
 		private void TaskPathControl_TextChanged(object sender, EventArgs e)
 		{
+			v_TaskPath = ((TextBox)sender).Text;
 			_passParameters.Checked = false;
 		}
 
-		private void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
-		{
-			var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null);
-			currentScriptEngine.AutomationEngineContext.Arguments.AddRange(editor.ScriptEngineContext.Arguments);
-
-			var startFile = v_TaskPath;
-			if (startFile.Contains("{ProjectPath}"))
-				startFile = startFile.Replace("{ProjectPath}", editor.ScriptEngineContext.ProjectPath);
-
-			startFile = startFile.ConvertUserVariableToString(currentScriptEngine);
-			
-			var Sender = (CheckBox)sender;
-
-			_assignmentsGridViewHelper.Visible = Sender.Checked;
+		private void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls, bool isMouseEnter = false)
+		{			
+			var assignArgCheckBox = (CheckBox)sender;
+			_assignmentsGridViewHelper.Visible = assignArgCheckBox.Checked;
 
 			//load arguments if selected and file exists
-			if (Sender.Checked && File.Exists(startFile))
+			if (assignArgCheckBox.Checked)
 			{
-				_assignmentsGridViewHelper.DataSource = v_ArgumentAssignments;
+				var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null);
+				currentScriptEngine.AutomationEngineContext.Arguments.AddRange(editor.ScriptEngineContext.Arguments);
 
-				JObject scriptObject = JObject.Parse(File.ReadAllText(startFile));
-				var arguments = scriptObject["Arguments"].ToObject<List<ScriptArgument>>();
+				var startFile = v_TaskPath;
+				if (startFile.Contains("{ProjectPath}"))
+					startFile = startFile.Replace("{ProjectPath}", editor.ScriptEngineContext.ProjectPath);
 
-				foreach (var argument in arguments)
+				startFile = startFile.ConvertUserVariableToString(currentScriptEngine);
+
+				if (!isMouseEnter && File.Exists(startFile))
+                {
+					_assignmentsGridViewHelper.DataSource = v_ArgumentAssignments;
+					DataTable vArgumentAssignmentsCopy = v_ArgumentAssignments.Copy();
+					v_ArgumentAssignments.Clear();
+
+					JObject scriptObject = JObject.Parse(File.ReadAllText(startFile));
+					var arguments = scriptObject["Arguments"].ToObject<List<ScriptArgument>>();
+
+					foreach (var argument in arguments)
+					{
+						if (argument.ArgumentName == "ProjectPath")
+							continue;
+
+						DataRow foundArguments = vArgumentAssignmentsCopy.Select("ArgumentName = '" + "{" + argument.ArgumentName + "}" + "'").FirstOrDefault();
+						if (foundArguments != null)
+						{
+							var foundArgumentValue = foundArguments[2];
+							v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentType, foundArgumentValue, argument.Direction.ToString());
+						}
+						else
+							v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentType, argument.ArgumentValue, argument.Direction.ToString());
+					}
+				}
+				
+                for (int i = 0; i < _assignmentsGridViewHelper.Rows.Count; i++)
 				{
-					if (argument.ArgumentName == "ProjectPath")
-						continue;
+					DataGridViewComboBoxCell typeComboBox = new DataGridViewComboBoxCell();
+					typeComboBox.Items.Add(v_ArgumentAssignments.Rows[i].ItemArray[1]);
+					typeComboBox.Tag = v_ArgumentAssignments.Rows[i].ItemArray[1];
+					_assignmentsGridViewHelper.Rows[i].Cells[1] = typeComboBox;
+					_assignmentsGridViewHelper.Rows[i].Cells[1].ReadOnly = true;
 
-					DataRow[] foundArguments  = v_ArgumentAssignments.Select("ArgumentName = '" + "{" + argument.ArgumentName + "}" + "'");
-					if (foundArguments.Length == 0)
-						v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentValue, argument.Direction.ToString());                   
-				}               
-
-				for (int i = 0; i < _assignmentsGridViewHelper.Rows.Count; i++)
-				{
 					DataGridViewComboBoxCell returnComboBox = new DataGridViewComboBoxCell();
 					returnComboBox.Items.Add("In");
 					returnComboBox.Items.Add("Out");
-					_assignmentsGridViewHelper.Rows[i].Cells[2] = returnComboBox;
-					//make read only until theres a way to cleanly synchronize changes made 
-					_assignmentsGridViewHelper.Rows[i].Cells[2].ReadOnly = true;
+					returnComboBox.Items.Add("InOut");
+					_assignmentsGridViewHelper.Rows[i].Cells[3] = returnComboBox;
+					_assignmentsGridViewHelper.Rows[i].Cells[3].ReadOnly = true;					
 				}
 			}
-			else if (!Sender.Checked)
+			else if (!assignArgCheckBox.Checked)
 			{
 				v_ArgumentAssignments.Clear();
 			}
@@ -335,34 +354,45 @@ namespace OpenBots.Commands.Task
 			foreach (DataRow rw in v_ArgumentAssignments.Rows)
 			{
 				var argumentName = (string)rw.ItemArray[0];
+				var argumentType = (Type)rw.ItemArray[1];
 				object argumentValue = null;
-				var argumentDirection = (string)rw.ItemArray[2];
+				var argumentDirection = (string)rw.ItemArray[3];
 
-				if (argumentDirection == "In")
+				if (argumentDirection == "In" || argumentDirection == "InOut")
                 {
-					if (((string)rw.ItemArray[1]).StartsWith("{") && ((string)rw.ItemArray[1]).EndsWith("}"))
-						argumentValue = ((string)rw.ItemArray[1]).ConvertUserVariableToObject(parentAutomationEngineInstance);
+					if (((string)rw.ItemArray[2]).StartsWith("{") && ((string)rw.ItemArray[2]).EndsWith("}"))
+						argumentValue = ((string)rw.ItemArray[2]).ConvertUserVariableToObject(parentAutomationEngineInstance, typeof(object));
 
 					if (argumentValue is string || argumentValue == null)
-						argumentValue = ((string)rw.ItemArray[1]).ConvertUserVariableToString(parentAutomationEngineInstance);
+						argumentValue = ((string)rw.ItemArray[2]).ConvertUserVariableToString(parentAutomationEngineInstance);
 
 					_argumentList.Add(new ScriptArgument
 					{
 						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
-						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
-						ArgumentValue = argumentValue
+						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection), 
+						ArgumentValue = argumentValue,
+						ArgumentType = argumentType
 					});
 				}
-
 					
-                else if (argumentDirection == "Out")
+                if (argumentDirection == "Out" || argumentDirection == "InOut")
                 {
-					_argumentList.Add(new ScriptArgument
-					{
-						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
-						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
-						AssignedVariable = ((string)rw.ItemArray[1]).Replace("{", "").Replace("}", "")
-					});
+					//verify whether the assigned variable/argument exists
+					((string)rw.ItemArray[2]).ConvertUserVariableToObject(parentAutomationEngineInstance, nameof(v_ArgumentAssignments), this);
+
+					var existingArg = _argumentList.Where(x => x.ArgumentName == argumentName.Replace("{", "").Replace("}", "")).FirstOrDefault();
+					if (existingArg != null)
+						existingArg.AssignedVariable = ((string)rw.ItemArray[2]).Replace("{", "").Replace("}", "");
+                    else
+                    {
+						_argumentList.Add(new ScriptArgument
+						{
+							ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
+							Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
+							AssignedVariable = ((string)rw.ItemArray[2]).Replace("{", "").Replace("}", ""),
+							ArgumentType = argumentType
+						});
+					}					
                 }
             }
 		}
@@ -376,7 +406,8 @@ namespace OpenBots.Commands.Task
 			var childArgumentList = childAutomationEngineInstance.AutomationEngineContext.Arguments;
 			foreach(var argument in _argumentList)
             {
-				if (argument.Direction == ScriptArgumentDirection.Out && !string.IsNullOrEmpty(argument.AssignedVariable))
+				if ((argument.Direction == ScriptArgumentDirection.Out || argument.Direction == ScriptArgumentDirection.InOut) 
+					&& !string.IsNullOrEmpty(argument.AssignedVariable))
                 {
 					var assignedParentVariable = parentVariableList.Where(v => v.VariableName == argument.AssignedVariable).FirstOrDefault();
 					var assignedParentArgument = parentArgumentList.Where(a => a.ArgumentName == argument.AssignedVariable).FirstOrDefault();

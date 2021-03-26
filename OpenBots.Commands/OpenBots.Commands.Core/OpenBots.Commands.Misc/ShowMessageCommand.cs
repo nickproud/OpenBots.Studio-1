@@ -25,6 +25,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("Hello World || {vMyText} || Hello {vName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(object) }, true)]
 		public string v_Message { get; set; }
 
 		[Required]
@@ -34,6 +35,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("0 || 5 || {vSeconds})")]
 		[Remarks("Set value to 0 to remain open indefinitely.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_AutoCloseAfter { get; set; }
 
 		public ShowMessageCommand()
@@ -55,7 +57,7 @@ namespace OpenBots.Commands.Misc
 			dynamic variableMessage = v_Message.ConvertUserVariableToString(engine);
 
 			if (variableMessage == v_Message && variableMessage.StartsWith("{") && variableMessage.EndsWith("}"))
-				variableMessage = v_Message.ConvertUserVariableToObject(engine);
+				variableMessage = v_Message.ConvertUserVariableToObject(engine, nameof(v_Message), this);
 
 			string type = "";
 			if(variableMessage?.GetType().Name == typeof(KeyValuePair<,>).Name)
@@ -68,7 +70,7 @@ namespace OpenBots.Commands.Misc
 			if (variableMessage is string)
 				variableMessage = variableMessage.Replace("\\n", Environment.NewLine);
 			else
-				variableMessage = type + Environment.NewLine + StringMethods.ConvertObjectToString(variableMessage);
+				variableMessage = variableMessage.GetType().ToString() + Environment.NewLine + StringMethods.ConvertObjectToString(variableMessage, variableMessage.GetType());
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{

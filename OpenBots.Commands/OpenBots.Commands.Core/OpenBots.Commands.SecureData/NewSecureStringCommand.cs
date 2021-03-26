@@ -25,6 +25,7 @@ namespace OpenBots.Commands.SecureData
 		[SampleUsage("Some Text || {vText}")]
 		[Remarks("You can use variables in input if you encase them within braces {vText}. You can also perform basic math operations.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Input { get; set; }
 
 		[Required]
@@ -32,7 +33,8 @@ namespace OpenBots.Commands.SecureData
 		[DisplayName("Output SecureString Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public NewSecureStringCommand()
@@ -47,9 +49,9 @@ namespace OpenBots.Commands.SecureData
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			SecureString secureStringValue = v_Input.ConvertUserVariableToString(engine).GetSecureString();
+			SecureString secureStringValue = v_Input.ConvertUserVariableToString(engine).ConvertStringToSecureString();
 
-			secureStringValue.StoreInUserVariable(engine, v_OutputUserVariableName);           
+			secureStringValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

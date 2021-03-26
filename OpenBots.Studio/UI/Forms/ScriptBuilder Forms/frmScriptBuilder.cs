@@ -20,15 +20,14 @@ using OpenBots.Core.IO;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
-using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.UI.Controls;
 using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
-using OpenBots.UI.CustomControls.CustomUIControls;
+using OpenBots.UI.CustomControls.Controls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -151,9 +150,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         //do after execution stops and right before the variable/argument tabs are made visible
                         if (!uiVariableArgumentTabs.Visible)
                         {
-                            dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                            dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-                            splitContainerScript.Panel2Collapsed = false;                           
+                            ResetVariableArgumentBindings();
+
+                            if (_selectedTabScriptActions is ListView)
+                                splitContainerScript.Panel2Collapsed = false; 
+                            
                             tpProject.Controls[0].Enabled = true;
                             tpCommands.Controls[0].Enabled = true;
                             tlpControls.Controls[0].Enabled = true;
@@ -190,6 +191,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         //variable/argument tab variables
         private List<string> _existingVarArgSearchList;
         private string _preEditVarArgName;
+        private Type _preEditVarArgType;
+        private TypeContext _typeContext;
 
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
@@ -200,10 +203,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private int _reqdIndex;
         private List<int> _matchingSearchIndex = new List<int>();
         private int _currentIndex = -1;
-        private UIListView _selectedTabScriptActions;
+        private dynamic _selectedTabScriptActions;
         private Point _lastClickPosition;
         private float _slimBarHeight;
         private float _thickBarHeight;
+
+        //hello world
+        private const string _helloWorldTextPython = "import ctypes\nctypes.windll.user32.MessageBoxW(0, \"Hello World\", \"Hello World\", 1)";
+        private const string _helloWorldTextTagUI = "https://openbots.ai/\nclick Register\nwait 5";
+        private const string _helloWorldTextCSScript = "using System;\nusing System.Windows.Forms;\n\npublic class Script\n{\n\t" + 
+                                                "public static void Main(object[] args)\n\t{\n\t\tMessageBox.Show(\"Hello World\");\n\t}\n}";
         #endregion
 
         #region Form Events
@@ -226,19 +235,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (!Directory.Exists(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder)))
                 Directory.CreateDirectory(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder));
 
-            _builder = new ContainerBuilder();            
+            _builder = new ContainerBuilder();
+            var groupedTypes = new Dictionary<string, List<Type>>();
+
+            var defaultTypes = ScriptDefaultTypes.DefaultVarArgTypes;
+            _typeContext = new TypeContext(groupedTypes, defaultTypes);          
         }
 
         private void UpdateWindowTitle()
         {
             if (ScriptProject.ProjectName != null)
-            {
-                Text = "OpenBots Studio - " + ScriptProject.ProjectName;
-            }
+                Text = $"OpenBots Studio - {ScriptProject.ProjectName} - {ScriptProject.ProjectType}";
             else
-            {
                 Text = "OpenBots Studio";
-            }
         }
 
         private async void frmScriptBuilder_LoadAsync(object sender, EventArgs e)
@@ -261,6 +270,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     MessageBox.Show($"{ex.Message}\n\nFirst time user environment setup failed.", "Error");
                 }                
             }
+
+            var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
+
+            VariableType.DataSource = defaultTypesBinding;
+            VariableType.DisplayMember = "Key";
+            VariableType.ValueMember = "Value";
+
+            ArgumentType.DataSource = defaultTypesBinding;
+            ArgumentType.DisplayMember = "Key";
+            ArgumentType.ValueMember = "Value";
 
             //set controls double buffered
             foreach (Control control in Controls)
@@ -333,7 +352,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //instantiate and populate display icons for commands
             scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
 
-            var groupedCommands = scriptBuilder._automationCommands.GroupBy(f => f.DisplayGroup);
+            var groupedCommands = scriptBuilder._automationCommands.Where(x => x.Command.CommandName != "BrokenCodeCommentCommand")
+                                                                   .GroupBy(f => f.DisplayGroup);
 
             scriptBuilder.tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)
@@ -417,7 +437,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)
         {
-            _selectedTabScriptActions.Columns[2].Width = Width - 340;
+            if (_selectedTabScriptActions is ListView)
+                _selectedTabScriptActions.Columns[2].Width = Width - 340;
         }
 
         private void frmScriptBuilder_Resize(object sender, EventArgs e)
@@ -533,7 +554,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void AddNewCommand(string specificCommand = "")
         {
             //bring up new command configuration form
-            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands())
+            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), _typeContext)
             {
                 CreationModeInstance = CreationMode.Add
             };
@@ -541,11 +562,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (specificCommand != "")
                 newCommandForm.DefaultStartupCommand = specificCommand;
 
-            newCommandForm.ScriptEngineContext.Variables = _scriptVariables;
-            newCommandForm.ScriptEngineContext.Elements = _scriptElements;
-            newCommandForm.ScriptEngineContext.Arguments = _scriptArguments;
-            newCommandForm.ScriptEngineContext.Container = AContainer;
+            newCommandForm.ScriptEngineContext.Variables = new List<ScriptVariable>(_scriptVariables);
+            newCommandForm.ScriptEngineContext.Arguments = new List<ScriptArgument>(_scriptArguments);
+            newCommandForm.ScriptEngineContext.Elements = new List<ScriptElement>(_scriptElements);
 
+            newCommandForm.ScriptEngineContext.Container = AContainer;
             newCommandForm.ScriptEngineContext.ProjectPath = ScriptProjectPath;
             newCommandForm.HTMLElementRecorderURL = HTMLElementRecorderURL;
 
@@ -558,9 +579,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 _scriptVariables = newCommandForm.ScriptEngineContext.Variables;
                 _scriptArguments = newCommandForm.ScriptEngineContext.Arguments;
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
-             }
+                uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
+            }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
             {
@@ -569,6 +589,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 HTMLElementRecorderURL = newCommandForm.HTMLElementRecorderURL;
             }
 
+            ResetVariableArgumentBindings();
             newCommandForm.Dispose();
         }
 
@@ -586,6 +607,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region TreeView Events
         private void tvCommands_DoubleClick(object sender, EventArgs e)
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             //handle double clicks outside
             if (tvCommands.SelectedNode == null)
                 return;
@@ -717,9 +741,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void uiBtnReloadCommands_Click(object sender, EventArgs e)
         {
             NotifySync("Loading package assemblies...", Color.White);
-            string configPath = Path.Combine(ScriptProjectPath, "project.config");
+            string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-            _builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+            _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);            
             AContainer = _builder.Build();
             LoadCommands(this);
             ReloadAllFiles();
@@ -760,12 +784,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void NewProjectLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             LinkLabel senderLink = (LinkLabel)sender;
-            if (File.Exists(Path.Combine(senderLink.Tag.ToString(), "project.config")))
+            if (File.Exists(Path.Combine(senderLink.Tag.ToString(), "project.obconfig")))
                 OpenProject(senderLink.Tag.ToString());
             else
-                Notify($"Could not find 'project.config' for {senderLink.Tag}", Color.Red);
+                Notify($"Could not find 'project.obconfig' for {senderLink.Tag}", Color.Red);
         }
-        #endregion       
+        #endregion
     }
 }
 

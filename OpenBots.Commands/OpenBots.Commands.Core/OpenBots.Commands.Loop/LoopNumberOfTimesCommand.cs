@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("5 || {vLoopCount}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_LoopParameter { get; set; }
 
 		[Required]
@@ -34,6 +35,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("5 || {vStartIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_LoopStart { get; set; }
 
 		public LoopNumberOfTimesCommand()
@@ -42,6 +44,7 @@ namespace OpenBots.Commands.Loop
 			SelectionName = "Loop Number Of Times";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_startloop;
+			ScopeStartCommand = true;
 
 			v_LoopStart = "0";
 		}

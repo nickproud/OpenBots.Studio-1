@@ -24,6 +24,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("2020 || {vYear}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Year { get; set; }
 
 		[Required]
@@ -32,6 +33,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("3 || 03 || january || jan || {vMonth}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Month { get; set; }
 
 		[Required]
@@ -40,6 +42,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("20 || {vDay}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Day { get; set; }
 
 		[DisplayName("Time (Optional)")]
@@ -47,6 +50,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("5:15 || 8:30:10 || {vTime}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Time { get; set; }
 
 		[DisplayName("Period (Optional)")]
@@ -62,7 +66,8 @@ namespace OpenBots.Commands.Data
 		[DisplayName("Output Date Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(DateTime) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public CreateDateTimeCommand()
@@ -126,7 +131,7 @@ namespace OpenBots.Commands.Data
 			else
 				date = new DateTime(vYear, vMonthInt, vDay);
 
-			date.StoreInUserVariable(engine, v_OutputUserVariableName);
+			date.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

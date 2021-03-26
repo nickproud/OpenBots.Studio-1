@@ -25,7 +25,6 @@ namespace OpenBots.Core.Infrastructure
         bool CurrentLoopCancelled { get; set; }
         bool CurrentLoopContinuing { get; set; }
         EngineSettings EngineSettings { get; set; }
-        List<DataTable> DataTables { get; set; }
         string FileName { get; set; }
         bool IsServerExecution { get; set; }
         bool IsServerChildExecution { get; set; }

@@ -19,10 +19,10 @@ namespace OpenBots.Commands.Data.Test
             _engine = new AutomationEngineInstance(null);
 
             string jsonObject = "{\"rect\":{\"length\":10, \"width\":5}}";
-            jsonObject.CreateTestVariable(_engine, "input");
+            VariableMethods.CreateTestVariable(jsonObject, _engine, "input", typeof(string));
             string selector = "rect.length";
-            selector.CreateTestVariable(_engine, "selector");
-            "unassigned".CreateTestVariable(_engine, "r1output");
+            VariableMethods.CreateTestVariable(selector, _engine, "selector", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "r1output", typeof(List<>));
 
             OBDataTable selectorTable = new OBDataTable();
             selectorTable.Columns.Add("Json Selector");
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Data.Test
             _parseJSONModel.v_ParseObjects = selectorTable;
 
             _parseJSONModel.RunCommand(_engine);
-            List<string> resultList = (List<string>)"{r1output}".ConvertUserVariableToObject(_engine);
+            List<string> resultList = (List<string>)"{r1output}".ConvertUserVariableToObject(_engine, typeof(List<>));
             Assert.Equal("10", resultList[0]);
         }
     }

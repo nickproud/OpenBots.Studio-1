@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Script;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
@@ -40,6 +41,7 @@ namespace OpenBots.Commands.Task.Test
             ScriptVariable var1 = new ScriptVariable();
             var1.VariableName = "output";
             var1.VariableValue = "outputValue";
+            var1.VariableType = typeof(string);
             variables.Add(var1);
             
             _taskScript.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -52,12 +54,14 @@ namespace OpenBots.Commands.Task.Test
             arg1.ArgumentName = "inputArg";
             arg1.Direction = ScriptArgumentDirection.In;
             arg1.ArgumentValue = "default";
+            arg1.ArgumentType = typeof(string);
             arguments.Add(arg1);
             ScriptArgument arg2 = new ScriptArgument();
             arg2.ArgumentName = "outputArg";
             arg2.Direction = ScriptArgumentDirection.Out;
             arg2.ArgumentValue = "default";
             arg2.AssignedVariable = "{outputVar}";
+            arg2.ArgumentType = typeof(string);
             arguments.Add(arg2);
 
             // set script arguments
@@ -68,7 +72,7 @@ namespace OpenBots.Commands.Task.Test
             _textFile.v_FilePath = Path.Combine(filePath, @"test.txt");
             _textFile.v_TextToWrite = "{inputArg}";
             _textFile.v_Overwrite = "Overwrite";
-            _engine.AutomationEngineContext.FilePath = Path.Combine(filePath, "task.json");
+            _engine.AutomationEngineContext.FilePath = Path.Combine(filePath, "task.obscript");
             _engine.AutomationEngineContext.IsTest = true;
             List<ScriptAction> commands = new List<ScriptAction>();
             ScriptAction com1 = new ScriptAction();
@@ -97,14 +101,18 @@ namespace OpenBots.Commands.Task.Test
 
             DataTable argumentTable = new DataTable();
             argumentTable.Columns.Add("ArgumentName");
+            argumentTable.Columns.Add("ArgumentType");
             argumentTable.Columns.Add("ArgumentValue");
             argumentTable.Columns.Add("ArgumentDirection");
+            argumentTable.Columns[1].DataType = typeof(Type);
             DataRow arg1row = argumentTable.NewRow();
             arg1row["ArgumentName"] = "inputArg";
+            arg1row["ArgumentType"] = typeof(string);
             arg1row["ArgumentValue"] = "{taskInput}";
             arg1row["ArgumentDirection"] = "In";
             DataRow arg2row = argumentTable.NewRow();
             arg2row["ArgumentName"] = "outputArg";
+            arg2row["ArgumentType"] = typeof(string);
             arg2row["ArgumentValue"] = "{outputVar}";
             arg2row["ArgumentDirection"] = "Out";
             argumentTable.Rows.Add(arg1row);
@@ -118,9 +126,9 @@ namespace OpenBots.Commands.Task.Test
             ScriptAction runTaskAction = new ScriptAction();
             runTaskAction.ScriptCommand = _runTask;
 
-            "inputValue".CreateTestVariable(_engine, "taskInput");
-            "default".CreateTestVariable(_engine, "taskOutput");
-            "unassigned".CreateTestVariable(_engine, "outputVar");
+            VariableMethods.CreateTestVariable("inputValue", _engine, "taskInput", typeof(string));
+            VariableMethods.CreateTestVariable("default", _engine, "taskOutput", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "outputVar", typeof(string));
 
             _engine.ExecuteCommand(runTaskAction);
 
@@ -129,7 +137,7 @@ namespace OpenBots.Commands.Task.Test
             Assert.Equal("inputValue", OBIO.File.ReadAllText(Path.Combine(filePath, @"test.txt")));
 
             OBIO.File.Delete(Path.Combine(filePath, @"test.txt"));
-            OBIO.File.Delete(Path.Combine(filePath, @"task.json"));
+            OBIO.File.Delete(Path.Combine(filePath, @"task.obscript"));
         }
     }
 }

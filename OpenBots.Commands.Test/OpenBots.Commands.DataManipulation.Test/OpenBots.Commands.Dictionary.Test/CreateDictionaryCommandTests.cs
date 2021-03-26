@@ -24,15 +24,15 @@ namespace OpenBots.Commands.Dictionary.Test
             row1["Keys"] = "key1";
             row1["Values"] = "val1";
             inputDt.Rows.Add(row1);
-            inputDt.CreateTestVariable(_engine, "inputDt");
-            "unassigned".CreateTestVariable(_engine, "output");
+            VariableMethods.CreateTestVariable(inputDt, _engine, "inputDt", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(Dictionary<,>));
 
-            _createDictionary.v_ColumnNameDataTable = (OBData.DataTable)"{inputDt}".ConvertUserVariableToObject(_engine);
+            _createDictionary.v_ColumnNameDataTable = (OBData.DataTable)"{inputDt}".ConvertUserVariableToObject(_engine, typeof(OBData.DataTable));
             _createDictionary.v_OutputUserVariableName = "{output}";
 
             _createDictionary.RunCommand(_engine);
 
-            Dictionary<string, string> outDict = (Dictionary<string, string>)"{output}".ConvertUserVariableToObject(_engine);
+            Dictionary<string, string> outDict = (Dictionary<string, string>)"{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
 
             Assert.True(outDict.ContainsKey("key1"));
             Assert.Equal("val1", outDict["key1"]);

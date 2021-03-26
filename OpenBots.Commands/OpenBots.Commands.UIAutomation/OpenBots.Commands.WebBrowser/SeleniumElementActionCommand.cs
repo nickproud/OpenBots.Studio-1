@@ -9,7 +9,6 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
@@ -39,23 +38,23 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(IWebDriver) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." + 
 			"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("{vSearchParameter}" +
-					 "\n\tXPath : //*[@id=\"features\"]/div[2]/div/h2" +
-					 "\n\tID: 1" +
-					 "\n\tName: myName" +
-					 "\n\tTag Name: h1" +
-					 "\n\tClass Name: myClass" +
-					 "\n\tCSS Selector: [attribute=value]" +
-					 "\n\tLink Text: https://www.mylink.com/"
-					)]
+		[SampleUsage("XPath : //*[@id=\"features\"]/div[2]/div/h2/div[{var1}]/div" +
+				 "\n\tID: 1" +
+				 "\n\tName: my{var2}Name" +
+				 "\n\tTag Name: h1" +
+				 "\n\tClass Name: myClass" +
+				 "\n\tCSS Selector: [attribute=value]" +
+				 "\n\tLink Text: https://www.mylink.com/")]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_SeleniumSearchParameters { get; set; }
 
 		[Required]
@@ -99,6 +98,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.\n"+
 				 "Advanced keystrokes may be set the following way: Hello[tab]World[enter]")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(IWebElement), typeof(List<>), typeof(DataTable), typeof(string), typeof(bool) }, true)]
 		public DataTable v_WebActionParameterTable { get; set; }
 
 		[Required]
@@ -107,6 +107,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
@@ -148,46 +149,7 @@ namespace OpenBots.Commands.WebBrowser
 			v_SeleniumSearchParameters.Columns.Add("Enabled");
 			v_SeleniumSearchParameters.Columns.Add("Parameter Name");
 			v_SeleniumSearchParameters.Columns.Add("Parameter Value");
-			v_SeleniumSearchParameters.TableName = DateTime.Now.ToString("v_SeleniumSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));
-
-			//create search param grid
-			_searchParametersGridViewHelper = new DataGridView();
-			_searchParametersGridViewHelper.Width = 400;
-			_searchParametersGridViewHelper.Height = 250;
-			_searchParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_SeleniumSearchParameters", false, DataSourceUpdateMode.OnPropertyChanged);
-
-			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
-			enabled.HeaderText = "Enabled";
-			enabled.DataPropertyName = "Enabled";
-			enabled.FillWeight = 30;
-			_searchParametersGridViewHelper.Columns.Add(enabled);
-
-			DataGridViewTextBoxColumn propertyName = new DataGridViewTextBoxColumn();
-			propertyName.HeaderText = "Parameter Name";
-			propertyName.DataPropertyName = "Parameter Name";
-			propertyName.FillWeight = 40;
-			_searchParametersGridViewHelper.Columns.Add(propertyName);
-
-			DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
-			propertyValue.HeaderText = "Parameter Value";
-			propertyValue.DataPropertyName = "Parameter Value";
-			_searchParametersGridViewHelper.Columns.Add(propertyValue);
-			_searchParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_searchParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_searchParametersGridViewHelper.AllowUserToAddRows = true;
-			_searchParametersGridViewHelper.AllowUserToDeleteRows = true;
-
-			_actionParametersGridViewHelper = new DataGridView();
-			_actionParametersGridViewHelper.AllowUserToAddRows = true;
-			_actionParametersGridViewHelper.AllowUserToDeleteRows = true;
-			_actionParametersGridViewHelper.Size = new Size(400, 150);
-			_actionParametersGridViewHelper.ColumnHeadersHeight = 30;
-			_actionParametersGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_actionParametersGridViewHelper.DataBindings.Add("DataSource", this, "v_WebActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
-			_actionParametersGridViewHelper.AllowUserToAddRows = false;
-			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
-			_actionParametersGridViewHelper.AllowUserToResizeRows = false;
-			_actionParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
+			v_SeleniumSearchParameters.TableName = DateTime.Now.ToString("v_SeleniumSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));		
 		}
 
 		public override void RunCommand(object sender)
@@ -311,7 +273,7 @@ namespace OpenBots.Commands.WebBrowser
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = secureString.ConvertUserVariableToObject(engine);
+					var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
 
 					if (secureStrVariable is SecureString)
 						secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
@@ -371,7 +333,7 @@ namespace OpenBots.Commands.WebBrowser
 						optionsItems.Add(optionValue);
 					}
 
-					optionsItems.StoreInUserVariable(engine, applyToVarName);
+					optionsItems.StoreInUserVariable(engine, applyToVarName, typeof(List<string>));
 				   
 					break;
 
@@ -440,7 +402,7 @@ namespace OpenBots.Commands.WebBrowser
 					else
 						elementValue = ((IWebElement)element).GetAttribute(attributeName);
 
-					elementValue.StoreInUserVariable(engine, VariableName);
+					elementValue.StoreInUserVariable(engine, VariableName, typeof(string));
 					break;
 
 				case "Get Matching Element(s)":
@@ -456,10 +418,10 @@ namespace OpenBots.Commands.WebBrowser
 						{
 							elementList.Add(item);
 						}
-						elementList.StoreInUserVariable(engine, variableName);
+						elementList.StoreInUserVariable(engine, variableName, typeof(List<IWebElement>));
 					}
 					else
-						((IWebElement)element).StoreInUserVariable(engine, variableName);                    
+						((IWebElement)element).StoreInUserVariable(engine, variableName, typeof(IWebElement));                    
 					break;
 
 				case "Get Table":
@@ -495,7 +457,7 @@ namespace OpenBots.Commands.WebBrowser
 					foreach (var row in doc.DocumentNode.SelectNodes("//tr[td]"))
 						DT.Rows.Add(row.SelectNodes("td").Select(td => Regex.Replace(td.InnerText, @"\t|\n|\r", "").Trim()).ToArray());
 
-					DT.StoreInUserVariable(engine, DTVariableName);
+					DT.StoreInUserVariable(engine, DTVariableName, typeof(DataTable));
 					break;
 
 				case "Clear Element":
@@ -516,9 +478,9 @@ namespace OpenBots.Commands.WebBrowser
 													select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 					if (element == null)
-						"False".StoreInUserVariable(engine, existsBoolVariableName);
+						false.StoreInUserVariable(engine, existsBoolVariableName, typeof(bool));
 					else
-						"True".StoreInUserVariable(engine, existsBoolVariableName);
+						true.StoreInUserVariable(engine, existsBoolVariableName, typeof(bool));
 
 					break;
 				default:
@@ -551,16 +513,37 @@ namespace OpenBots.Commands.WebBrowser
 				v_SeleniumSearchParameters.Rows.Add(false, "Link Text", "");
 				v_SeleniumSearchParameters.Rows.Add(false, "CSS Selector", "");
 			}
-			_searchParametersGridViewHelper.DataSource = v_SeleniumSearchParameters;
 			//create search parameters   
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_SeleniumSearchParameters", this));
 			RenderedControls.Add(helperControl);
+
+			//create search param grid
+			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_SeleniumSearchParameters", this);
+			_searchParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
+
+			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
+			enabled.HeaderText = "Enabled";
+			enabled.DataPropertyName = "Enabled";
+			enabled.FillWeight = 30;
+			_searchParametersGridViewHelper.Columns.Add(enabled);
+
+			DataGridViewTextBoxColumn propertyName = new DataGridViewTextBoxColumn();
+			propertyName.HeaderText = "Parameter Name";
+			propertyName.DataPropertyName = "Parameter Name";
+			propertyName.FillWeight = 40;
+			_searchParametersGridViewHelper.Columns.Add(propertyName);
+
+			DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
+			propertyValue.HeaderText = "Parameter Value";
+			propertyValue.DataPropertyName = "Parameter Value";
+			_searchParametersGridViewHelper.Columns.Add(propertyValue);
+
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_SeleniumSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
 			RenderedControls.Add(_searchParametersGridViewHelper);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SeleniumSearchOption", this, editor));
 
-			_elementActionDropdown = (ComboBox)commandControls.CreateDropdownFor("v_SeleniumElementAction", this);
+			_elementActionDropdown = commandControls.CreateDropdownFor("v_SeleniumElementAction", this);
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_SeleniumElementAction", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_SeleniumElementAction", this, new Control[] { _elementActionDropdown }, editor));
 			_elementActionDropdown.SelectionChangeCommitted += SeleniumAction_SelectionChangeCommitted;
@@ -568,6 +551,12 @@ namespace OpenBots.Commands.WebBrowser
 
 			_actionParametersControls = new List<Control>();
 			_actionParametersControls.Add(commandControls.CreateDefaultLabelFor("v_WebActionParameterTable", this));
+
+			_actionParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_WebActionParameterTable", this);
+			_actionParametersGridViewHelper.AllowUserToAddRows = false;
+			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
+			_actionParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
+
 			_actionParametersControls.AddRange(commandControls.CreateUIHelpersFor("v_WebActionParameterTable", this, new Control[] { _actionParametersGridViewHelper }, editor));
 			_actionParametersControls.Add(_actionParametersGridViewHelper);
 			RenderedControls.AddRange(_actionParametersControls);
@@ -738,13 +727,25 @@ namespace OpenBots.Commands.WebBrowser
 					break;
 
 				case "Get Options":
-					actionParameters.Rows.Add("Attribute Name");
-					actionParameters.Rows.Add("Variable Name");
+					foreach (var ctrl in _actionParametersControls)
+						ctrl.Show();
+
+					if (sender != null)
+					{
+						actionParameters.Rows.Add("Attribute Name");
+						actionParameters.Rows.Add("Variable Name");
+					}
 					break;
 
 				case "Select Option":
-					actionParameters.Rows.Add("Selection Type");
-					actionParameters.Rows.Add("Selection Parameter");
+					foreach (var ctrl in _actionParametersControls)
+						ctrl.Show();
+
+					if (sender != null)
+					{
+						actionParameters.Rows.Add("Selection Type");
+						actionParameters.Rows.Add("Selection Parameter");
+					}
 
 					DataGridViewComboBoxCell selectionTypeBox = new DataGridViewComboBoxCell();
 					selectionTypeBox.Items.Add("Select By Index");
@@ -784,6 +785,8 @@ namespace OpenBots.Commands.WebBrowser
 				default:
 					break;
 			}
+
+			_actionParametersGridViewHelper.Columns[0].ReadOnly = true;
 			_actionParametersGridViewHelper.DataSource = v_WebActionParameterTable;
 		}
 

@@ -6,13 +6,13 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Core.UI.Controls.CustomControls;
 using OpenBots.Core.Utilities.CommandUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -24,30 +24,27 @@ namespace OpenBots.Commands.Loop
 		"until the result of the logical statements becomes false.")]
 	public class BeginMultiLoopCommand : ScriptCommand
 	{
+		[Required]
+		[DisplayName("Logic Type")]
+		[PropertyUISelectionOption("And")]
+		[PropertyUISelectionOption("Or")]
+		[Description("Select the logic to use when evaluating multiple Ifs.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_LogicType { get; set; }
 
 		[Required]
 		[DisplayName("Multiple Loop Conditions")]
 		[Description("Add new Loop condition(s).")]
 		[SampleUsage("")]
-		[Remarks("All of the conditions must be true to execute the loop block.")]
+		[Remarks("")]
 		[Editor("ShowLoopBuilder", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string) }, true)]
 		public DataTable v_LoopConditionsTable { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
 		private DataGridView _loopConditionHelper;
-
-		[JsonIgnore]
-		[Browsable(false)]
-		private List<ScriptVariable> _scriptVariables;
-
-		[JsonIgnore]
-		[Browsable(false)]
-		private List<ScriptArgument> _scriptArguments;
-
-		[JsonIgnore]
-		[Browsable(false)]
-		private List<ScriptElement> _scriptElements;
 
 		public BeginMultiLoopCommand()
 		{
@@ -55,7 +52,9 @@ namespace OpenBots.Commands.Loop
 			SelectionName = "Begin Multi Loop";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_startloop;
+			ScopeStartCommand = true;
 
+			v_LogicType = "And";
 			v_LoopConditionsTable = new DataTable();
 			v_LoopConditionsTable.TableName = DateTime.Now.ToString("MultiLoopConditionTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 			v_LoopConditionsTable.Columns.Add("Statement");
@@ -99,13 +98,10 @@ namespace OpenBots.Commands.Loop
 		{
 			base.Render(editor, commandControls);
 
-			//get script variables for feeding into loop builder form
-			_scriptVariables = editor.ScriptEngineContext.Variables;
-			_scriptArguments = editor.ScriptEngineContext.Arguments;
-			_scriptElements = editor.ScriptEngineContext.Elements;
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_LogicType", this, editor));
 
 			//create controls
-			var controls = commandControls.CreateDataGridViewGroupFor("v_LoopConditionsTable", this, editor);
+			var controls = commandControls.CreateDefaultDataGridViewGroupFor("v_LoopConditionsTable", this, editor);
 			_loopConditionHelper = controls[2] as DataGridView;
 
 			//handle helper click
@@ -126,7 +122,7 @@ namespace OpenBots.Commands.Loop
 			_loopConditionHelper.Columns.Add(new DataGridViewButtonColumn() { HeaderText = "Delete", UseColumnTextForButtonValue = true, Text = "Delete", Width = 60 });
 			_loopConditionHelper.AllowUserToAddRows = false;
 			_loopConditionHelper.AllowUserToDeleteRows = true;
-			_loopConditionHelper.CellContentClick += (sender, e) => LoopConditionHelper_CellContentClick(sender, e, commandControls);
+			_loopConditionHelper.CellContentClick += (sender, e) => LoopConditionHelper_CellContentClick(sender, e, editor, commandControls);
 
 			return RenderedControls;
 		}
@@ -137,10 +133,15 @@ namespace OpenBots.Commands.Loop
 			{
 				return "Loop <Not Configured>";
 			}
-			else
+			else if (v_LogicType == "And")
 			{
 				var statements = v_LoopConditionsTable.AsEnumerable().Select(f => f.Field<string>("Statement")).ToList();
 				return string.Join(" && ", statements);
+			}
+			else
+            {
+				var statements = v_LoopConditionsTable.AsEnumerable().Select(f => f.Field<string>("Statement")).ToList();
+				return string.Join(" || ", statements);
 			}
 		}
 
@@ -153,16 +154,26 @@ namespace OpenBots.Commands.Loop
 				var loopCommand = JsonConvert.DeserializeObject<BeginLoopCommand>(commandData);
 				var statementResult = CommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable);
 
-				if (!statementResult)
+				if (!statementResult && v_LogicType == "And")
 				{
 					isTrueStatement = false;
 					break;
+				}
+
+				if(statementResult && v_LogicType == "Or")
+                {
+					isTrueStatement = true;
+					break;
+                }
+				else if (v_LogicType == "Or")
+				{
+					isTrueStatement = false;
 				}
 			}
 			return isTrueStatement;
 		}
 
-		private void LoopConditionHelper_CellContentClick(object sender, DataGridViewCellEventArgs e, ICommandControls commandControls)
+		private void LoopConditionHelper_CellContentClick(object sender, DataGridViewCellEventArgs e, IfrmCommandEditor parentEditor, ICommandControls commandControls)
 		{
 			var senderGrid = (DataGridView)sender;
 
@@ -185,13 +196,15 @@ namespace OpenBots.Commands.Loop
 					editor.EditingCommand = loopCommand;
 					editor.OriginalCommand = loopCommand;
 					editor.CreationModeInstance = CreationMode.Edit;
-					editor.ScriptEngineContext.Variables = _scriptVariables;
-					editor.ScriptEngineContext.Arguments = _scriptArguments;
-					editor.ScriptEngineContext.Elements = _scriptElements;
+					editor.ScriptEngineContext = parentEditor.ScriptEngineContext;
+					editor.TypeContext = parentEditor.TypeContext;
 
 					if (((Form)editor).ShowDialog() == DialogResult.OK)
 					{
-						var editedCommand = editor.EditingCommand as BeginLoopCommand;
+						parentEditor.ScriptEngineContext = editor.ScriptEngineContext;
+						parentEditor.TypeContext = editor.TypeContext;
+
+						var editedCommand = editor.SelectedCommand as BeginLoopCommand;
 						var displayText = editedCommand.GetDisplayValue();
 						var serializedData = JsonConvert.SerializeObject(editedCommand);
 
@@ -216,7 +229,8 @@ namespace OpenBots.Commands.Loop
 			var automationCommands = new List<AutomationCommand>() { CommandsHelper.ConvertToAutomationCommand(typeof(BeginLoopCommand)) };
 			IfrmCommandEditor editor = commandControls.CreateCommandEditorForm(automationCommands, null);
 			editor.SelectedCommand = new BeginLoopCommand();
-			editor.ScriptEngineContext.Variables = parentEditor.ScriptEngineContext.Variables;
+			editor.ScriptEngineContext = parentEditor.ScriptEngineContext;
+			editor.TypeContext = parentEditor.TypeContext;
 
 			if (((Form)editor).ShowDialog() == DialogResult.OK)
 			{
@@ -224,7 +238,8 @@ namespace OpenBots.Commands.Loop
 				var configuredCommand = editor.SelectedCommand as BeginLoopCommand;
 				var displayText = configuredCommand.GetDisplayValue();
 				var serializedData = JsonConvert.SerializeObject(configuredCommand);
-				parentEditor.ScriptEngineContext.Variables = editor.ScriptEngineContext.Variables;
+				parentEditor.ScriptEngineContext = editor.ScriptEngineContext;
+				parentEditor.TypeContext = editor.TypeContext;
 
 				//add to list
 				v_LoopConditionsTable.Rows.Add(displayText, serializedData);

@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using OpenBots.Core.Command;
+using OpenBots.Studio.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace OpenBots.Nuget
 {
     public class AppDomainSetupManager
     {
-        public static ContainerBuilder LoadBuilder(List<string> assemblyPaths)
+        public static ContainerBuilder LoadBuilder(List<string> assemblyPaths, Dictionary<string, List<Type>> groupedTypes)
         {
             List<Assembly> existingAssemblies = new List<Assembly>();
             foreach(var path in assemblyPaths)
@@ -37,6 +38,13 @@ namespace OpenBots.Nuget
                     Console.WriteLine(ex);
                 }
             }
+
+            //TODO: limit types to one in loaded assemblies. Previously getting all assemblies instead of just the ones in existingAssemblies because mscorlib was missing
+            TypeMethods.GenerateAllVariableTypes(AppDomain.CurrentDomain.GetAssemblies().ToList(), groupedTypes);
+
+            //if no commands have been loaded, at least include OpenBots.Core to access the BrokenCodeCommand
+            if (existingAssemblies.Count == 0)
+                existingAssemblies.Add(Assembly.GetAssembly(typeof(BrokenCodeCommentCommand)));
 
             ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterAssemblyTypes(existingAssemblies.ToArray())

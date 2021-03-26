@@ -38,6 +38,7 @@ namespace OpenBots.Commands.Data
 		[Remarks("Providing an invalid File Path/URL will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -45,7 +46,8 @@ namespace OpenBots.Commands.Data
 		[DisplayName("Output Text Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetPDFTextCommand()
@@ -103,7 +105,7 @@ namespace OpenBots.Commands.Data
 			}
 			pdfDoc.Close();
 
-			result.StoreInUserVariable(engine, v_OutputUserVariableName);
+			result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

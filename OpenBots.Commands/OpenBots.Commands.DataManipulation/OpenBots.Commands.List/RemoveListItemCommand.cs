@@ -28,6 +28,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("{vList}")]
 		[Remarks("Any type of variable other than List will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_ListName { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("0 || {vIndex}")]
 		[Remarks("Providing an out of range index will produce an exception.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ListIndex { get; set; }
 
 		public RemoveListItemCommand()
@@ -52,7 +54,7 @@ namespace OpenBots.Commands.List
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vListVariable = v_ListName.ConvertUserVariableToObject(engine);
+			var vListVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
 			var vListIndex = int.Parse(v_ListIndex.ConvertUserVariableToString(engine));
 
 			if (vListVariable != null)

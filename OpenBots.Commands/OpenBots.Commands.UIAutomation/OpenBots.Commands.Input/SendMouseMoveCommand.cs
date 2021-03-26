@@ -27,6 +27,7 @@ namespace OpenBots.Commands.Input
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by your resolution. For 1920x1080, the valid range would be 0-1920.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowMouseCaptureHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_XMousePosition { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.Input
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by your resolution. For 1920x1080, the valid range would be 0-1080.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowMouseCaptureHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_YMousePosition { get; set; }
 
 		[DisplayName("Click Type (Optional)")]

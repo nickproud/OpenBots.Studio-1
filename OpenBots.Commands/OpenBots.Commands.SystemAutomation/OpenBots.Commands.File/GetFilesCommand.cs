@@ -27,6 +27,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SourceFolderPath { get; set; }
 
 		[Required]
@@ -34,7 +35,8 @@ namespace OpenBots.Commands.File
 		[DisplayName("Output File Path(s) List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetFilesCommand()
@@ -61,7 +63,7 @@ namespace OpenBots.Commands.File
 			var filesList = Directory.GetFiles(sourceFolder, ".", SearchOption.AllDirectories).ToList();
 
 			//Add File Paths to the output variable
-			filesList.StoreInUserVariable(engine, v_OutputUserVariableName);
+			filesList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

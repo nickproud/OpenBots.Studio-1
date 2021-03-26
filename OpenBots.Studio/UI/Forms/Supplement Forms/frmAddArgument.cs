@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Script;
+﻿using OpenBots.Core.Enums;
+using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
 using System;
 using System.Collections.Generic;
@@ -13,21 +14,39 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         public List<ScriptArgument> ScriptArguments { get; set; }
         private bool _isEditMode;
         private string _editingArgumentName;
+        private TypeContext _typeContext;
+        private Type _preEditType;
 
-        public frmAddArgument()
+        public frmAddArgument(TypeContext typeContext)
         {
             InitializeComponent();
+            _typeContext = typeContext;
             cbxDefaultDirection.SelectedIndex = 0;
+
+            cbxDefaultType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+            cbxDefaultType.DisplayMember = "Key";
+            cbxDefaultType.ValueMember = "Value";
+
+            cbxDefaultType.SelectedValue = typeof(string);
+            cbxDefaultType.Tag = typeof(string);
         }
 
-        public frmAddArgument(string argumentName, ScriptArgumentDirection argumentDirection, string argumentValue)
+        public frmAddArgument(string argumentName, ScriptArgumentDirection argumentDirection, string argumentValue, Type argumentType,
+            TypeContext typeContext)
         {
             InitializeComponent();
+            _typeContext = typeContext;
+            cbxDefaultType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+            cbxDefaultType.DisplayMember = "Key";
+            cbxDefaultType.ValueMember = "Value";
+
             Text = "edit argument";
             lblHeader.Text = "edit argument";
             txtArgumentName.Text = argumentName;
             cbxDefaultDirection.Text = argumentDirection.ToString();
             txtDefaultValue.Text = argumentValue;
+            cbxDefaultType.SelectedValue = argumentType;
+            cbxDefaultType.Tag = argumentType;
 
             _isEditMode = true;
             _editingArgumentName = argumentName;
@@ -75,7 +94,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void cbxDefaultDirection_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbxDefaultDirection.Text == "Out")
+            if (cbxDefaultDirection.Text == "Out" || cbxDefaultDirection.Text == "InOut")
             {
                 txtDefaultValue.Text = "";
                 txtDefaultValue.Enabled = false;
@@ -88,6 +107,44 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             ComboBox clickedDropdownBox = (ComboBox)sender;
             clickedDropdownBox.DroppedDown = true;
+        }
+
+        private void cbxDefaultType_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (((Type)cbxDefaultType.SelectedValue).Name == "MoreOptions")
+            {
+                frmTypes typeForm = new frmTypes(_typeContext.GroupedTypes);
+                typeForm.ShowDialog();
+
+                if (typeForm.DialogResult == DialogResult.OK)
+                {
+                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.FullName))
+                    {
+                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.FullName, typeForm.SelectedType);
+                        cbxDefaultType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+                    }
+
+                    cbxDefaultType.SelectedValue = typeForm.SelectedType;
+                    cbxDefaultType.Tag = typeForm.SelectedType;
+                }
+                else
+                {
+                    cbxDefaultType.SelectedValue = _preEditType;
+                    cbxDefaultType.Tag = _preEditType;
+                }
+            }
+            else
+                cbxDefaultType.Tag = cbxDefaultType.SelectedValue;
+
+            _preEditType = (Type)cbxDefaultType.SelectedValue;
+
+            if (_preEditType == typeof(string) || _preEditType.IsPrimitive)
+                txtDefaultValue.ReadOnly = false;
+            else
+            {
+                txtDefaultValue.ReadOnly = true;
+                txtDefaultValue.Text = "";
+            }
         }
     }
 }

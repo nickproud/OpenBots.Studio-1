@@ -53,6 +53,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("Param Value || {vParamValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string) }, true)]
 		public DataTable v_ActionParameterTable { get; set; }
 
 		[JsonIgnore]
@@ -77,6 +78,7 @@ namespace OpenBots.Commands.Loop
 			SelectionName = "Begin Loop";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_startloop;
+			ScopeStartCommand = true;
 
 			//define parameter table
 			v_ActionParameterTable = new DataTable
@@ -85,17 +87,6 @@ namespace OpenBots.Commands.Loop
 			};
 			v_ActionParameterTable.Columns.Add("Parameter Name");
 			v_ActionParameterTable.Columns.Add("Parameter Value");
-
-			_loopGridViewHelper = new DataGridView();
-			_loopGridViewHelper.AllowUserToAddRows = true;
-			_loopGridViewHelper.AllowUserToDeleteRows = true;
-			_loopGridViewHelper.Size = new Size(400, 250);
-			_loopGridViewHelper.ColumnHeadersHeight = 30;
-			_loopGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_loopGridViewHelper.DataBindings.Add("DataSource", this, "v_ActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
-			_loopGridViewHelper.AllowUserToAddRows = false;
-			_loopGridViewHelper.AllowUserToDeleteRows = false;
-			_loopGridViewHelper.MouseEnter += LoopGridViewHelper_MouseEnter;
 
 			_recorderControl = new CommandItemControl();
 			_recorderControl.Padding = new Padding(10, 0, 0, 0);
@@ -144,7 +135,7 @@ namespace OpenBots.Commands.Loop
 		{
 			base.Render(editor, commandControls);
 
-			_actionDropdown = (ComboBox)commandControls.CreateDropdownFor("v_LoopActionType", this);
+			_actionDropdown = commandControls.CreateDropdownFor("v_LoopActionType", this);
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_LoopActionType", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_LoopActionType", this, new Control[] { _actionDropdown }, editor));
 			_actionDropdown.SelectionChangeCommitted += loopAction_SelectionChangeCommitted;
@@ -154,8 +145,15 @@ namespace OpenBots.Commands.Loop
 			_parameterControls.Add(commandControls.CreateDefaultLabelFor("v_ActionParameterTable", this));
 			_recorderControl.Click += (sender, e) => ShowLoopElementRecorder(sender, e, editor, commandControls);
 			_parameterControls.Add(_recorderControl);
+
+			_loopGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ActionParameterTable", this);
+			_loopGridViewHelper.AllowUserToAddRows = false;
+			_loopGridViewHelper.AllowUserToDeleteRows = false;
+			_loopGridViewHelper.MouseEnter += LoopGridViewHelper_MouseEnter;
+
 			_parameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ActionParameterTable", this, new Control[] { _loopGridViewHelper }, editor));
 			_parameterControls.Add(_loopGridViewHelper);
+
 			RenderedControls.AddRange(_parameterControls);
 
 			return RenderedControls;
@@ -597,6 +595,7 @@ namespace OpenBots.Commands.Loop
 				default:
 					break;
 			}
+			loopActionParameterBox.Columns[0].ReadOnly = true;
 		}
 
 		private void LoopGridViewHelper_MouseEnter(object sender, EventArgs e)

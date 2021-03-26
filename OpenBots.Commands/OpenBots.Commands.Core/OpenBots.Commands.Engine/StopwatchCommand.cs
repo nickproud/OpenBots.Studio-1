@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("MyStopwatchInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
+		[CompatibleTypes(new Type[] { typeof(Stopwatch) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -45,6 +46,7 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("g || dd\\.hh\\:mm || {vFormat}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ToStringFormat { get; set; }
 
 		[Required]
@@ -52,12 +54,17 @@ namespace OpenBots.Commands.Engine
 		[DisplayName("Output Elapsed Time Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
 		private List<Control> _measureControls;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
 
 		public StopwatchCommand()
 		{
@@ -108,7 +115,7 @@ namespace OpenBots.Commands.Engine
 					else
 						elapsedTime = stopwatch.Elapsed.ToString(format);
 
-					elapsedTime.StoreInUserVariable(engine, v_OutputUserVariableName);
+					elapsedTime.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 					break;
 				default:
 					throw new NotImplementedException("Stopwatch Action '" + v_StopwatchAction + "' not implemented");
@@ -121,14 +128,11 @@ namespace OpenBots.Commands.Engine
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_StopwatchAction", this, editor));
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += StopWatchComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[3]).SelectedIndexChanged += StopWatchComboBox_SelectedIndexChanged;
 
 			_measureControls = new List<Control>();
 			_measureControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ToStringFormat", this, editor));
 			_measureControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
-
-			foreach (var ctrl in _measureControls)
-				ctrl.Visible = false;
 
 			RenderedControls.AddRange(_measureControls);
 		  
@@ -143,20 +147,29 @@ namespace OpenBots.Commands.Engine
 				return base.GetDisplayValue() + $" [{v_StopwatchAction} - Instance Name '{v_InstanceName}']";
 		}
 
-		private void StopWatchComboBox_SelectedValueChanged(object sender, EventArgs e)
+		public override void Shown()
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Measure Stopwatch")
+			base.Shown();
+			_hasRendered = true;
+			StopWatchComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void StopWatchComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[3]).Text == "Measure Stopwatch" && _hasRendered)
 			{
 				foreach (var ctrl in _measureControls)
 					ctrl.Visible = true;
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _measureControls)
 				{
 					ctrl.Visible = false;
 					if (ctrl is TextBox)
 						((TextBox)ctrl).Clear();
+					else if (ctrl is ComboBox)
+						((ComboBox)ctrl).SelectedIndex = -1;
 				}
 			}
 		}

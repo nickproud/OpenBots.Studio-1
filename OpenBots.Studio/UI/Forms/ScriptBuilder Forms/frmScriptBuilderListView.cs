@@ -246,7 +246,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             break;
                         case Keys.S:
                             ClearSelectedListViewItems();
-                            SaveToFile(false);
+                            SaveToOpenBotsFile(false);
                             break;
                         case Keys.E:
                             SetSelectedCodeToCommented(false);
@@ -301,7 +301,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 else
                 {
                     //create new command editor form
-                    frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands());
+                    frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), _typeContext);
 
                     editCommand.ScriptEngineContext.Container = AContainer;
 
@@ -313,14 +313,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //create clone of current command so databinding does not affect if changes are not saved
                     editCommand.OriginalCommand = CommonMethods.Clone(currentCommand);
 
-                    //set variables
-                    editCommand.ScriptEngineContext.Variables = _scriptVariables;
-
-                    //set arguments 
-                    editCommand.ScriptEngineContext.Arguments = _scriptArguments;
-
-                    //set elements
-                    editCommand.ScriptEngineContext.Elements = _scriptElements;
+                    editCommand.ScriptEngineContext.Variables = new List<ScriptVariable>(_scriptVariables);
+                    editCommand.ScriptEngineContext.Arguments = new List<ScriptArgument>(_scriptArguments);
+                    editCommand.ScriptEngineContext.Elements = new List<ScriptElement>(_scriptElements);
 
                     editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
 
@@ -337,8 +332,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                         _scriptVariables = editCommand.ScriptEngineContext.Variables;
                         _scriptArguments = editCommand.ScriptEngineContext.Arguments;
-                        dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                        dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                        uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
                     }
 
                     if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
@@ -348,6 +342,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         HTMLElementRecorderURL = editCommand.HTMLElementRecorderURL;
                     }
 
+                    ResetVariableArgumentBindings();
                     editCommand.Dispose();
                 }
             }
@@ -375,6 +370,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newSequence.ScriptProject = ScriptProject;
             newSequence.ScriptProjectPath = ScriptProjectPath;
             newSequence.AContainer = AContainer;
+            newSequence.TypeContext = _typeContext;
 
             newSequence.LoadCommands();
 
@@ -440,18 +436,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptVariables = newSequence.ScriptVariables.Where(x => !string.IsNullOrEmpty(x.VariableName)).ToList();
                 _scriptElements = newSequence.ScriptElements.Where(x => !string.IsNullOrEmpty(x.ElementName)).ToList();
                 _scriptArguments = newSequence.ScriptArguments.Where(x => !string.IsNullOrEmpty(x.ArgumentName)).ToList();
-
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
             }
             else
             {
                 _scriptVariables = originalStudioVariables;
-                _scriptArguments = originalStudioArguments;
-
-                dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-                dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+                _scriptArguments = originalStudioArguments;                
             }
+
+            ResetVariableArgumentBindings();
 
             //add to parent
             List<ScriptCommand> movedCommands = CommonMethods.Clone(newSequence.MoveToParentCommands);
@@ -947,21 +939,24 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void AddRemoveBreakpoint()
         {
-            //warn if nothing was selected
-            if (_selectedTabScriptActions.SelectedItems.Count == 0)
-                Notify("No code was selected!", Color.Yellow);
-            else
-                CreateUndoSnapshot();
-
-            //get each item and set appropriately
-            foreach (ListViewItem item in _selectedTabScriptActions.SelectedItems)
+            if (_selectedTabScriptActions is ListView)
             {
-                var selectedCommand = (ScriptCommand)item.Tag;
-                selectedCommand.PauseBeforeExecution = !selectedCommand.PauseBeforeExecution;
-            }
+                //warn if nothing was selected
+                if (_selectedTabScriptActions.SelectedItems.Count == 0)
+                    Notify("No code was selected!", Color.Yellow);
+                else
+                    CreateUndoSnapshot();
 
-            //recolor
-            _selectedTabScriptActions.Invalidate();
+                //get each item and set appropriately
+                foreach (ListViewItem item in _selectedTabScriptActions.SelectedItems)
+                {
+                    var selectedCommand = (ScriptCommand)item.Tag;
+                    selectedCommand.PauseBeforeExecution = !selectedCommand.PauseBeforeExecution;
+                }
+
+                //recolor
+                _selectedTabScriptActions.Invalidate();
+            }           
         }
 
         private void disableSelectedCodeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -997,6 +992,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void deleteSelectedCodeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DeleteSelectedCode();
+        }
+
+        private void runFromThisCommandToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RunFromThisCommand();
         }
 
         private void viewCodeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1132,7 +1132,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region ListView Search
         private void txtScriptSearch_TextChanged(object sender, EventArgs e)
         {
-            if (_selectedTabScriptActions.Items.Count == 0)
+            if (!(_selectedTabScriptActions is ListView) || _selectedTabScriptActions.Items.Count == 0)
                 return;
 
             _reqdIndex = 0;
@@ -1177,6 +1177,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void SearchForItemInListView()
         {
+            if (!(_selectedTabScriptActions is ListView))
+                return;
+
             var searchCriteria = txtScriptSearch.Text;
 
             if (searchCriteria == "")
@@ -1184,7 +1187,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 searchCriteria = tsSearchBox.Text;
             }
 
-            var matchingItems = _selectedTabScriptActions.Items.OfType<ListViewItem>()
+            var matchingItems = ((ListView)_selectedTabScriptActions).Items.OfType<ListViewItem>()
                                                                .Where(x => x.Text.Contains(searchCriteria))
                                                                .ToList();
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenBots.Core.Enums;
+using System;
 
 namespace OpenBots.Core.Script
 {
@@ -14,6 +15,12 @@ namespace OpenBots.Core.Script
         /// direction of the argument or current index
         /// </summary>
         public ScriptArgumentDirection Direction { get; set; }
+
+
+        /// <summary>
+        /// type of the argument or current index
+        /// </summary>
+        public Type ArgumentType { get; set; }
 
         /// <summary>
         /// value of the argument or current index

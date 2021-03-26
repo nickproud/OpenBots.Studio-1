@@ -1,7 +1,6 @@
 ﻿using NuGet;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
-using OpenBots.Nuget; 
 using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
 using OpenBots.Core.Project;
@@ -20,6 +19,7 @@ namespace OpenBots.UI.Supplement_Forms
         public string NotificationMessage { get; set; }
         private string _projectPath;
         private string _projectName;
+        private string _automationEngine;
         private Dictionary<string, string> _projectDependencies { get; set; }
         
         public frmPublishProject(string projectPath, Project project)
@@ -27,6 +27,7 @@ namespace OpenBots.UI.Supplement_Forms
             _projectPath = projectPath;
             _projectName = project.ProjectName;
             _projectDependencies = project.Dependencies;
+            _automationEngine = project.ProjectType.ToString();
             InitializeComponent();           
         }
 
@@ -58,7 +59,7 @@ namespace OpenBots.UI.Supplement_Forms
         {
             try
             {
-                string[] scriptFiles = Directory.GetFiles(_projectPath, "*.json", SearchOption.AllDirectories);
+                string[] scriptFiles = Directory.GetFiles(_projectPath, "*.*", SearchOption.AllDirectories);
                 List<ManifestContentFiles> manifestFiles = new List<ManifestContentFiles>();
                 foreach (string file in scriptFiles)
                 {
@@ -125,7 +126,7 @@ namespace OpenBots.UI.Supplement_Forms
                 try {
                     lblError.Text = $"Publishing {_projectName} to the server...";
                     var client = AuthMethods.GetAuthToken();
-                    AutomationMethods.UploadAutomation(client, _projectName, nugetFilePath);
+                    AutomationMethods.UploadAutomation(client, _projectName, nugetFilePath, _automationEngine);
                 }
                 catch (Exception)
                 {

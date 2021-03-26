@@ -28,6 +28,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("{vMailItem}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(MailItem) })]
 		public string v_MailItem { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("New Folder || {vFolderName}")]
 		[Remarks("Destination folder cannot be a subfolder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_DestinationFolder { get; set; }
 
 		[Required]
@@ -70,7 +72,7 @@ namespace OpenBots.Commands.Outlook
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine);
+			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
 			var vDestinationFolder = v_DestinationFolder.ConvertUserVariableToString(engine);
 			
 			Application outlookApp = new Application();

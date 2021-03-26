@@ -20,9 +20,9 @@ namespace OpenBots.Commands.Data.Test
             DateTime inputDate = DateTime.Now;
             string dateFormat = "MM/dd/yy, hh:mm:ss";
 
-            inputDate.CreateTestVariable(_engine, "inputDate");
-            dateFormat.CreateTestVariable(_engine, "dateFormat");
-            "unassigned".CreateTestVariable(_engine, "output");
+            VariableMethods.CreateTestVariable(inputDate, _engine, "inputDate", typeof(string));
+            VariableMethods.CreateTestVariable(dateFormat, _engine, "dateFormat", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _formatDate.v_InputData = "{inputDate}";
             _formatDate.v_ToStringFormat = "{dateFormat}";
@@ -43,14 +43,14 @@ namespace OpenBots.Commands.Data.Test
             int inputDate = 1;
             string dateFormat = "MM/dd/yy, hh:mm:ss";
 
-            inputDate.CreateTestVariable(_engine, "{inputDate}");
-            dateFormat.CreateTestVariable(_engine, "{dateFormat}");
+            VariableMethods.CreateTestVariable(inputDate, _engine, "inputDate", typeof(string));
+            VariableMethods.CreateTestVariable(dateFormat, _engine, "dateFormat", typeof(string));
 
             _formatDate.v_InputData = "{inputDate}";
             _formatDate.v_ToStringFormat = "{dateFormat}";
             _formatDate.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<InvalidDataException>(() => _formatDate.RunCommand(_engine));
+            Assert.Throws<FormatException>(() => _formatDate.RunCommand(_engine));
         }
     }
 }

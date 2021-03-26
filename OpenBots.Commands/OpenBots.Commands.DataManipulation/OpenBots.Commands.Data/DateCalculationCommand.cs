@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("1/1/2000 || {vDate} || {DateTime.Now}")]
 		[Remarks("You can use known text or variables.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(DateTime), typeof(string) })]
 		public string v_InputDate { get; set; }
 
 		[Required]
@@ -59,6 +60,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("15 || {vIncrement}")]
 		[Remarks("You can use negative numbers which will do the opposite, ex. Subtract Days and an increment of -5 will Add Days.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Increment { get; set; }
 
 		[DisplayName("Date Format (Optional)")]
@@ -66,6 +68,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("MM/dd/yy hh:mm:ss || MM/dd/yyyy || {vDateFormat}")]
 		[Remarks("You can specify either a valid DateTime, Date or Time Format; an invalid format will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ToStringFormat { get; set; }
 
 		[Required]
@@ -73,12 +76,17 @@ namespace OpenBots.Commands.Data
 		[DisplayName("Output Date Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
 		private List<Control> _stringFormatControls;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
 
 		public DateCalculationCommand()
 		{
@@ -102,7 +110,7 @@ namespace OpenBots.Commands.Data
 			dynamic input = v_InputDate.ConvertUserVariableToString(engine);
 
 			if (input == v_InputDate && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_InputDate.ConvertUserVariableToObject(engine);
+				input = v_InputDate.ConvertUserVariableToObject(engine, nameof(v_InputDate), this);
 
 			DateTime variableDate;
 
@@ -193,7 +201,7 @@ namespace OpenBots.Commands.Data
 				stringDateFormatted = ((object)dateTimeValue).ToString();
 
 			//store string (Result) in variable
-			stringDateFormatted.StoreInUserVariable(engine, v_OutputUserVariableName);
+			stringDateFormatted.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -205,13 +213,10 @@ namespace OpenBots.Commands.Data
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_CalculationMethod", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Increment", this, editor));
 
-			((ComboBox)RenderedControls[4]).SelectedIndexChanged += calculationMethodComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += calculationMethodComboBox_SelectedIndexChanged;
 
 			_stringFormatControls = new List<Control>();
 			_stringFormatControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ToStringFormat", this, editor));
-
-			foreach (var ctrl in _stringFormatControls)
-				ctrl.Visible = false;
 
 			RenderedControls.AddRange(_stringFormatControls);
 
@@ -246,9 +251,16 @@ namespace OpenBots.Commands.Data
 			return base.GetDisplayValue() + $" [{operand} '{v_Increment}' {interval} {operandLanguage} '{v_InputDate}' - Store Date in '{v_OutputUserVariableName}']";
 		}
 
-		private void calculationMethodComboBox_SelectedValueChanged(object sender, EventArgs e)
+		public override void Shown()
 		{
-			if (!((ComboBox)RenderedControls[4]).Text.StartsWith("Get"))
+			base.Shown();
+			_hasRendered = true;
+			calculationMethodComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void calculationMethodComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (!((ComboBox)RenderedControls[4]).Text.StartsWith("Get") && _hasRendered)
 			{
 				foreach (var ctrl in _stringFormatControls)
 				{
@@ -257,7 +269,7 @@ namespace OpenBots.Commands.Data
 						((TextBox)ctrl).Text = "MM/dd/yyyy hh:mm:ss";
 				}                                    
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _stringFormatControls)
 				{

@@ -37,7 +37,8 @@ namespace OpenBots.Commands.Image
 		[DisplayName("Output Image Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("vUserVariable")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(Bitmap) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public CaptureImageCommand()
@@ -55,17 +56,15 @@ namespace OpenBots.Commands.Image
 
 			//user image to bitmap
 			Bitmap capturedBmp = new Bitmap(CommonMethods.Base64ToImage(v_ImageCapture));
-			capturedBmp.StoreInUserVariable(engine, v_OutputUserVariableName);
+			capturedBmp.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
 
-			UIPictureBox imageCapture = new UIPictureBox();
-			imageCapture.Width = 200;
-			imageCapture.Height = 200;
-			imageCapture.DataBindings.Add("EncodedImage", this, "v_ImageCapture", false, DataSourceUpdateMode.OnPropertyChanged);
+			var imageCapture = commandControls.CreateDefaultPictureBoxFor("v_ImageCapture", this);
+			
 
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ImageCapture", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageCapture", this, new Control[] { imageCapture }, editor));

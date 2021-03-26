@@ -23,10 +23,10 @@ namespace OpenBots.Commands.Data.Test
             {
                 defaultFormat = null;
             }
-            defaultFormat.CreateTestVariable(_engine, "format");
-            increment.CreateTestVariable(_engine, "increment");
-            input.CreateTestVariable(_engine, "inputDate");
-            "unassigned".CreateTestVariable(_engine, "output");
+            VariableMethods.CreateTestVariable(defaultFormat, _engine, "format", typeof(string));
+            VariableMethods.CreateTestVariable(increment, _engine, "increment", typeof(string));
+            VariableMethods.CreateTestVariable(input, _engine, "inputDate", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _dateCalculation.v_InputDate = "{inputDate}";
             _dateCalculation.v_CalculationMethod = calcMethod;
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Data.Test
             _dateCalculation.RunCommand(_engine);
             if (expectedResult.GetType() == typeof(DateTime))
             {
-                Assert.Equal(expectedResult.ToString(defaultFormat), _dateCalculation.v_OutputUserVariableName.ConvertUserVariableToObject(_engine));
+                Assert.Equal(expectedResult.ToString(defaultFormat), _dateCalculation.v_OutputUserVariableName.ConvertUserVariableToString(_engine));
             }
             else if (expectedResult.GetType() == typeof(int))
             {

@@ -1,7 +1,8 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Model.EngineModel;
-using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.Script;
+using OpenBots.Core.UI.Controls;
 using System.Collections.Generic;
 
 namespace OpenBots.Core.Infrastructure
@@ -17,5 +18,6 @@ namespace OpenBots.Core.Infrastructure
         ScriptCommand EditingCommand { get; set; }
         List<ScriptCommand> ConfiguredCommands { get; set; }
         string HTMLElementRecorderURL { get; set; }
+        TypeContext TypeContext { get; set; }
     }
 }

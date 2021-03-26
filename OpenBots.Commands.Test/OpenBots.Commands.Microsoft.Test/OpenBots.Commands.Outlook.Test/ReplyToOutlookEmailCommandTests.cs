@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Outlook.Test
             _replyToOutlookEmail = new ReplyToOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
 
-            "unassigned".CreateTestVariable(_engine, "emails");
+            VariableMethods.CreateTestVariable(null, _engine, "emails", typeof(List<>));
 
             _getOutlookEmails.v_SourceFolder = "TestInput";
             _getOutlookEmails.v_Filter = "[Subject] = 'toReply'";
@@ -38,9 +38,9 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
             MailItem email = emails[0];
-            email.CreateTestVariable(_engine, "email");
+            VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 
             _replyToOutlookEmail.v_MailItem = "{email}";
             _replyToOutlookEmail.v_OperationType = "Reply";
@@ -63,9 +63,9 @@ namespace OpenBots.Commands.Outlook.Test
 
                 _getOutlookEmails.RunCommand(_engine);
 
-                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
                 attempts++;
-            } while (emails.Count < 1 && attempts < 5);
+            } while (emails.Count < 1 && attempts < 8);
             email = emails[0];
 
             Assert.Equal("replyBody \r\n", email.Body);
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.Outlook.Test
             _sendOutlookEmail = new SendOutlookEmailCommand();
             _moveCopyOutlookEmail = new MoveCopyOutlookEmailCommand();
 
-            "unassigned".CreateTestVariable(_engine, "emails");
+            VariableMethods.CreateTestVariable(null, _engine, "emails", typeof(List<>));
 
             _getOutlookEmails.v_SourceFolder = "Inbox";
             _getOutlookEmails.v_Filter = "[Subject] = 'toReply'";
@@ -93,9 +93,9 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            List<MailItem> emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+            List<MailItem> emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
             MailItem email = emails[0];
-            email.CreateTestVariable(_engine, "email");
+            VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";
@@ -113,9 +113,9 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+            emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
             email = emails[0];
-            email.CreateTestVariable(_engine, "email");
+            VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 
             _deleteOutlookEmail.v_MailItem = "{email}";
             _deleteOutlookEmail.v_DeleteReadOnly = "No";
@@ -143,11 +143,11 @@ namespace OpenBots.Commands.Outlook.Test
 
                 _getOutlookEmails.RunCommand(_engine);
 
-                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
                 attempts++;
             } while (attempts < 5 && emails.Count < 1);
             email = emails[0];
-            email.CreateTestVariable(_engine, "email");
+            VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 
             _moveCopyOutlookEmail.v_MailItem = "{email}";
             _moveCopyOutlookEmail.v_DestinationFolder = "TestInput";

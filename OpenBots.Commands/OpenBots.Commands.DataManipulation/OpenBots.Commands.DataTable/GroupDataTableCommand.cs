@@ -18,7 +18,7 @@ namespace OpenBots.Commands.DataTable
     [Serializable]
     [Category("DataTable Commands")]
     [Description("This command groups a DataTable by a specified column name/index as a List of DataTables.")]
-    public class GroupByCommand : ScriptCommand
+    public class GroupDataTableCommand : ScriptCommand
     {
 		[Required]
 		[DisplayName("DataTable")]
@@ -26,6 +26,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("{vDataTable}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_DataTable { get; set; }
 
 		[Required]
@@ -43,6 +44,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("0 || {vIndex} || Column1 || {vColumnName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_DataValueIndex { get; set; }
 
 		[Required]
@@ -50,10 +52,11 @@ namespace OpenBots.Commands.DataTable
 		[DisplayName("Output DataTable List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
-		public GroupByCommand()
+		public GroupDataTableCommand()
 		{
 			CommandName = "GroupDataTableCommand";
 			SelectionName = "Group Datatable";
@@ -67,7 +70,7 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine);
+			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
 			OBDataTable dataTable = (OBDataTable)dataTableVariable;
 
 			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);
@@ -89,7 +92,7 @@ namespace OpenBots.Commands.DataTable
 						group table by new { placeCol = table[columnName] } into dataTableGroup
 						select dataTableGroup.ToList().CopyToDataTable()).ToList();
 
-			dataTableList.StoreInUserVariable(engine, v_OutputUserVariableName);
+			dataTableList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

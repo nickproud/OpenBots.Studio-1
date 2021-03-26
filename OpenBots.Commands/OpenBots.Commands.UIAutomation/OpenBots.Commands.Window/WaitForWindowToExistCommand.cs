@@ -5,7 +5,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,6 +26,7 @@ namespace OpenBots.Commands.Window
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -35,6 +35,7 @@ namespace OpenBots.Commands.Window
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Timeout { get; set; }
 
 		public WaitForWindowToExistCommand()
@@ -61,6 +62,8 @@ namespace OpenBots.Commands.Window
 
 			while (DateTime.Now < endDateTime)
 			{
+				if (engine.IsCancellationPending)
+					break;
 				hWnd = User32Functions.FindWindow(windowName);
 
 				if (hWnd != IntPtr.Zero) //If found

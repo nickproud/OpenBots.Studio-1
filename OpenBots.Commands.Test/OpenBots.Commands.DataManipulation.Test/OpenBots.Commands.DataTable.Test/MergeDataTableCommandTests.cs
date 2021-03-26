@@ -22,8 +22,8 @@ namespace OpenBots.Commands.DataTable.Test
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.CreateTestVariable(_engine, "dt1");
-            dt2.CreateTestVariable(_engine, "dt2");
+            VariableMethods.CreateTestVariable(dt1, _engine, "dt1", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(dt2, _engine, "dt2", typeof(OBData.DataTable));
 
             _mergeDataTable.v_SourceDataTable = "{dt1}";
             _mergeDataTable.v_DestinationDataTable = "{dt2}";
@@ -39,8 +39,8 @@ namespace OpenBots.Commands.DataTable.Test
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.CreateTestVariable(_engine, "dt1");
-            dt2.CreateTestVariable(_engine, "dt2");
+            VariableMethods.CreateTestVariable(dt1, _engine, "dt1", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(dt2, _engine, "dt2", typeof(int));
 
             _mergeDataTable.v_SourceDataTable = "{dt1}";
             _mergeDataTable.v_DestinationDataTable = "{dt2}";
@@ -56,8 +56,8 @@ namespace OpenBots.Commands.DataTable.Test
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
 
-            dt1.CreateTestVariable(_engine, "dt1");
-            dt2.CreateTestVariable(_engine, "dt2");
+            VariableMethods.CreateTestVariable(dt1, _engine, "dt1", typeof(OBData.DataTable));
+            VariableMethods.CreateTestVariable(dt2, _engine, "dt2", typeof(OBData.DataTable));
 
             switch (schema)
             {
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _mergeDataTable.RunCommand(_engine);
 
-            OBData.DataTable resultDataTable = (OBData.DataTable)_mergeDataTable.v_DestinationDataTable.ConvertUserVariableToObject(_engine);
+            OBData.DataTable resultDataTable = (OBData.DataTable)_mergeDataTable.v_DestinationDataTable.ConvertUserVariableToObject(_engine, typeof(OBData.DataTable));
 
             Assert.Equal(dt2.GetType(), resultDataTable.GetType());
             // Check each row / column pair and assert equivalence

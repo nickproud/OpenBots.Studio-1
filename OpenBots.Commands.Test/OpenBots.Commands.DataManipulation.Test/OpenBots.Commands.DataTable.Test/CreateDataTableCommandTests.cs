@@ -22,8 +22,8 @@ namespace OpenBots.Commands.DataTable.Test
             {
                 TableName = "ColumnNamesDataTable" + DateTime.Now.ToString("MMddyy.hhmmss")
             };
-            "Col1".CreateTestVariable(_engine, "Col1");
-            "unassigned".CreateTestVariable(_engine, "outputTable");
+            VariableMethods.CreateTestVariable("Col1", _engine, "Col1", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "outputTable", typeof(OBData.DataTable));
             columnNameDataTable.Columns.Add("{Col1}");
 
             _createDataTableCommand.v_ColumnNameDataTable = columnNameDataTable;
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.DataTable.Test
                 expectedDt.Columns.Add(rwColumnName.Field<string>("Column Name").ConvertUserVariableToString(_engine));
             }
 
-            OBData.DataTable resultDataTable = (OBData.DataTable)_createDataTableCommand.v_OutputUserVariableName.ConvertUserVariableToObject(_engine);
+            OBData.DataTable resultDataTable = (OBData.DataTable)_createDataTableCommand.v_OutputUserVariableName.ConvertUserVariableToObject(_engine, typeof(OBData.DataTable));
 
             for (int row = 0; row < expectedDt.Rows.Count; row++)
             {

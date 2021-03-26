@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Server.Models;
 using RestSharp;
-using RestSharp.Serialization.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using IOFile = System.IO.File;
 
@@ -13,10 +10,11 @@ namespace OpenBots.Core.Server.API_Methods
 {
     public class AssetMethods
     {
-        public static Asset GetAsset(RestClient client, string filter)
+        public static Asset GetAsset(RestClient client, string assetName, string assetType)
         {           
-            var request = new RestRequest("api/v1/Assets", Method.GET);
-            request.AddParameter("$filter", filter);
+            var request = new RestRequest("api/v1/Assets/getassetbyname/{assetName}", Method.GET);
+            request.AddUrlSegment("assetName", assetName);
+            request.AddQueryParameter("assetType", assetType);
             request.RequestFormat = DataFormat.Json;
 
             var response = client.Execute(request);
@@ -24,10 +22,8 @@ namespace OpenBots.Core.Server.API_Methods
             if (!response.IsSuccessful)
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
 
-            var deserializer = new JsonDeserializer();
-            var output = deserializer.Deserialize<Dictionary<string, string>>(response);
-            var items = output["items"];
-            return JsonConvert.DeserializeObject<List<Asset>>(items).FirstOrDefault();
+            var item = response.Content;
+            return JsonConvert.DeserializeObject<Asset>(item);
         }       
 
         public static void PutAsset(RestClient client, Asset asset)

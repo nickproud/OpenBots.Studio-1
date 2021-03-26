@@ -27,6 +27,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("{vSrcDataTable}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_SourceDataTable { get; set; }
 
 		[Required]
@@ -35,6 +36,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("{vDestDataTable}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_DestinationDataTable { get; set; }
 
 		[Required]
@@ -70,8 +72,8 @@ namespace OpenBots.Commands.DataTable
 			var engine = (IAutomationEngineInstance)sender;
 
 			// Get Variable Objects
-			var v_SourceDTVariable = v_SourceDataTable.ConvertUserVariableToObject(engine);
-			var v_DestinationDTVariable = v_DestinationDataTable.ConvertUserVariableToObject(engine);
+			var v_SourceDTVariable = v_SourceDataTable.ConvertUserVariableToObject(engine, nameof(v_SourceDataTable), this);
+			var v_DestinationDTVariable = v_DestinationDataTable.ConvertUserVariableToObject(engine, nameof(v_DestinationDataTable), this);
 
 			// (Null Check)
 			if (v_SourceDTVariable is null)
@@ -112,7 +114,7 @@ namespace OpenBots.Commands.DataTable
 				}
 
 				// Update Destination Variable Value
-				destinationDT.StoreInUserVariable(engine, v_DestinationDataTable);               
+				destinationDT.StoreInUserVariable(engine, v_DestinationDataTable, nameof(v_DestinationDataTable), this);               
 			}
 
 		}

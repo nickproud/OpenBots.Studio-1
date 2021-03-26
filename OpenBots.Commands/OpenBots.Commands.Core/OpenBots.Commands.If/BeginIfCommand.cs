@@ -50,6 +50,7 @@ namespace OpenBots.Commands.If
 		[SampleUsage("Param Value || {vParamValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string)}, true)]
 		public DataTable v_ActionParameterTable { get; set; }
 
 		[JsonIgnore]
@@ -74,6 +75,7 @@ namespace OpenBots.Commands.If
 			SelectionName = "Begin If";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_begin_if;
+			ScopeStartCommand = true;
 
 			//define parameter table
 			v_ActionParameterTable = new DataTable
@@ -82,17 +84,6 @@ namespace OpenBots.Commands.If
 			};
 			v_ActionParameterTable.Columns.Add("Parameter Name");
 			v_ActionParameterTable.Columns.Add("Parameter Value");
-
-			_ifGridViewHelper = new DataGridView();
-			_ifGridViewHelper.AllowUserToAddRows = true;
-			_ifGridViewHelper.AllowUserToDeleteRows = true;
-			_ifGridViewHelper.Size = new Size(400, 250);
-			_ifGridViewHelper.ColumnHeadersHeight = 30;
-			_ifGridViewHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-			_ifGridViewHelper.DataBindings.Add("DataSource", this, "v_ActionParameterTable", false, DataSourceUpdateMode.OnPropertyChanged);
-			_ifGridViewHelper.AllowUserToAddRows = false;
-			_ifGridViewHelper.AllowUserToDeleteRows = false;
-			_ifGridViewHelper.MouseEnter += IfGridViewHelper_MouseEnter;
 
 			_recorderControl = new CommandItemControl();
 			_recorderControl.Padding = new Padding(10, 0, 0, 0);
@@ -149,7 +140,7 @@ namespace OpenBots.Commands.If
 		{
 			base.Render(editor, commandControls);
 
-			_actionDropdown = (ComboBox)commandControls.CreateDropdownFor("v_IfActionType", this);
+			_actionDropdown = commandControls.CreateDropdownFor("v_IfActionType", this);
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_IfActionType", this));
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_IfActionType", this, new Control[] { _actionDropdown }, editor));
 			_actionDropdown.SelectionChangeCommitted += ifAction_SelectionChangeCommitted;
@@ -160,8 +151,15 @@ namespace OpenBots.Commands.If
 
 			_recorderControl.Click += (sender, e) => ShowIfElementRecorder(sender, e, editor, commandControls);
 			_parameterControls.Add(_recorderControl);
+
+			_ifGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ActionParameterTable", this);
+			_ifGridViewHelper.AllowUserToAddRows = false;
+			_ifGridViewHelper.AllowUserToDeleteRows = false;
+			_ifGridViewHelper.MouseEnter += IfGridViewHelper_MouseEnter;
+
 			_parameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ActionParameterTable", this, new Control[] { _ifGridViewHelper }, editor));
 			_parameterControls.Add(_ifGridViewHelper);
+
 			RenderedControls.AddRange(_parameterControls);
 
 			return RenderedControls;
@@ -604,6 +602,8 @@ namespace OpenBots.Commands.If
 				default:
 					break;
 			}
+
+			ifActionParameterBox.Columns[0].ReadOnly = true;
 		}
 
 		private void IfGridViewHelper_MouseEnter(object sender, EventArgs e)

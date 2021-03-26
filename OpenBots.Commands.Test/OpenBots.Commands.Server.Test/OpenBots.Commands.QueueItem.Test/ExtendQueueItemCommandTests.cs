@@ -22,8 +22,8 @@ namespace OpenBots.Commands.QueueItem.Test
             _workQueueItem = new WorkQueueItemCommand();
             _extendQueueItem = new ExtendQueueItemCommand();
 
-            "unassigned".CreateTestVariable(_engine, "output");
-            "unassigned".CreateTestVariable(_engine, "vQueueItem");
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
 
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "ExtendQueueItemTest";
@@ -41,13 +41,13 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemDict = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine);
+            var queueItemDict = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var client = AuthMethods.GetAuthToken();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
             _extendQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.StoreInUserVariable(_engine, _extendQueueItem.v_QueueItem);
+            queueItemDict.StoreInUserVariable(_engine, _extendQueueItem.v_QueueItem, typeof(Dictionary<,>));
 
             _extendQueueItem.RunCommand(_engine);
 
@@ -75,9 +75,9 @@ namespace OpenBots.Commands.QueueItem.Test
                 { "LockedUntilUTC", DateTime.UtcNow.AddHours(1) }
             };
 
-            "unassigned".CreateTestVariable(_engine, "vQueueItem");
+            VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _extendQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.StoreInUserVariable(_engine, _extendQueueItem.v_QueueItem);
+            queueItemDict.StoreInUserVariable(_engine, _extendQueueItem.v_QueueItem, typeof(Dictionary<,>));
 
             Assert.Throws<NullReferenceException>(() => _extendQueueItem.RunCommand(_engine));
         }

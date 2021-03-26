@@ -1,12 +1,12 @@
 ﻿using OpenBots.Core.Properties;
-using OpenBots.Core.UI.Controls.CustomControls;
+using OpenBots.Core.UI.Controls;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
-namespace OpenBots.UI.CustomControls.CustomUIControls
+namespace OpenBots.UI.CustomControls.Controls
 {
     public static class UIImage
     {

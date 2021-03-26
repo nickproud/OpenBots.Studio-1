@@ -29,6 +29,7 @@ namespace OpenBots.Commands.Database
 		[Description("Enter the unique instance that was specified in the **Define Database Connection** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Define Database Connection** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(OleDbConnection) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -47,22 +48,33 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("SELECT OrderID, CustomerID FROM Orders || {vQuery}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_Query { get; set; }
 
-		[Required]
-		[DisplayName("Query Parameters")]
+		[DisplayName("Query Parameters (Optional)")]
 		[Description("Define the query parameters.")]
 		[SampleUsage("[STRING | @name | {vNameValue}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public DataTable v_QueryParameters { get; set; }
+
+		[Required]
+		[DisplayName("Timeout (Seconds)")]
+		[Description("Specify how many seconds to wait before throwing an exception.")]
+		[SampleUsage("30 || {vSeconds}")]
+		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
+		public string v_QueryTimeout { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Dataset Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(DataTable), typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -92,6 +104,7 @@ namespace OpenBots.Commands.Database
 			v_QueryParameters.Columns.Add("Parameter Type");
 
 			v_QueryType = "Return Dataset";
+			v_QueryTimeout = "30";
 		}
 
 		public override void RunCommand(object sender)
@@ -99,12 +112,14 @@ namespace OpenBots.Commands.Database
 			//create engine, instance, query
 			var engine = (IAutomationEngineInstance)sender;
 			var query = v_Query.ConvertUserVariableToString(engine);
+			var vQueryTimeout = v_QueryTimeout.ConvertUserVariableToString(engine);
 
 			//define connection
 			var databaseConnection = (OleDbConnection)v_InstanceName.GetAppInstance(engine);
 
 			//define commad
 			var oleCommand = new OleDbCommand(query, databaseConnection);
+			oleCommand.CommandTimeout = Convert.ToInt32(vQueryTimeout);
 
 			//add parameters
 			foreach (DataRow rw in v_QueryParameters.Rows)
@@ -114,7 +129,6 @@ namespace OpenBots.Commands.Database
 				var parameterType = rw.Field<string>("Parameter Type").ConvertUserVariableToString(engine);
 
 				object convertedValue = null;
-				//"STRING", "BOOLEAN", "DECIMAL", "INT16", "INT32", "INT64", "DATETIME", "DOUBLE", "SINGLE", "GUID", "BYTE", "BYTE[]"
 				switch (parameterType)
 				{
 					case "STRING":
@@ -170,24 +184,22 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Close();
 				
 				dataTable.TableName = v_OutputUserVariableName;
-				engine.DataTables.Add(dataTable);
-
-				dataTable.StoreInUserVariable(engine, v_OutputUserVariableName);
+				dataTable.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else if (v_QueryType == "Execute NonQuery")
 			{
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+				result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
-			else if(v_QueryType == "Execute Stored Procedure")
+			else if (v_QueryType == "Execute Stored Procedure")
 			{
 				oleCommand.CommandType = CommandType.StoredProcedure;
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+				result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else
 				throw new NotImplementedException($"Query Execution Type '{v_QueryType}' not implemented.");
@@ -207,14 +219,10 @@ namespace OpenBots.Commands.Database
 			RenderedControls.AddRange(queryControls);
 
 			//set up query parameter controls
-			_queryParametersGridView = new DataGridView();
-			_queryParametersGridView.AllowUserToAddRows = true;
-			_queryParametersGridView.AllowUserToDeleteRows = true;
-			_queryParametersGridView.Size = new Size(400, 250);
-			_queryParametersGridView.ColumnHeadersHeight = 30;
-			_queryParametersGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			_queryParametersGridView = commandControls.CreateDefaultDataGridViewFor("v_QueryParameters", this);
 			_queryParametersGridView.AutoGenerateColumns = false;
-		
+			_queryParametersGridView.AllowUserToAddRows = false;
+
 			var selectColumn = new DataGridViewComboBoxColumn();
 			selectColumn.HeaderText = "Type";
 			selectColumn.DataPropertyName = "Parameter Type";
@@ -232,8 +240,6 @@ namespace OpenBots.Commands.Database
 			paramValueColumn.HeaderText = "Value";
 			paramValueColumn.DataPropertyName = "Parameter Value";
 			_queryParametersGridView.Columns.Add(paramValueColumn);
-
-			_queryParametersGridView.DataBindings.Add("DataSource", this, "v_QueryParameters", false, DataSourceUpdateMode.OnPropertyChanged);
 		 
 			_queryParametersControls = new List<Control>();
 			_queryParametersControls.Add(commandControls.CreateDefaultLabelFor("v_QueryParameters", this));
@@ -252,6 +258,7 @@ namespace OpenBots.Commands.Database
 			_queryParametersControls.Add(_queryParametersGridView);
 			RenderedControls.AddRange(_queryParametersControls);
 
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueryTimeout", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 			return RenderedControls;
 		}

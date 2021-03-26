@@ -42,6 +42,9 @@
             this.lblDefineDefaultDirectionDescriptor = new System.Windows.Forms.Label();
             this.cbxDefaultDirection = new System.Windows.Forms.ComboBox();
             this.lblDefineDefaultDirection = new System.Windows.Forms.Label();
+            this.lblDefineDefaultTypeDescriptor = new System.Windows.Forms.Label();
+            this.cbxDefaultType = new System.Windows.Forms.ComboBox();
+            this.lblDefineDefaultType = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnOk)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).BeginInit();
             this.SuspendLayout();
@@ -102,7 +105,7 @@
             this.lblDefineDefaultValueDescriptor.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineDefaultValueDescriptor.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineDefaultValueDescriptor.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDefineDefaultValueDescriptor.Location = new System.Drawing.Point(16, 426);
+            this.lblDefineDefaultValueDescriptor.Location = new System.Drawing.Point(16, 556);
             this.lblDefineDefaultValueDescriptor.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineDefaultValueDescriptor.Name = "lblDefineDefaultValueDescriptor";
             this.lblDefineDefaultValueDescriptor.Size = new System.Drawing.Size(571, 53);
@@ -116,7 +119,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDefaultValue.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDefaultValue.ForeColor = System.Drawing.Color.SteelBlue;
-            this.txtDefaultValue.Location = new System.Drawing.Point(21, 483);
+            this.txtDefaultValue.Location = new System.Drawing.Point(21, 613);
             this.txtDefaultValue.Margin = new System.Windows.Forms.Padding(4);
             this.txtDefaultValue.Name = "txtDefaultValue";
             this.txtDefaultValue.Size = new System.Drawing.Size(566, 32);
@@ -128,7 +131,7 @@
             this.lblDefineDefaultValue.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineDefaultValue.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineDefaultValue.ForeColor = System.Drawing.Color.White;
-            this.lblDefineDefaultValue.Location = new System.Drawing.Point(16, 400);
+            this.lblDefineDefaultValue.Location = new System.Drawing.Point(16, 530);
             this.lblDefineDefaultValue.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineDefaultValue.Name = "lblDefineDefaultValue";
             this.lblDefineDefaultValue.Size = new System.Drawing.Size(298, 28);
@@ -145,7 +148,7 @@
             this.uiBtnOk.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnOk.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOk.Image")));
             this.uiBtnOk.IsMouseOver = false;
-            this.uiBtnOk.Location = new System.Drawing.Point(10, 529);
+            this.uiBtnOk.Location = new System.Drawing.Point(10, 667);
             this.uiBtnOk.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnOk.Name = "uiBtnOk";
             this.uiBtnOk.Size = new System.Drawing.Size(60, 60);
@@ -164,7 +167,7 @@
             this.uiBtnCancel.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnCancel.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCancel.Image")));
             this.uiBtnCancel.IsMouseOver = false;
-            this.uiBtnCancel.Location = new System.Drawing.Point(70, 529);
+            this.uiBtnCancel.Location = new System.Drawing.Point(70, 667);
             this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnCancel.Name = "uiBtnCancel";
             this.uiBtnCancel.Size = new System.Drawing.Size(60, 60);
@@ -178,7 +181,7 @@
             this.lblArgumentNameError.BackColor = System.Drawing.Color.Transparent;
             this.lblArgumentNameError.Font = new System.Drawing.Font("Segoe UI Light", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblArgumentNameError.ForeColor = System.Drawing.Color.Red;
-            this.lblArgumentNameError.Location = new System.Drawing.Point(16, 201);
+            this.lblArgumentNameError.Location = new System.Drawing.Point(16, 200);
             this.lblArgumentNameError.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblArgumentNameError.Name = "lblArgumentNameError";
             this.lblArgumentNameError.Size = new System.Drawing.Size(571, 36);
@@ -189,7 +192,7 @@
             this.lblDefineDefaultDirectionDescriptor.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineDefaultDirectionDescriptor.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineDefaultDirectionDescriptor.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDefineDefaultDirectionDescriptor.Location = new System.Drawing.Point(16, 266);
+            this.lblDefineDefaultDirectionDescriptor.Location = new System.Drawing.Point(16, 406);
             this.lblDefineDefaultDirectionDescriptor.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineDefaultDirectionDescriptor.Name = "lblDefineDefaultDirectionDescriptor";
             this.lblDefineDefaultDirectionDescriptor.Size = new System.Drawing.Size(571, 53);
@@ -206,8 +209,9 @@
             this.cbxDefaultDirection.ForeColor = System.Drawing.Color.SteelBlue;
             this.cbxDefaultDirection.Items.AddRange(new object[] {
             "In",
-            "Out"});
-            this.cbxDefaultDirection.Location = new System.Drawing.Point(21, 323);
+            "Out",
+            "InOut"});
+            this.cbxDefaultDirection.Location = new System.Drawing.Point(21, 463);
             this.cbxDefaultDirection.Margin = new System.Windows.Forms.Padding(4);
             this.cbxDefaultDirection.Name = "cbxDefaultDirection";
             this.cbxDefaultDirection.Size = new System.Drawing.Size(566, 33);
@@ -221,18 +225,62 @@
             this.lblDefineDefaultDirection.BackColor = System.Drawing.Color.Transparent;
             this.lblDefineDefaultDirection.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDefineDefaultDirection.ForeColor = System.Drawing.Color.White;
-            this.lblDefineDefaultDirection.Location = new System.Drawing.Point(16, 240);
+            this.lblDefineDefaultDirection.Location = new System.Drawing.Point(16, 380);
             this.lblDefineDefaultDirection.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDefineDefaultDirection.Name = "lblDefineDefaultDirection";
             this.lblDefineDefaultDirection.Size = new System.Drawing.Size(330, 28);
             this.lblDefineDefaultDirection.TabIndex = 24;
             this.lblDefineDefaultDirection.Text = "Define Argument Default Direction";
             // 
+            // lblDefineDefaultTypeDescriptor
+            // 
+            this.lblDefineDefaultTypeDescriptor.BackColor = System.Drawing.Color.Transparent;
+            this.lblDefineDefaultTypeDescriptor.Font = new System.Drawing.Font("Segoe UI Light", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDefineDefaultTypeDescriptor.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.lblDefineDefaultTypeDescriptor.Location = new System.Drawing.Point(16, 266);
+            this.lblDefineDefaultTypeDescriptor.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblDefineDefaultTypeDescriptor.Name = "lblDefineDefaultTypeDescriptor";
+            this.lblDefineDefaultTypeDescriptor.Size = new System.Drawing.Size(571, 53);
+            this.lblDefineDefaultTypeDescriptor.TabIndex = 29;
+            this.lblDefineDefaultTypeDescriptor.Text = "Define a default type for the argument. The type of the argument cannot be change" +
+    "d during the execution of a Script.";
+            // 
+            // cbxDefaultType
+            // 
+            this.cbxDefaultType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxDefaultType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxDefaultType.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbxDefaultType.ForeColor = System.Drawing.Color.SteelBlue;
+            this.cbxDefaultType.Location = new System.Drawing.Point(21, 323);
+            this.cbxDefaultType.Margin = new System.Windows.Forms.Padding(4);
+            this.cbxDefaultType.Name = "cbxDefaultType";
+            this.cbxDefaultType.Size = new System.Drawing.Size(566, 33);
+            this.cbxDefaultType.TabIndex = 28;
+            this.cbxDefaultType.Tag = typeof(string);
+            this.cbxDefaultType.SelectionChangeCommitted += new System.EventHandler(this.cbxDefaultType_SelectionChangeCommitted);
+            // 
+            // lblDefineDefaultType
+            // 
+            this.lblDefineDefaultType.AutoSize = true;
+            this.lblDefineDefaultType.BackColor = System.Drawing.Color.Transparent;
+            this.lblDefineDefaultType.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDefineDefaultType.ForeColor = System.Drawing.Color.White;
+            this.lblDefineDefaultType.Location = new System.Drawing.Point(16, 240);
+            this.lblDefineDefaultType.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblDefineDefaultType.Name = "lblDefineDefaultType";
+            this.lblDefineDefaultType.Size = new System.Drawing.Size(291, 28);
+            this.lblDefineDefaultType.TabIndex = 27;
+            this.lblDefineDefaultType.Text = "Define Argument Default Type";
+            // 
             // frmAddArgument
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(609, 603);
+            this.ClientSize = new System.Drawing.Size(609, 741);
+            this.Controls.Add(this.lblDefineDefaultTypeDescriptor);
+            this.Controls.Add(this.cbxDefaultType);
+            this.Controls.Add(this.lblDefineDefaultType);
             this.Controls.Add(this.lblDefineDefaultDirectionDescriptor);
             this.Controls.Add(this.cbxDefaultDirection);
             this.Controls.Add(this.lblDefineDefaultDirection);
@@ -275,5 +323,8 @@
         private System.Windows.Forms.Label lblDefineDefaultDirectionDescriptor;
         public System.Windows.Forms.ComboBox cbxDefaultDirection;
         private System.Windows.Forms.Label lblDefineDefaultDirection;
+        private System.Windows.Forms.Label lblDefineDefaultTypeDescriptor;
+        public System.Windows.Forms.ComboBox cbxDefaultType;
+        private System.Windows.Forms.Label lblDefineDefaultType;
     }
 }

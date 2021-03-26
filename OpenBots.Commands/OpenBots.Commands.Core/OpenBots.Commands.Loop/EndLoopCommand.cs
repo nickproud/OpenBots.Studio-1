@@ -20,7 +20,6 @@ namespace OpenBots.Commands.Loop
             SelectionName = "End Loop";
             CommandEnabled = true;
             CommandIcon = Resources.command_endloop;
-
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

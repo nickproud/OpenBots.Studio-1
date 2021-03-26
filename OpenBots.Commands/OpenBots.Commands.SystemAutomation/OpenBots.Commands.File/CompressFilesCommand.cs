@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Security;
 using System.Windows.Forms;
 using IO = System.IO;
 
@@ -28,13 +29,15 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_DirectoryPathOrigin { get; set; }
 
 		[DisplayName("Password (Optional)")]
 		[Description("Define the password to use for file compression.")]
-		[SampleUsage("password || {vPassword}")]
-		[Remarks("")]
+		[SampleUsage("{vPassword}")]
+		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_Password { get; set; }
 
 		[Required]
@@ -44,6 +47,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_PathDestination { get; set; }
 
 		[Required]
@@ -51,7 +55,8 @@ namespace OpenBots.Commands.File
 		[DisplayName("Output Compressed File Path Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public CompressFilesCommand()
@@ -72,8 +77,10 @@ namespace OpenBots.Commands.File
 			// get file path to destination files
 			var vFilePathDestination = v_PathDestination.ConvertUserVariableToString(engine);
 
+			var vPassword = "";
 			// get password to extract files
-			var vPassword = v_Password.ConvertUserVariableToString(engine);
+			if (v_Password != null)
+				vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
 
             if (IO.File.Exists(vSourceDirectoryPathOrigin))
             {
@@ -135,7 +142,7 @@ namespace OpenBots.Commands.File
 			}
 
 			//Add File Path to the output variable
-			compressedFileName.StoreInUserVariable(engine, v_OutputUserVariableName);
+			compressedFileName.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -144,7 +151,7 @@ namespace OpenBots.Commands.File
 
 			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DirectoryPathOrigin", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultPasswordInputGroupFor("v_Password", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Password", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_PathDestination", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

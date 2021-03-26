@@ -6,12 +6,12 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Security;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.System
@@ -27,6 +27,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("myMachine || {vMachineName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_MachineName { get; set; }
 
 		[Required]
@@ -35,14 +36,16 @@ namespace OpenBots.Commands.System
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_UserName { get; set; }
 
 		[Required]
 		[DisplayName("Password")]
 		[Description("Define the password to use when connecting to the machine.")]
-		[SampleUsage("password || {vPassword}")]
-		[Remarks("")]
+		[SampleUsage("{vPassword}")]
+		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_Password { get; set; }
 
 		[Required]
@@ -51,6 +54,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("1000 || {vWidth}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_RDPWidth { get; set; }
 
 		[Required]
@@ -59,6 +63,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("800 || {vHeight}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_RDPHeight { get; set; }
 
 		public LaunchRemoteDesktopCommand()
@@ -77,7 +82,7 @@ namespace OpenBots.Commands.System
 			var engine = (IAutomationEngineInstance)sender;
 			var machineName = v_MachineName.ConvertUserVariableToString(engine);
 			var userName = v_UserName.ConvertUserVariableToString(engine);
-			var password = v_Password.ConvertUserVariableToString(engine);
+			var password = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
 			var width = int.Parse(v_RDPWidth.ConvertUserVariableToString(engine));
 			var height = int.Parse(v_RDPHeight.ConvertUserVariableToString(engine));
 
@@ -109,7 +114,7 @@ namespace OpenBots.Commands.System
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_MachineName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_UserName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultPasswordInputGroupFor("v_Password", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Password", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_RDPWidth", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_RDPHeight", this, editor));
 

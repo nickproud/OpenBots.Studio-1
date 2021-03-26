@@ -161,7 +161,6 @@ namespace OpenBots.UI.Forms
                         case "Day(s)":
                             trigger.Repetition.Interval = TimeSpan.FromDays(recurParsed);
                             break;
-
                         default:
                             break;
                     }               

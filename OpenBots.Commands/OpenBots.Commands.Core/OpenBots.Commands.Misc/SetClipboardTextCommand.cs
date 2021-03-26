@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("Hello || {vTextToSet}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_TextToSet { get; set; }
 
 		public SetClipboardTextCommand()

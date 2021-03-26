@@ -30,6 +30,7 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
+		[CompatibleTypes(new Type[] { typeof(Application) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -38,6 +39,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Name || {vKeyColumn}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_KeyColumn { get; set; }
 
 		[Required]
@@ -46,6 +48,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Value || {vValueColumn}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_ValueColumn { get; set; }
 
 		[Required]
@@ -53,7 +56,8 @@ namespace OpenBots.Commands.Excel
 		[DisplayName("Output Dictionary Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public LoadDictionaryCommand()
@@ -124,7 +128,7 @@ namespace OpenBots.Commands.Excel
 				outputDictionary.Add(dict.keys, dict.values);
 			}
 
-			outputDictionary.StoreInUserVariable(engine, v_OutputUserVariableName);
+			outputDictionary.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

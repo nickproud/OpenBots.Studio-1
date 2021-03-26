@@ -254,7 +254,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
 
                 //create new command editor form
-                frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands());
+                frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), TypeContext);
 
                 editCommand.ScriptEngineContext.Container = AContainer;
 
@@ -266,14 +266,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 //create clone of current command so databinding does not affect if changes are not saved
                 editCommand.OriginalCommand = CommonMethods.Clone(currentCommand);
 
-                //set variables
-                editCommand.ScriptEngineContext.Variables = ScriptVariables;
-
-                //set arguments 
-                editCommand.ScriptEngineContext.Arguments = ScriptArguments;
-
-                //set elements
-                editCommand.ScriptEngineContext.Elements = ScriptElements;
+                editCommand.ScriptEngineContext.Variables = new List<ScriptVariable>(ScriptVariables);
+                editCommand.ScriptEngineContext.Arguments = new List<ScriptArgument>(ScriptArguments);
+                editCommand.ScriptEngineContext.Elements = new List<ScriptElement>(ScriptElements);
 
                 editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
 
@@ -289,9 +284,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     selectedCommandItem.SubItems.Add(editCommand.SelectedCommand.GetDisplayValue());
 
                     ScriptVariables = editCommand.ScriptEngineContext.Variables;
-                    ScriptArguments = editCommand.ScriptEngineContext.Arguments;
-                    dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
-                    dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
+                    ScriptArguments = editCommand.ScriptEngineContext.Arguments;                    
                 }
 
                 if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
@@ -301,8 +294,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     HTMLElementRecorderURL = editCommand.HTMLElementRecorderURL;
                 }
 
-                editCommand.Dispose();
-                
+                ResetVariableArgumentBindings();
+                editCommand.Dispose();                
             }
             catch(Exception ex)
             {

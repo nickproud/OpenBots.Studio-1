@@ -216,13 +216,6 @@ namespace OpenBots.UI.Forms
                 case SinkType.HTTP:
                     ScriptEngineContext.EngineLogger = new Logging().CreateHTTPLogger("", _engineSettings.LoggingValue1, _engineSettings.MinLogLevel);
                     break;
-                case SinkType.SignalR:
-                    string[] groupNames = _engineSettings.LoggingValue3.Split(',').Select(x => x.Trim()).ToArray();
-                    string[] userIDs = _engineSettings.LoggingValue4.Split(',').Select(x => x.Trim()).ToArray();
-
-                    ScriptEngineContext.EngineLogger = new Logging().CreateSignalRLogger("", _engineSettings.LoggingValue1, _engineSettings.LoggingValue2,
-                        groupNames, userIDs, _engineSettings.MinLogLevel);
-                    break;
             }
 
             //determine whether to show listbox or not
@@ -261,7 +254,8 @@ namespace OpenBots.UI.Forms
             if (_isParentScheduledTask)
             {
                 List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, true);
-                var builder = AppDomainSetupManager.LoadBuilder(assemblyList);
+                Dictionary<string, List<Type>> groupedTypes = new Dictionary<string, List<Type>>();
+                var builder = AppDomainSetupManager.LoadBuilder(assemblyList, groupedTypes);
                 ScriptEngineContext.Container = builder.Build();
             }
 
@@ -289,7 +283,7 @@ namespace OpenBots.UI.Forms
 
                 //toggle running flag to allow for tab selection
                 ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-                ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenFile(ScriptEngineContext.FilePath, true);
+                ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenOpenBotsFile(ScriptEngineContext.FilePath, true);
                 ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
             }
 
@@ -433,7 +427,8 @@ namespace OpenBots.UI.Forms
             var childArgumentList = childfrmScriptEngine.ScriptEngineContext.Arguments;
             foreach (var argument in argumentList)
             {
-                if (argument.Direction == ScriptArgumentDirection.Out && argument.AssignedVariable != null)
+                if ((argument.Direction == ScriptArgumentDirection.Out || argument.Direction == ScriptArgumentDirection.InOut)
+                    && argument.AssignedVariable != null)
                 {
                     var assignedParentVariable = parentVariableList.Where(v => v.VariableName == argument.AssignedVariable).FirstOrDefault();
                     var assignedParentArgument = parentArgumentList.Where(a => a.ArgumentName == argument.AssignedVariable).FirstOrDefault();
@@ -499,7 +494,7 @@ namespace OpenBots.UI.Forms
                     {
                         //toggle running flag to allow for tab selection
                         ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-                        ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenFile(ScriptEngineContext.FilePath, true);
+                        ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenOpenBotsFile(ScriptEngineContext.FilePath, true);
                         ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
 
                         ScriptEngineContext.ScriptBuilder.CurrentEngine = this;
@@ -522,7 +517,7 @@ namespace OpenBots.UI.Forms
 
                         //toggle running flag to allow for tab selection
                         ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-                        ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenFile(ScriptEngineContext.FilePath, true);
+                        ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenOpenBotsFile(ScriptEngineContext.FilePath, true);
                         ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
 
                         IsNewTaskSteppedInto = true;
@@ -676,46 +671,6 @@ namespace OpenBots.UI.Forms
                     inputForm.Dispose();
                     return null;
                 }                                  
-            }
-        }
-
-
-        public delegate List<string> ShowInputDelegate(string header, string directions, DataTable inputTable);
-        public List<string> ShowInput(string header, string directions, DataTable inputTable)
-        {
-            if (InvokeRequired)
-            {
-                var d = new ShowInputDelegate(ShowInput);
-                Invoke(d, new object[] { header, directions, inputTable });
-                return null;
-            }
-            else
-            {
-                var inputForm = new frmUserInput(header, directions, inputTable);
-
-                var dialogResult = inputForm.ShowDialog();
-
-                if (dialogResult == DialogResult.OK)
-                {
-                    var responses = new List<string>();
-                    foreach (var ctrl in inputForm.InputControls)
-                    {
-                        if (ctrl is CheckBox)
-                        {
-                            var checkboxCtrl = (CheckBox)ctrl;
-                            responses.Add(checkboxCtrl.Checked.ToString());
-                        }
-                        else
-                            responses.Add(ctrl.Text);
-                    }
-                    inputForm.Dispose();
-                    return responses;
-                }
-                else
-                {
-                    inputForm.Dispose();
-                    return null;
-                }
             }
         }
 

@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Asset
 		[SampleUsage("Name || {vAssetName}")]
 		[Remarks("This command will throw an exception if an asset of the wrong type is used.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_AssetName { get; set; }
 
 		[Required]
@@ -34,6 +35,7 @@ namespace OpenBots.Commands.Asset
 		[SampleUsage("Smith || {vAssetValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_AppendText { get; set; }
 
 
@@ -54,7 +56,7 @@ namespace OpenBots.Commands.Asset
 			var vAppendText = v_AppendText.ConvertUserVariableToString(engine);
 
 			var client = AuthMethods.GetAuthToken();
-			var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq 'Text'");
+			var asset = AssetMethods.GetAsset(client, vAssetName, "Text");
 
 			if (asset == null)
 				throw new DataException($"No Asset was found for '{vAssetName}' with type 'Text'");

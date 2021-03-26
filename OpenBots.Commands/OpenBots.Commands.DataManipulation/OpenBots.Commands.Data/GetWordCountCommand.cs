@@ -24,6 +24,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("Hello World || {vStringVariable}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_InputValue { get; set; }
 
 		[Required]
@@ -31,7 +32,8 @@ namespace OpenBots.Commands.Data
 		[DisplayName("Output Count Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetWordCountCommand()
@@ -55,7 +57,7 @@ namespace OpenBots.Commands.Data
 			var wordCount = stringRequiringCount.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries).Length;
 
 			//store word count into variable
-			wordCount.ToString().StoreInUserVariable(engine, v_OutputUserVariableName);
+			wordCount.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

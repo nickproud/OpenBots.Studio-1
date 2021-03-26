@@ -27,6 +27,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("{vDataRow}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(DataRow) })]
 		public string v_DataRow { get; set; }
 
 		[Required]
@@ -44,6 +45,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("0 || {vIndex} || Column1 || {vColumnName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_DataValueIndex { get; set; }
 
 		[Required]
@@ -51,7 +53,8 @@ namespace OpenBots.Commands.DataTable
 		[DisplayName("Output Value Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetDataRowValueCommand()
@@ -67,7 +70,7 @@ namespace OpenBots.Commands.DataTable
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var dataRowVariable = v_DataRow.ConvertUserVariableToObject(engine);
+			var dataRowVariable = v_DataRow.ConvertUserVariableToObject(engine, nameof(v_DataRow), this);
 			DataRow dataRow = (DataRow)dataRowVariable;
 
 			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);
@@ -84,7 +87,7 @@ namespace OpenBots.Commands.DataTable
 				value = dataRow.Field<string>(index);
 			}
 
-			value.StoreInUserVariable(engine, v_OutputUserVariableName);
+			value.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

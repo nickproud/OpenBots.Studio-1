@@ -4,7 +4,6 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,7 +33,8 @@ namespace OpenBots.Commands.System
 		[DisplayName("Output OS Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -70,7 +70,7 @@ namespace OpenBots.Commands.System
 					if (prop.Name == systemVariable.ToString())
 					{
 						var sysValue = prop.Value.ToString();
-						sysValue.StoreInUserVariable(engine, v_OutputUserVariableName);
+						sysValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 						return;
 					}
 				}
@@ -126,7 +126,7 @@ namespace OpenBots.Commands.System
 				{
 					if (prop.Name == selectedValue.ToString())
 					{
-						_variableValue.Text = prop.Value.ToString();
+						_variableValue.Text = prop.Value?.ToString();
 						return;
 					}
 				}

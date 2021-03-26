@@ -27,6 +27,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("http://mycompany.com/news || {vCompany}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_WebRequestURL { get; set; }
 
 		[Required]
@@ -43,7 +44,8 @@ namespace OpenBots.Commands.WebBrowser
 		[DisplayName("Output Response Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
-		[Remarks("Variables not pre-defined in the Variable Manager will be automatically generated at runtime.")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetHTMLSourceCommand()
@@ -71,7 +73,7 @@ namespace OpenBots.Commands.WebBrowser
 			StreamReader reader = new StreamReader(dataStream);
 			string strResponse = reader.ReadToEnd();
 
-			strResponse.StoreInUserVariable(engine, v_OutputUserVariableName);
+			strResponse.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

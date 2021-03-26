@@ -45,8 +45,12 @@
       <HintPath>..\..\packages\Microsoft.Office.Interop.Word.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Word.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Office, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MicrosoftOfficeCore.15.0.0\lib\net35\Office.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -61,19 +65,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OpenBots.Commands.Excel\ExcelWriteImageToCell.cs" />
+    <Compile Include="OpenBots.Commands.Excel\ExcelGetTableRangeCommand.cs" />
+    <Compile Include="OpenBots.Commands.Excel\ExcelSortTableCommand.cs" />
     <Compile Include="Library\ExcelHelper.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelActivateRangeCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelActivateSheetCommand.cs" />
+    <Compile Include="OpenBots.Commands.Excel\ExcelAddTableColumnCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelAppendCellCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelAppendRowCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelAppendSheetCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelCloseApplicationCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelCreateApplicationCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelCreatePivotTableCommand.cs" />
+    <Compile Include="OpenBots.Commands.Excel\ExcelCreateTableCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelDeleteColumnCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelDeleteRangeCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelDeleteRowCommand.cs" />
+    <Compile Include="OpenBots.Commands.Excel\ExcelDeleteTableColumnCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelExportToPDFCommand.cs" />
+    <Compile Include="OpenBots.Commands.Excel\ExcelFilterTableCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelGetCellCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelGetLastRowIndexCommand.cs" />
     <Compile Include="OpenBots.Commands.Excel\ExcelGetRangeCommand.cs" />
@@ -120,6 +131,17 @@
   <ItemGroup>
     <Folder Include="Forms\" />
     <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

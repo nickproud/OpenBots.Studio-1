@@ -26,6 +26,7 @@ namespace OpenBots.Commands.Switch
 		[SampleUsage("{vSwitch}")]
 		[Remarks("This value must be a variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_SwitchValue { get; set; }
 
 		public BeginSwitchCommand()
@@ -34,7 +35,7 @@ namespace OpenBots.Commands.Switch
 			SelectionName = "Switch";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_begin_switch;
-
+			ScopeStartCommand = true;
 		}
 
 		public override void RunCommand(object sender, ScriptAction parentCommand)

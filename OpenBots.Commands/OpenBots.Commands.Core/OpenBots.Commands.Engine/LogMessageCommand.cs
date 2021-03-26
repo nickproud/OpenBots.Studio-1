@@ -28,6 +28,7 @@ namespace OpenBots.Commands.Engine
 			"Logs are all saved in the OpenBots Studio Root Folder in the 'Logs' folder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_LogFile { get; set; }
 
 		[Required]
@@ -36,6 +37,7 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("Third Step is Complete || {vLogText}")]
 		[Remarks("Provide only text data.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
 		public string v_LogText { get; set; }
 
 		[Required]

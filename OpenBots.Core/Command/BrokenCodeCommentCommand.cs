@@ -16,7 +16,7 @@ namespace OpenBots.Core.Command
         {
             CommandName = "BrokenCodeCommentCommand";
             SelectionName = "Broken Code Comment";
-            CommandEnabled = false;
+            CommandEnabled = true;
             CommandIcon = Resources.command_broken;
         }
 

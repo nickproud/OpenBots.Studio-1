@@ -20,7 +20,7 @@ namespace OpenBots.Commands.Outlook.Test
             _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
 
-            "unassigned".CreateTestVariable(_engine, "emails");
+            VariableMethods.CreateTestVariable(null, _engine, "emails", typeof(List<>));
 
             _getOutlookEmails.v_SourceFolder = "Inbox";
             _getOutlookEmails.v_Filter = "[Subject] = 'toDelete'";
@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine);
+            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
             MailItem email = emails[0];
             Assert.Equal("testBody \r\n", email.Body);
         }

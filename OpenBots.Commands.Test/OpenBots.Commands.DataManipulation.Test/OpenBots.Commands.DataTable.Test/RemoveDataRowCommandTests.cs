@@ -42,7 +42,7 @@ namespace OpenBots.Commands.DataTable.Test
             row3["lastname"] = "doe";
             inputTable.Rows.Add(row3);
 
-            inputTable.CreateTestVariable(_engine, "inputTable");
+            VariableMethods.CreateTestVariable(inputTable, _engine, "inputTable", typeof(OBData.DataTable));
 
             _removeDataRow.v_DataTable = "{inputTable}";
             _removeDataRow.v_SearchItem = search;
@@ -50,7 +50,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _removeDataRow.RunCommand(_engine);
             
-            OBData.DataTable outputTable = (OBData.DataTable)_removeDataRow.v_DataTable.ConvertUserVariableToObject(_engine);
+            OBData.DataTable outputTable = (OBData.DataTable)_removeDataRow.v_DataTable.ConvertUserVariableToObject(_engine, typeof(OBData.DataTable));
             Assert.True(outputTable.Rows[expectedIndex][0].Equals(expectedName));
         }
     }
