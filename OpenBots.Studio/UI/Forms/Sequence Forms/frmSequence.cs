@@ -15,7 +15,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using IContainer = Autofac.IContainer;
+using AContainer = Autofac.IContainer;
 
 namespace OpenBots.UI.Forms.Sequence_Forms
 {
@@ -27,6 +27,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         public List<ScriptVariable> ScriptVariables { get; set; }
         public List<ScriptArgument> ScriptArguments { get; set; }
         public List<ScriptElement> ScriptElements { get; set; }
+        public Dictionary<string, AssemblyReference> ImportedNamespaces { get; set; }
+        public Dictionary<string, AssemblyReference> AllNamespaces { get; set; }
         public Project ScriptProject { get; set; }
         public string ScriptProjectPath { get; set; }       
 
@@ -43,7 +45,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private string _txtCommandWatermark = "Type Here to Search";       
 
         //package manager variables
-        public IContainer AContainer { get; set; }
+        public AContainer AContainer { get; set; }
         private Dictionary<string, List<Type>> _groupedTypes { get; set; }
 
         //variable/argument tab variables
@@ -91,6 +93,16 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             ArgumentType.DataSource = defaultTypesBinding;
             ArgumentType.DisplayMember = "Key";
             ArgumentType.ValueMember = "Value";
+
+            var importedNameSpacesBinding = new BindingSource(ImportedNamespaces, null);
+            lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
+            lbxImportedNamespaces.DisplayMember = "Key";
+            lbxImportedNamespaces.ValueMember = "Value";
+
+            var allNameSpacesBinding = new BindingSource(AllNamespaces, null);
+            cbxAllNamespaces.DataSource = allNameSpacesBinding;
+            cbxAllNamespaces.DisplayMember = "Key";
+            cbxAllNamespaces.ValueMember = "Value";
 
             //set controls double buffered
             foreach (Control control in Controls)
@@ -284,6 +296,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             newCommandForm.ScriptEngineContext.Variables = new List<ScriptVariable>(ScriptVariables);
             newCommandForm.ScriptEngineContext.Arguments = new List<ScriptArgument>(ScriptArguments);
             newCommandForm.ScriptEngineContext.Elements = new List<ScriptElement>(ScriptElements);
+            newCommandForm.ScriptEngineContext.ImportedNamespaces = ImportedNamespaces;
 
             newCommandForm.ScriptEngineContext.Container = AContainer;
             newCommandForm.ScriptEngineContext.ProjectPath = ScriptProjectPath;
@@ -452,7 +465,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             txtCommandSearch.Clear();
         }
-        #endregion
+        #endregion        
     }
 }
 

@@ -269,6 +269,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 editCommand.ScriptEngineContext.Variables = new List<ScriptVariable>(ScriptVariables);
                 editCommand.ScriptEngineContext.Arguments = new List<ScriptArgument>(ScriptArguments);
                 editCommand.ScriptEngineContext.Elements = new List<ScriptElement>(ScriptElements);
+                editCommand.ScriptEngineContext.ImportedNamespaces = ImportedNamespaces;
 
                 editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
 
