@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using OpenBots.Core.Command;
+using OpenBots.Core.Script;
 using OpenBots.Studio.Utilities;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
@@ -11,7 +11,7 @@ namespace OpenBots.Nuget
 {
     public class AppDomainSetupManager
     {
-        public static ContainerBuilder LoadBuilder(List<string> assemblyPaths, Dictionary<string, List<Type>> groupedTypes, Dictionary<string, Assembly> allNamespaces)
+        public static ContainerBuilder LoadBuilder(List<string> assemblyPaths, Dictionary<string, List<Type>> groupedTypes, Dictionary<string, AssemblyReference> allNamespaces)
         {
             List<Assembly> existingAssemblies = new List<Assembly>();
             foreach(var path in assemblyPaths)

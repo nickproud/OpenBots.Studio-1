@@ -47,7 +47,7 @@ namespace OpenBots.Core.Script
         /// <summary>
         /// Contains user-selected assemblies
         /// </summary>
-        public Dictionary<string, Assembly> ImportedNamespaces { get; set; }
+        public Dictionary<string, AssemblyReference> ImportedNamespaces { get; set; }
         /// <summary>
         /// Contains user-selected commands
         /// </summary>

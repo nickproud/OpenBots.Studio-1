@@ -15,7 +15,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using VBFileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
 
@@ -189,7 +188,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             List<ScriptVariable> mainScriptVariables = new List<ScriptVariable>();
             List<ScriptArgument> mainScriptArguments = new List<ScriptArgument>();
             List<ScriptElement> mainScriptElements = new List<ScriptElement>();
-            Dictionary<string, Assembly> mainImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+            Dictionary<string, AssemblyReference> mainImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
 
             try
             {
@@ -793,7 +792,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         List<ScriptVariable> newScriptVariables = new List<ScriptVariable>();
                         List<ScriptArgument> newScriptArguments = new List<ScriptArgument>();
                         List<ScriptElement> newScriptElements = new List<ScriptElement>();
-                        Dictionary<string, Assembly> newScriptImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+                        Dictionary<string, AssemblyReference> newScriptImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
 
                         try
                         {

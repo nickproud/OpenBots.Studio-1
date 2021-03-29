@@ -2,13 +2,13 @@
 using NuGet;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
+using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using AContainer = Autofac.IContainer;
@@ -91,7 +91,7 @@ namespace OpenBots.Studio.Utilities
             }
         }
 
-        public static void GenerateAllNamespaces(List<Assembly> assemblyList, Dictionary<string, Assembly> allNamespaces)
+        public static void GenerateAllNamespaces(List<Assembly> assemblyList, Dictionary<string, AssemblyReference> allNamespaces)
         {
             allNamespaces.Clear();
 
@@ -109,7 +109,11 @@ namespace OpenBots.Studio.Utilities
                                      return new Type[] { };
                                  } 
                              })?
-                             .Select(t => new { Key = t?.Namespace, Value = t.Assembly })
+                             .Select(t => new 
+                             { 
+                                 Key = t?.Namespace, 
+                                 Value = new AssemblyReference(t.Assembly.GetName().Name, t.Assembly.GetName().Version.ToString()) 
+                             })
                              .Where(n => !string.IsNullOrEmpty(n.Key) && !n.Key.StartsWith("<"))
                              .GroupBy(x => x.Key)
                              .OrderBy(n => n.Key)

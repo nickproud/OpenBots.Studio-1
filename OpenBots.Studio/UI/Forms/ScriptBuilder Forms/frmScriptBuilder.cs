@@ -49,8 +49,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private List<ScriptVariable> _scriptVariables;
         private List<ScriptArgument> _scriptArguments;
         private List<ScriptElement> _scriptElements;
-        private Dictionary<string, Assembly> _importedNamespaces;
-        private Dictionary<string, Assembly> _allNamespaces;
+        private Dictionary<string, AssemblyReference> _importedNamespaces;
+        private Dictionary<string, AssemblyReference> _allNamespaces;
         private string _scriptFilePath;
         public string ScriptFilePath
         {
@@ -243,7 +243,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             var defaultTypes = ScriptDefaultTypes.DefaultVarArgTypes;
             _typeContext = new TypeContext(groupedTypes, defaultTypes);
             _importedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
-            _allNamespaces = new Dictionary<string, Assembly>() { { "System", Assembly.GetAssembly(typeof(string)) } };
+            _allNamespaces = new Dictionary<string, AssemblyReference>() 
+            { 
+                { 
+                    "System", new AssemblyReference(Assembly.GetAssembly(typeof(string)).GetName().Name, 
+                                                    Assembly.GetAssembly(typeof(string)).GetName().Version.ToString())
+                } 
+            };
         }
 
         private void UpdateWindowTitle()

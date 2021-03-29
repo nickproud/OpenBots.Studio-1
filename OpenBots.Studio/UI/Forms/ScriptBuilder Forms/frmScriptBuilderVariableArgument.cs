@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
@@ -390,7 +389,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region Imported Namespaces
         private void cbxAllNamespaces_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            var pair = (KeyValuePair<string, Assembly>)cbxAllNamespaces.SelectedItem;
+            var pair = (KeyValuePair<string, AssemblyReference>)cbxAllNamespaces.SelectedItem;
             if (!_importedNamespaces.ContainsKey(pair.Key))
             {
                 _importedNamespaces.Add(pair.Key, pair.Value);
@@ -411,7 +410,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 List<string> removaList = new List<string>();
                 foreach (var item in listBox.SelectedItems)
                 {
-                    var pair = (KeyValuePair<string, Assembly>)item;
+                    var pair = (KeyValuePair<string, AssemblyReference>)item;
                     removaList.Add(pair.Key);
                 }
 

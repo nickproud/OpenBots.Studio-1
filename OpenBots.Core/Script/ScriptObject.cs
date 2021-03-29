@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
 
 namespace OpenBots.Core.Script
 {
@@ -8,7 +7,7 @@ namespace OpenBots.Core.Script
         public List<ScriptVariable> ScriptVariables { get; set; }
         public List<ScriptArgument> ScriptArguments { get; set; }
         public List<ScriptElement> ScriptElements { get; set; }
-        public Dictionary<string, Assembly> ImportedNamespaces { get; set; }
+        public Dictionary<string, AssemblyReference> ImportedNamespaces { get; set; }
 
         public ScriptObject()
         {
@@ -19,7 +18,7 @@ namespace OpenBots.Core.Script
         }
 
         public ScriptObject(List<ScriptVariable> scriptVariables, List<ScriptArgument> scriptArguments, List<ScriptElement> scriptElements,
-            Dictionary<string, Assembly> importedNamespaces)
+            Dictionary<string, AssemblyReference> importedNamespaces)
         {
             ScriptVariables = scriptVariables;
             ScriptArguments = scriptArguments;

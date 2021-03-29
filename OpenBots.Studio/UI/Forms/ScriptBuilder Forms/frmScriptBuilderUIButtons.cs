@@ -23,7 +23,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -201,7 +200,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _scriptVariables = new List<ScriptVariable>();
                     _scriptArguments = new List<ScriptArgument>();
                     _scriptElements = new List<ScriptElement>();
-                    _importedNamespaces = new Dictionary<string, Assembly>();
+                    _importedNamespaces = new Dictionary<string, AssemblyReference>();
 
                     if (deserializedScript.Commands.Count == 0)
                     {
