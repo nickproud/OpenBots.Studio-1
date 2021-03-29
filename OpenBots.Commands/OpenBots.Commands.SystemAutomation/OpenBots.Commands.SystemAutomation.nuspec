@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>OpenBots.Commands.SystemAutomation</id>
-    <version>1.4.0.0</version>
+    <version>1.4.1.0</version>
     <title>System Automation Commands</title>
     <authors>OpenBots Inc</authors>
     <owners>OpenBots Inc</owners>
