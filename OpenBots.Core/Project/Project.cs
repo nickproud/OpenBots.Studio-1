@@ -122,7 +122,7 @@ namespace OpenBots.Core.Project
                     {
                         dialogMessageFirstLine = $"Attempting to open a 'project.obconfig' from a version of OpenBots Studio older than 1.2.0.0.";
                     }
-                    //if project version is lower than than 1.4.0.0
+                    //if project version is lower than the Studio version
                     else if (new Version(project.Version).CompareTo(new Version(Application.ProductVersion)) < 0)
                     {                      
                         dialogMessageFirstLine = $"Attempting to open a 'project.obconfig' from OpenBots Studio version {project.Version}.";
