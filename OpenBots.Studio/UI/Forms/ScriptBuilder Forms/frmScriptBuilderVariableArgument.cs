@@ -426,14 +426,21 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else
             {
                 dgvVariablesArguments_KeyDown(null, e);
-                e.Handled = true;
             }
         }
 
-
+        private void lbxImportedNamespaces_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+        
         private void cbxAllNamespaces_KeyDown(object sender, KeyEventArgs e)
         {
             dgvVariablesArguments_KeyDown(null, e);
+        }
+
+        private void cbxAllNamespaces_KeyPress(object sender, KeyPressEventArgs e)
+        {
             e.Handled = true;
         }
         #endregion

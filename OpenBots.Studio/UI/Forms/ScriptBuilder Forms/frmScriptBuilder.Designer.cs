@@ -1592,6 +1592,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.cbxAllNamespaces.TabIndex = 1;
             this.cbxAllNamespaces.SelectionChangeCommitted += new System.EventHandler(this.cbxAllNamespaces_SelectionChangeCommitted);
             this.cbxAllNamespaces.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cbxAllNamespaces_KeyDown);
+            this.cbxAllNamespaces.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cbxAllNamespaces_KeyPress);
             // 
             // lbxImportedNamespaces
             // 
@@ -1605,6 +1606,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.lbxImportedNamespaces.Sorted = true;
             this.lbxImportedNamespaces.TabIndex = 2;
             this.lbxImportedNamespaces.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbxImportedNamespaces_KeyDown);
+            this.lbxImportedNamespaces.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.lbxImportedNamespaces_KeyPress);
             // 
             // pnlCommandHelper
             // 
