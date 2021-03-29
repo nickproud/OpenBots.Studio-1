@@ -56,7 +56,7 @@ namespace OpenBots.Commands.Asset
 			var vAppendText = v_AppendText.ConvertUserVariableToString(engine);
 
 			var client = AuthMethods.GetAuthToken();
-			var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq 'Text'");
+			var asset = AssetMethods.GetAsset(client, vAssetName, "Text");
 
 			if (asset == null)
 				throw new DataException($"No Asset was found for '{vAssetName}' with type 'Text'");

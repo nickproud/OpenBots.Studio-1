@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Asset
 		[DisplayName("Asset Type")]
 		[PropertyUISelectionOption("Text")]
 		[PropertyUISelectionOption("Number")]
-		[PropertyUISelectionOption("JSON")]
+		[PropertyUISelectionOption("Json")]
 		[PropertyUISelectionOption("File")]
 		[Description("Specify the type of the Asset.")]
 		[SampleUsage("")]
@@ -89,7 +89,7 @@ namespace OpenBots.Commands.Asset
 			var vAssetValue = v_AssetValue.ConvertUserVariableToString(engine);
 
 			var client = AuthMethods.GetAuthToken();
-			var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq '{v_AssetType}'");
+			var asset = AssetMethods.GetAsset(client, vAssetName, v_AssetType);
 
 			if (asset == null)
 				throw new DataException($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
@@ -102,7 +102,7 @@ namespace OpenBots.Commands.Asset
 				case "Number":
 					asset.NumberValue = double.Parse(vAssetValue);
 					break;
-				case "JSON":
+				case "Json":
 					asset.JsonValue = vAssetValue;
 					break;
 				case "File":
@@ -120,7 +120,7 @@ namespace OpenBots.Commands.Asset
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AssetName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_AssetType", this, editor));
-			((ComboBox)RenderedControls[4]).SelectedIndexChanged += AssetTypeComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += AssetTypeComboBox_SelectedIndexChanged;
 
 			_uploadPathControls = new List<Control>();
 			_uploadPathControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AssetFilePath", this, editor));
@@ -151,9 +151,10 @@ namespace OpenBots.Commands.Asset
 				v_AssetType = "Text";
 				((ComboBox)RenderedControls[4]).Text = v_AssetType;
 			}
+			AssetTypeComboBox_SelectedIndexChanged(this, null);
 		}
 
-		private void AssetTypeComboBox_SelectedValueChanged(object sender, EventArgs e)
+		private void AssetTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (((ComboBox)RenderedControls[4]).Text == "File" && _hasRendered)
 			{
@@ -167,7 +168,7 @@ namespace OpenBots.Commands.Asset
 						((TextBox)ctrl).Clear();
 				}
 			}
-			else if(_hasRendered)
+			else if(((ComboBox)RenderedControls[4]).Text != "File" && _hasRendered)
 			{
 				foreach (var ctrl in _uploadPathControls)
 				{

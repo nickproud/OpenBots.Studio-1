@@ -84,6 +84,10 @@ namespace OpenBots.Commands.Data
 		[Browsable(false)]
 		private List<Control> _stringFormatControls;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public DateCalculationCommand()
 		{
 			CommandName = "DateCalculationCommand";
@@ -209,13 +213,10 @@ namespace OpenBots.Commands.Data
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_CalculationMethod", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Increment", this, editor));
 
-			((ComboBox)RenderedControls[4]).SelectedIndexChanged += calculationMethodComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += calculationMethodComboBox_SelectedIndexChanged;
 
 			_stringFormatControls = new List<Control>();
 			_stringFormatControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ToStringFormat", this, editor));
-
-			foreach (var ctrl in _stringFormatControls)
-				ctrl.Visible = false;
 
 			RenderedControls.AddRange(_stringFormatControls);
 
@@ -250,9 +251,16 @@ namespace OpenBots.Commands.Data
 			return base.GetDisplayValue() + $" [{operand} '{v_Increment}' {interval} {operandLanguage} '{v_InputDate}' - Store Date in '{v_OutputUserVariableName}']";
 		}
 
-		private void calculationMethodComboBox_SelectedValueChanged(object sender, EventArgs e)
+		public override void Shown()
 		{
-			if (!((ComboBox)RenderedControls[4]).Text.StartsWith("Get"))
+			base.Shown();
+			_hasRendered = true;
+			calculationMethodComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void calculationMethodComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (!((ComboBox)RenderedControls[4]).Text.StartsWith("Get") && _hasRendered)
 			{
 				foreach (var ctrl in _stringFormatControls)
 				{
@@ -261,7 +269,7 @@ namespace OpenBots.Commands.Data
 						((TextBox)ctrl).Text = "MM/dd/yyyy hh:mm:ss";
 				}                                    
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _stringFormatControls)
 				{

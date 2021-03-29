@@ -34,7 +34,7 @@ namespace OpenBots.Commands.Asset
 		[DisplayName("Asset Type")]
 		[PropertyUISelectionOption("Text")]
 		[PropertyUISelectionOption("Number")]
-		[PropertyUISelectionOption("JSON")]
+		[PropertyUISelectionOption("Json")]
 		[PropertyUISelectionOption("File")]
 		[Description("Specify the type of the Asset.")]
 		[SampleUsage("")]
@@ -89,7 +89,7 @@ namespace OpenBots.Commands.Asset
 			var vOutputDirectoryPath = v_OutputDirectoryPath.ConvertUserVariableToString(engine);
 
 			var client = AuthMethods.GetAuthToken();
-			var asset = AssetMethods.GetAsset(client, $"name eq '{vAssetName}' and type eq '{v_AssetType}'");
+			var asset = AssetMethods.GetAsset(client, vAssetName, v_AssetType);
 
 			if (asset == null)
 				throw new DataException($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
@@ -103,7 +103,7 @@ namespace OpenBots.Commands.Asset
 				case "Number":
 					assetValue = asset.NumberValue;
 					break;
-				case "JSON":
+				case "Json":
 					assetValue = asset.JsonValue;
 					break;
 				case "File":
@@ -127,18 +127,16 @@ namespace OpenBots.Commands.Asset
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AssetName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_AssetType", this, editor));
-			((ComboBox)RenderedControls[4]).SelectedIndexChanged += AssetTypeComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += AssetTypeComboBox_SelectedIndexChanged;
 
 			_downloadPathControls = new List<Control>();
 			_downloadPathControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_OutputDirectoryPath", this, editor));
-			foreach (var ctrl in _downloadPathControls)
-				ctrl.Visible = false;
+
 			RenderedControls.AddRange(_downloadPathControls);
 
 			_outputVariableControls = new List<Control>();
-			_outputVariableControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_OutputUserVariableName", this, editor));
-			foreach (var ctrl in _outputVariableControls)
-				ctrl.Visible = false;
+			_outputVariableControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
+
 			RenderedControls.AddRange(_outputVariableControls);
 
 			return RenderedControls;
@@ -162,9 +160,10 @@ namespace OpenBots.Commands.Asset
 				v_AssetType = "Text";
 				((ComboBox)RenderedControls[4]).Text = v_AssetType;
 			}
+			AssetTypeComboBox_SelectedIndexChanged(this, null);
 		}
 
-		private void AssetTypeComboBox_SelectedValueChanged(object sender, EventArgs e)
+		private void AssetTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (((ComboBox)RenderedControls[4]).Text == "File" && _hasRendered)
 			{
@@ -178,7 +177,7 @@ namespace OpenBots.Commands.Asset
 						((TextBox)ctrl).Clear();
 				}
 			}
-			else if(_hasRendered)
+			else if(((ComboBox)RenderedControls[4]).Text != "File" && _hasRendered)
 			{
 				foreach (var ctrl in _downloadPathControls)
 				{

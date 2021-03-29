@@ -133,22 +133,16 @@ namespace OpenBots.Commands.Terminal
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
 
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += searchOptionComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[3]).SelectedIndexChanged += searchOptionComboBox_SelectedIndexChanged;
 
 			_rowColumnControls = new List<Control>();
 			_rowColumnControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_YMousePosition", this, editor));
 			_rowColumnControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_XMousePosition", this, editor));
 
-			foreach (var ctrl in _rowColumnControls)
-				ctrl.Visible = false;
-
 			RenderedControls.AddRange(_rowColumnControls);
 
 			_fieldTextControls = new List<Control>();
 			_fieldTextControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FieldText", this, editor));
-
-			foreach (var ctrl in _fieldTextControls)
-				ctrl.Visible = false;
 
 			RenderedControls.AddRange(_fieldTextControls);
 
@@ -175,9 +169,10 @@ namespace OpenBots.Commands.Terminal
 				v_Option = "Row/Col Position";
 				((ComboBox)RenderedControls[3]).Text = v_Option;
 			}
+			searchOptionComboBox_SelectedIndexChanged(this, null);
 		}
 
-		private void searchOptionComboBox_SelectedValueChanged(object sender, EventArgs e)
+		private void searchOptionComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (((ComboBox)RenderedControls[3]).Text == "Row/Col Position" && _hasRendered)
 			{

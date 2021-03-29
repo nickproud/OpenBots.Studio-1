@@ -59,6 +59,10 @@ namespace OpenBots.Commands.QueueItem
 		[Browsable(false)]
 		private List<Control> _errorMessageControls;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public SetQueueItemStatusCommand()
 		{
 			CommandName = "SetQueueItemStatusCommand";
@@ -104,13 +108,12 @@ namespace OpenBots.Commands.QueueItem
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueueItem", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_QueueItemStatusType", this, editor));
-			((ComboBox)RenderedControls[4]).SelectedIndexChanged += QueueItemStatusTypeComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += QueueItemStatusTypeComboBox_SelectedIndexChanged;
 
 			_errorMessageControls = new List<Control>();
 			_errorMessageControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueueItemErrorCode", this, editor));
 			_errorMessageControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_QueueItemErrorMessage", this, editor));
-			foreach (var ctrl in _errorMessageControls)
-				ctrl.Visible = false;
+
 			RenderedControls.AddRange(_errorMessageControls);
 
 			return RenderedControls;
@@ -124,14 +127,21 @@ namespace OpenBots.Commands.QueueItem
 				return base.GetDisplayValue() + $" [Set '{v_QueueItem}' Status to '{v_QueueItemStatusType}']";
 		}
 
-		private void QueueItemStatusTypeComboBox_SelectedValueChanged(object sender, EventArgs e)
+		public override void Shown()
 		{
-			if (((ComboBox)RenderedControls[4]).Text != "Successful")
+			base.Shown();
+			_hasRendered = true;
+			QueueItemStatusTypeComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void QueueItemStatusTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[4]).Text != "Successful" && _hasRendered)
 			{
 				foreach (var ctrl in _errorMessageControls)
 					ctrl.Visible = true;
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _errorMessageControls)
 				{

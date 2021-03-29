@@ -51,8 +51,7 @@ namespace OpenBots.Commands.Database
 		[CompatibleTypes(null, true)]
 		public string v_Query { get; set; }
 
-		[Required]
-		[DisplayName("Query Parameters")]
+		[DisplayName("Query Parameters (Optional)")]
 		[Description("Define the query parameters.")]
 		[SampleUsage("[STRING | @name | {vNameValue}]")]
 		[Remarks("")]

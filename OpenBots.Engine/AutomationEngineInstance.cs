@@ -263,7 +263,7 @@ namespace OpenBots.Engine
                 var GlobalInstances = GlobalAppInstances.GetInstances();
                 foreach (var instance in GlobalInstances)
                 {
-                    AutomationEngineContext.AppInstances.Add(instance.Key, instance.Value);
+                    AutomationEngineContext.AppInstances[instance.Key] = instance.Value;
                 }
 
                 if (AutomationEngineContext.ImportedNamespaces == null)

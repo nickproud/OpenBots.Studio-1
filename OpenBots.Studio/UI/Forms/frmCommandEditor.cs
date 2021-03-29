@@ -326,9 +326,12 @@ namespace OpenBots.UI.Forms
                                     {
                                         foreach (DataGridViewCell cell in row.Cells)
                                         {
-                                            isAllValid = ValidateInput(isAllValid, cell.Value?.ToString(), currentControl, testEngine);
-                                            if (!isAllValid)
+                                            bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl, testEngine);
+                                            if (!isCellValid)
+                                            {
+                                                isAllValid = false;
                                                 break;
+                                            }                                               
                                         }
                                     }                                   
                                 }
@@ -336,9 +339,12 @@ namespace OpenBots.UI.Forms
                                 {
                                     foreach (DataGridViewCell cell in row.Cells)
                                     {
-                                        isAllValid = ValidateInput(isAllValid, cell.Value?.ToString(), currentControl, testEngine);
-                                        if (!isAllValid)
+                                        bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl, testEngine);
+                                        if (!isCellValid)
+                                        {
+                                            isAllValid = false;
                                             break;
+                                        }
                                     }
                                 }                             
                             }                          
@@ -347,17 +353,19 @@ namespace OpenBots.UI.Forms
                     else if (ctrl is UITextBox)
                     {
                         currentControl = (UITextBox)ctrl;
-
+                        currentControl.BorderColor = Color.Transparent;
                         isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
                     }
                     else if (ctrl is UIComboBox)
                     {
                         currentControl = (UIComboBox)ctrl;
+                        currentControl.BorderColor = Color.Transparent;
                         isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
                     }
                     else if(ctrl is UIPictureBox)
                     {
                         currentControl = (UIPictureBox)ctrl;
+                        currentControl.BorderColor = Color.Transparent;
                         isAllValid = ValidateInput(isAllValid, currentControl.EncodedImage, currentControl, testEngine);
                     }
                     else
@@ -369,7 +377,6 @@ namespace OpenBots.UI.Forms
 
         private bool ValidateInput(bool isAllValid, string validatingText, dynamic currentControl, AutomationEngineInstance testEngine)
         {
-            currentControl.BorderColor = Color.Transparent;
             var validationContext = (CommandControlValidationContext)currentControl.Tag;
 
             //check whether input is required

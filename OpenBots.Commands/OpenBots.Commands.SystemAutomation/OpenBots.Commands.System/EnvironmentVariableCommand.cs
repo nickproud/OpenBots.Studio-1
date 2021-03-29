@@ -134,7 +134,7 @@ namespace OpenBots.Commands.System
 			var variable = Environment.GetEnvironmentVariables();
 			var value = variable[selectedValue];
 
-			_variableValue.Text = value.ToString();
+			_variableValue.Text = value?.ToString();
 		}
 
 		public override string GetDisplayValue()

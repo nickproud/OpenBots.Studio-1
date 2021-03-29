@@ -126,7 +126,7 @@ namespace OpenBots.Commands.System
 				{
 					if (prop.Name == selectedValue.ToString())
 					{
-						_variableValue.Text = prop.Value.ToString();
+						_variableValue.Text = prop.Value?.ToString();
 						return;
 					}
 				}

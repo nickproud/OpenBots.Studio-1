@@ -75,6 +75,10 @@ namespace OpenBots.Commands.Word
 		[Browsable(false)]
 		private List<Control> _openFileControls;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public WordCreateApplicationCommand()
 		{
 			CommandName = "WordCreateApplicationCommand";
@@ -133,13 +137,10 @@ namespace OpenBots.Commands.Word
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_NewOpenDocument", this, editor));
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += OpenFileComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[3]).SelectedIndexChanged += OpenFileComboBox_SelectedIndexChanged;
 
 			_openFileControls = new List<Control>();
 			_openFileControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
-
-			foreach (var ctrl in _openFileControls)
-				ctrl.Visible = false;
 
 			RenderedControls.AddRange(_openFileControls);
 
@@ -154,14 +155,21 @@ namespace OpenBots.Commands.Word
 			return base.GetDisplayValue() + $" [{v_NewOpenDocument} - Visible '{v_Visible}' - Close Instances '{v_CloseAllInstances}' - New Instance Name '{v_InstanceName}']";
 		}
 
-		private void OpenFileComboBox_SelectedValueChanged(object sender, EventArgs e)
+		public override void Shown()
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Open Document")
+			base.Shown();
+			_hasRendered = true;
+			OpenFileComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void OpenFileComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[3]).Text == "Open Document" && _hasRendered)
 			{
 				foreach (var ctrl in _openFileControls)
 					ctrl.Visible = true;
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _openFileControls)
 				{

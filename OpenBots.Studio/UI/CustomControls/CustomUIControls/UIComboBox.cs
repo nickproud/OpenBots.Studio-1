@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -12,24 +13,49 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
         const uint RDW_INVALIDATE = 0x1;
         const uint RDW_IUPDATENOW = 0x100;
         const uint RDW_FRAME = 0x400;
+
         [DllImport("user32.dll")]
         static extern IntPtr GetWindowDC(IntPtr hWnd);
         [DllImport("user32.dll")]
         static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
         [DllImport("user32.dll")]
         static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprc, IntPtr hrgn, uint flags);
-        Color borderColor;
 
+        private Color _borderColor;
         public Color BorderColor
         {
-            get { return borderColor; }
+            get 
+            { 
+                return _borderColor; 
+            }
             set
             {
-                borderColor = value;
+                _borderColor = value;
                 RedrawWindow(Handle, IntPtr.Zero, IntPtr.Zero,
                     RDW_FRAME | RDW_IUPDATENOW | RDW_INVALIDATE);
             }
         }
+
+        private bool _isDoubleBuffered;
+        public bool IsDoubleBuffered
+        {
+            get 
+            { 
+                return _isDoubleBuffered; 
+            }
+            set
+            {
+                _isDoubleBuffered = value;
+                if (_isDoubleBuffered == true)
+                {
+                    var dgvType = GetType();
+                    var pi = dgvType.GetProperty("DoubleBuffered",
+                          BindingFlags.Instance | BindingFlags.NonPublic);
+                    pi.SetValue(this, true, null);
+                }
+            }
+        }
+
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
@@ -42,6 +68,7 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
                 ReleaseDC(Handle, hdc);
             }
         }
+
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);

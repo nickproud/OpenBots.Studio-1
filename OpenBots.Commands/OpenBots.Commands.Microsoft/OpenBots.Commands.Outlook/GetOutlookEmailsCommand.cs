@@ -111,6 +111,10 @@ namespace OpenBots.Commands.Outlook
 		[Browsable(false)]
 		private List<Control> _savingControls;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public GetOutlookEmailsCommand()
 		{
 			CommandName = "GetOutlookEmailsCommand";
@@ -198,15 +202,12 @@ namespace OpenBots.Commands.Outlook
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_GetUnreadOnly", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_MarkAsRead", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SaveMessagesAndAttachments", this, editor));
-			((ComboBox)RenderedControls[11]).SelectedIndexChanged += SaveMailItemsComboBox_SelectedValueChanged;
+			((ComboBox)RenderedControls[11]).SelectedIndexChanged += SaveMailItemsComboBox_SelectedIndexChanged;
 
 			_savingControls = new List<Control>();
 			_savingControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_IncludeEmbeddedImagesAsAttachments", this, editor));
 			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_MessageDirectory", this, editor));
 			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AttachmentDirectory", this, editor));
-
-			foreach (var ctrl in _savingControls)
-				ctrl.Visible = false;
 
 			RenderedControls.AddRange(_savingControls);
 
@@ -218,6 +219,13 @@ namespace OpenBots.Commands.Outlook
 		public override string GetDisplayValue()
 		{
 			return base.GetDisplayValue() + $" [From '{v_SourceFolder}' - Filter by '{v_Filter}' - Store MailItem List in '{v_OutputUserVariableName}']";
+		}
+
+		public override void Shown()
+		{
+			base.Shown();
+			_hasRendered = true;
+			SaveMailItemsComboBox_SelectedIndexChanged(this, null);
 		}
 
 		private void ProcessEmail(MailItem mail, string msgDirectory, string attDirectory)
@@ -260,14 +268,14 @@ namespace OpenBots.Commands.Outlook
 			}
 		}
 
-		private void SaveMailItemsComboBox_SelectedValueChanged(object sender, EventArgs e)
+		private void SaveMailItemsComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[11]).Text == "Yes")
+			if (((ComboBox)RenderedControls[11]).Text == "Yes" && _hasRendered)
 			{
 				foreach (var ctrl in _savingControls)
 					ctrl.Visible = true;
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _savingControls)
 				{

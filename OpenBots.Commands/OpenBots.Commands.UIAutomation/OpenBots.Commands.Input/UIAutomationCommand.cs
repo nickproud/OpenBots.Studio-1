@@ -444,6 +444,7 @@ namespace OpenBots.Commands.Input
 			_searchParametersGridViewHelper.Columns.Add(propertyValue);
 			_searchParametersGridViewHelper.AllowUserToAddRows = false;
 			_searchParametersGridViewHelper.AllowUserToDeleteRows = false;
+			_searchParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 
 			//create actions
 			_actionParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_UIAActionParameters", this);
@@ -487,6 +488,7 @@ namespace OpenBots.Commands.Input
 			//create action parameters
 			_actionParametersControls = new List<Control>();
 			_actionParametersControls.Add(commandControls.CreateDefaultLabelFor("v_UIAActionParameters", this));
+			_actionParametersControls.AddRange(commandControls.CreateUIHelpersFor("v_UIAActionParameters", this, new Control[] { _actionParametersGridViewHelper }, editor));
 			_actionParametersControls.Add(_actionParametersGridViewHelper);
 			RenderedControls.AddRange(_actionParametersControls);
 
@@ -558,10 +560,7 @@ namespace OpenBots.Commands.Input
 			v_UIASearchParameters.Rows.Clear();
 
 			foreach (DataRow rw in newElementRecorder.SearchParameters.Rows)
-            {
-				if (!string.IsNullOrEmpty(rw.ItemArray[2]?.ToString()))
-					v_UIASearchParameters.ImportRow(rw);
-			}
+				v_UIASearchParameters.ImportRow(rw);
 				
 			_searchParametersGridViewHelper.DataSource = v_UIASearchParameters;
 			_searchParametersGridViewHelper.Refresh();

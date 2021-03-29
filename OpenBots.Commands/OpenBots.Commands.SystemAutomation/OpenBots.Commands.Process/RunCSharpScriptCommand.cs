@@ -218,6 +218,8 @@ namespace OpenBots.Commands.Process
 				v_ArgumentType = "In-Studio Variables";
 				((ComboBox)RenderedControls[5]).Text = v_ArgumentType;
 			}
+			ArgumentTypeComboBox_SelectedIndexChanged(this, null);
+			HasOutputComboBox_SelectedIndexChanged(this, null);
 		}
 
 		private void ArgumentTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -251,18 +253,18 @@ namespace OpenBots.Commands.Process
 
 		private void HasOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[13]).Text == "Yes")
+			if (((ComboBox)RenderedControls[13]).Text == "Yes" && _hasRendered)
 			{
 				foreach (var ctrl in _outputControls)
 					ctrl.Visible = true;
 			}
-			else
+			else if(_hasRendered)
 			{
 				foreach (var ctrl in _outputControls)
 				{
 					ctrl.Visible = false;
-					if (ctrl is TextBox)
-						((TextBox)ctrl).Clear();
+					if (ctrl is ComboBox)
+						((ComboBox)ctrl).SelectedIndex = -1;
 				}
 			}
 		}
