@@ -335,6 +335,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             var defaultTypesBinding = new BindingSource(TypeContext.DefaultTypes, null);
             VariableType.DataSource = defaultTypesBinding;
             ArgumentType.DataSource = defaultTypesBinding;
+
+            var importedNameSpacesBinding = new BindingSource(ImportedNamespaces, null);
+            lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
+
+            var allNameSpacesBinding = new BindingSource(AllNamespaces, null);
+            cbxAllNamespaces.DataSource = allNameSpacesBinding;
         }
 
         private void dgvVariablesArguments_KeyDown(object sender, KeyEventArgs e)
@@ -366,5 +372,63 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             }
         }
         #endregion       
+
+        #region Imported Namespaces
+        private void cbxAllNamespaces_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            var pair = (KeyValuePair<string, AssemblyReference>)cbxAllNamespaces.SelectedItem;
+            if (!ImportedNamespaces.ContainsKey(pair.Key))
+            {
+                ImportedNamespaces.Add(pair.Key, pair.Value);
+                var importedNameSpacesBinding = new BindingSource(ImportedNamespaces, null);
+                lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
+
+                //marks the script as unsaved with changes
+                if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))
+                    uiScriptTabControl.SelectedTab.Text += " *";
+            }
+        }
+
+        private void lbxImportedNamespaces_KeyDown(object sender, KeyEventArgs e)
+        {
+            ListBox listBox = (ListBox)sender;
+            if (e.KeyCode == Keys.Delete)
+            {
+                List<string> removaList = new List<string>();
+                foreach (var item in listBox.SelectedItems)
+                {
+                    var pair = (KeyValuePair<string, AssemblyReference>)item;
+                    removaList.Add(pair.Key);
+                }
+
+                removaList.ForEach(x => ImportedNamespaces.Remove(x));
+                var importedNameSpacesBinding = new BindingSource(ImportedNamespaces, null);
+                lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
+
+                //marks the script as unsaved with changes
+                if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))
+                    uiScriptTabControl.SelectedTab.Text += " *";
+            }
+            else
+            {
+                dgvVariablesArguments_KeyDown(null, e);
+            }
+        }
+
+        private void lbxImportedNamespaces_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void cbxAllNamespaces_KeyDown(object sender, KeyEventArgs e)
+        {
+            dgvVariablesArguments_KeyDown(null, e);
+        }
+
+        private void cbxAllNamespaces_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+        #endregion
     }
 }

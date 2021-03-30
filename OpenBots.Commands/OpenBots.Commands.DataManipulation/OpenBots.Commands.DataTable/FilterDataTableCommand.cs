@@ -41,8 +41,8 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Filter Tuple/RowFilter")]
 		[Description("Enter a tuple containing the column name and item you would like to filter by or enter a RowFilter")]
-		[SampleUsage("(ColumnName1,Item1),(ColumnName2,Item2) || ({vColumn1},{vItem1}),({vCloumn2},{vItem2}) || {vFilterTuple} || Age > 30 || Name <> 'John' || {vRowFilter}")]
-		[Remarks("DataRows must match all provided tuples to be included in the filtered DataTable.")]
+		[SampleUsage("(ColumnName1,Item1),(ColumnName2,Item2) || ({vColumn1},{vItem1}),({vCloumn2},{vItem2}) || {vFilterTuple} || [Employee Age] > 30 || Name <> 'John' || {vRowFilter}")]
+		[Remarks("DataRows must match all provided tuples to be included in the filtered DataTable. Column names containing spaces should be surrounded by [].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
 		public string v_SearchItem { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NuGet;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -316,6 +317,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     editCommand.ScriptEngineContext.Variables = new List<ScriptVariable>(_scriptVariables);
                     editCommand.ScriptEngineContext.Arguments = new List<ScriptArgument>(_scriptArguments);
                     editCommand.ScriptEngineContext.Elements = new List<ScriptElement>(_scriptElements);
+                    editCommand.ScriptEngineContext.ImportedNamespaces = _importedNamespaces;
 
                     editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
 
@@ -332,7 +334,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                         _scriptVariables = editCommand.ScriptEngineContext.Variables;
                         _scriptArguments = editCommand.ScriptEngineContext.Arguments;
-                        uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
+                        uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements, _importedNamespaces);
                     }
 
                     if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
@@ -357,8 +359,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             List<ScriptVariable> originalStudioVariables = new List<ScriptVariable>();
             originalStudioVariables.AddRange(_scriptVariables);
 
+            List<ScriptElement> originalStudioElements = new List<ScriptElement>();
+            originalStudioElements.AddRange(_scriptElements);
+
             List<ScriptArgument> originalStudioArguments = new List<ScriptArgument>();
             originalStudioArguments.AddRange(_scriptArguments);
+
+            Dictionary<string, AssemblyReference> originalStudioNamespaces = new Dictionary<string, AssemblyReference>();
+            originalStudioNamespaces.AddRange(_importedNamespaces);
 
             //get sequence events
             ISequenceCommand sequence = currentCommand as ISequenceCommand;
@@ -378,6 +386,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newSequence.ScriptVariables = _scriptVariables;
             newSequence.ScriptElements = _scriptElements;
             newSequence.ScriptArguments = _scriptArguments;
+            newSequence.ImportedNamespaces = _importedNamespaces;
+            newSequence.AllNamespaces = _allNamespaces;
 
             newSequence.dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
             newSequence.dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
@@ -436,11 +446,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _scriptVariables = newSequence.ScriptVariables.Where(x => !string.IsNullOrEmpty(x.VariableName)).ToList();
                 _scriptElements = newSequence.ScriptElements.Where(x => !string.IsNullOrEmpty(x.ElementName)).ToList();
                 _scriptArguments = newSequence.ScriptArguments.Where(x => !string.IsNullOrEmpty(x.ArgumentName)).ToList();
+                _importedNamespaces = newSequence.ImportedNamespaces;
             }
             else
             {
                 _scriptVariables = originalStudioVariables;
-                _scriptArguments = originalStudioArguments;                
+                _scriptElements = originalStudioElements;
+                _scriptArguments = originalStudioArguments;
+                _importedNamespaces = originalStudioNamespaces;
             }
 
             ResetVariableArgumentBindings();

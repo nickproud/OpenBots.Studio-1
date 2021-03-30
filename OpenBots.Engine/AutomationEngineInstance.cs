@@ -108,8 +108,11 @@ namespace OpenBots.Engine
             if (AutomationEngineContext.AppInstances == null)
                 AutomationEngineContext.AppInstances = new Dictionary<string, object>();
 
-                ServiceResponses = new List<IRestResponse>();
-                DataTables = new List<DataTable>();
+            if (AutomationEngineContext.ImportedNamespaces == null)
+                AutomationEngineContext.ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+
+            ServiceResponses = new List<IRestResponse>();
+            DataTables = new List<DataTable>();
 
             //this value can be later overriden by script
             AutoCalculateVariables = EngineSettings.AutoCalcVariables;
@@ -273,6 +276,11 @@ namespace OpenBots.Engine
                 foreach (var instance in GlobalInstances)
                 {
                     AutomationEngineContext.AppInstances[instance.Key] = instance.Value;
+                }
+
+                if (AutomationEngineContext.ImportedNamespaces == null)
+                {
+                    AutomationEngineContext.ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
                 }
 
                 //execute commands

@@ -91,7 +91,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSequence));
-            OpenBots.Core.Utilities.FormsUtilities.Theme theme2 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            OpenBots.Core.Utilities.FormsUtilities.Theme theme5 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.tmrNotify = new System.Windows.Forms.Timer(this.components);
             this.cmsScriptActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.enableSelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -130,22 +130,26 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.uiScriptTabControl = new OpenBots.UI.CustomControls.CustomUIControls.UITabControl();
             this.uiVariableArgumentTabs = new OpenBots.UI.CustomControls.CustomUIControls.UITabControl();
             this.variables = new System.Windows.Forms.TabPage();
+            this.dgvVariables = new System.Windows.Forms.DataGridView();
+            this.variableName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VariableType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.variableValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.arguments = new System.Windows.Forms.TabPage();
+            this.dgvArguments = new System.Windows.Forms.DataGridView();
+            this.argumentName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ArgumentType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.argumentValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.direction = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.imports = new System.Windows.Forms.TabPage();
+            this.tlpImports = new System.Windows.Forms.TableLayoutPanel();
+            this.cbxAllNamespaces = new System.Windows.Forms.ComboBox();
+            this.lbxImportedNamespaces = new System.Windows.Forms.ListBox();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clmCommand = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pnlDivider = new System.Windows.Forms.Panel();
             this.tlpControls = new System.Windows.Forms.TableLayoutPanel();
             this.ttScriptBuilder = new System.Windows.Forms.ToolTip(this.components);
-            this.dgvVariables = new System.Windows.Forms.DataGridView();
-            this.variableName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.VariableType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.variableValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvArguments = new System.Windows.Forms.DataGridView();
-            this.argumentName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ArgumentType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.argumentValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.direction = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.cmsScriptActions.SuspendLayout();
             this.pnlControlContainer.SuspendLayout();
             this.grpSaveClose.SuspendLayout();
@@ -174,10 +178,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.splitContainerScript.SuspendLayout();
             this.uiVariableArgumentTabs.SuspendLayout();
             this.variables.SuspendLayout();
-            this.arguments.SuspendLayout();
-            this.tlpControls.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvVariables)).BeginInit();
+            this.arguments.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvArguments)).BeginInit();
+            this.imports.SuspendLayout();
+            this.tlpImports.SuspendLayout();
+            this.tlpControls.SuspendLayout();
             this.SuspendLayout();
             // 
             // tmrNotify
@@ -535,9 +541,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.pnlPaneTabs.Name = "pnlPaneTabs";
             this.pnlPaneTabs.Size = new System.Drawing.Size(328, 711);
             this.pnlPaneTabs.TabIndex = 2;
-            theme2.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            theme2.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.pnlPaneTabs.Theme = theme2;
+            theme5.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            theme5.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.pnlPaneTabs.Theme = theme5;
             // 
             // uiPaneTabs
             // 
@@ -683,6 +689,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.uiVariableArgumentTabs.AllowDrop = true;
             this.uiVariableArgumentTabs.Controls.Add(this.variables);
             this.uiVariableArgumentTabs.Controls.Add(this.arguments);
+            this.uiVariableArgumentTabs.Controls.Add(this.imports);
             this.uiVariableArgumentTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiVariableArgumentTabs.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.uiVariableArgumentTabs.Location = new System.Drawing.Point(0, 0);
@@ -703,61 +710,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.variables.TabIndex = 0;
             this.variables.Text = "Variables";
             this.variables.UseVisualStyleBackColor = true;
-            // 
-            // arguments
-            // 
-            this.arguments.Controls.Add(this.dgvArguments);
-            this.arguments.Location = new System.Drawing.Point(4, 4);
-            this.arguments.Name = "arguments";
-            this.arguments.Padding = new System.Windows.Forms.Padding(3);
-            this.arguments.Size = new System.Drawing.Size(1427, 144);
-            this.arguments.TabIndex = 1;
-            this.arguments.Text = "Arguments";
-            this.arguments.UseVisualStyleBackColor = true;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Width = 20;
-            // 
-            // clmCommand
-            // 
-            this.clmCommand.Text = "Script Commands";
-            this.clmCommand.Width = 800;
-            // 
-            // pnlDivider
-            // 
-            this.pnlDivider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
-            this.tlpControls.SetColumnSpan(this.pnlDivider, 4);
-            this.pnlDivider.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlDivider.Location = new System.Drawing.Point(0, 98);
-            this.pnlDivider.Margin = new System.Windows.Forms.Padding(0);
-            this.pnlDivider.Name = "pnlDivider";
-            this.pnlDivider.Size = new System.Drawing.Size(1776, 6);
-            this.pnlDivider.TabIndex = 13;
-            // 
-            // tlpControls
-            // 
-            this.tlpControls.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
-            this.tlpControls.ColumnCount = 3;
-            this.tlpControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 319F));
-            this.tlpControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 655F));
-            this.tlpControls.Controls.Add(this.pnlDivider, 0, 1);
-            this.tlpControls.Controls.Add(this.splitContainerStudioControls, 0, 2);
-            this.tlpControls.Controls.Add(this.pnlStatus, 0, 3);
-            this.tlpControls.Controls.Add(this.pnlControlContainer, 0, 0);
-            this.tlpControls.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpControls.Location = new System.Drawing.Point(0, 0);
-            this.tlpControls.Margin = new System.Windows.Forms.Padding(0);
-            this.tlpControls.Name = "tlpControls";
-            this.tlpControls.RowCount = 4;
-            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 98F));
-            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 6F));
-            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 39F));
-            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpControls.Size = new System.Drawing.Size(1776, 862);
-            this.tlpControls.TabIndex = 2;
             // 
             // dgvVariables
             // 
@@ -784,7 +736,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.dgvVariables.SelectionChanged += new System.EventHandler(this.dgvVariables_SelectionChanged);
             this.dgvVariables.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
             this.dgvVariables.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
-
             // 
             // variableName
             // 
@@ -807,6 +758,17 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.variableValue.HeaderText = "Variable Value";
             this.variableValue.MinimumWidth = 6;
             this.variableValue.Name = "variableValue";
+            // 
+            // arguments
+            // 
+            this.arguments.Controls.Add(this.dgvArguments);
+            this.arguments.Location = new System.Drawing.Point(4, 4);
+            this.arguments.Name = "arguments";
+            this.arguments.Padding = new System.Windows.Forms.Padding(3);
+            this.arguments.Size = new System.Drawing.Size(1427, 144);
+            this.arguments.TabIndex = 1;
+            this.arguments.Text = "Arguments";
+            this.arguments.UseVisualStyleBackColor = true;
             // 
             // dgvArguments
             // 
@@ -864,6 +826,107 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.direction.MinimumWidth = 6;
             this.direction.Name = "direction";
             // 
+            // imports
+            // 
+            this.imports.Controls.Add(this.tlpImports);
+            this.imports.Location = new System.Drawing.Point(4, 4);
+            this.imports.Name = "imports";
+            this.imports.Padding = new System.Windows.Forms.Padding(3);
+            this.imports.Size = new System.Drawing.Size(1427, 144);
+            this.imports.TabIndex = 2;
+            this.imports.Text = "Imports";
+            this.imports.UseVisualStyleBackColor = true;
+            // 
+            // tlpImports
+            // 
+            this.tlpImports.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
+            this.tlpImports.ColumnCount = 1;
+            this.tlpImports.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpImports.Controls.Add(this.cbxAllNamespaces, 0, 0);
+            this.tlpImports.Controls.Add(this.lbxImportedNamespaces, 0, 1);
+            this.tlpImports.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpImports.Location = new System.Drawing.Point(3, 3);
+            this.tlpImports.Name = "tlpImports";
+            this.tlpImports.RowCount = 2;
+            this.tlpImports.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpImports.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpImports.Size = new System.Drawing.Size(1421, 138);
+            this.tlpImports.TabIndex = 1;
+            // 
+            // cbxAllNamespaces
+            // 
+            this.cbxAllNamespaces.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.cbxAllNamespaces.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cbxAllNamespaces.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbxAllNamespaces.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxAllNamespaces.ForeColor = System.Drawing.Color.Black;
+            this.cbxAllNamespaces.Location = new System.Drawing.Point(2, 2);
+            this.cbxAllNamespaces.Margin = new System.Windows.Forms.Padding(2);
+            this.cbxAllNamespaces.Name = "cbxAllNamespaces";
+            this.cbxAllNamespaces.Size = new System.Drawing.Size(1417, 31);
+            this.cbxAllNamespaces.TabIndex = 1;
+            this.cbxAllNamespaces.SelectionChangeCommitted += new System.EventHandler(this.cbxAllNamespaces_SelectionChangeCommitted);
+            this.cbxAllNamespaces.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cbxAllNamespaces_KeyDown);
+            this.cbxAllNamespaces.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cbxAllNamespaces_KeyPress);
+            // 
+            // lbxImportedNamespaces
+            // 
+            this.lbxImportedNamespaces.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbxImportedNamespaces.FormattingEnabled = true;
+            this.lbxImportedNamespaces.ItemHeight = 23;
+            this.lbxImportedNamespaces.Location = new System.Drawing.Point(3, 33);
+            this.lbxImportedNamespaces.Name = "lbxImportedNamespaces";
+            this.lbxImportedNamespaces.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.lbxImportedNamespaces.Size = new System.Drawing.Size(1415, 102);
+            this.lbxImportedNamespaces.Sorted = true;
+            this.lbxImportedNamespaces.TabIndex = 2;
+            this.lbxImportedNamespaces.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbxImportedNamespaces_KeyDown);
+            this.lbxImportedNamespaces.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.lbxImportedNamespaces_KeyPress);
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Width = 20;
+            // 
+            // clmCommand
+            // 
+            this.clmCommand.Text = "Script Commands";
+            this.clmCommand.Width = 800;
+            // 
+            // pnlDivider
+            // 
+            this.pnlDivider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
+            this.tlpControls.SetColumnSpan(this.pnlDivider, 4);
+            this.pnlDivider.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlDivider.Location = new System.Drawing.Point(0, 98);
+            this.pnlDivider.Margin = new System.Windows.Forms.Padding(0);
+            this.pnlDivider.Name = "pnlDivider";
+            this.pnlDivider.Size = new System.Drawing.Size(1776, 6);
+            this.pnlDivider.TabIndex = 13;
+            // 
+            // tlpControls
+            // 
+            this.tlpControls.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
+            this.tlpControls.ColumnCount = 3;
+            this.tlpControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 319F));
+            this.tlpControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 655F));
+            this.tlpControls.Controls.Add(this.pnlDivider, 0, 1);
+            this.tlpControls.Controls.Add(this.splitContainerStudioControls, 0, 2);
+            this.tlpControls.Controls.Add(this.pnlStatus, 0, 3);
+            this.tlpControls.Controls.Add(this.pnlControlContainer, 0, 0);
+            this.tlpControls.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpControls.Location = new System.Drawing.Point(0, 0);
+            this.tlpControls.Margin = new System.Windows.Forms.Padding(0);
+            this.tlpControls.Name = "tlpControls";
+            this.tlpControls.RowCount = 4;
+            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 98F));
+            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 6F));
+            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 39F));
+            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpControls.Size = new System.Drawing.Size(1776, 862);
+            this.tlpControls.TabIndex = 2;
+            // 
             // frmSequence
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
@@ -910,10 +973,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.splitContainerScript.ResumeLayout(false);
             this.uiVariableArgumentTabs.ResumeLayout(false);
             this.variables.ResumeLayout(false);
-            this.arguments.ResumeLayout(false);
-            this.tlpControls.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvVariables)).EndInit();
+            this.arguments.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvArguments)).EndInit();
+            this.imports.ResumeLayout(false);
+            this.tlpImports.ResumeLayout(false);
+            this.tlpControls.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -973,6 +1038,10 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private DataGridViewComboBoxColumn ArgumentType;
         private DataGridViewTextBoxColumn argumentValue;
         private DataGridViewComboBoxColumn direction;
+        private TabPage imports;
+        private TableLayoutPanel tlpImports;
+        private ComboBox cbxAllNamespaces;
+        private ListBox lbxImportedNamespaces;
     }
 }
 

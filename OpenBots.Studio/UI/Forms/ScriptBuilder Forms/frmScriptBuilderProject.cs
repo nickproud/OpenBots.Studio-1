@@ -67,7 +67,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 NotifySync("Loading package assemblies...", Color.White);               
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces);
                 AContainer = _builder.Build();
 
                 string mainScriptPath = Path.Combine(ScriptProjectPath, ScriptProjectPath, ScriptProject.Main);
@@ -114,7 +114,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     NotifySync("Loading package assemblies...", Color.White);
 
                     var assemblyList = NugetPackageManager.LoadPackageAssemblies(existingConfigPath);
-                    _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
+                    _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces);
                     AContainer = _builder.Build();
 
                     ScriptProject = project;
@@ -188,6 +188,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             List<ScriptVariable> mainScriptVariables = new List<ScriptVariable>();
             List<ScriptArgument> mainScriptArguments = new List<ScriptArgument>();
             List<ScriptElement> mainScriptElements = new List<ScriptElement>();
+            Dictionary<string, AssemblyReference> mainImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
 
             try
             {
@@ -213,6 +214,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     Variables = mainScriptVariables,
                     Arguments = mainScriptArguments,
                     Elements = mainScriptElements,
+                    ImportedNamespaces = mainImportedNamespaces,
                     FilePath = mainScriptPath,
                     Container = AContainer
                 };
@@ -279,7 +281,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     throw new Exception("Main script not found");
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces);
                 AContainer = _builder.Build();
 
                 _mainFileName = mainFileName;
@@ -790,6 +792,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         List<ScriptVariable> newScriptVariables = new List<ScriptVariable>();
                         List<ScriptArgument> newScriptArguments = new List<ScriptArgument>();
                         List<ScriptElement> newScriptElements = new List<ScriptElement>();
+                        Dictionary<string, AssemblyReference> newScriptImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
 
                         try
                         {
@@ -809,6 +812,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             Variables = newScriptVariables,
                             Arguments = newScriptArguments,
                             Elements = newScriptElements,
+                            ImportedNamespaces = newScriptImportedNamespaces,
                             FilePath = newFilePath,
                             Container = AContainer
                         };

@@ -220,6 +220,8 @@
     <Compile Include="Attributes\PropertyAttributes\SampleUsage.cs" />
     <Compile Include="Command\BrokenCodeCommentCommand.cs" />
     <Compile Include="Command\ScriptCommand.cs" />
+    <Compile Include="Script\AssemblyReference.cs" />
+    <Compile Include="Script\ScriptDefaultNamespaces.cs" />
     <Compile Include="Script\ScriptDefaultTypes.cs" />
     <Compile Include="Script\TypeContext.cs" />
     <Compile Include="Utilities\CommonUtilities\CommonMethods.cs" />
@@ -305,6 +307,7 @@
     <Compile Include="UI\Controls\UIPictureButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Utilities\CommonUtilities\NamespaceMethods.cs" />
     <Compile Include="Utilities\FormsUtilities\FormsHelper.cs" />
     <Compile Include="UI\DTOs\Class.cs" />
     <Compile Include="UI\DTOs\MachineConfiguration.cs" />

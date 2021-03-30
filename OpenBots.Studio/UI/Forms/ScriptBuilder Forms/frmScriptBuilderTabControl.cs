@@ -34,6 +34,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             _scriptVariables = scriptObject.ScriptVariables;
                             _scriptArguments = scriptObject.ScriptArguments;
                             _scriptElements = scriptObject.ScriptElements;
+                            _importedNamespaces = scriptObject.ImportedNamespaces;
 
                             if (!_isRunTaskCommand)
                             {
