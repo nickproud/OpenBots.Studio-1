@@ -758,6 +758,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
        
         private void uiBtnRestart_Click(object sender, EventArgs e)
         {
+            _appSettings.ClientSettings.IsRestarting = true;
+            _appSettings.Save(_appSettings);
             Application.Restart();
         }
 
@@ -967,7 +969,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 if (frmManager.ShowRestartWarning)
                 {
-                    var result = MessageBox.Show("OpenBots Studio must restart in order for these changes to take effect. Would you like to restart?", "Restart", MessageBoxButtons.YesNo);
+                    var result = MessageBox.Show("OpenBots Studio must restart in order for certain changes to take effect.\n" + 
+                                                 "Would you like to restart?", "Restart", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
                     {
                         _appSettings.ClientSettings.IsRestarting = true;

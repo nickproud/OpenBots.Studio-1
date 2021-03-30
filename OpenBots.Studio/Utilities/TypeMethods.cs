@@ -102,15 +102,6 @@ namespace OpenBots.Studio.Utilities
                 {
                     var packageName = GetPackageName(typeName);
                     ShowErrorDialog($"Missing {packageName}, please download the package from Package Manager and retry.");
-
-                    //if (!(Form.ActiveForm is frmScriptBuilder))
-                    //    Form.ActiveForm.Close();
-
-                    //Application.Restart();
-                    //Environment.Exit(0);
-                    // TODO
-                    // Cancel Execution 
-                    // Show Nuget Package Manager Window
                 }
 
                 return commandType;
