@@ -238,7 +238,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 catch (Exception ex)
                 {
                     //signal an error has happened
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
                 }
             }           
         }
@@ -290,7 +290,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             catch (Exception ex)
             {
                 //signal an error has happened
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -347,7 +347,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     if (!saveFileDialog.FileName.Contains(ScriptProjectPath))
                     {
-                        Notify("An Error Occured: Attempted to save script outside of project directory", Color.Red);
+                        Notify("An Error Occurred: Attempted to save script outside of project directory", Color.Red);
                         return isSuccessfulSave;
                     }
 
@@ -365,7 +365,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
 
             return isSuccessfulSave;
@@ -519,7 +519,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 if (!saveFileDialog.FileName.ToString().Contains(ScriptProjectPath))
                 {
-                    Notify("An Error Occured: Attempted to save script outside of project directory", Color.Red);
+                    Notify("An Error Occurred: Attempted to save script outside of project directory", Color.Red);
                     return isSuccessfulSave;
                 }
 
@@ -558,7 +558,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
             return isSuccessfulSave;
         }
@@ -741,7 +741,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             catch (Exception ex)
             {
                 //signal an error has happened
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -775,6 +775,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
        
         private void uiBtnRestart_Click(object sender, EventArgs e)
         {
+            _appSettings.ClientSettings.IsRestarting = true;
+            _appSettings.Save(_appSettings);
             Application.Restart();
         }
 
@@ -981,6 +983,21 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 ScriptProject.Dependencies = ScriptProject.Dependencies.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
+
+                if (frmManager.ShowRestartWarning)
+                {
+                    var result = MessageBox.Show("OpenBots Studio must restart in order for certain changes to take effect.\n" + 
+                                                 "Would you like to restart? Not doing so could cause unexpected behavior.", 
+                                                 "Restart", MessageBoxButtons.YesNo);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        _appSettings.ClientSettings.IsRestarting = true;
+                        _appSettings.Save(_appSettings);
+                        Application.Restart();
+                        return;
+                    }
+                }
 
                 NotifySync("Loading package assemblies...", Color.White);
 

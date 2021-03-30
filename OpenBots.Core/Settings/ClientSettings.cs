@@ -22,6 +22,7 @@ namespace OpenBots.Core.Settings
         public bool UseSlimActionBar { get; set; }
         public DataTable PackageSourceDT { get; set; }
         public List<string> RecentProjects { get; set; }
+        public bool IsRestarting { get; set; }
 
         public ClientSettings()
         {
@@ -34,6 +35,7 @@ namespace OpenBots.Core.Settings
             EnableSequenceDragDrop = true;
             PreloadBuilderCommands = false;
             UseSlimActionBar = true;
+            IsRestarting = false;
         }
     }
 }

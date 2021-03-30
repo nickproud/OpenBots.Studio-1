@@ -188,7 +188,7 @@ namespace OpenBots.UI.Forms
                         catch (Exception ex)
                         {
                             //handle any unexpected errors
-                            MessageBox.Show("An Error Occured during Data Migration Copy: " + ex.ToString());
+                            MessageBox.Show("An Error Occurred during Data Migration Copy: " + ex.ToString());
                         }
                     }
                     //update textbox which will be updated once user selects "Ok"

@@ -34,11 +34,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             addProjectToolStripMenuItem_Click(sender, e);
         }
 
-        public DialogResult AddProject()
+        public DialogResult AddProject(frmProjectBuilder restartProjectBuilder = null)
         {
             tvProject.Nodes.Clear();
-            var projectBuilder = new frmProjectBuilder();
-            projectBuilder.ShowDialog();
+            frmProjectBuilder projectBuilder;
+
+            if (restartProjectBuilder == null)
+            {
+                projectBuilder = new frmProjectBuilder();
+                projectBuilder.ShowDialog();
+            }
+            else
+                projectBuilder = restartProjectBuilder;
 
             //close OpenBots if add project form is closed at startup
             if (projectBuilder.DialogResult == DialogResult.Cancel && ScriptProject == null)
@@ -48,7 +55,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //create new project
-            else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.CreateProject)
+            else if (projectBuilder.Action == ProjectAction.CreateProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
                 if (result == DialogResult.Cancel)
@@ -90,7 +97,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //open existing OpenBots project
-            else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.OpenProject)
+            else if (projectBuilder.Action == ProjectAction.OpenProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
                 if (result == DialogResult.Cancel)
@@ -143,7 +150,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     projectBuilder.Dispose();
 
                     //show fail dialog
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
 
                     //try adding project again
                     AddProject();                    
@@ -228,7 +235,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -256,7 +263,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -298,7 +305,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             catch (Exception ex)
             {
                 //show fail dialog
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         
 
@@ -345,7 +352,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -469,7 +476,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
                 catch (Exception ex)
                 {
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
                 }
             }
         }
@@ -515,7 +522,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -548,7 +555,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -597,7 +604,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }        
 
@@ -646,7 +653,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -723,7 +730,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -844,7 +851,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
         #endregion
@@ -888,7 +895,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -961,7 +968,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
         #endregion

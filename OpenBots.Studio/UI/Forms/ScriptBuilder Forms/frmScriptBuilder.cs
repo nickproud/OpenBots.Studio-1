@@ -218,8 +218,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #endregion
 
         #region Form Events
-        public frmScriptBuilder()
+        public frmScriptBuilder(string projectPath)
         {
+            ScriptProjectPath = projectPath;
             _selectedTabScriptActions = NewLstScriptActions();
             InitializeComponent();
 
@@ -448,9 +449,28 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         }
         private void frmScriptBuilder_Shown(object sender, EventArgs e)
         {
-            Program.SplashForm.Close();
+            DialogResult result;
 
-            var result = AddProject();
+            if (!_appSettings.ClientSettings.IsRestarting)
+            {
+                Program.SplashForm.Close();
+                result = AddProject();
+            }
+            else
+            {
+                _appSettings.ClientSettings.IsRestarting = false;
+                _appSettings.Save(_appSettings);
+
+                frmProjectBuilder restartProjectBuilder = new frmProjectBuilder()
+                {
+                    ExistingProjectPath = ScriptProjectPath,
+                    ExistingConfigPath = Path.Combine(ScriptProjectPath, "project.obconfig"),
+                    Action = ProjectAction.OpenProject,
+                    DialogResult = DialogResult.OK
+                };
+                result = AddProject(restartProjectBuilder);
+            }
+
             if (result != DialogResult.Abort)
                 Notify("Welcome! Press 'Add Command' to get started!", Color.White);
         }
