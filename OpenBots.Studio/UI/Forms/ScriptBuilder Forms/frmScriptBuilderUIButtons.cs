@@ -970,7 +970,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (frmManager.ShowRestartWarning)
                 {
                     var result = MessageBox.Show("OpenBots Studio must restart in order for certain changes to take effect.\n" + 
-                                                 "Would you like to restart?", "Restart", MessageBoxButtons.YesNo);
+                                                 "Would you like to restart? Not doing so could cause unexpected behavior.", 
+                                                 "Restart", MessageBoxButtons.YesNo);
+
                     if (result == DialogResult.Yes)
                     {
                         _appSettings.ClientSettings.IsRestarting = true;
