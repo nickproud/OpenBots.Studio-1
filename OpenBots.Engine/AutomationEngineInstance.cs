@@ -23,6 +23,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis;
+using OBScript = OpenBots.Core.Script.Script;
+using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
+using RSScript = Microsoft.CodeAnalysis.Scripting.Script;
+
+
 
 namespace OpenBots.Engine
 {
@@ -74,6 +82,10 @@ namespace OpenBots.Engine
             
             _privateCommandLog = "Can't log display value as the command contains sensitive data";
 
+            //initialize roslyn instance
+            engineContext.engineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences("").WithImports(null));
+            engineContext.engineScript.ContinueWith("");
+
             //initialize error tracking list
             ErrorsOccured = new List<ScriptError>();
 
@@ -85,7 +97,7 @@ namespace OpenBots.Engine
             EngineSettings = settings.EngineSettings;
 
             if (AutomationEngineContext.Variables == null)
-                AutomationEngineContext.Variables = new List<ScriptVariable>();
+                AutomationEngineContext.Variables = new List<OBScriptVariable>();
 
             if (AutomationEngineContext.Arguments == null)
                 AutomationEngineContext.Arguments = new List<ScriptArgument>();
@@ -170,18 +182,18 @@ namespace OpenBots.Engine
                 ReportProgress("Bot Engine Started: " + DateTime.Now.ToString());
 
                 //get automation script
-                Script automationScript;
+                OBScript automationScript;
                 if (dataIsFile)
                 {
                     ReportProgress("Deserializing File");
                     Log.Information("Script Path: " + AutomationEngineContext.FilePath);
                     FileName = AutomationEngineContext.FilePath;
-                    automationScript = Script.DeserializeFile(AutomationEngineContext);
+                    automationScript = OBScript.DeserializeFile(AutomationEngineContext);
                 }
                 else
                 {
                     ReportProgress("Deserializing JSON");
-                    automationScript = Script.DeserializeJsonString(AutomationEngineContext.FilePath);
+                    automationScript = OBScript.DeserializeJsonString(AutomationEngineContext.FilePath);
                 }
                 
                 ReportProgress("Creating Variable List");
@@ -208,7 +220,7 @@ namespace OpenBots.Engine
                     projectPathVariable.VariableValue = AutomationEngineContext.ProjectPath;
                 else
                 {
-                    projectPathVariable = new ScriptVariable
+                    projectPathVariable = new OBScriptVariable
                     {
                         VariableName = "ProjectPath",
                         VariableType = typeof(string),
@@ -628,7 +640,7 @@ namespace OpenBots.Engine
             //handle if variable is missing
             if (resultVar == null)
             {
-                resultVar = new ScriptVariable() { VariableName = "OpenBots.Result", VariableValue = "" };
+                resultVar = new OBScriptVariable() { VariableName = "OpenBots.Result", VariableValue = "" };
             }
 
             //check value
