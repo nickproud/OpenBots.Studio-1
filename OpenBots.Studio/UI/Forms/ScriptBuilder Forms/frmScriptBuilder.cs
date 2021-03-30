@@ -441,8 +441,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _appSettings.ClientSettings.IsRestarting = false;
                 _appSettings.Save(_appSettings);
 
-                var test = AppDomain.CurrentDomain.GetAssemblies();
-
                 frmProjectBuilder restartProjectBuilder = new frmProjectBuilder()
                 {
                     ExistingProjectPath = ScriptProjectPath,
