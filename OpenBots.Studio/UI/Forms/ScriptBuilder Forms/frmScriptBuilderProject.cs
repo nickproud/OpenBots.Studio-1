@@ -143,7 +143,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     projectBuilder.Dispose();
 
                     //show fail dialog
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
 
                     //try adding project again
                     AddProject();                    
@@ -226,7 +226,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -254,7 +254,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -296,7 +296,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             catch (Exception ex)
             {
                 //show fail dialog
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         
 
@@ -343,7 +343,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -467,7 +467,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
                 catch (Exception ex)
                 {
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
                 }
             }
         }
@@ -513,7 +513,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -546,7 +546,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -595,7 +595,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }        
 
@@ -644,7 +644,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -721,7 +721,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -840,7 +840,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
         #endregion
@@ -884,7 +884,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -957,7 +957,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
         #endregion

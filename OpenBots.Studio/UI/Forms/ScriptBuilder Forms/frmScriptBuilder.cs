@@ -216,8 +216,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #endregion
 
         #region Form Events
-        public frmScriptBuilder()
+        public frmScriptBuilder(string projectPath)
         {
+            ScriptProjectPath = projectPath;
             _selectedTabScriptActions = NewLstScriptActions();
             InitializeComponent();
 
@@ -430,9 +431,67 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             Program.SplashForm.Close();
 
-            var result = AddProject();
-            if (result != DialogResult.Abort)
-                Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+            if (!_appSettings.ClientSettings.IsRestarting)
+            {
+                var result = AddProject();
+                if (result != DialogResult.Abort)
+                    Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+            }
+            else
+            {
+                try
+                {
+                    _appSettings.ClientSettings.IsRestarting = false;
+                    _appSettings.Save(_appSettings);
+
+                    //open project
+                    string existingConfigPath = Path.Combine(ScriptProjectPath, "project.obconfig");
+                    Project project = Project.OpenProject(existingConfigPath);
+
+                    if (existingConfigPath.EndsWith(".config"))
+                        existingConfigPath = existingConfigPath.Replace(".config", ".obconfig");
+
+                    string mainFileName = project.Main;
+
+                    string mainFilePath = Directory.GetFiles(ScriptProjectPath, mainFileName, SearchOption.AllDirectories).FirstOrDefault();
+                    if (mainFilePath == null)
+                        throw new Exception("Main script not found");
+
+                    NotifySync("Loading package assemblies...", Color.White);
+
+                    var assemblyList = NugetPackageManager.LoadPackageAssemblies(existingConfigPath);
+                    _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);
+                    AContainer = _builder.Build();
+
+                    ScriptProject = project;
+                    _mainFileName = mainFileName;
+                    uiScriptTabControl.TabPages.Clear();
+
+                    //open Main
+                    switch (ScriptProject.ProjectType)
+                    {
+                        case ProjectType.OpenBots:
+                            OpenOpenBotsFile(mainFilePath);
+                            break;
+                        case ProjectType.Python:
+                        case ProjectType.TagUI:
+                        case ProjectType.CSScript:
+                            OpenTextEditorFile(mainFilePath, ScriptProject.ProjectType);
+                            break;
+                    }                   
+
+                    //show success dialog
+                    Notify("Project has been opened successfully!", Color.White);
+                    Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+                }
+                catch(Exception ex)
+                {
+                    Notify($"An Error Occurred: {ex.Message}", Color.Red);
+                    var result = AddProject();
+                    if (result != DialogResult.Abort)
+                        Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+                }              
+            }           
         }
 
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)

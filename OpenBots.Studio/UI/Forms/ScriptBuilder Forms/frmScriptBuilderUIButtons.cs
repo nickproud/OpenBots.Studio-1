@@ -232,7 +232,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 catch (Exception ex)
                 {
                     //signal an error has happened
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
                 }
             }           
         }
@@ -284,7 +284,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             catch (Exception ex)
             {
                 //signal an error has happened
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -341,7 +341,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     if (!saveFileDialog.FileName.Contains(ScriptProjectPath))
                     {
-                        Notify("An Error Occured: Attempted to save script outside of project directory", Color.Red);
+                        Notify("An Error Occurred: Attempted to save script outside of project directory", Color.Red);
                         return isSuccessfulSave;
                     }
 
@@ -359,7 +359,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
 
             return isSuccessfulSave;
@@ -513,7 +513,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 if (!saveFileDialog.FileName.ToString().Contains(ScriptProjectPath))
                 {
-                    Notify("An Error Occured: Attempted to save script outside of project directory", Color.Red);
+                    Notify("An Error Occurred: Attempted to save script outside of project directory", Color.Red);
                     return isSuccessfulSave;
                 }
 
@@ -551,7 +551,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
             return isSuccessfulSave;
         }
@@ -723,7 +723,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             catch (Exception ex)
             {
                 //signal an error has happened
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 

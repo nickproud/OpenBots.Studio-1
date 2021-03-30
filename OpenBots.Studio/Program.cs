@@ -90,14 +90,19 @@ namespace OpenBots
                         break;
                 }                
             }
+            else if (appSettings.ClientSettings.StartupMode == "Builder Mode" && appSettings.ClientSettings.IsRestarting)
+            {
+                Application.DoEvents();
+                Application.Run(new frmScriptBuilder(appSettings.ClientSettings.RecentProjects[0]));
+            }
             else if (appSettings.ClientSettings.StartupMode == "Builder Mode")
             {
                 SplashForm = new frmSplash();
                 SplashForm.Show();
 
                 Application.DoEvents();
-                Application.Run(new frmScriptBuilder());
-            }
+                Application.Run(new frmScriptBuilder(null));
+            }           
             else
             {
                 SplashForm = new frmSplash();
