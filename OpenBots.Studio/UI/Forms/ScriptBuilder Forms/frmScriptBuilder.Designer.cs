@@ -123,6 +123,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.ArgumentType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.argumentValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.direction = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.imports = new System.Windows.Forms.TabPage();
+            this.tlpImports = new System.Windows.Forms.TableLayoutPanel();
+            this.cbxAllNamespaces = new System.Windows.Forms.ComboBox();
+            this.lbxImportedNamespaces = new System.Windows.Forms.ListBox();
             this.pnlCommandHelper = new System.Windows.Forms.Panel();
             this.flwRecentFiles = new OpenBots.UI.CustomControls.CustomUIControls.UIFlowLayoutPanel();
             this.lblFilesMissing = new System.Windows.Forms.Label();
@@ -247,6 +251,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             ((System.ComponentModel.ISupportInitialize)(this.dgvVariables)).BeginInit();
             this.arguments.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvArguments)).BeginInit();
+            this.imports.SuspendLayout();
+            this.tlpImports.SuspendLayout();
             this.pnlCommandHelper.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecentFiles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLinks)).BeginInit();
@@ -371,7 +377,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.openShortcutMenuToolStripMenuItem,
             this.runFromThisCommandToolStripMenuItem});
             this.cmsScriptActions.Name = "cmsScriptActions";
-            this.cmsScriptActions.Size = new System.Drawing.Size(329, 312);
+            this.cmsScriptActions.Size = new System.Drawing.Size(329, 284);
             // 
             // enableSelectedCodeToolStripMenuItem
             // 
@@ -1409,6 +1415,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiVariableArgumentTabs.AllowDrop = true;
             this.uiVariableArgumentTabs.Controls.Add(this.variables);
             this.uiVariableArgumentTabs.Controls.Add(this.arguments);
+            this.uiVariableArgumentTabs.Controls.Add(this.imports);
             this.uiVariableArgumentTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiVariableArgumentTabs.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.uiVariableArgumentTabs.Location = new System.Drawing.Point(0, 0);
@@ -1544,6 +1551,62 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.direction.HeaderText = "Direction";
             this.direction.MinimumWidth = 6;
             this.direction.Name = "direction";
+            // 
+            // imports
+            // 
+            this.imports.Controls.Add(this.tlpImports);
+            this.imports.Location = new System.Drawing.Point(4, 4);
+            this.imports.Name = "imports";
+            this.imports.Size = new System.Drawing.Size(1358, 197);
+            this.imports.TabIndex = 2;
+            this.imports.Text = "Imports";
+            this.imports.UseVisualStyleBackColor = true;
+            // 
+            // tlpImports
+            // 
+            this.tlpImports.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
+            this.tlpImports.ColumnCount = 1;
+            this.tlpImports.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpImports.Controls.Add(this.cbxAllNamespaces, 0, 0);
+            this.tlpImports.Controls.Add(this.lbxImportedNamespaces, 0, 1);
+            this.tlpImports.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpImports.Location = new System.Drawing.Point(0, 0);
+            this.tlpImports.Name = "tlpImports";
+            this.tlpImports.RowCount = 2;
+            this.tlpImports.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpImports.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpImports.Size = new System.Drawing.Size(1358, 197);
+            this.tlpImports.TabIndex = 0;
+            // 
+            // cbxAllNamespaces
+            // 
+            this.cbxAllNamespaces.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.cbxAllNamespaces.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cbxAllNamespaces.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbxAllNamespaces.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxAllNamespaces.ForeColor = System.Drawing.Color.Black;
+            this.cbxAllNamespaces.Location = new System.Drawing.Point(2, 2);
+            this.cbxAllNamespaces.Margin = new System.Windows.Forms.Padding(2);
+            this.cbxAllNamespaces.Name = "cbxAllNamespaces";
+            this.cbxAllNamespaces.Size = new System.Drawing.Size(1354, 31);
+            this.cbxAllNamespaces.TabIndex = 1;
+            this.cbxAllNamespaces.SelectionChangeCommitted += new System.EventHandler(this.cbxAllNamespaces_SelectionChangeCommitted);
+            this.cbxAllNamespaces.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cbxAllNamespaces_KeyDown);
+            this.cbxAllNamespaces.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cbxAllNamespaces_KeyPress);
+            // 
+            // lbxImportedNamespaces
+            // 
+            this.lbxImportedNamespaces.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbxImportedNamespaces.FormattingEnabled = true;
+            this.lbxImportedNamespaces.ItemHeight = 23;
+            this.lbxImportedNamespaces.Location = new System.Drawing.Point(3, 33);
+            this.lbxImportedNamespaces.Name = "lbxImportedNamespaces";
+            this.lbxImportedNamespaces.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.lbxImportedNamespaces.Size = new System.Drawing.Size(1352, 161);
+            this.lbxImportedNamespaces.Sorted = true;
+            this.lbxImportedNamespaces.TabIndex = 2;
+            this.lbxImportedNamespaces.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbxImportedNamespaces_KeyDown);
+            this.lbxImportedNamespaces.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.lbxImportedNamespaces_KeyPress);
             // 
             // pnlCommandHelper
             // 
@@ -2308,6 +2371,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             ((System.ComponentModel.ISupportInitialize)(this.dgvVariables)).EndInit();
             this.arguments.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvArguments)).EndInit();
+            this.imports.ResumeLayout(false);
+            this.tlpImports.ResumeLayout(false);
             this.pnlCommandHelper.ResumeLayout(false);
             this.pnlCommandHelper.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecentFiles)).EndInit();
@@ -2480,6 +2545,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private DataGridViewComboBoxColumn VariableType;
         private DataGridViewTextBoxColumn variableValue;
         private ToolStripMenuItem runFromThisCommandToolStripMenuItem;
+        private TabPage imports;
+        private TableLayoutPanel tlpImports;
+        private ComboBox cbxAllNamespaces;
+        private ListBox lbxImportedNamespaces;
     }
 }
 
