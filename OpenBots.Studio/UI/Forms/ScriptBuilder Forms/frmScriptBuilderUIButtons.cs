@@ -965,6 +965,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ScriptProject.Dependencies = ScriptProject.Dependencies.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
 
+                if (frmManager.ShowRestartWarning)
+                {
+                    var result = MessageBox.Show("OpenBots Studio must restart in order for these changes to take effect. Would you like to restart?", "Restart", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        _appSettings.ClientSettings.IsRestarting = true;
+                        _appSettings.Save(_appSettings);
+                        Application.Restart();
+                        return;
+                    }
+                }
+
                 NotifySync("Loading package assemblies...", Color.White);
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);

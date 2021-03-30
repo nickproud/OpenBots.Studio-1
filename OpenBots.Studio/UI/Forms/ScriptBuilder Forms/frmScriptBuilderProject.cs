@@ -34,11 +34,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             addProjectToolStripMenuItem_Click(sender, e);
         }
 
-        public DialogResult AddProject()
+        public DialogResult AddProject(frmProjectBuilder restartProjectBuilder = null)
         {
             tvProject.Nodes.Clear();
-            var projectBuilder = new frmProjectBuilder();
-            projectBuilder.ShowDialog();
+            frmProjectBuilder projectBuilder;
+
+            if (restartProjectBuilder == null)
+            {
+                projectBuilder = new frmProjectBuilder();
+                projectBuilder.ShowDialog();
+            }
+            else
+                projectBuilder = restartProjectBuilder;
 
             //close OpenBots if add project form is closed at startup
             if (projectBuilder.DialogResult == DialogResult.Cancel && ScriptProject == null)
@@ -48,7 +55,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //create new project
-            else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.CreateProject)
+            else if (projectBuilder.Action == ProjectAction.CreateProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
                 if (result == DialogResult.Cancel)
@@ -90,7 +97,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //open existing OpenBots project
-            else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.OpenProject)
+            else if (projectBuilder.Action == ProjectAction.OpenProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
                 if (result == DialogResult.Cancel)
