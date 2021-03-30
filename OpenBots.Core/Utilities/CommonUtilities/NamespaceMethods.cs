@@ -18,7 +18,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             try
             {
-                if (engine.AutomationEngineContext.ImportedNamespaces.TryGetValue(namespaceKey, out AssemblyReference assemblyReference))
+                var importedNamespaces = engine.AutomationEngineContext.ImportedNamespaces;
+                if (importedNamespaces.TryGetValue(namespaceKey, out AssemblyReference assemblyReference))
                 {
                     return AppDomain.CurrentDomain.GetAssemblies()
                                                   .Where(x => x.GetName().Name == assemblyReference.AssemblyName && 
@@ -38,14 +39,15 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             try
             {
-                if (engine.AutomationEngineContext.ImportedNamespaces != null && engine.AutomationEngineContext.ImportedNamespaces.Count > 0)
+                var importedNamespaces = engine.AutomationEngineContext.ImportedNamespaces;
+                if (importedNamespaces != null && importedNamespaces.Count > 0)
                 {
-                    return engine.AutomationEngineContext.ImportedNamespaces.Select(x => AppDomain.CurrentDomain.GetAssemblies()
-                                                                                                                .Where(y => y.GetName().Name == x.Value.AssemblyName &&
-                                                                                                                            y.GetName().Version == Version.Parse(x.Value.AssemblyVersion))
-                                                                                                                .FirstOrDefault())
-                                                                            .Distinct()
-                                                                            .ToList();
+                    return importedNamespaces.Select(x => AppDomain.CurrentDomain.GetAssemblies()
+                                                                                 .Where(y => y.GetName().Name == x.Value.AssemblyName &&
+                                                                                             y.GetName().Version == Version.Parse(x.Value.AssemblyVersion))
+                                                                                 .FirstOrDefault())
+                                             .Distinct()
+                                             .ToList();
                 }
 
                 throw new Exception($"ImportedNamespaces is null or empty!");
