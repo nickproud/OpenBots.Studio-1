@@ -76,6 +76,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 dgvArguments.RowsAdded -= dgvVariablesArguments_RowsAdded;
                 dgvArguments.UserDeletingRow -= dgvVariablesArguments_UserDeletingRow;
                 dgvArguments.KeyDown -= dgvVariablesArguments_KeyDown;
+                lbxImportedNamespaces.KeyDown -= lbxImportedNamespaces_KeyDown;
+                lbxImportedNamespaces.KeyPress -= lbxImportedNamespaces_KeyPress;
 
                 foreach (Control control in Controls)
                     control.Dispose();
