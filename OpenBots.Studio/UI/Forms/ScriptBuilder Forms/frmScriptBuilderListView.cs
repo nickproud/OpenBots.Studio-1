@@ -414,6 +414,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 //failed to open sequence command. Dispose and force collection
                 newSequence.Dispose();
+                newSequence = null;
                 GC.Collect();
 
                 //try again
@@ -464,6 +465,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //dispose and force collection
             newSequence.Dispose();
+            newSequence = null;
             GC.Collect();
         }
 
