@@ -711,6 +711,7 @@ namespace OpenBots.UI.Forms
         private void autoCloseTimer_Tick(object sender, EventArgs e)
         {
             Close();
+            Dispose();
         }
 
         public delegate void uiBtnCancel_ClickDelegate(object sender, EventArgs e);
@@ -727,7 +728,8 @@ namespace OpenBots.UI.Forms
                 {
                     UpdateLineNumber(0);
                     ClosingAllEngines = true;
-                    Close();                   
+                    Close();
+                    Dispose();
                     return;
                 }
 
