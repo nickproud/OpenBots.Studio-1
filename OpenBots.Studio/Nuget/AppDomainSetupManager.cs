@@ -28,7 +28,7 @@ namespace OpenBots.Nuget
                     if (existingAssembly == null && name != "RestSharp" && name != "WebDriver" && name != "OpenBots.Core")
                     {
                         //has to be LoadFile because package manager can't update/uninstall assemblies if LoadFrom
-                        var assembly = Assembly.LoadFile(path);
+                        var assembly = Assembly.LoadFrom(path);
                         existingAssemblies.Add(assembly);
                     }
                     else if (existingAssembly != null)
