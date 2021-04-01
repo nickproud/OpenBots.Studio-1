@@ -193,7 +193,14 @@ namespace OpenBots.Commands.Task
 				{
 					((Form)parentfrmScriptEngine).TopMost = true;
 				});
-			}          
+			}
+
+			if (_childfrmScriptEngine != null)
+            {
+				((Form)_childfrmScriptEngine).Dispose();
+				_childfrmScriptEngine = null;
+				GC.Collect();
+            }			
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

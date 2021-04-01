@@ -1124,7 +1124,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {
                 if (CurrentEngine != null)
+                {
                     ((Form)CurrentEngine).Close();
+                    ((Form)CurrentEngine).Dispose();
+                    CurrentEngine = null;
+                }
             }
             catch(Exception ex)
             {
@@ -1132,6 +1136,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 Console.WriteLine(ex);
             }
 
+            GC.Collect();
             //initialize Logger
             switch (_appSettings.EngineSettings.LoggingSinkType)
             {
