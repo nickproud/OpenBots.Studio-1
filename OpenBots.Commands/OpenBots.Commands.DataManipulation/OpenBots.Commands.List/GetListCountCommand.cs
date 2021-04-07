@@ -29,7 +29,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("{vList}")]
 		[Remarks("Providing any type of variable other than a List will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		//[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_ListName { get; set; }
 
 		[Required]
@@ -38,7 +38,7 @@ namespace OpenBots.Commands.List
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(int) })]
+		//[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetListCountCommand()
@@ -50,11 +50,11 @@ namespace OpenBots.Commands.List
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable by regular name
-			var listVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
+			var listVariable = await VariableMethods.EvaluateCode($"{v_ListName}", engine);
 
 			//if still null then throw exception
 			if (listVariable == null)
@@ -94,7 +94,7 @@ namespace OpenBots.Commands.List
 				throw new System.Exception("Complex Variable List Type<T> Not Supported");
 
 			int count = listToCount.Count;
-			count.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			VariableMethods.SetVariableValue(v_OutputUserVariableName, engine, count);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -102,7 +102,7 @@ namespace OpenBots.Commands.List
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}

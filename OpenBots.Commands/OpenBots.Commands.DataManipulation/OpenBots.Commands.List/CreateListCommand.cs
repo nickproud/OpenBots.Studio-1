@@ -49,7 +49,7 @@ namespace OpenBots.Commands.List
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		//[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public CreateListCommand()
@@ -62,12 +62,13 @@ namespace OpenBots.Commands.List
 			v_ListType = "String";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 			dynamic vNewList = null;
 			string[] splitListItems = null;
+			string typeString = "string";
 
 			if (!string.IsNullOrEmpty(v_ListItems))
 			{
@@ -77,6 +78,7 @@ namespace OpenBots.Commands.List
 			switch (v_ListType)
 			{
 				case "String":
+					typeString = "string";
 					vNewList = new List<string>();
 					if (splitListItems != null)
 					{
@@ -85,6 +87,7 @@ namespace OpenBots.Commands.List
 					}                   
 					break;
 				case "DataTable":
+					typeString = "DataTable";
 					vNewList = new List<OBDataTable>();
 					if (splitListItems != null)
 					{                       
@@ -101,6 +104,7 @@ namespace OpenBots.Commands.List
 					}
 					break;
 				case "MailItem (Outlook)":
+					typeString = "MailItem";
 					vNewList = new List<MailItem>();
 					if (splitListItems != null)
 					{
@@ -117,6 +121,7 @@ namespace OpenBots.Commands.List
 					}
 					break;
 				case "MimeMessage (IMAP/SMTP)":
+					typeString = "MimeMessage";
 					vNewList = new List<MimeMessage>();
 					if (splitListItems != null)
 					{
@@ -133,6 +138,7 @@ namespace OpenBots.Commands.List
 					}
 					break;
 				case "IWebElement":
+					typeString = "IWebElement";
 					vNewList = new List<IWebElement>();
 					if (splitListItems != null)
 					{
@@ -150,7 +156,8 @@ namespace OpenBots.Commands.List
 					break;
 			}
 
-			((object)vNewList).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			await VariableMethods.EvaluateCode(v_OutputUserVariableName, $"new List<{typeString}>();", engine);
+			VariableMethods.SetVariableValue(v_OutputUserVariableName, engine, vNewList);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -159,7 +166,7 @@ namespace OpenBots.Commands.List
 
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_ListType", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListItems", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
