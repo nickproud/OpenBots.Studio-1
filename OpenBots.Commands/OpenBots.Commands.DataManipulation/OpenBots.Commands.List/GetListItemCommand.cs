@@ -47,7 +47,7 @@ namespace OpenBots.Commands.List
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement) })]
+		//[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetListItemCommand()
@@ -59,14 +59,13 @@ namespace OpenBots.Commands.List
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var itemIndex = v_ItemIndex.ConvertUserVariableToString(engine);
 			int index = int.Parse(itemIndex);
 			//get variable by regular name
-			var listVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
-
+			var listVariable = await VariableMethods.EvaluateCode($"{v_ListName}", engine);
 			//if still null then throw exception
 			if (listVariable == null)
 			{
@@ -121,7 +120,7 @@ namespace OpenBots.Commands.List
 
 			var item = listToIndex[index];
 
-			((object)item).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);         
+			VariableMethods.SetVariableValue(v_OutputUserVariableName, engine, item);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -130,7 +129,7 @@ namespace OpenBots.Commands.List
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ItemIndex", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
