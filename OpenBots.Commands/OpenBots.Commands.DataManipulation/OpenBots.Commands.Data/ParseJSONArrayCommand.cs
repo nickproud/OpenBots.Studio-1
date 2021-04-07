@@ -46,12 +46,12 @@ namespace OpenBots.Commands.Data
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get variablized input
-			var variableInput = v_JsonArrayName.ConvertUserVariableToString(engine);
+			var variableInput = (string)await v_JsonArrayName.EvaluateCode(engine);
 
 			//create objects
 			JArray arr;
@@ -73,7 +73,7 @@ namespace OpenBots.Commands.Data
 				resultList.Add(result.ToString());
 			}
 
-			resultList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
+			resultList.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

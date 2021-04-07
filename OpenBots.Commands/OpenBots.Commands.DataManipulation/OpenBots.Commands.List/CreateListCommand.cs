@@ -49,7 +49,7 @@ namespace OpenBots.Commands.List
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		//[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public CreateListCommand()
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.List
 					if (splitListItems != null)
 					{
 						foreach (string item in splitListItems)
-							((List<string>)vNewList).Add(item.ConvertUserVariableToString(engine));
+							((List<string>)vNewList).Add((string)await VariableMethods.EvaluateCode(item, engine, typeof(string)));
 					}                   
 					break;
 				case "DataTable":
@@ -94,7 +94,7 @@ namespace OpenBots.Commands.List
 						foreach (string item in splitListItems)
 						{
 							OBDataTable dataTable;
-							var dataTableVariable = item.ConvertUserVariableToObject(engine, typeof(OBDataTable));
+							var dataTableVariable = await VariableMethods.EvaluateCode(item, engine, typeof(OBDataTable));
 							if (dataTableVariable != null && dataTableVariable is OBDataTable)
 								dataTable = (OBDataTable)dataTableVariable;
 							else
@@ -156,8 +156,8 @@ namespace OpenBots.Commands.List
 					break;
 			}
 
-			await VariableMethods.EvaluateCode(v_OutputUserVariableName, $"new List<{typeString}>();", engine);
-			VariableMethods.SetVariableValue(v_OutputUserVariableName, engine, vNewList);
+			await VariableMethods.EvaluateCode($"{v_OutputUserVariableName} = new List<{typeString}>();", engine, typeof(List<>));
+			((object)vNewList).SetVariableValue(engine, v_OutputUserVariableName, typeof(List<>));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

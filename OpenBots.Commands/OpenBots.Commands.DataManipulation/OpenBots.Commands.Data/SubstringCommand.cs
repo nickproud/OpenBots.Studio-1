@@ -62,12 +62,12 @@ namespace OpenBots.Commands.Data
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var inputText = v_InputText.ConvertUserVariableToString(engine);
-			var startIndex = int.Parse(v_StartIndex.ConvertUserVariableToString(engine));
-			var stringLength = v_StringLength.ConvertUserVariableToString(engine);
+			var inputText = (string)await v_InputText.EvaluateCode(engine);
+			var startIndex = (int)await v_StartIndex.EvaluateCode(engine);
+			var stringLength = (string)await v_StringLength.EvaluateCode(engine);
 
 			//apply substring
 			if (!string.IsNullOrEmpty(stringLength))
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.Data
 				inputText = inputText.Substring(startIndex);
 			}
 
-			inputText.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			inputText.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

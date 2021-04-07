@@ -56,15 +56,15 @@ namespace OpenBots.Commands.Data
 			v_ToStringFormat = "MM/dd/yyyy";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var formatting = v_ToStringFormat.ConvertUserVariableToString(engine);
+			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine);
 
-			dynamic input = v_InputData.ConvertUserVariableToString(engine);
+			dynamic input = (string)await v_InputData.EvaluateCode(engine);
 
 			if (input == v_InputData && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_InputData.ConvertUserVariableToObject(engine, nameof(v_InputData), this);
+				input = await v_InputData.EvaluateCode(engine, nameof(v_InputData), this);
 
 			DateTime variableDate;
 
@@ -77,7 +77,7 @@ namespace OpenBots.Commands.Data
 
 			string formattedString  = variableDate.ToString(formatting);
 				
-			formattedString.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			formattedString.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

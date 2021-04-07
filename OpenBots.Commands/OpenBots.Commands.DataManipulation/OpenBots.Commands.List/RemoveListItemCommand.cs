@@ -28,7 +28,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("{vList}")]
 		[Remarks("Any type of variable other than List will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		//[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_ListName { get; set; }
 
 		[Required]
@@ -55,8 +55,8 @@ namespace OpenBots.Commands.List
 			var engine = (IAutomationEngineInstance)sender;
 
 			//var vListVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
-			var vListVariable = await VariableMethods.EvaluateCode($"{v_ListName}", engine);
-			var vListIndex = (int)await VariableMethods.EvaluateCode($"{v_ListIndex}", engine);
+			var vListVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
+			var vListIndex = (int)await VariableMethods.EvaluateCode(v_ListIndex, engine, typeof(int));
 
 			if (vListVariable != null)
 			{
@@ -75,7 +75,7 @@ namespace OpenBots.Commands.List
 			}
 			else
 				throw new Exception("Attempted to write data to a variable, but the variable was not found. Enclose variables within braces, ex. {vVariable}");
-			VariableMethods.SetVariableValue(v_ListName, engine, vListVariable);
+			vListVariable.SetVariableValue(engine, v_ListName, typeof(List<>));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -74,14 +74,14 @@ namespace OpenBots.Commands.Data
 			v_AcceptUndefined = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get variablized string
-			var variableMath = v_MathExpression.ConvertUserVariableToString(engine);
-			var thousandSeparator = v_ThousandSeparator.ConvertUserVariableToString(engine);
-			var decimalSeparator = v_DecimalSeparator.ConvertUserVariableToString(engine);
+			var variableMath = (string)await v_MathExpression.EvaluateCode(engine);
+			var thousandSeparator = (string)await v_ThousandSeparator.EvaluateCode(engine);
+			var decimalSeparator = (string)await v_DecimalSeparator.EvaluateCode(engine);
 
 			//Check if expression calculation is infinity
 			if (variableMath == "∞")
@@ -89,7 +89,7 @@ namespace OpenBots.Commands.Data
 				if (v_AcceptUndefined == "No")
 					throw new DivideByZeroException("Expression calculation resulted in inifinty.");
 				else
-					typeof(Nullable).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					typeof(Nullable).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else
 			{
@@ -122,7 +122,7 @@ namespace OpenBots.Commands.Data
 				}
 
 				//store string in variable
-				result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 
 		}

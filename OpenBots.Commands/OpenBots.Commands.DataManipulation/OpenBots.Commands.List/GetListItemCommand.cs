@@ -47,7 +47,7 @@ namespace OpenBots.Commands.List
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		//[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement) })]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetListItemCommand()
@@ -65,7 +65,7 @@ namespace OpenBots.Commands.List
 			var itemIndex = v_ItemIndex.ConvertUserVariableToString(engine);
 			int index = int.Parse(itemIndex);
 			//get variable by regular name
-			var listVariable = await VariableMethods.EvaluateCode($"{v_ListName}", engine);
+			var listVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
 			//if still null then throw exception
 			if (listVariable == null)
 			{
@@ -120,7 +120,7 @@ namespace OpenBots.Commands.List
 
 			var item = listToIndex[index];
 
-			VariableMethods.SetVariableValue(v_OutputUserVariableName, engine, item);
+			((object)item).SetVariableValue(engine, v_OutputUserVariableName, typeof(List<>));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

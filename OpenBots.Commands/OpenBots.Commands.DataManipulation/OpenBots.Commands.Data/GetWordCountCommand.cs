@@ -45,19 +45,19 @@ namespace OpenBots.Commands.Data
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			//get engine
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get input value
-			var stringRequiringCount = v_InputValue.ConvertUserVariableToString(engine);
+			var stringRequiringCount = (string)await v_InputValue.EvaluateCode(engine);
 
 			//count number of words
 			var wordCount = stringRequiringCount.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries).Length;
 
 			//store word count into variable
-			wordCount.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			wordCount.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

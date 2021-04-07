@@ -52,13 +52,13 @@ namespace OpenBots.Commands.Data
             CommandIcon = Resources.command_string;
 
         }
-        public override void RunCommand(object sender)
+        public async override void RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var fullText = v_FullText.ConvertUserVariableToString(engine);
-            var comparisonText = v_ComparisonText.ConvertUserVariableToString(engine);
+            var fullText = (string)await v_FullText.EvaluateCode(engine);
+            var comparisonText = (string)await v_ComparisonText.EvaluateCode(engine);
             bool outputUserVar = fullText.Contains(comparisonText);
-            outputUserVar.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+            outputUserVar.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
         {

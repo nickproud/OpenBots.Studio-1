@@ -62,12 +62,12 @@ namespace OpenBots.Commands.Data
 			
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get variable path or URL to source file
-			var vSourceFilePath = v_FilePath.ConvertUserVariableToString(engine);
+			var vSourceFilePath = (string)await v_FilePath.EvaluateCode(engine);
 
 			if (v_FileSourceType == "File URL")
 			{
@@ -105,7 +105,7 @@ namespace OpenBots.Commands.Data
 			}
 			pdfDoc.Close();
 
-			result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
