@@ -3,10 +3,7 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
 using Serilog.Core;
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis;
-using OBScript = OpenBots.Core.Script.Script;
 using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 using RSScript = Microsoft.CodeAnalysis.Scripting.Script;
 
@@ -27,14 +24,15 @@ namespace OpenBots.Core.Model.EngineModel
         public IfrmScriptEngine ScriptEngine { get; set; }
         public bool IsTest { get; set; } = false;
         public int StartFromLineNumber { get; set; } = 1;
-        public RSScript engineScript { get; set; }
+        public RSScript EngineScript { get; set; }
+        public ScriptState EngineScriptState { get; set; }
 
         public EngineContext()
         {
         }
 
         public EngineContext(string filePath, string projectPath, IContainer container, IfrmScriptBuilder scriptBuilder, Logger engineLogger,
-            List<ScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, object> appInstances, 
+            List<OBScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, object> appInstances, 
             Dictionary<string, AssemblyReference> importedNamespaces, IfrmScriptEngine scriptEngine, int startFromLineNumber)
         {
             FilePath = filePath;

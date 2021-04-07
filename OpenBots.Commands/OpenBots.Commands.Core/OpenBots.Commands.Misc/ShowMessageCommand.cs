@@ -54,10 +54,25 @@ namespace OpenBots.Commands.Misc
 
 			int closeAfter = int.Parse(v_AutoCloseAfter.ConvertUserVariableToString(engine));
 
-			dynamic variableMessage = v_Message.ConvertUserVariableToString(engine);
+			string variableMessage = v_Message;
 
-			if (variableMessage == v_Message && variableMessage.StartsWith("{") && variableMessage.EndsWith("}"))
-				variableMessage = v_Message.ConvertUserVariableToObject(engine, nameof(v_Message), this);
+			var messageComponents = variableMessage.Split(new char[] {'{', '}'});
+
+			var varList = engine.AutomationEngineContext.EngineScriptState.Variables;
+			HashSet<string> varListNames = new HashSet<string>();
+			foreach(var scriptVar in varList)
+            {
+				varListNames.Add(scriptVar.Name);
+            }
+			for(int i = 0;i<messageComponents.Length;i++)
+            {
+                if (varListNames.Contains(messageComponents[i]))
+                {
+					messageComponents[i] = messageComponents[i].GetVariableValue(engine).ToString();
+                }
+            }
+
+			variableMessage = string.Join("", messageComponents);
 
 			string type = "";
 			if(variableMessage?.GetType().Name == typeof(KeyValuePair<,>).Name)

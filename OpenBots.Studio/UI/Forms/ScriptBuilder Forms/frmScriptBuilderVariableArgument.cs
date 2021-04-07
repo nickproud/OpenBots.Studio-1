@@ -81,13 +81,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 else if (e.ColumnIndex == 1)
                 {
                     Type selectedType = (Type)dgv.Rows[e.RowIndex].Cells[1].Value;
-                    if (selectedType.IsPrimitive || selectedType == typeof(string))
-                        dgv.Rows[e.RowIndex].Cells[2].ReadOnly = false;
-                    else
-                    {
-                        dgv.Rows[e.RowIndex].Cells[2].Value = null;
-                        dgv.Rows[e.RowIndex].Cells[2].ReadOnly = true;
-                    }                       
+                    dgv.Rows[e.RowIndex].Cells[2].ReadOnly = false;                   
                 }
 
                 //marks the script as unsaved with changes

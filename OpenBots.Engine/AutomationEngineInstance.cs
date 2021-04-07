@@ -22,6 +22,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
@@ -82,10 +83,6 @@ namespace OpenBots.Engine
             
             _privateCommandLog = "Can't log display value as the command contains sensitive data";
 
-            //initialize roslyn instance
-            engineContext.engineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences("").WithImports(null));
-            engineContext.engineScript.ContinueWith("");
-
             //initialize error tracking list
             ErrorsOccured = new List<ScriptError>();
 
@@ -118,6 +115,13 @@ namespace OpenBots.Engine
             AutoCalculateVariables = EngineSettings.AutoCalcVariables;
 
             ErrorHandlingAction = string.Empty;
+
+            //initialize roslyn instance
+            List<Assembly> assemblies = NamespaceMethods.GetAssemblies(this);
+            List<string> assemblyNames = engineContext.ImportedNamespaces.Keys.ToList();
+
+            engineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(assemblies).WithImports(assemblyNames));
+            engineContext.EngineScriptState = null;
         }
 
         public IAutomationEngineInstance CreateAutomationEngineInstance(EngineContext engineContext)
