@@ -9,6 +9,7 @@ using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
@@ -1259,7 +1260,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     break;
             }
 
-            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null, null, startLineNumber);
+            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null, null, startLineNumber, _isDebugMode);
 
             //initialize Engine
             CurrentEngine = new frmScriptEngine(engineContext, false, _isDebugMode);
@@ -1267,6 +1268,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             CurrentEngine.ScriptEngineContext.ScriptBuilder = this;
             IsScriptRunning = true;
             ((frmScriptEngine)CurrentEngine).Show();
+
+            if (!_isDebugMode)
+                FormsHelper.HideAllForms();
         }
 
         private void RunFromThisCommand()

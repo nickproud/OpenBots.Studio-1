@@ -1,28 +1,32 @@
-﻿using System.Threading;
+﻿using OpenBots.Core.Infrastructure;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace OpenBots.Core.Utilities.FormsUtilities
 {
     public static class FormsHelper
     {
-        public static void ShowAllForms()
+        public static void ShowAllForms(bool isDebugMode)
         {
             foreach (Form form in Application.OpenForms)
-                ShowForm(form);
+                ShowForm(isDebugMode, form);
 
             Thread.Sleep(1000);
         }
 
-        public delegate void ShowFormDelegate(Form form);
-        public static void ShowForm(Form form)
+        public delegate void ShowFormDelegate(bool isDebugMode, Form form);
+        public static void ShowForm(bool isDebugMode, Form form)
         {
             if (form.InvokeRequired)
             {
                 var d = new ShowFormDelegate(ShowForm);
-                form.Invoke(d, new object[] { form });
+                form.Invoke(d, new object[] { isDebugMode, form });
             }
             else
-                form.WindowState = FormWindowState.Normal;
+            {
+                if (isDebugMode)
+                    form.WindowState = FormWindowState.Normal;
+            }
         }
 
         public static void HideAllForms()

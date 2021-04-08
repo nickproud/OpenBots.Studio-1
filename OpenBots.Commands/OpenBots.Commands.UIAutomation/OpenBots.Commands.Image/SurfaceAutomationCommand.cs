@@ -1,11 +1,9 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -25,11 +23,21 @@ using WindowsInput;
 
 namespace OpenBots.Commands.Image
 {
-	[Serializable]
+    [Serializable]
 	[Category("Image Commands")]
 	[Description("This command attempts to find and perform an action on an existing image on screen.")]
 	public class SurfaceAutomationCommand : ScriptCommand, IImageCommands
 	{
+		[Required]
+		[DisplayName("Window Name")]
+		[Description("Select the name of the window to activate and bring forward.")]
+		[SampleUsage("Untitled - Notepad || {vWindow}")]
+		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
+		public string v_WindowName { get; set; }
+
 		[Required]
 		[DisplayName("Capture Search Image")]
 		[Description("Use the tool to capture an image that will be located on screen during execution.")]
@@ -71,6 +79,15 @@ namespace OpenBots.Commands.Image
 		[CompatibleTypes(null, true)]
 		public string v_MatchAccuracy { get; set; }
 
+		[Required]
+		[DisplayName("Timeout (Seconds)")]
+		[Description("Specify how many seconds to wait before throwing an exception.")]
+		[SampleUsage("30 || {vSeconds}")]
+		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(null, true)]
+		public string v_Timeout { get; set; }
+
 		[JsonIgnore]
 		[Browsable(false)]
 		public bool TestMode { get; set; } = false;
@@ -94,7 +111,9 @@ namespace OpenBots.Commands.Image
 			CommandEnabled = true;
 			CommandIcon = Resources.command_camera;
 
+			v_WindowName = "None";
 			v_MatchAccuracy = "0.8";
+			v_Timeout = "30";
 
 			v_ImageActionParameterTable = new DataTable
 			{
@@ -107,6 +126,10 @@ namespace OpenBots.Commands.Image
 		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
+			string windowName = v_WindowName.ConvertUserVariableToString(engine);
+			int timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			var timeToEnd = DateTime.Now.AddSeconds(timeout);
+
 			bool testMode = TestMode;
 			//user image to bitmap
 			Bitmap userImage = new Bitmap(CommonMethods.Base64ToImage(v_ImageCapture));
@@ -122,43 +145,112 @@ namespace OpenBots.Commands.Image
 				throw new InvalidDataException("Accuracy value is invalid");
 			}
 
-			dynamic element = null;
-			if (v_ImageAction == "Wait For Image To Exist")
-			{
-				var timeoutText = (from rw in v_ImageActionParameterTable.AsEnumerable()
-								   where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
-								   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-				timeoutText = timeoutText.ConvertUserVariableToString(engine);
-				int timeOut = Convert.ToInt32(timeoutText);
-				var timeToEnd = DateTime.Now.AddSeconds(timeOut);
-
+			//Activate window if specified
+			if (windowName != "None")
+            {
 				while (timeToEnd >= DateTime.Now)
 				{
 					try
 					{
-						element = CommandsHelper.FindImageElement(userImage, accuracy);
-
-						if (element == null)
-							throw new Exception("Image Element Not Found");
-						else
+						if (engine.IsCancellationPending)
 							break;
+
+						User32Functions.ActivateWindow(windowName);
+
+						if (!User32Functions.GetActiveWindowTitle().Equals(windowName))
+							throw new Exception($"Window '{windowName}' Not Yet Found... ");
+
+						break;
 					}
 					catch (Exception)
 					{
-						engine.ReportProgress("Element Not Yet Found... " + (timeToEnd - DateTime.Now).Seconds + "s remain");
-						Thread.Sleep(1000);
+						engine.ReportProgress($"Window '{windowName}' Not Yet Found... {(timeToEnd - DateTime.Now).Minutes}m, {(timeToEnd - DateTime.Now).Seconds}s remain");
+						Thread.Sleep(500);
 					}
 				}
 
-				if (element == null)
-					throw new Exception("Image Element Not Found");
-
-				return;
+				if (!User32Functions.GetActiveWindowTitle().Equals(windowName))
+					throw new Exception($"Window '{windowName}' Not Found");
+				else
+					Thread.Sleep(500);
 			}
-			else
-				element = CommandsHelper.FindImageElement(userImage, accuracy);
 
+			dynamic element = null;
+
+			while (timeToEnd >= DateTime.Now)
+			{
+				try
+				{
+					if (engine.IsCancellationPending)
+						break;
+
+					element = CommandsHelper.FindImageElement(userImage, accuracy, engine, timeToEnd);
+
+					if (element == null)
+						throw new Exception("Specified image was not found in window!");
+					else
+						break;
+				}
+				catch (Exception)
+				{
+					engine.ReportProgress("Element Not Yet Found... " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+					Thread.Sleep(1000);
+				}
+			}
+
+			if (element == null)
+            {
+				FormsHelper.ShowAllForms(engine.AutomationEngineContext.IsDebugMode);
+				throw new Exception("Specified image was not found in window!");
+			}
+
+			PerformImageElementAction(engine, element);
+		}	
+
+		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
+		{
+			base.Render(editor, commandControls);
+
+			RenderedControls.AddRange(commandControls.CreateDefaultWindowControlGroupFor("v_WindowName", this, editor));
+
+			var imageCapture = commandControls.CreateDefaultPictureBoxFor("v_ImageCapture", this);
+			imageCapture.MouseEnter += ImageGridViewHelper_MouseEnter;
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ImageCapture", this));
+			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageCapture", this, new Control[] { imageCapture }, editor));
+			RenderedControls.Add(imageCapture);
+
+			_imageActionDropdown = commandControls.CreateDropdownFor("v_ImageAction", this);
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ImageAction", this));
+			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageAction", this, new Control[] { _imageActionDropdown }, editor));
+			_imageActionDropdown.SelectionChangeCommitted += ImageAction_SelectionChangeCommitted;
+			RenderedControls.Add(_imageActionDropdown);
+
+			_imageParameterControls = new List<Control>();
+			_imageParameterControls.Add(commandControls.CreateDefaultLabelFor("v_ImageActionParameterTable", this));
+
+			_imageGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ImageActionParameterTable", this);
+			_imageGridViewHelper.AllowUserToAddRows = false;
+			_imageGridViewHelper.AllowUserToDeleteRows = false;
+			//_imageGridViewHelper.AllowUserToResizeRows = false;
+			_imageGridViewHelper.MouseEnter += ImageGridViewHelper_MouseEnter;
+
+			_imageParameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageActionParameterTable", this, new Control[] { _imageGridViewHelper }, editor));
+			_imageParameterControls.Add(_imageGridViewHelper);
+			RenderedControls.AddRange(_imageParameterControls);
+
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_MatchAccuracy", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Timeout", this, editor));
+
+			return RenderedControls;
+		}
+
+		public override string GetDisplayValue()
+		{
+			return base.GetDisplayValue() + $" [{v_ImageAction} on Screen - Accuracy '{v_MatchAccuracy}']";
+		}
+
+		public void PerformImageElementAction(IAutomationEngineInstance engine, ImageElement element)
+		{
 			try
 			{
 				string clickPosition;
@@ -266,56 +358,15 @@ namespace OpenBots.Commands.Image
 					default:
 						break;
 				}
-				FormsHelper.ShowAllForms();
+				FormsHelper.ShowAllForms(engine.AutomationEngineContext.IsDebugMode);
 			}
 			catch (Exception ex)
 			{
-				FormsHelper.ShowAllForms();
-				if (element == null)
-					throw new Exception("Specified image was not found in window!");
-				else
-					throw ex;
+				FormsHelper.ShowAllForms(engine.AutomationEngineContext.IsDebugMode);
+				throw ex;
 			}
 		}
 
-		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
-		{
-			base.Render(editor, commandControls);
-
-			var imageCapture = commandControls.CreateDefaultPictureBoxFor("v_ImageCapture", this);
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ImageCapture", this));
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageCapture", this, new Control[] { imageCapture }, editor));
-			RenderedControls.Add(imageCapture);
-
-			_imageActionDropdown = commandControls.CreateDropdownFor("v_ImageAction", this);
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ImageAction", this));
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageAction", this, new Control[] { _imageActionDropdown }, editor));
-			_imageActionDropdown.SelectionChangeCommitted += ImageAction_SelectionChangeCommitted;
-			RenderedControls.Add(_imageActionDropdown);
-
-			_imageParameterControls = new List<Control>();
-			_imageParameterControls.Add(commandControls.CreateDefaultLabelFor("v_ImageActionParameterTable", this));
-
-			_imageGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ImageActionParameterTable", this);
-			_imageGridViewHelper.AllowUserToAddRows = false;
-			_imageGridViewHelper.AllowUserToDeleteRows = false;
-			//_imageGridViewHelper.AllowUserToResizeRows = false;
-			_imageGridViewHelper.MouseEnter += ImageGridViewHelper_MouseEnter;
-
-			_imageParameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ImageActionParameterTable", this, new Control[] { _imageGridViewHelper }, editor));
-			_imageParameterControls.Add(_imageGridViewHelper);
-			RenderedControls.AddRange(_imageParameterControls);
-
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_MatchAccuracy", this, editor));
-
-			return RenderedControls;
-		}
-
-		public override string GetDisplayValue()
-		{
-			return base.GetDisplayValue() + $" [{v_ImageAction} on Screen - Accuracy '{v_MatchAccuracy}']";
-		}
-		
 		private void ImageAction_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			SurfaceAutomationCommand cmd = this;
@@ -420,10 +471,7 @@ namespace OpenBots.Commands.Image
 
 				case "Wait For Image To Exist":
 					foreach (var ctrl in _imageParameterControls)
-						ctrl.Show();
-
-					if (sender != null)
-						actionParameters.Rows.Add("Timeout (Seconds)", 30);
+						ctrl.Hide();
 					break;
 
 				default:

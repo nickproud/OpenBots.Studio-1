@@ -56,11 +56,10 @@ namespace OpenBots.Commands.Window
 			string windowName = v_WindowName.ConvertUserVariableToString(engine);
 			var timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
 
-			var endDateTime = DateTime.Now.AddSeconds(timeout);
-
+			var timeToEnd = DateTime.Now.AddSeconds(timeout);
 			IntPtr hWnd = IntPtr.Zero;
 
-			while (DateTime.Now < endDateTime)
+			while (DateTime.Now < timeToEnd)
 			{
 				if (engine.IsCancellationPending)
 					break;
@@ -68,7 +67,7 @@ namespace OpenBots.Commands.Window
 
 				if (hWnd != IntPtr.Zero) //If found
 					break;
-				engine.ReportProgress($"Window '{windowName}' Not Yet Found... " + (endDateTime - DateTime.Now).Minutes + "m, " + (endDateTime - DateTime.Now).Seconds + "s remain");
+				engine.ReportProgress($"Window '{windowName}' Not Yet Found... {(timeToEnd - DateTime.Now).Minutes}m, {(timeToEnd - DateTime.Now).Seconds}s remain");
 				Thread.Sleep(1000);
 			}
 
