@@ -92,6 +92,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         break;
                 }
 
+                ScriptProject.SaveProject(mainScriptPath);
                 //show success dialog
                 Notify("Project has been created successfully!", Color.White);
             }
@@ -231,7 +232,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _mainFileName = ScriptProject.Main;
 
                 OpenOpenBotsFile(mainScriptPath);
-                ScriptFilePath = mainScriptPath;               
+                ScriptFilePath = mainScriptPath;
+                _scriptFileExtension = ".obscript";
+                _isMainScript = true;
             }
             catch (Exception ex)
             {
@@ -249,9 +252,32 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     case ProjectType.Python:
                         File.WriteAllText(mainScriptPath, _helloWorldTextPython);
                         File.Create(Path.Combine(new FileInfo(mainScriptPath).Directory.FullName, "requirements.txt")).Close();
+
+                        //assign pythonVersion and mainFunction arguments
+                        var mainFunctionArgument = new ProjectArgument
+                        {
+                            ArgumentName = "--MainFunction",
+                            ArgumentType = typeof(string),
+                            ArgumentValue = "main"
+                        };
+                        ScriptProject.ProjectArguments.Add(mainFunctionArgument);
+
+                        var pythonVersionArgument = new ProjectArgument
+                        {
+                            ArgumentName = "--PythonVersion",
+                            ArgumentType = typeof(string),
+                        };
+                        ScriptProject.ProjectArguments.Add(pythonVersionArgument);
                         break;
                     case ProjectType.TagUI:
                         File.WriteAllText(mainScriptPath, _helloWorldTextTagUI);
+
+                        var reportArgument = new ProjectArgument
+                        {
+                            ArgumentName = "-report",
+                            ArgumentType = typeof(string),
+                        };
+                        ScriptProject.ProjectArguments.Add(reportArgument);
                         break;
                     case ProjectType.CSScript:
                         File.WriteAllText(mainScriptPath, _helloWorldTextCSScript);
@@ -260,6 +286,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 
                 OpenTextEditorFile(mainScriptPath, ScriptProject.ProjectType);
                 ScriptFilePath = mainScriptPath;
+                _scriptFileExtension = Path.GetExtension(mainScriptPath);
+                _isMainScript = true;
             }
             catch (Exception ex)
             {
@@ -449,7 +477,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 try
                 {
                     string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
-                    string currentOpenScriptFilePath = _scriptFilePath;
+                    string currentOpenScriptFilePath = ScriptFilePath;
 
                     string fileExtension = Path.GetExtension(selectedNodePath).ToLower();
                     if (File.Exists(selectedNodePath))

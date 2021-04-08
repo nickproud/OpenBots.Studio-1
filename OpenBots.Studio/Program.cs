@@ -86,7 +86,7 @@ namespace OpenBots
                     case ProjectType.Python:
                     case ProjectType.TagUI:
                     case ProjectType.CSScript:
-                        ExecutionManager.RunTextEditorProject(configPath);
+                        ExecutionManager.RunTextEditorProject(configPath, Project.OpenProject(configPath).ProjectArguments);
                         break;
                 }                
             }

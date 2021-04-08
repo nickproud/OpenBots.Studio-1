@@ -115,12 +115,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.variables = new System.Windows.Forms.TabPage();
             this.dgvVariables = new System.Windows.Forms.DataGridView();
             this.variableName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.VariableType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.variableType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.variableValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.arguments = new System.Windows.Forms.TabPage();
             this.dgvArguments = new System.Windows.Forms.DataGridView();
             this.argumentName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ArgumentType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.argumentType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.argumentValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.direction = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.imports = new System.Windows.Forms.TabPage();
@@ -1443,7 +1443,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvVariables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvVariables.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.variableName,
-            this.VariableType,
+            this.variableType,
             this.variableValue});
             this.dgvVariables.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvVariables.Location = new System.Drawing.Point(3, 3);
@@ -1472,11 +1472,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // 
             // VariableType
             // 
-            this.VariableType.DataPropertyName = "VariableType";
-            this.VariableType.HeaderText = "Variable Type";
-            this.VariableType.MinimumWidth = 6;
-            this.VariableType.Name = "VariableType";
-            this.VariableType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.variableType.DataPropertyName = "VariableType";
+            this.variableType.HeaderText = "Variable Type";
+            this.variableType.MinimumWidth = 6;
+            this.variableType.Name = "variableType";
+            this.variableType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // variableValue
             // 
@@ -1502,7 +1502,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvArguments.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.argumentName,
-            this.ArgumentType,
+            this.argumentType,
             this.argumentValue,
             this.direction});
             this.dgvArguments.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1530,13 +1530,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.argumentName.MinimumWidth = 6;
             this.argumentName.Name = "argumentName";
             // 
-            // ArgumentType
+            // argumentType
             // 
-            this.ArgumentType.DataPropertyName = "ArgumentType";
-            this.ArgumentType.HeaderText = "Argument Type";
-            this.ArgumentType.MinimumWidth = 6;
-            this.ArgumentType.Name = "ArgumentType";
-            this.ArgumentType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.argumentType.DataPropertyName = "ArgumentType";
+            this.argumentType.HeaderText = "Argument Type";
+            this.argumentType.MinimumWidth = 6;
+            this.argumentType.Name = "argumentType";
+            this.argumentType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // argumentValue
             // 
@@ -2538,11 +2538,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private DataGridView dgvArguments;
         private Core.UI.Controls.UIPictureButton uiBtnAddArgument;
         private DataGridViewTextBoxColumn argumentName;
-        private DataGridViewComboBoxColumn ArgumentType;
+        private DataGridViewComboBoxColumn argumentType;
         private DataGridViewTextBoxColumn argumentValue;
         private DataGridViewComboBoxColumn direction;
         private DataGridViewTextBoxColumn variableName;
-        private DataGridViewComboBoxColumn VariableType;
+        private DataGridViewComboBoxColumn variableType;
         private DataGridViewTextBoxColumn variableValue;
         private ToolStripMenuItem runFromThisCommandToolStripMenuItem;
         private TabPage imports;

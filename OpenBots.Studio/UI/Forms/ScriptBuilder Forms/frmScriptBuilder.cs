@@ -22,6 +22,7 @@ using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Nuget;
+using OpenBots.Properties;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.Controls;
 using OpenBots.UI.Forms.Supplement_Forms;
@@ -67,6 +68,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public Project ScriptProject { get; set; }
         public string ScriptProjectPath { get; private set; }
         private string _mainFileName;
+        private string _scriptFileExtension;
+        private bool _isMainScript;
         public Logger EngineLogger { get; set; }
         public IfrmScriptEngine CurrentEngine { get; set; }      
 
@@ -155,8 +158,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             ResetVariableArgumentBindings();
 
                             if (_selectedTabScriptActions is ListView)
-                                splitContainerScript.Panel2Collapsed = false; 
-                            
+                                SetVarArgTabControlSettings(ProjectType.OpenBots);
+                            else
+                                SetVarArgTabControlSettings(ProjectType.Python);
+                                                           
                             tpProject.Controls[0].Enabled = true;
                             tpCommands.Controls[0].Enabled = true;
                             tlpControls.Controls[0].Enabled = true;
@@ -211,10 +216,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private float _thickBarHeight;
 
         //hello world
-        private const string _helloWorldTextPython = "import ctypes\nctypes.windll.user32.MessageBoxW(0, \"Hello World\", \"Hello World\", 1)";
-        private const string _helloWorldTextTagUI = "https://openbots.ai/\nclick Register\nwait 5";
-        private const string _helloWorldTextCSScript = "using System;\nusing System.Windows.Forms;\n\npublic class Script\n{\n\t" + 
-                                                "public static void Main(object[] args)\n\t{\n\t\tMessageBox.Show(\"Hello World\");\n\t}\n}";
+        private string _helloWorldTextPython = Resources.DefaultPythonScript;
+        private string _helloWorldTextTagUI = Resources.DefaultTagUIScript;
+        private string _helloWorldTextCSScript = Resources.DefaultCSScript;
         #endregion
 
         #region Form Events
@@ -284,13 +288,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
 
-            VariableType.DataSource = defaultTypesBinding;
-            VariableType.DisplayMember = "Key";
-            VariableType.ValueMember = "Value";
+            variableType.DataSource = defaultTypesBinding;
+            variableType.DisplayMember = "Key";
+            variableType.ValueMember = "Value";
 
-            ArgumentType.DataSource = defaultTypesBinding;
-            ArgumentType.DisplayMember = "Key";
-            ArgumentType.ValueMember = "Value";
+            argumentType.DataSource = defaultTypesBinding;
+            argumentType.DisplayMember = "Key";
+            argumentType.ValueMember = "Value";
 
             var importedNameSpacesBinding = new BindingSource(_importedNamespaces, null);
             lbxImportedNamespaces.DataSource = importedNameSpacesBinding;

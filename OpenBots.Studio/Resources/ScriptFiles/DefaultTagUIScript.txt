@@ -1,0 +1,5 @@
+https://openbots.ai/
+
+click Register
+
+wait 5

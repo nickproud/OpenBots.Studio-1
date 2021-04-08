@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -71,8 +72,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //if the variable/argument name is valid, set value cell's readonly as false
                     else
                     {
-                        foreach (DataGridViewCell cell in dgv.Rows[e.RowIndex].Cells)
-                            cell.ReadOnly = false;                          
+                        if (_scriptFileExtension == ".obscript")
+                        {
+                            foreach (DataGridViewCell cell in dgv.Rows[e.RowIndex].Cells)
+                                cell.ReadOnly = false;
+                        }
+                        //if script isn't an obscript, enable the value cell only
+                        else
+                            dgv.Rows[e.RowIndex].Cells[2].ReadOnly = false;
 
                         dgv.Rows[e.RowIndex].Cells[0].Value = variableName.Trim(); 
                     }
@@ -115,7 +122,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         if (cell.ColumnIndex != 0)
                             cell.ReadOnly = true;
                     }
-                }
+                }                
             }
             catch (Exception ex)
             {
@@ -128,8 +135,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             try
             {
-                //prevents the ProjectPath row from being deleted
-                if (e.Row.Cells[0].Value?.ToString() == "ProjectPath")
+                string varArgName = e.Row.Cells[0].Value?.ToString();
+                    //prevents the ProjectPath row from being deleted
+                if (varArgName == "ProjectPath" && _scriptFileExtension == ".obscript")
+                    e.Cancel = true;
+                else if((varArgName == "--PythonVersion" || varArgName == "--MainFunction") && _scriptFileExtension == ".py")
                     e.Cancel = true;
                 else
                 {
@@ -153,9 +163,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
+                    string varArgName = row.Cells[0].Value?.ToString();
+
                     //sets the entire ProjectPath row as readonly
-                    if (row.Cells[0].Value?.ToString() == "ProjectPath")
+                    if (varArgName == "ProjectPath" && _scriptFileExtension == ".obscript")
                         row.ReadOnly = true;
+                    else if ((varArgName == "--PythonVersion" || varArgName == "--MainFunction") && _scriptFileExtension == ".py")
+                        row.Cells[0].ReadOnly = true;
 
                     //adds new type to default list when a script containing non-defaults is loaded
                     if (!_typeContext.DefaultTypes.ContainsKey(((Type)row.Cells[1].Value)?.ToString()))
@@ -237,8 +251,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.FullName))
                             {
                                 _typeContext.DefaultTypes.Add(typeForm.SelectedType.FullName, typeForm.SelectedType);
-                                VariableType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
-                                ArgumentType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+                                variableType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+                                argumentType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
                             }
 
                             dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = typeForm.SelectedType;
@@ -333,14 +347,47 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
 
             var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
-            VariableType.DataSource = defaultTypesBinding;
-            ArgumentType.DataSource = defaultTypesBinding;
+            variableType.DataSource = defaultTypesBinding;
+            argumentType.DataSource = defaultTypesBinding;
 
             var importedNameSpacesBinding = new BindingSource(_importedNamespaces, null);
             lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
 
             var allNameSpacesBinding = new BindingSource(_allNamespaces, null);
             cbxAllNamespaces.DataSource = allNameSpacesBinding;
+        }
+
+        private void SetVarArgTabControlSettings(ProjectType projectType)
+        {
+            switch (projectType)
+            {
+                case ProjectType.OpenBots:
+                    splitContainerScript.Panel2Collapsed = false;
+
+                    if (!uiVariableArgumentTabs.TabPages.Contains(variables))
+                        uiVariableArgumentTabs.TabPages.Insert(0, variables);
+                    if (!uiVariableArgumentTabs.TabPages.Contains(imports))
+                        uiVariableArgumentTabs.TabPages.Add(imports);
+
+                    dgvArguments.Columns["argumentType"].ReadOnly = false;
+                    dgvArguments.Columns["direction"].ReadOnly = false;
+                    break;
+                case ProjectType.Python:
+                case ProjectType.TagUI:
+                case ProjectType.CSScript:
+                    if (_isMainScript)
+                        splitContainerScript.Panel2Collapsed = false;           
+                    else
+                        splitContainerScript.Panel2Collapsed = true;
+
+                    uiVariableArgumentTabs.TabPages.Remove(variables);
+                    uiVariableArgumentTabs.TabPages.Remove(imports);
+
+                    dgvArguments.Columns["argumentType"].ReadOnly = true;
+                    dgvArguments.Columns["direction"].ReadOnly = true;
+                    break;
+            }
+
         }
 
         private void dgvVariablesArguments_KeyDown(object sender, KeyEventArgs e)
@@ -363,7 +410,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         case Keys.S:
                             ClearSelectedListViewItems();
-                            SaveToOpenBotsFile(false);
+                            if (_selectedTabScriptActions is ListView)
+                                SaveToOpenBotsFile(false);
+                            else
+                                SaveToTextEditorFile(false);
                             break;
                         case Keys.J:
                             OpenArgumentManager();

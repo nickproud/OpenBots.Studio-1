@@ -19,37 +19,40 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (uiScriptTabControl.TabCount > 0)
             {
                 ScriptFilePath = uiScriptTabControl.SelectedTab.ToolTipText.ToString();
-                string fileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
 
-                switch (fileExtension)
+                switch (_scriptFileExtension)
                 {
                     case ".obscript":
                         if (!_isScriptRunning)
-                            splitContainerScript.Panel2Collapsed = false;
-
-                        _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
-                        ScriptObject scriptObject = (ScriptObject)uiScriptTabControl.SelectedTab.Tag;
-                        if (scriptObject != null)
-                        {
-                            _scriptVariables = scriptObject.ScriptVariables;
-                            _scriptArguments = scriptObject.ScriptArguments;
-                            _scriptElements = scriptObject.ScriptElements;
-                            _importedNamespaces = scriptObject.ImportedNamespaces;
-
-                            if (!_isRunTaskCommand)
-                            {
-                                ResetVariableArgumentBindings();
-                            }
-                        }
+                            SetVarArgTabControlSettings(ProjectType.OpenBots);
+                            
+                        _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];     
                         break;
                     case ".py":
                     case ".tag":
                     case ".cs":
-                        _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
-                        splitContainerScript.Panel2Collapsed = true;
+                        if (!_isScriptRunning)
+                            SetVarArgTabControlSettings(ProjectType.Python);
+
+                        _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];                       
                         break;
                 }
-                          
+
+                ScriptObject scriptObject = (ScriptObject)uiScriptTabControl.SelectedTab.Tag;
+                if (scriptObject != null)
+                {
+                    _scriptVariables = scriptObject.ScriptVariables;
+                    _scriptArguments = scriptObject.ScriptArguments;
+                    _scriptElements = scriptObject.ScriptElements;
+                    _importedNamespaces = scriptObject.ImportedNamespaces;
+
+                    if (!_isRunTaskCommand)
+                    {
+                        ResetVariableArgumentBindings();
+                    }
+                }
             }
         }
 

@@ -976,6 +976,9 @@
     <Content Include="Firefox\softokn3.dll" />
     <Content Include="Firefox\xul.dll" />
     <Content Include="OpenBots-ico.ico" />
+    <Content Include="Resources\ScriptFiles\DefaultCSScript.txt" />
+    <Content Include="Resources\ScriptFiles\DefaultPythonScript.txt" />
+    <None Include="Resources\ScriptFiles\DefaultTagUIScript.txt" />
     <None Include="Resources\ActionBar\action-bar-search.png" />
     <None Include="Resources\Misc\robot-bouncing.gif" />
     <None Include="Resources\Engine\engine-cancel.png" />
