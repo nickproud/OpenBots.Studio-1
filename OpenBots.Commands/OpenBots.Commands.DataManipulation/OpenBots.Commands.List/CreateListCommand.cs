@@ -166,7 +166,7 @@ namespace OpenBots.Commands.List
 
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_ListType", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListItems", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_OutputUserVariableName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}

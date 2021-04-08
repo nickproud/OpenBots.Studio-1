@@ -94,9 +94,9 @@ namespace OpenBots.UI.CustomControls
             var variableNameControl = AddVariableNames(CreateStandardComboboxFor(parameterName, parent), editor);
             var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { variableNameControl }, editor);
 
-            variableNameControl.Click += (sender, e) => VariableNameControl_Click(sender, e, editor);
-            variableNameControl.KeyPress += DropdownBox_KeyPress;
-            variableNameControl.KeyDown += DropdownBox_KeyDown;
+            //variableNameControl.Click += (sender, e) => VariableNameControl_Click(sender, e, editor);
+            //variableNameControl.KeyPress += DropdownBox_KeyPress;
+            //variableNameControl.KeyDown += DropdownBox_KeyDown;
 
             controlList.Add(label);
             controlList.AddRange(helpers);
