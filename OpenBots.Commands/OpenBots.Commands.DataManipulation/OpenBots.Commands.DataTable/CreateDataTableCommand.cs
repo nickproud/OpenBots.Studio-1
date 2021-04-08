@@ -55,7 +55,7 @@ namespace OpenBots.Commands.DataTable
 			v_ColumnNameDataTable.Columns.Add("Column Name");
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
@@ -63,10 +63,10 @@ namespace OpenBots.Commands.DataTable
 
 			foreach(DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 			{
-				Dt.Columns.Add(rwColumnName.Field<string>("Column Name").ConvertUserVariableToString(engine));
+				Dt.Columns.Add((string)await rwColumnName.Field<string>("Column Name").EvaluateCode(engine));
 			}
 
-			Dt.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			Dt.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

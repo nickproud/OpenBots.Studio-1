@@ -66,14 +66,14 @@ namespace OpenBots.Commands.DataTable
 			v_Option = "Column Index";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
+			var dataTableVariable = await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 			OBDataTable dataTable = (OBDataTable)dataTableVariable;
 
-			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);
+			var valueIndex = (string)await v_DataValueIndex.EvaluateCode(engine);
 
 			string columnName = "";
 
@@ -92,7 +92,7 @@ namespace OpenBots.Commands.DataTable
 						group table by new { placeCol = table[columnName] } into dataTableGroup
 						select dataTableGroup.ToList().CopyToDataTable()).ToList();
 
-			dataTableList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			dataTableList.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

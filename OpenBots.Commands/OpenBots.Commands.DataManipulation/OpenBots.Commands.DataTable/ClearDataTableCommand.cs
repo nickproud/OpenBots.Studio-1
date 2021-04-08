@@ -35,15 +35,15 @@ namespace OpenBots.Commands.DataTable
 			CommandIcon = Resources.command_spreadsheet;
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
+			var dataTableVariable = await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 			OBDataTable dataTable = (OBDataTable)dataTableVariable;
 
 			dataTable.Clear();
-			dataTable.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
+			dataTable.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

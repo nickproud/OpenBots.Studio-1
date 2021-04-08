@@ -85,14 +85,14 @@ namespace OpenBots.Commands.DataTable
 			v_SortOrder = "Alphabetical";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
+			var dataTableVariable = await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 			OBDataTable dataTable = (OBDataTable)dataTableVariable;
 
-			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);
+			var valueIndex = (string)await v_DataValueIndex.EvaluateCode(engine);
 
 			string columnName = "";
 
@@ -128,7 +128,7 @@ namespace OpenBots.Commands.DataTable
 								 orderby Convert.ToInt32(row[columnName]) descending
 								 select row).CopyToDataTable();
 			}
-			dataTable.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			dataTable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

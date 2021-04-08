@@ -60,7 +60,7 @@ namespace OpenBots.Commands.DataTable
 			v_MissingSchemaAction = "Add";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			/* ------------Before Merge Operation, following conditions must be checked---------------
 
@@ -72,8 +72,8 @@ namespace OpenBots.Commands.DataTable
 			var engine = (IAutomationEngineInstance)sender;
 
 			// Get Variable Objects
-			var v_SourceDTVariable = v_SourceDataTable.ConvertUserVariableToObject(engine, nameof(v_SourceDataTable), this);
-			var v_DestinationDTVariable = v_DestinationDataTable.ConvertUserVariableToObject(engine, nameof(v_DestinationDataTable), this);
+			var v_SourceDTVariable = await v_SourceDataTable.EvaluateCode(engine, nameof(v_SourceDataTable), this);
+			var v_DestinationDTVariable = await v_DestinationDataTable.EvaluateCode(engine, nameof(v_DestinationDataTable), this);
 
 			// (Null Check)
 			if (v_SourceDTVariable is null)
@@ -114,7 +114,7 @@ namespace OpenBots.Commands.DataTable
 				}
 
 				// Update Destination Variable Value
-				destinationDT.StoreInUserVariable(engine, v_DestinationDataTable, nameof(v_DestinationDataTable), this);               
+				destinationDT.SetVariableValue(engine, v_DestinationDataTable, nameof(v_DestinationDataTable), this);               
 			}
 
 		}

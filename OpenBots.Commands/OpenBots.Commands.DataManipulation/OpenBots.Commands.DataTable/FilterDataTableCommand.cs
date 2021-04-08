@@ -65,18 +65,18 @@ namespace OpenBots.Commands.DataTable
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vSearchItem = v_SearchItem.ConvertUserVariableToString(engine);
+			var vSearchItem = (string)await v_SearchItem.EvaluateCode(engine);
 
-			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
+			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
             if (v_FilterOption == "RowFilter")
             {
 				DataView dv = new DataView(Dt);
 				dv.RowFilter = vSearchItem;
-				dv.ToTable().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				dv.ToTable().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
             else
             {
@@ -123,7 +123,7 @@ namespace OpenBots.Commands.DataTable
 				foreach (DataRow item in templist)
 					outputDT.Rows.Add(item.ItemArray);
 
-				outputDT.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				outputDT.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 
 		}
