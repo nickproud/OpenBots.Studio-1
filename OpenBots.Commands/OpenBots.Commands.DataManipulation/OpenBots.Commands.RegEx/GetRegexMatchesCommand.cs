@@ -57,16 +57,16 @@ namespace OpenBots.Commands.RegEx
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vInputData = v_InputText.ConvertUserVariableToString(engine);
-			string vRegex = v_Regex.ConvertUserVariableToString(engine);
+			var vInputData = (string)await v_InputText.EvaluateCode(engine);
+			string vRegex = (string)await v_Regex.EvaluateCode(engine);
 
 			var matches = (from match in Regex.Matches(vInputData, vRegex).Cast<Match>() 
 						   select match.Groups[0].Value).ToList();
 
-			matches.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			matches.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

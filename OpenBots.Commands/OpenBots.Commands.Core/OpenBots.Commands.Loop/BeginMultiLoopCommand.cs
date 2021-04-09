@@ -15,6 +15,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Loop
 {
@@ -61,10 +62,10 @@ namespace OpenBots.Commands.Loop
 			v_LoopConditionsTable.Columns.Add("CommandData");
 		}
 
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			bool isTrueStatement = DetermineMultiStatementTruth(engine);
+			bool isTrueStatement = await DetermineMultiStatementTruth(engine);
 			engine.ReportProgress("Starting Loop");
 
 			while (isTrueStatement)
@@ -90,7 +91,7 @@ namespace OpenBots.Commands.Loop
 						break;
 					}
 				}
-				isTrueStatement = DetermineMultiStatementTruth(engine);
+				isTrueStatement = await DetermineMultiStatementTruth(engine);
 			}
 		}
 
@@ -145,14 +146,14 @@ namespace OpenBots.Commands.Loop
 			}
 		}
 
-		private bool DetermineMultiStatementTruth(IAutomationEngineInstance engine)
+		private async Tasks.Task<bool> DetermineMultiStatementTruth(IAutomationEngineInstance engine)
 		{
 			bool isTrueStatement = true;
 			foreach (DataRow rw in v_LoopConditionsTable.Rows)
 			{
 				var commandData = rw["CommandData"].ToString();
 				var loopCommand = JsonConvert.DeserializeObject<BeginLoopCommand>(commandData);
-				var statementResult = CommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable);
+				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable);
 
 				if (!statementResult && v_LogicType == "And")
 				{

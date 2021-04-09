@@ -26,7 +26,7 @@ namespace OpenBots.Commands.ErrorHandling
             ScopeStartCommand = true;
         }
 
-        public override void RunCommand(object sender, ScriptAction parentCommand)
+        public async override void RunCommand(object sender, ScriptAction parentCommand)
         {
             //get engine
             var engine = (IAutomationEngineInstance) sender;

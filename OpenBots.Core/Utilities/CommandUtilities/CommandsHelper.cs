@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 
 namespace OpenBots.Core.Utilities.CommandUtilities
@@ -66,7 +67,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             return descriptions[0].Description;
         }
 
-        public static AutomationElement SearchForGUIElement(IAutomationEngineInstance engine, DataTable uiaSearchParams, string variableWindowName)
+        public async static Task<AutomationElement> SearchForGUIElement(IAutomationEngineInstance engine, DataTable uiaSearchParams, string variableWindowName)
         {
             User32Functions.ActivateWindow(variableWindowName);
             //create search params
@@ -81,7 +82,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
                 var parameterName = (string)param["Parameter Name"];
                 var parameterValue = (string)param["Parameter Value"];
 
-                parameterValue = parameterValue.ConvertUserVariableToString(engine);
+                parameterValue = (string)await parameterValue.EvaluateCode(engine);
 
                 PropertyCondition propCondition;
                 if (bool.TryParse(parameterValue, out bool bValue))
@@ -190,7 +191,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             }
         }
 
-        public static object FindElement(IAutomationEngineInstance engine, IWebDriver seleniumInstance, List<string[]> searchParameterRows, 
+        public async static Task<object> FindElement(IAutomationEngineInstance engine, IWebDriver seleniumInstance, List<string[]> searchParameterRows, 
             string searchOption, int timeout)
         {
             var wait = new WebDriverWait(seleniumInstance, new TimeSpan(0, 0, timeout));
@@ -201,7 +202,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
             foreach (var row in searchParameterRows)
             {
-                string parameter = row[2].ToString().ConvertUserVariableToString(engine);
+                string parameter = (string)await row[2].ToString().EvaluateCode(engine);
                 switch (row[1].ToString())
                 {
                     case string a when a.ToLower().Contains("xpath"):
@@ -305,7 +306,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             return element;
         }
 
-		public static bool DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable)
+		public async static Task<bool> DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable)
 		{
 			bool ifResult = false;
 
@@ -321,8 +322,8 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 								  where rw.Field<string>("Parameter Name") == "Value2"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				value1 = value1.ConvertUserVariableToString(engine);
-				value2 = value2.ConvertUserVariableToString(engine);
+				value1 = (string)await value1.EvaluateCode(engine);
+				value2 = (string)await value2.EvaluateCode(engine);
 
 				decimal cdecValue1, cdecValue2;
 
@@ -375,10 +376,10 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
 				DateTime dt1, dt2;
 
-				dynamic input1 = value1.ConvertUserVariableToString(engine);
+				dynamic input1 = (string)await value1.EvaluateCode(engine);
 
 				if (input1 == value1 && input1.StartsWith("{") && input1.EndsWith("}"))
-					input1 = value1.ConvertUserVariableToObject(engine, typeof(object));
+					input1 = value1.EvaluateCode(engine, typeof(object));
 
 				if (input1 is DateTime)
 					dt1 = (DateTime)input1;
@@ -387,10 +388,10 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				else
 					throw new InvalidDataException("Value1 is not a valid DateTime");
 
-				dynamic input2 = value2.ConvertUserVariableToString(engine);
+				dynamic input2 = (string)await value2.EvaluateCode(engine);
 
 				if (input2 == value2 && input2.StartsWith("{") && input2.EndsWith("}"))
-					input2 = value2.ConvertUserVariableToObject(engine, typeof(object));
+					input2 = value2.EvaluateCode(engine, typeof(object));
 
 				if (input2 is DateTime)
 					dt2 = (DateTime)input2;
@@ -442,8 +443,8 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										 where rw.Field<string>("Parameter Name") == "Case Sensitive"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				value1 = value1.ConvertUserVariableToString(engine);
-				value2 = value2.ConvertUserVariableToString(engine);
+				value1 = (string)await value1.EvaluateCode(engine);
+				value2 = (string)await value2.EvaluateCode(engine);
 
 				if (caseSensitive == "No")
 				{
@@ -476,7 +477,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										where rw.Field<string>("Parameter Name") == "Variable Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var actualVariable = variableName.ConvertUserVariableToObject(engine, typeof(object));
+				var actualVariable = variableName.EvaluateCode(engine, typeof(object));
 
 				if (actualVariable != null)
 					ifResult = true;
@@ -489,7 +490,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										where rw.Field<string>("Parameter Name") == "Variable Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var actualVariable = variableName.ConvertUserVariableToString(engine).Trim();
+				var actualVariable = ((string)await variableName.EvaluateCode(engine)).Trim();
 
 				var numericTest = decimal.TryParse(actualVariable, out decimal parsedResult);
 
@@ -506,7 +507,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 				//convert to variable
-				string variableLineNumber = userLineNumber.ConvertUserVariableToString(engine);
+				string variableLineNumber = (string)await userLineNumber.EvaluateCode(engine);
 
 				//convert to int
 				int lineNumber = int.Parse(variableLineNumber);
@@ -516,9 +517,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				{
 
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.StoreInUserVariable(engine, "Error.Message", typeof(string));
-					error.LineNumber.ToString().StoreInUserVariable(engine, "Error.Line", typeof(string));
-					error.StackTrace.StoreInUserVariable(engine, "Error.StackTrace", typeof(string));
+					error.ErrorMessage.SetVariableValue(engine, "Error.Message", typeof(string));
+					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", typeof(string));
+					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", typeof(string));
 
 					ifResult = true;
 				}
@@ -533,7 +534,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 				//convert to variable
-				string variableLineNumber = userLineNumber.ConvertUserVariableToString(engine);
+				string variableLineNumber = (string)await userLineNumber.EvaluateCode(engine);
 
 				//convert to int
 				int lineNumber = int.Parse(variableLineNumber);
@@ -546,9 +547,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				else
 				{
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.StoreInUserVariable(engine, "Error.Message", typeof(string));
-					error.LineNumber.ToString().StoreInUserVariable(engine, "Error.Line", typeof(string));
-					error.StackTrace.StoreInUserVariable(engine, "Error.StackTrace", typeof(string));
+					error.ErrorMessage.SetVariableValue(engine, "Error.Message", typeof(string));
+					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", typeof(string));
+					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", typeof(string));
 
 					ifResult = false;
 				}
@@ -560,7 +561,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 									  where rw.Field<string>("Parameter Name") == "Window Name"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				//variable translation
-				string variablizedWindowName = windowName.ConvertUserVariableToString(engine);
+				string variablizedWindowName = (string)await windowName.EvaluateCode(engine);
 
 				//search for window
 				IntPtr windowPtr = User32Functions.FindWindow(variablizedWindowName);
@@ -577,7 +578,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 									  where rw.Field<string>("Parameter Name") == "Window Name"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				string variablizedWindowName = windowName.ConvertUserVariableToString(engine);
+				string variablizedWindowName = (string)await windowName.EvaluateCode(engine);
 
 				var currentWindowTitle = User32Functions.GetActiveWindowTitle();
 
@@ -598,7 +599,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var userFileSelected = fileName.ConvertUserVariableToString(engine);
+				var userFileSelected = (string)await fileName.EvaluateCode(engine);
 
 				bool existCheck = false;
 				if (trueWhenFileExists == "It Does Exist")
@@ -621,7 +622,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var userFolderSelected = folderName.ConvertUserVariableToString(engine);
+				var userFolderSelected = (string)await folderName.EvaluateCode(engine);
 
 				bool existCheck = false;
 				if (trueWhenFileExists == "It Does Exist")
@@ -664,17 +665,20 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 			}
 			else if (ifActionType == "GUI Element Exists")
 			{
-				string windowName = ((from rw in IfActionParameterTable.AsEnumerable()
+				string windowName = (from rw in IfActionParameterTable.AsEnumerable()
 									  where rw.Field<string>("Parameter Name") == "Window Name"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+									  select rw.Field<string>("Parameter Value")).FirstOrDefault();
+				windowName = (string)await windowName.EvaluateCode(engine);
 
-				string elementSearchParam = ((from rw in IfActionParameterTable.AsEnumerable()
+				string elementSearchParam = (from rw in IfActionParameterTable.AsEnumerable()
 											  where rw.Field<string>("Parameter Name") == "Element Search Parameter"
-											  select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
+				elementSearchParam = (string)await elementSearchParam.EvaluateCode(engine);
 
-				string elementSearchMethod = ((from rw in IfActionParameterTable.AsEnumerable()
+				string elementSearchMethod = (from rw in IfActionParameterTable.AsEnumerable()
 											   where rw.Field<string>("Parameter Name") == "Element Search Method"
-											   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+											   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+				elementSearchMethod = (string)await elementSearchMethod.EvaluateCode(engine);
 
 				string trueWhenElementExists = (from rw in IfActionParameterTable.AsEnumerable()
 												where rw.Field<string>("Parameter Name") == "True When"
@@ -682,7 +686,8 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
 				string timeout = (from rw in IfActionParameterTable.AsEnumerable()
 								  where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
-								  select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine);
+								  select rw.Field<string>("Parameter Value")).FirstOrDefault();
+				timeout = (string)await timeout.EvaluateCode(engine);
 
 				//set up search parameter table
 				var uiASearchParameters = new DataTable();
@@ -698,7 +703,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				{
 					try
 					{
-						handle = SearchForGUIElement(engine, uiASearchParameters, windowName);
+						handle = await SearchForGUIElement(engine, uiASearchParameters, windowName);
 						break;
 					}
 					catch (Exception)
@@ -721,12 +726,14 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				string imageName = (from rw in IfActionParameterTable.AsEnumerable()
 									where rw.Field<string>("Parameter Name") == "Captured Image Variable"
 									select rw.Field<string>("Parameter Value")).FirstOrDefault();
+				string accuracyString;
 				double accuracy;
 				try
 				{
-					accuracy = double.Parse((from rw in IfActionParameterTable.AsEnumerable()
+					accuracyString = (from rw in IfActionParameterTable.AsEnumerable()
 											 where rw.Field<string>("Parameter Name") == "Accuracy (0-1)"
-											 select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+											 select rw.Field<string>("Parameter Value")).FirstOrDefault();
+					accuracy = double.Parse((string)await accuracyString.EvaluateCode(engine));
 					if (accuracy > 1 || accuracy < 0)
 						throw new ArgumentOutOfRangeException("Accuracy value is out of range (0-1)");
 				}
@@ -739,7 +746,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				var imageVariable = imageName.ConvertUserVariableToObject(engine, typeof(Bitmap));
+				var imageVariable = await imageName.EvaluateCode(engine, typeof(Bitmap));
 
 				Bitmap capturedImage;
 				if (imageVariable != null && imageVariable is Bitmap)

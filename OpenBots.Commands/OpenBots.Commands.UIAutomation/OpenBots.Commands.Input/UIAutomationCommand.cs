@@ -118,7 +118,7 @@ namespace OpenBots.Commands.Input
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vTimeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
@@ -138,7 +138,7 @@ namespace OpenBots.Commands.Input
 					if (engine.IsCancellationPending)
 						break;
 
-					requiredHandle = CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
+					requiredHandle = await CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
 
 					if (requiredHandle == null)
 						throw new Exception("Element Not Yet Found... ");

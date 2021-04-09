@@ -22,7 +22,7 @@ namespace OpenBots.Commands.ErrorHandling
             CommandEnabled = true;           
         }
 
-        public override void RunCommand(object sender)
+        public async override void RunCommand(object sender)
         {
             //no execution required, used as a marker by the Automation Engine
         }

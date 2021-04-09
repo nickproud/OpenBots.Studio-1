@@ -64,13 +64,13 @@ namespace OpenBots.Commands.Engine
 			v_LogType = "Information";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get text to log and log file name       
-			var textToLog = v_LogText.ConvertUserVariableToString(engine);
-			var loggerFilePath = v_LogFile.ConvertUserVariableToString(engine);
+			var textToLog = (string)await v_LogText.EvaluateCode(engine);
+			var loggerFilePath = (string)await v_LogFile.EvaluateCode(engine);
 
 			//determine log file
 			if (v_LogFile == "Engine Logs")

@@ -37,10 +37,10 @@ namespace OpenBots.Commands.Engine
 			v_EngineDelay = "250";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var engineDelay = v_EngineDelay.ConvertUserVariableToString(engine);
+			var engineDelay = (string)await v_EngineDelay.EvaluateCode(engine);
 			var delay = int.Parse(engineDelay);
 
 			//update delay setting

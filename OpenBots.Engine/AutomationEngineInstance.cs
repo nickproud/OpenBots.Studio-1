@@ -175,7 +175,7 @@ namespace OpenBots.Engine
             }).Start();
         }
 
-        private void ExecuteScript(bool dataIsFile)
+        private async void ExecuteScript(bool dataIsFile)
         {
             try
             {
@@ -220,6 +220,12 @@ namespace OpenBots.Engine
                 }
 
                 AutomationEngineContext.Variables = automationScript.Variables;
+                foreach (OBScriptVariable var in AutomationEngineContext.Variables)
+                {
+                    await VariableMethods.EvaluateCode(var.VariableName, "null", var.VariableType, this);
+                    var.VariableValue.SetVariableValue(this, var.VariableName, var.VariableType);
+                }
+
 
                 //update ProjectPath variable
                 var projectPathVariable = AutomationEngineContext.Variables.Where(v => v.VariableName == "ProjectPath").SingleOrDefault();
@@ -253,6 +259,11 @@ namespace OpenBots.Engine
                 }
 
                 AutomationEngineContext.Arguments = automationScript.Arguments;
+                foreach (ScriptArgument var in AutomationEngineContext.Arguments)
+                {
+                    await VariableMethods.EvaluateCode(var.ArgumentName, "null", var.ArgumentType, this);
+                    var.ArgumentValue.SetVariableValue(this, var.ArgumentName, var.ArgumentType);
+                }
 
                 ReportProgress("Creating Element List");
 

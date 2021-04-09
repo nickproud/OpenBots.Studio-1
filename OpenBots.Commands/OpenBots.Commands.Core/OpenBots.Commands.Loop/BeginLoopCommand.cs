@@ -98,10 +98,10 @@ namespace OpenBots.Commands.Loop
 			_recorderControl.Hide();
 		}
 
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var loopResult = CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
+			var loopResult = await CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
 			engine.ReportProgress("Starting Loop"); 
 
 			while (loopResult)
@@ -127,7 +127,7 @@ namespace OpenBots.Commands.Loop
 						break;
 					}
 				}
-				loopResult = CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
+				loopResult = await CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
 			}
 		}
 

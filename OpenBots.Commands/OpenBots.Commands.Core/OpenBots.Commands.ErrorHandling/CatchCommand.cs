@@ -49,7 +49,7 @@ namespace OpenBots.Commands.ErrorHandling
 			v_ExceptionType = "Exception";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			//no execution required, used as a marker by the Automation Engine
 		}

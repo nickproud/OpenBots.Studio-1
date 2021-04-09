@@ -95,10 +95,10 @@ namespace OpenBots.Commands.If
 			_recorderControl.Hide();
 		}
 
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var ifResult = CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
+			var ifResult = await CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
 
 			int startIndex, endIndex, elseIndex;
 			if (parentCommand.AdditionalScriptCommands.Any(item => item.ScriptCommand is ElseCommand))

@@ -34,7 +34,7 @@ namespace OpenBots.Commands.Engine
 			v_CalculationOption = "Enable Automatic Calculations";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 

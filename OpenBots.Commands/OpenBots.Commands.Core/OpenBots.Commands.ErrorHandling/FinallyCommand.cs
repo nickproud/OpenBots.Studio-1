@@ -23,7 +23,7 @@ namespace OpenBots.Commands.ErrorHandling
 
         }
 
-        public override void RunCommand(object sender, ScriptAction parentCommand)
+        public async override void RunCommand(object sender, ScriptAction parentCommand)
         {
             //no execution required, used as a marker by the Automation Engine
         }

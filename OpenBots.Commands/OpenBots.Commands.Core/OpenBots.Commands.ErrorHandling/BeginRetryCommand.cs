@@ -17,6 +17,7 @@ using System.Data;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.ErrorHandling
 {
@@ -86,14 +87,14 @@ namespace OpenBots.Commands.ErrorHandling
 			v_IfConditionsTable.Columns.Add("CommandData");
 		}
 
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			//get engine
 			var engine = (IAutomationEngineInstance)sender;
 			var retryCommand = (BeginRetryCommand)parentCommand.ScriptCommand;
 
-			int retryCount = int.Parse(retryCommand.v_RetryCount.ConvertUserVariableToString(engine));
-			int retryInterval = int.Parse(retryCommand.v_RetryInterval.ConvertUserVariableToString(engine))*1000;
+			int retryCount = (int)await retryCommand.v_RetryCount.EvaluateCode(engine);
+			int retryInterval = ((int)await retryCommand.v_RetryInterval.EvaluateCode(engine))*1000;
 			bool exceptionOccurred;
 
 			for(int startIndex = 0; startIndex < retryCount; startIndex++)
@@ -122,7 +123,7 @@ namespace OpenBots.Commands.ErrorHandling
 					}
 				}
 				// If no exception is thrown out and the Condition's satisfied				
-				if (!exceptionOccurred && GetConditionResult(engine))
+				if (!exceptionOccurred && await GetConditionResult(engine))
 				{
 					engine.ErrorsOccured.Clear();
 					retryCount = 0;					
@@ -258,14 +259,14 @@ namespace OpenBots.Commands.ErrorHandling
 			}
 		}
 
-		private bool GetConditionResult(IAutomationEngineInstance engine)
+		private async Tasks.Task<bool> GetConditionResult(IAutomationEngineInstance engine)
 		{
 			bool isTrueStatement = true;
 			foreach (DataRow rw in v_IfConditionsTable.Rows)
 			{
 				var commandData = rw["CommandData"].ToString();
 				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
-				var statementResult = CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
+				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
 
 				if (!statementResult && v_LogicType == "And")
 				{

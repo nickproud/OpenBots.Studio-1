@@ -22,7 +22,7 @@ namespace OpenBots.Commands.ErrorHandling
 
         }
 
-        public override void RunCommand(object sender)
+        public async override void RunCommand(object sender)
         {
             throw new Exception("Rethrowing Original Exception");
         }

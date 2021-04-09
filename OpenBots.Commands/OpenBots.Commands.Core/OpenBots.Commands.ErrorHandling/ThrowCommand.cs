@@ -60,10 +60,10 @@ namespace OpenBots.Commands.ErrorHandling
 			v_ExceptionType = "Exception";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var exceptionMessage = v_ExceptionMessage.ConvertUserVariableToString(engine);
+			var exceptionMessage = (string)await v_ExceptionMessage.EvaluateCode(engine);
 
 			Exception ex;
 			switch(v_ExceptionType)

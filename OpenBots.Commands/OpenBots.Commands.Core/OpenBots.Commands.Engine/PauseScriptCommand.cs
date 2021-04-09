@@ -38,10 +38,10 @@ namespace OpenBots.Commands.Engine
 			v_PauseLength = "1000";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var userPauseLength = v_PauseLength.ConvertUserVariableToString(engine);
+			var userPauseLength = (string)await v_PauseLength.EvaluateCode(engine);
 			var pauseLength = int.Parse(userPauseLength);
 			Thread.Sleep(pauseLength);
 		}

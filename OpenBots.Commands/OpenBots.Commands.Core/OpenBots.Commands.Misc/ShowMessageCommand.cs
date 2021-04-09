@@ -48,11 +48,11 @@ namespace OpenBots.Commands.Misc
 			v_AutoCloseAfter = "0";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			int closeAfter = int.Parse(v_AutoCloseAfter.ConvertUserVariableToString(engine));
+			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
 
 			string variableMessage = v_Message;
 

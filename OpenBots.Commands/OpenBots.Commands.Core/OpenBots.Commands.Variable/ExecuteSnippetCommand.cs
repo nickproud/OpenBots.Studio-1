@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Variable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			await VariableMethods.EvaluateCode(v_VariableName, v_Input, engine);
+			await VariableMethods.EvaluateCode(v_VariableName, v_Input, null, engine);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
