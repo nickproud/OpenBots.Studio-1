@@ -87,7 +87,7 @@ namespace OpenBots.Commands.List
 					itemList.Add(value.ToString());
 				}
 
-				itemList.StoreInUserVariable(engine, v_ListName, nameof(v_ListName), this);
+				itemList.SetVariableValue(engine, v_ListName, nameof(v_ListName), this);
 				listToCount = itemList;
 			}
 			else

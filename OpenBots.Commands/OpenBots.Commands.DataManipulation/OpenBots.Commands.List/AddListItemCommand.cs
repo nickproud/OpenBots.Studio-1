@@ -29,7 +29,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("{vList}")]
 		[Remarks("Any type of variable other than List will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		//[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_ListName { get; set; }
 
 		[Required]
@@ -38,7 +38,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("Hello || {vItem}")]
 		[Remarks("List item can only be a String, DataTable, MailItem or IWebElement.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement)}, true)]
+		//[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement)}, true)]
 		public string v_ListItem { get; set; }
 
 		public AddListItemCommand()
@@ -50,23 +50,23 @@ namespace OpenBots.Commands.List
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vListVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
+			var vListVariable = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
 
 			if (vListVariable != null)
 			{
 				if (vListVariable is List<string>)
 				{
-					((List<string>)vListVariable).Add(v_ListItem.ConvertUserVariableToString(engine));
+					((List<string>)vListVariable).Add((string)await v_ListItem.EvaluateCode(engine));
 				}
 				else if (vListVariable is List<OBDataTable>)
 				{
 					OBDataTable dataTable;
-					var dataTableVariable = v_ListItem.ConvertUserVariableToObject(engine, nameof(v_ListItem), this);
+					var dataTableVariable = await v_ListItem.EvaluateCode(engine, nameof(v_ListItem), this);
 					if (dataTableVariable != null && dataTableVariable is OBDataTable)
 						dataTable = (OBDataTable)dataTableVariable;
 					else
@@ -76,7 +76,7 @@ namespace OpenBots.Commands.List
 				else if (vListVariable is List<MailItem>)
 				{
 					MailItem mailItem;
-					var mailItemVariable = v_ListItem.ConvertUserVariableToObject(engine, nameof(v_ListItem), this);
+					var mailItemVariable = await v_ListItem.EvaluateCode(engine, nameof(v_ListItem), this);
 					if (mailItemVariable != null && mailItemVariable is MailItem)
 						mailItem = (MailItem)mailItemVariable;
 					else
@@ -86,7 +86,7 @@ namespace OpenBots.Commands.List
 				else if (vListVariable is List<MimeMessage>)
 				{
 					MimeMessage mimeMessage;
-					var mimeMessageVariable = v_ListItem.ConvertUserVariableToObject(engine, nameof(v_ListItem), this);
+					var mimeMessageVariable = await v_ListItem.EvaluateCode(engine, nameof(v_ListItem), this);
 					if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 						mimeMessage = (MimeMessage)mimeMessageVariable;
 					else
@@ -96,7 +96,7 @@ namespace OpenBots.Commands.List
 				else if (vListVariable is List<IWebElement>)
 				{
 					IWebElement webElement;
-					var webElementVariable = v_ListItem.ConvertUserVariableToObject(engine, nameof(v_ListItem), this);
+					var webElementVariable = await v_ListItem.EvaluateCode(engine, nameof(v_ListItem), this);
 					if (webElementVariable != null && webElementVariable is IWebElement)
 						webElement = (IWebElement)webElementVariable;
 					else
@@ -112,6 +112,7 @@ namespace OpenBots.Commands.List
 			{
 				throw new Exception("Attempted to add data to a variable, but the variable was not found. Enclose variables within braces, ex. {vVariable}");
 			}
+			vListVariable.SetVariableValue(engine, v_ListName, typeof(List<string>));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

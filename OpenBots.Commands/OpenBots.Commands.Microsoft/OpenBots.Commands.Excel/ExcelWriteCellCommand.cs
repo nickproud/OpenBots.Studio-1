@@ -56,12 +56,12 @@ namespace OpenBots.Commands.Excel
 			v_CellLocation = "A1";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
-			var vTargetAddress = v_CellLocation.ConvertUserVariableToString(engine);
-			var vTargetText = v_TextToSet.ConvertUserVariableToString(engine);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
+			var vTargetText = (string)await v_TextToSet.EvaluateCode(engine);
 			var excelInstance = (Application)excelObject;
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;

@@ -56,11 +56,11 @@ namespace OpenBots.Commands.Excel
 			v_InstanceName = "DefaultExcel";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string vSheetToRename = v_OriginalSheetName.ConvertUserVariableToString(engine);
-			string vNewSheetName = v_NewSheetName.ConvertUserVariableToString(engine);
+			string vSheetToRename = (string)await v_OriginalSheetName.EvaluateCode(engine);
+			string vNewSheetName = (string)await v_NewSheetName.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;

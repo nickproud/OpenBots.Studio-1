@@ -47,12 +47,12 @@ namespace OpenBots.Commands.File
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFile = v_SourceFilePath.ConvertUserVariableToString(engine);
-			var newFileName = v_NewName.ConvertUserVariableToString(engine);
+			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine);
+			var newFileName = (string)await v_NewName.EvaluateCode(engine);
 
 			if (!IO.File.Exists(sourceFile))
             {

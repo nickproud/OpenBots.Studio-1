@@ -220,26 +220,27 @@ namespace OpenBots.Engine
                 }
 
                 AutomationEngineContext.Variables = automationScript.Variables;
-                foreach (OBScriptVariable var in AutomationEngineContext.Variables)
-                {
-                    await VariableMethods.EvaluateCode(var.VariableName, "null", var.VariableType, this);
-                    var.VariableValue.SetVariableValue(this, var.VariableName, var.VariableType);
-                }
-
-
+                
                 //update ProjectPath variable
                 var projectPathVariable = AutomationEngineContext.Variables.Where(v => v.VariableName == "ProjectPath").SingleOrDefault();
                 if (projectPathVariable != null)
-                    projectPathVariable.VariableValue = AutomationEngineContext.ProjectPath;
+                    projectPathVariable.VariableValue = "@\"" + AutomationEngineContext.ProjectPath + '"';
                 else
                 {
                     projectPathVariable = new OBScriptVariable
                     {
                         VariableName = "ProjectPath",
                         VariableType = typeof(string),
-                        VariableValue = AutomationEngineContext.ProjectPath
+                        VariableValue = "@\"" + AutomationEngineContext.ProjectPath + '"'
                     };
                     AutomationEngineContext.Variables.Add(projectPathVariable);
+                }
+
+                foreach (OBScriptVariable var in AutomationEngineContext.Variables)
+                {
+                    
+                    await VariableMethods.EvaluateCode(var.VariableName, (string)var.VariableValue, var.VariableType, this);
+                    //var.VariableValue.SetVariableValue(this, var.VariableName, var.VariableType);
                 }
 
                 ReportProgress("Creating Argument List");
@@ -261,8 +262,8 @@ namespace OpenBots.Engine
                 AutomationEngineContext.Arguments = automationScript.Arguments;
                 foreach (ScriptArgument var in AutomationEngineContext.Arguments)
                 {
-                    await VariableMethods.EvaluateCode(var.ArgumentName, "null", var.ArgumentType, this);
-                    var.ArgumentValue.SetVariableValue(this, var.ArgumentName, var.ArgumentType);
+                    await VariableMethods.EvaluateCode(var.ArgumentName, (string)var.ArgumentValue, var.ArgumentType, this);
+                    //var.ArgumentValue.SetVariableValue(this, var.ArgumentName, var.ArgumentType);
                 }
 
                 ReportProgress("Creating Element List");
@@ -336,7 +337,7 @@ namespace OpenBots.Engine
                 AutomationEngineContext.EngineLogger.Dispose();
         }
 
-        public void ExecuteCommand(ScriptAction command)
+        public async void ExecuteCommand(ScriptAction command)
         {
             //get command
             ScriptCommand parentCommand = command.ScriptCommand;
@@ -499,7 +500,7 @@ namespace OpenBots.Engine
                     if (parentCommand.CommandName == "LogMessageCommand")
                     {
                         string displayValue = parentCommand.GetDisplayValue().Replace("Log Message ['", "").Replace("']", "");
-                        string logMessage = displayValue.Split('-').Last().ConvertUserVariableToString(this);
+                        string logMessage = (string)await displayValue.Split('-').Last().EvaluateCode(this);
                         displayValue = displayValue.Replace(displayValue.Split('-').Last(), logMessage);
                         ReportProgress($"Logging Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? _privateCommandLog : displayValue)}",
                             parentCommand.LogLevel);

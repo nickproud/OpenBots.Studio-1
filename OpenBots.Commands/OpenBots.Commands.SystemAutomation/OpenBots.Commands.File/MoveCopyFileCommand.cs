@@ -77,12 +77,12 @@ namespace OpenBots.Commands.File
 			v_OverwriteFile = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFile = v_SourceFilePath.ConvertUserVariableToString(engine);
-			var destinationFolder = v_DestinationDirectory.ConvertUserVariableToString(engine);
+			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine);
+			var destinationFolder = (string)await v_DestinationDirectory.EvaluateCode(engine);
 
             if (!IO.File.Exists(sourceFile))
             {

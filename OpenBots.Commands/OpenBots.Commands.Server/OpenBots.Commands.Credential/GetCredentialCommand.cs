@@ -57,10 +57,10 @@ namespace OpenBots.Commands.Credential
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vCredentialName = v_CredentialName.ConvertUserVariableToString(engine);
+			var vCredentialName = (string)await v_CredentialName.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			var credential = CredentialMethods.GetCredential(client, $"name eq '{vCredentialName}'");
@@ -71,8 +71,8 @@ namespace OpenBots.Commands.Credential
 			string username = credential.UserName;
 			SecureString password = credential.PasswordSecret.ConvertStringToSecureString();
 
-			username.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-			password.StoreInUserVariable(engine, v_OutputUserVariableName2, nameof(v_OutputUserVariableName2), this);
+			username.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			password.SetVariableValue(engine, v_OutputUserVariableName2, nameof(v_OutputUserVariableName2), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

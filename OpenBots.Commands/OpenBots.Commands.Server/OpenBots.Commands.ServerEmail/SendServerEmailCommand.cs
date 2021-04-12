@@ -92,16 +92,16 @@ namespace OpenBots.Commands.ServerEmail
             CommonMethods.InitializeDefaultWebProtocol();
         }
 
-        public override void RunCommand(object sender)
+        public async override void RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var vAccountName = v_AccountName.ConvertUserVariableToString(engine);
-            var vToRecipients = v_ToRecipients.ConvertUserVariableToString(engine);
-            var vCCRecipients = v_CCRecipients.ConvertUserVariableToString(engine);
-            var vBCCRecipients = v_BCCRecipients.ConvertUserVariableToString(engine);
-            var vSubject = v_Subject.ConvertUserVariableToString(engine);
-            var vBody = v_Body.ConvertUserVariableToString(engine);
-            var vAttachments = v_Attachments.ConvertUserVariableToString(engine);
+            var vAccountName = (string)await v_AccountName.EvaluateCode(engine);
+            var vToRecipients = (string)await v_ToRecipients.EvaluateCode(engine);
+            var vCCRecipients = (string)await v_CCRecipients.EvaluateCode(engine);
+            var vBCCRecipients = (string)await v_BCCRecipients.EvaluateCode(engine);
+            var vSubject = (string)await v_Subject.EvaluateCode(engine);
+            var vBody = (string)await v_Body.EvaluateCode(engine);
+            var vAttachments = (string)await v_Attachments.EvaluateCode(engine);
 
             var toEmailList = ServerEmailMethods.GetEmailList(vToRecipients);
             var ccEmailList = ServerEmailMethods.GetEmailList(vCCRecipients);

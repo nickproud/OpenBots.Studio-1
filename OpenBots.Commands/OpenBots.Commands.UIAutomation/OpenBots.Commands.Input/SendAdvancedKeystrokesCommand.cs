@@ -69,10 +69,10 @@ namespace OpenBots.Commands.Input
 			v_KeyUpDefault = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableWindowName = v_WindowName.ConvertUserVariableToString(engine);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 
 			//activate anything except current window
 			if (variableWindowName != "Current Window")

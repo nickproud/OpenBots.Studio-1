@@ -20,7 +20,7 @@ namespace OpenBots.Commands.File.Test
         }
 
         [Fact]
-        public void GetsFiles()
+        public async void GetsFiles()
         {
             _engine = new AutomationEngineInstance(null);
             _getFiles = new GetFilesCommand();
@@ -35,7 +35,7 @@ namespace OpenBots.Commands.File.Test
 
             _getFiles.RunCommand(_engine);
 
-            List<string> fileList = (List<string>)"{output}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> fileList = (List<string>)await "{output}".EvaluateCode(_engine, typeof(List<>));
 
             List<string> filenames = new List<string>();
 

@@ -111,7 +111,7 @@ namespace OpenBots.Commands.List
 						foreach (string item in splitListItems)
 						{
 							MailItem mailItem;
-							var mailItemVariable = item.ConvertUserVariableToObject(engine, typeof(MailItem));
+							var mailItemVariable = await item.EvaluateCode(engine, typeof(MailItem));
 							if (mailItemVariable != null && mailItemVariable is MailItem)
 								mailItem = (MailItem)mailItemVariable;
 							else
@@ -128,7 +128,7 @@ namespace OpenBots.Commands.List
 						foreach (string item in splitListItems)
 						{
 							MimeMessage mimeMessage;
-							var mimeMessageVariable = item.ConvertUserVariableToObject(engine, typeof(MimeMessage));
+							var mimeMessageVariable = await item.EvaluateCode(engine, typeof(MimeMessage));
 							if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 								mimeMessage = (MimeMessage)mimeMessageVariable;
 							else
@@ -145,7 +145,7 @@ namespace OpenBots.Commands.List
 						foreach (string item in splitListItems)
 						{
 							IWebElement webElement;
-							var webElementVariable = item.ConvertUserVariableToObject(engine, typeof(IWebElement));
+							var webElementVariable = await item.EvaluateCode(engine, typeof(IWebElement));
 							if (webElementVariable != null && webElementVariable is IWebElement)
 								webElement = (IWebElement)webElementVariable;
 							else

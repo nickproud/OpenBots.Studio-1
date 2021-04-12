@@ -44,19 +44,19 @@ namespace OpenBots.Commands.Variable
 			CommandIcon = Resources.command_parse;
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			dynamic input = v_Input.ConvertUserVariableToString(engine);
+			dynamic input = (string)await v_Input.EvaluateCode(engine);
 
 			if (string.IsNullOrEmpty(input))
 				input = null;
 
 			if (input == v_Input && input.StartsWith("{") && input.EndsWith("}"))
             {
-				if (v_Input.ConvertUserVariableToObject(engine, typeof(object)) != null)
-					input = v_Input.ConvertUserVariableToObject(engine, typeof(object));
+				if (await v_Input.EvaluateCode(engine, typeof(object)) != null)
+					input = await v_Input.EvaluateCode(engine, typeof(object));
 				else
 					input = null;
 			}
@@ -77,7 +77,7 @@ namespace OpenBots.Commands.Variable
 					throw new InvalidCastException("Input and Output types do not match");
 			}
 			
-			((object)input).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)input).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -90,16 +90,16 @@ namespace OpenBots.Commands.Input
 			v_InputDirections = "Directions: Please fill in the following fields";
 		}
 
-		public override void RunCommand(object sender)
+		public async  override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var header = v_InputHeader.ConvertUserVariableToString(engine);
-			var directions = v_InputDirections.ConvertUserVariableToString(engine);
+			var header = (string)await v_InputHeader.EvaluateCode(engine);
+			var directions = (string)await v_InputDirections.EvaluateCode(engine);
 			
 			//translate variables for each label
 			foreach (DataRow rw in v_UserInputConfig.Rows)
 			{
-				rw["DefaultValue"] = rw["DefaultValue"].ToString().ConvertUserVariableToString(engine);
+				rw["DefaultValue"] = (string)await rw["DefaultValue"].ToString().EvaluateCode(engine);
 				string targetVariable = rw["StoreInVariable"].ToString();
 
 				if (string.IsNullOrEmpty(targetVariable))
@@ -150,7 +150,7 @@ namespace OpenBots.Commands.Input
 
 						//store user data in variable
 						if (!string.IsNullOrEmpty(targetVariable))
-							userInputs[i].StoreInUserVariable(engine, targetVariable, nameof(v_UserInputConfig), this);
+							userInputs[i].SetVariableValue(engine, targetVariable, nameof(v_UserInputConfig), this);
 					}
 				}
 		}

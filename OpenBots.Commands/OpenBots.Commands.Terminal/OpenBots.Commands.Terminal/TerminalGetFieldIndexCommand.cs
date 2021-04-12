@@ -96,7 +96,7 @@ namespace OpenBots.Commands.Terminal
 			v_InstanceName = "DefaultTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
@@ -109,13 +109,13 @@ namespace OpenBots.Commands.Terminal
 
 			if (v_Option == "Row/Col Position")
             {
-				var mouseX = int.Parse(v_XMousePosition.ConvertUserVariableToString(engine));
-				var mouseY = int.Parse(v_YMousePosition.ConvertUserVariableToString(engine));
+				var mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+				var mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
 				field = fields.Where(f => (mouseY * 80 + mouseX) >= f.Location.position && (mouseY * 80 + mouseX) < f.Location.position + f.Location.length).FirstOrDefault();
 			}
             else
             {
-				var fieldText = v_FieldText.ConvertUserVariableToString(engine);
+				var fieldText = (string)await v_FieldText.EvaluateCode(engine);
 				field = fields.Where(f => f.Text != null && f.Text.ToLower().Contains(fieldText.ToLower())).FirstOrDefault();
 			}
 
@@ -123,7 +123,7 @@ namespace OpenBots.Commands.Terminal
 			if (field != null)
 				fieldIndex = Array.IndexOf(terminalObject.TN3270.CurrentScreenXML.Fields, field);
 
-			fieldIndex.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			fieldIndex.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

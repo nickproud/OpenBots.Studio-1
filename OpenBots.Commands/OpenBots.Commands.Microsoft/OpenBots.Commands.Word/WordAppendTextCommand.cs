@@ -105,10 +105,10 @@ namespace OpenBots.Commands.Word
 			v_FontUnderline = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vText = v_TextToSet.ConvertUserVariableToString(engine);
+			var vText = (string)await v_TextToSet.EvaluateCode(engine);
 			var wordObject = v_InstanceName.GetAppInstance(engine);
 
 			Application wordInstance = (Application)wordObject;

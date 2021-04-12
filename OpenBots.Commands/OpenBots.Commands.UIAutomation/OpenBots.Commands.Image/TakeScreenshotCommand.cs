@@ -60,12 +60,12 @@ namespace OpenBots.Commands.Image
 			v_WindowName = "Current Window";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = v_WindowName.ConvertUserVariableToString(engine);
-			string vFolderPath = v_FolderPath.ConvertUserVariableToString(engine);
-			string vFileName = v_FileName.ConvertUserVariableToString(engine);
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			string vFolderPath = (string)await v_FolderPath.EvaluateCode(engine);
+			string vFileName = (string)await v_FileName.EvaluateCode(engine);
 			string vFilePath = Path.Combine(vFolderPath, vFileName);
 
 			Bitmap image;

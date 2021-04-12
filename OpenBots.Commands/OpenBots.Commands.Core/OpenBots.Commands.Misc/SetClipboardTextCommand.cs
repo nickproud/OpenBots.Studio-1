@@ -38,10 +38,10 @@ namespace OpenBots.Commands.Misc
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var input = v_TextToSet.ConvertUserVariableToString(engine);
+			var input = (string)await v_TextToSet.EvaluateCode(engine);
 
 			User32Functions.SetClipboardText(input);
 		}

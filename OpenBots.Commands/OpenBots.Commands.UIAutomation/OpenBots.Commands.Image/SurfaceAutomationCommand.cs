@@ -104,7 +104,7 @@ namespace OpenBots.Commands.Image
 			v_ImageActionParameterTable.Columns.Add("Parameter Value");			
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			bool testMode = TestMode;
@@ -113,7 +113,7 @@ namespace OpenBots.Commands.Image
 			double accuracy;
 			try
 			{
-				accuracy = double.Parse(v_MatchAccuracy.ConvertUserVariableToString(engine));
+				accuracy = (double)await v_MatchAccuracy.EvaluateCode(engine);
 				if (accuracy > 1 || accuracy < 0)
 					throw new ArgumentOutOfRangeException("Accuracy value is out of range (0-1)");
 			}
@@ -129,7 +129,7 @@ namespace OpenBots.Commands.Image
 								   where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				timeoutText = timeoutText.ConvertUserVariableToString(engine);
+				timeoutText = (string)await timeoutText.EvaluateCode(engine);
 				int timeOut = Convert.ToInt32(timeoutText);
 				var timeToEnd = DateTime.Now.AddSeconds(timeOut);
 
@@ -162,6 +162,8 @@ namespace OpenBots.Commands.Image
 			try
 			{
 				string clickPosition;
+				string xAdjustString;
+				string yAdjustString;
 				int xAdjust;
 				int yAdjust;
 				switch (v_ImageAction)
@@ -173,12 +175,14 @@ namespace OpenBots.Commands.Image
 						clickPosition = (from rw in v_ImageActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Click Position"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
-						yAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
+						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 
 						Point clickPositionPoint = GetClickPosition(clickPosition, element);
 
@@ -191,16 +195,19 @@ namespace OpenBots.Commands.Image
 					case "Set Text":
 						string textToSet = (from rw in v_ImageActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Text To Set"
-											select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine);
+											select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						textToSet = (string)await textToSet.EvaluateCode(engine);
 						clickPosition = (from rw in v_ImageActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Click Position"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
-						yAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
+						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 						string encryptedData = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												where rw.Field<string>("Parameter Name") == "Encrypted Text"
 												select rw.Field<string>("Parameter Value")).FirstOrDefault();
@@ -227,14 +234,16 @@ namespace OpenBots.Commands.Image
 						clickPosition = (from rw in v_ImageActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Click Position"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
-						yAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
+						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 
-						var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
+						var secureStrVariable = await secureString.EvaluateCode(engine, typeof(SecureString));
 
 						if (secureStrVariable is SecureString)
 							secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
@@ -259,9 +268,9 @@ namespace OpenBots.Commands.Image
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 						if (element != null)
-							true.StoreInUserVariable(engine, outputVariable, typeof(bool));
+							true.SetVariableValue(engine, outputVariable, typeof(bool));
 						else
-							false.StoreInUserVariable(engine, outputVariable, typeof(bool));
+							false.SetVariableValue(engine, outputVariable, typeof(bool));
 						break;
 					default:
 						break;

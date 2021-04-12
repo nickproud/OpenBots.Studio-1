@@ -107,7 +107,7 @@ namespace OpenBots.Commands.IEBrowser
         }
 
         [STAThread]
-        public override void RunCommand(object sender)
+        public async override void RunCommand(object sender)
         {
             object browserObject = null;
 
@@ -129,7 +129,7 @@ namespace OpenBots.Commands.IEBrowser
             foreach (DataRow seachCriteria in elementSearchProperties)
             {
                 string searchPropertyValue = seachCriteria.Field<string>("Property Value");
-                searchPropertyValue = searchPropertyValue.ConvertUserVariableToString(engine);
+                searchPropertyValue = (string)await searchPropertyValue.EvaluateCode(engine);
                 seachCriteria.SetField<string>("Property Value", searchPropertyValue);
             }
 
@@ -358,7 +358,7 @@ namespace OpenBots.Commands.IEBrowser
             ((DataGridView)_elementParameterControls[2]).Columns[0].ReadOnly = true;
         }
 
-        private void RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)
+        private async void RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)
         {
             var engine = (IAutomationEngineInstance)sender;
             switch (v_WebAction)
@@ -382,13 +382,15 @@ namespace OpenBots.Commands.IEBrowser
 
                     //inputs need to be validated
 
-                    int userXAdjust = Convert.ToInt32((from rw in v_WebActionParameterTable.AsEnumerable()
+                    string userXAdjustString = (from rw in v_WebActionParameterTable.AsEnumerable()
                                                        where rw.Field<string>("Parameter Name") == "X Adjustment"
-                                                       select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+                                                       select rw.Field<string>("Parameter Value")).FirstOrDefault();
+                    int userXAdjust = (int)await userXAdjustString.EvaluateCode(engine);
 
-                    int userYAdjust = Convert.ToInt32((from rw in v_WebActionParameterTable.AsEnumerable()
+                    string userYAdjustString = (from rw in v_WebActionParameterTable.AsEnumerable()
                                                        where rw.Field<string>("Parameter Name") == "Y Adjustment"
-                                                       select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+                                                       select rw.Field<string>("Parameter Value")).FirstOrDefault();
+                    int userYAdjust = (int)await userYAdjustString.EvaluateCode(engine);
 
                     var ieClientLocation = User32Functions.GetWindowPosition(new IntPtr(browserInstance.HWND));
 
@@ -407,7 +409,7 @@ namespace OpenBots.Commands.IEBrowser
                                          where rw.Field<string>("Parameter Name") == "Value To Set"
                                          select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-                    valueToSet = valueToSet.ConvertUserVariableToString(engine);
+                    valueToSet = (string)await valueToSet.EvaluateCode(engine);
 
                     element.setAttribute(setAttributeName, valueToSet);
                     break;
@@ -418,7 +420,7 @@ namespace OpenBots.Commands.IEBrowser
                                         where rw.Field<string>("Parameter Name") == "Text To Set"
                                         select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-                    textToSet = textToSet.ConvertUserVariableToString(engine);
+                    textToSet = (string)await textToSet.EvaluateCode(engine);
 
                     element.setAttribute(setTextAttributeName, textToSet);
                     break;
@@ -433,7 +435,7 @@ namespace OpenBots.Commands.IEBrowser
 
                     string convertedAttribute = Convert.ToString(element.getAttribute(attributeName));
 
-                    convertedAttribute.StoreInUserVariable(engine, variableName, typeof(string));
+                    convertedAttribute.SetVariableValue(engine, variableName, typeof(string));
                     break;
             }
         }

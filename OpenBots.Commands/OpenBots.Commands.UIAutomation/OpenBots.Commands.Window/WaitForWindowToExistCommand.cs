@@ -50,11 +50,11 @@ namespace OpenBots.Commands.Window
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async  override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = v_WindowName.ConvertUserVariableToString(engine);
-			var timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			var timeout = (int)await v_Timeout.EvaluateCode(engine);
 
 			var endDateTime = DateTime.Now.AddSeconds(timeout);
 

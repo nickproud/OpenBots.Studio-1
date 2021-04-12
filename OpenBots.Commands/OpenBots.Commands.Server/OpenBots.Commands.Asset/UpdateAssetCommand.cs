@@ -81,12 +81,12 @@ namespace OpenBots.Commands.Asset
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
-			var vAssetFilePath = v_AssetFilePath.ConvertUserVariableToString(engine);
-			var vAssetValue = v_AssetValue.ConvertUserVariableToString(engine);
+			var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
+			var vAssetFilePath = (string)await v_AssetFilePath.EvaluateCode(engine);
+			var vAssetValue = (string)await v_AssetValue.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			var asset = AssetMethods.GetAsset(client, vAssetName, v_AssetType);

@@ -77,12 +77,12 @@ namespace OpenBots.Commands.WebBrowser
 			v_CaseSensitiveMatch = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			var matchParam = v_MatchParameter.ConvertUserVariableToString(engine);
+			var matchParam = (string)await v_MatchParameter.EvaluateCode(engine);
 
 			var handles = seleniumInstance.WindowHandles;
 			var currentHandle = seleniumInstance.CurrentWindowHandle;

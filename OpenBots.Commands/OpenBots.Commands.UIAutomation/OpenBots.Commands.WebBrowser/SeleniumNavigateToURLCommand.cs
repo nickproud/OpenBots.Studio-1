@@ -49,11 +49,11 @@ namespace OpenBots.Commands.WebBrowser
 			v_URL = "https://";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
-			var vURL = v_URL.ConvertUserVariableToString(engine);
+			var vURL = (string)await v_URL.EvaluateCode(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
 
 			try

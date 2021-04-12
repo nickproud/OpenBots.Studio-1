@@ -29,7 +29,7 @@ namespace OpenBots.Commands.List.Test
         [InlineData("MailItem (Outlook)")]
         [InlineData("MimeMessage (IMAP/SMTP)")]
         [InlineData("IWebElement")]
-        public void CreatesList(string listType)
+        public async void CreatesList(string listType)
         {
             _engine = new AutomationEngineInstance(null);
             _createList = new CreateListCommand();
@@ -62,10 +62,10 @@ namespace OpenBots.Commands.List.Test
                 default:
                     break;
             }
-            output.WriteLine("{output}".ConvertUserVariableToObject(_engine, typeof(List<>)).GetType().ToString());
+            output.WriteLine((await "{output}".EvaluateCode(_engine, typeof(List<>))).GetType().ToString());
             output.WriteLine(expectedList.GetType().ToString());
 
-            Assert.True(Object.ReferenceEquals("{output}".ConvertUserVariableToObject(_engine, typeof(List<>)).GetType(), expectedList.GetType()));
+            Assert.True(Object.ReferenceEquals((await "{output}".EvaluateCode(_engine, typeof(List<>))).GetType(), expectedList.GetType()));
         }
 
         [Fact]

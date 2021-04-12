@@ -76,13 +76,13 @@ namespace OpenBots.Commands.Outlook
 			v_BodyType = "Plain";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vRecipients = v_Recipients.ConvertUserVariableToString(engine);
-			var vAttachment = v_Attachments.ConvertUserVariableToString(engine);
-			var vSubject = v_Subject.ConvertUserVariableToString(engine);
-			var vBody = v_Body.ConvertUserVariableToString(engine);
+			var vRecipients = (string)await v_Recipients.EvaluateCode(engine);
+			var vAttachment = (string)await v_Attachments.EvaluateCode(engine);
+			var vSubject = (string)await v_Subject.EvaluateCode(engine);
+			var vBody = (string)await v_Body.EvaluateCode(engine);
 			var splitRecipients = vRecipients.Split(';');
 
 			Application outlookApp = new Application();

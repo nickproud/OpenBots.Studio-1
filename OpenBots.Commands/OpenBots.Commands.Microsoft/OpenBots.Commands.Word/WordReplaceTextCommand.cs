@@ -55,11 +55,11 @@ namespace OpenBots.Commands.Word
 
 			v_InstanceName = "DefaultWord";
 		}
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFindText = v_FindText.ConvertUserVariableToString(engine);
-			var vReplaceWithText = v_ReplaceWithText.ConvertUserVariableToString(engine);
+			var vFindText = (string)await v_FindText.EvaluateCode(engine);
+			var vReplaceWithText = (string)await v_ReplaceWithText.EvaluateCode(engine);
 
 			//get word app object
 			var wordObject = v_InstanceName.GetAppInstance(engine);

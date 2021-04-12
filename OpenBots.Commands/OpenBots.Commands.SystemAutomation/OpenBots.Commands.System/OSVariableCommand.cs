@@ -54,10 +54,10 @@ namespace OpenBots.Commands.System
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var systemVariable = v_OSVariableName.ConvertUserVariableToString(engine);
+			var systemVariable = (string)await v_OSVariableName.EvaluateCode(engine);
 
 			ObjectQuery wql = new ObjectQuery("SELECT * FROM Win32_OperatingSystem");
 			ManagementObjectSearcher searcher = new ManagementObjectSearcher(wql);
@@ -70,7 +70,7 @@ namespace OpenBots.Commands.System
 					if (prop.Name == systemVariable.ToString())
 					{
 						var sysValue = prop.Value.ToString();
-						sysValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+						sysValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 						return;
 					}
 				}

@@ -89,10 +89,10 @@ namespace OpenBots.Commands.Excel
 			v_CloseAllInstances = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFilePath = v_FilePath.ConvertUserVariableToString(engine);
+			var vFilePath = (string)await v_FilePath.EvaluateCode(engine);
 
 			if (v_CloseAllInstances == "Yes")
 			{

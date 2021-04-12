@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Input
 			v_ErrorOnClose = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Input
 			}
 
 			//sample for temp testing
-			var htmlInput = v_InputHTML.ConvertUserVariableToString(engine);
+			var htmlInput = (string)await v_InputHTML.EvaluateCode(engine);
 
 			//invoke ui for data collection
 			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
@@ -74,7 +74,7 @@ namespace OpenBots.Commands.Input
 				{
 					//store each one into context
 					foreach (var variable in variables)
-						variable.VariableValue.StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName), variable.VariableType);
+						variable.VariableValue.SetVariableValue(engine, ConvertStringToVariableName(variable.VariableName), variable.VariableType);
 				}
 				else if (v_ErrorOnClose == "Yes")
 					throw new Exception("Input Form was closed by the user");

@@ -28,11 +28,11 @@ namespace OpenBots.Commands.Variable
 
 		[Required]
 		[DisplayName("Output Variable")]
-		[Description("")]
+		[Description("Enter the variable to which the output will be assigned. Leave empty to execute code without assignment.")]
 		[SampleUsage("")]
 		[Remarks("")]
 		[CompatibleTypes(new Type[] { typeof(object) }, true)]
-		public string v_VariableName { get; set; }
+		public string v_OutputUserVariableName { get; set; }
 
 		public ExecuteSnippetCommand()
 		{
@@ -45,8 +45,10 @@ namespace OpenBots.Commands.Variable
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-
-			await VariableMethods.EvaluateCode(v_VariableName, v_Input, null, engine);
+			if (v_OutputUserVariableName != "")
+				await VariableMethods.EvaluateCode(v_OutputUserVariableName, v_Input, null, engine);
+			else
+				await v_Input.EvaluateCodeInPlace(engine);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -54,14 +56,14 @@ namespace OpenBots.Commands.Variable
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Input", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_VariableName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" ['{v_VariableName}' = '{v_Input}']";
+			return base.GetDisplayValue() + $" ['{v_OutputUserVariableName}' = '{v_Input}']";
 		}
 	}
 }

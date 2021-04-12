@@ -73,13 +73,13 @@ namespace OpenBots.Commands.Microsoft
             v_InstanceName = "DefaultExcel";
         }
 
-        public override void RunCommand(object sender)
+        public async override void RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = v_SheetNameExcelTable.ConvertUserVariableToString(engine);
-            var vColumnIndex = v_ColumnIndex.ConvertUserVariableToString(engine);
-            var vTableName = v_TableName.ConvertUserVariableToString(engine);
-            var vColumnName = v_ColumnName.ConvertUserVariableToString(engine);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
+            var vColumnIndex = (string)await v_ColumnIndex.EvaluateCode(engine);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine);
+            var vColumnName = (string)await v_ColumnName.EvaluateCode(engine);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;

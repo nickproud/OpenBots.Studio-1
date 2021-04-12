@@ -54,11 +54,11 @@ namespace OpenBots.Commands.BZTerminal
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string textToWaitFor = v_TextToWaitFor.ConvertUserVariableToString(engine);
-			var timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			string textToWaitFor = (string)await v_TextToWaitFor.EvaluateCode(engine);
+			var timeout = (int)await v_Timeout.EvaluateCode(engine);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)

@@ -60,12 +60,12 @@ namespace OpenBots.Commands.WebBrowser
 			v_InstanceName = "DefaultBrowser";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			var requestedInfo = v_InfoType.ConvertUserVariableToString(engine);
+			var requestedInfo = (string)await v_InfoType.EvaluateCode(engine);
 			string info;
 
 			switch (requestedInfo)
@@ -89,7 +89,7 @@ namespace OpenBots.Commands.WebBrowser
 					throw new NotImplementedException($"{requestedInfo} is not implemented for lookup.");
 			}
 			//store data
-			info.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			info.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

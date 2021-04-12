@@ -54,11 +54,11 @@ namespace OpenBots.Commands.Terminal
 			v_InstanceName = "DefaultTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var fieldIndex = int.Parse(v_FieldIndex.ConvertUserVariableToString(engine));
-			string textToSend = v_TextToSet.ConvertUserVariableToString(engine);
+			var fieldIndex = (int)await v_FieldIndex.EvaluateCode(engine);
+			string textToSend = (string)await v_TextToSet.EvaluateCode(engine);
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)

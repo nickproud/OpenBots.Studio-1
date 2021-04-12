@@ -97,16 +97,16 @@ namespace OpenBots.Commands.Email
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MimeMessage vMimeMessageToForward = (MimeMessage)v_SMTPMimeMessage.ConvertUserVariableToObject(engine, nameof(v_SMTPMimeMessage), this);
-			string vSMTPHost = v_SMTPHost.ConvertUserVariableToString(engine);
-			string vSMTPPort = v_SMTPPort.ConvertUserVariableToString(engine);
-			string vSMTPUserName = v_SMTPUserName.ConvertUserVariableToString(engine);
-			string vSMTPPassword = ((SecureString)v_SMTPPassword.ConvertUserVariableToObject(engine, nameof(v_SMTPPassword), this)).ConvertSecureStringToString();
-			string vSMTPRecipients = v_SMTPRecipients.ConvertUserVariableToString(engine);
-			string vSMTPBody = v_SMTPBody.ConvertUserVariableToString(engine);
+			MimeMessage vMimeMessageToForward = (MimeMessage)await v_SMTPMimeMessage.EvaluateCode(engine, nameof(v_SMTPMimeMessage), this);
+			string vSMTPHost = (string)await v_SMTPHost.EvaluateCode(engine);
+			string vSMTPPort = (string)await v_SMTPPort.EvaluateCode(engine);
+			string vSMTPUserName = (string)await v_SMTPUserName.EvaluateCode(engine);
+			string vSMTPPassword = ((SecureString)await v_SMTPPassword.EvaluateCode(engine, nameof(v_SMTPPassword), this)).ConvertSecureStringToString();
+			string vSMTPRecipients = (string)await v_SMTPRecipients.EvaluateCode(engine);
+			string vSMTPBody = (string)await v_SMTPBody.EvaluateCode(engine);
 
 			using (var client = new SmtpClient())
 			{

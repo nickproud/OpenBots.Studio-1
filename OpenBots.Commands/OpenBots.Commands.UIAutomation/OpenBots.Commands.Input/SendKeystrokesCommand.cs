@@ -62,15 +62,15 @@ namespace OpenBots.Commands.Input
 			v_EncryptionOption = "Not Encrypted";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableWindowName = v_WindowName.ConvertUserVariableToString(engine);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 
 			if (variableWindowName != "Current Window")
 				User32Functions.ActivateWindow(variableWindowName);
 
-			string textToSend = v_TextToSend.ConvertUserVariableToString(engine);
+			string textToSend = (string)await v_TextToSend.EvaluateCode(engine);
 
 			if (v_EncryptionOption == "Encrypted")
 				textToSend = EncryptionServices.DecryptString(textToSend, "OPENBOTS");

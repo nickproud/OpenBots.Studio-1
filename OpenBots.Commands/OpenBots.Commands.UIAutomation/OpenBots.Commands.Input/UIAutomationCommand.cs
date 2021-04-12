@@ -121,10 +121,10 @@ namespace OpenBots.Commands.Input
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vTimeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			var vTimeout = (int)await v_Timeout.EvaluateCode(engine);
 
 			//create variable window name
-			var variableWindowName = v_WindowName.ConvertUserVariableToString(engine);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 			if (variableWindowName == "Current Window")
 				variableWindowName = User32Functions.GetActiveWindowTitle();			
 
@@ -175,8 +175,8 @@ namespace OpenBots.Commands.Input
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 					//convert potential variable
-					var xAdjustVariable = xAdjust.ConvertUserVariableToString(engine);
-					var yAdjustVariable = yAdjust.ConvertUserVariableToString(engine);
+					var xAdjustVariable = (string)await xAdjust.EvaluateCode(engine);
+					var yAdjustVariable = (string)await yAdjust.EvaluateCode(engine);
 
 					int xAdjustInt;
 					int yAdjustInt;
@@ -221,7 +221,7 @@ namespace OpenBots.Commands.Input
 					if (encryptedData == "Encrypted")
 						textToSet = EncryptionServices.DecryptString(textToSet, "OPENBOTS");
 
-					textToSet = textToSet.ConvertUserVariableToString(engine);
+					textToSet = (string)await textToSet.EvaluateCode(engine);
 
 					if (requiredHandle.Current.IsEnabled && requiredHandle.Current.IsKeyboardFocusable)
 					{
@@ -275,7 +275,7 @@ namespace OpenBots.Commands.Input
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
+					var secureStrVariable = await secureString.EvaluateCode(engine, typeof(SecureString));
 
 					if (secureStrVariable is SecureString)
 						secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
@@ -374,7 +374,7 @@ namespace OpenBots.Commands.Input
 						else
 							searchResult = requiredHandle.Current.Name.ToString();
 
-						searchResult.StoreInUserVariable(engine, applyToVariable, typeof(string));
+						searchResult.SetVariableValue(engine, applyToVariable, typeof(string));
 					}
 
 					else if (v_AutomationType == "Element Exists")
@@ -385,7 +385,7 @@ namespace OpenBots.Commands.Input
 						else
 							searchResult = true;
 
-						searchResult.StoreInUserVariable(engine, applyToVariable, typeof(bool));
+						searchResult.SetVariableValue(engine, applyToVariable, typeof(bool));
 					}
 					
 					break;
@@ -413,7 +413,7 @@ namespace OpenBots.Commands.Input
 					var requiredValue = requiredHandle.Current.GetType().GetRuntimeProperty(propertyName)?.GetValue(requiredHandle.Current).ToString();
 
 					//store into variable
-					((object)requiredValue).StoreInUserVariable(engine, applyToVariable2, typeof(string));
+					((object)requiredValue).SetVariableValue(engine, applyToVariable2, typeof(string));
 					break;
 				default:
 					throw new NotImplementedException("Automation type '" + v_AutomationType + "' not supported.");

@@ -12,7 +12,7 @@ namespace OpenBots.Commands.Engine.Test
         private Variable.SetVariableCommand _setVariable;
 
         [Fact]
-        public void SetsEnginePreference()
+        public async void SetsEnginePreference()
         {
             _engine = new AutomationEngineInstance(null);
             _setEnginePreference = new SetEnginePreferenceCommand();
@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Engine.Test
             action.ScriptCommand = _setVariable;
             _engine.ExecuteCommand(action);
 
-            Assert.Equal("1+1", "{output}".ConvertUserVariableToString(_engine));
+            Assert.Equal("1+1", (string)await "{output}".EvaluateCode(_engine));
         }
     }
 }

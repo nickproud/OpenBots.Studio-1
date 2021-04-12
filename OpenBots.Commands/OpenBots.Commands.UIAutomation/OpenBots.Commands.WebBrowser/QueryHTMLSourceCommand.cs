@@ -55,16 +55,16 @@ namespace OpenBots.Commands.WebBrowser
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-			doc.LoadHtml(v_HTMLVariable.ConvertUserVariableToString(engine));
+			doc.LoadHtml((string)await v_HTMLVariable.EvaluateCode(engine));
 
 			var div = doc.DocumentNode.SelectSingleNode(v_XPathQuery);
 			string divString = div.InnerText;
 
-			divString.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			divString.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

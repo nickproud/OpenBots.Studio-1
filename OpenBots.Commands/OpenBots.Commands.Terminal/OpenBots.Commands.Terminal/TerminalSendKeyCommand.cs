@@ -71,12 +71,12 @@ namespace OpenBots.Commands.Terminal
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = v_XMousePosition.ConvertUserVariableToString(engine);
-			var mouseY = v_YMousePosition.ConvertUserVariableToString(engine);
-			var vTimeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine)) * 1000;
+			var mouseX = (string)await v_XMousePosition.EvaluateCode(engine);
+			var mouseY = (string)await v_YMousePosition.EvaluateCode(engine);
+			var vTimeout = ((int)await v_Timeout.EvaluateCode(engine)) * 1000;
 			OpenEmulator terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)

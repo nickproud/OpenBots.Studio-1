@@ -439,11 +439,15 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             string type = "";
             if (code == null)
-                return "";
+                code = "null";
             if (varType == null)
                 type = "var";
             else
                 type = varType.Name;
+            if(varType == typeof(List<>))
+            {
+                type = "List<string>";
+            }
             List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
             List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
 
@@ -453,6 +457,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             }
 
             string script = $"{type} {varName} = {code}";
+
             if (script[script.Length - 1] != ';')
             {
                 script = script + ";";
@@ -467,7 +472,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine, Type varType)
         {
             if (code == null)
-                return "";
+                code = "null";
             List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
             List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
 
@@ -490,7 +495,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine)
         {
             if (code == null)
-                return "";
+                code = "null";
             List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
             List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
 
@@ -510,10 +515,30 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return engine.AutomationEngineContext.EngineScriptState.GetVariable("guidPlaceholder").Value;
         }
 
+        public async static Task<bool> EvaluateCodeInPlace(this string code, IAutomationEngineInstance engine)
+        {
+            List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
+            List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
+
+            if (engine.AutomationEngineContext.EngineScriptState == null)
+            {
+                engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScript.RunAsync();
+            }
+
+            string script = $"{code}";
+            if (script[script.Length - 1] != ';')
+            {
+                script = script + ";";
+            }
+
+            engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScriptState.ContinueWithAsync(script, ScriptOptions.Default.WithReferences(assemblies).WithImports(assemblyNames));
+            return true;
+        }
+
         public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine, string parameterName, ScriptCommand parent)
         {
             if (code == null)
-                return "";
+                code = "null";
             List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
             List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
 
@@ -534,7 +559,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         }
         public static void SetVariableValue(this object newVal, IAutomationEngineInstance engine, string varName, Type varType)
         {
-            engine.AutomationEngineContext.EngineScriptState.Variables.Where(x => x.Name == varName).FirstOrDefault().Value = newVal;
+            engine.AutomationEngineContext.EngineScriptState.Variables.Where(x => x.Name == varName).FirstOrDefault().Value = Convert.ChangeType(newVal, varType);
         }
 
         public static void SetVariableValue(this object newVal, IAutomationEngineInstance engine, string varName, string parameterName, ScriptCommand parent)

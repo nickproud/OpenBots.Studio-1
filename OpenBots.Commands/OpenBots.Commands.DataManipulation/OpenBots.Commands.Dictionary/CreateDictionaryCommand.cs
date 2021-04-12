@@ -71,7 +71,7 @@ namespace OpenBots.Commands.Dictionary
 			v_DictionaryType = "String";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
@@ -84,8 +84,8 @@ namespace OpenBots.Commands.Dictionary
                         foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
                         {
                             outputDictionary.Add(
-                                rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine),
-                                rwColumnName.Field<string>("Values").ConvertUserVariableToString(engine));
+                                (string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine),
+                                (string)await rwColumnName.Field<string>("Values").EvaluateCode(engine));
                         }
 					break;
 				case "DataTable":
@@ -93,13 +93,13 @@ namespace OpenBots.Commands.Dictionary
 						foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 						{
 							OBDataTable dataTable;
-							var dataTableVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(OBDataTable));
+							var dataTableVariable = await rwColumnName.Field<string>("Values").EvaluateCode(engine, typeof(OBDataTable));
 							if (dataTableVariable != null && dataTableVariable is OBDataTable)
 								dataTable = (OBDataTable)dataTableVariable;
 							else
 								throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 							outputDictionary.Add(
-								rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), dataTable);
+								(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine), dataTable);
 						}
 					break;
 				case "MailItem (Outlook)":
@@ -107,13 +107,13 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 						{
 							MailItem mailItem;
-							var mailItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(MailItem));
+							var mailItemVariable = await rwColumnName.Field<string>("Values").EvaluateCode(engine, typeof(MailItem));
 							if (mailItemVariable != null && mailItemVariable is MailItem)
 								mailItem = (MailItem)mailItemVariable;
 							else
 								throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 							outputDictionary.Add(
-								rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), mailItem);
+								(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine), mailItem);
 						}
 					break;
 				case "MimeMessage (IMAP/SMTP)":
@@ -121,13 +121,13 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 						{
 							MimeMessage mimeMessage;
-							var mimeMessageVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(MimeMessage));
+							var mimeMessageVariable = await rwColumnName.Field<string>("Values").EvaluateCode(engine, typeof(MimeMessage));
 							if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 								mimeMessage = (MimeMessage)mimeMessageVariable;
 							else
 							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 							outputDictionary.Add(
-								rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), mimeMessage);
+								(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine), mimeMessage);
 						}
 					break;
 				case "IWebElement":
@@ -135,13 +135,13 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 						{
 							IWebElement webElement;
-							var webElementVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(IWebElement));
+							var webElementVariable = await rwColumnName.Field<string>("Values").EvaluateCode(engine, typeof(IWebElement));
 							if (webElementVariable != null && webElementVariable is IWebElement)
 								webElement = (IWebElement)webElementVariable;
 							else
 								throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 							outputDictionary.Add(
-								rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), webElement);
+								(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine), webElement);
 						}
 					break;
 				case "Object":
@@ -149,18 +149,18 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						object objectItem;
-						var objectItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(object));
+						var objectItemVariable = await rwColumnName.Field<string>("Values").EvaluateCode(engine, typeof(object));
 						if (objectItemVariable != null && objectItemVariable is object)
 							objectItem = (object)objectItemVariable;
 						else
 							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 						outputDictionary.Add(
-							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), objectItem);
+							(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine), objectItem);
 					}
 					break;
 			}
 
-			((object)outputDictionary).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)outputDictionary).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

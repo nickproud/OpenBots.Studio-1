@@ -66,12 +66,12 @@ namespace OpenBots.Commands.Misc
 			v_EncryptionType = "Encrypt";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var variableInput = v_InputValue.ConvertUserVariableToString(engine);
-			var passphrase = v_PassPhrase.ConvertUserVariableToString(engine);
+			var variableInput = (string)await v_InputValue.EvaluateCode(engine);
+			var passphrase = (string)await v_PassPhrase.EvaluateCode(engine);
 
 			string resultData = "";
 			if (v_EncryptionType == "Encrypt")
@@ -79,7 +79,7 @@ namespace OpenBots.Commands.Misc
 			else if (v_EncryptionType == "Decrypt")
 				resultData = EncryptionServices.DecryptString(variableInput, passphrase);
 
-			resultData.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			resultData.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -61,11 +61,11 @@ namespace OpenBots.Commands.BZTerminal
 			v_InstanceName = "DefaultBZTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = v_XMousePosition.ConvertUserVariableToString(engine);
-			var mouseY = v_YMousePosition.ConvertUserVariableToString(engine);
+			var mouseX = (string)await v_XMousePosition.EvaluateCode(engine);
+			var mouseY = (string)await v_YMousePosition.EvaluateCode(engine);
 
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 

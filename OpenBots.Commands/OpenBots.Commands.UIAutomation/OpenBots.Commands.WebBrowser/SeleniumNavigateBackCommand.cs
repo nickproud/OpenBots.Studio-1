@@ -36,10 +36,10 @@ namespace OpenBots.Commands.WebBrowser
 			v_InstanceName = "DefaultBrowser";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vInstance = v_InstanceName.ConvertUserVariableToString(engine);
+			var vInstance = (string)await v_InstanceName.EvaluateCode(engine);
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
 			seleniumInstance.Navigate().Back();

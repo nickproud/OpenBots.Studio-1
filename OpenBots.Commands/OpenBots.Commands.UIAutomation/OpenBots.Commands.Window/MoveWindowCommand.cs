@@ -73,10 +73,10 @@ namespace OpenBots.Commands.Window
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = v_WindowName.ConvertUserVariableToString(engine);
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
 			int timeout = Int32.Parse(v_Timeout);
 			DateTime timeToEnd = DateTime.Now.AddSeconds(timeout);
 			while (timeToEnd >= DateTime.Now)
@@ -99,8 +99,8 @@ namespace OpenBots.Commands.Window
 				}
 			}
 
-			var variableXPosition = v_XMousePosition.ConvertUserVariableToString(engine);
-			var variableYPosition = v_YMousePosition.ConvertUserVariableToString(engine);
+			var variableXPosition = (string)await v_XMousePosition.EvaluateCode(engine);
+			var variableYPosition = (string)await v_YMousePosition.EvaluateCode(engine);
 
 			User32Functions.MoveWindow(windowName, variableXPosition, variableYPosition);
 		}

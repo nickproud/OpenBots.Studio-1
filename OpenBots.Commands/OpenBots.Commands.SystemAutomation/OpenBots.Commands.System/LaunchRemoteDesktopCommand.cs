@@ -77,14 +77,14 @@ namespace OpenBots.Commands.System
 			v_RDPHeight = SystemInformation.PrimaryMonitorSize.Height.ToString();
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var machineName = v_MachineName.ConvertUserVariableToString(engine);
-			var userName = v_UserName.ConvertUserVariableToString(engine);
-			var password = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
-			var width = int.Parse(v_RDPWidth.ConvertUserVariableToString(engine));
-			var height = int.Parse(v_RDPHeight.ConvertUserVariableToString(engine));
+			var machineName = (string)await v_MachineName.EvaluateCode(engine);
+			var userName = (string)await v_UserName.EvaluateCode(engine);
+			var password = ((SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+			var width = (int)await v_RDPWidth.EvaluateCode(engine);
+			var height = (int)await v_RDPHeight.EvaluateCode(engine);
 
 			if (engine.AutomationEngineContext.ScriptEngine != null)
 			{

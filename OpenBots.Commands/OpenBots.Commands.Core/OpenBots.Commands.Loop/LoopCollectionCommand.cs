@@ -54,13 +54,13 @@ namespace OpenBots.Commands.Loop
 			ScopeStartCommand = true;
 		}
 
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			LoopCollectionCommand loopCommand = (LoopCollectionCommand)parentCommand.ScriptCommand;
 			var engine = (IAutomationEngineInstance)sender;
 
 			int loopTimes;
-			var complexVariable = v_LoopParameter.ConvertUserVariableToObject(engine, nameof(v_LoopParameter), this);           
+			var complexVariable = await v_LoopParameter.EvaluateCode(engine, nameof(v_LoopParameter), this);           
 
 			//if still null then throw exception
 			if (complexVariable == null)
@@ -128,7 +128,7 @@ namespace OpenBots.Commands.Loop
 					itemList.Add(value.ToString());
 				}
 
-				itemList.StoreInUserVariable(engine, v_LoopParameter, nameof(v_LoopParameter), this);
+				itemList.SetVariableValue(engine, v_LoopParameter, nameof(v_LoopParameter), this);
 				listToLoop = itemList;
 			}
 			else
@@ -140,7 +140,7 @@ namespace OpenBots.Commands.Loop
 			{
 				engine.ReportProgress("Starting Loop Number " + (i + 1) + "/" + loopTimes + " From Line " + loopCommand.LineNumber);
 				
-				((object)listToLoop[i]).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				((object)listToLoop[i]).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 				foreach (var cmd in parentCommand.AdditionalScriptCommands)
 				{

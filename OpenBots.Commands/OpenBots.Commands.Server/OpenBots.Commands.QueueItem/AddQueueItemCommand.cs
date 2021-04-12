@@ -124,17 +124,17 @@ namespace OpenBots.Commands.QueueItem
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueName = v_QueueName.ConvertUserVariableToString(engine);
-			var vQueueItemName = v_QueueItemName.ConvertUserVariableToString(engine);
-			var vSource = v_Source.ConvertUserVariableToString(engine);
-			var vEvent = v_Event.ConvertUserVariableToString(engine);
-			var vJsonType = v_JsonType.ConvertUserVariableToString(engine);            
-			var vPriority = v_Priority.ConvertUserVariableToString(engine);
-			var vQueueItemTextValue = v_QueueItemTextValue.ConvertUserVariableToString(engine);
-			var vAttachments = v_Attachments.ConvertUserVariableToString(engine);
+			var vQueueName = (string)await v_QueueName.EvaluateCode(engine);
+			var vQueueItemName = (string)await v_QueueItemName.EvaluateCode(engine);
+			var vSource = (string)await v_Source.EvaluateCode(engine);
+			var vEvent = (string)await v_Event.EvaluateCode(engine);
+			var vJsonType = (string)await v_JsonType.EvaluateCode(engine);            
+			var vPriority = (string)await v_Priority.EvaluateCode(engine);
+			var vQueueItemTextValue = (string)await v_QueueItemTextValue.EvaluateCode(engine);
+			var vAttachments = (string)await v_Attachments.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			Queue queue = QueueMethods.GetQueue(client, $"name eq '{vQueueName}'");

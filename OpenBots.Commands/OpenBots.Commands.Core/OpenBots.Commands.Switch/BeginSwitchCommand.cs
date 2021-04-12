@@ -38,12 +38,12 @@ namespace OpenBots.Commands.Switch
 			ScopeStartCommand = true;
 		}
 
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			//get engine
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vSwitchValue = v_SwitchValue.ConvertUserVariableToString(engine);
+			var vSwitchValue = (string)await v_SwitchValue.EvaluateCode(engine);
 			if (vSwitchValue == v_SwitchValue || !v_SwitchValue.StartsWith("{") || !v_SwitchValue.EndsWith("}"))
 				throw new Exception("Switch value is not a variable");
 

@@ -70,10 +70,10 @@ namespace OpenBots.Commands.BZTerminal
 			v_CloseAllInstances = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var sessionFilePath = v_SessionFilePath.ConvertUserVariableToString(engine);
+			var sessionFilePath = (string)await v_SessionFilePath.EvaluateCode(engine);
 			var terminalContext = new BZTerminalContext();
 
 			if (v_CloseAllInstances == "Yes")

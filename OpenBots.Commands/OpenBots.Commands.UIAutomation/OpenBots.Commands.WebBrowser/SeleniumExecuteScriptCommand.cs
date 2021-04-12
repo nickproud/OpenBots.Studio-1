@@ -63,12 +63,12 @@ namespace OpenBots.Commands.WebBrowser
 			v_InstanceName = "DefaultBrowser";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
-			var script = v_ScriptCode.ConvertUserVariableToString(engine);
-			var args = v_Arguments.ConvertUserVariableToString(engine);
+			var script = (string)await v_ScriptCode.EvaluateCode(engine);
+			var args = (string)await v_Arguments.EvaluateCode(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
 			IJavaScriptExecutor js = (IJavaScriptExecutor)seleniumInstance;
 
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.WebBrowser
 
 			//apply result to variable
 			if ((result != null) && (!string.IsNullOrEmpty(v_OutputUserVariableName)))
-				result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

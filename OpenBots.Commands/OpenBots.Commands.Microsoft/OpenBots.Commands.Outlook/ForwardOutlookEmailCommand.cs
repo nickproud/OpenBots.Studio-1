@@ -48,12 +48,12 @@ namespace OpenBots.Commands.Outlook
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
   
-			var vRecipients = v_Recipients.ConvertUserVariableToString(engine);
+			var vRecipients = (string)await v_Recipients.EvaluateCode(engine);
 			var splitRecipients = vRecipients.Split(';');
 
 			MailItem newMail = vMailItem.Forward();

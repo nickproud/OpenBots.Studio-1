@@ -59,10 +59,10 @@ namespace OpenBots.Commands.IEBrowser
             v_InstanceTracking = "Forget Instance";
         }
 
-        public override void RunCommand(object sender)
+        public async override void RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var webURL = v_URL.ConvertUserVariableToString(engine);
+            var webURL = (string)await v_URL.EvaluateCode(engine);
 
             InternetExplorer newBrowserSession = new InternetExplorer();
 

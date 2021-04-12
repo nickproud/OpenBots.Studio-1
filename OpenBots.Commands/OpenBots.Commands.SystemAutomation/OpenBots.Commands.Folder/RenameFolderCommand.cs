@@ -46,12 +46,12 @@ namespace OpenBots.Commands.Folder
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
-			var newFolderName = v_NewName.ConvertUserVariableToString(engine);
+			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine);
+			var newFolderName = (string)await v_NewName.EvaluateCode(engine);
 
 			if (!Directory.Exists(sourceFolder))
             {

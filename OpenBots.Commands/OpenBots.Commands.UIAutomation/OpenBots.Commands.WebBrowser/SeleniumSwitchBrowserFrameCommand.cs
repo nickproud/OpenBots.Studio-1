@@ -60,12 +60,12 @@ namespace OpenBots.Commands.WebBrowser
 			v_FrameParameter = "0";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			var frameIndex = v_FrameParameter.ConvertUserVariableToString(engine);
+			var frameIndex = (string)await v_FrameParameter.EvaluateCode(engine);
 
 			switch (v_SelectionType)
 			{

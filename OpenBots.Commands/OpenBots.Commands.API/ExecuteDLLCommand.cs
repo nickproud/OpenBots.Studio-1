@@ -81,13 +81,13 @@ namespace OpenBots.Commands.API
 			v_MethodParameters.TableName = DateTime.Now.ToString("MethodParameterTable" + DateTime.Now.ToString("MMddyy.hhmmss"));			
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get file path
-			var filePath = v_FilePath.ConvertUserVariableToString(engine);
-			var className = v_ClassName.ConvertUserVariableToString(engine);
-			var methodName = v_MethodName.ConvertUserVariableToString(engine);
+			var filePath = (string)await v_FilePath.EvaluateCode(engine);
+			var className = (string)await v_ClassName.EvaluateCode(engine);
+			var methodName = (string)await v_MethodName.EvaluateCode(engine);
 
 			//if file path does not exist
 			if (!File.Exists(filePath))
@@ -127,11 +127,11 @@ namespace OpenBots.Commands.API
 					var paramName = param.Name;
 
 					//get parameter value
-					var requiredParameterValue = v_MethodParameters.AsEnumerable()
+					var requiredParameterValue = (string)await v_MethodParameters.AsEnumerable()
 																   .Where(rws => rws.Field<string>("Parameter Name") == paramName)
 																   .Select(rws => rws.Field<string>("Parameter Value"))
 																   .FirstOrDefault()
-																   .ConvertUserVariableToString(engine);
+																   .EvaluateCode(engine);
 
 					dynamic parseResult;
 					//check namespace and convert
@@ -208,7 +208,7 @@ namespace OpenBots.Commands.API
 			}
 
 			//store result in variable
-			result.ToString().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			result.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

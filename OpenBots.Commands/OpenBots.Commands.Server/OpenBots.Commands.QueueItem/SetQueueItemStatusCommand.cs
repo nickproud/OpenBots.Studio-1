@@ -74,12 +74,12 @@ namespace OpenBots.Commands.QueueItem
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueItem = (Dictionary<string, object>)v_QueueItem.ConvertUserVariableToObject(engine, nameof(v_QueueItem), this);
-			var vQueueItemErrorMessage = v_QueueItemErrorMessage.ConvertUserVariableToString(engine);
-			var vQueueItemErrorCode = v_QueueItemErrorCode.ConvertUserVariableToString(engine);
+			var vQueueItem = (Dictionary<string, object>)await v_QueueItem.EvaluateCode(engine, nameof(v_QueueItem), this);
+			var vQueueItemErrorMessage = (string)await v_QueueItemErrorMessage.EvaluateCode(engine);
+			var vQueueItemErrorCode = (string)await v_QueueItemErrorCode.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 

@@ -114,7 +114,7 @@ namespace OpenBots.Commands.API
 			v_AdvancedParameters.TableName = DateTime.Now.ToString("AdvRESTParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			try
 			{
@@ -125,9 +125,9 @@ namespace OpenBots.Commands.API
 				var engine = (IAutomationEngineInstance)sender;
 
 				//get parameters
-				var targetURL = v_BaseURL.ConvertUserVariableToString(engine);
-				var targetEndpoint = v_APIEndPoint.ConvertUserVariableToString(engine);
-				var targetMethod = v_APIMethodType.ConvertUserVariableToString(engine);
+				var targetURL = (string)await v_BaseURL.EvaluateCode(engine);
+				var targetEndpoint = (string)await v_APIEndPoint.EvaluateCode(engine);
+				var targetMethod = (string)await v_APIMethodType.EvaluateCode(engine);
 
 				//client
 				var client = new RestClient(targetURL);
@@ -147,8 +147,8 @@ namespace OpenBots.Commands.API
 				//for each api parameter
 				foreach (var param in apiParameters)
 				{
-					var paramName = ((string)param["Parameter Name"]).ConvertUserVariableToString(engine);
-					var paramValue = ((string)param["Parameter Value"]).ConvertUserVariableToString(engine);
+					var paramName = (string)await ((string)param["Parameter Name"]).EvaluateCode(engine);
+					var paramValue = (string)await ((string)param["Parameter Value"]).EvaluateCode(engine);
 
 					request.AddParameter(paramName, paramValue);
 				}
@@ -156,8 +156,8 @@ namespace OpenBots.Commands.API
 				//for each header
 				foreach (var header in apiHeaders)
 				{
-					var paramName = ((string)header["Parameter Name"]).ConvertUserVariableToString(engine);
-					var paramValue = ((string)header["Parameter Value"]).ConvertUserVariableToString(engine);
+					var paramName = (string)await ((string)header["Parameter Name"]).EvaluateCode(engine);
+					var paramValue = (string)await ((string)header["Parameter Value"]).EvaluateCode(engine);
 
 					request.AddHeader(paramName, paramValue);
 				}
@@ -169,7 +169,7 @@ namespace OpenBots.Commands.API
 				//add json body
 				if (jsonBody != null)
 				{
-					var json = jsonBody.ConvertUserVariableToString(engine);
+					var json = (string)await jsonBody.EvaluateCode(engine);
 					request.AddJsonBody(jsonBody);
 				}
 
@@ -179,9 +179,9 @@ namespace OpenBots.Commands.API
 				//get file
 				if (file != null)
 				{
-					var paramName = ((string)file["Parameter Name"]).ConvertUserVariableToString(engine);
-					var paramValue = ((string)file["Parameter Value"]).ConvertUserVariableToString(engine);
-					var fileData = paramValue.ConvertUserVariableToString(engine);
+					var paramName = (string)await ((string)file["Parameter Name"]).EvaluateCode(engine);
+					var paramValue = (string)await ((string)file["Parameter Value"]).EvaluateCode(engine);
+					var fileData = (string)await paramValue.EvaluateCode(engine);
 					request.AddFile(paramName, fileData);
 
 				}
@@ -189,15 +189,15 @@ namespace OpenBots.Commands.API
 				//add advanced parameters
 				foreach (DataRow rw in v_AdvancedParameters.Rows)
 				{
-					var paramName = rw.Field<string>("Parameter Name").ConvertUserVariableToString(engine);
-					var paramValue = rw.Field<string>("Parameter Value").ConvertUserVariableToString(engine);
-					var paramType = rw.Field<string>("Parameter Type").ConvertUserVariableToString(engine);
-					var contentType = rw.Field<string>("Content Type").ConvertUserVariableToString(engine);
+					var paramName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine);
+					var paramValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine);
+					var paramType = (string)await rw.Field<string>("Parameter Type").EvaluateCode(engine);
+					var contentType = (string)await rw.Field<string>("Content Type").EvaluateCode(engine);
 
 					request.AddParameter(paramName, paramValue, contentType, (ParameterType)Enum.Parse(typeof(ParameterType), paramType));
 				}
 
-				var requestFormat = v_RequestFormat.ConvertUserVariableToString(engine);
+				var requestFormat = (string)await v_RequestFormat.EvaluateCode(engine);
 				if (string.IsNullOrEmpty(requestFormat))
 				{
 					requestFormat = "Xml";
@@ -225,7 +225,7 @@ namespace OpenBots.Commands.API
 					restContent = content;
 				}
 
-				restContent.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				restContent.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			catch (Exception ex)
 			{

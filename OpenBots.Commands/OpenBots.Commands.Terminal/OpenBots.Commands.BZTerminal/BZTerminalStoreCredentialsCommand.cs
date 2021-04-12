@@ -54,11 +54,11 @@ namespace OpenBots.Commands.BZTerminal
 			v_InstanceName = "DefaultBZTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vUserName = v_Username.ConvertUserVariableToString(engine);
-			var vPassword = (SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this);
+			var vUserName = (string)await v_Username.EvaluateCode(engine);
+			var vPassword = (SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)

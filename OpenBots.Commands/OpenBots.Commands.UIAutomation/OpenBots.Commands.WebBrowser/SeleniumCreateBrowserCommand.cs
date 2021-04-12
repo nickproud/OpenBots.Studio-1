@@ -98,11 +98,11 @@ namespace OpenBots.Commands.WebBrowser
 			v_URL = "https://";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var convertedOptions = v_SeleniumOptions.ConvertUserVariableToString(engine);
-			var vURL = v_URL.ConvertUserVariableToString(engine);
+			var convertedOptions = (string)await v_SeleniumOptions.EvaluateCode(engine);
+			var vURL = (string)await v_URL.EvaluateCode(engine);
 
 			IWebDriver webDriver;
 

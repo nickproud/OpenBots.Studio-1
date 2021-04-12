@@ -87,7 +87,7 @@ namespace OpenBots.Commands.Task
 			v_ArgumentAssignments.Columns[1].DataType = typeof(Type);			
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var parentAutomationEngineInstance = (IAutomationEngineInstance)sender;
 			if(parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine == null)
@@ -96,7 +96,7 @@ namespace OpenBots.Commands.Task
 				return;
 			}
 
-			var childTaskPath = v_TaskPath.ConvertUserVariableToString(parentAutomationEngineInstance);
+			var childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance);
 			if (!File.Exists(childTaskPath))
 				throw new FileNotFoundException("Task file was not found");
 
@@ -244,7 +244,7 @@ namespace OpenBots.Commands.Task
 			_passParameters.Checked = false;
 		}
 
-		private void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls, bool isMouseEnter = false)
+		private async void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls, bool isMouseEnter = false)
 		{			
 			var assignArgCheckBox = (CheckBox)sender;
 			_assignmentsGridViewHelper.Visible = assignArgCheckBox.Checked;
@@ -259,7 +259,7 @@ namespace OpenBots.Commands.Task
 				if (startFile.Contains("{ProjectPath}"))
 					startFile = startFile.Replace("{ProjectPath}", editor.ScriptEngineContext.ProjectPath);
 
-				startFile = startFile.ConvertUserVariableToString(currentScriptEngine);
+				startFile = (string)await startFile.EvaluateCode(currentScriptEngine);
 
 				if (!isMouseEnter && File.Exists(startFile))
                 {
@@ -308,10 +308,10 @@ namespace OpenBots.Commands.Task
 			}
 		}       
 
-		private void RunServerTask(object sender)
+		private async void RunServerTask(object sender)
 		{
 			var parentAutomationEngineInstance = (IAutomationEngineInstance)sender;
-			string childTaskPath = v_TaskPath.ConvertUserVariableToString(parentAutomationEngineInstance);
+			string childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance);
 			string parentTaskPath = parentAutomationEngineInstance.FileName;
 
 			//create argument list
@@ -345,7 +345,7 @@ namespace OpenBots.Commands.Task
 			Log.Information("Resuming Parent Task: " + Path.GetFileName(parentTaskPath));
 		}
 
-		private void InitializeArgumentLists(IAutomationEngineInstance parentAutomationEngineInstance)
+		private async void InitializeArgumentLists(IAutomationEngineInstance parentAutomationEngineInstance)
 		{
 			_argumentList = new List<ScriptArgument>();
 
@@ -359,10 +359,10 @@ namespace OpenBots.Commands.Task
 				if (argumentDirection == "In" || argumentDirection == "InOut")
                 {
 					if (((string)rw.ItemArray[2]).StartsWith("{") && ((string)rw.ItemArray[2]).EndsWith("}"))
-						argumentValue = ((string)rw.ItemArray[2]).ConvertUserVariableToObject(parentAutomationEngineInstance, typeof(object));
+						argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, typeof(object));
 
 					if (argumentValue is string || argumentValue == null)
-						argumentValue = ((string)rw.ItemArray[2]).ConvertUserVariableToString(parentAutomationEngineInstance);
+						argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance);
 
 					_argumentList.Add(new ScriptArgument
 					{
@@ -376,7 +376,7 @@ namespace OpenBots.Commands.Task
                 if (argumentDirection == "Out" || argumentDirection == "InOut")
                 {
 					//verify whether the assigned variable/argument exists
-					((string)rw.ItemArray[2]).ConvertUserVariableToObject(parentAutomationEngineInstance, nameof(v_ArgumentAssignments), this);
+					await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, nameof(v_ArgumentAssignments), this);
 
 					var existingArg = _argumentList.Where(x => x.ArgumentName == argumentName.Replace("{", "").Replace("}", "")).FirstOrDefault();
 					if (existingArg != null)

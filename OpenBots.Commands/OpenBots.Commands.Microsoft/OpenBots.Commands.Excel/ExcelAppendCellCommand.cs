@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Excel
 			v_InstanceName = "DefaultExcel";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Excel
 			var lastUsedRow = excelSheet.Cells.Find("*", Missing.Value, Missing.Value, Missing.Value, XlSearchOrder.xlByRows, 
 													XlSearchDirection.xlPrevious, false, Missing.Value, Missing.Value).Row;
 			var targetAddress = "A" + (lastUsedRow + 1);
-			var vTargetText = v_TextToSet.ConvertUserVariableToString(engine);
+			var vTargetText = (string)await v_TextToSet.EvaluateCode(engine);
 			excelSheet.Range[targetAddress].Value = vTargetText;
 		}
 

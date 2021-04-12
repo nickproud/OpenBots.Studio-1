@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.OleDb;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Database
 {
@@ -79,13 +80,13 @@ namespace OpenBots.Commands.Database
 			v_TestConnection = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			//get engine and preference
 			var engine = (IAutomationEngineInstance)sender;
 
 			//create connection
-			var oleDBConnection = CreateConnection(sender);
+			var oleDBConnection = await CreateConnection(sender);
 
 			//attempt to open and close connection
 			if (v_TestConnection == "Yes")
@@ -97,11 +98,11 @@ namespace OpenBots.Commands.Database
 			oleDBConnection.AddAppInstance(engine, v_InstanceName);
 		}
 
-		private OleDbConnection CreateConnection(object sender)
+		private async Task<OleDbConnection> CreateConnection(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var connection = v_ConnectionString.ConvertUserVariableToString(engine);
-			var connectionPass = v_ConnectionStringPassword.ConvertUserVariableToString(engine);
+			var connection = (string)await v_ConnectionString.EvaluateCode(engine);
+			var connectionPass = (string)await v_ConnectionStringPassword.EvaluateCode(engine);
 
 			if (connectionPass.StartsWith("!"))
 			{
@@ -196,13 +197,13 @@ namespace OpenBots.Commands.Database
 			return base.GetDisplayValue() + $" [Instance Name '{v_InstanceName}']";
 		}
 
-		private void TestConnection(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
+		private async void TestConnection(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			
 			try
 			{
 				var engine = (IAutomationEngineInstance)commandControls.CreateAutomationEngineInstance(editor.ScriptEngineContext);
-				var oleDBConnection = CreateConnection(engine);
+				var oleDBConnection = await CreateConnection(engine);
 				oleDBConnection.Open();
 				oleDBConnection.Close();
 				MessageBox.Show("Connection Successful", "Test Connection", MessageBoxButtons.OK, MessageBoxIcon.Information);

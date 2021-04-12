@@ -13,7 +13,7 @@ namespace OpenBots.Commands.Folder.Test
         private GetFoldersCommand _getFolders;
 
         [Fact]
-        public void GetsFolders()
+        public async void GetsFolders()
         {
             _engine = new AutomationEngineInstance(null);
             _getFolders = new GetFoldersCommand();
@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Folder.Test
 
             _getFolders.RunCommand(_engine);
 
-            List<string> folderList = (List<string>)"{output}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> folderList = (List<string>)await "{output}".EvaluateCode(_engine, typeof(List<>));
 
             Assert.Contains(Path.Combine(inputPath, @"toGet"), folderList);
         }

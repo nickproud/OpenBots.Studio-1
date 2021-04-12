@@ -15,7 +15,7 @@ namespace OpenBots.Commands.Variable.Test
         private SetVariableCommand _setVariable;
 
         [Fact]
-        public void SetsVariable()
+        public async void SetsVariable()
         {
             _engine = new AutomationEngineInstance(null);
             _setVariable = new SetVariableCommand();
@@ -28,11 +28,11 @@ namespace OpenBots.Commands.Variable.Test
 
             _setVariable.RunCommand(_engine);
 
-            Assert.Equal("valueToSet", "{setVariable}".ConvertUserVariableToString(_engine));
+            Assert.Equal("valueToSet", (string)await "{setVariable}".EvaluateCode(_engine));
         }
 
         [Fact]
-        public void SetsVariableWithMath()
+        public async void SetsVariableWithMath()
         {
             _engine = new AutomationEngineInstance(null);
             _setVariable = new SetVariableCommand();
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Variable.Test
 
             _setVariable.RunCommand(_engine);
 
-            Assert.Equal("2", "{setVariable}".ConvertUserVariableToString(_engine));
+            Assert.Equal("2", (string)await "{setVariable}".EvaluateCode(_engine));
         }
     }
 }

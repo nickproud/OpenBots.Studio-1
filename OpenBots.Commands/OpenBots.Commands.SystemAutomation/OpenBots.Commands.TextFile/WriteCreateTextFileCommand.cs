@@ -59,12 +59,12 @@ namespace OpenBots.Commands.TextFile
 			v_Overwrite = "Append";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//convert variables
-			var filePath = v_FilePath.ConvertUserVariableToString(engine);
-			var outputText = v_TextToWrite.ConvertUserVariableToString(engine).Replace("[crLF]", Environment.NewLine);
+			var filePath = (string)await v_FilePath.EvaluateCode(engine);
+			var outputText = ((string)await v_TextToWrite.EvaluateCode(engine)).Replace("[crLF]", Environment.NewLine);
 
 			//append or overwrite as necessary
 			if (v_Overwrite == "Append")

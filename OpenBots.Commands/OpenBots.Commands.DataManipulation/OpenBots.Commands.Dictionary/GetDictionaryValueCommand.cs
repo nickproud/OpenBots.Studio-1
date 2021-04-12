@@ -60,31 +60,31 @@ namespace OpenBots.Commands.Dictionary
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			//Retrieve Dictionary by name
 			var engine = (IAutomationEngineInstance)sender;
-			var vKey = v_Key.ConvertUserVariableToString(engine);
+			var vKey = (string)await v_Key.EvaluateCode(engine);
 
 			dynamic dict;
 
 			//Declare local dictionary and assign output
-			if (v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this) is Dictionary<string, string>)
-				dict = (Dictionary<string,string>)v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this);
-			else if (v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this) is Dictionary<string, OBDataTable>)
-				dict = (Dictionary<string, OBDataTable>)v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this);
-			else if (v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this) is Dictionary<string, MailItem>)
-				dict = (Dictionary<string, MailItem>)v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this);
-			else if (v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this) is Dictionary<string, MimeMessage>)
-				dict = (Dictionary<string, MimeMessage>)v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this);
-			else if (v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this) is Dictionary<string, IWebElement>)
-				dict = (Dictionary<string, IWebElement>)v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this);
-			else if (v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this) is Dictionary<string, object>)
-				dict = (Dictionary<string, object>)v_InputDictionary.ConvertUserVariableToObject(engine, nameof(v_InputDictionary), this);
+			if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, string>)
+				dict = (Dictionary<string,string>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
+			else if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, OBDataTable>)
+				dict = (Dictionary<string, OBDataTable>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
+			else if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, MailItem>)
+				dict = (Dictionary<string, MailItem>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
+			else if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, MimeMessage>)
+				dict = (Dictionary<string, MimeMessage>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
+			else if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, IWebElement>)
+				dict = (Dictionary<string, IWebElement>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
+			else if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, object>)
+				dict = (Dictionary<string, object>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
 			else
 				throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 
-			((object)dict[vKey]).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)dict[vKey]).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -46,12 +46,12 @@ namespace OpenBots.Commands.SecureData
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			SecureString secureStringValue = v_Input.ConvertUserVariableToString(engine).ConvertStringToSecureString();
+			SecureString secureStringValue = ((string)await v_Input.EvaluateCode(engine)).ConvertStringToSecureString();
 
-			secureStringValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
+			secureStringValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

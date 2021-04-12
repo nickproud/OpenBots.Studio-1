@@ -49,13 +49,13 @@ namespace OpenBots.Commands.Excel
 			v_InstanceName = "DefaultExcel";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic vRow = v_RowToSet.ConvertUserVariableToString(engine);
+			dynamic vRow = (string)await v_RowToSet.EvaluateCode(engine);
 
 			if (vRow == v_RowToSet && v_RowToSet.StartsWith("{") && v_RowToSet.EndsWith("}"))
-				vRow = v_RowToSet.ConvertUserVariableToObject(engine, nameof(v_RowToSet), this);
+				vRow = await v_RowToSet.EvaluateCode(engine, nameof(v_RowToSet), this);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
@@ -92,7 +92,7 @@ namespace OpenBots.Commands.Excel
 			}
 			else
 			{
-				string vRowString = v_RowToSet.ConvertUserVariableToString(engine);
+				string vRowString = (string)await v_RowToSet.EvaluateCode(engine);
 				var splittext = vRowString.Split(',');
 				string cellValue;
 				foreach (var item in splittext)

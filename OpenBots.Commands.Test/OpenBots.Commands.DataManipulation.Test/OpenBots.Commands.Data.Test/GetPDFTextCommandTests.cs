@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Data.Test
         [Theory]
         [InlineData("File Path")]
         [InlineData("File URL")]
-        public void GetsPDFText(string filePathOrUrl)
+        public async void GetsPDFText(string filePathOrUrl)
         {
             _getPDFText = new GetPDFTextCommand();
             _engine = new AutomationEngineInstance(null);
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Data.Test
 
             _getPDFText.RunCommand(_engine);
 
-            Assert.Equal("Dummy PDF file", "{outputText}".ConvertUserVariableToString(_engine));
+            Assert.Equal("Dummy PDF file", (string)await "{outputText}".EvaluateCode(_engine));
         }
 
         [Fact]

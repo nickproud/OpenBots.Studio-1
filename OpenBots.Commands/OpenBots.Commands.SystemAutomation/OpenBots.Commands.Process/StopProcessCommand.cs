@@ -49,10 +49,10 @@ namespace OpenBots.Commands.Process
 			v_StopOption = "Kill";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string vProgramName = v_ProgramName.ConvertUserVariableToString(engine);
+			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine);
 
 			if (OBFile.Exists(vProgramName))
 				vProgramName = Path.GetFileNameWithoutExtension(vProgramName);

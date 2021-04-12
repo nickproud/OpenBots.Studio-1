@@ -46,14 +46,14 @@ namespace OpenBots.Commands.IEBrowser
             v_InstanceName = "DefaultIEBrowser";
         }
 
-        public override void RunCommand(object sender)
+        public async override void RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
 
             var browserObject = v_InstanceName.GetAppInstance(engine);
             var browserInstance = (InternetExplorer)browserObject;
 
-            browserInstance.Navigate(v_URL.ConvertUserVariableToString(engine));
+            browserInstance.Navigate((string)await v_URL.EvaluateCode(engine));
             IECreateBrowserCommand.WaitForReadyState(browserInstance);
         }
 

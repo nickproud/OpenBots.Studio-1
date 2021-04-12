@@ -71,12 +71,12 @@ namespace OpenBots.Commands.BZTerminal
 			v_InstanceName = "DefaultBZTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = int.Parse(v_XMousePosition.ConvertUserVariableToString(engine));
-			var mouseY = int.Parse(v_YMousePosition.ConvertUserVariableToString(engine));
-			var length = int.Parse(v_Length.ConvertUserVariableToString(engine));
+			var mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+			var mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
+			var length = (int)await v_Length.EvaluateCode(engine);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)
@@ -86,7 +86,7 @@ namespace OpenBots.Commands.BZTerminal
 
 			int startIndex = (mouseY - 1) * 80 + (mouseX - 1);
 			string extractedText = screentext.ToString().Substring(startIndex, length);
-			extractedText.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			extractedText.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

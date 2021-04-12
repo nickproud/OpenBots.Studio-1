@@ -12,7 +12,7 @@ namespace OpenBots.Commands.DataTable.Test
         private AutomationEngineInstance _engine;
 
         [Fact]
-        public void getsDataRowCount()
+        public async void getsDataRowCount()
         {
             _getDataRowCount = new GetDataRowCountCommand();
             _engine = new AutomationEngineInstance(null);
@@ -31,7 +31,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _getDataRowCount.RunCommand(_engine);
 
-            Assert.Equal("1", (string)_getDataRowCount.v_OutputUserVariableName.ConvertUserVariableToString(_engine));
+            Assert.Equal("1", (string)await _getDataRowCount.v_OutputUserVariableName.EvaluateCode(_engine));
         }
     }
 }

@@ -90,13 +90,13 @@ namespace OpenBots.Commands.Excel
 			v_Range = "A1:";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vExcelObject = v_InstanceName.GetAppInstance(engine);
-			var vRange = v_Range.ConvertUserVariableToString(engine);
-			var vColumnName = v_ColumnName.ConvertUserVariableToString(engine);
-			var vOutputDirectory = v_OutputDirectory.ConvertUserVariableToString(engine);
+			var vRange = (string)await v_Range.EvaluateCode(engine);
+			var vColumnName = (string)await v_ColumnName.EvaluateCode(engine);
+			var vOutputDirectory = (string)await v_OutputDirectory.EvaluateCode(engine);
 			var excelInstance = (Application)vExcelObject;
 
 			excelInstance.DisplayAlerts = false;
@@ -168,7 +168,7 @@ namespace OpenBots.Commands.Excel
 									   .ToList();
 
 			//add list of datatables to output variable
-			result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 			//save split datatables in individual workbooks labeled by selected column data
 			if (Directory.Exists(vOutputDirectory))

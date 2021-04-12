@@ -60,11 +60,11 @@ namespace OpenBots.Commands.Process
 			v_WaitForExit = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string vProgramName = v_ProgramName.ConvertUserVariableToString(engine);
-			string vProgramArgs = v_ProgramArgs.ConvertUserVariableToString(engine);
+			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine);
+			string vProgramArgs = (string)await v_ProgramArgs.EvaluateCode(engine);
 			Diagnostics.Process newProcess;
 
 			if (OBFile.Exists(vProgramName))

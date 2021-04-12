@@ -71,12 +71,12 @@ namespace OpenBots.Commands.Excel
 			v_KeyColumn = "Name";
 			v_ValueColumn = "Value";
 		}
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			
-			var vKeyColumn = v_KeyColumn.ConvertUserVariableToString(engine);
-			var vValueColumn = v_ValueColumn.ConvertUserVariableToString(engine);
+			var vKeyColumn = (string)await v_KeyColumn.EvaluateCode(engine);
+			var vValueColumn = (string)await v_ValueColumn.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
@@ -128,7 +128,7 @@ namespace OpenBots.Commands.Excel
 				outputDictionary.Add(dict.keys, dict.values);
 			}
 
-			outputDictionary.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			outputDictionary.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

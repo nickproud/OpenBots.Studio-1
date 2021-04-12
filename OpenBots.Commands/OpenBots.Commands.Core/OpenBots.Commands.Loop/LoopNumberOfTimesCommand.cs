@@ -49,17 +49,17 @@ namespace OpenBots.Commands.Loop
 			v_LoopStart = "0";
 		}
 
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override void RunCommand(object sender, ScriptAction parentCommand)
 		{
 			LoopNumberOfTimesCommand loopCommand = (LoopNumberOfTimesCommand)parentCommand.ScriptCommand;
 			var engine = (IAutomationEngineInstance)sender;
 
 			int loopTimes;
 
-			var loopParameter = loopCommand.v_LoopParameter.ConvertUserVariableToString(engine);
+			var loopParameter = (string)await loopCommand.v_LoopParameter.EvaluateCode(engine);
 			loopTimes = int.Parse(loopParameter);
 
-			int.TryParse(v_LoopStart.ConvertUserVariableToString(engine), out int startIndex);
+			int startIndex = (int)await v_LoopStart.EvaluateCode(engine);
 
 			for (int i = startIndex; i < loopTimes; i++)
 			{

@@ -63,12 +63,12 @@ namespace OpenBots.Commands.NLG
 			v_ParameterType = "Set Subject";
 		}
 
-		public override void RunCommand(object sender)
+		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var p = (SPhraseSpec)v_InstanceName.GetAppInstance(engine);
 
-			var userInput = v_Parameter.ConvertUserVariableToString(engine);
+			var userInput = (string)await v_Parameter.EvaluateCode(engine);
 
 			switch (v_ParameterType)
 			{

@@ -62,7 +62,7 @@ namespace OpenBots.Commands.List
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var itemIndex = v_ItemIndex.ConvertUserVariableToString(engine);
+			var itemIndex = (string)await v_ItemIndex.EvaluateCode(engine);
 			int index = int.Parse(itemIndex);
 			//get variable by regular name
 			var listVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
@@ -110,7 +110,7 @@ namespace OpenBots.Commands.List
 					itemList.Add(value.ToString());
 				}
 
-				itemList.StoreInUserVariable(engine, v_ListName, nameof(v_ListName), this);
+				itemList.SetVariableValue(engine, v_ListName, nameof(v_ListName), this);
 				listToIndex = itemList;
 			}
 			else
