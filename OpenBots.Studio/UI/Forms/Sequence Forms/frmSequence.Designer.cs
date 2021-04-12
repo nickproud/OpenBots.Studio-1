@@ -97,7 +97,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSequence));
-            OpenBots.Core.Utilities.FormsUtilities.Theme theme5 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
+            OpenBots.Core.Utilities.FormsUtilities.Theme theme1 = new OpenBots.Core.Utilities.FormsUtilities.Theme();
             this.tmrNotify = new System.Windows.Forms.Timer(this.components);
             this.cmsScriptActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.enableSelectedCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -508,10 +508,10 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.tlpControls.SetColumnSpan(this.pnlStatus, 3);
             this.pnlStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlStatus.Font = new System.Drawing.Font("Segoe UI Semibold", 10F);
-            this.pnlStatus.Location = new System.Drawing.Point(0, 823);
+            this.pnlStatus.Location = new System.Drawing.Point(0, 832);
             this.pnlStatus.Margin = new System.Windows.Forms.Padding(0);
             this.pnlStatus.Name = "pnlStatus";
-            this.pnlStatus.Size = new System.Drawing.Size(1776, 39);
+            this.pnlStatus.Size = new System.Drawing.Size(1776, 30);
             this.pnlStatus.TabIndex = 3;
             this.pnlStatus.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlStatus_Paint);
             this.pnlStatus.DoubleClick += new System.EventHandler(this.pnlStatus_DoubleClick);
@@ -534,7 +534,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             // 
             this.splitContainerStudioControls.Panel2.BackColor = System.Drawing.Color.Transparent;
             this.splitContainerStudioControls.Panel2.Controls.Add(this.splitContainerScript);
-            this.splitContainerStudioControls.Size = new System.Drawing.Size(1768, 711);
+            this.splitContainerStudioControls.Size = new System.Drawing.Size(1768, 720);
             this.splitContainerStudioControls.SplitterDistance = 328;
             this.splitContainerStudioControls.SplitterWidth = 5;
             this.splitContainerStudioControls.TabIndex = 4;
@@ -545,11 +545,11 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.pnlPaneTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlPaneTabs.Location = new System.Drawing.Point(0, 0);
             this.pnlPaneTabs.Name = "pnlPaneTabs";
-            this.pnlPaneTabs.Size = new System.Drawing.Size(328, 711);
+            this.pnlPaneTabs.Size = new System.Drawing.Size(328, 720);
             this.pnlPaneTabs.TabIndex = 2;
-            theme5.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            theme5.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
-            this.pnlPaneTabs.Theme = theme5;
+            theme1.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            theme1.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
+            this.pnlPaneTabs.Theme = theme1;
             // 
             // uiPaneTabs
             // 
@@ -560,7 +560,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.uiPaneTabs.Margin = new System.Windows.Forms.Padding(4);
             this.uiPaneTabs.Name = "uiPaneTabs";
             this.uiPaneTabs.SelectedIndex = 0;
-            this.uiPaneTabs.Size = new System.Drawing.Size(328, 711);
+            this.uiPaneTabs.Size = new System.Drawing.Size(328, 720);
             this.uiPaneTabs.TabIndex = 26;
             // 
             // tpCommands
@@ -572,7 +572,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.tpCommands.Margin = new System.Windows.Forms.Padding(2);
             this.tpCommands.Name = "tpCommands";
             this.tpCommands.Padding = new System.Windows.Forms.Padding(2);
-            this.tpCommands.Size = new System.Drawing.Size(320, 675);
+            this.tpCommands.Size = new System.Drawing.Size(320, 684);
             this.tpCommands.TabIndex = 4;
             this.tpCommands.Text = "Commands";
             this.tpCommands.UseVisualStyleBackColor = true;
@@ -591,7 +591,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.tlpCommands.RowCount = 2;
             this.tlpCommands.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
             this.tlpCommands.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpCommands.Size = new System.Drawing.Size(316, 671);
+            this.tlpCommands.Size = new System.Drawing.Size(316, 680);
             this.tlpCommands.TabIndex = 10;
             // 
             // tvCommands
@@ -607,7 +607,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.tvCommands.Name = "tvCommands";
             this.tvCommands.ShowLines = false;
             this.tvCommands.ShowNodeToolTips = true;
-            this.tvCommands.Size = new System.Drawing.Size(308, 632);
+            this.tvCommands.Size = new System.Drawing.Size(308, 641);
             this.tvCommands.TabIndex = 9;
             this.tvCommands.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tvCommands_ItemDrag);
             this.tvCommands.DoubleClick += new System.EventHandler(this.tvCommands_DoubleClick);
@@ -672,8 +672,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             // splitContainerScript.Panel2
             // 
             this.splitContainerScript.Panel2.Controls.Add(this.uiVariableArgumentTabs);
-            this.splitContainerScript.Size = new System.Drawing.Size(1435, 711);
-            this.splitContainerScript.SplitterDistance = 527;
+            this.splitContainerScript.Size = new System.Drawing.Size(1435, 720);
+            this.splitContainerScript.SplitterDistance = 533;
             this.splitContainerScript.TabIndex = 4;
             // 
             // uiScriptTabControl
@@ -686,7 +686,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.uiScriptTabControl.Name = "uiScriptTabControl";
             this.uiScriptTabControl.SelectedIndex = 0;
             this.uiScriptTabControl.ShowToolTips = true;
-            this.uiScriptTabControl.Size = new System.Drawing.Size(1435, 527);
+            this.uiScriptTabControl.Size = new System.Drawing.Size(1435, 533);
             this.uiScriptTabControl.TabIndex = 3;
             // 
             // uiVariableArgumentTabs
@@ -702,7 +702,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.uiVariableArgumentTabs.Multiline = true;
             this.uiVariableArgumentTabs.Name = "uiVariableArgumentTabs";
             this.uiVariableArgumentTabs.SelectedIndex = 0;
-            this.uiVariableArgumentTabs.Size = new System.Drawing.Size(1435, 180);
+            this.uiVariableArgumentTabs.Size = new System.Drawing.Size(1435, 183);
             this.uiVariableArgumentTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.uiVariableArgumentTabs.TabIndex = 0;
             // 
@@ -712,7 +712,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.variables.Location = new System.Drawing.Point(4, 4);
             this.variables.Name = "variables";
             this.variables.Padding = new System.Windows.Forms.Padding(3);
-            this.variables.Size = new System.Drawing.Size(1427, 144);
+            this.variables.Size = new System.Drawing.Size(1427, 147);
             this.variables.TabIndex = 0;
             this.variables.Text = "Variables";
             this.variables.UseVisualStyleBackColor = true;
@@ -730,7 +730,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.dgvVariables.Name = "dgvVariables";
             this.dgvVariables.RowHeadersWidth = 51;
             this.dgvVariables.RowTemplate.Height = 24;
-            this.dgvVariables.Size = new System.Drawing.Size(1421, 138);
+            this.dgvVariables.Size = new System.Drawing.Size(1421, 141);
             this.dgvVariables.TabIndex = 0;
             this.dgvVariables.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEndEdit);
             this.dgvVariables.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEnter);
@@ -928,8 +928,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 98F));
             this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 6F));
             this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 39F));
-            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tlpControls.Size = new System.Drawing.Size(1776, 862);
             this.tlpControls.TabIndex = 2;
             // 

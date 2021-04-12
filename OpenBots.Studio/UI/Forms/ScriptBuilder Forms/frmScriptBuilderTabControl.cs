@@ -25,7 +25,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 switch (_scriptFileExtension)
                 {
                     case ".obscript":
-                        if (!_isScriptRunning)
+                        if (!IsScriptRunning)
                             SetVarArgTabControlSettings(ProjectType.OpenBots);
                             
                         _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];     
@@ -33,7 +33,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     case ".py":
                     case ".tag":
                     case ".cs":
-                        if (!_isScriptRunning)
+                        if (!IsScriptRunning)
                             SetVarArgTabControlSettings(ProjectType.Python);
 
                         _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];                       

@@ -299,7 +299,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             }
             catch(Exception ex)
             {
-                Notify($"Error: {ex.Message}", Color.Red);
+                Notify($"An Error Occurred: {ex.Message}", Color.Red);
             }
         }
 
@@ -920,18 +920,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             CreateUndoSnapshot();
             SelectedTabScriptActions.Invalidate();
             AutoSizeLineNumberColumn();
-        }
-
-        private void pnlStatus_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.DrawString(_notificationText, pnlStatus.Font, new SolidBrush(_notificationColor), 30, 4);
-            e.Graphics.DrawImage(Resources.OpenBots_icon, 5, 3, 20, 20);
-            _notificationPaintedText = _notificationText;
-        }
-
-        private void pnlStatus_DoubleClick(object sender, EventArgs e)
-        {
-            MessageBox.Show(_notificationPaintedText);
         }
         #endregion        
         #endregion

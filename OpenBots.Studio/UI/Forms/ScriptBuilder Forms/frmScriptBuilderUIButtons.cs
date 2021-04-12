@@ -661,7 +661,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
                 catch (Exception ex)
                 {
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
                 }              
             }
             catch (Exception ex)
@@ -785,9 +785,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 Script deserializedScript = Script.DeserializeFile(engineContext);
 
                 if (deserializedScript.Commands.Count == 0)
-                {
                     Notify("Error Parsing File: Commands not found!", Color.Red);
-                }
 
                 //variables for comments
                 var fileName = new FileInfo(filePath).Name;
@@ -1171,7 +1169,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (ex is UnauthorizedAccessException)
                     MessageBox.Show("Close Visual Studio and run as Admin to install default packages.", "Unauthorized");
                 else
-                    Notify("Error: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
 
             //hide spinner and enable package manager related buttons
@@ -1227,7 +1225,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (!SaveAllFiles())
                 return;
 
-            Notify("Running Script..", Color.White);
+            Notify("Running Script...", Color.White);
 
             try
             {
@@ -1268,6 +1266,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             CurrentEngine.ScriptEngineContext.ScriptBuilder = this;
             IsScriptRunning = true;
             ((frmScriptEngine)CurrentEngine).Show();
+
+            Notify("", Color.White);
 
             if (!_isDebugMode)
                 FormsHelper.HideAllForms();
