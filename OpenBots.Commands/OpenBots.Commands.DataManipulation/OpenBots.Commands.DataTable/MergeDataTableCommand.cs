@@ -72,28 +72,21 @@ namespace OpenBots.Commands.DataTable
 			var engine = (IAutomationEngineInstance)sender;
 
 			// Get Variable Objects
-			var v_SourceDTVariable = await v_SourceDataTable.EvaluateCode(engine, nameof(v_SourceDataTable), this);
-			var v_DestinationDTVariable = await v_DestinationDataTable.EvaluateCode(engine, nameof(v_DestinationDataTable), this);
+			var SourceDTVariable = (OBDataTable)await v_SourceDataTable.EvaluateCode(engine, nameof(v_SourceDataTable), this);
+			var DestinationDTVariable = (OBDataTable)await v_DestinationDataTable.EvaluateCode(engine, nameof(v_DestinationDataTable), this);
 
 			// (Null Check)
-			if (v_SourceDTVariable is null)
+			if (SourceDTVariable is null)
 				throw new ArgumentNullException("Source DataTable Variable '" + v_SourceDataTable + "' is not initialized.");
 
-			if (v_DestinationDTVariable is null)
+			if (DestinationDTVariable is null)
 				throw new ArgumentNullException("Destination DataTable Variable '" + v_DestinationDataTable + "' is not initialized.");
-
-			// (Data Type Check)
-			if (!(v_SourceDTVariable is OBDataTable))
-				throw new ArgumentException("Type of Source DataTable Variable '" + v_SourceDataTable + "' is not DataTable.");
-
-			if (!(v_DestinationDTVariable is OBDataTable))
-				throw new ArgumentException("Type of Destination DataTable Variable '" + v_DestinationDataTable + "' is not DataTable.");
 
 			// Same Variable Check
 			if (v_SourceDataTable != v_DestinationDataTable)
 			{
-				var sourceDT = (OBDataTable)v_SourceDTVariable;
-				var destinationDT = (OBDataTable)v_DestinationDTVariable;
+				var sourceDT = SourceDTVariable;
+				var destinationDT = DestinationDTVariable;
 
 				switch (v_MissingSchemaAction)
 				{

@@ -73,7 +73,7 @@ namespace OpenBots.Commands.DataTable
 			var dataTableVariable = await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 			OBDataTable dataTable = (OBDataTable)dataTableVariable;
 
-			var valueIndex = (string)await v_DataValueIndex.EvaluateCode(engine);
+			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
 			string columnName = "";
 

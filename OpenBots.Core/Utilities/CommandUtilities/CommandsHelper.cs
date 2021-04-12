@@ -80,9 +80,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             foreach (var param in searchParams)
             {
                 var parameterName = (string)param["Parameter Name"];
-                var parameterValue = (string)param["Parameter Value"];
+                var parameterValueString = (string)param["Parameter Value"];
 
-                parameterValue = (string)await parameterValue.EvaluateCode(engine);
+                dynamic parameterValue = await parameterValueString.EvaluateCode(engine);
 
                 PropertyCondition propCondition;
                 if (bool.TryParse(parameterValue, out bool bValue))
@@ -322,19 +322,17 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 								  where rw.Field<string>("Parameter Name") == "Value2"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				value1 = (string)await value1.EvaluateCode(engine);
-				value2 = (string)await value2.EvaluateCode(engine);
-
-				decimal cdecValue1, cdecValue2;
+				decimal cdecValue1 = (decimal)await value1.EvaluateCode(engine);
+				decimal cdecValue2 = (decimal)await value2.EvaluateCode(engine);
 
 				switch (operand)
 				{
 					case "is equal to":
-						ifResult = (value1 == value2);
+						ifResult = (cdecValue1 == cdecValue2);
 						break;
 
 					case "is not equal to":
-						ifResult = (value1 != value2);
+						ifResult = (cdecValue1 != cdecValue2);
 						break;
 
 					case "is greater than":
@@ -376,7 +374,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
 				DateTime dt1, dt2;
 
-				dynamic input1 = (string)await value1.EvaluateCode(engine);
+				dynamic input1 = await value1.EvaluateCode(engine);
 
 				if (input1 == value1 && input1.StartsWith("{") && input1.EndsWith("}"))
 					input1 = value1.EvaluateCode(engine, typeof(object));
@@ -388,10 +386,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				else
 					throw new InvalidDataException("Value1 is not a valid DateTime");
 
-				dynamic input2 = (string)await value2.EvaluateCode(engine);
-
-				if (input2 == value2 && input2.StartsWith("{") && input2.EndsWith("}"))
-					input2 = value2.EvaluateCode(engine, typeof(object));
+				dynamic input2 = await value2.EvaluateCode(engine);
 
 				if (input2 is DateTime)
 					dt2 = (DateTime)input2;
@@ -490,12 +485,15 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										where rw.Field<string>("Parameter Name") == "Variable Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var actualVariable = ((string)await variableName.EvaluateCode(engine)).Trim();
+				dynamic actualVariable = await variableName.EvaluateCode(engine);
 
-				var numericTest = decimal.TryParse(actualVariable, out decimal parsedResult);
+				decimal parsedResult;
 
-				if (numericTest)
+				if (actualVariable.GetType() == typeof(decimal))
+				{
 					ifResult = true;
+					parsedResult = actualVariable;
+				}
 				else
 					ifResult = false;
 			}
@@ -506,11 +504,8 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										  where rw.Field<string>("Parameter Name") == "Line Number"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				//convert to variable
-				string variableLineNumber = (string)await userLineNumber.EvaluateCode(engine);
-
 				//convert to int
-				int lineNumber = int.Parse(variableLineNumber);
+				int lineNumber = (int)await userLineNumber.EvaluateCode(engine);
 
 				//determine if error happened
 				if (engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).Count() > 0)
@@ -532,12 +527,8 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				string userLineNumber = ((from rw in IfActionParameterTable.AsEnumerable()
 										  where rw.Field<string>("Parameter Name") == "Line Number"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				//convert to variable
-				string variableLineNumber = (string)await userLineNumber.EvaluateCode(engine);
-
 				//convert to int
-				int lineNumber = int.Parse(variableLineNumber);
+				int lineNumber = (int)await userLineNumber.EvaluateCode(engine);
 
 				//determine if error happened
 				if (engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).Count() == 0)
@@ -684,10 +675,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 												where rw.Field<string>("Parameter Name") == "True When"
 												select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				string timeout = (from rw in IfActionParameterTable.AsEnumerable()
+				string timeoutString = (from rw in IfActionParameterTable.AsEnumerable()
 								  where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault();
-				timeout = (string)await timeout.EvaluateCode(engine);
 
 				//set up search parameter table
 				var uiASearchParameters = new DataTable();
@@ -696,7 +686,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				uiASearchParameters.Columns.Add("Parameter Value");
 				uiASearchParameters.Rows.Add(true, elementSearchMethod, elementSearchParam);
 
-				int vTimeout = int.Parse(timeout);
+				int vTimeout = (int)await timeoutString.EvaluateCode(engine);
 				AutomationElement handle = null;
 				var timeToEnd = DateTime.Now.AddSeconds(vTimeout);
 				while (timeToEnd >= DateTime.Now)
@@ -733,7 +723,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 					accuracyString = (from rw in IfActionParameterTable.AsEnumerable()
 											 where rw.Field<string>("Parameter Name") == "Accuracy (0-1)"
 											 select rw.Field<string>("Parameter Value")).FirstOrDefault();
-					accuracy = double.Parse((string)await accuracyString.EvaluateCode(engine));
+					accuracy = (double)await accuracyString.EvaluateCode(engine);
 					if (accuracy > 1 || accuracy < 0)
 						throw new ArgumentOutOfRangeException("Accuracy value is out of range (0-1)");
 				}

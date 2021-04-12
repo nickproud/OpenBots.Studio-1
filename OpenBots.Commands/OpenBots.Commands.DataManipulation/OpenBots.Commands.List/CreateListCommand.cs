@@ -155,9 +155,7 @@ namespace OpenBots.Commands.List
 					}
 					break;
 			}
-
-			await VariableMethods.EvaluateCode($"{v_OutputUserVariableName} = new List<{typeString}>();", engine, typeof(List<>));
-			((object)vNewList).SetVariableValue(engine, v_OutputUserVariableName, typeof(List<>));
+			vNewList.SetVariableValue(engine, v_OutputUserVariableName, typeof(List<>));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

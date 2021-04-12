@@ -72,7 +72,7 @@ namespace OpenBots.Commands.DataTable
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vSearchItem = (string)await v_SearchItem.EvaluateCode(engine);
+			dynamic vSearchItem = await v_SearchItem.EvaluateCode(engine);
 
 			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 

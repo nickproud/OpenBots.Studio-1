@@ -82,7 +82,8 @@ namespace OpenBots.Commands.Data
 			//get variablized input
 			var variableInput = (string)await v_InputText.EvaluateCode(engine);
 
-			string variableLeading, variableTrailing, skipOccurences, extractedText;
+			string variableLeading, variableTrailing, extractedText;
+			int skipOccurences;
 
 			//handle extraction cases
 			switch (v_TextExtractionType)
@@ -90,26 +91,26 @@ namespace OpenBots.Commands.Data
 				case "Extract All After Text":
 					//extract trailing texts            
 					variableLeading = (string)await GetParameterValue("Leading Text").EvaluateCode(engine);
-					skipOccurences = (string)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
+					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
 					extractedText = ExtractLeadingText(variableInput, variableLeading, skipOccurences);
 					break;
 				case "Extract All Before Text":
 					//extract leading text
 					variableTrailing = (string)await GetParameterValue("Trailing Text").EvaluateCode(engine);
-					skipOccurences = (string)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
+					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
 					extractedText = ExtractTrailingText(variableInput, variableTrailing, skipOccurences);
 					break;
 				case "Extract All Between Text":
 					//extract leading and then trailing which gives the items between
 					variableLeading = (string)await GetParameterValue("Leading Text").EvaluateCode(engine);
 					variableTrailing = (string)await GetParameterValue("Trailing Text").EvaluateCode(engine);
-					skipOccurences = (string)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
+					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
 
 					//extract leading
 					extractedText = ExtractLeadingText(variableInput, variableLeading, skipOccurences);
 
 					//extract trailing -- assume we will take to the first item
-					extractedText = ExtractTrailingText(extractedText, variableTrailing, "0");
+					extractedText = ExtractTrailingText(extractedText, variableTrailing, 0);
 
 					break;
 				default:
@@ -187,15 +188,10 @@ namespace OpenBots.Commands.Data
 					 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 		}
 
-		private string ExtractLeadingText(string input, string substring, string occurences)
+		private string ExtractLeadingText(string input, string substring, int occurences)
 		{
 			//verify the occurence index
-			int leadingOccurenceIndex = 0;
-
-			if (!int.TryParse(occurences, out leadingOccurenceIndex))
-			{
-				throw new Exception("Invalid Index For Extraction - " + occurences);
-			}
+			int leadingOccurenceIndex = occurences;
 
 			//find index matches
 			var leadingOccurencesFound = Regex.Matches(input, substring).Cast<Match>().Select(m => m.Index).ToList();
@@ -214,14 +210,10 @@ namespace OpenBots.Commands.Data
 			return input.Substring(startPosition);
 		}
 
-		private string ExtractTrailingText(string input, string substring, string occurences)
+		private string ExtractTrailingText(string input, string substring, int occurences)
 		{
 			//verify the occurence index
-			int leadingOccurenceIndex = 0;
-			if (!int.TryParse(occurences, out leadingOccurenceIndex))
-			{
-				throw new Exception("Invalid Index For Extraction - " + occurences);
-			}
+			int leadingOccurenceIndex = occurences;
 
 			//find index matches
 			var trailingOccurencesFound = Regex.Matches(input, substring).Cast<Match>().Select(m => m.Index).ToList();

@@ -74,7 +74,7 @@ namespace OpenBots.Commands.DataTable
 			var dataRowVariable = await v_DataRow.EvaluateCode(engine, nameof(v_DataRow), this);
 			DataRow dataRow = (DataRow)dataRowVariable;
 
-			var valueIndex = (string)await v_DataValueIndex.EvaluateCode(engine);
+			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
 			if (v_Option == "Column Index")
 			{

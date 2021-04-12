@@ -54,38 +54,7 @@ namespace OpenBots.Commands.Misc
 
 			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
 
-			string variableMessage = v_Message;
-
-			var messageComponents = variableMessage.Split(new char[] {'{', '}'});
-
-			var varList = engine.AutomationEngineContext.EngineScriptState.Variables;
-			HashSet<string> varListNames = new HashSet<string>();
-			foreach(var scriptVar in varList)
-            {
-				varListNames.Add(scriptVar.Name);
-            }
-			for(int i = 0;i<messageComponents.Length;i++)
-            {
-                if (varListNames.Contains(messageComponents[i]))
-                {
-					messageComponents[i] = messageComponents[i].GetVariableValue(engine).ToString();
-                }
-            }
-
-			variableMessage = string.Join("", messageComponents);
-
-			string type = "";
-			if(variableMessage?.GetType().Name == typeof(KeyValuePair<,>).Name)
-            {
-				type = variableMessage.GetType().FullName;
-			}
-			else if (variableMessage != null)
-				type = variableMessage.GetType().FullName;
-
-			if (variableMessage is string)
-				variableMessage = variableMessage.Replace("\\n", Environment.NewLine);
-			else
-				variableMessage = variableMessage.GetType().ToString() + Environment.NewLine + StringMethods.ConvertObjectToString(variableMessage, variableMessage.GetType());
+			string variableMessage = (string)await v_Message.EvaluateCode(engine);
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{

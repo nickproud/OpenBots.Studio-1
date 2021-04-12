@@ -63,10 +63,8 @@ namespace OpenBots.Commands.List
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			//var vListVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
-			var vListVariable = await VariableMethods.EvaluateCode($"{v_ListName}", engine, typeof(List<>));
-			//var vListIndex = int.Parse(v_ListIndex.ConvertUserVariableToString(engine));
-			var vListIndex = (int)await VariableMethods.EvaluateCode($"{v_ListIndex}", engine, typeof(int));
+			var vListVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
+			var vListIndex = (int)await VariableMethods.EvaluateCode(v_ListIndex, engine, typeof(int));
 			if (vListVariable != null)
 			{
 				if (vListVariable is List<string>)

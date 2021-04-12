@@ -61,8 +61,7 @@ namespace OpenBots.Commands.DataTable
 			var engine = (IAutomationEngineInstance)sender;
 			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
-			var rowIndex = (string)await v_DataRowIndex.EvaluateCode(engine);
-			int index = int.Parse(rowIndex);
+			int index = (int)await v_DataRowIndex.EvaluateCode(engine);
 
 			DataRow row = dataTable.Rows[index];
 

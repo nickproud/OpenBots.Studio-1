@@ -51,7 +51,7 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
-			var count = dataTable.Columns.Count.ToString();
+			int count = dataTable.Columns.Count;
 
 			count.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}

@@ -45,8 +45,12 @@ namespace OpenBots.Commands.Variable
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
+			object value = null;
 			if (v_OutputUserVariableName != "")
-				await VariableMethods.EvaluateCode(v_OutputUserVariableName, v_Input, null, engine);
+			{
+				value = await VariableMethods.EvaluateCode(v_Input, engine);
+				value.SetVariableValue(engine, v_OutputUserVariableName, VariableMethods.GetVariableType(v_OutputUserVariableName, engine));
+			}
 			else
 				await v_Input.EvaluateCodeInPlace(engine);
 		}

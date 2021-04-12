@@ -84,7 +84,7 @@ namespace OpenBots.Commands.Data
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vYear = (int)await v_Year.EvaluateCode(engine);
-			var vMonth = (string)await v_Month.EvaluateCode(engine);
+			dynamic vMonth = await v_Month.EvaluateCode(engine);
 			var vDay = (int)await v_Day.EvaluateCode(engine);
 			var vTime = (string)await v_Time.EvaluateCode(engine);
 
