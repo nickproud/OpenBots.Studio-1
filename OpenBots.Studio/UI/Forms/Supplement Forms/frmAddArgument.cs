@@ -113,7 +113,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             if (((Type)cbxDefaultType.SelectedValue).Name == "MoreOptions")
             {
-                frmTypes typeForm = new frmTypes(_typeContext.GroupedTypes);
+                frmTypes typeForm = new frmTypes(_typeContext);
                 typeForm.ShowDialog();
 
                 if (typeForm.DialogResult == DialogResult.OK)

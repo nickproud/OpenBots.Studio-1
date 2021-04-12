@@ -1,35 +1,32 @@
-﻿using OpenBots.Core.UI.Forms;
+﻿using OpenBots.Core.Script;
+using OpenBots.Core.UI.Forms;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.Supplement_Forms
 {
     public partial class frmTypes : UIForm
     {
-        public Dictionary<string, List<Type>> GroupedTypes { get; set; } = new Dictionary<string, List<Type>>();
         public Type SelectedType { get; set; }
 
         private TreeView _tvTypesCopy;
         private string _txtTypeWatermark = "Type Here to Search";
+        private TypeContext _typeContext;
+        private Type _preEditType;
 
-        public frmTypes(Dictionary<string, List<Type>> groupedTypes)
+        public frmTypes(TypeContext typeContext)
         {
             InitializeComponent();
-            GroupedTypes = groupedTypes;
+            _typeContext = typeContext;
         }
 
         private void frmTypes_Load(object sender, EventArgs e)
         {
             
 
-            foreach(var group in GroupedTypes)
+            foreach(var group in _typeContext.GroupedTypes)
             {
                 var groupNode = new TreeNode();
                 groupNode.Name = group.Key;
@@ -53,22 +50,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             CopyTreeView(tvTypes, _tvTypesCopy);
         }
 
-        private void tvTypes_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            //handle double clicks outside
-            if (tvTypes.SelectedNode == null)
-                return;
-
-            //exit if parent node is clicked
-            if (tvTypes.SelectedNode.Parent == null)
-                return;
-
-            if (tvTypes.SelectedNode.Nodes.Count == 0)
-            {
-                SelectedType = (Type)tvTypes.SelectedNode.Tag;
-                DialogResult = DialogResult.OK;
-            }           
-        }
 
         public void CopyTreeView(TreeView originalTreeView, TreeView copiedTreeView)
         {
@@ -184,6 +165,142 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void uiBtnCollapse_Click(object sender, EventArgs e)
         {
             tvTypes.CollapseAll();
+        }
+
+        private void uiBtnOk_Click(object sender, EventArgs e)
+        {
+            //handle double clicks outside
+            if (tvTypes.SelectedNode == null)
+                return;
+
+            //exit if parent node is clicked
+            if (tvTypes.SelectedNode.Parent == null)
+                return;
+
+            if (tvTypes.SelectedNode.Nodes.Count == 0)
+            {
+                SelectedType = (Type)tvTypes.SelectedNode.Tag;
+
+                if (SelectedType.IsGenericType)
+                {
+                    SelectedType = ConstructGenericType();
+                }
+                DialogResult = DialogResult.OK;
+            }
+        }
+
+        private Type ConstructGenericType()
+        {
+            List<Type> genericArguments = new List<Type>();
+            foreach(Control control in flpTypeConstruction.Controls)
+            {
+                if (control is ComboBox)
+                {
+                    genericArguments.Add((Type)control.Tag);
+                }
+            }
+
+            return SelectedType.MakeGenericType(genericArguments.ToArray());
+        }
+
+        private void uiBtnCancel_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+        }
+
+        private void tvTypes_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            //handle double clicks outside
+            if (tvTypes.SelectedNode == null)
+                return;
+
+            //exit if parent node is clicked
+            if (tvTypes.SelectedNode.Parent == null)
+                return;
+
+            if (tvTypes.SelectedNode.Nodes.Count == 0)
+            {
+                SelectedType = (Type)tvTypes.SelectedNode.Tag;
+                if (SelectedType.IsGenericType)
+                {
+                    LoadGenericPanel();
+                }
+            }
+        }
+
+        private void LoadGenericPanel()
+        {
+            flpTypeConstruction.Controls.Clear();
+            foreach (Control control in flpTypeConstruction.Controls)
+                control.Dispose();
+
+            flpTypeConstruction.Controls.Add(NewTypeLabel(SelectedType.Name));
+
+            foreach(var arg in SelectedType.GetGenericArguments())
+                flpTypeConstruction.Controls.Add(NewTypeComboBox());
+            //Type[] typeArgs = { typeof(string), typeof(int) };
+            //var newType = SelectedType.MakeGenericType(typeArgs);
+   
+        }
+
+        private Label NewTypeLabel(string text)
+        {
+            Label lblType = new Label();
+            lblType.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblType.ForeColor = Color.Black;
+            lblType.Text = text;
+            lblType.AutoSize = true;
+            return lblType;
+        }
+
+        private ComboBox NewTypeComboBox()
+        {
+            ComboBox cbxType = new ComboBox();
+            cbxType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbxType.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cbxType.ForeColor = Color.SteelBlue;
+            cbxType.Width = 200;
+            cbxType.Tag = typeof(string);
+            cbxType.SelectionChangeCommitted += new EventHandler(cbxDefaultType_SelectionChangeCommitted);
+
+            cbxType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+            cbxType.DisplayMember = "Key";
+            cbxType.ValueMember = "Value";
+
+            cbxType.SelectedValue = typeof(string);
+            cbxType.Tag = typeof(string);
+            return cbxType;
+        }
+
+        private void cbxDefaultType_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            var cbxType = (ComboBox)sender;
+            if (((Type)cbxType.SelectedValue).Name == "MoreOptions")
+            {
+                frmTypes typeForm = new frmTypes(_typeContext);
+                typeForm.ShowDialog();
+
+                if (typeForm.DialogResult == DialogResult.OK)
+                {
+                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.FullName))
+                    {
+                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.FullName, typeForm.SelectedType);
+                        cbxType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+                    }
+
+                    cbxType.SelectedValue = typeForm.SelectedType;
+                    cbxType.Tag = typeForm.SelectedType;
+                }
+                else
+                {
+                    cbxType.SelectedValue = _preEditType;
+                    cbxType.Tag = _preEditType;
+                }
+            }
+            else
+                cbxType.Tag = cbxType.SelectedValue;
+
+            _preEditType = (Type)cbxType.SelectedValue;
         }
     }
 }

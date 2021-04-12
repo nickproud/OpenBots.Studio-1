@@ -242,7 +242,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     else if (selectedCell.Value is Type && ((Type)selectedCell.Value).Name == "MoreOptions")
                     {
                         //triggers the type form to open if 'More Options...' is selected
-                        frmTypes typeForm = new frmTypes(_typeContext.GroupedTypes);
+                        frmTypes typeForm = new frmTypes(_typeContext);
                         typeForm.ShowDialog();
 
                         //adds type to defaults if new, then commits selection to the cell
