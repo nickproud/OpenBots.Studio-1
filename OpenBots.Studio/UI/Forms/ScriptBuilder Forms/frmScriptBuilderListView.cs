@@ -631,13 +631,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newCommand.Text = cmdDetails.GetDisplayValue();
             newCommand.SubItems.Add(cmdDetails.GetDisplayValue());
             newCommand.SubItems.Add(cmdDetails.GetDisplayValue());
-            //cmdDetails.RenderedControls = null;
+            newCommand.ToolTipText = cmdDetails.GetDisplayValue();
             newCommand.Tag = cmdDetails;
             newCommand.ForeColor = Color.SteelBlue;
             newCommand.BackColor = Color.DimGray;
+
             if (_uiImages != null)
                 newCommand.ImageIndex = _uiImages.Images.IndexOfKey(cmdDetails.GetType().Name);
-            newCommand.ToolTipText = cmdDetails.GetDisplayValue();
 
             return newCommand;
         }
@@ -886,6 +886,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _selectedTabScriptActions.Items.Remove(item);
 
             _selectedTabScriptActions.Invalidate();
+
+            GC.Collect();
         }
 
         private void SelectAllScopedCode()

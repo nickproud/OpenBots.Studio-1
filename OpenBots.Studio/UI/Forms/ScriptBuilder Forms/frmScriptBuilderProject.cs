@@ -128,7 +128,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     ScriptProject = project;
                     _mainFileName = mainFileName;                 
                     ScriptProjectPath = projectBuilder.ExistingProjectPath;
+
+                    foreach (TabPage tab in uiScriptTabControl.TabPages)
+                    {
+                        tab.Controls[0].Dispose();
+                        tab.Dispose();
+                    }
+                        
                     uiScriptTabControl.TabPages.Clear();
+
+                    GC.Collect();
 
                     //open Main
                     switch (ScriptProject.ProjectType)

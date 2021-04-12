@@ -24,6 +24,7 @@ using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using OpenBots.UI.CustomControls;
 using OpenBots.UI.CustomControls.CustomUIControls;
+using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -55,7 +56,6 @@ namespace OpenBots.UI.Forms
         public List<ScriptCommand> ConfiguredCommands { get; set; }
         public string HTMLElementRecorderURL { get; set; }
         public TypeContext TypeContext { get; set; }
-
         private ICommandControls _commandControls;
         private ToolTip _errorToolTip;
 
@@ -86,9 +86,7 @@ namespace OpenBots.UI.Forms
             cboSelectedCommand.DisplayMember = "FullName";
 
             if ((CreationModeInstance == CreationMode.Add) && (DefaultStartupCommand != null) && (CommandList.Where(x => x.FullName == DefaultStartupCommand).Count() > 0))
-            {
                 cboSelectedCommand.SelectedIndex = cboSelectedCommand.FindStringExact(DefaultStartupCommand);
-            }
             else if (CreationModeInstance == CreationMode.Edit)
             {
                 // var requiredCommand = commandList.Where(x => x.FullName.Contains(defaultStartupCommand)).FirstOrDefault(); //&& x.CommandClass.Name == originalCommand.CommandName).FirstOrDefault();
@@ -96,18 +94,12 @@ namespace OpenBots.UI.Forms
                 var requiredCommand = CommandList.Where(x => x.Command.ToString() == EditingCommand.ToString()).FirstOrDefault();
 
                 if (requiredCommand == null)
-                {
                     MessageBox.Show("Command was not found! " + DefaultStartupCommand);
-                }
                 else
-                {
                     cboSelectedCommand.SelectedIndex = cboSelectedCommand.FindStringExact(requiredCommand.FullName);
-                }
             }
             else
-            {
                 cboSelectedCommand.SelectedIndex = 0;
-            }
 
             //force commit event to populate the flow layout
             cboSelectedCommand_SelectionChangeCommitted(null, null);
@@ -115,14 +107,11 @@ namespace OpenBots.UI.Forms
             //apply original variables if command is being updated
             if (OriginalCommand != null)
             {
-
                 //update bindings
                 foreach (Control c in flw_InputVariables.Controls)
                 {
                     foreach (Binding b in c.DataBindings)
-                    {
                         b.ReadValue();
-                    }
 
                     //helper for box
                     if (c is UIPictureBox)
@@ -133,12 +122,14 @@ namespace OpenBots.UI.Forms
                         if (SelectedCommand.CommandName == "SurfaceAutomationCommand")
                         {
                             cmd = (IImageCommands)SelectedCommand;
+
                             if (!string.IsNullOrEmpty(cmd.v_ImageCapture))
                                 typedControl.Image = CommonMethods.Base64ToImage(cmd.v_ImageCapture);
                         }
                         else if (SelectedCommand.CommandName == "CaptureImageCommand")
                         {
                             cmd = (IImageCommands)SelectedCommand;
+
                             if (!string.IsNullOrEmpty(cmd.v_ImageCapture))
                                 typedControl.Image = CommonMethods.Base64ToImage(cmd.v_ImageCapture);
                         }
@@ -160,9 +151,7 @@ namespace OpenBots.UI.Forms
         private void frmCommandEditor_Resize(object sender, EventArgs e)
         {
             foreach (Control item in flw_InputVariables.Controls)
-            {
                 item.Width = Width - 70;
-            }
         }
 
         private void cboSelectedCommand_SelectionChangeCommitted(object sender, EventArgs e)
@@ -191,14 +180,20 @@ namespace OpenBots.UI.Forms
             //update data source
             userSelectedCommand.Command = SelectedCommand;
 
-            if(OriginalCommand != null)
-            {
-                //copy original properties
+            //copy original properties
+            if (OriginalCommand != null)
                 CopyPropertiesTo(OriginalCommand, SelectedCommand);
-            }
 
-            //bind controls to new data source
-            userSelectedCommand.Bind(this, _commandControls);
+            try
+            {
+                //bind controls to new data source
+                userSelectedCommand.Bind(this, _commandControls);
+            }
+            catch (Exception ex)
+            {
+                frmDialog errorForm = new frmDialog(ex.Message, ex.GetType()?.ToString(), DialogType.CancelOnly, 0); ;
+                errorForm.ShowDialog();
+            }
 
             Label descriptionLabel = new Label();
             descriptionLabel.AutoSize = true;
@@ -235,8 +230,10 @@ namespace OpenBots.UI.Forms
                 try
                 {
                     PropertyInfo propFrom = fromObject.GetType().GetProperty(propTo.Name);
+
                     if (propTo.Name == "SelectionName")
                         continue;
+
                     if (propFrom != null && propFrom.CanWrite)
                         propTo.SetValue(toObject, propFrom.GetValue(fromObject, null), null);
                 }
@@ -273,6 +270,7 @@ namespace OpenBots.UI.Forms
                 {
                     var typedControl = (UIPictureBox)ctrl;
                     dynamic cmd;
+
                     if (SelectedCommand.CommandName == "SurfaceAutomationCommand")
                     {
                         cmd = (IImageCommands)SelectedCommand;
@@ -340,6 +338,7 @@ namespace OpenBots.UI.Forms
                                     foreach (DataGridViewCell cell in row.Cells)
                                     {
                                         bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl, testEngine);
+
                                         if (!isCellValid)
                                         {
                                             isAllValid = false;

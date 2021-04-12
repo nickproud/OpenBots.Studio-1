@@ -10,7 +10,6 @@ using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -466,13 +465,13 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             newCommand.Text = cmdDetails.GetDisplayValue();
             newCommand.SubItems.Add(cmdDetails.GetDisplayValue());
             newCommand.SubItems.Add(cmdDetails.GetDisplayValue());
-            //cmdDetails.RenderedControls = null;
+            newCommand.ToolTipText = cmdDetails.GetDisplayValue();
             newCommand.Tag = cmdDetails;
             newCommand.ForeColor = Color.SteelBlue;
             newCommand.BackColor = Color.DimGray;
+
             if (_uiImages != null)
                 newCommand.ImageIndex = _uiImages.Images.IndexOfKey(cmdDetails.GetType().Name);
-            newCommand.ToolTipText = cmdDetails.GetDisplayValue();
 
             return newCommand;
         }
@@ -674,6 +673,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 SelectedTabScriptActions.Items.Remove(item);
 
             SelectedTabScriptActions.Invalidate();
+
+            GC.Collect();
         }
 
         private void SelectAllScopedCode()
