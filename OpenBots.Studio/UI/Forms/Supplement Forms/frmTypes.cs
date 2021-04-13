@@ -1,8 +1,10 @@
 ﻿using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.Supplement_Forms
@@ -10,23 +12,24 @@ namespace OpenBots.UI.Forms.Supplement_Forms
     public partial class frmTypes : UIForm
     {
         public Type SelectedType { get; set; }
-
         private TreeView _tvTypesCopy;
         private string _txtTypeWatermark = "Type Here to Search";
         private TypeContext _typeContext;
         private Type _preEditType;
+        private ToolTip _typeToolTip;
 
         public frmTypes(TypeContext typeContext)
         {
             InitializeComponent();
             _typeContext = typeContext;
+            _preEditType = typeof(string);
         }
 
         private void frmTypes_Load(object sender, EventArgs e)
         {
-            
+            _typeToolTip = AddTypeToolTip();
 
-            foreach(var group in _typeContext.GroupedTypes)
+            foreach (var group in _typeContext.GroupedTypes)
             {
                 var groupNode = new TreeNode();
                 groupNode.Name = group.Key;
@@ -36,9 +39,9 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 foreach(var type in group.Value)
                 {
                     var typeNode = new TreeNode();
-                    typeNode.Name = type.FullName;
-                    typeNode.Text = type.FullName;
-                    typeNode.ToolTipText = type.Name;
+                    typeNode.Name = type.GetRealTypeFullName();
+                    typeNode.Text = type.GetRealTypeFullName();
+                    typeNode.ToolTipText = type.GetRealTypeFullName();
                     typeNode.Tag = type;
                     groupNode.Nodes.Add(typeNode);
                 }
@@ -85,6 +88,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             //blocks repainting tree until all controls are loaded
             tvTypes.BeginUpdate();
             tvTypes.Nodes.Clear();
+
             if (txtTypeSearch.Text != string.Empty)
             {
                 foreach (TreeNode parentNodeCopy in _tvTypesCopy.Nodes)
@@ -104,9 +108,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                         }
                     }
                     if (!childNodefound && !(parentNodeCopy.Text.ToLower().Contains(txtTypeSearch.Text.ToLower())))
-                    {
                         tvTypes.Nodes.Remove(searchedParentNode);
-                    }
                     else if (parentNodeCopy.Text.ToLower().Contains(txtTypeSearch.Text.ToLower()))
                     {
                         searchedParentNode.Nodes.Clear();
@@ -124,9 +126,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             else
             {
                 foreach (TreeNode parentNodeCopy in _tvTypesCopy.Nodes)
-                {
                     tvTypes.Nodes.Add((TreeNode)parentNodeCopy.Clone());
-                }
+
                 tvTypes.CollapseAll();
             }
 
@@ -182,9 +183,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 SelectedType = (Type)tvTypes.SelectedNode.Tag;
 
                 if (SelectedType.IsGenericType)
-                {
                     SelectedType = ConstructGenericType();
-                }
+
                 DialogResult = DialogResult.OK;
             }
         }
@@ -192,12 +192,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private Type ConstructGenericType()
         {
             List<Type> genericArguments = new List<Type>();
+
             foreach(Control control in flpTypeConstruction.Controls)
             {
                 if (control is ComboBox)
-                {
                     genericArguments.Add((Type)control.Tag);
-                }
             }
 
             return SelectedType.MakeGenericType(genericArguments.ToArray());
@@ -206,6 +205,40 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void uiBtnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+        }
+
+        private void cbxDefaultType_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            var cbxType = (ComboBox)sender;
+            if (((Type)cbxType.SelectedValue).Name == "MoreOptions")
+            {
+                frmTypes typeForm = new frmTypes(_typeContext);
+                typeForm.ShowDialog();
+
+                if (typeForm.DialogResult == DialogResult.OK)
+                {
+                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.GetRealTypeName()))
+                    {
+                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.GetRealTypeName(), typeForm.SelectedType);
+                        cbxType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
+                    }
+
+                    cbxType.SelectedValue = typeForm.SelectedType;
+                    cbxType.Tag = typeForm.SelectedType;
+                }
+                else
+                {
+                    cbxType.SelectedValue = _preEditType;
+                    cbxType.Tag = _preEditType;
+                }
+
+                typeForm.Dispose();
+            }
+            else
+                cbxType.Tag = cbxType.SelectedValue;
+
+            _preEditType = (Type)cbxType.SelectedValue;
+            _typeToolTip.SetToolTip(cbxType, _preEditType.GetRealTypeName());
         }
 
         private void tvTypes_AfterSelect(object sender, TreeViewEventArgs e)
@@ -221,10 +254,9 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             if (tvTypes.SelectedNode.Nodes.Count == 0)
             {
                 SelectedType = (Type)tvTypes.SelectedNode.Tag;
+
                 if (SelectedType.IsGenericType)
-                {
                     LoadGenericPanel();
-                }
             }
         }
 
@@ -234,22 +266,32 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             foreach (Control control in flpTypeConstruction.Controls)
                 control.Dispose();
 
-            flpTypeConstruction.Controls.Add(NewTypeLabel(SelectedType.Name));
+            flpTypeConstruction.Controls.Add(NewTypeLabel(SelectedType.Name.Substring(0, SelectedType.Name.IndexOf('`')) + "<"));
+            int genericArgumentsCount = SelectedType.GetGenericArguments().Length;
+            for (int i = 0; i < genericArgumentsCount; i++)
+            {
+                ComboBox cbxType = NewTypeComboBox();
+                flpTypeConstruction.Controls.Add(cbxType);
+                
+                cbxType.SelectedValue = typeof(string);
+                cbxType.Tag = typeof(string);
+                _typeToolTip.SetToolTip(cbxType, typeof(string).GetRealTypeName());
 
-            foreach(var arg in SelectedType.GetGenericArguments())
-                flpTypeConstruction.Controls.Add(NewTypeComboBox());
-            //Type[] typeArgs = { typeof(string), typeof(int) };
-            //var newType = SelectedType.MakeGenericType(typeArgs);
-   
+                if (i + 1 < genericArgumentsCount)
+                    flpTypeConstruction.Controls.Add(NewTypeLabel(","));
+            }
+
+            flpTypeConstruction.Controls.Add(NewTypeLabel(">"));
         }
 
         private Label NewTypeLabel(string text)
         {
             Label lblType = new Label();
-            lblType.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblType.ForeColor = Color.Black;
+            lblType.Font = new Font("Segoe Semibold UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblType.ForeColor = Color.White;
             lblType.Text = text;
             lblType.AutoSize = true;
+            lblType.Padding = new Padding(0, 5, 0, 0);
             return lblType;
         }
 
@@ -257,7 +299,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             ComboBox cbxType = new ComboBox();
             cbxType.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbxType.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cbxType.Font = new Font("Segoe Semibold UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbxType.ForeColor = Color.SteelBlue;
             cbxType.Width = 200;
             cbxType.Tag = typeof(string);
@@ -267,40 +309,18 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             cbxType.DisplayMember = "Key";
             cbxType.ValueMember = "Value";
 
-            cbxType.SelectedValue = typeof(string);
-            cbxType.Tag = typeof(string);
             return cbxType;
         }
 
-        private void cbxDefaultType_SelectionChangeCommitted(object sender, EventArgs e)
+        public ToolTip AddTypeToolTip()
         {
-            var cbxType = (ComboBox)sender;
-            if (((Type)cbxType.SelectedValue).Name == "MoreOptions")
-            {
-                frmTypes typeForm = new frmTypes(_typeContext);
-                typeForm.ShowDialog();
-
-                if (typeForm.DialogResult == DialogResult.OK)
-                {
-                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.FullName))
-                    {
-                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.FullName, typeForm.SelectedType);
-                        cbxType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
-                    }
-
-                    cbxType.SelectedValue = typeForm.SelectedType;
-                    cbxType.Tag = typeForm.SelectedType;
-                }
-                else
-                {
-                    cbxType.SelectedValue = _preEditType;
-                    cbxType.Tag = _preEditType;
-                }
-            }
-            else
-                cbxType.Tag = cbxType.SelectedValue;
-
-            _preEditType = (Type)cbxType.SelectedValue;
+            ToolTip typeToolTip = new ToolTip();
+            typeToolTip.IsBalloon = false;
+            typeToolTip.ShowAlways = true;
+            typeToolTip.AutoPopDelay = 5000;
+            return typeToolTip;
         }
+
+        
     }
 }

@@ -86,13 +86,13 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             var defaultTypesBinding = new BindingSource(TypeContext.DefaultTypes, null);
 
-            VariableType.DataSource = defaultTypesBinding;
-            VariableType.DisplayMember = "Key";
-            VariableType.ValueMember = "Value";
+            variableType.DataSource = defaultTypesBinding;
+            variableType.DisplayMember = "Key";
+            variableType.ValueMember = "Value";
 
-            ArgumentType.DataSource = defaultTypesBinding;
-            ArgumentType.DisplayMember = "Key";
-            ArgumentType.ValueMember = "Value";
+            argumentType.DataSource = defaultTypesBinding;
+            argumentType.DisplayMember = "Key";
+            argumentType.ValueMember = "Value";
 
             var importedNameSpacesBinding = new BindingSource(ImportedNamespaces, null);
             lbxImportedNamespaces.DataSource = importedNameSpacesBinding;

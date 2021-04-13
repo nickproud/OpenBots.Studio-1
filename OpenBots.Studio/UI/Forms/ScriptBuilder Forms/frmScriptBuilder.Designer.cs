@@ -1470,7 +1470,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.variableName.MinimumWidth = 6;
             this.variableName.Name = "variableName";
             // 
-            // VariableType
+            // variableType
             // 
             this.variableType.DataPropertyName = "VariableType";
             this.variableType.HeaderText = "Variable Type";
