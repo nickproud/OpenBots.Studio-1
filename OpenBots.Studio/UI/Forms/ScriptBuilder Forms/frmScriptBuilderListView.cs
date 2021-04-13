@@ -631,13 +631,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newCommand.Text = cmdDetails.GetDisplayValue();
             newCommand.SubItems.Add(cmdDetails.GetDisplayValue());
             newCommand.SubItems.Add(cmdDetails.GetDisplayValue());
-            //cmdDetails.RenderedControls = null;
+            newCommand.ToolTipText = cmdDetails.GetDisplayValue();
             newCommand.Tag = cmdDetails;
             newCommand.ForeColor = Color.SteelBlue;
             newCommand.BackColor = Color.DimGray;
+
             if (_uiImages != null)
                 newCommand.ImageIndex = _uiImages.Images.IndexOfKey(cmdDetails.GetType().Name);
-            newCommand.ToolTipText = cmdDetails.GetDisplayValue();
 
             return newCommand;
         }
@@ -886,6 +886,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _selectedTabScriptActions.Items.Remove(item);
 
             _selectedTabScriptActions.Invalidate();
+
+            GC.Collect();
         }
 
         private void SelectAllScopedCode()
@@ -1129,18 +1131,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             CreateUndoSnapshot();
             _selectedTabScriptActions.Invalidate();
             AutoSizeLineNumberColumn();
-        }
-
-        private void pnlStatus_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.DrawString(_notificationText, pnlStatus.Font, new SolidBrush(_notificationColor), 30, 4);
-            e.Graphics.DrawImage(Resources.OpenBots_icon, 5, 3, 20, 20);
-            _notificationPaintedText = _notificationText;
-        }
-
-        private void pnlStatus_DoubleClick(object sender, EventArgs e)
-        {
-            MessageBox.Show(_notificationPaintedText);
         }
         #endregion
 

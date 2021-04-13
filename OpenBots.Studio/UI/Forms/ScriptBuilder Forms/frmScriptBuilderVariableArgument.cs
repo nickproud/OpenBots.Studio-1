@@ -65,7 +65,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //prevents user from creating a new variable/argument with an already used name
                     if (_existingVarArgSearchList.Contains(variableName) && variableName != _preEditVarArgName)
                     {
-                        Notify($"A variable or argument with the name '{variableName}' already exists", Color.Red);
+                        Notify($"An Error Occurred: A variable or argument with the name '{variableName}' already exists", Color.Red);
                         dgv.Rows.RemoveAt(e.RowIndex);
                         return;
                     }
