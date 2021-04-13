@@ -257,6 +257,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
             if (tvTypes.SelectedNode.Nodes.Count == 0)
             {
+                flpTypeConstruction.Controls.Clear();
+                foreach (Control control in flpTypeConstruction.Controls)
+                    control.Dispose();
+
                 SelectedType = (Type)tvTypes.SelectedNode.Tag;
 
                 if (SelectedType.IsGenericType)
@@ -266,10 +270,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void LoadGenericPanel()
         {
-            flpTypeConstruction.Controls.Clear();
-            foreach (Control control in flpTypeConstruction.Controls)
-                control.Dispose();
-
             flpTypeConstruction.Controls.Add(NewTypeLabel(SelectedType.Name.Substring(0, SelectedType.Name.IndexOf('`')) + "<"));
             int genericArgumentsCount = SelectedType.GetGenericArguments().Length;
             for (int i = 0; i < genericArgumentsCount; i++)
@@ -296,6 +296,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             lblType.Text = text;
             lblType.AutoSize = true;
             lblType.Padding = new Padding(0, 5, 0, 0);
+            lblType.Margin = new Padding(0, 0, 0, 0);
             return lblType;
         }
 
@@ -306,6 +307,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             cbxType.Font = new Font("Segoe Semibold UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbxType.ForeColor = Color.SteelBlue;
             cbxType.Width = 200;
+            cbxType.Padding = new Padding(0, 0, 0, 0);
+            cbxType.Margin = new Padding(0, 0, 0, 0);
             cbxType.Tag = typeof(string);
             cbxType.SelectionChangeCommitted += new EventHandler(cbxDefaultType_SelectionChangeCommitted);
 
