@@ -319,8 +319,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             typeToolTip.ShowAlways = true;
             typeToolTip.AutoPopDelay = 5000;
             return typeToolTip;
-        }
-
-        
+        }     
     }
 }
