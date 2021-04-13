@@ -80,6 +80,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void txtTypeSearch_TextChanged(object sender, EventArgs e)
         {
+            flpTypeConstruction.Controls.Clear();
+            foreach (Control control in flpTypeConstruction.Controls)
+                control.Dispose();
+
             if (txtTypeSearch.Text == _txtTypeWatermark)
                 return;
 
