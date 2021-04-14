@@ -1,10 +1,14 @@
 ﻿using CSScriptLibrary;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Project;
+using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -17,28 +21,35 @@ namespace OpenBots.Utilities
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = false)]
         public static extern bool PathFindOnPath([In, Out] StringBuilder pszFile, [In] string[] ppszOtherDirs);
 
-        public static void RunTextEditorProject(string configPath)
+        public static void RunTextEditorProject(string configPath, List<ProjectArgument> scriptArgs)
         {
             Project project = Project.OpenProject(configPath);
             string mainPath = Path.Combine(new FileInfo(configPath).DirectoryName, project.Main);
             switch (project.ProjectType)
             {
                 case ProjectType.Python:
-                    RunPythonAutomation(mainPath, new object[] { });
+                    RunPythonAutomation(mainPath, scriptArgs);
                     break;
                 case ProjectType.TagUI:
-                    RunTagUIAutomation(mainPath, new FileInfo(configPath).DirectoryName, new object[] { });
+                    RunTagUIAutomation(mainPath, new FileInfo(configPath).DirectoryName, scriptArgs);
                     break;
                 case ProjectType.CSScript:
-                    RunCSharpAutomation(mainPath, new object[] { null });
+                    RunCSharpAutomation(mainPath, scriptArgs);
                     break;
             }
         }
 
-        public static void RunPythonAutomation(string scriptPath, object[] scriptArgs)
+        public static void RunPythonAutomation(string scriptPath, List<ProjectArgument> scriptArgs)
         {
             string error = "";
-            string pythonExecutable = CommonMethods.GetPythonPath(Environment.UserName, "");
+            string version = scriptArgs.Where(x => x.ArgumentName == "--PythonVersion").FirstOrDefault().ArgumentValue?.ToString();
+            if (version == null)
+                throw new ArgumentNullException("--PythonVersion");
+
+            string pythonExecutable = CommonMethods.GetPythonPath(Environment.UserName, version);
+
+            string strScriptArgs = string.Join(" ", scriptArgs.Select(x => $"{x.ArgumentName} {x.ArgumentValue}".Trim())
+                                                              .ToList());
 
             if (!string.IsNullOrEmpty(pythonExecutable))
             {
@@ -47,7 +58,7 @@ namespace OpenBots.Utilities
                 scriptProc.StartInfo = new ProcessStartInfo()
                 {
                     FileName = pythonExecutable,
-                    Arguments = $"\"{scriptPath}\" ", //+ scriptArgs,
+                    Arguments = $"\"{scriptPath}\" {strScriptArgs}",
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -66,17 +77,24 @@ namespace OpenBots.Utilities
                 throw new Exception(error);
         }
 
-        public static void RunCSharpAutomation(string scriptPath, object[] scriptArgs)
+        public static void RunCSharpAutomation(string scriptPath, List<ProjectArgument> scriptArgs)
         {
             string code = File.ReadAllText(scriptPath);
-            var mainMethod = CSScript.LoadCode(code).CreateObject("*").GetType().GetMethod("Main");
+            MethodInfo mainMethod = CSScript.LoadCode(code).CreateObject("*").GetType().GetMethod("Main");
+
+            object[] scriptArgsArray;
+            if (scriptArgs.Count == 0)
+                scriptArgsArray = new object[] { null };
+            else
+                scriptArgsArray = new object[] { scriptArgs.Select(x => x.ArgumentValue).ToArray() };
+            
             if (mainMethod.GetParameters().Length == 0)
                 mainMethod.Invoke(null, null);
             else
-                mainMethod.Invoke(null, scriptArgs);
+                mainMethod.Invoke(null, scriptArgsArray);
         }
 
-        public static void RunTagUIAutomation(string scriptPath, string projectPath, object[] scriptArgs)
+        public static void RunTagUIAutomation(string scriptPath, string projectPath, List<ProjectArgument> scriptArgs)
         {
             string error = "";
             string tagUIexePath = GetFullPathFromWindows("tagui");
@@ -94,6 +112,9 @@ namespace OpenBots.Utilities
 
             string newScriptPath = destinationDirectory + scriptPath.Replace(projectPath, "");
 
+            string strScriptArgs = string.Join(" ", scriptArgs.Select(x => $"{x.ArgumentName} {x.ArgumentValue}".Trim())
+                                                              .ToList());
+
             if (!string.IsNullOrEmpty(tagUIexePath))
             {
                 Process scriptProc = new Process();
@@ -101,7 +122,7 @@ namespace OpenBots.Utilities
                 scriptProc.StartInfo = new ProcessStartInfo()
                 {
                     FileName = tagUIexePath + ".cmd",
-                    Arguments = $"\"{newScriptPath}\"", //+ scriptArgs,
+                    Arguments = $"\"{newScriptPath}\" {strScriptArgs}",
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -115,9 +136,6 @@ namespace OpenBots.Utilities
                 error = scriptProc.StandardError.ReadToEnd();
                 scriptProc.Close();
             }
-
-            // Delete TagUI Execution Directory
-            Directory.Delete(destinationDirectory, true);
 
             if (!string.IsNullOrEmpty(error))
                 throw new Exception(error);

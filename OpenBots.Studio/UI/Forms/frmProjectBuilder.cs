@@ -15,17 +15,10 @@ namespace OpenBots.UI.Forms
         public string NewProjectName { get; private set; }        
         public ProjectType NewProjectType { get; private set; }        
         public string NewProjectPath { get; private set; }
-        public string ExistingProjectPath { get; private set; }
-        public string ExistingConfigPath { get; private set; }
-        public ProjectAction Action { get; private set; }
-        private string _newProjectLocation;
-
-        public enum ProjectAction
-        {
-            None,
-            CreateProject,
-            OpenProject           
-        }
+        public string ExistingProjectPath { get; set; }
+        public string ExistingConfigPath { get; set; }
+        public ProjectAction Action { get; set; }
+        private string _newProjectLocation;       
 
         public frmProjectBuilder()
         {

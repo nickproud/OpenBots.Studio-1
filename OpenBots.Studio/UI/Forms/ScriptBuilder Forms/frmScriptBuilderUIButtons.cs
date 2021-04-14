@@ -9,6 +9,7 @@ using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
@@ -46,6 +47,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void NewFile()
         {
             ScriptFilePath = null;
+            _scriptFileExtension = null;
+            _isMainScript = false;
 
             string title = $"New Tab {(uiScriptTabControl.TabCount + 1)} *";
             TabPage newTabPage = new TabPage(title)
@@ -91,15 +94,55 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     break;
                 case ProjectType.Python:
                     newTabPage.Controls.Add(NewTextEditorActions(ProjectType.Python, title));
+                    newTabPage.Tag = new ScriptObject();
                     uiScriptTabControl.SelectedTab = newTabPage;
+                    _scriptArguments = new List<ScriptArgument>();
+
+                    //assign pythonVersion and mainFunction arguments
+                    var mainFunctionArgument = new ScriptArgument
+                    {
+                        ArgumentName = "--MainFunction",
+                        ArgumentType = typeof(string),
+                        Direction = ScriptArgumentDirection.In,
+                        ArgumentValue = "main"
+                    };
+                    _scriptArguments.Add(mainFunctionArgument);
+
+                    var pythonVersionArgument = new ScriptArgument
+                    {
+                        ArgumentName = "--PythonVersion",
+                        ArgumentType = typeof(string),
+                        Direction = ScriptArgumentDirection.In                      
+                    };
+                    _scriptArguments.Add(pythonVersionArgument);
+
+                    SetVarArgTabControlSettings(ScriptProject.ProjectType);
+                    ResetVariableArgumentBindings();
                     break;
                 case ProjectType.TagUI:
                     newTabPage.Controls.Add(NewTextEditorActions(ProjectType.TagUI, title));
+                    newTabPage.Tag = new ScriptObject();
                     uiScriptTabControl.SelectedTab = newTabPage;
+                    _scriptArguments = new List<ScriptArgument>();
+
+                    var reportArgument = new ProjectArgument
+                    {
+                        ArgumentName = "-report",
+                        ArgumentType = typeof(string),
+                    };
+                    ScriptProject.ProjectArguments.Add(reportArgument);
+
+                    SetVarArgTabControlSettings(ScriptProject.ProjectType);
+                    ResetVariableArgumentBindings();
                     break;
                 case ProjectType.CSScript:
                     newTabPage.Controls.Add(NewTextEditorActions(ProjectType.CSScript, title));
+                    newTabPage.Tag = new ScriptObject();
                     uiScriptTabControl.SelectedTab = newTabPage;
+                    _scriptArguments = new List<ScriptArgument>();
+
+                    SetVarArgTabControlSettings(ScriptProject.ProjectType);
+                    ResetVariableArgumentBindings();
                     break;
             }
             
@@ -209,6 +252,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     //update file path and reflect in title bar
                     ScriptFilePath = filePath;
+                    _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                    _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
 
                     string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
                     _selectedTabScriptActions.Name = $"{scriptFileName}ScriptActions";
@@ -228,6 +273,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     if (!isRunTaskCommand)
                     {
+                        SetVarArgTabControlSettings(ProjectType.OpenBots);
                         ResetVariableArgumentBindings();
 
                         Notify("Script Loaded Successfully!", Color.White);
@@ -238,7 +284,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 catch (Exception ex)
                 {
                     //signal an error has happened
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
                 }
             }           
         }
@@ -280,17 +326,40 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
 
+                //reinitialize
+                _scriptVariables = new List<ScriptVariable>();
+                _scriptArguments = new List<ScriptArgument>();
+                _scriptElements = new List<ScriptElement>();
+                _importedNamespaces = new Dictionary<string, AssemblyReference>();
+
                 //update file path and reflect in title bar
                 ScriptFilePath = filePath;
-                string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
+                _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
 
+                string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
+                _selectedTabScriptActions.Name = $"{scriptFileName}ScriptActions";
+
+                //assign project arguments
+                _scriptArguments.AddRange(ScriptProject.ProjectArguments.Select(arg => new ScriptArgument 
+                                                                                        { 
+                                                                                            ArgumentName = arg.ArgumentName,
+                                                                                            ArgumentType = arg.ArgumentType,
+                                                                                            ArgumentValue = arg.ArgumentValue,
+                                                                                            Direction = arg.Direction,
+                                                                                        })
+                                                                        .ToList());
+
+                uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements, _importedNamespaces);
                 uiScriptTabControl.SelectedTab.Text = scriptFileName;
-                splitContainerScript.Panel2Collapsed = true;
+
+                SetVarArgTabControlSettings(ProjectType.Python);
+                ResetVariableArgumentBindings();
             }
             catch (Exception ex)
             {
                 //signal an error has happened
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -347,11 +416,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     if (!saveFileDialog.FileName.Contains(ScriptProjectPath))
                     {
-                        Notify("An Error Occured: Attempted to save script outside of project directory", Color.Red);
+                        Notify("An Error Occurred: Attempted to save script outside of project directory", Color.Red);
                         return isSuccessfulSave;
                     }
 
                     ScriptFilePath = saveFileDialog.FileName;
+                    _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                    _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
+
                     string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
                     if (uiScriptTabControl.SelectedTab.Text != scriptFileName)
                         UpdateTabPage(uiScriptTabControl.SelectedTab, ScriptFilePath);
@@ -362,10 +434,31 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 Notify("File has been saved successfully!", Color.White);
                 isSuccessfulSave = true;
+
+                try
+                {
+                    if (_isMainScript)
+                    {
+                        ScriptProject.ProjectArguments.Clear();
+                        ScriptProject.ProjectArguments.AddRange(_scriptArguments.Select(arg => new ProjectArgument()
+                        {
+                            ArgumentName = arg.ArgumentName,
+                            ArgumentType = arg.ArgumentType,
+                            ArgumentValue = arg.ArgumentValue
+                        })
+                                                                                .ToList());
+                    }
+
+                    ScriptProject.SaveProject(ScriptFilePath);
+                }
+                catch (Exception ex)
+                {
+                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                } 
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
 
             return isSuccessfulSave;
@@ -519,11 +612,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 if (!saveFileDialog.FileName.ToString().Contains(ScriptProjectPath))
                 {
-                    Notify("An Error Occured: Attempted to save script outside of project directory", Color.Red);
+                    Notify("An Error Occurred: Attempted to save script outside of project directory", Color.Red);
                     return isSuccessfulSave;
                 }
 
                 ScriptFilePath = saveFileDialog.FileName;
+                _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
+
                 string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
                 if (uiScriptTabControl.SelectedTab.Text != scriptFileName)
                     UpdateTabPage(uiScriptTabControl.SelectedTab, ScriptFilePath);
@@ -549,16 +645,28 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 isSuccessfulSave = true;
                 try
                 {
+                    if (_isMainScript)
+                    {
+                        ScriptProject.ProjectArguments.Clear();
+                        ScriptProject.ProjectArguments.AddRange(_scriptArguments.Select(arg => new ProjectArgument()
+                                                                                    {
+                                                                                        ArgumentName = arg.ArgumentName,
+                                                                                        ArgumentType = arg.ArgumentType,
+                                                                                        ArgumentValue = arg.ArgumentValue
+                                                                                    })
+                                                                                .ToList());
+                    }
+
                     ScriptProject.SaveProject(ScriptFilePath);
                 }
                 catch (Exception ex)
                 {
-                    Notify(ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
                 }              
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
             return isSuccessfulSave;
         }
@@ -677,9 +785,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 Script deserializedScript = Script.DeserializeFile(engineContext);
 
                 if (deserializedScript.Commands.Count == 0)
-                {
                     Notify("Error Parsing File: Commands not found!", Color.Red);
-                }
 
                 //variables for comments
                 var fileName = new FileInfo(filePath).Name;
@@ -741,7 +847,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             catch (Exception ex)
             {
                 //signal an error has happened
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -775,6 +881,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
        
         private void uiBtnRestart_Click(object sender, EventArgs e)
         {
+            _appSettings.ClientSettings.IsRestarting = true;
+            _appSettings.Save(_appSettings);
             Application.Restart();
         }
 
@@ -982,6 +1090,21 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ScriptProject.Dependencies = ScriptProject.Dependencies.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
 
+                if (frmManager.ShowRestartWarning)
+                {
+                    var result = MessageBox.Show("OpenBots Studio must restart in order for certain changes to take effect.\n" + 
+                                                 "Would you like to restart? Not doing so could cause unexpected behavior.", 
+                                                 "Restart", MessageBoxButtons.YesNo);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        _appSettings.ClientSettings.IsRestarting = true;
+                        _appSettings.Save(_appSettings);
+                        Application.Restart();
+                        return;
+                    }
+                }
+
                 NotifySync("Loading package assemblies...", Color.White);
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
@@ -1046,7 +1169,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (ex is UnauthorizedAccessException)
                     MessageBox.Show("Close Visual Studio and run as Admin to install default packages.", "Unauthorized");
                 else
-                    Notify("Error: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
 
             //hide spinner and enable package manager related buttons
@@ -1102,12 +1225,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (!SaveAllFiles())
                 return;
 
-            Notify("Running Script..", Color.White);
+            Notify("Running Script...", Color.White);
 
             try
             {
                 if (CurrentEngine != null)
+                {
                     ((Form)CurrentEngine).Close();
+                    ((Form)CurrentEngine).Dispose();
+                    CurrentEngine = null;
+                }
             }
             catch(Exception ex)
             {
@@ -1115,6 +1242,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 Console.WriteLine(ex);
             }
 
+            GC.Collect();
             //initialize Logger
             switch (_appSettings.EngineSettings.LoggingSinkType)
             {
@@ -1130,7 +1258,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     break;
             }
 
-            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null, null, startLineNumber);
+            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null, null, startLineNumber, _isDebugMode);
 
             //initialize Engine
             CurrentEngine = new frmScriptEngine(engineContext, false, _isDebugMode);
@@ -1138,6 +1266,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             CurrentEngine.ScriptEngineContext.ScriptBuilder = this;
             IsScriptRunning = true;
             ((frmScriptEngine)CurrentEngine).Show();
+
+            Notify("", Color.White);
+
+            if (!_isDebugMode)
+                FormsHelper.HideAllForms();
         }
 
         private void RunFromThisCommand()
@@ -1157,9 +1290,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             _isDebugMode = false;
 
-            string fileExtension = Path.GetExtension(_scriptFilePath).ToLower();
-
-            switch (fileExtension)
+            switch (_scriptFileExtension)
             {
                 case ".obscript":
                     RunOBScript();
@@ -1167,27 +1298,39 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 default:
                     if (!SaveAllFiles())
                         return;
-                    try
+
+                    if (_isMainScript)
                     {
-                        //arguments and outputs not yet implemented
-                        switch (fileExtension)
+                        try
                         {
-                            case ".py":
-                                ExecutionManager.RunPythonAutomation(_scriptFilePath, new object[] { });
-                                break;
-                            case ".tag":
-                                ExecutionManager.RunTagUIAutomation(_scriptFilePath, ScriptProjectPath, new object[] { });
-                                break;
-                            case ".cs":
-                                ExecutionManager.RunCSharpAutomation(_scriptFilePath, new object[] { null });
-                                break;
+                            //arguments and outputs not yet implemented
+                            switch (_scriptFileExtension)
+                            {
+                                case ".py":
+                                    ExecutionManager.RunPythonAutomation(ScriptFilePath, ScriptProject.ProjectArguments);
+                                    break;
+                                case ".tag":
+                                    ExecutionManager.RunTagUIAutomation(ScriptFilePath, ScriptProjectPath, ScriptProject.ProjectArguments);
+                                    break;
+                                case ".cs":
+                                    ExecutionManager.RunCSharpAutomation(ScriptFilePath, ScriptProject.ProjectArguments);
+                                    break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            frmDialog errorMessageBox = new frmDialog(ex.Message, "Error", DialogType.OkOnly, 0);
+                            errorMessageBox.ShowDialog();
+                            errorMessageBox.Dispose();
                         }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        frmDialog errorMessageBox = new frmDialog(ex.Message, "Error", DialogType.OkOnly, 0);
+                        frmDialog errorMessageBox = new frmDialog("Unable to run a script that isn't 'Main'", "Error", DialogType.OkOnly, 0);
                         errorMessageBox.ShowDialog();
+                        errorMessageBox.Dispose();
                     }
+                    
                     break; 
             }          
         }

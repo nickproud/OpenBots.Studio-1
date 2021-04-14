@@ -26,7 +26,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("1/1/2000 || {vDate} || {DateTime.Now}")]
 		[Remarks("You can use known text or variables.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DateTime), typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(DateTime), typeof(string) }, true)]
 		public string v_InputDate { get; set; }
 
 		[Required]

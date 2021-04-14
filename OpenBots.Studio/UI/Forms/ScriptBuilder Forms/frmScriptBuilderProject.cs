@@ -34,11 +34,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             addProjectToolStripMenuItem_Click(sender, e);
         }
 
-        public DialogResult AddProject()
+        public DialogResult AddProject(frmProjectBuilder restartProjectBuilder = null)
         {
             tvProject.Nodes.Clear();
-            var projectBuilder = new frmProjectBuilder();
-            projectBuilder.ShowDialog();
+            frmProjectBuilder projectBuilder;
+
+            if (restartProjectBuilder == null)
+            {
+                projectBuilder = new frmProjectBuilder();
+                projectBuilder.ShowDialog();
+            }
+            else
+                projectBuilder = restartProjectBuilder;
 
             //close OpenBots if add project form is closed at startup
             if (projectBuilder.DialogResult == DialogResult.Cancel && ScriptProject == null)
@@ -48,7 +55,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             //create new project
-            else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.CreateProject)
+            else if (projectBuilder.Action == ProjectAction.CreateProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
                 if (result == DialogResult.Cancel)
@@ -85,12 +92,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         break;
                 }
 
+                ScriptProject.SaveProject(mainScriptPath);
                 //show success dialog
                 Notify("Project has been created successfully!", Color.White);
             }
 
             //open existing OpenBots project
-            else if (projectBuilder.Action == frmProjectBuilder.ProjectAction.OpenProject)
+            else if (projectBuilder.Action == ProjectAction.OpenProject)
             {
                 DialogResult result = CheckForUnsavedScripts();
                 if (result == DialogResult.Cancel)
@@ -120,7 +128,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     ScriptProject = project;
                     _mainFileName = mainFileName;                 
                     ScriptProjectPath = projectBuilder.ExistingProjectPath;
+
+                    foreach (TabPage tab in uiScriptTabControl.TabPages)
+                    {
+                        tab.Controls[0].Dispose();
+                        tab.Dispose();
+                    }
+                        
                     uiScriptTabControl.TabPages.Clear();
+
+                    GC.Collect();
 
                     //open Main
                     switch (ScriptProject.ProjectType)
@@ -143,7 +160,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     projectBuilder.Dispose();
 
                     //show fail dialog
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
 
                     //try adding project again
                     AddProject();                    
@@ -224,11 +241,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _mainFileName = ScriptProject.Main;
 
                 OpenOpenBotsFile(mainScriptPath);
-                ScriptFilePath = mainScriptPath;               
+                ScriptFilePath = mainScriptPath;
+                _scriptFileExtension = ".obscript";
+                _isMainScript = true;
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -242,9 +261,32 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     case ProjectType.Python:
                         File.WriteAllText(mainScriptPath, _helloWorldTextPython);
                         File.Create(Path.Combine(new FileInfo(mainScriptPath).Directory.FullName, "requirements.txt")).Close();
+
+                        //assign pythonVersion and mainFunction arguments
+                        var mainFunctionArgument = new ProjectArgument
+                        {
+                            ArgumentName = "--MainFunction",
+                            ArgumentType = typeof(string),
+                            ArgumentValue = "main"
+                        };
+                        ScriptProject.ProjectArguments.Add(mainFunctionArgument);
+
+                        var pythonVersionArgument = new ProjectArgument
+                        {
+                            ArgumentName = "--PythonVersion",
+                            ArgumentType = typeof(string),
+                        };
+                        ScriptProject.ProjectArguments.Add(pythonVersionArgument);
                         break;
                     case ProjectType.TagUI:
                         File.WriteAllText(mainScriptPath, _helloWorldTextTagUI);
+
+                        var reportArgument = new ProjectArgument
+                        {
+                            ArgumentName = "-report",
+                            ArgumentType = typeof(string),
+                        };
+                        ScriptProject.ProjectArguments.Add(reportArgument);
                         break;
                     case ProjectType.CSScript:
                         File.WriteAllText(mainScriptPath, _helloWorldTextCSScript);
@@ -253,10 +295,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 
                 OpenTextEditorFile(mainScriptPath, ScriptProject.ProjectType);
                 ScriptFilePath = mainScriptPath;
+                _scriptFileExtension = Path.GetExtension(mainScriptPath);
+                _isMainScript = true;
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -298,7 +342,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             catch (Exception ex)
             {
                 //show fail dialog
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         
 
@@ -345,7 +389,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -442,7 +486,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 try
                 {
                     string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
-                    string currentOpenScriptFilePath = _scriptFilePath;
+                    string currentOpenScriptFilePath = ScriptFilePath;
 
                     string fileExtension = Path.GetExtension(selectedNodePath).ToLower();
                     if (File.Exists(selectedNodePath))
@@ -469,7 +513,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
                 catch (Exception ex)
                 {
-                    Notify("An Error Occured: " + ex.Message, Color.Red);
+                    Notify("An Error Occurred: " + ex.Message, Color.Red);
                 }
             }
         }
@@ -515,7 +559,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -548,7 +592,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -597,7 +641,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }        
 
@@ -646,7 +690,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -723,7 +767,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -844,7 +888,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
         #endregion
@@ -888,7 +932,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -961,7 +1005,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
         #endregion

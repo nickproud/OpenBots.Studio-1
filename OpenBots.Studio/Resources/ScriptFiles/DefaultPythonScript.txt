@@ -1,0 +1,12 @@
+import ctypes
+import argparse
+
+def main(version):
+  ctypes.windll.user32.MessageBoxW(0, "Hello World! I am running on Python version " + version, "Hello World", 1)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='A tutorial of argparse in OpenBots!')
+    parser.add_argument("--MainFunction", type=str, help="Main Function argument")
+    parser.add_argument("--PythonVersion", type=str, help="Python Version argument")
+    args = parser.parse_args()
+    eval(args.MainFunction)(args.PythonVersion)

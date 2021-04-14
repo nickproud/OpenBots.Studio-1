@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using OpenBots.Core.Enums;
+using OpenBots.Core.Script;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,7 @@ namespace OpenBots.Core.Project
         public ProjectType ProjectType { get; set; }
         public string Main { get; set; }
         public string Version { get; set; }
+        public List<ProjectArgument> ProjectArguments { get; set; }
         public Dictionary<string, string> Dependencies { get; set; }
 
         [JsonIgnore]
@@ -39,8 +41,9 @@ namespace OpenBots.Core.Project
         {
             ProjectID = Guid.NewGuid();
             ProjectName = projectName;
-            Version = Application.ProductVersion;
             ProjectType = projectType;
+            Version = Application.ProductVersion;
+            ProjectArguments = new List<ProjectArgument>();
 
             var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
             

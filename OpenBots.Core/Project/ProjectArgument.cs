@@ -4,7 +4,7 @@ using System;
 namespace OpenBots.Core.Script
 {
     [Serializable]
-    public class ScriptArgument
+    public class ProjectArgument
     {
         /// <summary>
         /// name that will be used to identify the argument
@@ -24,11 +24,6 @@ namespace OpenBots.Core.Script
         /// <summary>
         /// direction of the argument or current index
         /// </summary>
-        public ScriptArgumentDirection Direction { get; set; }
-
-        /// <summary>
-        /// name of the variable assigned to an Out Argument
-        /// </summary>
-        public string AssignedVariable { get; set; }
+        public ScriptArgumentDirection Direction { get; set; } = ScriptArgumentDirection.In;
     }
 }

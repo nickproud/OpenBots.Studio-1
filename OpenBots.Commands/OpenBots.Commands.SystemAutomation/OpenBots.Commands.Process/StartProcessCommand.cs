@@ -26,7 +26,7 @@ namespace OpenBots.Commands.Process
 		[Required]
 		[DisplayName("Program Name or Path")]
 		[Description("Provide a valid program name or enter a full path to the script/executable including the extension.")]
-		[SampleUsage(@"notepad || excel || {vApp} || C:\temp\myapp.exe || {ProjectPath}\myapp.exe")]
+		[SampleUsage(@"notepad || excel || {vApp} || C:\temp\myapp.exe || {ProjectPath}\myapp.exe || {ProjectPath}\myfile.pdf")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
@@ -63,17 +63,31 @@ namespace OpenBots.Commands.Process
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
+
 			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine);
 			string vProgramArgs = (string)await v_ProgramArgs.EvaluateCode(engine);
-			Diagnostics.Process newProcess;
+			Diagnostics.Process newProcess = new Diagnostics.Process();
 
 			if (OBFile.Exists(vProgramName))
+            {
+				newProcess.StartInfo = new Diagnostics.ProcessStartInfo()
+				{
+					FileName = vProgramName,
+					Arguments = vProgramArgs
+				};
+
+				newProcess.Start();
+			}
+            else
+            {
 				vProgramName = Path.GetFileNameWithoutExtension(vProgramName);
 
-			if (string.IsNullOrEmpty(v_ProgramArgs))
-				newProcess = Diagnostics.Process.Start(vProgramName);
-			else
-				newProcess = Diagnostics.Process.Start(vProgramName, vProgramArgs);			
+				if (string.IsNullOrEmpty(v_ProgramArgs))
+					newProcess = Diagnostics.Process.Start(vProgramName);
+				else
+					newProcess = Diagnostics.Process.Start(vProgramName, vProgramArgs);
+
+			}
 
 			if (v_WaitForExit == "Yes")
 				newProcess.WaitForExit();

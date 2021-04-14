@@ -6,11 +6,11 @@ using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -75,31 +75,7 @@ namespace OpenBots.Commands.Input
 			if (v_EncryptionOption == "Encrypted")
 				textToSend = EncryptionServices.DecryptString(textToSend, "OPENBOTS");
 
-			if (textToSend == "{WIN_KEY}")
-			{
-				User32Functions.KeyDown(Keys.LWin);
-				User32Functions.KeyUp(Keys.LWin);
-			}
-			else if (textToSend.Contains("{WIN_KEY+"))
-			{
-				User32Functions.KeyDown(Keys.LWin);
-				var remainingText = textToSend.Replace("{WIN_KEY+", "").Replace("}","");
-
-				foreach (var c in remainingText)
-				{
-					Keys key = (Keys)Enum.Parse(typeof(Keys), c.ToString());
-					User32Functions.KeyDown(key);
-				}
-				User32Functions.KeyUp(Keys.LWin);
-
-				foreach (var c in remainingText)
-				{
-					Keys key = (Keys)Enum.Parse(typeof(Keys), c.ToString());
-					User32Functions.KeyUp(key);
-				}
-			}
-			else
-				SendKeys.SendWait(textToSend);
+			SendKeys.SendWait(Regex.Replace(textToSend, "[+^%~()]", "{$0}"));
 
 			Thread.Sleep(500);
 		}

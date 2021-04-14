@@ -11,6 +11,7 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Engine;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
@@ -24,7 +25,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -619,7 +619,7 @@ namespace OpenBots.UI.CustomControls
                         //show image recognition test
                         helperControl.CommandImage = Resources.command_camera;
                         helperControl.CommandDisplay = "Run Image Recognition Test";
-                        helperControl.Click += (sender, e) => RunImageCapture(sender, e);
+                        helperControl.Click += (sender, e) => RunImageRecognitionTest(sender, e);
                         break;
 
                     case UIAdditionalHelperType.ShowCodeBuilder:
@@ -902,7 +902,7 @@ namespace OpenBots.UI.CustomControls
                 settings.Save(settings);
             }
 
-            HideAllForms();
+            FormsHelper.HideAllForms();
 
             var userAcceptance = MessageBox.Show("The image capture process will now begin and display a screenshot of the" +
                 " current desktop in a custom full-screen window.  You may stop the capture process at any time by pressing" +
@@ -927,7 +927,7 @@ namespace OpenBots.UI.CustomControls
                 imageCaptureForm.Dispose();
             }
 
-            ShowAllForms();
+            FormsHelper.ShowAllForms(true);
 
             if (minimizePreference)
             {
@@ -936,7 +936,7 @@ namespace OpenBots.UI.CustomControls
             }
         }
 
-        private void RunImageCapture(object sender, EventArgs e)
+        private void RunImageRecognitionTest(object sender, EventArgs e)
         {
             //get input control
             CommandItemControl inputBox = (CommandItemControl)sender;
@@ -950,151 +950,42 @@ namespace OpenBots.UI.CustomControls
             }
 
             //hide all
-            HideAllForms();
+            FormsHelper.HideAllForms();
 
             try
             {
-                ImageElement element = FindImageElementTest(new Bitmap(CommonMethods.Base64ToImage(imageSource)), 0.8);
+                ImageElement element = CommandsHelper.FindImageElement(new Bitmap(CommonMethods.Base64ToImage(imageSource)), 0.8, null, DateTime.Now.AddSeconds(15), true);
                 if (element == null)
                     MessageBox.Show("Image not found");
+                else
+                {
+                    //draw on output to demonstrate finding
+                    Graphics bigTestGraphics = Graphics.FromImage(element.BigTestImage);
+                    var Rectangle = new Rectangle(element.LeftX, element.TopY, element.SmallTestImage.Width - 1, element.SmallTestImage.Height - 1);
+                    Pen pen = new Pen(Color.Red);
+                    pen.Width = 5.0F;
+                    bigTestGraphics.DrawRectangle(pen, Rectangle);
+
+                    frmImageCapture captureOutput = new frmImageCapture();
+                    captureOutput.pbTaggedImage.Image = element.SmallTestImage;
+                    captureOutput.pbSearchResult.Image = element.BigTestImage;
+                    captureOutput.TopMost = true;
+
+                    captureOutput.ShowDialog();
+
+                    bigTestGraphics.Dispose();
+                    element.SmallTestImage.Dispose();
+                    element.BigTestImage.Dispose();
+                    captureOutput.Dispose();
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.ToString());
             }
+
             //show all forms
-            ShowAllForms();
-        }
-
-        public ImageElement FindImageElementTest(Bitmap smallBmp, double accuracy)
-        {
-            HideAllForms();
-
-            dynamic element = null;
-            double tolerance = 1.0 - accuracy;
-
-            Bitmap bigBmp = ImageMethods.Screenshot();
-
-            Bitmap smallTestBmp = new Bitmap(smallBmp);
-
-            Bitmap bigTestBmp = new Bitmap(bigBmp);
-            Graphics bigTestGraphics = Graphics.FromImage(bigTestBmp);
-
-            BitmapData smallData =
-              smallBmp.LockBits(new Rectangle(0, 0, smallBmp.Width, smallBmp.Height),
-                       ImageLockMode.ReadOnly,
-                       PixelFormat.Format24bppRgb);
-            BitmapData bigData =
-              bigBmp.LockBits(new Rectangle(0, 0, bigBmp.Width, bigBmp.Height),
-                       ImageLockMode.ReadOnly,
-                       PixelFormat.Format24bppRgb);
-
-            int smallStride = smallData.Stride;
-            int bigStride = bigData.Stride;
-
-            int bigWidth = bigBmp.Width;
-            int bigHeight = bigBmp.Height - smallBmp.Height + 1;
-            int smallWidth = smallBmp.Width * 3;
-            int smallHeight = smallBmp.Height;
-
-            int margin = Convert.ToInt32(255.0 * tolerance);
-
-            unsafe
-            {
-                byte* pSmall = (byte*)(void*)smallData.Scan0;
-                byte* pBig = (byte*)(void*)bigData.Scan0;
-
-                int smallOffset = smallStride - smallBmp.Width * 3;
-                int bigOffset = bigStride - bigBmp.Width * 3;
-
-                bool matchFound = true;
-
-                for (int y = 0; y < bigHeight; y++)
-                {
-                    for (int x = 0; x < bigWidth; x++)
-                    {
-                        byte* pBigBackup = pBig;
-                        byte* pSmallBackup = pSmall;
-
-                        //Look for the small picture.
-                        for (int i = 0; i < smallHeight; i++)
-                        {
-                            int j = 0;
-                            matchFound = true;
-                            for (j = 0; j < smallWidth; j++)
-                            {
-                                //With tolerance: pSmall value should be between margins.
-                                int inf = pBig[0] - margin;
-                                int sup = pBig[0] + margin;
-                                if (sup < pSmall[0] || inf > pSmall[0])
-                                {
-                                    matchFound = false;
-                                    break;
-                                }
-
-                                pBig++;
-                                pSmall++;
-                            }
-
-                            if (!matchFound)
-                                break;
-
-                            //We restore the pointers.
-                            pSmall = pSmallBackup;
-                            pBig = pBigBackup;
-
-                            //Next rows of the small and big pictures.
-                            pSmall += smallStride * (1 + i);
-                            pBig += bigStride * (1 + i);
-                        }
-
-                        //If match found, we return.
-                        if (matchFound)
-                        {
-                            element = new ImageElement
-                            {
-                                LeftX = x,
-                                MiddleX = x + smallBmp.Width / 2,
-                                RightX = x + smallBmp.Width,
-                                TopY = y,
-                                MiddleY = y + smallBmp.Height / 2,
-                                BottomY = y + smallBmp.Height
-                            };
-
-                            //draw on output to demonstrate finding
-                            var Rectangle = new Rectangle(x, y, smallBmp.Width - 1, smallBmp.Height - 1);
-                            Pen pen = new Pen(Color.Red);
-                            pen.Width = 5.0F;
-                            bigTestGraphics.DrawRectangle(pen, Rectangle);
-
-                            frmImageCapture captureOutput = new frmImageCapture();
-                            captureOutput.pbTaggedImage.Image = smallTestBmp;
-                            captureOutput.pbSearchResult.Image = bigTestBmp;
-                            captureOutput.TopMost = true;
-                            captureOutput.Show();
-                            
-                            break;
-                        }
-                        //If no match found, we restore the pointers and continue.
-                        else
-                        {
-                            pBig = pBigBackup;
-                            pSmall = pSmallBackup;
-                            pBig += 3;
-                        }
-                    }
-
-                    if (matchFound)
-                        break;
-
-                    pBig += bigOffset;
-                }
-            }
-
-            bigBmp.UnlockBits(bigData);
-            smallBmp.UnlockBits(smallData);
-            bigTestGraphics.Dispose();
-            return element;
+            FormsHelper.ShowAllForms(true);
         }
 
         public Tuple<string, string> ShowConditionElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor)
@@ -1399,46 +1290,6 @@ namespace OpenBots.UI.CustomControls
             }              
         }
 
-        public void ShowAllForms()
-        {
-            foreach (Form form in Application.OpenForms)
-                ShowForm(form);
-
-            Thread.Sleep(1000);
-        }
-
-        public delegate void ShowFormDelegate(Form form);
-        public void ShowForm(Form form)
-        {
-            if (form.InvokeRequired)
-            {
-                var d = new ShowFormDelegate(ShowForm);
-                form.Invoke(d, new object[] { form });
-            }
-            else
-                form.WindowState = FormWindowState.Normal;
-        }
-
-        public void HideAllForms()
-        {
-            foreach (Form form in Application.OpenForms)
-                HideForm(form);
-
-            Thread.Sleep(1000);
-        }
-
-        public delegate void HideFormDelegate(Form form);
-        public void HideForm(Form form)
-        {
-            if (form.InvokeRequired)
-            {
-                var d = new HideFormDelegate(HideForm);
-                form.Invoke(d, new object[] { form });
-            }
-            else
-                form.WindowState = FormWindowState.Minimized;
-        }
-
         public ComboBox AddWindowNames(ComboBox cbo)
         {
             if (cbo == null)
@@ -1446,7 +1297,7 @@ namespace OpenBots.UI.CustomControls
 
             cbo.Items.Clear();
             cbo.Items.Add("Current Window");
-
+            
             Process[] processlist = Process.GetProcesses();
 
             //pull the main window title for each
@@ -1458,6 +1309,8 @@ namespace OpenBots.UI.CustomControls
                     cbo.Items.Add(process.MainWindowTitle);
                 }
             }
+
+            cbo.Items.Add("None");
 
             return cbo;
         }

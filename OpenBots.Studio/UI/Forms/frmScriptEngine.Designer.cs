@@ -1,4 +1,7 @@
-﻿namespace OpenBots.UI.Forms
+﻿using OpenBots.Utilities;
+using System.Windows.Forms;
+
+namespace OpenBots.UI.Forms
 {
     partial class frmScriptEngine
     {
@@ -15,6 +18,25 @@
         {
             if (disposing && (components != null))
             {
+                lstSteppingCommands.DrawItem -= lstSteppingCommands_DrawItem;
+                lstSteppingCommands.MouseDoubleClick -= lstSteppingCommands_MouseDoubleClick;
+                tmrNotify.Tick -= autoCloseTimer_Tick;
+                uiBtnStepInto.Click -= uiBtnStepInto_Click;
+                uiBtnStepOver.Click -= uiBtnStepOver_Click;
+                uiBtnCancel.Click -= uiBtnCancel_Click;
+                uiBtnPause.Click -= uiBtnPause_Click;
+                pbBotIcon.Click -= pbBotIcon_Click;
+                uiBtnScheduleManagement.Click -= uiBtnScheduleManagement_Click;
+                FormClosing -= frmScriptEngine_FormClosing;
+                Load -= frmProcessingStatus_LoadAsync;
+                GlobalHook.HookStopped -= OnHookStopped;
+                EngineInstance.ReportProgressEvent -= Engine_ReportProgress;
+                EngineInstance.ScriptFinishedEvent -= Engine_ScriptFinishedEvent;
+                EngineInstance.LineNumberChangedEvent -= EngineInstance_LineNumberChangedEvent;
+
+                foreach (Control control in Controls)
+                    control.Dispose();
+
                 components.Dispose();
             }
             base.Dispose(disposing);

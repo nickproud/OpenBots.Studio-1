@@ -16,6 +16,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using AContainer = Autofac.IContainer;
+using CoreResources = OpenBots.Properties.Resources;
 
 namespace OpenBots.UI.Forms.Sequence_Forms
 {
@@ -35,10 +36,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         //notification variables
         private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
         private DateTime _notificationExpires;
-        private bool _isDisplaying;
         private string _notificationText;
         private Color _notificationColor;
-        private string _notificationPaintedText;             
+        private bool _isNotificationListEmpty;
 
         //command search variables
         private TreeView _tvCommandsCopy;
@@ -115,9 +115,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             //get app settings
             _appSettings = new ApplicationSettings();
             _appSettings = _appSettings.GetOrCreateApplicationSettings();           
-
-            //no height for status bar
-            HideNotificationRow();
 
             //set listview column size
             frmSequence_SizeChanged(null, null);
@@ -204,70 +201,94 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void tmrNotify_Tick(object sender, EventArgs e)
         {
             if (_appSettings == null)
-            {
                 return;
-            }
 
-            if ((_notificationExpires < DateTime.Now) && (_isDisplaying))
-            {
-                HideNotification();
-            }
-
-            if ((_appSettings.ClientSettings.AntiIdleWhileOpen) && (DateTime.Now > _lastAntiIdleEvent.AddMinutes(1)))
-            {
+            if (_appSettings.ClientSettings.AntiIdleWhileOpen && DateTime.Now > _lastAntiIdleEvent.AddMinutes(1))
                 PerformAntiIdle();
-            }
 
             //check if notification is required
-            if ((_notificationList.Count > 0) && (_notificationExpires < DateTime.Now))
+            if (_notificationList.Count > 0 && _notificationExpires < DateTime.Now)
             {
                 var itemToDisplay = _notificationList[0];
                 _notificationList.RemoveAt(0);
-                _notificationExpires = DateTime.Now.AddSeconds(2);
+
+                int displayTime;
+                switch (itemToDisplay.Item2.Name)
+                {
+                    case "White":
+                        displayTime = 1;
+                        break;
+                    case "Yellow":
+                        displayTime = 2;
+                        break;
+                    case "Red":
+                        displayTime = 3;
+                        break;
+                    default:
+                        displayTime = 1;
+                        break;
+                }
+                _notificationExpires = DateTime.Now.AddSeconds(displayTime);
                 ShowNotification(itemToDisplay.Item1, itemToDisplay.Item2);
             }
+            else if (_notificationList.Count == 0 && !_isNotificationListEmpty)
+            {
+                pnlStatus.Invalidate();
+                _isNotificationListEmpty = true;
+            }
+            else if (!_isNotificationListEmpty)
+                pnlStatus.Invalidate();
         }
 
         public void Notify(string notificationText, Color notificationColor)
         {
+            _isNotificationListEmpty = false;
             _notificationList.Add(new Tuple<string, Color>(notificationText, notificationColor));
+        }
+
+        public void NotifySync(string notificationText, Color notificationColor)
+        {
+            Notify(notificationText, notificationColor);
+            tmrNotify_Tick(null, null);
+            tlpControls.Refresh();
         }
 
         private void ShowNotification(string textToDisplay, Color textColor)
         {
             _notificationText = textToDisplay;
             _notificationColor = textColor;
-
-            pnlStatus.SuspendLayout();
-
-            ShowNotificationRow();
-            pnlStatus.ResumeLayout();
-            _isDisplaying = true;
         }
 
-        private void HideNotification()
+        private void pnlStatus_Paint(object sender, PaintEventArgs e)
         {
-            pnlStatus.SuspendLayout();
+            e.Graphics.DrawString(_notificationText, pnlStatus.Font, new SolidBrush(_notificationColor), 30, 4);
 
-            HideNotificationRow();
-            pnlStatus.ResumeLayout();
-            _isDisplaying = false;
+            if (!string.IsNullOrEmpty(_notificationText))
+                e.Graphics.DrawImage(CoreResources.OpenBots_icon, 5, 3, 20, 20);
         }
 
-        private void HideNotificationRow()
+        private void pnlStatus_DoubleClick(object sender, EventArgs e)
         {
-            tlpControls.RowStyles[3].Height = 0;
-        }
+            if (string.IsNullOrEmpty(_notificationText))
+                return;
 
-        private void ShowNotificationRow()
-        {
-            tlpControls.RowStyles[3].Height = 30;
-        }
-
-        private void PerformAntiIdle()
-        {
-            _lastAntiIdleEvent = DateTime.Now;
-            Notify("Anti-Idle Triggered", Color.White);
+            string caption;
+            switch (_notificationColor.Name)
+            {
+                case "White":
+                    caption = "Information";
+                    break;
+                case "Yellow":
+                    caption = "Warning";
+                    break;
+                case "Red":
+                    caption = "Error";
+                    break;
+                default:
+                    caption = "Information";
+                    break;
+            }
+            MessageBox.Show(_notificationText, caption);
         }
 
         private void notifyTray_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -279,6 +300,13 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 notifyTray.Visible = false;
             }
         }
+
+        private void PerformAntiIdle()
+        {
+            _lastAntiIdleEvent = DateTime.Now;
+            Notify("Anti-Idle Triggered", Color.White);
+        }
+
         #endregion
 
         #region Create Command Logic

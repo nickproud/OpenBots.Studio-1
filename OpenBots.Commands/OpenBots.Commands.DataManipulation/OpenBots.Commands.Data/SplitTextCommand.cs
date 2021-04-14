@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Data
 		[Remarks("[crLF] can be used for line breaks and [chars] can be used to split each character." +
 				 "To use multiple delimeters, create a List variable of delimeter characters to use as the input.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(List<>)})]
+		[CompatibleTypes(new Type[] { typeof(List<>)}, true)]
 		public string v_SplitCharacter { get; set; }
 
 		[Required]

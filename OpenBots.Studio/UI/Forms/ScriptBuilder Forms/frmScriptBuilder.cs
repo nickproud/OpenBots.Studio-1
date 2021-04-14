@@ -35,6 +35,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using AContainer = Autofac.IContainer;
+using CoreResources = OpenBots.Properties.Resources;
 using Point = System.Drawing.Point;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
@@ -67,16 +68,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public Project ScriptProject { get; set; }
         public string ScriptProjectPath { get; private set; }
         private string _mainFileName;
+        private string _scriptFileExtension;
+        private bool _isMainScript;
         public Logger EngineLogger { get; set; }
         public IfrmScriptEngine CurrentEngine { get; set; }      
 
         //notification variables
         private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
         private DateTime _notificationExpires;
-        private bool _isDisplaying;
         private string _notificationText;
         private Color _notificationColor;
-        private string _notificationPaintedText;      
+        private bool _isNotificationListEmpty;
 
         //debug variables
         private int _debugLine;
@@ -155,8 +157,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             ResetVariableArgumentBindings();
 
                             if (_selectedTabScriptActions is ListView)
-                                splitContainerScript.Panel2Collapsed = false; 
-                            
+                                SetVarArgTabControlSettings(ProjectType.OpenBots);
+                            else
+                                SetVarArgTabControlSettings(ProjectType.Python);
+                                                           
                             tpProject.Controls[0].Enabled = true;
                             tpCommands.Controls[0].Enabled = true;
                             tlpControls.Controls[0].Enabled = true;
@@ -211,15 +215,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private float _thickBarHeight;
 
         //hello world
-        private const string _helloWorldTextPython = "import ctypes\nctypes.windll.user32.MessageBoxW(0, \"Hello World\", \"Hello World\", 1)";
-        private const string _helloWorldTextTagUI = "https://openbots.ai/\nclick Register\nwait 5";
-        private const string _helloWorldTextCSScript = "using System;\nusing System.Windows.Forms;\n\npublic class Script\n{\n\t" + 
-                                                "public static void Main(object[] args)\n\t{\n\t\tMessageBox.Show(\"Hello World\");\n\t}\n}";
+        private string _helloWorldTextPython = CoreResources.DefaultPythonScript;
+        private string _helloWorldTextTagUI = CoreResources.DefaultTagUIScript;
+        private string _helloWorldTextCSScript = CoreResources.DefaultCSScript;
         #endregion
 
         #region Form Events
-        public frmScriptBuilder()
+        public frmScriptBuilder(string projectPath)
         {
+            ScriptProjectPath = projectPath;
             _selectedTabScriptActions = NewLstScriptActions();
             InitializeComponent();
 
@@ -283,13 +287,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
 
-            VariableType.DataSource = defaultTypesBinding;
-            VariableType.DisplayMember = "Key";
-            VariableType.ValueMember = "Value";
+            variableType.DataSource = defaultTypesBinding;
+            variableType.DisplayMember = "Key";
+            variableType.ValueMember = "Value";
 
-            ArgumentType.DataSource = defaultTypesBinding;
-            ArgumentType.DisplayMember = "Key";
-            ArgumentType.ValueMember = "Value";
+            argumentType.DataSource = defaultTypesBinding;
+            argumentType.DisplayMember = "Key";
+            argumentType.ValueMember = "Value";
 
             var importedNameSpacesBinding = new BindingSource(_importedNamespaces, null);
             lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
@@ -338,9 +342,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //get latest files for recent files list on load
             GenerateRecentProjects();
-
-            //no height for status bar
-            HideNotificationRow();
 
             //set listview column size
             frmScriptBuilder_SizeChanged(null, null);
@@ -448,11 +449,30 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         }
         private void frmScriptBuilder_Shown(object sender, EventArgs e)
         {
-            Program.SplashForm.Close();
+            DialogResult result;
 
-            var result = AddProject();
+            if (!_appSettings.ClientSettings.IsRestarting)
+            {
+                Program.SplashForm.Close();
+                result = AddProject();
+            }
+            else
+            {
+                _appSettings.ClientSettings.IsRestarting = false;
+                _appSettings.Save(_appSettings);
+
+                frmProjectBuilder restartProjectBuilder = new frmProjectBuilder()
+                {
+                    ExistingProjectPath = ScriptProjectPath,
+                    ExistingConfigPath = Path.Combine(ScriptProjectPath, "project.obconfig"),
+                    Action = ProjectAction.OpenProject,
+                    DialogResult = DialogResult.OK
+                };
+                result = AddProject(restartProjectBuilder);
+            }
+
             if (result != DialogResult.Abort)
-                Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+                Notify("Welcome! Select a Command to get started!", Color.White);
         }
 
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)
@@ -481,37 +501,51 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void tmrNotify_Tick(object sender, EventArgs e)
         {
             if (CurrentEngine == null)
-            {
                 IsScriptRunning = false;
-            }
 
             if (_appSettings == null)
-            {
                 return;
-            }
 
-            if ((_notificationExpires < DateTime.Now) && (_isDisplaying))
-            {
-                HideNotification();
-            }
-
-            if ((_appSettings.ClientSettings.AntiIdleWhileOpen) && (DateTime.Now > _lastAntiIdleEvent.AddMinutes(1)))
-            {
+            if (_appSettings.ClientSettings.AntiIdleWhileOpen && DateTime.Now > _lastAntiIdleEvent.AddMinutes(1))
                 PerformAntiIdle();
-            }
 
             //check if notification is required
-            if ((_notificationList.Count > 0) && (_notificationExpires < DateTime.Now))
+            if (_notificationList.Count > 0 && _notificationExpires < DateTime.Now)
             {
                 var itemToDisplay = _notificationList[0];
                 _notificationList.RemoveAt(0);
-                _notificationExpires = DateTime.Now.AddSeconds(2);
+
+                int displayTime;
+                switch (itemToDisplay.Item2.Name)
+                {
+                    case "White":
+                        displayTime = 1;
+                        break;
+                    case "Yellow":
+                        displayTime = 2;
+                        break;
+                    case "Red":
+                        displayTime = 3;
+                        break;
+                    default:
+                        displayTime = 1;
+                        break;
+                }
+                _notificationExpires = DateTime.Now.AddSeconds(displayTime);
                 ShowNotification(itemToDisplay.Item1, itemToDisplay.Item2);
+            }           
+            else if (_notificationList.Count == 0 && !_isNotificationListEmpty)
+            {
+                pnlStatus.Invalidate();
+                _isNotificationListEmpty = true;
             }
+            else if (!_isNotificationListEmpty)
+                pnlStatus.Invalidate();
         }
 
         public void Notify(string notificationText, Color notificationColor)
         {
+            _isNotificationListEmpty = false;
             _notificationList.Add(new Tuple<string, Color>(notificationText, notificationColor));
         }
 
@@ -526,37 +560,38 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             _notificationText = textToDisplay;
             _notificationColor = textColor;
+        }
+    
+        private void pnlStatus_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.DrawString(_notificationText, pnlStatus.Font, new SolidBrush(_notificationColor), 30, 4);
 
-            pnlStatus.SuspendLayout();
-
-            ShowNotificationRow();
-            pnlStatus.ResumeLayout();
-            _isDisplaying = true;
+            if (!string.IsNullOrEmpty(_notificationText))
+                e.Graphics.DrawImage(CoreResources.OpenBots_icon, 5, 3, 20, 20);
         }
 
-        private void HideNotification()
+        private void pnlStatus_DoubleClick(object sender, EventArgs e)
         {
-            pnlStatus.SuspendLayout();
+            if (string.IsNullOrEmpty(_notificationText))
+                return;
 
-            HideNotificationRow();
-            pnlStatus.ResumeLayout();
-            _isDisplaying = false;
-        }
-
-        private void HideNotificationRow()
-        {
-            tlpControls.RowStyles[4].Height = 0;
-        }
-
-        private void ShowNotificationRow()
-        {
-            tlpControls.RowStyles[4].Height = 30;
-        }
-
-        private void PerformAntiIdle()
-        {
-            _lastAntiIdleEvent = DateTime.Now;
-            Notify("Anti-Idle Triggered", Color.White);
+            string caption;
+            switch (_notificationColor.Name)
+            {
+                case "White":
+                    caption = "Information";
+                    break;
+                case "Yellow":
+                    caption = "Warning";
+                    break;
+                case "Red":
+                    caption = "Error";
+                    break;
+                default:
+                    caption = "Information";
+                    break;
+            }
+            MessageBox.Show(_notificationText, caption);
         }
 
         private void notifyTray_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -568,6 +603,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 notifyTray.Visible = false;
             }
         }
+
+        private void PerformAntiIdle()
+        {
+            _lastAntiIdleEvent = DateTime.Now;
+            Notify("Anti-Idle Triggered", Color.White);
+        }
+
         #endregion
 
         #region Create Command Logic
