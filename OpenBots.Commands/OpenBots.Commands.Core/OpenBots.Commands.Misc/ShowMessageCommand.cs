@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Misc
 			var engine = (IAutomationEngineInstance)sender;
 
 			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
-
+			
 			string variableMessage = (string)await v_Message.EvaluateCode(engine);
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)

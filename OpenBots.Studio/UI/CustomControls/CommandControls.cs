@@ -1473,14 +1473,16 @@ namespace OpenBots.UI.CustomControls
 
                 List<string> varArgNames = new List<string>();
 
+                varArgNames.Add("");
+
                 foreach (var variable in ((frmCommandEditor)editor).ScriptEngineContext.Variables)
                 {
                     if (variable.VariableName != "ProjectPath")
-                        varArgNames.Add("{" + variable.VariableName + "}");
+                        varArgNames.Add(variable.VariableName);
                 }
 
                 foreach (var argument in ((frmCommandEditor)editor).ScriptEngineContext.Arguments)
-                    varArgNames.Add("{" + argument.ArgumentName + "}");
+                    varArgNames.Add(argument.ArgumentName);
 
                 cbo.Items.AddRange(varArgNames.OrderBy(x => x).ToArray());               
             }

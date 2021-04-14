@@ -456,7 +456,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScript.RunAsync();
             }
 
-            string script = $"{type} {varName} = {code}";
+            string script = $"{type}? {varName} = {code}";
 
             if (script[script.Length - 1] != ';')
             {

@@ -67,7 +67,10 @@ namespace OpenBots.Commands.Variable
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" ['{v_OutputUserVariableName}' = '{v_Input}']";
+			if (v_OutputUserVariableName != null)
+				return base.GetDisplayValue() + $" ['{v_OutputUserVariableName}' = '{v_Input}']";
+			else
+				return base.GetDisplayValue() + $"['{v_Input}']";
 		}
 	}
 }
