@@ -77,8 +77,8 @@ namespace OpenBots.Commands.Window
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			string windowName = (string)await v_WindowName.EvaluateCode(engine);
-			var variableXPosition = (string)v_XMousePosition.EvaluateCode(engine);
-			var variableYPosition = (string)v_YMousePosition.EvaluateCode(engine);
+			var variableXPosition = (string)await v_XMousePosition.EvaluateCode(engine);
+			var variableYPosition = (string)await v_YMousePosition.EvaluateCode(engine);
 			int timeout = (int)await v_Timeout.EvaluateCode(engine);
 
 			DateTime timeToEnd = DateTime.Now.AddSeconds(timeout);

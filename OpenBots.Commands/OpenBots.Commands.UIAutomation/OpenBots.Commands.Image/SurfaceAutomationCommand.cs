@@ -249,7 +249,7 @@ namespace OpenBots.Commands.Image
 			return base.GetDisplayValue() + $" [{v_ImageAction} on Screen - Accuracy '{v_MatchAccuracy}']";
 		}
 
-		public void PerformImageElementAction(IAutomationEngineInstance engine, ImageElement element)
+		public async void PerformImageElementAction(IAutomationEngineInstance engine, ImageElement element)
 		{
 			try
 			{
