@@ -95,9 +95,9 @@ namespace OpenBots.Commands.Data
 			CommandEnabled = true;
 			CommandIcon = Resources.command_stopwatch;
 
-			v_InputDate = "{DateTime.Now}";
+			v_InputDate = "DateTime.Now";
 			v_CalculationMethod = "Add Second(s)";
-			v_ToStringFormat = "MM/dd/yyyy hh:mm:ss";
+			v_ToStringFormat = "\"MM/dd/yyyy hh:mm:ss\"";
 		}
 
 		public async override void RunCommand(object sender)
@@ -105,12 +105,9 @@ namespace OpenBots.Commands.Data
 			var engine = (IAutomationEngineInstance)sender;
 
 			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine);
-			var variableIncrement = (string)await v_Increment.EvaluateCode(engine);
+			var variableIncrement = (double)await v_Increment.EvaluateCode(engine);
 
 			dynamic input = await v_InputDate.EvaluateCode(engine);
-
-			if (input == v_InputDate && input.StartsWith("{") && input.EndsWith("}"))
-				input = await v_InputDate.EvaluateCode(engine, nameof(v_InputDate), this);
 
 			DateTime variableDate;
 
@@ -122,11 +119,7 @@ namespace OpenBots.Commands.Data
 				throw new InvalidDataException($"{v_InputDate} is not a valid DateTime");
 
 			//get increment value
-			double requiredInterval;
-
-			//convert to double
-			if (!double.TryParse(variableIncrement, out requiredInterval))
-				throw new InvalidDataException("Increment was unable to be parsed - " + variableIncrement);
+			double requiredInterval = variableIncrement;
 
 			dynamic dateTimeValue;
 

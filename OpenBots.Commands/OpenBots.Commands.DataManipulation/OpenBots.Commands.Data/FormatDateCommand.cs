@@ -52,8 +52,8 @@ namespace OpenBots.Commands.Data
 			CommandEnabled = true;
 			CommandIcon = Resources.command_stopwatch;
 
-			v_InputData = "{DateTime.Now}";
-			v_ToStringFormat = "MM/dd/yyyy";
+			v_InputData = "DateTime.Now";
+			v_ToStringFormat = "\"MM/dd/yyyy\"";
 		}
 
 		public async override void RunCommand(object sender)
@@ -61,10 +61,7 @@ namespace OpenBots.Commands.Data
 			var engine = (IAutomationEngineInstance)sender;
 			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine);
 
-			dynamic input = (string)await v_InputData.EvaluateCode(engine);
-
-			if (input == v_InputData && input.StartsWith("{") && input.EndsWith("}"))
-				input = await v_InputData.EvaluateCode(engine, nameof(v_InputData), this);
+			dynamic input = await v_InputData.EvaluateCode(engine);
 
 			DateTime variableDate;
 

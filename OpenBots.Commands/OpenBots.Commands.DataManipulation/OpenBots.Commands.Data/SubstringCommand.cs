@@ -67,12 +67,15 @@ namespace OpenBots.Commands.Data
 			var engine = (IAutomationEngineInstance)sender;
 			var inputText = (string)await v_InputText.EvaluateCode(engine);
 			var startIndex = (int)await v_StartIndex.EvaluateCode(engine);
-			var stringLength = (string)await v_StringLength.EvaluateCode(engine);
+
+			int length = -1;
+
+			if(v_StringLength != "")
+				length = (int)await v_StringLength.EvaluateCode(engine);
 
 			//apply substring
-			if (!string.IsNullOrEmpty(stringLength))
+			if (length > -1)
 			{
-				int length = int.Parse(stringLength);
 				inputText = inputText.Substring(startIndex, length);
 			}
 			else

@@ -47,7 +47,6 @@ namespace OpenBots.Commands.Data.Test
             string mathExpression = "{num1} + {num2}";
 
             _mathCalculation.v_MathExpression = mathExpression;
-            _mathCalculation.v_ThousandSeparator = "{thouSeparator}";
             _mathCalculation.v_OutputUserVariableName = "{output}";
 
             _mathCalculation.RunCommand(_engine);
@@ -72,7 +71,6 @@ namespace OpenBots.Commands.Data.Test
             string mathExpression = "{num1} + {num2}";
 
             _mathCalculation.v_MathExpression = mathExpression;
-            _mathCalculation.v_DecimalSeparator = "{decSeparator}";
             _mathCalculation.v_OutputUserVariableName = "{output}";
 
             _mathCalculation.RunCommand(_engine);

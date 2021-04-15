@@ -763,15 +763,13 @@ namespace OpenBots.UI.CustomControls
                 {
                     TextBox targetTextbox = (TextBox)inputBox.Tag;
                     //concat variable name with brackets [vVariable] as engine searches for the same
-                    targetTextbox.Text = targetTextbox.Text.Insert(targetTextbox.SelectionStart, string.Concat("{",
-                        newVariableSelector.ReturnVariableArgument, "}"));
+                    targetTextbox.Text = targetTextbox.Text.Insert(targetTextbox.SelectionStart, newVariableSelector.ReturnVariableArgument);
                 }
                 else if (inputBox.Tag is ComboBox)
                 {
                     ComboBox targetCombobox = (ComboBox)inputBox.Tag;
                     //concat variable name with brackets [vVariable] as engine searches for the same
-                    targetCombobox.Text = targetCombobox.Text.Insert(targetCombobox.SelectionStart, string.Concat("{",
-                        newVariableSelector.ReturnVariableArgument, "}"));
+                    targetCombobox.Text = targetCombobox.Text.Insert(targetCombobox.SelectionStart, newVariableSelector.ReturnVariableArgument);
                 }
                 else if (inputBox.Tag is DataGridView)
                 {
@@ -801,7 +799,7 @@ namespace OpenBots.UI.CustomControls
                     }
 
                     targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value = 
-                        targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value + string.Concat("{", newVariableSelector.ReturnVariableArgument, "}");
+                        targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value + newVariableSelector.ReturnVariableArgument;
                     
                     //TODO - Insert variables at cursor position instead of at the end of a cell
                     //targetDGV.CurrentCell = targetDGV.SelectedCells[0];
@@ -868,7 +866,7 @@ namespace OpenBots.UI.CustomControls
                 if (filePath.StartsWith(_projectPath))
                     filePath = filePath.Replace(_projectPath, "{ProjectPath}");
 
-                targetTextbox.Text = filePath;
+                targetTextbox.Text = "\"" + filePath + "\"";
             }
         }
 
@@ -887,7 +885,7 @@ namespace OpenBots.UI.CustomControls
                 if (folderPath.StartsWith(_projectPath))
                     folderPath = folderPath.Replace(_projectPath, "{ProjectPath}");
 
-                targetTextBox.Text = folderPath;
+                targetTextBox.Text = "\"" + folderPath + "\"";
             }
         }
 

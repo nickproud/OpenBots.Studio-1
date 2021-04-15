@@ -68,8 +68,7 @@ namespace OpenBots.Commands.Data
 
 			dynamic input = (string)await v_SplitCharacter.EvaluateCode(engine);
 
-			if (input == v_SplitCharacter && input.StartsWith("{") && input.EndsWith("}"))
-				input = await v_SplitCharacter.EvaluateCode(engine, nameof(v_SplitCharacter), this);
+			input = await v_SplitCharacter.EvaluateCode(engine, nameof(v_SplitCharacter), this);
 
 			if (input is List<string>)
 			{
