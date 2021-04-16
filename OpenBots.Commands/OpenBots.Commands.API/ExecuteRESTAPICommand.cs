@@ -116,121 +116,107 @@ namespace OpenBots.Commands.API
 
 		public async override void RunCommand(object sender)
 		{
+			//make REST Request and store into variable
+			string restContent;
+
+			//get engine instance
+			var engine = (IAutomationEngineInstance)sender;
+
+			//get parameters
+			var targetURL = (string)await v_BaseURL.EvaluateCode(engine);
+			var targetEndpoint = (string)await v_APIEndPoint.EvaluateCode(engine);
+
+			//client
+			var client = new RestClient(targetURL);
+
+			//methods
+			Method method = (Method)Enum.Parse(typeof(Method), v_APIMethodType);
+
+			//rest request
+			var request = new RestRequest(targetEndpoint, method);
+
+			//get parameters
+			var apiParameters = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "PARAMETER");
+
+			//get headers
+			var apiHeaders = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "HEADER");
+
+			//for each api parameter
+			foreach (var param in apiParameters)
+			{
+				var paramName = (string)await ((string)param["Parameter Name"]).EvaluateCode(engine);
+				var paramValue = (string)await ((string)param["Parameter Value"]).EvaluateCode(engine);
+
+				request.AddParameter(paramName, paramValue);
+			}
+
+			//for each header
+			foreach (var header in apiHeaders)
+			{
+				var paramName = (string)await ((string)header["Parameter Name"]).EvaluateCode(engine);
+				var paramValue = (string)await ((string)header["Parameter Value"]).EvaluateCode(engine);
+
+				request.AddHeader(paramName, paramValue);
+			}
+
+			//get json body
+			var jsonBody = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "JSON BODY")
+											.Select(rw => rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+			//add json body
+			if (jsonBody != null)
+			{
+				var json = (string)await jsonBody.EvaluateCode(engine);
+				request.AddJsonBody(jsonBody);
+			}
+
+			//get json body
+			var file = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "FILE").FirstOrDefault();
+
+			//get file
+			if (file != null)
+			{
+				var paramName = (string)await ((string)file["Parameter Name"]).EvaluateCode(engine);
+				var paramValue = (string)await ((string)file["Parameter Value"]).EvaluateCode(engine);
+				var fileData = (string)await paramValue.EvaluateCode(engine);
+				request.AddFile(paramName, fileData);
+
+			}
+
+			//add advanced parameters
+			foreach (DataRow rw in v_AdvancedParameters.Rows)
+			{
+				var paramName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine);
+				var paramValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine);
+				var paramType = (string)await rw.Field<string>("Parameter Type").EvaluateCode(engine);
+				var contentType = (string)await rw.Field<string>("Content Type").EvaluateCode(engine);
+
+				request.AddParameter(paramName, paramValue, contentType, (ParameterType)Enum.Parse(typeof(ParameterType), paramType));
+			}
+
+			request.RequestFormat = (DataFormat)Enum.Parse(typeof(DataFormat), v_RequestFormat);
+
+			//execute client request
+			IRestResponse response = client.Execute(request);
+			var content = response.Content;
+
+			//add service response for tracking
+			engine.ServiceResponses.Add(response);
+
+			// return response.Content;
 			try
 			{
-				//make REST Request and store into variable
-				string restContent;
-
-				//get engine instance
-				var engine = (IAutomationEngineInstance)sender;
-
-				//get parameters
-				var targetURL = (string)await v_BaseURL.EvaluateCode(engine);
-				var targetEndpoint = (string)await v_APIEndPoint.EvaluateCode(engine);
-				var targetMethod = (string)await v_APIMethodType.EvaluateCode(engine);
-
-				//client
-				var client = new RestClient(targetURL);
-
-				//methods
-				Method method = (Method)Enum.Parse(typeof(Method), targetMethod);
-
-				//rest request
-				var request = new RestRequest(targetEndpoint, method);
-
-				//get parameters
-				var apiParameters = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "PARAMETER");
-
-				//get headers
-				var apiHeaders = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "HEADER");
-
-				//for each api parameter
-				foreach (var param in apiParameters)
-				{
-					var paramName = (string)await ((string)param["Parameter Name"]).EvaluateCode(engine);
-					var paramValue = (string)await ((string)param["Parameter Value"]).EvaluateCode(engine);
-
-					request.AddParameter(paramName, paramValue);
-				}
-
-				//for each header
-				foreach (var header in apiHeaders)
-				{
-					var paramName = (string)await ((string)header["Parameter Name"]).EvaluateCode(engine);
-					var paramValue = (string)await ((string)header["Parameter Value"]).EvaluateCode(engine);
-
-					request.AddHeader(paramName, paramValue);
-				}
-
-				//get json body
-				var jsonBody = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "JSON BODY")
-											   .Select(rw => rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-				//add json body
-				if (jsonBody != null)
-				{
-					var json = (string)await jsonBody.EvaluateCode(engine);
-					request.AddJsonBody(jsonBody);
-				}
-
-				//get json body
-				var file = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "FILE").FirstOrDefault();
-
-				//get file
-				if (file != null)
-				{
-					var paramName = (string)await ((string)file["Parameter Name"]).EvaluateCode(engine);
-					var paramValue = (string)await ((string)file["Parameter Value"]).EvaluateCode(engine);
-					var fileData = (string)await paramValue.EvaluateCode(engine);
-					request.AddFile(paramName, fileData);
-
-				}
-
-				//add advanced parameters
-				foreach (DataRow rw in v_AdvancedParameters.Rows)
-				{
-					var paramName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine);
-					var paramValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine);
-					var paramType = (string)await rw.Field<string>("Parameter Type").EvaluateCode(engine);
-					var contentType = (string)await rw.Field<string>("Content Type").EvaluateCode(engine);
-
-					request.AddParameter(paramName, paramValue, contentType, (ParameterType)Enum.Parse(typeof(ParameterType), paramType));
-				}
-
-				var requestFormat = (string)await v_RequestFormat.EvaluateCode(engine);
-				if (string.IsNullOrEmpty(requestFormat))
-				{
-					requestFormat = "Xml";
-				}
-				request.RequestFormat = (DataFormat)Enum.Parse(typeof(DataFormat), requestFormat);
-
-
-				//execute client request
-				IRestResponse response = client.Execute(request);
-				var content = response.Content;
-
-				//add service response for tracking
-				engine.ServiceResponses.Add(response);
-
-				// return response.Content;
-				try
-				{
-					//try to parse and return json content
-					var result = JsonConvert.DeserializeObject(content);
-					restContent = result.ToString();
-				}
-				catch (Exception)
-				{
-					//content failed to parse simply return it
-					restContent = content;
-				}
-
-				restContent.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				//try to parse and return json content
+				var result = JsonConvert.DeserializeObject(content);
+				restContent = result.ToString();
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
-				throw ex;
+				//content failed to parse simply return it
+				restContent = content;
 			}
+
+			restContent.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -241,7 +227,7 @@ namespace OpenBots.Commands.API
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_APIEndPoint", this, editor));
 
 			var apiMethodLabel = commandControls.CreateDefaultLabelFor("v_APIMethodType", this);
-			var apiMethodDropdown = (ComboBox)commandControls.CreateDropdownFor("v_APIMethodType", this);
+			var apiMethodDropdown = commandControls.CreateDropdownFor("v_APIMethodType", this);
 			foreach (Method method in (Method[])Enum.GetValues(typeof(Method)))
 			{
 				apiMethodDropdown.Items.Add(method.ToString());
