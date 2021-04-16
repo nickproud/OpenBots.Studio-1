@@ -70,8 +70,7 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var dataTableVariable = await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
-			OBDataTable dataTable = (OBDataTable)dataTableVariable;
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
 			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
@@ -79,12 +78,12 @@ namespace OpenBots.Commands.DataTable
 
 			if (v_Option == "Column Index")
 			{
-				int index = int.Parse(valueIndex);
+				int index = (int)valueIndex;
 				columnName = dataTable.Columns[index].ColumnName;
 			}
 			else if (v_Option == "Column Name")
 			{
-				columnName = valueIndex;
+				columnName = (string)valueIndex;
 			}
 
 			List<OBDataTable> dataTableList = new List<OBDataTable>();

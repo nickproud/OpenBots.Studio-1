@@ -78,7 +78,7 @@ namespace OpenBots.Commands.DataTable
 
 			if(v_RemoveOption == "Index")
             {
-                Dt.Rows[Convert.ToInt32(vSearchItem)].Delete();
+                Dt.Rows[(int)vSearchItem].Delete();
 				Dt.AcceptChanges();
 				Dt.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
 			}

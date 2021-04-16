@@ -41,7 +41,7 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Search Value")]
 		[Description("Enter a valid DataRow index or column name.")]
-		[SampleUsage("0 || {vIndex} || Column1 || {vColumnName}")]
+		[SampleUsage("0 || vIndex || \"Column1\" || vColumnName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]

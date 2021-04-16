@@ -33,7 +33,7 @@ namespace OpenBots.Commands.RegEx
 		[Required]
 		[DisplayName("Regex Pattern")]
 		[Description("Enter a Regex Pattern to apply to the input Text.")]
-		[SampleUsage(@"^([\w\-]+) || {vPattern}")]
+		[SampleUsage(@"^([\w\-]+) || vPattern")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.RegEx
 		[Editable(false)]
 		[DisplayName("Output Match List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -61,7 +61,7 @@ namespace OpenBots.Commands.RegEx
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vInputData = (string)await v_InputText.EvaluateCode(engine);
-			string vRegex = (string)await v_Regex.EvaluateCode(engine);
+			string vRegex = (string)await ("@" + v_Regex).EvaluateCode(engine);
 
 			var matches = (from match in Regex.Matches(vInputData, vRegex).Cast<Match>() 
 						   select match.Groups[0].Value).ToList();

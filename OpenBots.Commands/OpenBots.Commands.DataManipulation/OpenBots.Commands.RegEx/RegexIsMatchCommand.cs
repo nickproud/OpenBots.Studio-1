@@ -31,7 +31,7 @@ namespace OpenBots.Commands.RegEx
 		[Required]
 		[DisplayName("Regex Pattern")]
 		[Description("Enter a Regex Pattern to apply to the input Text.")]
-		[SampleUsage(@"^([\w\-]+) || {vPattern}")]
+		[SampleUsage(@"^([\w\-]+) || vPattern")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
@@ -41,7 +41,7 @@ namespace OpenBots.Commands.RegEx
 		[Editable(false)]
 		[DisplayName("Output Result Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(bool) })]
 		public string v_OutputUserVariableName { get; set; }
