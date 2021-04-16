@@ -565,6 +565,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static void SetVariableValue(this object newVal, IAutomationEngineInstance engine, string varName, string parameterName, ScriptCommand parent)
         {
             engine.AutomationEngineContext.EngineScriptState.Variables.Where(x => x.Name == varName).FirstOrDefault().Value = newVal;
+            engine.AutomationEngineContext.Variables.Where(x => x.VariableName == varName).FirstOrDefault().VariableValue = newVal;
         }
         public static dynamic GetVariableValue(this string varName, IAutomationEngineInstance engine)
         {

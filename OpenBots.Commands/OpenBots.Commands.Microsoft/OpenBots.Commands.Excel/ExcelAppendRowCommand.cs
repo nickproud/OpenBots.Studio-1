@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Row")]
 		[Description("Enter the text value that will be set in the appended row (Can be a DataRow).")]
-		[SampleUsage("Hello,World || {vData1},{vData2} || {vDataRow}")]
+		[SampleUsage("\"Hello,World\" || vData1+\",\"+vData2 || vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(DataRow) }, true)]
@@ -52,10 +52,7 @@ namespace OpenBots.Commands.Excel
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic vRow = (string)await v_RowToSet.EvaluateCode(engine);
-
-			if (vRow == v_RowToSet && v_RowToSet.StartsWith("{") && v_RowToSet.EndsWith("}"))
-				vRow = await v_RowToSet.EvaluateCode(engine, nameof(v_RowToSet), this);
+			dynamic vRow = await v_RowToSet.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
