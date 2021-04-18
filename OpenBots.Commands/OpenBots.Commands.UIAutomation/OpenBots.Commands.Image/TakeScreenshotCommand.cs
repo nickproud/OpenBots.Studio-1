@@ -50,6 +50,15 @@ namespace OpenBots.Commands.Image
 		[CompatibleTypes(null, true)]
 		public string v_FileName { get; set; }
 
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output Image Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("vUserVariable")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(Bitmap) })]
+		public string v_OutputUserVariableName { get; set; }
+
 		public TakeScreenshotCommand()
 		{
 			CommandName = "TakeScreenshotCommand";
@@ -76,6 +85,7 @@ namespace OpenBots.Commands.Image
 				image = User32Functions.CaptureWindow(windowName);
 
 			image.Save(vFilePath);
+			image.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
@@ -84,6 +94,7 @@ namespace OpenBots.Commands.Image
 			RenderedControls.AddRange(commandControls.CreateDefaultWindowControlGroupFor("v_WindowName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FolderPath", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FileName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
@@ -91,7 +102,7 @@ namespace OpenBots.Commands.Image
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Target Window '{v_WindowName}' - Save to File Path '{v_FolderPath}\\{v_FileName}']";
+			return base.GetDisplayValue() + $" [Target Window '{v_WindowName}' - Save to File Path '{v_FolderPath}\\{v_FileName}' - Store Image in '{v_OutputUserVariableName}']";
 		}
 	}
 }

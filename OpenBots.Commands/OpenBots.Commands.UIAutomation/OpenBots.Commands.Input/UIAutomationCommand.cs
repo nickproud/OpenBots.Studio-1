@@ -174,21 +174,17 @@ namespace OpenBots.Commands.Input
 								   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					//convert potential variable
-					var xAdjustVariable = (string)await xAdjust.EvaluateCode(engine);
-					var yAdjustVariable = (string)await yAdjust.EvaluateCode(engine);
-
 					int xAdjustInt;
 					int yAdjustInt;
 
 					//parse to int
-					if (!string.IsNullOrEmpty(xAdjustVariable))
-						xAdjustInt = int.Parse(xAdjustVariable);
+					if (!string.IsNullOrEmpty(xAdjust))
+						xAdjustInt = (int)await xAdjust.EvaluateCode(engine);
 					else
 						xAdjustInt = 0;
 
-					if (!string.IsNullOrEmpty(yAdjustVariable))
-						yAdjustInt = int.Parse(yAdjustVariable);
+					if (!string.IsNullOrEmpty(yAdjust))
+						yAdjustInt = (int)await yAdjust.EvaluateCode(engine);
 					else
 						yAdjustInt = 0;
 
@@ -196,10 +192,7 @@ namespace OpenBots.Commands.Input
 					var newPoint = requiredHandle.GetClickablePoint();
 
 					//send mousemove command
-					User32Functions.SendMouseMove(
-						(newPoint.X + xAdjustInt).ToString(),
-						(newPoint.Y + yAdjustInt).ToString(),
-						clickType);
+					User32Functions.SendMouseMove(Convert.ToInt32(newPoint.X) + xAdjustInt, Convert.ToInt32(newPoint.Y) + yAdjustInt, clickType);
 
 					break;
 				case "Set Text":
@@ -275,12 +268,9 @@ namespace OpenBots.Commands.Input
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = await secureString.EvaluateCode(engine, typeof(SecureString));
+					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, typeof(SecureString));
 
-					if (secureStrVariable is SecureString)
-						secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
-					else
-						throw new ArgumentException("Provided Argument is not a 'Secure String'");
+					secureString = secureStrVariable.ConvertSecureStringToString();
 
 					if (_clearElement == null)
 						_clearElement = "No";
@@ -374,7 +364,7 @@ namespace OpenBots.Commands.Input
 						else
 							searchResult = requiredHandle.Current.Name.ToString();
 
-						searchResult.SetVariableValue(engine, applyToVariable, typeof(string));
+						((string)searchResult).SetVariableValue(engine, applyToVariable, typeof(string));
 					}
 
 					else if (v_AutomationType == "Element Exists")
@@ -385,7 +375,7 @@ namespace OpenBots.Commands.Input
 						else
 							searchResult = true;
 
-						searchResult.SetVariableValue(engine, applyToVariable, typeof(bool));
+						((bool)searchResult).SetVariableValue(engine, applyToVariable, typeof(bool));
 					}
 					
 					break;

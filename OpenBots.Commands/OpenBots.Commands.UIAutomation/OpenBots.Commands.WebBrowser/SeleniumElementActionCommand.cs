@@ -207,10 +207,8 @@ namespace OpenBots.Commands.WebBrowser
 
 					var elementLocation = ((IWebElement)element).Location;
 					var seleniumWindowPosition = seleniumInstance.Manage().Window.Position;
-					User32Functions.SendMouseMove(
-						(seleniumWindowPosition.X + elementLocation.X +  userXAdjust).ToString(),
-						(seleniumWindowPosition.Y + elementLocation.Y + userYAdjust).ToString(),
-						v_SeleniumElementAction);
+					User32Functions.SendMouseMove(seleniumWindowPosition.X + elementLocation.X + userXAdjust, seleniumWindowPosition.Y + elementLocation.Y + userYAdjust, 
+												  v_SeleniumElementAction);
 					
 					break;
 				case "Double Left Click":
@@ -276,12 +274,8 @@ namespace OpenBots.Commands.WebBrowser
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = await secureString.EvaluateCode(engine, typeof(SecureString));
-
-					if (secureStrVariable is SecureString)
-						secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
-					else
-						throw new ArgumentException("Provided Argument is not a 'Secure String'");
+					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, typeof(SecureString));
+					secureString = secureStrVariable.ConvertSecureStringToString();
 
 					if (_clearElement == null)
 						_clearElement = "No";
@@ -307,10 +301,7 @@ namespace OpenBots.Commands.WebBrowser
 							_finalTextToSet += keyPress;
 						}
 						else
-						{
-							var convertedChunk = (string)await chunkedString.EvaluateCode(engine);
-							_finalTextToSet += convertedChunk;
-						}
+							_finalTextToSet += chunkedString;
 					}
 					((IWebElement)element).SendKeys(_finalTextToSet);
 					break;

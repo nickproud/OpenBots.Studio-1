@@ -95,7 +95,7 @@ namespace OpenBots.Commands.WebBrowser
 			v_InstanceTracking = "Forget Instance";
 			v_BrowserWindowOption = "Maximize";
 			v_EngineType = "Chrome";
-			v_URL = "https://";
+			v_URL = "\"https://\"";
 		}
 
 		public async override void RunCommand(object sender)
