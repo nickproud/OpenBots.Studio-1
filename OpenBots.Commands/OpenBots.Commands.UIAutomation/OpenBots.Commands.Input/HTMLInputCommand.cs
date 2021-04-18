@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Input
 			CommandEnabled = true;
 			CommandIcon = Resources.command_input;
 
-			v_InputHTML = Resources.HTMLInputSample;
+			v_InputHTML = $"\"{Resources.HTMLInputSample}\"";
 			v_ErrorOnClose = "No";
 		}
 

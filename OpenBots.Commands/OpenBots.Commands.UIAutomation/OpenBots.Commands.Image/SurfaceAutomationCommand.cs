@@ -111,7 +111,7 @@ namespace OpenBots.Commands.Image
 			CommandEnabled = true;
 			CommandIcon = Resources.command_camera;
 
-			v_WindowName = "None";
+			v_WindowName = "\"None\"";
 			v_MatchAccuracy = "0.8";
 			v_Timeout = "30";
 

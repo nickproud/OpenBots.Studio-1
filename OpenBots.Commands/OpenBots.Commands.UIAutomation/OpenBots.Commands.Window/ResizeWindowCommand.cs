@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Window
 			CommandEnabled = true;
 			CommandIcon = Resources.command_window;
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_Timeout = "30";
 		}
 

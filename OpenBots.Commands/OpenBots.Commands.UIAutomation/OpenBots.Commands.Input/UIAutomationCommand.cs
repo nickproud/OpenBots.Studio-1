@@ -114,7 +114,7 @@ namespace OpenBots.Commands.Input
 			v_UIAActionParameters.Columns.Add("Parameter Value");
 			v_UIAActionParameters.TableName = DateTime.Now.ToString("UIAActionParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_Timeout = "30";
 		}
 
@@ -545,7 +545,7 @@ namespace OpenBots.Commands.Input
 			((Form)newElementRecorder).ShowDialog();
 
 			//window name combobox
-			RenderedControls[3].Text = newElementRecorder.WindowName;
+			RenderedControls[3].Text = $"\"{newElementRecorder.WindowName}\"";
 
 			v_UIASearchParameters.Rows.Clear();
 

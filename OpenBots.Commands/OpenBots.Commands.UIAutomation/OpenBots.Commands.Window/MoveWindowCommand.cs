@@ -67,7 +67,7 @@ namespace OpenBots.Commands.Window
 			CommandIcon = Resources.command_window;
 
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_XMousePosition = "0";
 			v_YMousePosition = "0";
 			v_Timeout = "30";

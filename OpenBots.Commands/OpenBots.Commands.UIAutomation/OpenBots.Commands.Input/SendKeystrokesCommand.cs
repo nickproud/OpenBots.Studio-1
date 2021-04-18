@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Input
 			CommandEnabled = true;
 			CommandIcon = Resources.command_input;
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_EncryptionOption = "Not Encrypted";
 		}
 

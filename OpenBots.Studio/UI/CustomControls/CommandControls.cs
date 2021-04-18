@@ -1241,7 +1241,7 @@ namespace OpenBots.UI.CustomControls
                     if (_inputBox.Tag is ComboBox)
                     {
                         ComboBox targetComboBox = (ComboBox)_inputBox.Tag;
-                        targetComboBox.Text = windowName;
+                        targetComboBox.Text = $"\"{windowName}\"";
                     }
                   
                     if (_minimizePreference)

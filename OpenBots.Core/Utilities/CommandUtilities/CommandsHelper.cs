@@ -160,7 +160,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             }
         }
 
-        public static bool ElementExists(IAutomationEngineInstance engine, string instanceName, string searchMethod, string parameterName, 
+        public async static Task<bool> ElementExists(IAutomationEngineInstance engine, string instanceName, string searchMethod, string parameterName, 
             string searchOption, int timeout)
         {
             //get engine reference
@@ -179,7 +179,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             try
             {
                 //search for element
-                var element = FindElement(engine, seleniumInstance, seleniumSearchParamRows, searchOption, timeout);
+                var element = await FindElement(engine, seleniumInstance, seleniumSearchParamRows, searchOption, timeout);
 
                 //element exists
                 return true;
@@ -322,8 +322,8 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 								  where rw.Field<string>("Parameter Name") == "Value2"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				decimal cdecValue1 = (decimal)await value1.EvaluateCode(engine);
-				decimal cdecValue2 = (decimal)await value2.EvaluateCode(engine);
+				var cdecValue1 = (decimal)await value1.EvaluateCode(engine);
+				var cdecValue2 = (decimal)await value2.EvaluateCode(engine);
 
 				switch (operand)
 				{
@@ -648,7 +648,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 												where rw.Field<string>("Parameter Name") == "True When"
 												select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				bool elementExists = ElementExists(engine, instanceName, searchMethod, parameterName, "Find Element", int.Parse(timeout));
+				bool elementExists = await ElementExists(engine, instanceName, searchMethod, parameterName, "Find Element", int.Parse(timeout));
 				ifResult = elementExists;
 
 				if (trueWhenElementExists == "It Does Not Exist")

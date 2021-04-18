@@ -66,7 +66,7 @@ namespace OpenBots.Commands.Image
 			CommandEnabled = true;
 			CommandIcon = Resources.command_camera;
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 		}
 
 		public async override void RunCommand(object sender)
