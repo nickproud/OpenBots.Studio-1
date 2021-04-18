@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Task
 			CommandEnabled = true;
 			CommandIcon = Resources.command_start_process;
 
-			v_TaskPath = "{ProjectPath}";
+			v_TaskPath = "ProjectPath";
 
 			v_ArgumentAssignments = new DataTable();
 			v_ArgumentAssignments.Columns.Add("ArgumentName");
@@ -264,8 +264,8 @@ namespace OpenBots.Commands.Task
 				currentScriptEngine.AutomationEngineContext.Arguments.AddRange(editor.ScriptEngineContext.Arguments);
 
 				var startFile = v_TaskPath;
-				if (startFile.Contains("{ProjectPath}"))
-					startFile = startFile.Replace("{ProjectPath}", editor.ScriptEngineContext.ProjectPath);
+				if (startFile.Contains("ProjectPath +"))
+					startFile = startFile.Replace("ProjectPath +", editor.ScriptEngineContext.ProjectPath);
 
 				startFile = (string)await startFile.EvaluateCode(currentScriptEngine);
 

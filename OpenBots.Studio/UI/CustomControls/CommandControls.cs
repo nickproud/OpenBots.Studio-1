@@ -276,7 +276,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
 
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptVariableEditor.LastModifiedVariableName + "}");
+                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptVariableEditor.LastModifiedVariableName);
                 }
 
                 scriptVariableEditor.Dispose();
@@ -294,7 +294,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
 
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptArgumentEditor.LastModifiedArgumentName + "}");
+                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptArgumentEditor.LastModifiedArgumentName);
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -408,7 +408,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
 
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        comboBox.Text = string.Concat("{", scriptVariableEditor.LastModifiedVariableName, "}");
+                        comboBox.Text = scriptVariableEditor.LastModifiedVariableName;
                 }
 
                 scriptVariableEditor.Dispose();
@@ -426,7 +426,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
 
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        comboBox.Text = string.Concat("{", scriptArgumentEditor.LastModifiedArgumentName, "}");
+                        comboBox.Text = scriptArgumentEditor.LastModifiedArgumentName;
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -495,7 +495,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
 
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + string.Concat("{", scriptVariableEditor.LastModifiedVariableName, "}");
+                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + scriptVariableEditor.LastModifiedVariableName;
                 }
 
                 scriptVariableEditor.Dispose();
@@ -519,7 +519,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
 
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + string.Concat("{", scriptArgumentEditor.LastModifiedArgumentName, "}");
+                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + scriptArgumentEditor.LastModifiedArgumentName;
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -863,10 +863,11 @@ namespace OpenBots.UI.CustomControls
 
                 string filePath = ofd.FileName;
 
-                if (filePath.StartsWith(_projectPath))
-                    filePath = filePath.Replace(_projectPath, "{ProjectPath}");
+                filePath = "@\"" + filePath + "\"";
+                if (ofd.FileName.StartsWith(_projectPath))
+                    filePath = filePath.Replace("@\"" + _projectPath, "ProjectPath + @\"");
 
-                targetTextbox.Text = "\"" + filePath + "\"";
+                targetTextbox.Text = filePath;
             }
         }
 
@@ -882,10 +883,11 @@ namespace OpenBots.UI.CustomControls
 
                 string folderPath = fbd.SelectedPath;
 
-                if (folderPath.StartsWith(_projectPath))
-                    folderPath = folderPath.Replace(_projectPath, "{ProjectPath}");
+                folderPath = "@\"" + folderPath + "\"";
+                if (fbd.SelectedPath.StartsWith(_projectPath))
+                    folderPath = folderPath.Replace("@\"" + _projectPath, "ProjectPath + @\"");
 
-                targetTextBox.Text = "\"" + folderPath + "\"";
+                targetTextBox.Text = folderPath;
             }
         }
 

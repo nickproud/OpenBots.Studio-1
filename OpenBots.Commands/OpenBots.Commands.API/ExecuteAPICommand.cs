@@ -18,9 +18,8 @@ namespace OpenBots.Commands.API
 {
     [Serializable]
 	[Category("API Commands")]
-	[Description("This command calls a REST API with a specific HTTP method.")]
-
-	public class ExecuteRESTAPICommand : ScriptCommand
+	[Description("This command calls a WebAPI with a specific HTTP method.")]
+	public class ExecuteAPICommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Base URL")]
@@ -59,15 +58,15 @@ namespace OpenBots.Commands.API
 		[Remarks("")]
 		public string v_RequestFormat { get; set; }
 
-		[DisplayName("Basic REST Parameters (Optional)")]
+		[DisplayName("Basic Parameters (Optional)")]
 		[Description("Specify default search parameters.")]
 		[SampleUsage("")]
 		[Remarks("Once you have clicked on a valid window the search parameters will be populated.\n" +
 				 "Enable only the ones required to be a match at runtime.")]
 		[CompatibleTypes(null, true)]
-		public DataTable v_RESTParameters { get; set; }
+		public DataTable v_Parameters { get; set; }
 
-		[DisplayName("Advanced REST Parameters (Optional)")]
+		[DisplayName("Advanced Parameters (Optional)")]
 		[Description("Specify a list of advanced parameters.")]
 		[SampleUsage("")]
 		[Remarks("")]
@@ -85,25 +84,25 @@ namespace OpenBots.Commands.API
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private DataGridView _RESTParametersGridViewHelper;
+		private DataGridView _parametersGridViewHelper;
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private DataGridView _advancedRESTParametersGridViewHelper;
+		private DataGridView _advancedParametersGridViewHelper;
 
-		public ExecuteRESTAPICommand()
+		public ExecuteAPICommand()
 		{
-			CommandName = "ExecuteRESTAPICommand";
-			SelectionName = "Execute REST API";
+			CommandName = "ExecuteAPICommand";
+			SelectionName = "Execute API";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_run_code;
 
 			v_RequestFormat = "Json";
-			v_RESTParameters = new DataTable();
-			v_RESTParameters.Columns.Add("Parameter Type");
-			v_RESTParameters.Columns.Add("Parameter Name");
-			v_RESTParameters.Columns.Add("Parameter Value");
-			v_RESTParameters.TableName = DateTime.Now.ToString("RESTParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
+			v_Parameters = new DataTable();
+			v_Parameters.Columns.Add("Parameter Type");
+			v_Parameters.Columns.Add("Parameter Name");
+			v_Parameters.Columns.Add("Parameter Value");
+			v_Parameters.TableName = DateTime.Now.ToString("paramTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 
 			//advanced parameters
 			v_AdvancedParameters = new DataTable();
@@ -111,7 +110,7 @@ namespace OpenBots.Commands.API
 			v_AdvancedParameters.Columns.Add("Parameter Value");
 			v_AdvancedParameters.Columns.Add("Content Type");
 			v_AdvancedParameters.Columns.Add("Parameter Type");
-			v_AdvancedParameters.TableName = DateTime.Now.ToString("AdvRESTParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
+			v_AdvancedParameters.TableName = DateTime.Now.ToString("AdvParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 		}
 
 		public async override void RunCommand(object sender)
@@ -132,14 +131,14 @@ namespace OpenBots.Commands.API
 			//methods
 			Method method = (Method)Enum.Parse(typeof(Method), v_APIMethodType);
 
-			//rest request
+			//request
 			var request = new RestRequest(targetEndpoint, method);
 
 			//get parameters
-			var apiParameters = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "PARAMETER");
+			var apiParameters = v_Parameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "PARAMETER");
 
 			//get headers
-			var apiHeaders = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "HEADER");
+			var apiHeaders = v_Parameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "HEADER");
 
 			//for each api parameter
 			foreach (var param in apiParameters)
@@ -160,7 +159,7 @@ namespace OpenBots.Commands.API
 			}
 
 			//get json body
-			var jsonBody = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "JSON BODY")
+			var jsonBody = v_Parameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "JSON BODY")
 											.Select(rw => rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 			//add json body
@@ -171,7 +170,7 @@ namespace OpenBots.Commands.API
 			}
 
 			//get json body
-			var file = v_RESTParameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "FILE").FirstOrDefault();
+			var file = v_Parameters.AsEnumerable().Where(rw => rw.Field<string>("Parameter Type") == "FILE").FirstOrDefault();
 
 			//get file
 			if (file != null)
@@ -236,56 +235,56 @@ namespace OpenBots.Commands.API
 			RenderedControls.Add(apiMethodDropdown);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_RequestFormat", this, editor));
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_RESTParameters", this));
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_Parameters", this));
 
-			_RESTParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_RESTParameters", this);
-			_RESTParametersGridViewHelper.AutoGenerateColumns = false;
+			_parametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_Parameters", this);
+			_parametersGridViewHelper.AutoGenerateColumns = false;
 
 			var selectColumn = new DataGridViewComboBoxColumn();
 			selectColumn.HeaderText = "Type";
 			selectColumn.DataPropertyName = "Parameter Type";
 			selectColumn.DataSource = new string[] { "HEADER", "PARAMETER", "JSON BODY", "FILE" };
-			_RESTParametersGridViewHelper.Columns.Add(selectColumn);
+			_parametersGridViewHelper.Columns.Add(selectColumn);
 
 			var paramNameColumn = new DataGridViewTextBoxColumn();
 			paramNameColumn.HeaderText = "Name";
 			paramNameColumn.DataPropertyName = "Parameter Name";
-			_RESTParametersGridViewHelper.Columns.Add(paramNameColumn);
+			_parametersGridViewHelper.Columns.Add(paramNameColumn);
 
 			var paramValueColumn = new DataGridViewTextBoxColumn();
 			paramValueColumn.HeaderText = "Value";
 			paramValueColumn.DataPropertyName = "Parameter Value";
-			_RESTParametersGridViewHelper.Columns.Add(paramValueColumn);
+			_parametersGridViewHelper.Columns.Add(paramValueColumn);
 
-			RenderedControls.Add(_RESTParametersGridViewHelper);
+			RenderedControls.Add(_parametersGridViewHelper);
 
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_AdvancedParameters", this));
 
 			//advanced parameters
-			_advancedRESTParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_AdvancedParameters", this);
-			_advancedRESTParametersGridViewHelper.AutoGenerateColumns = false;
+			_advancedParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_AdvancedParameters", this);
+			_advancedParametersGridViewHelper.AutoGenerateColumns = false;
 
 			var advParamNameColumn = new DataGridViewTextBoxColumn();
 			advParamNameColumn.HeaderText = "Name";
 			advParamNameColumn.DataPropertyName = "Parameter Name";
-			_advancedRESTParametersGridViewHelper.Columns.Add(advParamNameColumn);
+			_advancedParametersGridViewHelper.Columns.Add(advParamNameColumn);
 
 			var advParamValueColumns = new DataGridViewTextBoxColumn();
 			advParamValueColumns.HeaderText = "Value";
 			advParamValueColumns.DataPropertyName = "Parameter Value";
-			_advancedRESTParametersGridViewHelper.Columns.Add(advParamValueColumns);
+			_advancedParametersGridViewHelper.Columns.Add(advParamValueColumns);
 
 			var advParamContentType = new DataGridViewTextBoxColumn();
 			advParamContentType.HeaderText = "Content Type";
 			advParamContentType.DataPropertyName = "Content Type";
-			_advancedRESTParametersGridViewHelper.Columns.Add(advParamContentType);
+			_advancedParametersGridViewHelper.Columns.Add(advParamContentType);
 
 			var advParamType = new DataGridViewComboBoxColumn();
 			advParamType.HeaderText = "Parameter Type";
 			advParamType.DataPropertyName = "Parameter Type";
 			advParamType.DataSource = new string[] { "Cookie", "GetOrPost", "HttpHeader", "QueryString", "RequestBody", "URLSegment", "QueryStringWithoutEncode" };
-			_advancedRESTParametersGridViewHelper.Columns.Add(advParamType);			
-			RenderedControls.Add(_advancedRESTParametersGridViewHelper);
+			_advancedParametersGridViewHelper.Columns.Add(advParamType);			
+			RenderedControls.Add(_advancedParametersGridViewHelper);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

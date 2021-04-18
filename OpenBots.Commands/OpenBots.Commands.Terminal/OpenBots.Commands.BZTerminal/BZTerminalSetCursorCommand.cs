@@ -56,14 +56,14 @@ namespace OpenBots.Commands.BZTerminal
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = (string)await v_XMousePosition.EvaluateCode(engine);
-			var mouseY = (string)await v_YMousePosition.EvaluateCode(engine);
+			var mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+			var mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
-			terminalContext.BZTerminalObj.SetCursor(int.Parse(mouseY), int.Parse(mouseX));
+			terminalContext.BZTerminalObj.SetCursor(mouseY, mouseX);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
