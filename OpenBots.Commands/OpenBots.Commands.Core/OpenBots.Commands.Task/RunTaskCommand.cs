@@ -96,7 +96,7 @@ namespace OpenBots.Commands.Task
 				return;
 			}
 
-			var childTaskPath = (string)await ("@" + v_TaskPath).EvaluateCode(parentAutomationEngineInstance);
+			var childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance);
 			if (!File.Exists(childTaskPath))
 				throw new FileNotFoundException("Task file was not found");
 

@@ -475,7 +475,7 @@ namespace OpenBots.Engine
                     //run the command
                     try
                     {
-                        parentCommand.RunCommand(this);
+                        await parentCommand.RunCommand(this);
                     }
                     catch (Exception ex)
                     {

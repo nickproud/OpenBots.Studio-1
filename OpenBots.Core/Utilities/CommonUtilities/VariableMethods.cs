@@ -438,7 +438,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public async static Task<object> EvaluateCode(string varName, string code, Type varType, IAutomationEngineInstance engine)
         {
             string type = "";
-            if (code == null)
+            if (code == null || code == "")
                 code = "null";
             if (varType == null)
                 type = "var";
@@ -471,7 +471,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine, Type varType)
         {
-            if (code == null)
+            if (code == null || code == "")
                 code = "null";
             List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
             List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
@@ -494,7 +494,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine)
         {
-            if (code == null)
+            if (code == null || code == "")
                 code = "null";
             List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
             List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
@@ -537,7 +537,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine, string parameterName, ScriptCommand parent)
         {
-            if (code == null)
+            if (code == null || code == "")
                 code = "null";
             List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
             List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();

@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Switch
 		[Required]
 		[DisplayName("Switch")]
 		[Description("This value will determine the Case block to execute.")]
-		[SampleUsage("{vSwitch}")]
+		[SampleUsage("vSwitch")]
 		[Remarks("This value must be a variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
@@ -44,8 +44,6 @@ namespace OpenBots.Commands.Switch
 			var engine = (IAutomationEngineInstance)sender;
 
 			var vSwitchValue = (string)await v_SwitchValue.EvaluateCode(engine);
-			if (vSwitchValue == v_SwitchValue || !v_SwitchValue.StartsWith("{") || !v_SwitchValue.EndsWith("}"))
-				throw new Exception("Switch value is not a variable");
 
 			//get indexes of commands
 			var caseIndices = FindAllCaseIndices(parentCommand.AdditionalScriptCommands);

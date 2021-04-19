@@ -67,11 +67,7 @@ namespace OpenBots.Commands.Data
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get variable path or URL to source file
-			var vSourceFilePath = v_FilePath;
-			if(vSourceFilePath.Contains("\"") || vSourceFilePath.Contains("`") || vSourceFilePath.Contains("'"))
-				vSourceFilePath = (string)await ("@" + v_FilePath).EvaluateCode(engine);
-			else
-				vSourceFilePath = (string)await (v_FilePath).EvaluateCode(engine);
+			var vSourceFilePath = (string)await (v_FilePath).EvaluateCode(engine);
 
 			if (v_FileSourceType == "File URL")
 			{

@@ -48,30 +48,12 @@ namespace OpenBots.Commands.Variable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			dynamic input = (string)await v_Input.EvaluateCode(engine);
-
-			if (string.IsNullOrEmpty(input))
-				input = null;
-
-			if (input == v_Input && input.StartsWith("{") && input.EndsWith("}"))
-            {
-				if (await v_Input.EvaluateCode(engine, typeof(object)) != null)
-					input = await v_Input.EvaluateCode(engine, typeof(object));
-				else
-					input = null;
-			}
+			dynamic input = await v_Input.EvaluateCode(engine);
 				
 			if (input != null)
             {
 				Type inputType = input.GetType();
-				Type outputType = v_OutputUserVariableName.GetVarArgType(engine);
-
-				if ((inputType == typeof(string) || inputType.IsPrimitive) && (outputType == typeof(string) || outputType.IsPrimitive))
-				{
-					var converter = TypeDescriptor.GetConverter(outputType);
-					input = converter.ConvertFrom(input);
-					inputType = input.GetType();
-				}
+				Type outputType = v_OutputUserVariableName.GetVariableType(engine);
 
 				if (inputType != outputType)
 					throw new InvalidCastException("Input and Output types do not match");

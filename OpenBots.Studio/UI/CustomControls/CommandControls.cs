@@ -866,7 +866,7 @@ namespace OpenBots.UI.CustomControls
                 if (filePath.StartsWith(_projectPath))
                     filePath = filePath.Replace(_projectPath, "{ProjectPath}");
 
-                targetTextbox.Text = "\"" + filePath + "\"";
+                targetTextbox.Text = "@\"" + filePath + "\"";
             }
         }
 
@@ -885,7 +885,7 @@ namespace OpenBots.UI.CustomControls
                 if (folderPath.StartsWith(_projectPath))
                     folderPath = folderPath.Replace(_projectPath, "{ProjectPath}");
 
-                targetTextBox.Text = "\"" + folderPath + "\"";
+                targetTextBox.Text = "@\"" + folderPath + "\"";
             }
         }
 
