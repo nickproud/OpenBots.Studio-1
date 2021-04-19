@@ -1191,11 +1191,18 @@ namespace OpenBots.UI.CustomControls
             if (string.IsNullOrEmpty(targetTextbox.Text))
                 return;
 
-            var encrypted = EncryptionServices.EncryptString(targetTextbox.Text, "OPENBOTS");
-            targetTextbox.Text = encrypted;
+            var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " +
+                                         $"Would you like to proceed and convert '{targetTextbox.Text}' to an encrypted value?",
+                                          "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-            ComboBox comboBoxControl = (ComboBox)((frmCommandEditor)editor).flw_InputVariables.Controls["v_EncryptionOption"];
-            comboBoxControl.Text = "Encrypted";
+            if (warning == DialogResult.Yes)
+            {
+                var encrypted = $"\"{EncryptionServices.EncryptString(targetTextbox.Text.TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
+                targetTextbox.Text = encrypted;
+
+                ComboBox comboBoxControl = (ComboBox)((frmCommandEditor)editor).flw_InputVariables.Controls["v_EncryptionOption"];
+                comboBoxControl.Text = "Encrypted";
+            }
         }
 
         private void GetWindowName(object sender, EventArgs e)

@@ -494,16 +494,16 @@ namespace OpenBots.Commands.Image
 			{
 				var targetElement = _imageGridViewHelper.Rows[0].Cells[1];
 
-				if (string.IsNullOrEmpty(targetElement.Value.ToString()))
+				if (targetElement.Value == null)
 					return;
 
-				var warning = MessageBox.Show($"Warning! Text should only be encrypted one time and is not reversible in the builder. " +
-											   "Would you like to proceed and convert '{targetElement.Value.ToString()}' to an encrypted value?",
+				var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " +
+											   $"Would you like to proceed and convert '{targetElement.Value}' to an encrypted value?",
 											   "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
 				if (warning == DialogResult.Yes)
 				{
-					targetElement.Value = EncryptionServices.EncryptString(targetElement.Value.ToString(), "OPENBOTS");
+					targetElement.Value = $"\"{EncryptionServices.EncryptString(targetElement.Value.ToString().TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
 					_imageGridViewHelper.Rows[4].Cells[1].Value = "Encrypted";
 				}
 			}

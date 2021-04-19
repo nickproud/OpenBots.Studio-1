@@ -221,7 +221,6 @@ namespace OpenBots.Commands.WebBrowser
 										select rw.Field<string>("Parameter Value")).FirstOrDefault();
 					string textToSet = (string)await textToSetString.EvaluateCode(engine);
 
-
 					string clearElement = (from rw in v_WebActionParameterTable.AsEnumerable()
 										   where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
@@ -795,16 +794,16 @@ namespace OpenBots.Commands.WebBrowser
 			{
 				var targetElement = _actionParametersGridViewHelper.Rows[0].Cells[1];
 
-				if (string.IsNullOrEmpty(targetElement.Value.ToString()))
+				if (targetElement.Value == null)
 					return;
 
-				var warning = MessageBox.Show($"Warning! Text should only be encrypted one time and is not reversible in the builder. " +
-											   "Would you like to proceed and convert '{targetElement.Value.ToString()}' to an encrypted value?", 
+				var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " +
+											   $"Would you like to proceed and convert '{targetElement.Value}' to an encrypted value?", 
 											   "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
 				if (warning == DialogResult.Yes)
 				{
-					targetElement.Value = EncryptionServices.EncryptString(targetElement.Value.ToString(), "OPENBOTS");
+					targetElement.Value = $"\"{EncryptionServices.EncryptString(targetElement.Value.ToString().TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
 					_actionParametersGridViewHelper.Rows[2].Cells[1].Value = "Encrypted";
 				}
 			}
