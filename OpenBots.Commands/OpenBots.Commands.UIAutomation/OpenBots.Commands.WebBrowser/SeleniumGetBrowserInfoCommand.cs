@@ -60,15 +60,14 @@ namespace OpenBots.Commands.WebBrowser
 			v_InstanceName = "DefaultBrowser";
 		}
 
-		public async override void RunCommand(object sender)
+		public override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			var requestedInfo = (string)await v_InfoType.EvaluateCode(engine);
 			string info;
 
-			switch (requestedInfo)
+			switch (v_InfoType)
 			{
 				case "Window Title":
 					info = seleniumInstance.Title;
@@ -86,7 +85,7 @@ namespace OpenBots.Commands.WebBrowser
 					info = JsonConvert.SerializeObject(seleniumInstance.WindowHandles);
 					break;
 				default:
-					throw new NotImplementedException($"{requestedInfo} is not implemented for lookup.");
+					throw new NotImplementedException($"{v_InfoType} is not implemented for lookup.");
 			}
 			//store data
 			info.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);

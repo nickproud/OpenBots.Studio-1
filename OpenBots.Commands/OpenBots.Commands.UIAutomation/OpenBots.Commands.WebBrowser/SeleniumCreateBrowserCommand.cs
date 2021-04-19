@@ -95,13 +95,17 @@ namespace OpenBots.Commands.WebBrowser
 			v_InstanceTracking = "Forget Instance";
 			v_BrowserWindowOption = "Maximize";
 			v_EngineType = "Chrome";
-			v_URL = "https://";
+			v_URL = "\"https://\"";
 		}
 
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var convertedOptions = (string)await v_SeleniumOptions.EvaluateCode(engine);
+
+			string convertedOptions = "";
+			if (!string.IsNullOrEmpty(v_SeleniumOptions))
+				convertedOptions = (string)await v_SeleniumOptions.EvaluateCode(engine);
+
 			var vURL = (string)await v_URL.EvaluateCode(engine);
 
 			IWebDriver webDriver;

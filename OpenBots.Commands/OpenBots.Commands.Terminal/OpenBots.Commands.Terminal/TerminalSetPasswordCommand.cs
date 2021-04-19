@@ -65,16 +65,22 @@ namespace OpenBots.Commands.Terminal
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = (string)await v_XMousePosition.EvaluateCode(engine);
-			var mouseY = (string)await v_YMousePosition.EvaluateCode(engine);
-			var timeout = (int)await v_Timeout.EvaluateCode(engine);
+
+			int mouseX = 0, mouseY = 0;
+			if (!string.IsNullOrEmpty(v_XMousePosition))
+				mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+
+			if (!string.IsNullOrEmpty(v_YMousePosition))
+				mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
+
+			var timeout = ((int)await v_Timeout.EvaluateCode(engine)) * 1000;
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
-			if (!string.IsNullOrEmpty(mouseX) && !string.IsNullOrEmpty(mouseY))
-				terminalObject.TN3270.SetCursor(int.Parse(mouseY), int.Parse(mouseX));
+			if (!string.IsNullOrEmpty(v_XMousePosition) && !string.IsNullOrEmpty(v_YMousePosition))
+				terminalObject.TN3270.SetCursor(mouseY, mouseX);
 
 			terminalObject.TN3270.SetText(terminalObject.Password.ConvertSecureStringToString());
 			terminalObject.TN3270.WaitForTextOnScreen(timeout, terminalObject.Password.ConvertSecureStringToString());

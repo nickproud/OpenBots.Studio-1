@@ -65,7 +65,7 @@ namespace OpenBots.Commands.Input
 			v_KeyActions.Columns.Add("Action");
 			v_KeyActions.TableName = "SendAdvancedKeyStrokesCommand" + DateTime.Now.ToString("MMddyy.hhmmss");
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_KeyUpDefault = "Yes";
 		}
 

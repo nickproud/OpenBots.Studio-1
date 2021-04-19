@@ -394,8 +394,8 @@ namespace OpenBots.Commands.IEBrowser
 
                     var ieClientLocation = User32Functions.GetWindowPosition(new IntPtr(browserInstance.HWND));
 
-                    var mouseX = ((elementXposition + ieClientLocation.left + 10) + userXAdjust).ToString(); // + 10 gives extra padding
-                    var mouseY = ((elementYposition + ieClientLocation.top + 90 + SystemInformation.CaptionHeight) + userYAdjust).ToString(); // +90 accounts for title bar height
+                    var mouseX = (elementXposition + ieClientLocation.left + 10) + userXAdjust; // + 10 gives extra padding
+                    var mouseY = (elementYposition + ieClientLocation.top + 90 + SystemInformation.CaptionHeight) + userYAdjust; // +90 accounts for title bar height
                     var mouseClick = v_WebAction;
 
                     User32Functions.SendMouseMove(mouseX, mouseY, v_WebAction);

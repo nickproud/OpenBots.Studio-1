@@ -64,16 +64,22 @@ namespace OpenBots.Commands.BZTerminal
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = (string)await v_XMousePosition.EvaluateCode(engine);
-			var mouseY = (string)await v_YMousePosition.EvaluateCode(engine);
+
+			int mouseX = 0, mouseY = 0;
+			if (!string.IsNullOrEmpty(v_XMousePosition))
+				mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+
+			if (!string.IsNullOrEmpty(v_YMousePosition))
+				mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
+
 			var timeout = (int)await v_Timeout.EvaluateCode(engine);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
-			if (!string.IsNullOrEmpty(mouseX) && !string.IsNullOrEmpty(mouseY))
-				terminalContext.BZTerminalObj.SetCursor(int.Parse(mouseY), int.Parse(mouseX));
+			if (!string.IsNullOrEmpty(v_XMousePosition) && !string.IsNullOrEmpty(v_YMousePosition))
+				terminalContext.BZTerminalObj.SetCursor(mouseY, mouseX);
 
 			terminalContext.BZTerminalObj.SendKey(terminalContext.Password.ConvertSecureStringToString());
 			terminalContext.BZTerminalObj.WaitForText(terminalContext.Password.ConvertSecureStringToString(), 1, 1, timeout);

@@ -164,7 +164,7 @@ namespace OpenBots.Commands.WebBrowser
 
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			dynamic element = CommandsHelper.FindElement(engine, seleniumInstance, seleniumSearchParamRows, v_SeleniumSearchOption, vTimeout);
+			dynamic element = await CommandsHelper.FindElement(engine, seleniumInstance, seleniumSearchParamRows, v_SeleniumSearchOption, vTimeout);
 
 			if (element == null && v_SeleniumElementAction != "Element Exists")
 				throw new ElementNotVisibleException("Unable to find element within the provided time limit");
@@ -207,10 +207,8 @@ namespace OpenBots.Commands.WebBrowser
 
 					var elementLocation = ((IWebElement)element).Location;
 					var seleniumWindowPosition = seleniumInstance.Manage().Window.Position;
-					User32Functions.SendMouseMove(
-						(seleniumWindowPosition.X + elementLocation.X +  userXAdjust).ToString(),
-						(seleniumWindowPosition.Y + elementLocation.Y + userYAdjust).ToString(),
-						v_SeleniumElementAction);
+					User32Functions.SendMouseMove(seleniumWindowPosition.X + elementLocation.X + userXAdjust, seleniumWindowPosition.Y + elementLocation.Y + userYAdjust, 
+												  v_SeleniumElementAction);
 					
 					break;
 				case "Double Left Click":
@@ -222,7 +220,6 @@ namespace OpenBots.Commands.WebBrowser
 										where rw.Field<string>("Parameter Name") == "Text To Set"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault();
 					string textToSet = (string)await textToSetString.EvaluateCode(engine);
-
 
 					string clearElement = (from rw in v_WebActionParameterTable.AsEnumerable()
 										   where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
@@ -276,12 +273,8 @@ namespace OpenBots.Commands.WebBrowser
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = await secureString.EvaluateCode(engine, typeof(SecureString));
-
-					if (secureStrVariable is SecureString)
-						secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
-					else
-						throw new ArgumentException("Provided Argument is not a 'Secure String'");
+					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, typeof(SecureString));
+					secureString = secureStrVariable.ConvertSecureStringToString();
 
 					if (_clearElement == null)
 						_clearElement = "No";
@@ -307,10 +300,7 @@ namespace OpenBots.Commands.WebBrowser
 							_finalTextToSet += keyPress;
 						}
 						else
-						{
-							var convertedChunk = (string)await chunkedString.EvaluateCode(engine);
-							_finalTextToSet += convertedChunk;
-						}
+							_finalTextToSet += chunkedString;
 					}
 					((IWebElement)element).SendKeys(_finalTextToSet);
 					break;
@@ -804,16 +794,16 @@ namespace OpenBots.Commands.WebBrowser
 			{
 				var targetElement = _actionParametersGridViewHelper.Rows[0].Cells[1];
 
-				if (string.IsNullOrEmpty(targetElement.Value.ToString()))
+				if (targetElement.Value == null)
 					return;
 
-				var warning = MessageBox.Show($"Warning! Text should only be encrypted one time and is not reversible in the builder. " +
-											   "Would you like to proceed and convert '{targetElement.Value.ToString()}' to an encrypted value?", 
+				var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " +
+											   $"Would you like to proceed and convert '{targetElement.Value}' to an encrypted value?", 
 											   "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
 				if (warning == DialogResult.Yes)
 				{
-					targetElement.Value = EncryptionServices.EncryptString(targetElement.Value.ToString(), "OPENBOTS");
+					targetElement.Value = $"\"{EncryptionServices.EncryptString(targetElement.Value.ToString().TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
 					_actionParametersGridViewHelper.Rows[2].Cells[1].Value = "Encrypted";
 				}
 			}

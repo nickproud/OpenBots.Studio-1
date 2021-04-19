@@ -107,7 +107,7 @@ namespace OpenBots.Commands.Database
 			if (connectionPass.StartsWith("!"))
 			{
 				connectionPass = connectionPass.Substring(1);
-				connectionPass = EncryptionServices.DecryptString(connectionPass, "openbots-database-automation");
+				connectionPass = EncryptionServices.DecryptString(connectionPass, "OPENBOTS");
 			}
 			connection = connection.Replace("#pwd", connectionPass);
 
@@ -244,14 +244,14 @@ namespace OpenBots.Commands.Database
 			var acknowledgement =  MessageBox.Show("WARNING! This function will encrypt the password locally but " + 
 												   "is not extremely secure as the client knows the secret! " + 
 												   "Consider using a password management service instead. The encrypted " +
-												   "password will be stored with a leading exclamation ('!') whch the " +
+												   "password will be stored with a leading exclamation ('!') which the " +
 												   "automation engine will detect and know to decrypt the value automatically " +
 												   "at run-time. Do not encrypt the password multiple times or the decryption " +
 												   "will be invalid!  Would you like to proceed?", "Encryption Warning", 
 												   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
 			if (acknowledgement == DialogResult.Yes)
-				_connectionStringPassword.Text = string.Concat($"!{EncryptionServices.EncryptString(_connectionStringPassword.Text, "openbots-database-automation")}");
+				_connectionStringPassword.Text = $"\"!{EncryptionServices.EncryptString(_connectionStringPassword.Text.TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
 		}
 
 		public void ShowConnectionBuilder()

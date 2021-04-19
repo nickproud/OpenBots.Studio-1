@@ -322,7 +322,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
                             //if property is a basic type then display
                             if ((propName == row[1].ToString()) && ((propValue is string) || (propValue is bool) || (propValue is int) || (propValue is double)))
-                                SearchParameters.Rows.Add(row[0], propName, propValue);
+                                SearchParameters.Rows.Add(row[0], propName, $"\"{propValue}\"");
                         }
                         catch (Exception ex)
                         {
@@ -343,7 +343,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
                         //if property is a basic type then display
                         if ((propValue is string) || (propValue is bool) || (propValue is int) || (propValue is double))
-                            SearchParameters.Rows.Add(false, propName, propValue);
+                            SearchParameters.Rows.Add(false, propName, $"\"{propValue}\"");
                     }
                     catch (Exception ex)
                     {

@@ -45,7 +45,6 @@ namespace OpenBots.Commands.Image
 			SelectionName = "Perform OCR";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_camera;
-
 		}
 
 		public async override void RunCommand(object sender)
