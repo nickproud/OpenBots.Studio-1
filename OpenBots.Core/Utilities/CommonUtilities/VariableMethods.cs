@@ -560,6 +560,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static void SetVariableValue(this object newVal, IAutomationEngineInstance engine, string varName, Type varType)
         {
             engine.AutomationEngineContext.EngineScriptState.Variables.Where(x => x.Name == varName).FirstOrDefault().Value = newVal;
+
             var existingVar = engine.AutomationEngineContext.Variables.Where(x => x.VariableName == varName).FirstOrDefault();
             if (existingVar != null)
                 existingVar.VariableValue = newVal;
@@ -571,6 +572,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static void SetVariableValue(this object newVal, IAutomationEngineInstance engine, string varName, string parameterName, ScriptCommand parent)
         {
             engine.AutomationEngineContext.EngineScriptState.Variables.Where(x => x.Name == varName).FirstOrDefault().Value = newVal;
+
             var existingVar = engine.AutomationEngineContext.Variables.Where(x => x.VariableName == varName).FirstOrDefault();
             if (existingVar != null)
                 existingVar.VariableValue = newVal;
@@ -578,6 +580,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             if (existingArg != null)
                 existingArg.ArgumentValue = newVal;
         }
+
         public static dynamic GetVariableValue(this string varName, IAutomationEngineInstance engine)
         {
             return engine.AutomationEngineContext.EngineScriptState.GetVariable(varName).Value;

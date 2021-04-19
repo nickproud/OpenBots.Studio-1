@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Window
 			CommandEnabled = true;
 			CommandIcon = Resources.command_window;
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_Timeout = "30";
 		}
 
@@ -72,8 +72,8 @@ namespace OpenBots.Commands.Window
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			string windowName = (string)await v_WindowName.EvaluateCode(engine);
-			var variableXSize = (string)await v_XWindowSize.EvaluateCode(engine);
-			var variableYSize = (string)await v_YWindowSize.EvaluateCode(engine);
+			var xSize = (int)await v_XWindowSize.EvaluateCode(engine);
+			var ySize = (int)await v_YWindowSize.EvaluateCode(engine);
 			int timeout = (int)await v_Timeout.EvaluateCode(engine);
 			DateTime timeToEnd = DateTime.Now.AddSeconds(timeout);
 			List<IntPtr> targetWindows;
@@ -104,14 +104,7 @@ namespace OpenBots.Commands.Window
 			foreach (var targetedWindow in targetWindows)
 			{
 				User32Functions.SetWindowState(targetedWindow, WindowState.SwShowNormal);
-
-				if (!int.TryParse(variableXSize, out int xPos))
-					throw new Exception("Width Invalid - " + v_XWindowSize);
-
-				if (!int.TryParse(variableYSize, out int yPos))
-					throw new Exception("Height Invalid - " + v_YWindowSize);
-
-				User32Functions.SetWindowSize(targetedWindow, xPos, yPos);
+				User32Functions.SetWindowSize(targetedWindow, xSize, ySize);
 			}
 		}
 

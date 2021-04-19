@@ -111,7 +111,7 @@ namespace OpenBots.Commands.Image
 			CommandEnabled = true;
 			CommandIcon = Resources.command_camera;
 
-			v_WindowName = "None";
+			v_WindowName = "\"None\"";
 			v_MatchAccuracy = "0.8";
 			v_Timeout = "30";
 
@@ -126,8 +126,8 @@ namespace OpenBots.Commands.Image
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = v_WindowName.ConvertUserVariableToString(engine);
-			int timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			int timeout = (int)await v_Timeout.EvaluateCode(engine);
 			var timeToEnd = DateTime.Now.AddSeconds(timeout);
 
 			bool testMode = TestMode;
@@ -279,8 +279,8 @@ namespace OpenBots.Commands.Image
 						Point clickPositionPoint = GetClickPosition(clickPosition, element);
 
 						//move mouse to position
-						var mouseX = (clickPositionPoint.X + xAdjust).ToString();
-						var mouseY = (clickPositionPoint.Y + yAdjust).ToString();
+						var mouseX = clickPositionPoint.X + xAdjust;
+						var mouseY = clickPositionPoint.Y + yAdjust;
 						User32Functions.SendMouseMove(mouseX, mouseY, clickType);
 						break;
 
@@ -310,8 +310,8 @@ namespace OpenBots.Commands.Image
 						Point setTextPositionPoint = GetClickPosition(clickPosition, element);
 
 						//move mouse to position and set text
-						var xPos = (setTextPositionPoint.X + xAdjust).ToString();
-						var yPos = (setTextPositionPoint.Y + yAdjust).ToString();
+						var xPos = setTextPositionPoint.X + xAdjust;
+						var yPos = setTextPositionPoint.Y + yAdjust;
 						User32Functions.SendMouseMove(xPos, yPos, "Left Click");
 
 						var simulator = new InputSimulator();
@@ -335,18 +335,15 @@ namespace OpenBots.Commands.Image
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 
-						var secureStrVariable = await secureString.EvaluateCode(engine, typeof(SecureString));
+						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, typeof(SecureString));
 
-						if (secureStrVariable is SecureString)
-							secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
-						else
-							throw new ArgumentException("Provided Argument is not a 'Secure String'");
+						secureString = secureStrVariable.ConvertSecureStringToString();
 
 						Point setSecureTextPositionPoint = GetClickPosition(clickPosition, element);
 
 						//move mouse to position and set text
-						var xPosition = (setSecureTextPositionPoint.X + xAdjust).ToString();
-						var yPosition = (setSecureTextPositionPoint.Y + yAdjust).ToString();
+						var xPosition = setSecureTextPositionPoint.X + xAdjust;
+						var yPosition = setSecureTextPositionPoint.Y + yAdjust;
 						User32Functions.SendMouseMove(xPosition, yPosition, "Left Click");
 
 						var simulator2 = new InputSimulator();
@@ -497,16 +494,16 @@ namespace OpenBots.Commands.Image
 			{
 				var targetElement = _imageGridViewHelper.Rows[0].Cells[1];
 
-				if (string.IsNullOrEmpty(targetElement.Value.ToString()))
+				if (targetElement.Value == null)
 					return;
 
-				var warning = MessageBox.Show($"Warning! Text should only be encrypted one time and is not reversible in the builder. " +
-											   "Would you like to proceed and convert '{targetElement.Value.ToString()}' to an encrypted value?",
+				var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " +
+											   $"Would you like to proceed and convert '{targetElement.Value}' to an encrypted value?",
 											   "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
 				if (warning == DialogResult.Yes)
 				{
-					targetElement.Value = EncryptionServices.EncryptString(targetElement.Value.ToString(), "OPENBOTS");
+					targetElement.Value = $"\"{EncryptionServices.EncryptString(targetElement.Value.ToString().TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
 					_imageGridViewHelper.Rows[4].Cells[1].Value = "Encrypted";
 				}
 			}

@@ -300,40 +300,40 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     switch (row[1].ToString())
                     {
                         case "XPath":
-                            SearchParameters.Rows.Add(row[0], "XPath", _xPath);
+                            SearchParameters.Rows.Add(row[0], "XPath", $"\"{_xPath}\"");
                             break;
                         case "ID":
-                            SearchParameters.Rows.Add(row[0], "ID", _id);
+                            SearchParameters.Rows.Add(row[0], "ID", $"\"{_id}\"");
                             break;
                         case "Name":
-                            SearchParameters.Rows.Add(row[0], "Name", _name);
+                            SearchParameters.Rows.Add(row[0], "Name", $"\"{_name}\"");
                             break;
                         case "Tag Name":
-                            SearchParameters.Rows.Add(row[0], "Tag Name", _tagName);
+                            SearchParameters.Rows.Add(row[0], "Tag Name", $"\"{_tagName}\"");
                             break;
                         case "Class Name":
-                            SearchParameters.Rows.Add(row[0], "Class Name", _className);
+                            SearchParameters.Rows.Add(row[0], "Class Name", $"\"{_className}\"");
                             break;
                         case "Link Text":
-                            SearchParameters.Rows.Add(row[0], "Link Text", _linkText);
+                            SearchParameters.Rows.Add(row[0], "Link Text", $"\"{_linkText}\"");
                             break;
                         case "CSS Selector":
                             for (int i = 0; i < _cssSelectors.Count; i++)
-                                SearchParameters.Rows.Add(row[0], $"CSS Selector {i + 1}", _cssSelectors[i]);
+                                SearchParameters.Rows.Add(row[0], $"CSS Selector {i + 1}", $"\"{_cssSelectors[i]}\"");
                             break;
                     }
                 }
             }
             else
             {
-                SearchParameters.Rows.Add(true, "XPath", _xPath);
-                SearchParameters.Rows.Add(false, "ID", _id);
-                SearchParameters.Rows.Add(false, "Name", _name);
-                SearchParameters.Rows.Add(false, "Tag Name", _tagName);
-                SearchParameters.Rows.Add(false, "Class Name", _className);
-                SearchParameters.Rows.Add(false, "Link Text", _linkText);
+                SearchParameters.Rows.Add(true, "XPath", $"\"{_xPath}\"");
+                SearchParameters.Rows.Add(false, "ID", $"\"{_id}\"");
+                SearchParameters.Rows.Add(false, "Name", $"\"{_name}\"");
+                SearchParameters.Rows.Add(false, "Tag Name", $"\"{_tagName}\"");
+                SearchParameters.Rows.Add(false, "Class Name", $"\"{_className}\"");
+                SearchParameters.Rows.Add(false, "Link Text", $"\"{_linkText}\"");
                 for (int i = 0; i < _cssSelectors.Count; i++)
-                    SearchParameters.Rows.Add(false, $"CSS Selector {i + 1}", _cssSelectors[i]);
+                    SearchParameters.Rows.Add(false, $"CSS Selector {i + 1}", $"\"{_cssSelectors[i]}\"");
             }
         }
 

@@ -72,8 +72,8 @@ namespace OpenBots.Commands.Input
 		public async override void RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = (string)await v_XMousePosition.EvaluateCode(engine);
-			var mouseY = (string)await v_YMousePosition.EvaluateCode(engine);
+			var mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+			var mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
 
 			User32Functions.SendMouseMove(mouseX, mouseY, v_MouseClick);
 		}
