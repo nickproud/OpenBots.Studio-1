@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Worksheet Name")]
 		[Description("Specify the name of the new Worksheet to append.")]
-		[SampleUsage("Sheet1 || {vSheet}")]
+		[SampleUsage("\"Sheet1\" || vSheet")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]

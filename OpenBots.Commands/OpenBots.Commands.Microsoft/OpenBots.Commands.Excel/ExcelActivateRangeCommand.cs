@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Range")]
 		[Description("Enter the location of the cell or range to activate.")]
-		[SampleUsage("A1 || A1:B10 || A1: || {vRange} || {vStart}:{vEnd} || {vStart}:")]
+		[SampleUsage("\"A1\" || \"A1:B10\" || \"A1:\" || vRange || vStart+\":+\"vEnd || vStart + \":\"")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]

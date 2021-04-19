@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Worksheet Name")]
 		[Description("Specify the Worksheet within the Workbook to activate.")]
-		[SampleUsage("Sheet1 || {vSheet}")]
+		[SampleUsage("\"Sheet1\" || vSheet")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
