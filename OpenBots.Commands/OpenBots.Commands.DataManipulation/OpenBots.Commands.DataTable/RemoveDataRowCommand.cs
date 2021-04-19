@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -69,7 +70,7 @@ namespace OpenBots.Commands.DataTable
 			v_RemoveOption = "Tuple";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			dynamic vSearchItem = await v_SearchItem.EvaluateCode(engine);

@@ -32,7 +32,7 @@ namespace OpenBots.Commands.TextFile.Test
 
         }
         [Fact]
-        public void HandlesNonexistentFile()
+        public async global::System.Threading.Tasks.Task HandlesNonexistentFile()
         {
             _engine = new AutomationEngineInstance(null);
             _readTextFile = new ReadTextFileCommand();
@@ -41,7 +41,7 @@ namespace OpenBots.Commands.TextFile.Test
             _readTextFile.v_FilePath = Path.Combine(projectDirectory, @"Resources\doesNotExist.txt");
             _readTextFile.v_OutputUserVariableName = "{test}";
 
-            Assert.Throws<FileNotFoundException>(() => _readTextFile.RunCommand(_engine));
+            await Assert.ThrowsAsync<FileNotFoundException>(() => _readTextFile.RunCommand(_engine));
 
         }
     }

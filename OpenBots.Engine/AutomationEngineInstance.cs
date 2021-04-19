@@ -30,8 +30,7 @@ using Microsoft.CodeAnalysis;
 using OBScript = OpenBots.Core.Script.Script;
 using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 using RSScript = Microsoft.CodeAnalysis.Scripting.Script;
-
-
+using System.Threading.Tasks;
 
 namespace OpenBots.Engine
 {
@@ -311,7 +310,7 @@ namespace OpenBots.Engine
                         return;
                     }
 
-                    ExecuteCommand(automationScript.Commands[startCommandIndex]);
+                    await ExecuteCommand(automationScript.Commands[startCommandIndex]);
                     startCommandIndex++;
                 }
 
@@ -334,7 +333,7 @@ namespace OpenBots.Engine
                 AutomationEngineContext.EngineLogger.Dispose();
         }
 
-        public async void ExecuteCommand(ScriptAction command)
+        public async Task ExecuteCommand(ScriptAction command)
         {
             //get command
             ScriptCommand parentCommand = command.ScriptCommand;
@@ -439,12 +438,12 @@ namespace OpenBots.Engine
                     //run the command and pass bgw/command as this command will recursively call this method for sub commands
                     //TODO: Make sure that removing these lines doesn't create any other issues
                     //command.IsExceptionIgnored = true;
-                    parentCommand.RunCommand(this, command);
+                    await parentCommand.RunCommand(this, command);
                 }
                 else if (parentCommand.CommandName == "SequenceCommand")
                 {
                     //command.IsExceptionIgnored = true;
-                    parentCommand.RunCommand(this, command);
+                    await parentCommand.RunCommand(this, command);
                 }
                 else if (parentCommand.CommandName == "StopCurrentTaskCommand")
                 {

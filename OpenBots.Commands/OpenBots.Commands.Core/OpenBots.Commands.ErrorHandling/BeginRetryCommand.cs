@@ -87,7 +87,7 @@ namespace OpenBots.Commands.ErrorHandling
 			v_IfConditionsTable.Columns.Add("CommandData");
 		}
 
-		public async override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			//get engine
 			var engine = (IAutomationEngineInstance)sender;

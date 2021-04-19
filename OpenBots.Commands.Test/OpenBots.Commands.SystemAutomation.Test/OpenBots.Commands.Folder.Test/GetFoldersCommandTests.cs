@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Folder.Test
         }
 
         [Fact]
-        public void HandlesInvalidDirectoryPath()
+        public async global::System.Threading.Tasks.Task HandlesInvalidDirectoryPath()
         {
             _engine = new AutomationEngineInstance(null);
             _getFolders = new GetFoldersCommand();
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Folder.Test
             _getFolders.v_SourceFolderPath = "{inputPath}";
             _getFolders.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<DirectoryNotFoundException>(() => _getFolders.RunCommand(_engine));
+            await Assert.ThrowsAsync<DirectoryNotFoundException>(() => _getFolders.RunCommand(_engine));
         }
     }
 }

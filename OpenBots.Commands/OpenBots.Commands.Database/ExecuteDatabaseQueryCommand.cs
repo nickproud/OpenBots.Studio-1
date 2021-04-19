@@ -14,6 +14,7 @@ using System.Data;
 using System.Data.OleDb;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Database
@@ -107,7 +108,7 @@ namespace OpenBots.Commands.Database
 			v_QueryTimeout = "30";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			//create engine, instance, query
 			var engine = (IAutomationEngineInstance)sender;

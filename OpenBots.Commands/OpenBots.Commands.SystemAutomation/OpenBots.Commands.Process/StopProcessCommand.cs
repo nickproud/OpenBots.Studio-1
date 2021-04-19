@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
 using OBFile = System.IO.File;
@@ -49,7 +50,7 @@ namespace OpenBots.Commands.Process
 			v_StopOption = "Kill";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine);

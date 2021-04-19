@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Folder.Test
         }
 
         [Fact]
-        public void HandlesInvalidSourceFolderInput()
+        public async global::System.Threading.Tasks.Task HandlesInvalidSourceFolderInput()
         {
             _engine = new AutomationEngineInstance(null);
             _moveCopyFolder = new MoveCopyFolderCommand();
@@ -79,7 +79,7 @@ namespace OpenBots.Commands.Folder.Test
             _moveCopyFolder.v_CreateDirectory = "Yes";
             _moveCopyFolder.v_DeleteExisting = "Yes";
 
-            Assert.Throws<DirectoryNotFoundException>(() => _moveCopyFolder.RunCommand(_engine));
+            await Assert.ThrowsAsync<DirectoryNotFoundException>(() => _moveCopyFolder.RunCommand(_engine));
         }
     }
 }

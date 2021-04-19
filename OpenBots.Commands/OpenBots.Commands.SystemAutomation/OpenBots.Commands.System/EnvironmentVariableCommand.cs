@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.System
@@ -76,7 +77,7 @@ namespace OpenBots.Commands.System
 
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var environmentVariable = (string)await v_EnvVariableName.EvaluateCode(engine);

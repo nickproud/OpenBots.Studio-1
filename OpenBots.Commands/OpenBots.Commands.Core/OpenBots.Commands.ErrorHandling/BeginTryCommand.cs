@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.ErrorHandling
 {
@@ -26,7 +27,7 @@ namespace OpenBots.Commands.ErrorHandling
             ScopeStartCommand = true;
         }
 
-        public async override void RunCommand(object sender, ScriptAction parentCommand)
+        public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
         {
             //get engine
             var engine = (IAutomationEngineInstance) sender;

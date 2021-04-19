@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Core.Command
@@ -93,11 +94,11 @@ namespace OpenBots.Core.Command
 			CommandID = id.ToString();
 		}
 
-		public virtual void RunCommand(object sender)
+		public async virtual Task RunCommand(object sender)
 		{
 		}
 
-		public virtual void RunCommand(object sender, ScriptAction command)
+		public async virtual Task RunCommand(object sender, ScriptAction command)
 		{
 		}
 

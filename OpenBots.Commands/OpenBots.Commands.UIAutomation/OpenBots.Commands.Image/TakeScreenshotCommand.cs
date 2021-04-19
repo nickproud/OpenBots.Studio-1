@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Image
@@ -69,7 +70,7 @@ namespace OpenBots.Commands.Image
 			v_WindowName = "\"Current Window\"";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			string windowName = (string)await v_WindowName.EvaluateCode(engine);

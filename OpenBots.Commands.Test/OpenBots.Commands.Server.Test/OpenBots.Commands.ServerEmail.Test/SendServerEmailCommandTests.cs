@@ -267,7 +267,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         }
 
         [Fact]
-        public void HandlesNonExistentRecipients()
+        public async Task HandlesNonExistentRecipients()
         {
             _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
@@ -280,7 +280,7 @@ namespace OpenBots.Commands.ServerEmail.Test
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = "";
 
-            Assert.Throws<NullReferenceException>(() => _sendServerEmail.RunCommand(_engine));
+            await Assert.ThrowsAsync<NullReferenceException>(() => _sendServerEmail.RunCommand(_engine));
         }
 
         public async Task<MailItem> GetEmail(string filePath, string subject)

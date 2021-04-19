@@ -34,7 +34,7 @@ namespace OpenBots.Commands.File.Test
         }
 
         [Fact]
-        public void FailsWhenFileNotFound()
+        public async global::System.Threading.Tasks.Task FailsWhenFileNotFound()
         {
             _engine = new AutomationEngineInstance(null);
             _waitForFile = new WaitForFileCommand();
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.File.Test
             _waitForFile.v_FileName = "{inputPath}";
             _waitForFile.v_WaitTime = "{waitTime}";
 
-            Assert.Throws<FileNotFoundException>(() => _waitForFile.RunCommand(_engine));
+            await Assert.ThrowsAsync<FileNotFoundException>(() => _waitForFile.RunCommand(_engine));
         }
     }
 }

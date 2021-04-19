@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
 
@@ -92,7 +93,7 @@ namespace OpenBots.Commands.Word
 			v_CloseAllInstances = "Yes";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vFilePath = (string)await v_FilePath.EvaluateCode(engine);

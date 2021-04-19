@@ -14,6 +14,7 @@ using System.IO;
 using System.Security;
 using System.Security.Authentication;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBFile = System.IO.File;
 
@@ -106,7 +107,7 @@ namespace OpenBots.Commands.Email
 			v_SMTPOperationType = "Reply";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			MimeMessage vMimeMessageToReply = (MimeMessage)await v_SMTPMimeMessage.EvaluateCode(engine, nameof(v_SMTPMimeMessage), this);

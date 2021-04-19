@@ -64,7 +64,7 @@ namespace OpenBots.Commands.List.Test
         }
 
         [Fact]
-        public void HandlesInvalidListItem()
+        public async System.Threading.Tasks.Task HandlesInvalidListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _addListItem = new AddListItemCommand();
@@ -78,7 +78,7 @@ namespace OpenBots.Commands.List.Test
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";
 
-            Assert.Throws<Exception>(() => _addListItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<Exception>(() => _addListItem.RunCommand(_engine));
         }
     }
 }

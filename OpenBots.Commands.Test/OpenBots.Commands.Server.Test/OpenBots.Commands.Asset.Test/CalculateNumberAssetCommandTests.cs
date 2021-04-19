@@ -137,7 +137,7 @@ namespace OpenBots.Commands.Asset.Test
         }
 
         [Fact]
-        public void HandlesNonexistentAsset()
+        public async System.Threading.Tasks.Task HandlesNonexistentAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _calculateAsset = new CalculateNumberAssetCommand();
@@ -152,7 +152,7 @@ namespace OpenBots.Commands.Asset.Test
             _calculateAsset.v_AssetActionType = "Increment";
             _calculateAsset.v_AssetActionValue = "";
 
-            Assert.Throws<DataException>(() => _calculateAsset.RunCommand(_engine));
+            await Assert.ThrowsAsync<DataException>(() => _calculateAsset.RunCommand(_engine));
         }
 
         private void resetAsset(string assetName, string assetValue, string type)

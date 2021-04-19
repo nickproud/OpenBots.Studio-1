@@ -100,7 +100,7 @@ namespace OpenBots.Commands.Asset.Test
         }
 
         [Fact]
-        public void HandlesNonexistentAsset()
+        public async System.Threading.Tasks.Task HandlesNonexistentAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
@@ -112,7 +112,7 @@ namespace OpenBots.Commands.Asset.Test
             _getAsset.v_OutputDirectoryPath = "";
             _getAsset.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<DataException>(() => _getAsset.RunCommand(_engine));
+            await Assert.ThrowsAsync<DataException>(() => _getAsset.RunCommand(_engine));
         }
     }
 }

@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security;
 using System.Security.Authentication;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Email
@@ -97,7 +98,7 @@ namespace OpenBots.Commands.Email
 
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			MimeMessage vMimeMessageToForward = (MimeMessage)await v_SMTPMimeMessage.EvaluateCode(engine, nameof(v_SMTPMimeMessage), this);

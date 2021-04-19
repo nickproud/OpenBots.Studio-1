@@ -156,7 +156,7 @@ namespace OpenBots.Commands.QueueItem.Test
         }
 
         [Fact]
-        public void HandlesNonExistentQueue()
+        public async System.Threading.Tasks.Task HandlesNonExistentQueue()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -169,7 +169,7 @@ namespace OpenBots.Commands.QueueItem.Test
             _addQueueItem.v_QueueItemTextValue = "{'text':'testText'}";
             _addQueueItem.v_Priority = "10";
 
-            Assert.Throws<DataException>(() => _addQueueItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<DataException>(() => _addQueueItem.RunCommand(_engine));
         }
     }
 }

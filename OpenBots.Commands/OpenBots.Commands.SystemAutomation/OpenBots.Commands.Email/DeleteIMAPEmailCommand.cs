@@ -15,6 +15,7 @@ using System.Linq;
 using System.Security;
 using System.Security.Authentication;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Email
@@ -90,7 +91,7 @@ namespace OpenBots.Commands.Email
 			v_IMAPDeleteReadOnly = "Yes";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			MimeMessage vMimeMessage = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine, nameof(v_IMAPMimeMessage), this);

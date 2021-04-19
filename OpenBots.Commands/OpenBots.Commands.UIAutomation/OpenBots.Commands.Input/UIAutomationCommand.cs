@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Forms;
 
@@ -118,7 +119,7 @@ namespace OpenBots.Commands.Input
 			v_Timeout = "30";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vTimeout = (int)await v_Timeout.EvaluateCode(engine);

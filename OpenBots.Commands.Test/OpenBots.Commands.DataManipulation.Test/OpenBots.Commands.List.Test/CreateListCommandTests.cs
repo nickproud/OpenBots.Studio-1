@@ -69,7 +69,7 @@ namespace OpenBots.Commands.List.Test
         }
 
         [Fact]
-        public void RejectsIncorrectValue()
+        public async System.Threading.Tasks.Task RejectsIncorrectValue()
         {
             _engine = new AutomationEngineInstance(null);
             _createList = new CreateListCommand();
@@ -84,7 +84,7 @@ namespace OpenBots.Commands.List.Test
             _createList.v_ListItems = "{item1},{item2}";
             _createList.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<System.ArgumentException>(() => _createList.RunCommand(_engine));
+            await Assert.ThrowsAsync<System.ArgumentException>(() => _createList.RunCommand(_engine));
         }
     }
 }

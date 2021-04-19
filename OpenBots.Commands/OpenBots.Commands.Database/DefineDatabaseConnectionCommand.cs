@@ -80,7 +80,7 @@ namespace OpenBots.Commands.Database
 			v_TestConnection = "Yes";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			//get engine and preference
 			var engine = (IAutomationEngineInstance)sender;

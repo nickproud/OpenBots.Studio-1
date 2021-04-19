@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Asset.Test
         }
 
         [Fact]
-        public void HandlesNonexistentAsset()
+        public async System.Threading.Tasks.Task HandlesNonexistentAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _appendTextAsset = new AppendTextAssetCommand();
@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Asset.Test
             VariableMethods.CreateTestVariable(assetName, _engine, "{assetName}", typeof(string));
             VariableMethods.CreateTestVariable(toAppend, _engine, "{toAppend}", typeof(string));
 
-            Assert.Throws<DataException>(() => _appendTextAsset.RunCommand(_engine));
+            await Assert.ThrowsAsync<DataException>(() => _appendTextAsset.RunCommand(_engine));
         }
 
         private void resetAsset(string assetName, string assetVal, string type)

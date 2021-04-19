@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Outlook
 {
@@ -65,7 +66,7 @@ namespace OpenBots.Commands.Outlook
             CommandIcon = Resources.command_smtp;
         }
 
-        public async override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
             MailItem email = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);

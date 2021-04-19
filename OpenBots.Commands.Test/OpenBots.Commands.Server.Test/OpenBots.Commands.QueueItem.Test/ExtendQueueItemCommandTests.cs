@@ -57,7 +57,7 @@ namespace OpenBots.Commands.QueueItem.Test
         }
 
         [Fact]
-        public void HandlesNonExistentTransactionKey()
+        public async System.Threading.Tasks.Task HandlesNonExistentTransactionKey()
         {
             _engine = new AutomationEngineInstance(null);
             _extendQueueItem = new ExtendQueueItemCommand();
@@ -79,7 +79,7 @@ namespace OpenBots.Commands.QueueItem.Test
             _extendQueueItem.v_QueueItem = "{vQueueItem}";
             queueItemDict.SetVariableValue(_engine, _extendQueueItem.v_QueueItem, typeof(Dictionary<,>));
 
-            Assert.Throws<NullReferenceException>(() => _extendQueueItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<NullReferenceException>(() => _extendQueueItem.RunCommand(_engine));
         }
     }
 }

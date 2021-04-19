@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsInput;
 
@@ -123,7 +124,7 @@ namespace OpenBots.Commands.Image
 			v_ImageActionParameterTable.Columns.Add("Parameter Value");			
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			string windowName = (string)await v_WindowName.EvaluateCode(engine);

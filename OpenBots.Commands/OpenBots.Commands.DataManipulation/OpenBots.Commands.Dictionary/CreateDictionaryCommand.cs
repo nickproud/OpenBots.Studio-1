@@ -14,6 +14,7 @@ using Microsoft.Office.Interop.Outlook;
 using MimeKit;
 using OpenQA.Selenium;
 using OBDataTable = System.Data.DataTable;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Dictionary
 {
@@ -71,7 +72,7 @@ namespace OpenBots.Commands.Dictionary
 			v_DictionaryType = "String";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 

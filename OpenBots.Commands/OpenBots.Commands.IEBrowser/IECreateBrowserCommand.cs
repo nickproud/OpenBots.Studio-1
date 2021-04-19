@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.IEBrowser
@@ -59,7 +60,7 @@ namespace OpenBots.Commands.IEBrowser
             v_InstanceTracking = "Forget Instance";
         }
 
-        public async override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
             var webURL = (string)await v_URL.EvaluateCode(engine);

@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Engine
 {
@@ -77,7 +78,7 @@ namespace OpenBots.Commands.Engine
 			v_StopwatchAction = "Start Stopwatch";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var format = (string)await v_ToStringFormat.EvaluateCode(engine);

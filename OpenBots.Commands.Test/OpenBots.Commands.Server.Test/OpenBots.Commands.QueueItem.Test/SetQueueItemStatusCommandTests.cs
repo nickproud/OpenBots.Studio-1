@@ -94,7 +94,7 @@ namespace OpenBots.Commands.QueueItem.Test
         }
 
         [Fact]
-        public void HandlesNonExistentTransactionKey()
+        public async Task HandlesNonExistentTransactionKey()
         {
             _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
@@ -117,7 +117,7 @@ namespace OpenBots.Commands.QueueItem.Test
             _setQueueItem.v_QueueItemStatusType = "Successful";
             queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
 
-            Assert.Throws<NullReferenceException>(() => _setQueueItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<NullReferenceException>(() => _setQueueItem.RunCommand(_engine));
         }
 
         internal void AddQueueItem(string name)

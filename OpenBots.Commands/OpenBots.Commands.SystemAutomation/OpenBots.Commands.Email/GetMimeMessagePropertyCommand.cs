@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.IO;
 using OpenBots.Core.Properties;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Email
 {
@@ -85,7 +86,7 @@ namespace OpenBots.Commands.Email
             v_Property = "Sender";
         }
 
-        public async override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
 

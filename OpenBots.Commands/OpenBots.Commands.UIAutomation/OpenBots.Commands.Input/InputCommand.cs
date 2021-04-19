@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
@@ -90,7 +91,7 @@ namespace OpenBots.Commands.Input
 			v_InputDirections = "Directions: Please fill in the following fields";
 		}
 
-		public async  override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var header = (string)await v_InputHeader.EvaluateCode(engine);

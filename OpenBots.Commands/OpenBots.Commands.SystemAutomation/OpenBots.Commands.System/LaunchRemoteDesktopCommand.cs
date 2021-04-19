@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.System
@@ -77,7 +78,7 @@ namespace OpenBots.Commands.System
 			v_RDPHeight = SystemInformation.PrimaryMonitorSize.Height.ToString();
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var machineName = (string)await v_MachineName.EvaluateCode(engine);

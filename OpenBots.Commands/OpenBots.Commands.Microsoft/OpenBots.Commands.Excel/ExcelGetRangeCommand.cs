@@ -15,6 +15,7 @@ using System.Data;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using DataTable = System.Data.DataTable;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Excel
 {
@@ -81,7 +82,7 @@ namespace OpenBots.Commands.Excel
 			v_Range = "A1:";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{         
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);

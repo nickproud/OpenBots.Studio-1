@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.API
@@ -113,7 +114,7 @@ namespace OpenBots.Commands.API
 			v_AdvancedParameters.TableName = DateTime.Now.ToString("AdvParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			//make REST Request and store into variable
 			string restContent;

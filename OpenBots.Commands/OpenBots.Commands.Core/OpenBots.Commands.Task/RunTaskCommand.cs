@@ -19,6 +19,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Task
 {
@@ -87,7 +88,7 @@ namespace OpenBots.Commands.Task
 			v_ArgumentAssignments.Columns[1].DataType = typeof(Type);			
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var parentAutomationEngineInstance = (IAutomationEngineInstance)sender;
 			if(parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine == null)

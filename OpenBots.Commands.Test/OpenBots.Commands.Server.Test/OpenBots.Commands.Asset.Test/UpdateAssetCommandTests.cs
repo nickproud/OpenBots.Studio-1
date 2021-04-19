@@ -146,7 +146,7 @@ namespace OpenBots.Commands.Asset.Test
         }
 
         [Fact]
-        public void HandlesNonexistentAsset()
+        public async System.Threading.Tasks.Task HandlesNonexistentAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
@@ -162,7 +162,7 @@ namespace OpenBots.Commands.Asset.Test
             _updateAsset.v_AssetFilePath = "";
             _updateAsset.v_AssetValue = "{newAsset}";
 
-            Assert.Throws<DataException>(() => _updateAsset.RunCommand(_engine));
+            await Assert.ThrowsAsync<DataException>(() => _updateAsset.RunCommand(_engine));
         }
 
         private void resetAsset(string assetName, string assetVal, string type)

@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Core.Properties;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.IEBrowser
 {
@@ -52,7 +53,7 @@ namespace OpenBots.Commands.IEBrowser
             v_InstanceName = "DefaultIEBrowser";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
 

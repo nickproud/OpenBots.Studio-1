@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -57,7 +58,7 @@ namespace OpenBots.Commands.WebBrowser
 
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create((string)await v_WebRequestURL.EvaluateCode(engine));

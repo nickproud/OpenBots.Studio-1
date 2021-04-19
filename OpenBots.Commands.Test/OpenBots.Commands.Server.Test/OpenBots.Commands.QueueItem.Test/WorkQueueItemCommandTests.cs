@@ -140,7 +140,7 @@ namespace OpenBots.Commands.QueueItem.Test
         }
 
         [Fact]
-        public void HandlesNonExistentQueue()
+        public async System.Threading.Tasks.Task HandlesNonExistentQueue()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -161,7 +161,7 @@ namespace OpenBots.Commands.QueueItem.Test
             _workQueueItem.v_SaveAttachments = "No";
             _workQueueItem.v_AttachmentDirectory = "";
 
-            Assert.Throws<DataException>(() => _workQueueItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<DataException>(() => _workQueueItem.RunCommand(_engine));
         }
     }
 }

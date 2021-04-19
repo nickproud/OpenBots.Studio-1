@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Input
 {
@@ -69,7 +70,7 @@ namespace OpenBots.Commands.Input
 			v_KeyUpDefault = "Yes";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);

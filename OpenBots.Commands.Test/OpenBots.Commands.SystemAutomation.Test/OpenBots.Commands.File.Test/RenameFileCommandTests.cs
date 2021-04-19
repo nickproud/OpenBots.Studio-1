@@ -38,7 +38,7 @@ namespace OpenBots.Commands.File.Test
         }
 
         [Fact]
-        public void HandlesInvalidFileInput()
+        public async global::System.Threading.Tasks.Task HandlesInvalidFileInput()
         {
             _engine = new AutomationEngineInstance(null);
             _renameFile = new RenameFileCommand();
@@ -53,7 +53,7 @@ namespace OpenBots.Commands.File.Test
             _renameFile.v_SourceFilePath = "{inputPath}";
             _renameFile.v_NewName = "{newName}";
 
-            Assert.Throws<FileNotFoundException>(() => _renameFile.RunCommand(_engine));
+            await Assert.ThrowsAsync<FileNotFoundException>(() => _renameFile.RunCommand(_engine));
         }
 
         private void resetTestFilename(string file)

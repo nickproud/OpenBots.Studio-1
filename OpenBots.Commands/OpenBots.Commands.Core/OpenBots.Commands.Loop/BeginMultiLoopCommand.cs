@@ -62,7 +62,7 @@ namespace OpenBots.Commands.Loop
 			v_LoopConditionsTable.Columns.Add("CommandData");
 		}
 
-		public async override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			bool isTrueStatement = await DetermineMultiStatementTruth(engine);

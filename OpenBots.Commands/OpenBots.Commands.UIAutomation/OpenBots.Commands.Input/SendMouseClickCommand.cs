@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
@@ -44,7 +45,7 @@ namespace OpenBots.Commands.Input
 			v_MouseClick = "Left Click";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var mousePosition = Cursor.Position;
 			User32Functions.SendMouseClick(v_MouseClick, mousePosition.X, mousePosition.Y);

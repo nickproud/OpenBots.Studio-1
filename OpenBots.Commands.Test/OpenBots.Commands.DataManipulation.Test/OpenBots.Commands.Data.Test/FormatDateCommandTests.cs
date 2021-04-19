@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Data.Test
         }
 
         [Fact]
-        public void HandlesInvalidInput()
+        public async System.Threading.Tasks.Task HandlesInvalidInput()
         {
             _formatDate = new FormatDateCommand();
             _engine = new AutomationEngineInstance(null);
@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Data.Test
             _formatDate.v_ToStringFormat = "{dateFormat}";
             _formatDate.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<FormatException>(() => _formatDate.RunCommand(_engine));
+            await Assert.ThrowsAsync<FormatException>(() => _formatDate.RunCommand(_engine));
         }
     }
 }

@@ -18,6 +18,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.IEBrowser
 {
@@ -107,7 +108,7 @@ namespace OpenBots.Commands.IEBrowser
         }
 
         [STAThread]
-        public async override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             object browserObject = null;
 
@@ -139,11 +140,11 @@ namespace OpenBots.Commands.IEBrowser
 
             if (doc == _lastDocFound)
             {
-                qualifyingElementFound = InspectFrame(_lastElementCollectionFound, elementSearchProperties, sender, browserInstance);
+                qualifyingElementFound = await InspectFrame(_lastElementCollectionFound, elementSearchProperties, sender, browserInstance);
             }
             if (!qualifyingElementFound)
             {
-                qualifyingElementFound = InspectFrame(doc.all, elementSearchProperties, sender, browserInstance);
+                qualifyingElementFound = await InspectFrame(doc.all, elementSearchProperties, sender, browserInstance);
             }
             if (qualifyingElementFound)
             {
@@ -358,7 +359,7 @@ namespace OpenBots.Commands.IEBrowser
             ((DataGridView)_elementParameterControls[2]).Columns[0].ReadOnly = true;
         }
 
-        private async void RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)
+        private async Task RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)
         {
             var engine = (IAutomationEngineInstance)sender;
             switch (v_WebAction)
@@ -470,7 +471,7 @@ namespace OpenBots.Commands.IEBrowser
             return curtop;
         }
 
-        private bool InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, InternetExplorer browserInstance)
+        private async Task<bool> InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, InternetExplorer browserInstance)
         {
             bool qualifyingElementFound = false;
             foreach (IHTMLElement element in elementCollection)
@@ -487,7 +488,7 @@ namespace OpenBots.Commands.IEBrowser
                         qualifyingElementFound = FindQualifyingElement(elementSearchProperties, element);
                         if (qualifyingElementFound)
                         {
-                            RunCommandActions(element, sender, browserInstance);
+                            await RunCommandActions(element, sender, browserInstance);
                             _lastElementCollectionFound = elementCollection;
                             return (true);
                             //break;
@@ -501,7 +502,7 @@ namespace OpenBots.Commands.IEBrowser
                             }
                             if (frameId != null)
                             {
-                                qualifyingElementFound = InspectFrame(browserInstance.Document.getElementById(frameId).contentDocument.all, elementSearchProperties, sender, browserInstance);
+                                qualifyingElementFound = await InspectFrame(browserInstance.Document.getElementById(frameId).contentDocument.all, elementSearchProperties, sender, browserInstance);
                             }
                         }
                         if (qualifyingElementFound)

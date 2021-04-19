@@ -14,6 +14,8 @@ using System.IO;
 using CSScriptLibrary;
 using Diagnostics = System.Diagnostics;
 using OBFile = System.IO.File;
+using System.Threading.Tasks;
+
 namespace OpenBots.Commands.Process
 {
 	[Serializable]
@@ -50,7 +52,7 @@ namespace OpenBots.Commands.Process
 			CommandIcon = Resources.command_script;
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			Diagnostics.Process scriptProc = new Diagnostics.Process();

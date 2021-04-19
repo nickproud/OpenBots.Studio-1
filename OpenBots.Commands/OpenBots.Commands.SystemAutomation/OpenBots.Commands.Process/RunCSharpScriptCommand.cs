@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Windows.Forms;
 using OBFile = System.IO.File;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Process
 {
@@ -111,7 +112,7 @@ namespace OpenBots.Commands.Process
 			v_VariableArgumentsDataTable.Columns.Add("Argument Values");
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 

@@ -17,6 +17,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Excel
 {
@@ -73,7 +74,7 @@ namespace OpenBots.Commands.Excel
 			v_ImageScalePercentage = "100";
 		}
 
-		public async override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
