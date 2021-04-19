@@ -75,7 +75,7 @@ namespace OpenBots.Commands.Input
 			if (v_EncryptionOption == "Encrypted")
 				textToSend = EncryptionServices.DecryptString(textToSend, "OPENBOTS");
 
-			SendKeys.SendWait(Regex.Replace(textToSend, "[+^%~()]", "{$0}"));
+			SendKeys.SendWait(Regex.Replace(textToSend, "[+^%~(){}]", "{$0}"));
 
 			Thread.Sleep(500);
 		}
