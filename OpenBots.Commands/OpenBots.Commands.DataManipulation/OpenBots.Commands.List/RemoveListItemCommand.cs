@@ -38,7 +38,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("0 || {vIndex}")]
 		[Remarks("Providing an out of range index will produce an exception.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_ListIndex { get; set; }
 
 		public RemoveListItemCommand()
@@ -52,31 +52,16 @@ namespace OpenBots.Commands.List
 
 		public async override Task RunCommand(object sender)
 		{
-			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			//var vListVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
-			var vListVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
-			var vListIndex = (int)await VariableMethods.EvaluateCode(v_ListIndex, engine, typeof(int));
+			var vListIndex = (int)await v_ListIndex.EvaluateCode(engine, nameof(v_ListIndex), this);
 
-			if (vListVariable != null)
-			{
-				if (vListVariable is List<string>)
-					((List<string>)vListVariable).RemoveAt(vListIndex);
-				else if (vListVariable is List<OBDataTable>)
-					((List<OBDataTable>)vListVariable).RemoveAt(vListIndex);
-				else if (vListVariable is List<MailItem>)
-					((List<MailItem>)vListVariable).RemoveAt(vListIndex);
-				else if (vListVariable is List<MimeMessage>)
-					((List<MimeMessage>)vListVariable).RemoveAt(vListIndex);
-				else if (vListVariable is List<IWebElement>)
-					((List<IWebElement>)vListVariable).RemoveAt(vListIndex);
-				else
-					throw new Exception("Complex Variable List Type<T> Not Supported");
-			}
-			else
-				throw new Exception("Attempted to write data to a variable, but the variable was not found. Enclose variables within braces, ex. {vVariable}");
-			vListVariable.SetVariableValue(engine, v_ListName, typeof(List<>));
+			var vListVariable = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
+			dynamic dynamicList = vListVariable;
+			dynamicList.RemoveAt(vListIndex);
+
+
+			((object)dynamicList).SetVariableValue(engine, v_ListName, nameof(v_ListName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

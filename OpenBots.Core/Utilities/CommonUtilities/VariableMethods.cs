@@ -470,7 +470,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScript.RunAsync();
             }
 
-            string script = $"object guidPlaceholder = {code}";
+            string script = $"object {engine.AutomationEngineContext.GuidPlaceholder} = {code}";
             if(script[script.Length-1] != ';')
             {
                 script = script + ";";
@@ -478,7 +478,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
             engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScriptState.ContinueWithAsync(script, ScriptOptions.Default.WithReferences(assemblies).WithImports(assemblyNames));
 
-            return engine.AutomationEngineContext.EngineScriptState.GetVariable("guidPlaceholder").Value;
+            return engine.AutomationEngineContext.EngineScriptState.GetVariable($"{engine.AutomationEngineContext.GuidPlaceholder}").Value;
         }
 
         public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine)
@@ -493,7 +493,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScript.RunAsync();
             }
 
-            string script = $"object guidPlaceholder = {code}";
+            string script = $"object {engine.AutomationEngineContext.GuidPlaceholder} = {code}";
             if (script[script.Length - 1] != ';')
             {
                 script = script + ";";
@@ -501,7 +501,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
             engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScriptState.ContinueWithAsync(script, ScriptOptions.Default.WithReferences(assemblies).WithImports(assemblyNames));
 
-            return engine.AutomationEngineContext.EngineScriptState.GetVariable("guidPlaceholder").Value;
+            return engine.AutomationEngineContext.EngineScriptState.GetVariable($"{engine.AutomationEngineContext.GuidPlaceholder}").Value;
         }
 
         public async static Task<bool> EvaluateCodeInPlace(this string code, IAutomationEngineInstance engine)
@@ -536,7 +536,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScript.RunAsync();
             }
 
-            string script = $"object guidPlaceholder = {code}";
+            string script = $"object {engine.AutomationEngineContext.GuidPlaceholder} = {code}";
             if (script[script.Length - 1] != ';')
             {
                 script = script + ";";
@@ -544,7 +544,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
             engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScriptState.ContinueWithAsync(script, ScriptOptions.Default.WithReferences(assemblies).WithImports(assemblyNames));
 
-            return engine.AutomationEngineContext.EngineScriptState.GetVariable("guidPlaceholder").Value;
+            return engine.AutomationEngineContext.EngineScriptState.GetVariable($"{engine.AutomationEngineContext.GuidPlaceholder}").Value;
         }
         public static void SetVariableValue(this object newVal, IAutomationEngineInstance engine, string varName, Type varType)
         {

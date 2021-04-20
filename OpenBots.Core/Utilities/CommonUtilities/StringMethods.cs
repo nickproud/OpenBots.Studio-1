@@ -323,9 +323,9 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             StringBuilder stringBuilder = new StringBuilder();
             Type type = list.GetType().GetGenericArguments()[0];
 
-            if (type == typeof(string))
+            if (type == typeof(string) || type.IsPrimitive)
             {
-                List<string> stringList = (List<string>)list;
+                dynamic stringList = list;
                 stringBuilder.Append($"Count({stringList.Count}) [");
 
                 for (int i = 0; i < stringList.Count - 1; i++)
@@ -414,9 +414,9 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             Type type = dictionary.GetType().GetGenericArguments()[1];
             dynamic stringDictionary;
 
-            if (type == typeof(string))
+            if (type == typeof(string) || type.IsPrimitive)
             {
-                stringDictionary = (Dictionary<string, string>)dictionary;
+                stringDictionary = dictionary;
                 stringBuilder.Append($"Count({stringDictionary.Count}) [");
 
                 foreach (KeyValuePair<string, string> pair in stringDictionary)

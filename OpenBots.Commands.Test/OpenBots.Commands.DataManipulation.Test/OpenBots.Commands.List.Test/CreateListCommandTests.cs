@@ -36,7 +36,7 @@ namespace OpenBots.Commands.List.Test
 
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
-            _createList.v_ListType = listType;
+           // _createList.v_ListType = listType;
             _createList.v_OutputUserVariableName = "{output}";
 
             _createList.RunCommand(_engine);
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.List.Test
             VariableMethods.CreateTestVariable(item2, _engine, "item2", typeof(bool));
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
-            _createList.v_ListType = "DataTable";
+           // _createList.v_ListType = "DataTable";
             _createList.v_ListItems = "{item1},{item2}";
             _createList.v_OutputUserVariableName = "{output}";
 

@@ -1,10 +1,8 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +12,7 @@ using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Variable
 {
-	[Serializable]
+    [Serializable]
 	[Category("Variable Commands")]
 	[Description("This command runs a snippet and assigns the output to a variable.")]
 	public class ExecuteSnippetCommand : ScriptCommand
@@ -46,8 +44,9 @@ namespace OpenBots.Commands.Variable
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			object value = null;
-			if (v_OutputUserVariableName != "")
+			object value;
+
+			if (!string.IsNullOrEmpty(v_OutputUserVariableName))
 			{
 				value = await VariableMethods.EvaluateCode(v_Input, engine);
 				value.SetVariableValue(engine, v_OutputUserVariableName, VariableMethods.GetVariableType(v_OutputUserVariableName, engine));

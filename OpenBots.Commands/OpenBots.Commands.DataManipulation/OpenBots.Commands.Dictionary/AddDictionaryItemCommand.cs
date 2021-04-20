@@ -153,7 +153,7 @@ namespace OpenBots.Commands.Dictionary
 			}
 			else
 			{
-				throw new NullReferenceException("Attempted to add data to a variable, but the variable was not found. Enclose variables within braces, ex. {vVariable}");
+				throw new NullReferenceException("Attempted to add data to a list variable, but the variable was null.");
 			}
 		}
 

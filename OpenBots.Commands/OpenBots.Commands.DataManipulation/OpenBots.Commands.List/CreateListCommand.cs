@@ -1,47 +1,30 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Exception = System.Exception;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List
 {
-	[Serializable]
+    [Serializable]
 	[Category("List Commands")]
 	[Description("This command creates a new List variable.")]
 	public class CreateListCommand : ScriptCommand
 	{
-		[Required]
-		[DisplayName("List Type")]
-		[PropertyUISelectionOption("String")]
-		[PropertyUISelectionOption("DataTable")]
-		[PropertyUISelectionOption("MailItem (Outlook)")]
-		[PropertyUISelectionOption("MimeMessage (IMAP/SMTP)")]
-		[PropertyUISelectionOption("IWebElement")]
-		[Description("Specify the data type of the List to be created.")]
-		[SampleUsage("")]
-		[Remarks("")]
-		public string v_ListType { get; set; }
-
 		[DisplayName("List Item(s) (Optional)")]
 		[Description("Enter the item(s) to write to the List.")]
 		[SampleUsage("Hello || {vItem} || Hello,World || {vItem1},{vItem2}")]
-		[Remarks("List item can only be a String, DataTable, MailItem or IWebElement.\n" +
-				 "Multiple items should be delimited by a comma(,). This input is optional.")]
+		[Remarks("Multiple items should be delimited by a comma(,). This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement) }, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_ListItems { get; set; }
 
 		[Required]
@@ -59,111 +42,33 @@ namespace OpenBots.Commands.List
 			SelectionName = "Create List";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
-
-			v_ListType = "String";
 		}
 
 		public async override Task RunCommand(object sender)
 		{
-			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic vNewList = null;
+			dynamic dynamicNewList;
 			string[] splitListItems = null;
-			string typeString = "string";
 
 			if (!string.IsNullOrEmpty(v_ListItems))
-			{
 				splitListItems = v_ListItems.Split(',');
-			}
 
-			switch (v_ListType)
-			{
-				case "String":
-					typeString = "string";
-					vNewList = new List<string>();
-					if (splitListItems != null)
-					{
-						foreach (string item in splitListItems)
-							((List<string>)vNewList).Add((string)await VariableMethods.EvaluateCode(item, engine, typeof(string)));
-					}                   
-					break;
-				case "DataTable":
-					typeString = "DataTable";
-					vNewList = new List<OBDataTable>();
-					if (splitListItems != null)
-					{                       
-						foreach (string item in splitListItems)
-						{
-							OBDataTable dataTable;
-							var dataTableVariable = await VariableMethods.EvaluateCode(item, engine, typeof(OBDataTable));
-							if (dataTableVariable != null && dataTableVariable is OBDataTable)
-								dataTable = (OBDataTable)dataTableVariable;
-							else
-								throw new Exception("Invalid List Item type, please provide valid List Item type.");
-							((List<OBDataTable>)vNewList).Add(dataTable);
-						}                           
-					}
-					break;
-				case "MailItem (Outlook)":
-					typeString = "MailItem";
-					vNewList = new List<MailItem>();
-					if (splitListItems != null)
-					{
-						foreach (string item in splitListItems)
-						{
-							MailItem mailItem;
-							var mailItemVariable = await item.EvaluateCode(engine, typeof(MailItem));
-							if (mailItemVariable != null && mailItemVariable is MailItem)
-								mailItem = (MailItem)mailItemVariable;
-							else
-								throw new Exception("Invalid List Item type, please provide valid List Item type.");
-							((List<MailItem>)vNewList).Add(mailItem);
-						}
-					}
-					break;
-				case "MimeMessage (IMAP/SMTP)":
-					typeString = "MimeMessage";
-					vNewList = new List<MimeMessage>();
-					if (splitListItems != null)
-					{
-						foreach (string item in splitListItems)
-						{
-							MimeMessage mimeMessage;
-							var mimeMessageVariable = await item.EvaluateCode(engine, typeof(MimeMessage));
-							if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
-								mimeMessage = (MimeMessage)mimeMessageVariable;
-							else
-								throw new Exception("Invalid List Item type, please provide valid List Item type.");
-							((List<MimeMessage>)vNewList).Add(mimeMessage);
-						}
-					}
-					break;
-				case "IWebElement":
-					typeString = "IWebElement";
-					vNewList = new List<IWebElement>();
-					if (splitListItems != null)
-					{
-						foreach (string item in splitListItems)
-						{
-							IWebElement webElement;
-							var webElementVariable = await item.EvaluateCode(engine, typeof(IWebElement));
-							if (webElementVariable != null && webElementVariable is IWebElement)
-								webElement = (IWebElement)webElementVariable;
-							else
-								throw new Exception("Invalid List Item type, please provide valid List Item type.");
-							((List<IWebElement>)vNewList).Add(webElement);
-						}
-					}
-					break;
+			string listTypeName = v_OutputUserVariableName.GetVarArgType(engine).GetRealTypeName();
+			dynamicNewList = await $"new {listTypeName}()".EvaluateCode(engine);
+
+			foreach (string item in splitListItems)
+            {
+				dynamic dynamicItem = await item.EvaluateCode(engine);
+				dynamicNewList.Add(dynamicItem);
 			}
-			vNewList.SetVariableValue(engine, v_OutputUserVariableName, typeof(List<>));
+				
+			((object)dynamicNewList).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_ListType", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListItems", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
@@ -172,7 +77,7 @@ namespace OpenBots.Commands.List
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Create New List<{v_ListType}> With Item(s) '{v_ListItems}' - Store List<{v_ListType}> in '{v_OutputUserVariableName}']";
+			return base.GetDisplayValue() + $" [Create New List With Item(s) '{v_ListItems}' - Store List in '{v_OutputUserVariableName}']";
 		}
 	}
 }

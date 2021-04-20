@@ -55,12 +55,13 @@ namespace OpenBots.Commands.Misc
 
 			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
 			
-			string variableMessage = (string)await v_Message.EvaluateCode(engine);
+			var variableMessage = await v_Message.EvaluateCode(engine);
+			var message = StringMethods.ConvertObjectToString(variableMessage, variableMessage.GetType());
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{
 				engine.ReportProgress("Complex Messagebox Supported With UI Only");
-				MessageBox.Show(variableMessage, "Message Box Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(message, "Message Box Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
 
@@ -70,7 +71,7 @@ namespace OpenBots.Commands.Misc
 
 			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
 				{
-					engine.AutomationEngineContext.ScriptEngine.ShowMessage(variableMessage, "MessageBox", DialogType.OkOnly, closeAfter);
+					engine.AutomationEngineContext.ScriptEngine.ShowMessage(message, "MessageBox", DialogType.OkOnly, closeAfter);
 				}
 			));
 
