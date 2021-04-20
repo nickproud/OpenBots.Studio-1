@@ -191,7 +191,7 @@ namespace OpenBots.UI.Forms
             TreeNode typeNode = new TreeNode
             {
                 Name = "Type",
-                Text = _leadingType + variableType.ToString(),
+                Text = _leadingType + variableType.GetRealTypeFullName(),
                 Tag = variableType
             };
 
