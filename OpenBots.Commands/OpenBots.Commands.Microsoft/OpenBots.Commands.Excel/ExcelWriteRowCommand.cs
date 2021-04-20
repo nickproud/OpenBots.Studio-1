@@ -65,10 +65,7 @@ namespace OpenBots.Commands.Excel
 		{
 			var engine = (IAutomationEngineInstance)sender;          
 			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
-			dynamic vRow = (string)await v_RowToSet.EvaluateCode(engine);
-
-			if (vRow == v_RowToSet && v_RowToSet.StartsWith("{") && v_RowToSet.EndsWith("}"))
-				vRow = await v_RowToSet.EvaluateCode(engine, nameof(v_RowToSet), this);
+			dynamic vRow = await v_RowToSet.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;

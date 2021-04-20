@@ -81,9 +81,9 @@ namespace OpenBots.Commands.Excel
 			var excelInstance = (Application)excelObject;
 			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
 			var vImagePath = (string)await v_ImagePath.EvaluateCode(engine);
-			var vImageScalePercentage = (string)await v_ImageScalePercentage.EvaluateCode(engine);
+			var vImageScalePercentage = (int)await v_ImageScalePercentage.EvaluateCode(engine);
 
-			if(Convert.ToInt32(vImageScalePercentage) < 1)
+			if(vImageScalePercentage < 1)
 				throw new DataException("Invalid Image Scale Percentage value, it should be greater than 0.");
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;
@@ -91,7 +91,7 @@ namespace OpenBots.Commands.Excel
 			float left = (float)((double)oRange.Left);
 			float top = (float)((double)oRange.Top);
 			Image img = Image.FromFile(vImagePath);
-			img = ScaleByPercent(img, Convert.ToInt32(vImageScalePercentage));
+			img = ScaleByPercent(img, vImageScalePercentage);
 			excelSheet.Shapes.AddPicture(vImagePath, MsoTriState.msoFalse, MsoTriState.msoCTrue, left, top, img.Width, img.Height);
 		}
 
