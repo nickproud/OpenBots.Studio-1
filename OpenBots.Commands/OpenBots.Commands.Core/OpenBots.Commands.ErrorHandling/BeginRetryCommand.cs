@@ -111,7 +111,7 @@ namespace OpenBots.Commands.ErrorHandling
 					try
 					{
 						cmd.IsExceptionIgnored = true;						
-						engine.ExecuteCommand(cmd);
+						await engine.ExecuteCommand(cmd);
 						if (cmd.ScriptCommand.CommandName == "RunTaskCommand" && engine.ChildScriptFailed && !engine.ChildScriptErrorCaught)
 							throw new Exception("Child Script Failed");
 					}
@@ -122,8 +122,9 @@ namespace OpenBots.Commands.ErrorHandling
 						break;
 					}
 				}
-				// If no exception is thrown out and the Condition's satisfied				
-				if (!exceptionOccurred && await GetConditionResult(engine))
+				// If no exception is thrown out and the Condition's satisfied	
+				var result = await GetConditionResult(engine);
+				if (!exceptionOccurred && result)
 				{
 					engine.ErrorsOccured.Clear();
 					retryCount = 0;					

@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Variable
 			if (input != null)
             {
 				Type inputType = input.GetType();
-				Type outputType = v_OutputUserVariableName.GetVariableType(engine);
+				Type outputType = v_OutputUserVariableName.GetVarArgType(engine);
 
 				if (inputType != outputType)
 					throw new InvalidCastException("Input and Output types do not match");

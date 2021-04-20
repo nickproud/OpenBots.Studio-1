@@ -90,6 +90,46 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             }
         }
 
+        public static string GetRealTypeFullName(this Type t)
+        {
+            if (!t.IsGenericType)
+                return t.FullName;
+
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(t.FullName.Substring(0, t.FullName.IndexOf('`')));
+            stringBuilder.Append('<');
+            bool appendComma = false;
+            foreach (Type arg in t.GetGenericArguments())
+            {
+                if (appendComma) 
+                    stringBuilder.Append(',');
+                stringBuilder.Append(GetRealTypeFullName(arg));
+                appendComma = true;
+            }
+            stringBuilder.Append('>');
+            return stringBuilder.ToString();
+        }
+
+        public static string GetRealTypeName(this Type t)
+        {
+            if (!t.IsGenericType)
+                return t.Name;
+
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(t.Name.Substring(0, t.Name.IndexOf('`')));
+            stringBuilder.Append('<');
+            bool appendComma = false;
+            foreach (Type arg in t.GetGenericArguments())
+            {
+                if (appendComma) 
+                    stringBuilder.Append(',');
+                stringBuilder.Append(GetRealTypeName(arg));
+                appendComma = true;
+            }
+            stringBuilder.Append('>');
+            return stringBuilder.ToString();
+        }
+
         public static string ConvertObjectToString(object obj, Type type)
         {
             if (obj == null)

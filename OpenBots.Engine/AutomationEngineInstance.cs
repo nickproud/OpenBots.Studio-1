@@ -238,7 +238,7 @@ namespace OpenBots.Engine
                 foreach (OBScriptVariable var in AutomationEngineContext.Variables)
                 {
                     await VariableMethods.EvaluateCode(var.VariableName, (string)var.VariableValue, var.VariableType, this);
-                }
+                }           
 
                 ReportProgress("Creating Argument List");
 
@@ -257,9 +257,22 @@ namespace OpenBots.Engine
                 }
 
                 AutomationEngineContext.Arguments = automationScript.Arguments;
-                foreach (ScriptArgument var in AutomationEngineContext.Arguments)
+                
+                //used by RunTaskCommand to assign parent values to child arguments 
+                if(AutomationEngineContext.IsChildEngine)
                 {
-                    await VariableMethods.EvaluateCode(var.ArgumentName, (string)var.ArgumentValue, var.ArgumentType, this);
+                    foreach (ScriptArgument arg in AutomationEngineContext.Arguments)
+                    {
+                        await VariableMethods.EvaluateCode(arg.ArgumentName, "", arg.ArgumentType, this);
+                        arg.ArgumentValue.SetVariableValue(this, arg.ArgumentName, arg.ArgumentType);
+                    }
+                }
+                else
+                {
+                    foreach (ScriptArgument arg in AutomationEngineContext.Arguments)
+                    {
+                        await VariableMethods.EvaluateCode(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, this);
+                    }
                 }
 
                 ReportProgress("Creating Element List");

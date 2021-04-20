@@ -75,7 +75,7 @@ namespace OpenBots.Commands.Loop
 					if (engine.IsCancellationPending)
 						return;
 
-					engine.ExecuteCommand(cmd);
+					await engine.ExecuteCommand(cmd);
 
 					if (engine.CurrentLoopCancelled)
 					{

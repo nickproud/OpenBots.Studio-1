@@ -252,30 +252,22 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             OBScriptVariable requiredVariable;
 
-            if (varArgName.StartsWith("{") && varArgName.EndsWith("}"))
-            {
-                //reformat and attempt
-                var reformattedVarArg = varArgName.Replace("{", "").Replace("}", "");
+            var variableList = engine.AutomationEngineContext.Variables;
+            var systemVariables = CommonMethods.GenerateSystemVariables();
+            var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new OBScriptVariable
+                                                                                        {
+                                                                                            VariableName = arg.ArgumentName,
+                                                                                            VariableType = arg.ArgumentType,
+                                                                                            VariableValue = arg.ArgumentValue
+                                                                                        })
+                                                                                    .ToList();
 
-                var variableList = engine.AutomationEngineContext.Variables;
-                var systemVariables = CommonMethods.GenerateSystemVariables();
-                var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new OBScriptVariable
-                {
-                    VariableName = arg.ArgumentName,
-                    VariableType = arg.ArgumentType,
-                    VariableValue = arg.ArgumentValue
-                })
-                                                                                        .ToList();
+            var variableSearchList = new List<OBScriptVariable>();
+            variableSearchList.AddRange(variableList);
+            variableSearchList.AddRange(systemVariables);
+            variableSearchList.AddRange(argumentsAsVariablesList);
 
-                var variableSearchList = new List<OBScriptVariable>();
-                variableSearchList.AddRange(variableList);
-                variableSearchList.AddRange(systemVariables);
-                variableSearchList.AddRange(argumentsAsVariablesList);
-
-                requiredVariable = variableSearchList.Where(var => var.VariableName == reformattedVarArg).FirstOrDefault();
-            }
-            else
-                throw new Exception("Variable/Argument markers '{}' missing. Variable/Argument '" + varArgName + "' could not be found.");
+            requiredVariable = variableSearchList.Where(var => var.VariableName == varArgName).FirstOrDefault();
 
             if (requiredVariable != null)
                 return requiredVariable.VariableType;
@@ -443,11 +435,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             if (varType == null)
                 type = "var";
             else
-                type = varType.Name;
-            if(varType == typeof(List<>))
-            {
-                type = "List<string>";
-            }
+                type = varType.GetRealTypeName();
+
             List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
             List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
 
