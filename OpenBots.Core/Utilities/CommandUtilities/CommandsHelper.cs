@@ -310,128 +310,100 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 		{
 			bool ifResult = false;
 
-			if (ifActionType == "Value Compare")
+			if (ifActionType == "Number Compare")
 			{
 				string value1 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value1"
+								  where rw.Field<string>("Parameter Name") == "Number1"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string operand = ((from rw in IfActionParameterTable.AsEnumerable()
 								   where rw.Field<string>("Parameter Name") == "Operand"
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string value2 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value2"
+								  where rw.Field<string>("Parameter Name") == "Number2"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var cdecValue1 = (decimal)await value1.EvaluateCode(engine);
-				var cdecValue2 = (decimal)await value2.EvaluateCode(engine);
+				var cdecValue1 = Convert.ToDecimal(await value1.EvaluateCode(engine));
+				var cdecValue2 = Convert.ToDecimal(await value2.EvaluateCode(engine));
 
 				switch (operand)
 				{
 					case "is equal to":
-						ifResult = (cdecValue1 == cdecValue2);
+						ifResult = cdecValue1 == cdecValue2;
 						break;
 
 					case "is not equal to":
-						ifResult = (cdecValue1 != cdecValue2);
+						ifResult = cdecValue1 != cdecValue2;
 						break;
 
 					case "is greater than":
-						cdecValue1 = Convert.ToDecimal(value1);
-						cdecValue2 = Convert.ToDecimal(value2);
-						ifResult = (cdecValue1 > cdecValue2);
+						ifResult = cdecValue1 > cdecValue2;
 						break;
 
 					case "is greater than or equal to":
-						cdecValue1 = Convert.ToDecimal(value1);
-						cdecValue2 = Convert.ToDecimal(value2);
-						ifResult = (cdecValue1 >= cdecValue2);
+						ifResult = cdecValue1 >= cdecValue2;
 						break;
 
 					case "is less than":
-						cdecValue1 = Convert.ToDecimal(value1);
-						cdecValue2 = Convert.ToDecimal(value2);
-						ifResult = (cdecValue1 < cdecValue2);
+						ifResult = cdecValue1 < cdecValue2;
 						break;
 
 					case "is less than or equal to":
-						cdecValue1 = Convert.ToDecimal(value1);
-						cdecValue2 = Convert.ToDecimal(value2);
-						ifResult = (cdecValue1 <= cdecValue2);
+						ifResult = cdecValue1 <= cdecValue2;
 						break;
 				}
 			}
 			else if (ifActionType == "Date Compare")
 			{
 				string value1 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value1"
+								  where rw.Field<string>("Parameter Name") == "Date1"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string operand = ((from rw in IfActionParameterTable.AsEnumerable()
 								   where rw.Field<string>("Parameter Name") == "Operand"
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string value2 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value2"
+								  where rw.Field<string>("Parameter Name") == "Date2"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				DateTime dt1, dt2;
-
-				dynamic input1 = await value1.EvaluateCode(engine);
-
-				if (input1 == value1 && input1.StartsWith("{") && input1.EndsWith("}"))
-					input1 = value1.EvaluateCode(engine, typeof(object));
-
-				if (input1 is DateTime)
-					dt1 = (DateTime)input1;
-				else if (input1 is string)
-					dt1 = DateTime.Parse((string)input1);
-				else
-					throw new InvalidDataException("Value1 is not a valid DateTime");
-
-				dynamic input2 = await value2.EvaluateCode(engine);
-
-				if (input2 is DateTime)
-					dt2 = (DateTime)input2;
-				else if (input2 is string)
-					dt2 = DateTime.Parse((string)input2);
-				else
-					throw new InvalidDataException("Value2 is not a valid DateTime");
+				var dt1 = (DateTime)await value1.EvaluateCode(engine);
+				var dt2 = (DateTime)await value2.EvaluateCode(engine);
 
 				switch (operand)
 				{
 					case "is equal to":
-						ifResult = (dt1 == dt2);
+						ifResult = dt1 == dt2;
 						break;
 
 					case "is not equal to":
-						ifResult = (dt1 != dt2);
+						ifResult = dt1 != dt2;
 						break;
 
 					case "is greater than":
-						ifResult = (dt1 > dt2);
+						ifResult = dt1 > dt2;
 						break;
 
 					case "is greater than or equal to":
-						ifResult = (dt1 >= dt2);
+						ifResult = dt1 >= dt2;
 						break;
 
 					case "is less than":
-						ifResult = (dt1 < dt2);
+						ifResult = dt1 < dt2;
 						break;
 
 					case "is less than or equal to":
-						ifResult = (dt1 <= dt2);
+						ifResult = dt1 <= dt2;
 						break;
 				}
 			}
-			else if (ifActionType == "Variable Compare")
+			else if (ifActionType == "Text Compare")
 			{
 				string value1 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value1"
+								  where rw.Field<string>("Parameter Name") == "Text1"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string operand = ((from rw in IfActionParameterTable.AsEnumerable()
 								   where rw.Field<string>("Parameter Name") == "Operand"
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string value2 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value2"
+								  where rw.Field<string>("Parameter Name") == "Text2"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 				string caseSensitive = ((from rw in IfActionParameterTable.AsEnumerable()
@@ -450,23 +422,23 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				switch (operand)
 				{
 					case "contains":
-						ifResult = (value1.Contains(value2));
+						ifResult = value1.Contains(value2);
 						break;
 
 					case "does not contain":
-						ifResult = (!value1.Contains(value2));
+						ifResult = !value1.Contains(value2);
 						break;
 
 					case "is equal to":
-						ifResult = (value1 == value2);
+						ifResult = value1 == value2;
 						break;
 
 					case "is not equal to":
-						ifResult = (value1 != value2);
+						ifResult = value1 != value2;
 						break;
 				}
 			}
-			else if (ifActionType == "Variable Has Value")
+			else if (ifActionType == "Has Value")
 			{
 				string variableName = ((from rw in IfActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "Variable Name"
@@ -479,23 +451,13 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				else
 					ifResult = false;
 			}
-			else if (ifActionType == "Variable Is Numeric")
+			else if (ifActionType == "Is Numeric")
 			{
 				string variableName = ((from rw in IfActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "Variable Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				dynamic actualVariable = await variableName.EvaluateCode(engine);
-
-				decimal parsedResult;
-
-				if (actualVariable.GetType() == typeof(decimal))
-				{
-					ifResult = true;
-					parsedResult = actualVariable;
-				}
-				else
-					ifResult = false;
+				ifResult = decimal.TryParse((await variableName.EvaluateCode(engine)).ToString(), out decimal decimalResult);
 			}
 			else if (ifActionType == "Error Occured")
 			{
@@ -532,9 +494,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
 				//determine if error happened
 				if (engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).Count() == 0)
-				{
 					ifResult = true;
-				}
 				else
 				{
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
@@ -559,9 +519,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
 				//conditional
 				if (windowPtr != IntPtr.Zero)
-				{
 					ifResult = true;
-				}
 			}
 			else if (ifActionType == "Active Window Name Is")
 			{
@@ -574,10 +532,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				var currentWindowTitle = User32Functions.GetActiveWindowTitle();
 
 				if (currentWindowTitle == variablizedWindowName)
-				{
 					ifResult = true;
-				}
-
 			}
 			else if (ifActionType == "File Exists")
 			{
@@ -594,14 +549,10 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
 				bool existCheck = false;
 				if (trueWhenFileExists == "It Does Exist")
-				{
 					existCheck = true;
-				}
 
 				if (File.Exists(userFileSelected) == existCheck)
-				{
 					ifResult = true;
-				}
 			}
 			else if (ifActionType == "Folder Exists")
 			{
@@ -617,14 +568,10 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
 				bool existCheck = false;
 				if (trueWhenFileExists == "It Does Exist")
-				{
 					existCheck = true;
-				}
 
 				if (Directory.Exists(userFolderSelected) == existCheck)
-				{
 					ifResult = true;
-				}
 			}
 			else if (ifActionType == "Web Element Exists")
 			{
@@ -736,17 +683,11 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				var imageVariable = await imageName.EvaluateCode(engine, typeof(Bitmap));
+				var capturedImage = (Bitmap)await imageName.EvaluateCode(engine, typeof(Bitmap));
 				string timeoutString = (from rw in IfActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
 				int timeout = (int)await timeoutString.EvaluateCode(engine);
-
-				Bitmap capturedImage;
-				if (imageVariable != null && imageVariable is Bitmap)
-					capturedImage = (Bitmap)imageVariable;
-				else
-					throw new ArgumentException("Provided Argument is not a 'Bitmap' Image");
 
 				var element = FindImageElement(capturedImage, accuracy, engine, DateTime.Now.AddSeconds(timeout));
 				FormsHelper.ShowAllForms(engine.AutomationEngineContext.IsDebugMode);
@@ -776,9 +717,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 					ifResult = !ifResult;
 			}
 			else
-			{
 				throw new Exception("If type not recognized!");
-			}
 
 			return ifResult;
 		}

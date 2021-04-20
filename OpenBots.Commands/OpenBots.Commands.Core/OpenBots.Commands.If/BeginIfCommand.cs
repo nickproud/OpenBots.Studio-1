@@ -26,11 +26,11 @@ namespace OpenBots.Commands.If
 	{
 		[Required]
 		[DisplayName("Condition Type")]
-		[PropertyUISelectionOption("Value Compare")]
+		[PropertyUISelectionOption("Number Compare")]
 		[PropertyUISelectionOption("Date Compare")]
-		[PropertyUISelectionOption("Variable Compare")]
-		[PropertyUISelectionOption("Variable Has Value")]
-		[PropertyUISelectionOption("Variable Is Numeric")]
+		[PropertyUISelectionOption("Text Compare")]
+		[PropertyUISelectionOption("Has Value")]
+		[PropertyUISelectionOption("Is Numeric")]
 		[PropertyUISelectionOption("Window Name Exists")]
 		[PropertyUISelectionOption("Active Window Name Is")]
 		[PropertyUISelectionOption("File Exists")]
@@ -170,28 +170,50 @@ namespace OpenBots.Commands.If
 		{
 			switch (v_IfActionType)
 			{
-				case "Value Compare":
-				case "Date Compare":
-				case "Variable Compare":
-					string value1 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Value1"
+				case "Number Compare":
+					string number1 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Number1"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 					string operand = ((from rw in v_ActionParameterTable.AsEnumerable()
 									   where rw.Field<string>("Parameter Name") == "Operand"
 									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string value2 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Value2"
+					string number2 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Number2"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					return $"If ('{value1}' {operand} '{value2}')";
+					return $"If ('{number1}' {operand} '{number2}')";
+				case "Date Compare":
+					string date1 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Date1"
+									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+					string operand2 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									   where rw.Field<string>("Parameter Name") == "Operand"
+									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
+					string date2 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Date2"
+									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				case "Variable Has Value":
+					return $"If ('{date1}' {operand2} '{date2}')";
+				case "Text Compare":
+					string text1 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Text1"
+									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+					string operand3 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									   where rw.Field<string>("Parameter Name") == "Operand"
+									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
+					string text2 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Text2"
+									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+					return $"If ('{text1}' {operand3} '{text2}')";
+
+				case "Has Value":
 					string variableName = ((from rw in v_ActionParameterTable.AsEnumerable()
 									  where rw.Field<string>("Parameter Name") == "Variable Name"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"If (Variable '{variableName}' Has Value)";
-				case "Variable Is Numeric":
+				case "Is Numeric":
 					string varName = ((from rw in v_ActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Variable Name"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault());
@@ -338,15 +360,15 @@ namespace OpenBots.Commands.If
 
 			switch (_actionDropdown.SelectedItem)
 			{
-				case "Value Compare":
-				case "Date Compare":
+				case "Number Compare":
+
 					ifActionParameterBox.Visible = true;
 
 					if (sender != null)
 					{
-						actionParameters.Rows.Add("Value1", "");
+						actionParameters.Rows.Add("Number1", "");
 						actionParameters.Rows.Add("Operand", "");
-						actionParameters.Rows.Add("Value2", "");
+						actionParameters.Rows.Add("Number2", "");
 						ifActionParameterBox.DataSource = actionParameters;
 					}
 
@@ -363,15 +385,40 @@ namespace OpenBots.Commands.If
 					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
 
 					break;
-				case "Variable Compare":
+				case "Date Compare":
 
 					ifActionParameterBox.Visible = true;
 
 					if (sender != null)
 					{
-						actionParameters.Rows.Add("Value1", "");
+						actionParameters.Rows.Add("Date1", "");
 						actionParameters.Rows.Add("Operand", "");
-						actionParameters.Rows.Add("Value2", "");
+						actionParameters.Rows.Add("Date2", "");
+						ifActionParameterBox.DataSource = actionParameters;
+					}
+
+					//combobox cell for Variable Name
+					comparisonComboBox = new DataGridViewComboBoxCell();
+					comparisonComboBox.Items.Add("is equal to");
+					comparisonComboBox.Items.Add("is greater than");
+					comparisonComboBox.Items.Add("is greater than or equal to");
+					comparisonComboBox.Items.Add("is less than");
+					comparisonComboBox.Items.Add("is less than or equal to");
+					comparisonComboBox.Items.Add("is not equal to");
+
+					//assign cell as a combobox
+					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
+
+					break;
+				case "Text Compare":
+
+					ifActionParameterBox.Visible = true;
+
+					if (sender != null)
+					{
+						actionParameters.Rows.Add("Text1", "");
+						actionParameters.Rows.Add("Operand", "");
+						actionParameters.Rows.Add("Text2", "");
 						actionParameters.Rows.Add("Case Sensitive", "No");
 						ifActionParameterBox.DataSource = actionParameters;
 					}
@@ -394,7 +441,7 @@ namespace OpenBots.Commands.If
 					ifActionParameterBox.Rows[3].Cells[1] = comparisonComboBox;
 
 					break;
-				case "Variable Has Value":
+				case "Has Value":
 
 					ifActionParameterBox.Visible = true;
 					if (sender != null)
@@ -404,7 +451,7 @@ namespace OpenBots.Commands.If
 					}
 
 					break;
-				case "Variable Is Numeric":
+				case "Is Numeric":
 
 					ifActionParameterBox.Visible = true;
 					if (sender != null)
