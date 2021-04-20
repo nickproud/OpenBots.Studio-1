@@ -435,11 +435,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             if (varType == null)
                 type = "var";
             else
-                type = varType.Name;
-            if(varType == typeof(List<>))
-            {
-                type = "List<string>";
-            }
+                type = varType.GetRealTypeName();
+
             List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
             List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
 
