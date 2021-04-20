@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Misc
 {
@@ -48,29 +49,13 @@ namespace OpenBots.Commands.Misc
 			v_AutoCloseAfter = "0";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			int closeAfter = int.Parse(v_AutoCloseAfter.ConvertUserVariableToString(engine));
-
-			dynamic variableMessage = v_Message.ConvertUserVariableToString(engine);
-
-			if (variableMessage == v_Message && variableMessage.StartsWith("{") && variableMessage.EndsWith("}"))
-				variableMessage = v_Message.ConvertUserVariableToObject(engine, nameof(v_Message), this);
-
-			string type = "";
-			if(variableMessage?.GetType().Name == typeof(KeyValuePair<,>).Name)
-            {
-				type = variableMessage.GetType().FullName;
-			}
-			else if (variableMessage != null)
-				type = variableMessage.GetType().FullName;
-
-			if (variableMessage is string)
-				variableMessage = variableMessage.Replace("\\n", Environment.NewLine);
-			else
-				variableMessage = variableMessage.GetType().ToString() + Environment.NewLine + StringMethods.ConvertObjectToString(variableMessage, variableMessage.GetType());
+			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
+			
+			string variableMessage = (string)await v_Message.EvaluateCode(engine);
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{

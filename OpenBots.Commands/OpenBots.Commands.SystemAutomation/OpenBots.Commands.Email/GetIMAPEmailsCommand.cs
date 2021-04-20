@@ -18,6 +18,7 @@ using System.Linq;
 using System.Security;
 using System.Security.Authentication;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBFile = System.IO.File;
 
@@ -171,18 +172,18 @@ namespace OpenBots.Commands.Email
 			v_IncludeEmbeddedImagesAsAttachments = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string vIMAPHost = v_IMAPHost.ConvertUserVariableToString(engine);
-			string vIMAPPort = v_IMAPPort.ConvertUserVariableToString(engine);
-			string vIMAPUserName = v_IMAPUserName.ConvertUserVariableToString(engine);
-			string vIMAPPassword = ((SecureString)v_IMAPPassword.ConvertUserVariableToObject(engine, nameof(v_IMAPPassword), this)).ConvertSecureStringToString();
-			string vIMAPSourceFolder = v_IMAPSourceFolder.ConvertUserVariableToString(engine);
-			string vIMAPFilter = v_IMAPFilter.ConvertUserVariableToString(engine);
-			string vIMAPMessageDirectory = v_IMAPMessageDirectory.ConvertUserVariableToString(engine);
-			string vIMAPAttachmentDirectory = v_IMAPAttachmentDirectory.ConvertUserVariableToString(engine);
+			string vIMAPHost = (string)await v_IMAPHost.EvaluateCode(engine);
+			string vIMAPPort = (string)await v_IMAPPort.EvaluateCode(engine);
+			string vIMAPUserName = (string)await v_IMAPUserName.EvaluateCode(engine);
+			string vIMAPPassword = ((SecureString)await v_IMAPPassword.EvaluateCode(engine, nameof(v_IMAPPassword), this)).ConvertSecureStringToString();
+			string vIMAPSourceFolder = (string)await v_IMAPSourceFolder.EvaluateCode(engine);
+			string vIMAPFilter = (string)await v_IMAPFilter.EvaluateCode(engine);
+			string vIMAPMessageDirectory = (string)await v_IMAPMessageDirectory.EvaluateCode(engine);
+			string vIMAPAttachmentDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine);
 
 			using (var client = new ImapClient())
 			{
@@ -248,7 +249,7 @@ namespace OpenBots.Commands.Email
 						outMail.Add(message);
 
 					}
-					outMail.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					outMail.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 					client.Disconnect(true, cancel.Token);
 					client.ServerCertificateValidationCallback = null;

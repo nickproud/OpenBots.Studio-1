@@ -21,7 +21,7 @@ namespace OpenBots.Commands.List.Test
         }
 
         [Fact]
-        public void AddsStringListItem()
+        public async void AddsStringListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _addListItem = new AddListItemCommand();
@@ -37,12 +37,12 @@ namespace OpenBots.Commands.List.Test
 
             _addListItem.RunCommand(_engine);
 
-            List<string> outputList = (List<string>)"{list}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> outputList = (List<string>)await "{list}".EvaluateCode(_engine, typeof(List<>));
             Assert.Equal(itemToAdd, outputList[0]);
         }
 
         [Fact]
-        public void AddsDataTableListItem()
+        public async void AddsDataTableListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _addListItem = new AddListItemCommand();
@@ -59,12 +59,12 @@ namespace OpenBots.Commands.List.Test
 
             _addListItem.RunCommand(_engine);
 
-            List<OBDataTable> outputList = (List<OBDataTable>)"{list}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<OBDataTable> outputList = (List<OBDataTable>)await "{list}".EvaluateCode(_engine, typeof(List<>));
             Assert.Equal(itemToAdd, outputList[0]);
         }
 
         [Fact]
-        public void HandlesInvalidListItem()
+        public async System.Threading.Tasks.Task HandlesInvalidListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _addListItem = new AddListItemCommand();
@@ -78,7 +78,7 @@ namespace OpenBots.Commands.List.Test
             _addListItem.v_ListName = "{list}";
             _addListItem.v_ListItem = "{itemToAdd}";
 
-            Assert.Throws<Exception>(() => _addListItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<Exception>(() => _addListItem.RunCommand(_engine));
         }
     }
 }

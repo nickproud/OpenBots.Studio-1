@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -56,12 +57,12 @@ namespace OpenBots.Commands.Excel
 			v_CellLocation = "A1";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
-			var vTargetAddress = v_CellLocation.ConvertUserVariableToString(engine);
-			var vTargetText = v_TextToSet.ConvertUserVariableToString(engine);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
+			var vTargetText = (string)await v_TextToSet.EvaluateCode(engine);
 			var excelInstance = (Application)excelObject;
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;

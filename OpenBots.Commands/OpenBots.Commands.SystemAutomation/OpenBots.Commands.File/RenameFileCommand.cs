@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using IO = System.IO;
 
@@ -47,12 +48,12 @@ namespace OpenBots.Commands.File
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFile = v_SourceFilePath.ConvertUserVariableToString(engine);
-			var newFileName = v_NewName.ConvertUserVariableToString(engine);
+			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine);
+			var newFileName = (string)await v_NewName.EvaluateCode(engine);
 
 			if (!IO.File.Exists(sourceFile))
             {

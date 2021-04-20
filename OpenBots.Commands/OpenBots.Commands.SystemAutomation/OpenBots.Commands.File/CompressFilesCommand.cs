@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using IO = System.IO;
 
@@ -68,19 +69,19 @@ namespace OpenBots.Commands.File
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable path to source file
-			var vSourceDirectoryPathOrigin = v_DirectoryPathOrigin.ConvertUserVariableToString(engine);
+			var vSourceDirectoryPathOrigin = (string)await v_DirectoryPathOrigin.EvaluateCode(engine);
 
 			// get file path to destination files
-			var vFilePathDestination = v_PathDestination.ConvertUserVariableToString(engine);
+			var vFilePathDestination = (string)await v_PathDestination.EvaluateCode(engine);
 
 			var vPassword = "";
 			// get password to extract files
 			if (v_Password != null)
-				vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+				vPassword = ((SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this)).ConvertSecureStringToString();
 
             if (IO.File.Exists(vSourceDirectoryPathOrigin))
             {
@@ -142,7 +143,7 @@ namespace OpenBots.Commands.File
 			}
 
 			//Add File Path to the output variable
-			compressedFileName.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			compressedFileName.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

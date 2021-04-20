@@ -14,6 +14,8 @@ using System.IO;
 using CSScriptLibrary;
 using Diagnostics = System.Diagnostics;
 using OBFile = System.IO.File;
+using System.Threading.Tasks;
+
 namespace OpenBots.Commands.Process
 {
 	[Serializable]
@@ -50,13 +52,13 @@ namespace OpenBots.Commands.Process
 			CommandIcon = Resources.command_script;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			Diagnostics.Process scriptProc = new Diagnostics.Process();
 
-			string scriptPath = v_ScriptPath.ConvertUserVariableToString(engine);
-			string scriptArgs = v_ScriptArgs.ConvertUserVariableToString(engine);
+			string scriptPath = (string)await v_ScriptPath.EvaluateCode(engine);
+			string scriptArgs = (string)await v_ScriptArgs.EvaluateCode(engine);
 
 			string pythonExecutable = CommonMethods.GetPythonPath(Environment.UserName, "");
 

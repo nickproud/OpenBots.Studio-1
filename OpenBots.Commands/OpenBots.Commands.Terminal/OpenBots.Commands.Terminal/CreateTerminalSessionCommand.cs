@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Terminal
@@ -89,13 +90,13 @@ namespace OpenBots.Commands.Terminal
 			v_CloseAllInstances = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var host = v_Host.ConvertUserVariableToString(engine);
-			var port = v_Port.ConvertUserVariableToString(engine);
-			var terminalType = v_TerminalType.ConvertUserVariableToString(engine);
+			var host = (string)await v_Host.EvaluateCode(engine);
+			var port = (string)await v_Port.EvaluateCode(engine);
+			var terminalType = (string)await v_TerminalType.EvaluateCode(engine);
 			bool useSsl;
 
 			if (v_UseSsl == "Yes")

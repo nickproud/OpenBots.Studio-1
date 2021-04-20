@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -57,10 +58,10 @@ namespace OpenBots.Commands.WebBrowser
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(v_WebRequestURL.ConvertUserVariableToString(engine));
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create((string)await v_WebRequestURL.EvaluateCode(engine));
 			request.Method = "GET";
 			request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121 Safari/535.2";
 			if (v_WebRequestCredentials == "Yes")
@@ -73,7 +74,7 @@ namespace OpenBots.Commands.WebBrowser
 			StreamReader reader = new StreamReader(dataStream);
 			string strResponse = reader.ReadToEnd();
 
-			strResponse.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			strResponse.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

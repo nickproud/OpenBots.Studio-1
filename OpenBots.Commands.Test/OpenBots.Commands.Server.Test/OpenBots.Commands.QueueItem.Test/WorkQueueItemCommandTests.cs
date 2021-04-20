@@ -18,7 +18,7 @@ namespace OpenBots.Commands.QueueItem.Test
         private WorkQueueItemCommand _workQueueItem;
 
         [Fact]
-        public void WorkQueueItemNoAttachments()
+        public async void WorkQueueItemNoAttachments()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -41,7 +41,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
+            var queueItemObject = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
             var client = AuthMethods.GetAuthToken();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, queueItemObject["LockTransactionKey"].ToString());
 
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.QueueItem.Test
         }
 
         [Fact]
-        public void WorkQueueItemOneAttachment()
+        public async void WorkQueueItemOneAttachment()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -78,7 +78,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = "{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
+            var queueItemObject = await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
             string queueItemString = JsonConvert.SerializeObject(queueItemObject);
             var vQueueItem = JsonConvert.DeserializeObject<QueueItemModel>(queueItemString);
 
@@ -92,7 +92,7 @@ namespace OpenBots.Commands.QueueItem.Test
         }
 
         [Fact]
-        public void WorkQueueItemMultipleAttachments()
+        public async void WorkQueueItemMultipleAttachments()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -124,7 +124,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = "{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
+            var queueItemObject = await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
             string queueItemString = JsonConvert.SerializeObject(queueItemObject);
             var vQueueItem = JsonConvert.DeserializeObject<QueueItemModel>(queueItemString);
 
@@ -140,7 +140,7 @@ namespace OpenBots.Commands.QueueItem.Test
         }
 
         [Fact]
-        public void HandlesNonExistentQueue()
+        public async System.Threading.Tasks.Task HandlesNonExistentQueue()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -161,7 +161,7 @@ namespace OpenBots.Commands.QueueItem.Test
             _workQueueItem.v_SaveAttachments = "No";
             _workQueueItem.v_AttachmentDirectory = "";
 
-            Assert.Throws<DataException>(() => _workQueueItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<DataException>(() => _workQueueItem.RunCommand(_engine));
         }
     }
 }

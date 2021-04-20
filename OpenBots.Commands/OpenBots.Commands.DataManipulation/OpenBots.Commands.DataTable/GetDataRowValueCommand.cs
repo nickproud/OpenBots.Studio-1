@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.DataTable
@@ -67,13 +68,13 @@ namespace OpenBots.Commands.DataTable
 			v_Option = "Column Index";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var dataRowVariable = v_DataRow.ConvertUserVariableToObject(engine, nameof(v_DataRow), this);
+			var dataRowVariable = await v_DataRow.EvaluateCode(engine, nameof(v_DataRow), this);
 			DataRow dataRow = (DataRow)dataRowVariable;
 
-			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);
+			var valueIndex = (string)await v_DataValueIndex.EvaluateCode(engine);
 			string value = "";
 			if (v_Option == "Column Index")
 			{
@@ -87,7 +88,7 @@ namespace OpenBots.Commands.DataTable
 				value = dataRow.Field<string>(index);
 			}
 
-			value.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			value.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -85,25 +86,24 @@ namespace OpenBots.Commands.DataTable
 			v_SortOrder = "Alphabetical";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
-			OBDataTable dataTable = (OBDataTable)dataTableVariable;
+			var dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
-			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);
+			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
 			string columnName = "";
 
 			if (v_Option == "Column Index")
 			{
-				int index = int.Parse(valueIndex);
+				int index = (int)valueIndex;
 				columnName = dataTable.Columns[index].ColumnName;
 			}
 			else if (v_Option == "Column Name")
 			{
-				columnName = valueIndex;
+				columnName = (string)valueIndex;
 			}
 
 			if (v_SortType == "Ascending")
@@ -128,7 +128,7 @@ namespace OpenBots.Commands.DataTable
 								 orderby Convert.ToInt32(row[columnName]) descending
 								 select row).CopyToDataTable();
 			}
-			dataTable.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			dataTable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

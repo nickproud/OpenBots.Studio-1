@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using static OpenBots.Commands.Terminal.Library.TerminalKeys;
 
@@ -61,11 +62,16 @@ namespace OpenBots.Commands.BZTerminal
 			v_InstanceName = "DefaultBZTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = v_XMousePosition.ConvertUserVariableToString(engine);
-			var mouseY = v_YMousePosition.ConvertUserVariableToString(engine);
+
+			int mouseX = 0, mouseY = 0; 
+			if (!string.IsNullOrEmpty(v_XMousePosition))
+				mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+
+			if (!string.IsNullOrEmpty(v_YMousePosition))
+				mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
 
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
@@ -75,8 +81,8 @@ namespace OpenBots.Commands.BZTerminal
 			BZ3270Keys selectedKey = (BZ3270Keys)Enum.Parse(typeof(BZ3270Keys), v_TerminalKey);
 			string selectedKeyValue = BZTerminalKeysDict[selectedKey];
 
-			if (!string.IsNullOrEmpty(mouseX) && !string.IsNullOrEmpty(mouseY))
-				terminalContext.BZTerminalObj.SetCursor(int.Parse(mouseY), int.Parse(mouseX));
+			if (!string.IsNullOrEmpty(v_XMousePosition) && !string.IsNullOrEmpty(v_YMousePosition))
+				terminalContext.BZTerminalObj.SetCursor(mouseY, mouseX);
 
 			terminalContext.BZTerminalObj.SendKey(selectedKeyValue);
 			terminalContext.BZTerminalObj.WaitForReady();

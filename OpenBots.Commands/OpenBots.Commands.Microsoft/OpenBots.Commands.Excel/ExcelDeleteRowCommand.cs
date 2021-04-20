@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -58,13 +59,13 @@ namespace OpenBots.Commands.Excel
 			v_ShiftUp = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
 			Worksheet workSheet = excelInstance.ActiveSheet;
-			string vRowToDelete = v_RowNumber.ConvertUserVariableToString(engine);
+			string vRowToDelete = (string)await v_RowNumber.EvaluateCode(engine);
 
 			var cells = workSheet.Range["A" + vRowToDelete, Type.Missing];
 			var entireRow = cells.EntireRow;

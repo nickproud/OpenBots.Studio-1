@@ -323,7 +323,7 @@ namespace OpenBots.Utilities
                 //build keyboard command
                 dynamic keyboardCommand = TypeMethods.CreateTypeInstance(_container, "SendKeystrokesCommand");
                 keyboardCommand.v_TextToSend = selectedKey;
-                keyboardCommand.v_WindowName = "Current Window";
+                keyboardCommand.v_WindowName = "\"Current Window\"";
                 GeneratedCommands.Add(keyboardCommand);
             }
         }

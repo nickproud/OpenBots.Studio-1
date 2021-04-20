@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OBProcess = System.Diagnostics.Process;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.System
 {
@@ -39,7 +40,7 @@ namespace OpenBots.Commands.System
 			v_ActionName = "Shutdown";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			switch (v_ActionName)
 			{

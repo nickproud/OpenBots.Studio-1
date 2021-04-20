@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -65,22 +66,22 @@ namespace OpenBots.Commands.DataTable
 			v_DataRowDataTable.Columns.Add("Data");
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
+			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 			var newRow = Dt.NewRow();
 
 			foreach (DataRow rw in v_DataRowDataTable.Rows)
 			{
-				var columnName = rw.Field<string>("Column Name").ConvertUserVariableToString(engine);
-				var data = rw.Field<string>("Data").ConvertUserVariableToString(engine);
+				var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
+				var data = (string)await rw.Field<string>("Data").EvaluateCode(engine);
 				newRow.SetField(columnName, data);
 			}
 			Dt.Rows.Add(newRow);
 
-			Dt.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
+			Dt.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

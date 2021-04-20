@@ -15,6 +15,7 @@ using System.IO;
 using System.Security;
 using System.Security.Authentication;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBFile = System.IO.File;
 
@@ -106,18 +107,18 @@ namespace OpenBots.Commands.Email
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string vSMTPHost = v_SMTPHost.ConvertUserVariableToString(engine);
-			string vSMTPPort = v_SMTPPort.ConvertUserVariableToString(engine);
-			string vSMTPUserName = v_SMTPUserName.ConvertUserVariableToString(engine);
-			string vSMTPPassword = ((SecureString)v_SMTPPassword.ConvertUserVariableToObject(engine, nameof(v_SMTPPassword), this)).ConvertSecureStringToString();
-			string vSMTPRecipients = v_SMTPRecipients.ConvertUserVariableToString(engine);
-			string vSMTPSubject = v_SMTPSubject.ConvertUserVariableToString(engine);
-			string vSMTPBody = v_SMTPBody.ConvertUserVariableToString(engine);
-			string vSMTPAttachments = v_SMTPAttachments.ConvertUserVariableToString(engine);
+			string vSMTPHost = (string)await v_SMTPHost.EvaluateCode(engine);
+			string vSMTPPort = (string)await v_SMTPPort.EvaluateCode(engine);
+			string vSMTPUserName = (string)await v_SMTPUserName.EvaluateCode(engine);
+			string vSMTPPassword = ((SecureString)await v_SMTPPassword.EvaluateCode(engine, nameof(v_SMTPPassword), this)).ConvertSecureStringToString();
+			string vSMTPRecipients = (string)await v_SMTPRecipients.EvaluateCode(engine);
+			string vSMTPSubject = (string)await v_SMTPSubject.EvaluateCode(engine);
+			string vSMTPBody = (string)await v_SMTPBody.EvaluateCode(engine);
+			string vSMTPAttachments = (string)await v_SMTPAttachments.EvaluateCode(engine);
 
 			using (var client = new SmtpClient())
 			{

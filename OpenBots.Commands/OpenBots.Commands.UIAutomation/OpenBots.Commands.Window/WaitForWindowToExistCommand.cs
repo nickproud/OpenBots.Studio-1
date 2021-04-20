@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Window
@@ -46,15 +47,15 @@ namespace OpenBots.Commands.Window
 			CommandIcon = Resources.command_window;
 
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = v_WindowName.ConvertUserVariableToString(engine);
-			var timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			var timeout = (int)await v_Timeout.EvaluateCode(engine);
 
 			var timeToEnd = DateTime.Now.AddSeconds(timeout);
 			IntPtr hWnd = IntPtr.Zero;

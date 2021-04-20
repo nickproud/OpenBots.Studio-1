@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -63,21 +64,21 @@ namespace OpenBots.Commands.Data
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get full text
-			string replacementVariable = v_InputText.ConvertUserVariableToString(engine);
+			string replacementVariable = (string)await v_InputText.EvaluateCode(engine);
 
 			//get replacement text and value
-			string replacementText = v_OldText.ConvertUserVariableToString(engine);
-			string replacementValue = v_NewText.ConvertUserVariableToString(engine);
+			string replacementText = (string)await v_OldText.EvaluateCode(engine);
+			string replacementValue = (string)await v_NewText.EvaluateCode(engine);
 
 			//perform replacement
 			replacementVariable = replacementVariable.Replace(replacementText, replacementValue);
 
 			//store in variable
-			replacementVariable.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			replacementVariable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Misc
 {
@@ -37,10 +38,10 @@ namespace OpenBots.Commands.Misc
 
         }
 
-        public override void RunCommand(object sender)
+        public async override Tasks.Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            User32Functions.GetClipboardText().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+            User32Functions.GetClipboardText().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

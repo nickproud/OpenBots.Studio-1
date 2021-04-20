@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.ErrorHandling
 {
@@ -49,7 +50,7 @@ namespace OpenBots.Commands.ErrorHandling
 			v_ExceptionType = "Exception";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			//no execution required, used as a marker by the Automation Engine
 		}

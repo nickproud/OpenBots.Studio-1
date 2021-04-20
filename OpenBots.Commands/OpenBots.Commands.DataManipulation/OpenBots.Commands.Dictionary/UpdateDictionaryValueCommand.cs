@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -57,24 +58,24 @@ namespace OpenBots.Commands.Dictionary
 			CommandIcon = Resources.command_dictionary;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vDictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
-			var vKey = v_Key.ConvertUserVariableToString(engine);
+			var vDictionaryVariable = await v_DictionaryName.EvaluateCode(engine, nameof(v_DictionaryName), this);
+			var vKey = (string)await v_Key.EvaluateCode(engine);
 
 			if (vDictionaryVariable != null)
 			{
 				if (vDictionaryVariable is Dictionary<string, string>)
 				{
-					((Dictionary<string, string>)vDictionaryVariable)[vKey] = v_Value.ConvertUserVariableToString(engine);
+					((Dictionary<string, string>)vDictionaryVariable)[vKey] = (string)await v_Value.EvaluateCode(engine);
 				}
 				else if (vDictionaryVariable is Dictionary<string, OBDataTable>)
 				{
 					OBDataTable dataTable;
-					var dataTableVariable = v_Value.ConvertUserVariableToObject(engine, nameof(v_Value), this);
+					var dataTableVariable = await v_Value.EvaluateCode(engine, nameof(v_Value), this);
 					if (dataTableVariable != null && dataTableVariable is OBDataTable)
 						dataTable = (OBDataTable)dataTableVariable;
 					else
@@ -84,7 +85,7 @@ namespace OpenBots.Commands.Dictionary
 				else if (vDictionaryVariable is Dictionary<string, MailItem>)
 				{
 					MailItem mailItem;
-					var mailItemVariable = v_Value.ConvertUserVariableToObject(engine, nameof(v_Value), this);
+					var mailItemVariable = await v_Value.EvaluateCode(engine, nameof(v_Value), this);
 					if (mailItemVariable != null && mailItemVariable is MailItem)
 						mailItem = (MailItem)mailItemVariable;
 					else
@@ -94,7 +95,7 @@ namespace OpenBots.Commands.Dictionary
 				else if (vDictionaryVariable is Dictionary<string, MimeMessage>)
 				{
 					MimeMessage mimeMessage;
-					var mimeMessageVariable = v_Value.ConvertUserVariableToObject(engine, nameof(v_Value), this);
+					var mimeMessageVariable = await v_Value.EvaluateCode(engine, nameof(v_Value), this);
 					if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 						mimeMessage = (MimeMessage)mimeMessageVariable;
 					else
@@ -104,7 +105,7 @@ namespace OpenBots.Commands.Dictionary
 				else if (vDictionaryVariable is Dictionary<string, IWebElement>)
 				{
 					IWebElement webElement;
-					var webElementVariable = v_Value.ConvertUserVariableToObject(engine, nameof(v_Value), this);
+					var webElementVariable = await v_Value.EvaluateCode(engine, nameof(v_Value), this);
 					if (webElementVariable != null && webElementVariable is IWebElement)
 						webElement = (IWebElement)webElementVariable;
 					else
@@ -114,7 +115,7 @@ namespace OpenBots.Commands.Dictionary
 				else if (vDictionaryVariable is Dictionary<string, object>)
 				{
 					object objectItem;
-					var objectItemVariable = v_Value.ConvertUserVariableToObject(engine, nameof(v_Value), this);
+					var objectItemVariable = await v_Value.EvaluateCode(engine, nameof(v_Value), this);
 					if (objectItemVariable != null && objectItemVariable is object)
 						objectItem = (object)objectItemVariable;
 					else

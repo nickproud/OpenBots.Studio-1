@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Misc
 {
@@ -28,7 +29,7 @@ namespace OpenBots.Commands.Misc
 
         }
 
-        public override void RunCommand(object sender, ScriptAction parentCommand)
+        public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
         {
             var engine = (IAutomationEngineInstance)sender;
 

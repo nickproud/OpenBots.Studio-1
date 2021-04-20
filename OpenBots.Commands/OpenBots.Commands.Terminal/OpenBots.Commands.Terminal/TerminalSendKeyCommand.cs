@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Terminal
@@ -71,12 +72,18 @@ namespace OpenBots.Commands.Terminal
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = v_XMousePosition.ConvertUserVariableToString(engine);
-			var mouseY = v_YMousePosition.ConvertUserVariableToString(engine);
-			var vTimeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine)) * 1000;
+
+			int mouseX = 0, mouseY = 0;
+			if (!string.IsNullOrEmpty(v_XMousePosition))
+				mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+
+			if (!string.IsNullOrEmpty(v_YMousePosition))
+				mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
+
+			var vTimeout = ((int)await v_Timeout.EvaluateCode(engine)) * 1000;
 			OpenEmulator terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)
@@ -84,8 +91,8 @@ namespace OpenBots.Commands.Terminal
 
 			TnKey selectedKey = (TnKey)Enum.Parse(typeof(TnKey), v_TerminalKey);
 
-			if (!string.IsNullOrEmpty(mouseX) && !string.IsNullOrEmpty(mouseY))
-				terminalObject.TN3270.SetCursor(int.Parse(mouseX), int.Parse(mouseY));
+			if (!string.IsNullOrEmpty(v_XMousePosition) && !string.IsNullOrEmpty(v_YMousePosition))
+				terminalObject.TN3270.SetCursor(mouseX, mouseY);
 
 			terminalObject.TN3270.SendKey(false, selectedKey, vTimeout);
 			terminalObject.Redraw();

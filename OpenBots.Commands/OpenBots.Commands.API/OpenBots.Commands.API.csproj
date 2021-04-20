@@ -50,8 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExecuteDLLCommand.cs" />
-    <Compile Include="ExecuteRESTAPICommand.cs" />
+    <Compile Include="ExecuteAPICommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

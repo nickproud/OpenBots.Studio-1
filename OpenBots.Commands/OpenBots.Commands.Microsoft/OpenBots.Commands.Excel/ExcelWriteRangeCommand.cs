@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using DataTable = System.Data.DataTable;
@@ -72,16 +73,16 @@ namespace OpenBots.Commands.Excel
 			v_CellLocation = "A1";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vTargetAddress = v_CellLocation.ConvertUserVariableToString(engine);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 
 			var excelInstance = (Application)excelObject;
 			var excelSheet = (Worksheet)excelInstance.ActiveSheet;
 
-			DataTable Dt = (DataTable)v_DataTableToSet.ConvertUserVariableToObject(engine, nameof(v_DataTableToSet), this);
+			DataTable Dt = (DataTable)await v_DataTableToSet.EvaluateCode(engine, nameof(v_DataTableToSet), this);
 			if (string.IsNullOrEmpty(vTargetAddress) || vTargetAddress.Contains(":")) 
 				throw new Exception("Cell Location is invalid or empty");
 

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -95,14 +96,18 @@ namespace OpenBots.Commands.WebBrowser
 			v_InstanceTracking = "Forget Instance";
 			v_BrowserWindowOption = "Maximize";
 			v_EngineType = "Chrome";
-			v_URL = "https://";
+			v_URL = "\"https://\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var convertedOptions = v_SeleniumOptions.ConvertUserVariableToString(engine);
-			var vURL = v_URL.ConvertUserVariableToString(engine);
+
+			string convertedOptions = "";
+			if (!string.IsNullOrEmpty(v_SeleniumOptions))
+				convertedOptions = (string)await v_SeleniumOptions.EvaluateCode(engine);
+
+			var vURL = (string)await v_URL.EvaluateCode(engine);
 
 			IWebDriver webDriver;
 

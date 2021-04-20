@@ -3,6 +3,9 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
 using Serilog.Core;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis.Scripting;
+using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
+using RSScript = Microsoft.CodeAnalysis.Scripting.Script;
 
 namespace OpenBots.Core.Model.EngineModel
 {
@@ -13,7 +16,7 @@ namespace OpenBots.Core.Model.EngineModel
         public IContainer Container { get; set; }
         public IfrmScriptBuilder ScriptBuilder { get; set; }
         public Logger EngineLogger { get; set; }
-        public List<ScriptVariable> Variables { get; set; }
+        public List<OBScriptVariable> Variables { get; set; }
         public List<ScriptArgument> Arguments { get; set; }
         public List<ScriptElement> Elements { get; set; }
         public Dictionary<string, object> AppInstances { get; set; }
@@ -21,15 +24,18 @@ namespace OpenBots.Core.Model.EngineModel
         public IfrmScriptEngine ScriptEngine { get; set; }
         public bool IsTest { get; set; } = false;
         public int StartFromLineNumber { get; set; } = 1;
+        public RSScript EngineScript { get; set; }
+        public ScriptState EngineScriptState { get; set; }
         public bool IsDebugMode { get; set; }
+        public bool IsChildEngine { get; set; }
 
         public EngineContext()
         {
         }
 
         public EngineContext(string filePath, string projectPath, IContainer container, IfrmScriptBuilder scriptBuilder, Logger engineLogger,
-            List<ScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, object> appInstances, 
-            Dictionary<string, AssemblyReference> importedNamespaces, IfrmScriptEngine scriptEngine, int startFromLineNumber, bool isDebugMode)
+            List<OBScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, object> appInstances, 
+            Dictionary<string, AssemblyReference> importedNamespaces, IfrmScriptEngine scriptEngine, int startFromLineNumber, bool isDebugMode, bool isChildEngine)
         {
             FilePath = filePath;
             ProjectPath = projectPath;
@@ -44,6 +50,7 @@ namespace OpenBots.Core.Model.EngineModel
             ScriptEngine = scriptEngine;
             StartFromLineNumber = startFromLineNumber;
             IsDebugMode = isDebugMode;
+            IsChildEngine = isChildEngine;
         }
     }
 }

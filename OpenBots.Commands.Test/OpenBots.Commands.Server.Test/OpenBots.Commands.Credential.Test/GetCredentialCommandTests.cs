@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Credential.Test
          * Place the folder into your openbots core resources directory. Ex. OpenBots.Studio\OpenBots.Core\Resources\Credentials
         */
         [Fact]
-        public void GetsCredential()
+        public async void GetsCredential()
         {
             _engine = new AutomationEngineInstance(null);
             _getCredential = new GetCredentialCommand();
@@ -48,8 +48,8 @@ namespace OpenBots.Commands.Credential.Test
             string plainPassword = Resources.testCredPassword;
 
             SecureString expectedPass = plainPassword.ConvertStringToSecureString();
-            Assert.Equal(username, "{username}".ConvertUserVariableToString(_engine));
-            Assert.Equal(expectedPass.ToString(),"{password}".ConvertUserVariableToObject(_engine, typeof(SecureString)).ToString());
+            Assert.Equal(username, (string)await "{username}".EvaluateCode(_engine));
+            Assert.Equal(expectedPass.ToString(),(await "{password}".EvaluateCode(_engine, typeof(SecureString))).ToString());
         }
     }
 }

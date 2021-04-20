@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.SecureData
 {
@@ -46,12 +47,12 @@ namespace OpenBots.Commands.SecureData
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			SecureString secureStringValue = v_Input.ConvertUserVariableToString(engine).ConvertStringToSecureString();
+			SecureString secureStringValue = ((string)await v_Input.EvaluateCode(engine)).ConvertStringToSecureString();
 
-			secureStringValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
+			secureStringValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

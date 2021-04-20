@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Folder
@@ -38,11 +39,11 @@ namespace OpenBots.Commands.Folder
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
+			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine);
 
 			//delete folder
 			Directory.Delete(sourceFolder, true);

@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Data.Test
         [Theory]
         [InlineData("File Path")]
         [InlineData("File URL")]
-        public void GetsPDFText(string filePathOrUrl)
+        public async void GetsPDFText(string filePathOrUrl)
         {
             _getPDFText = new GetPDFTextCommand();
             _engine = new AutomationEngineInstance(null);
@@ -37,11 +37,11 @@ namespace OpenBots.Commands.Data.Test
 
             _getPDFText.RunCommand(_engine);
 
-            Assert.Equal("Dummy PDF file", "{outputText}".ConvertUserVariableToString(_engine));
+            Assert.Equal("Dummy PDF file", (string)await "{outputText}".EvaluateCode(_engine));
         }
 
         [Fact]
-        public void HandlesInvalidFilepath()
+        public async System.Threading.Tasks.Task HandlesInvalidFilepath()
         {
             _getPDFText = new GetPDFTextCommand();
             _engine = new AutomationEngineInstance(null);
@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Data.Test
             _getPDFText.v_FilePath = "{filepath}";
             _getPDFText.v_OutputUserVariableName = "{outputText}";
 
-            Assert.Throws<FileNotFoundException>(() => _getPDFText.RunCommand(_engine));
+            await Assert.ThrowsAsync<FileNotFoundException>(() => _getPDFText.RunCommand(_engine));
         }
     }
 }

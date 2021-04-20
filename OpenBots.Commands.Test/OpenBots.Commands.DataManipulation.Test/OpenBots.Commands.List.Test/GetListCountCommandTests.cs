@@ -12,7 +12,7 @@ namespace OpenBots.Commands.List.Test
         private GetListCountCommand _getListCount;
 
         [Fact]
-        public void GetsListCount()
+        public async void GetsListCount()
         {
             _engine = new AutomationEngineInstance(null);
             _getListCount = new GetListCountCommand();
@@ -30,7 +30,7 @@ namespace OpenBots.Commands.List.Test
 
             _getListCount.RunCommand(_engine);
 
-            Assert.Equal(inputList.Count, Int32.Parse("{output}".ConvertUserVariableToString(_engine)));
+            Assert.Equal(inputList.Count, (Int32)await "{output}".EvaluateCode(_engine));
         }
     }
 }

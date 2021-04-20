@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Asset
 {
@@ -49,11 +50,11 @@ namespace OpenBots.Commands.Asset
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
-			var vAppendText = v_AppendText.ConvertUserVariableToString(engine);
+			var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
+			var vAppendText = (string)await v_AppendText.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			var asset = AssetMethods.GetAsset(client, vAssetName, "Text");

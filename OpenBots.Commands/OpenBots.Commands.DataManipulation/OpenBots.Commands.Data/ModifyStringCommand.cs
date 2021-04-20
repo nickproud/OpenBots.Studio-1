@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -57,11 +58,11 @@ namespace OpenBots.Commands.Data
 			v_TextOperation = "To Upper Case";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var stringValue = v_InputText.ConvertUserVariableToString(engine);
+			var stringValue = (string)await v_InputText.EvaluateCode(engine);
 
 			switch (v_TextOperation)
 			{
@@ -83,7 +84,7 @@ namespace OpenBots.Commands.Data
 					throw new NotImplementedException("Conversion Type '" + v_TextOperation + "' not implemented!");
 			}
 
-			stringValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			stringValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

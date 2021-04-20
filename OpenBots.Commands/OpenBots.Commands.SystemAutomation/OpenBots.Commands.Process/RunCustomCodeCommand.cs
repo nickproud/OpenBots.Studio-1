@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
 
@@ -63,10 +64,10 @@ namespace OpenBots.Commands.Process
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var customCode = v_Code.ConvertUserVariableToString(engine);
+			var customCode = (string)await v_Code.EvaluateCode(engine);
 
 			if (customCode.Contains("static void Main"))
 			{
@@ -122,7 +123,7 @@ namespace OpenBots.Commands.Process
 
 				if(v_OutputUserVariableName.Length != 0)
 				{
-					((object)result).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					((object)result).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 				}
 			}
 		}
@@ -143,7 +144,7 @@ namespace OpenBots.Commands.Process
 			return base.GetDisplayValue() + $" [Store Data in '{v_OutputUserVariableName}']";
 		}
 
-		private void CompileAndExecute(string customCode, object sender)
+		private async void CompileAndExecute(string customCode, object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//compile custom code
@@ -159,7 +160,7 @@ namespace OpenBots.Commands.Process
 			}
 			else
 			{
-				var arguments = v_Args.ConvertUserVariableToString(engine);
+				var arguments = (string)await v_Args.EvaluateCode(engine);
 
 				//run code, OpenBots will wait for the app to exit before resuming
 				using (Diagnostics.Process scriptProc = new Diagnostics.Process())
@@ -180,7 +181,7 @@ namespace OpenBots.Commands.Process
 					if (v_OutputUserVariableName != "")
 					{
 						var output = scriptProc.StandardOutput.ReadToEnd();
-						output.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+						output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 					}
 				}
 			}

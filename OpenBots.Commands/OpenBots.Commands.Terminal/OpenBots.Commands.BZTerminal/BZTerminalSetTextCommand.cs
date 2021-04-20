@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.BZTerminal
@@ -70,20 +71,26 @@ namespace OpenBots.Commands.BZTerminal
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = v_XMousePosition.ConvertUserVariableToString(engine);
-			var mouseY = v_YMousePosition.ConvertUserVariableToString(engine);
-			var textToSend = v_TextToSet.ConvertUserVariableToString(engine);
-			var timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+
+			int mouseX = 0, mouseY = 0;
+			if (!string.IsNullOrEmpty(v_XMousePosition))
+				mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+
+			if (!string.IsNullOrEmpty(v_YMousePosition))
+				mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
+
+			var textToSend = (string)await v_TextToSet.EvaluateCode(engine);
+			var timeout = (int)await v_Timeout.EvaluateCode(engine);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
-			if (!string.IsNullOrEmpty(mouseX) && !string.IsNullOrEmpty(mouseY))
-				terminalContext.BZTerminalObj.SetCursor(int.Parse(mouseY), int.Parse(mouseX));
+			if (!string.IsNullOrEmpty(v_XMousePosition) && !string.IsNullOrEmpty(v_YMousePosition))
+				terminalContext.BZTerminalObj.SetCursor(mouseY, mouseX);
 
 			terminalContext.BZTerminalObj.SendKey(textToSend);
 			terminalContext.BZTerminalObj.WaitForText(textToSend, 1, 1, timeout);

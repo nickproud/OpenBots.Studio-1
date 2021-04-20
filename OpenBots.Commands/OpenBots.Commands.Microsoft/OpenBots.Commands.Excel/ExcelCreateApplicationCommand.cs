@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -89,10 +90,10 @@ namespace OpenBots.Commands.Excel
 			v_CloseAllInstances = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFilePath = v_FilePath.ConvertUserVariableToString(engine);
+			var vFilePath = (string)await (v_FilePath).EvaluateCode(engine);
 
 			if (v_CloseAllInstances == "Yes")
 			{

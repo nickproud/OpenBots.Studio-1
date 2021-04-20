@@ -29,7 +29,7 @@ namespace OpenBots.Commands.Task.Test
         }
 
         [Fact]
-        public void RunsTask()
+        public async void RunsTask()
         {
             _engine = new AutomationEngineInstance(null);
             _runTask = new RunTaskCommand();
@@ -132,7 +132,7 @@ namespace OpenBots.Commands.Task.Test
 
             _engine.ExecuteCommand(runTaskAction);
 
-            Assert.Equal("outputValue", "{outputVar}".ConvertUserVariableToString(_engine));
+            Assert.Equal("outputValue", (string)await "{outputVar}".EvaluateCode(_engine));
             Assert.True(OBIO.File.Exists(Path.Combine(filePath, @"test.txt")));
             Assert.Equal("inputValue", OBIO.File.ReadAllText(Path.Combine(filePath, @"test.txt")));
 

@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.System
@@ -76,10 +77,10 @@ namespace OpenBots.Commands.System
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var environmentVariable = v_EnvVariableName.ConvertUserVariableToString(engine);
+			var environmentVariable = (string)await v_EnvVariableName.EvaluateCode(engine);
 			
 			var envVariables = Environment.GetEnvironmentVariables();
 			var envDict = envVariables.Keys.Cast<object>().ToDictionary(k => k.ToString(), v => envVariables[v]);
@@ -89,7 +90,7 @@ namespace OpenBots.Commands.System
 			if (string.IsNullOrEmpty(envValue))
 				envValue = "null";
 
-			envValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			envValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

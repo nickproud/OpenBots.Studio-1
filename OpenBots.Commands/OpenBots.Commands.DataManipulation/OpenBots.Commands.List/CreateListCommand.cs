@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Exception = System.Exception;
 using OBDataTable = System.Data.DataTable;
@@ -62,12 +63,13 @@ namespace OpenBots.Commands.List
 			v_ListType = "String";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 			dynamic vNewList = null;
 			string[] splitListItems = null;
+			string typeString = "string";
 
 			if (!string.IsNullOrEmpty(v_ListItems))
 			{
@@ -77,21 +79,23 @@ namespace OpenBots.Commands.List
 			switch (v_ListType)
 			{
 				case "String":
+					typeString = "string";
 					vNewList = new List<string>();
 					if (splitListItems != null)
 					{
 						foreach (string item in splitListItems)
-							((List<string>)vNewList).Add(item.ConvertUserVariableToString(engine));
+							((List<string>)vNewList).Add((string)await VariableMethods.EvaluateCode(item, engine, typeof(string)));
 					}                   
 					break;
 				case "DataTable":
+					typeString = "DataTable";
 					vNewList = new List<OBDataTable>();
 					if (splitListItems != null)
 					{                       
 						foreach (string item in splitListItems)
 						{
 							OBDataTable dataTable;
-							var dataTableVariable = item.ConvertUserVariableToObject(engine, typeof(OBDataTable));
+							var dataTableVariable = await VariableMethods.EvaluateCode(item, engine, typeof(OBDataTable));
 							if (dataTableVariable != null && dataTableVariable is OBDataTable)
 								dataTable = (OBDataTable)dataTableVariable;
 							else
@@ -101,13 +105,14 @@ namespace OpenBots.Commands.List
 					}
 					break;
 				case "MailItem (Outlook)":
+					typeString = "MailItem";
 					vNewList = new List<MailItem>();
 					if (splitListItems != null)
 					{
 						foreach (string item in splitListItems)
 						{
 							MailItem mailItem;
-							var mailItemVariable = item.ConvertUserVariableToObject(engine, typeof(MailItem));
+							var mailItemVariable = await item.EvaluateCode(engine, typeof(MailItem));
 							if (mailItemVariable != null && mailItemVariable is MailItem)
 								mailItem = (MailItem)mailItemVariable;
 							else
@@ -117,13 +122,14 @@ namespace OpenBots.Commands.List
 					}
 					break;
 				case "MimeMessage (IMAP/SMTP)":
+					typeString = "MimeMessage";
 					vNewList = new List<MimeMessage>();
 					if (splitListItems != null)
 					{
 						foreach (string item in splitListItems)
 						{
 							MimeMessage mimeMessage;
-							var mimeMessageVariable = item.ConvertUserVariableToObject(engine, typeof(MimeMessage));
+							var mimeMessageVariable = await item.EvaluateCode(engine, typeof(MimeMessage));
 							if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 								mimeMessage = (MimeMessage)mimeMessageVariable;
 							else
@@ -133,13 +139,14 @@ namespace OpenBots.Commands.List
 					}
 					break;
 				case "IWebElement":
+					typeString = "IWebElement";
 					vNewList = new List<IWebElement>();
 					if (splitListItems != null)
 					{
 						foreach (string item in splitListItems)
 						{
 							IWebElement webElement;
-							var webElementVariable = item.ConvertUserVariableToObject(engine, typeof(IWebElement));
+							var webElementVariable = await item.EvaluateCode(engine, typeof(IWebElement));
 							if (webElementVariable != null && webElementVariable is IWebElement)
 								webElement = (IWebElement)webElementVariable;
 							else
@@ -149,8 +156,7 @@ namespace OpenBots.Commands.List
 					}
 					break;
 			}
-
-			((object)vNewList).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			vNewList.SetVariableValue(engine, v_OutputUserVariableName, typeof(List<>));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

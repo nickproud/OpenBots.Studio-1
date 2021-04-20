@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Exception = System.Exception;
 using OBDataTable = System.Data.DataTable;
@@ -49,13 +50,14 @@ namespace OpenBots.Commands.List
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vListVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
-			var vListIndex = int.Parse(v_ListIndex.ConvertUserVariableToString(engine));
+			//var vListVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
+			var vListVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
+			var vListIndex = (int)await VariableMethods.EvaluateCode(v_ListIndex, engine, typeof(int));
 
 			if (vListVariable != null)
 			{
@@ -74,6 +76,7 @@ namespace OpenBots.Commands.List
 			}
 			else
 				throw new Exception("Attempted to write data to a variable, but the variable was not found. Enclose variables within braces, ex. {vVariable}");
+			vListVariable.SetVariableValue(engine, v_ListName, typeof(List<>));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

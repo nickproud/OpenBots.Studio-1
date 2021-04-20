@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Excel
 {
@@ -58,14 +59,14 @@ namespace OpenBots.Commands.Excel
 			v_ShiftUp = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
 			Worksheet excelSheet = excelInstance.ActiveSheet;
 
-			string vRange = v_Range.ConvertUserVariableToString(engine);
+			string vRange = (string)await v_Range.EvaluateCode(engine);
 			var splitRange = vRange.Split(':');
 			Range cellRange;
             Range sourceRange = excelSheet.UsedRange;

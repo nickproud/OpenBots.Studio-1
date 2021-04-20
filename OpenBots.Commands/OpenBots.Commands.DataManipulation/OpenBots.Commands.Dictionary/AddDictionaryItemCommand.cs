@@ -14,6 +14,7 @@ using Microsoft.Office.Interop.Outlook;
 using MimeKit;
 using OpenQA.Selenium;
 using OBDataTable = System.Data.DataTable;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Dictionary
 {
@@ -58,10 +59,10 @@ namespace OpenBots.Commands.Dictionary
 			v_ColumnNameDataTable.Columns.Add("Values");
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var dictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
+			var dictionaryVariable = await v_DictionaryName.EvaluateCode(engine, nameof(v_DictionaryName), this);
 			if (dictionaryVariable != null)
 			{
 				if (dictionaryVariable is Dictionary<string, string>)
@@ -69,8 +70,8 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						((Dictionary<string, string>)dictionaryVariable).Add(
-							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine),
-							rwColumnName.Field<string>("Values").ConvertUserVariableToString(engine));
+							(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine),
+							(string)await rwColumnName.Field<string>("Values").EvaluateCode(engine));
 					}
 				}
 				else if (dictionaryVariable is Dictionary<string, OBDataTable>)
@@ -78,13 +79,13 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						OBDataTable dataTable;
-						var dataTableVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(OBDataTable));
+						var dataTableVariable = await rwColumnName.Field<string>("Values").EvaluateCode(engine, typeof(OBDataTable));
 						if (dataTableVariable != null && dataTableVariable is OBDataTable)
 							dataTable = (OBDataTable)dataTableVariable;
 						else
 							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 						((Dictionary<string, OBDataTable>)dictionaryVariable).Add(
-							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), dataTable);
+							(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine), dataTable);
 					}
 				}
 				else if (dictionaryVariable is Dictionary<string, MailItem>)
@@ -92,13 +93,13 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						MailItem mailItem;
-						var mailItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(MailItem));
+						var mailItemVariable = await rwColumnName.Field<string>("Values").EvaluateCode(engine, typeof(MailItem));
 						if (mailItemVariable != null && mailItemVariable is MailItem)
 							mailItem = (MailItem)mailItemVariable;
 						else
 							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 						((Dictionary<string, MailItem>)dictionaryVariable).Add(
-							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), mailItem);
+							(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine), mailItem);
 					}
 				}
 				else if (dictionaryVariable is Dictionary<string, MimeMessage>)
@@ -106,13 +107,13 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						MimeMessage mimeMessage;
-						var mimeMessageVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(MimeMessage));
+						var mimeMessageVariable = await rwColumnName.Field<string>("Values").EvaluateCode(engine, typeof(MimeMessage));
 						if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
 							mimeMessage = (MimeMessage)mimeMessageVariable;
 						else
 							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 						((Dictionary<string, MimeMessage>)dictionaryVariable).Add(
-							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), mimeMessage);
+							(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine), mimeMessage);
 					}
 				}
 				else if (dictionaryVariable is Dictionary<string, IWebElement>)
@@ -120,13 +121,13 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						IWebElement webElement;
-						var webElementVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(IWebElement));
+						var webElementVariable = await rwColumnName.Field<string>("Values").EvaluateCode(engine, typeof(IWebElement));
 						if (webElementVariable != null && webElementVariable is IWebElement)
 							webElement = (IWebElement)webElementVariable;
 						else
 							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 						((Dictionary<string, IWebElement>)dictionaryVariable).Add(
-							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), webElement);
+							(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine), webElement);
 					}
 				}
 				else if (dictionaryVariable is Dictionary<string, object>)
@@ -134,13 +135,13 @@ namespace OpenBots.Commands.Dictionary
 					foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 					{
 						object objectItem;
-						var objectItemVariable = rwColumnName.Field<string>("Values").ConvertUserVariableToObject(engine, typeof(object));
+						var objectItemVariable = await rwColumnName.Field<string>("Values").EvaluateCode(engine, typeof(object));
 						if (objectItemVariable != null && objectItemVariable is object)
 							objectItem = (object)objectItemVariable;
 						else
 							throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
 						((Dictionary<string, object>)dictionaryVariable).Add(
-							rwColumnName.Field<string>("Keys").ConvertUserVariableToString(engine), objectItem);
+							(string)await rwColumnName.Field<string>("Keys").EvaluateCode(engine), objectItem);
 					}
 				}
 				else
@@ -148,7 +149,7 @@ namespace OpenBots.Commands.Dictionary
 					throw new NotSupportedException("Dictionary type not supported");
 				}
 
-			dictionaryVariable.StoreInUserVariable(engine, v_DictionaryName, nameof(v_DictionaryName), this);
+			dictionaryVariable.SetVariableValue(engine, v_DictionaryName, nameof(v_DictionaryName), this);
 			}
 			else
 			{

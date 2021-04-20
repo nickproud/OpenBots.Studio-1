@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Image
@@ -45,13 +46,12 @@ namespace OpenBots.Commands.Image
 			SelectionName = "Perform OCR";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_camera;
-
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFilePath = v_FilePath.ConvertUserVariableToString(engine);
+			var vFilePath = (string)await v_FilePath.EvaluateCode(engine);
 
 			OneNoteOCR ocrEngine = new OneNoteOCR();
 			OCRText[] ocrTextArray = ocrEngine.OcrTexts(vFilePath).ToArray();
@@ -60,7 +60,7 @@ namespace OpenBots.Commands.Image
 			foreach (var text in ocrTextArray)
 				endResult += text.Text;
 
-			endResult.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			endResult.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

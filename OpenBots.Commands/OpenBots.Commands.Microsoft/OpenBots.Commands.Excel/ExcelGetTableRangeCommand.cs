@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -64,18 +65,18 @@ namespace OpenBots.Commands.Microsoft
             v_InstanceName = "DefaultExcel";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = v_SheetNameExcelTable.ConvertUserVariableToString(engine);
-            var vTableName = v_TableName.ConvertUserVariableToString(engine);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
             var excelTable = workSheetExcelTable.ListObjects[vTableName];
 
             //Extract a range of Excel Table and store in Output Range Variable
-            excelTable.Range.Address.Replace(@"$", string.Empty).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+            excelTable.Range.Address.Replace(@"$", string.Empty).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

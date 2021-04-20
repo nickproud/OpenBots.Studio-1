@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -69,18 +70,18 @@ namespace OpenBots.Commands.DataTable
 			v_RemoveOption = "Tuple";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vSearchItem = v_SearchItem.ConvertUserVariableToString(engine);
+			dynamic vSearchItem = await v_SearchItem.EvaluateCode(engine);
 
-			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
+			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
 			if(v_RemoveOption == "Index")
             {
-                Dt.Rows[Convert.ToInt32(vSearchItem)].Delete();
+                Dt.Rows[(int)vSearchItem].Delete();
 				Dt.AcceptChanges();
-				Dt.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
+				Dt.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
 			}
             else
             {
@@ -129,7 +130,7 @@ namespace OpenBots.Commands.DataTable
 						Dt.Rows.Remove(item);
 					}
 					Dt.AcceptChanges();
-					Dt.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
+					Dt.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
 				}
 
 				//If And operation is checked
@@ -158,7 +159,7 @@ namespace OpenBots.Commands.DataTable
 					Dt.AcceptChanges();
 
 					//Assigns Datatable to newly updated Datatable
-					Dt.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
+					Dt.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
 				}
 			}
 			

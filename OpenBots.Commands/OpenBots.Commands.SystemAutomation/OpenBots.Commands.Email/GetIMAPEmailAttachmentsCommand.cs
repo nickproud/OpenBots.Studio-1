@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBFile = System.IO.File;
 
@@ -67,12 +68,12 @@ namespace OpenBots.Commands.Email
             CommandIcon = Resources.command_smtp;
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            MimeMessage email = (MimeMessage)v_IMAPMimeMessage.ConvertUserVariableToObject(engine, nameof(v_IMAPMimeMessage), this);
-            bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.ConvertUserVariableToString(engine).Equals("Yes");
-            string attDirectory = v_IMAPAttachmentDirectory.ConvertUserVariableToString(engine);
+            MimeMessage email = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine, nameof(v_IMAPMimeMessage), this);
+            bool includeEmbeds = ((string)await v_IncludeEmbeddedImagesAsAttachments.EvaluateCode(engine)).Equals("Yes");
+            string attDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine);
 
             List<string> attachmentList = new List<string>();
             
@@ -107,7 +108,7 @@ namespace OpenBots.Commands.Email
                 }
             }
             
-            attachmentList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+            attachmentList.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

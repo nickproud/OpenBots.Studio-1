@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -52,19 +53,16 @@ namespace OpenBots.Commands.Data
 			CommandEnabled = true;
 			CommandIcon = Resources.command_stopwatch;
 
-			v_InputData = "{DateTime.Now}";
-			v_ToStringFormat = "MM/dd/yyyy";
+			v_InputData = "DateTime.Now";
+			v_ToStringFormat = "\"MM/dd/yyyy\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var formatting = v_ToStringFormat.ConvertUserVariableToString(engine);
+			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine);
 
-			dynamic input = v_InputData.ConvertUserVariableToString(engine);
-
-			if (input == v_InputData && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_InputData.ConvertUserVariableToObject(engine, nameof(v_InputData), this);
+			dynamic input = await v_InputData.EvaluateCode(engine);
 
 			DateTime variableDate;
 
@@ -77,7 +75,7 @@ namespace OpenBots.Commands.Data
 
 			string formattedString  = variableDate.ToString(formatting);
 				
-			formattedString.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			formattedString.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

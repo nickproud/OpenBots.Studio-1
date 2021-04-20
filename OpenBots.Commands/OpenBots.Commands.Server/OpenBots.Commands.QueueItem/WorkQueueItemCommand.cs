@@ -17,6 +17,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.QueueItem
@@ -83,11 +84,11 @@ namespace OpenBots.Commands.QueueItem
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueName = v_QueueName.ConvertUserVariableToString(engine);
-			var vAttachmentDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
+			var vQueueName = (string)await v_QueueName.EvaluateCode(engine);
+			var vAttachmentDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
 			Dictionary<string, object> queueItemDict = new Dictionary<string, object>();
 
 			var client = AuthMethods.GetAuthToken();
@@ -108,7 +109,7 @@ namespace OpenBots.Commands.QueueItem
 			if (queueItem == null)
 			{
 				queueItemDict = null;
-				queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				queueItemDict.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 				return;
 			}
 
@@ -126,7 +127,7 @@ namespace OpenBots.Commands.QueueItem
 													   kvp.Key == "LockedUntilUTC")
 										 .ToDictionary(i => i.Key, i => i.Value);
 
-			queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			queueItemDict.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 			if (v_SaveAttachments == "Yes")
 			{

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -80,16 +81,21 @@ namespace OpenBots.Commands.Data
 			v_AMorPM = "AM";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vYear = int.Parse(v_Year.ConvertUserVariableToString(engine));
-			var vMonth = v_Month.ConvertUserVariableToString(engine);
-			var vDay = int.Parse(v_Day.ConvertUserVariableToString(engine));
-			var vTime = v_Time.ConvertUserVariableToString(engine);
+			var vYear = (int)await v_Year.EvaluateCode(engine);
+			var vMonth = await v_Month.EvaluateCode(engine);
+			var vDay = (int)await v_Day.EvaluateCode(engine);
+			var vTime = (string)await v_Time.EvaluateCode(engine);
 
-
-			if (!int.TryParse(vMonth, out int vMonthInt))
+			int vMonthInt = 0;
+			string vMonthString = "";
+			if (vMonth.GetType() == typeof(string))
+				vMonthString = (string)vMonth;
+			else
+				vMonthInt = (int)vMonth;
+			if (vMonthString != "")
 			{
 				Dictionary<string, int> monthDict = new Dictionary<string, int>()
 				{
@@ -106,7 +112,7 @@ namespace OpenBots.Commands.Data
 					{ "nov", 11 },
 					{ "dec", 12 },
 				};
-				vMonthInt = monthDict[vMonth.ToLower().Substring(0,3)];
+				vMonthInt = monthDict[vMonthString.ToLower().Substring(0,3)];
 			}
 			
 
@@ -131,7 +137,7 @@ namespace OpenBots.Commands.Data
 			else
 				date = new DateTime(vYear, vMonthInt, vDay);
 
-			date.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			date.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

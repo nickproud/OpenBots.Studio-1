@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -48,11 +49,11 @@ namespace OpenBots.Commands.Dictionary
 			CommandIcon = Resources.command_dictionary;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable by regular name
-			var DictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
+			var DictionaryVariable = await v_DictionaryName.EvaluateCode(engine, nameof(v_DictionaryName), this);
 
 			//if still null then throw exception
 			if (DictionaryVariable == null)
@@ -78,7 +79,7 @@ namespace OpenBots.Commands.Dictionary
 				throw new DataException("Invalid dictionary type, please provide valid dictionary type.");
 
 			int count = DictionaryToCount.Count;
-			count.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			count.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

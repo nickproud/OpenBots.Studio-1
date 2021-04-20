@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -95,22 +96,19 @@ namespace OpenBots.Commands.Data
 			CommandEnabled = true;
 			CommandIcon = Resources.command_stopwatch;
 
-			v_InputDate = "{DateTime.Now}";
+			v_InputDate = "DateTime.Now";
 			v_CalculationMethod = "Add Second(s)";
-			v_ToStringFormat = "MM/dd/yyyy hh:mm:ss";
+			v_ToStringFormat = "\"MM/dd/yyyy hh:mm:ss\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var formatting = v_ToStringFormat.ConvertUserVariableToString(engine);
-			var variableIncrement = v_Increment.ConvertUserVariableToString(engine);
+			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine);
+			var variableIncrement = (double)await v_Increment.EvaluateCode(engine);
 
-			dynamic input = v_InputDate.ConvertUserVariableToString(engine);
-
-			if (input == v_InputDate && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_InputDate.ConvertUserVariableToObject(engine, nameof(v_InputDate), this);
+			dynamic input = await v_InputDate.EvaluateCode(engine);
 
 			DateTime variableDate;
 
@@ -122,11 +120,7 @@ namespace OpenBots.Commands.Data
 				throw new InvalidDataException($"{v_InputDate} is not a valid DateTime");
 
 			//get increment value
-			double requiredInterval;
-
-			//convert to double
-			if (!double.TryParse(variableIncrement, out requiredInterval))
-				throw new InvalidDataException("Increment was unable to be parsed - " + variableIncrement);
+			double requiredInterval = variableIncrement;
 
 			dynamic dateTimeValue;
 
@@ -201,7 +195,7 @@ namespace OpenBots.Commands.Data
 				stringDateFormatted = ((object)dateTimeValue).ToString();
 
 			//store string (Result) in variable
-			stringDateFormatted.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			stringDateFormatted.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

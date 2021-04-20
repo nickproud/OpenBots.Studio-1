@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -48,13 +49,13 @@ namespace OpenBots.Commands.Dictionary
 			CommandIcon = Resources.command_dictionary;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vDictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
-			var vKey = v_Key.ConvertUserVariableToString(engine);
+			var vDictionaryVariable = await v_DictionaryName.EvaluateCode(engine, nameof(v_DictionaryName), this);
+			var vKey = (string)await v_Key.EvaluateCode(engine);
 
 			if (vDictionaryVariable != null)
 			{

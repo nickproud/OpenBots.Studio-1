@@ -155,6 +155,7 @@
     <Compile Include="OpenBots.Commands.Switch\EndSwitchCommand.cs" />
     <Compile Include="OpenBots.Commands.Task\RunTaskCommand.cs" />
     <Compile Include="OpenBots.Commands.Task\StopCurrentTaskCommand.cs" />
+    <Compile Include="OpenBots.Commands.Variable\ExecuteSnippetCommand.cs" />
     <Compile Include="OpenBots.Commands.Variable\SetVariableCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

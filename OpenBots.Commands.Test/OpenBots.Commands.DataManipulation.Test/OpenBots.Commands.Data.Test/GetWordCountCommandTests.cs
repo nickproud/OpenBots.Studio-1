@@ -11,7 +11,7 @@ namespace OpenBots.Commands.Data.Test
         private AutomationEngineInstance _engine;
 
         [Fact]
-        public void GetsWordCount()
+        public async void GetsWordCount()
         {
             _getWordCount = new GetWordCountCommand();
             _engine = new AutomationEngineInstance(null);
@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Data.Test
 
             _getWordCount.RunCommand(_engine);
 
-            Assert.Equal(3, Int32.Parse(_getWordCount.v_OutputUserVariableName.ConvertUserVariableToString(_engine)));
+            Assert.Equal(3, (Int32)await _getWordCount.v_OutputUserVariableName.EvaluateCode(_engine));
         }
     }
 }

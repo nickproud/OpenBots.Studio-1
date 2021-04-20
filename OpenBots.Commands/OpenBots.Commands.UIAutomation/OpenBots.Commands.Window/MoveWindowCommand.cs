@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Window
 {
@@ -67,19 +68,19 @@ namespace OpenBots.Commands.Window
 			CommandIcon = Resources.command_window;
 
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_XMousePosition = "0";
 			v_YMousePosition = "0";
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = v_WindowName.ConvertUserVariableToString(engine);
-			var variableXPosition = v_XMousePosition.ConvertUserVariableToString(engine);
-			var variableYPosition = v_YMousePosition.ConvertUserVariableToString(engine);
-			int timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			var variableXPosition = (int)await v_XMousePosition.EvaluateCode(engine);
+			var variableYPosition = (int)await v_YMousePosition.EvaluateCode(engine);
+			int timeout = (int)await v_Timeout.EvaluateCode(engine);
 
 			DateTime timeToEnd = DateTime.Now.AddSeconds(timeout);
 
@@ -103,9 +104,9 @@ namespace OpenBots.Commands.Window
 				}
 			}
 
-			
 
-			User32Functions.MoveWindow(windowName, variableXPosition, variableYPosition);
+
+			User32Functions.MoveWindow(windowName, variableXPosition.ToString(), variableYPosition.ToString());
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -60,21 +61,21 @@ namespace OpenBots.Commands.WebBrowser
 			v_FrameParameter = "0";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			var frameIndex = v_FrameParameter.ConvertUserVariableToString(engine);
+			var frameIndex = await v_FrameParameter.EvaluateCode(engine);
 
 			switch (v_SelectionType)
 			{
 				case "Index":
-					var intFrameIndex = int.Parse(frameIndex);
+					var intFrameIndex = (int)frameIndex;
 					seleniumInstance.SwitchTo().Frame(intFrameIndex);
 					break;
 				case "Name or ID":
-					seleniumInstance.SwitchTo().Frame(frameIndex);
+					seleniumInstance.SwitchTo().Frame((string)frameIndex);
 					break;
 				case "Parent Frame":
 					seleniumInstance.SwitchTo().ParentFrame();

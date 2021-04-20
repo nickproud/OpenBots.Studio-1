@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Outlook.Application;
 
@@ -69,11 +70,11 @@ namespace OpenBots.Commands.Outlook
 			v_MoveCopyUnreadOnly = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
-			var vDestinationFolder = v_DestinationFolder.ConvertUserVariableToString(engine);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
+			var vDestinationFolder = (string)await v_DestinationFolder.EvaluateCode(engine);
 			
 			Application outlookApp = new Application();
 			AddressEntry currentUser = outlookApp.Session.CurrentUser.AddressEntry;

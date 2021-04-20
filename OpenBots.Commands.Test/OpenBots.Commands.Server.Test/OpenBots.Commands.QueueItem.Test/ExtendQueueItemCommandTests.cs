@@ -15,7 +15,7 @@ namespace OpenBots.Commands.QueueItem.Test
         private ExtendQueueItemCommand _extendQueueItem;
 
         [Fact]
-        public void ExtendQueueItem()
+        public async void ExtendQueueItem()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -41,13 +41,13 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemDict = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
+            var queueItemDict = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var client = AuthMethods.GetAuthToken();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
             _extendQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.StoreInUserVariable(_engine, _extendQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _extendQueueItem.v_QueueItem, typeof(Dictionary<,>));
 
             _extendQueueItem.RunCommand(_engine);
 
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.QueueItem.Test
         }
 
         [Fact]
-        public void HandlesNonExistentTransactionKey()
+        public async System.Threading.Tasks.Task HandlesNonExistentTransactionKey()
         {
             _engine = new AutomationEngineInstance(null);
             _extendQueueItem = new ExtendQueueItemCommand();
@@ -77,9 +77,9 @@ namespace OpenBots.Commands.QueueItem.Test
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _extendQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.StoreInUserVariable(_engine, _extendQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _extendQueueItem.v_QueueItem, typeof(Dictionary<,>));
 
-            Assert.Throws<NullReferenceException>(() => _extendQueueItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<NullReferenceException>(() => _extendQueueItem.RunCommand(_engine));
         }
     }
 }

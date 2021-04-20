@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using IO = System.IO;
 
@@ -69,11 +70,11 @@ namespace OpenBots.Commands.File
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable path to source file
-			var vSourceFilePathOrigin = v_FilePathOrigin.ConvertUserVariableToString(engine);
+			var vSourceFilePathOrigin = (string)await v_FilePathOrigin.EvaluateCode(engine);
 
 			if (!(IO.File.Exists(vSourceFilePathOrigin) && vSourceFilePathOrigin.Contains(".zip")))
             {
@@ -81,7 +82,7 @@ namespace OpenBots.Commands.File
             }
 
 			// get file path to destination files
-			var vFilePathDestination = v_PathDestination.ConvertUserVariableToString(engine);
+			var vFilePathDestination = (string)await v_PathDestination.EvaluateCode(engine);
 
 			if (!Directory.Exists(vFilePathDestination))
             {
@@ -98,7 +99,7 @@ namespace OpenBots.Commands.File
 			// get password to extract files
 			var vPassword = "";
 			if (v_Password != null)
-				vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+				vPassword = ((SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this)).ConvertSecureStringToString();
 			FileStream fs = IO.File.OpenRead(vSourceFilePathOrigin);
 			ZipFile file = new ZipFile(fs);
 
@@ -145,7 +146,7 @@ namespace OpenBots.Commands.File
 				var filesList = Directory.GetFiles(vFilePathDestination, ".", SearchOption.AllDirectories).ToList();
 
 				//Add File Paths to the output variable
-				filesList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				filesList.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}           
 		}
 

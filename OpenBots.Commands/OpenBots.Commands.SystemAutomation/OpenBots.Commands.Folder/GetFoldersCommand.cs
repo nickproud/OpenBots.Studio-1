@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Folder
@@ -48,11 +49,11 @@ namespace OpenBots.Commands.Folder
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
+			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine);
 
             if (!Directory.Exists(sourceFolder))
             {
@@ -62,7 +63,7 @@ namespace OpenBots.Commands.Folder
 			//Get Subdirectories List
 			var directoriesList = Directory.GetDirectories(sourceFolder).ToList();
 
-			directoriesList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			directoriesList.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

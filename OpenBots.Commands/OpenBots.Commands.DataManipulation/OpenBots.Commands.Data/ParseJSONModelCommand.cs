@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -54,16 +55,16 @@ namespace OpenBots.Commands.Data
 			v_ParseObjects.TableName = $"ParseJsonObjectsTable{DateTime.Now.ToString("MMddyyhhmmss")}";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			
 			//get variablized input
-			var variableInput = v_JsonObject.ConvertUserVariableToString(engine);
+			var variableInput = (string)await v_JsonObject.EvaluateCode(engine);
 
 			foreach (DataRow rw in v_ParseObjects.Rows)
 			{
-				var jsonSelector = rw.Field<string>("Json Selector").ConvertUserVariableToString(engine);
+				var jsonSelector = (string)await rw.Field<string>("Json Selector").EvaluateCode(engine);
 				var targetVariableName = rw.Field<string>("Output Variable");
 
 				//create objects
@@ -95,7 +96,7 @@ namespace OpenBots.Commands.Data
 				foreach (var result in searchResults)
 					resultList.Add(result.ToString());
 
-				resultList.StoreInUserVariable(engine, targetVariableName, nameof(v_ParseObjects), this);               
+				resultList.SetVariableValue(engine, targetVariableName, nameof(v_ParseObjects), this);               
 			}
 		}
 

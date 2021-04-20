@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
@@ -58,19 +59,19 @@ namespace OpenBots.Commands.Input
 			CommandEnabled = true;
 			CommandIcon = Resources.command_input;
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_EncryptionOption = "Not Encrypted";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableWindowName = v_WindowName.ConvertUserVariableToString(engine);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 
 			if (variableWindowName != "Current Window")
 				User32Functions.ActivateWindow(variableWindowName);
 
-			string textToSend = v_TextToSend.ConvertUserVariableToString(engine);
+			string textToSend = (string)await v_TextToSend.EvaluateCode(engine);
 
 			if (v_EncryptionOption == "Encrypted")
 				textToSend = EncryptionServices.DecryptString(textToSend, "OPENBOTS");

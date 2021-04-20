@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Asset
 {
@@ -82,11 +83,11 @@ namespace OpenBots.Commands.Asset
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
-			var vOutputDirectoryPath = v_OutputDirectoryPath.ConvertUserVariableToString(engine);
+			var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
+			var vOutputDirectoryPath = (string)await v_OutputDirectoryPath.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			var asset = AssetMethods.GetAsset(client, vAssetName, v_AssetType);
@@ -118,7 +119,7 @@ namespace OpenBots.Commands.Asset
 			}
 			
 			if (v_AssetType != "File")
-				((object)assetValue).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				((object)assetValue).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

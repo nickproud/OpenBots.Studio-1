@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.NLG
@@ -44,7 +45,7 @@ namespace OpenBots.Commands.NLG
 			v_InstanceName = "DefaultNLG";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var p = (SPhraseSpec)v_InstanceName.GetAppInstance(engine);
@@ -53,7 +54,7 @@ namespace OpenBots.Commands.NLG
 			Realiser realiser = new Realiser(lexicon);
 
 			string phraseOutput = realiser.realiseSentence(p);
-			phraseOutput.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			phraseOutput.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

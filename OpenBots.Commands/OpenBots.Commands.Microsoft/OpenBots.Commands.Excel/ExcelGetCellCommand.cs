@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -66,11 +67,11 @@ namespace OpenBots.Commands.Excel
 			v_Formulas = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
-			var vTargetAddress = v_CellLocation.ConvertUserVariableToString(engine);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
 			var excelInstance = (Application)excelObject;
 			Worksheet excelSheet = excelInstance.ActiveSheet;
             string cellValue;
@@ -80,7 +81,7 @@ namespace OpenBots.Commands.Excel
 			else
 				cellValue = (string)excelSheet.Range[vTargetAddress].Value.ToString();
 
-			cellValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);          
+			cellValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);          
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

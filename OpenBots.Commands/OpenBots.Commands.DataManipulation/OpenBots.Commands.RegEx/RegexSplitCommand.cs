@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.RegEx
@@ -23,7 +24,7 @@ namespace OpenBots.Commands.RegEx
 		[Required]
 		[DisplayName("Text")]
 		[Description("Select or provide text to apply Regex on.")]
-		[SampleUsage("Hello || {vText}")]
+		[SampleUsage("\"Hello\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
@@ -32,7 +33,7 @@ namespace OpenBots.Commands.RegEx
 		[Required]
 		[DisplayName("Regex Pattern")]
 		[Description("Enter a Regex Pattern to apply to the input Text.")]
-		[SampleUsage(@"^([\w\-]+) || {vPattern}")]
+		[SampleUsage(@"^([\w\-]+) || vPattern")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
@@ -42,7 +43,7 @@ namespace OpenBots.Commands.RegEx
 		[Editable(false)]
 		[DisplayName("Output List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -56,15 +57,15 @@ namespace OpenBots.Commands.RegEx
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vInputData = v_InputText.ConvertUserVariableToString(engine);
-			string vRegex = v_Regex.ConvertUserVariableToString(engine);
+			var vInputData = (string)await v_InputText.EvaluateCode(engine);
+			string vRegex = (string)await v_Regex.EvaluateCode(engine);
 
 			var vResultData = Regex.Split(vInputData, vRegex).ToList();
 
-			vResultData.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			vResultData.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

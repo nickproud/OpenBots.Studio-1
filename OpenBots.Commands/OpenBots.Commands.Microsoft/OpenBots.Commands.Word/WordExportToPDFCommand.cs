@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Word
 {
@@ -59,11 +60,11 @@ namespace OpenBots.Commands.Word
 			v_InstanceName = "DefaultWord";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFileName = v_FileName.ConvertUserVariableToString(engine);
-			var vFolderPath = v_FolderPath.ConvertUserVariableToString(engine);
+			var vFileName = (string)await v_FileName.EvaluateCode(engine);
+			var vFolderPath = (string)await v_FolderPath.EvaluateCode(engine);
 
 			//get word app object
 			var wordObject = v_InstanceName.GetAppInstance(engine);

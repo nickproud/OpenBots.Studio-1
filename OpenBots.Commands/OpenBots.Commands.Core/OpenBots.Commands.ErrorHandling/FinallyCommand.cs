@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.ErrorHandling
 {
@@ -23,7 +24,7 @@ namespace OpenBots.Commands.ErrorHandling
 
         }
 
-        public override void RunCommand(object sender, ScriptAction parentCommand)
+        public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
         {
             //no execution required, used as a marker by the Automation Engine
         }

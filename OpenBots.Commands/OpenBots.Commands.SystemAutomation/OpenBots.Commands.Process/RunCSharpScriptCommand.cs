@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Windows.Forms;
 using OBFile = System.IO.File;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Process
 {
@@ -111,11 +112,11 @@ namespace OpenBots.Commands.Process
 			v_VariableArgumentsDataTable.Columns.Add("Argument Values");
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string scriptPath = v_ScriptPath.ConvertUserVariableToString(engine);
+			string scriptPath = (string)await v_ScriptPath.EvaluateCode(engine);
 
 			string code = OBFile.ReadAllText(scriptPath);
 			var mainMethod = CSScript.LoadCode(code).CreateObject("*").GetType().GetMethod("Main");
@@ -127,12 +128,12 @@ namespace OpenBots.Commands.Process
 				foreach (DataRow varColumn in v_VariableArgumentsDataTable.Rows)
                 {
 					string var = varColumn.Field<string>("Argument Values").Trim();
-					dynamic input = var.ConvertUserVariableToString(engine);
+					dynamic input = (string)await var.EvaluateCode(engine);
 
 					if (input == var && input.StartsWith("{") && input.EndsWith("}"))
 					{
-						if (var.ConvertUserVariableToObject(engine, nameof(v_VariableArgumentsDataTable), this) != null)
-							input = var.ConvertUserVariableToObject(engine, nameof(v_VariableArgumentsDataTable), this);
+						if (await var.EvaluateCode(engine, nameof(v_VariableArgumentsDataTable), this) != null)
+							input = await var.EvaluateCode(engine, nameof(v_VariableArgumentsDataTable), this);
 					}
 					args[i] = input;
 					i++;
@@ -153,12 +154,12 @@ namespace OpenBots.Commands.Process
 					else
 						result = mainMethod.Invoke(null, new object[] { args });
 
-					result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 				}
 			}
 			else if (v_ArgumentType == "Command Line")
 			{
-				string scriptArgs = v_ScriptArgs.ConvertUserVariableToString(engine);
+				string scriptArgs = (string)await v_ScriptArgs.EvaluateCode(engine);
 				string[] argStrings = scriptArgs.Trim().Split(' ');
 				if (v_HasOutput == "No")
                 {
@@ -175,7 +176,7 @@ namespace OpenBots.Commands.Process
 					else
 						result = mainMethod.Invoke(null, new object[] { argStrings });
 
-					result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 				}
 			}
 		}

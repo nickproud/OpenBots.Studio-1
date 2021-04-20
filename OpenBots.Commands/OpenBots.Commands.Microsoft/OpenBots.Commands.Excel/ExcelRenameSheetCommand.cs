@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -56,11 +57,11 @@ namespace OpenBots.Commands.Excel
 			v_InstanceName = "DefaultExcel";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string vSheetToRename = v_OriginalSheetName.ConvertUserVariableToString(engine);
-			string vNewSheetName = v_NewSheetName.ConvertUserVariableToString(engine);
+			string vSheetToRename = (string)await v_OriginalSheetName.EvaluateCode(engine);
+			string vNewSheetName = (string)await v_NewSheetName.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;

@@ -15,6 +15,7 @@ using System.Data;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using DataTable = System.Data.DataTable;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Excel
 {
@@ -81,11 +82,11 @@ namespace OpenBots.Commands.Excel
 			v_Range = "A1:";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{         
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
-			var vRange = v_Range.ConvertUserVariableToString(engine);
+			var vRange = (string)await v_Range.EvaluateCode(engine);
 			var excelInstance = (Application)excelObject;
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;
@@ -177,7 +178,7 @@ namespace OpenBots.Commands.Excel
 					}
 				}
 
-				DT.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				DT.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 		}
 

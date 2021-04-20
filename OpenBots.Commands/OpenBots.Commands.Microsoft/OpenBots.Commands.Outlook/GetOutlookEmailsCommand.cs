@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Outlook.Application;
 
@@ -129,13 +130,13 @@ namespace OpenBots.Commands.Outlook
 			v_IncludeEmbeddedImagesAsAttachments = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFolder = v_SourceFolder.ConvertUserVariableToString(engine);
-			var vFilter = v_Filter.ConvertUserVariableToString(engine);
-			var vAttachmentDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
-			var vMessageDirectory = v_MessageDirectory.ConvertUserVariableToString(engine);
+			var vFolder = (string)await v_SourceFolder.EvaluateCode(engine);
+			var vFilter = (string)await v_Filter.EvaluateCode(engine);
+			var vAttachmentDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
+			var vMessageDirectory = (string)await v_MessageDirectory.EvaluateCode(engine);
 
 			if (vFolder == "") 
 				vFolder = "Inbox";
@@ -189,7 +190,7 @@ namespace OpenBots.Commands.Outlook
 					}
 				}
 
-				outMail.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				outMail.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 		}
 

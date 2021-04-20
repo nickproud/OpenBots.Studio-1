@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Folder
@@ -56,12 +57,12 @@ namespace OpenBots.Commands.Folder
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var destinationDirectory = v_DestinationDirectory.ConvertUserVariableToString(engine);
-			var newFolder = v_NewFolderName.ConvertUserVariableToString(engine);
+			var destinationDirectory = (string)await v_DestinationDirectory.EvaluateCode(engine);
+			var newFolder = (string)await v_NewFolderName.EvaluateCode(engine);
 
             if (!Directory.Exists(destinationDirectory))
             {

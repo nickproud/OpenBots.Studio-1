@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using DataTable = System.Data.DataTable;
@@ -71,12 +72,12 @@ namespace OpenBots.Commands.Excel
 			v_KeyColumn = "Name";
 			v_ValueColumn = "Value";
 		}
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			
-			var vKeyColumn = v_KeyColumn.ConvertUserVariableToString(engine);
-			var vValueColumn = v_ValueColumn.ConvertUserVariableToString(engine);
+			var vKeyColumn = (string)await v_KeyColumn.EvaluateCode(engine);
+			var vValueColumn = (string)await v_ValueColumn.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
@@ -128,7 +129,7 @@ namespace OpenBots.Commands.Excel
 				outputDictionary.Add(dict.keys, dict.values);
 			}
 
-			outputDictionary.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			outputDictionary.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

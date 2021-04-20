@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.BZTerminal
@@ -34,7 +35,7 @@ namespace OpenBots.Commands.BZTerminal
 			v_InstanceName = "DefaultBZTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);

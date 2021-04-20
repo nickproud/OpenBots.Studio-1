@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -30,7 +31,7 @@ namespace OpenBots.Commands.Microsoft
         [Required]
         [DisplayName("Column Index")]
         [Description("Enter the index for column to be added at.")]
-        [SampleUsage("1 || {vIndex}")]
+        [SampleUsage("1 || vIndex")]
         [Remarks("The column will be added at the last index if a column index is not provided.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(null, true)]
@@ -39,7 +40,7 @@ namespace OpenBots.Commands.Microsoft
         [Required]
         [DisplayName("Column Name")]
         [Description("Enter the name of the column to be added.")]
-        [SampleUsage("Column1 || {vColumnName}")]
+        [SampleUsage("\"Column1\" || vColumnName")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(null, true)]
@@ -48,7 +49,7 @@ namespace OpenBots.Commands.Microsoft
         [Required]
         [DisplayName("Excel Table Name")]
         [Description("Enter the name of the existing Excel Table.")]
-        [SampleUsage("TableName || {vTableName}")]
+        [SampleUsage("\"TableName\" || vTableName")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(null, true)]
@@ -73,13 +74,13 @@ namespace OpenBots.Commands.Microsoft
             v_InstanceName = "DefaultExcel";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = v_SheetNameExcelTable.ConvertUserVariableToString(engine);
-            var vColumnIndex = v_ColumnIndex.ConvertUserVariableToString(engine);
-            var vTableName = v_TableName.ConvertUserVariableToString(engine);
-            var vColumnName = v_ColumnName.ConvertUserVariableToString(engine);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
+            var vColumnIndex = (string)await v_ColumnIndex.EvaluateCode(engine);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine);
+            var vColumnName = (string)await v_ColumnName.EvaluateCode(engine);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;

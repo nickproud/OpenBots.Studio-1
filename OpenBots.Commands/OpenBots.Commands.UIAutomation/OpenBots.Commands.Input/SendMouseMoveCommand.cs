@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
@@ -69,11 +70,11 @@ namespace OpenBots.Commands.Input
 			v_MouseClick = "None";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = v_XMousePosition.ConvertUserVariableToString(engine);
-			var mouseY = v_YMousePosition.ConvertUserVariableToString(engine);
+			var mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+			var mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
 
 			User32Functions.SendMouseMove(mouseX, mouseY, v_MouseClick);
 		}

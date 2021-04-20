@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Asset
@@ -68,11 +69,11 @@ namespace OpenBots.Commands.Asset
             CommonMethods.InitializeDefaultWebProtocol();
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
-            var vAssetActionValue = v_AssetActionValue.ConvertUserVariableToString(engine);
+            var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
+            var vAssetActionValue = (string)await v_AssetActionValue.EvaluateCode(engine);
 
             var client = AuthMethods.GetAuthToken();
             var asset = AssetMethods.GetAsset(client, vAssetName, "Number");

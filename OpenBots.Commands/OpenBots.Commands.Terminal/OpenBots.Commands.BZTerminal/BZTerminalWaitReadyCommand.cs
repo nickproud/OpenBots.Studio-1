@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.BZTerminal
@@ -55,11 +56,11 @@ namespace OpenBots.Commands.BZTerminal
 			v_ExtraWait = "1";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
-			var extrawait = int.Parse(v_ExtraWait.ConvertUserVariableToString(engine)) * 1000;
+			var timeout = (int)await v_Timeout.EvaluateCode(engine);
+			var extrawait = ((int)await v_ExtraWait.EvaluateCode(engine)) * 1000;
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)

@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Word
 {
@@ -55,11 +56,11 @@ namespace OpenBots.Commands.Word
 
 			v_InstanceName = "DefaultWord";
 		}
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFindText = v_FindText.ConvertUserVariableToString(engine);
-			var vReplaceWithText = v_ReplaceWithText.ConvertUserVariableToString(engine);
+			var vFindText = (string)await v_FindText.EvaluateCode(engine);
+			var vReplaceWithText = (string)await v_ReplaceWithText.EvaluateCode(engine);
 
 			//get word app object
 			var wordObject = v_InstanceName.GetAppInstance(engine);

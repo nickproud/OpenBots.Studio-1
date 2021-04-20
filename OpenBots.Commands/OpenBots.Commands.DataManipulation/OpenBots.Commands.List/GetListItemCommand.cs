@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -59,14 +60,13 @@ namespace OpenBots.Commands.List
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var itemIndex = v_ItemIndex.ConvertUserVariableToString(engine);
+			var itemIndex = (string)await v_ItemIndex.EvaluateCode(engine);
 			int index = int.Parse(itemIndex);
 			//get variable by regular name
-			var listVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
-
+			var listVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
 			//if still null then throw exception
 			if (listVariable == null)
 			{
@@ -111,7 +111,7 @@ namespace OpenBots.Commands.List
 					itemList.Add(value.ToString());
 				}
 
-				itemList.StoreInUserVariable(engine, v_ListName, nameof(v_ListName), this);
+				itemList.SetVariableValue(engine, v_ListName, nameof(v_ListName), this);
 				listToIndex = itemList;
 			}
 			else
@@ -121,7 +121,7 @@ namespace OpenBots.Commands.List
 
 			var item = listToIndex[index];
 
-			((object)item).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);         
+			((object)item).SetVariableValue(engine, v_OutputUserVariableName, typeof(List<>));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

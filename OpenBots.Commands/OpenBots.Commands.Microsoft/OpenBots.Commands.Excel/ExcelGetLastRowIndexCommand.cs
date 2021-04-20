@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -58,17 +59,17 @@ namespace OpenBots.Commands.Excel
 			v_ColumnLetter = "A";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vColumnLetter = v_ColumnLetter.ConvertUserVariableToString(engine);
+			var vColumnLetter = (string)await v_ColumnLetter.EvaluateCode(engine);
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 
 			var excelInstance = (Application)excelObject;
 			var excelSheet = excelInstance.ActiveSheet;
 			var lastRow = (int)excelSheet.Cells(excelSheet.Rows.Count, vColumnLetter).End(XlDirection.xlUp).Row;
 
-			lastRow.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);   
+			lastRow.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);   
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

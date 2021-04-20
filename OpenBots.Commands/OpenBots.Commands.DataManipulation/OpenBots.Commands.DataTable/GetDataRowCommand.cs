@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -56,17 +57,16 @@ namespace OpenBots.Commands.DataTable
 			CommandIcon = Resources.command_spreadsheet;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			OBDataTable dataTable = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
-			var rowIndex = v_DataRowIndex.ConvertUserVariableToString(engine);
-			int index = int.Parse(rowIndex);
+			int index = (int)await v_DataRowIndex.EvaluateCode(engine);
 
 			DataRow row = dataTable.Rows[index];
 
-			row.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			row.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -84,12 +85,12 @@ namespace OpenBots.Commands.Microsoft
             v_SortType = "Ascending";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = v_SheetNameExcelTable.ConvertUserVariableToString(engine);
-            var vTableName = v_TableName.ConvertUserVariableToString(engine);
-            var vColumnValue = v_DataValueIndex.ConvertUserVariableToString(engine);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine);
+            var vColumnValue = await v_DataValueIndex.EvaluateCode(engine);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
@@ -97,9 +98,9 @@ namespace OpenBots.Commands.Microsoft
 
             ListColumn column;
             if (v_Option == "Column Index")
-                column = excelTable.ListColumns[int.Parse(vColumnValue)];
+                column = excelTable.ListColumns[(int)vColumnValue];
             else
-                column = excelTable.ListColumns[vColumnValue];
+                column = excelTable.ListColumns[(string)vColumnValue];
 
             XlSortOrder sortType; 
             if (v_SortType == "Ascending")

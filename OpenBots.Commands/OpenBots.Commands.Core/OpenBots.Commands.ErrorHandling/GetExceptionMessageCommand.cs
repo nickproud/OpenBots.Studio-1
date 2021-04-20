@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.ErrorHandling
 {
@@ -37,7 +38,7 @@ namespace OpenBots.Commands.ErrorHandling
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var error = engine.ErrorsOccured.OrderByDescending(x => x.LineNumber).FirstOrDefault();
@@ -45,7 +46,7 @@ namespace OpenBots.Commands.ErrorHandling
 			if (error != null)
 				errorMessage = $"Source: {error.SourceFile}, Line: {error.LineNumber}, " +
 					$"Exception Type: {error.ErrorType}, Exception Message: {error.ErrorMessage}";
-			errorMessage.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			errorMessage.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

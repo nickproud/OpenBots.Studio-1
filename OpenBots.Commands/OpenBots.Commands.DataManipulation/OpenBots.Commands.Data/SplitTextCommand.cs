@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -57,19 +58,18 @@ namespace OpenBots.Commands.Data
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var stringVariable = v_InputText.ConvertUserVariableToString(engine);
+			var stringVariable = (string)await v_InputText.EvaluateCode(engine);
 
 			string splitCharacter = "";
 			List<string> splitCharacterList = new List<string>();
 			bool isDelimeterList = false;
 
-			dynamic input = v_SplitCharacter.ConvertUserVariableToString(engine);
+			dynamic input = (string)await v_SplitCharacter.EvaluateCode(engine);
 
-			if (input == v_SplitCharacter && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_SplitCharacter.ConvertUserVariableToObject(engine, nameof(v_SplitCharacter), this);
+			input = await v_SplitCharacter.EvaluateCode(engine, nameof(v_SplitCharacter), this);
 
 			if (input is List<string>)
 			{
@@ -111,7 +111,7 @@ namespace OpenBots.Commands.Data
 			}
 			
 
-			splitString.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
+			splitString.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

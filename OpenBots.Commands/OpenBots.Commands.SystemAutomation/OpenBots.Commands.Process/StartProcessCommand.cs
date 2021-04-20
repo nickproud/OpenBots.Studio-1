@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
 using OBFile = System.IO.File;
@@ -60,12 +61,12 @@ namespace OpenBots.Commands.Process
 			v_WaitForExit = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string vProgramName = v_ProgramName.ConvertUserVariableToString(engine);
-			string vProgramArgs = v_ProgramArgs.ConvertUserVariableToString(engine);
 
+			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine);
+			string vProgramArgs = (string)await v_ProgramArgs.EvaluateCode(engine);
 			Diagnostics.Process newProcess = new Diagnostics.Process();
 
 			if (OBFile.Exists(vProgramName))

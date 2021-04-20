@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Credential
 {
@@ -56,12 +57,12 @@ namespace OpenBots.Commands.Credential
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vCredentialName = v_CredentialName.ConvertUserVariableToString(engine);
-			var vCredentialUsername = v_CredentialUsername.ConvertUserVariableToString(engine);
-			var vCredentialPassword = v_CredentialPassword.ConvertUserVariableToString(engine);
+			var vCredentialName = (string)await v_CredentialName.EvaluateCode(engine);
+			var vCredentialUsername = (string)await v_CredentialUsername.EvaluateCode(engine);
+			var vCredentialPassword = (string)await v_CredentialPassword.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			var credential = CredentialMethods.GetCredential(client, $"name eq '{vCredentialName}'");

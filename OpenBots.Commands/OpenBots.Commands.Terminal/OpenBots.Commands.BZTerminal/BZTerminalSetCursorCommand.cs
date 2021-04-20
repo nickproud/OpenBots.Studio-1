@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.BZTerminal
@@ -53,17 +54,17 @@ namespace OpenBots.Commands.BZTerminal
 			v_InstanceName = "DefaultBZTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = v_XMousePosition.ConvertUserVariableToString(engine);
-			var mouseY = v_YMousePosition.ConvertUserVariableToString(engine);
+			var mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+			var mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
-			terminalContext.BZTerminalObj.SetCursor(int.Parse(mouseY), int.Parse(mouseX));
+			terminalContext.BZTerminalObj.SetCursor(mouseY, mouseX);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

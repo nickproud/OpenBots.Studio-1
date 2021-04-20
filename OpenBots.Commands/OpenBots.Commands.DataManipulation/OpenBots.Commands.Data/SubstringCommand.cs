@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -62,17 +63,20 @@ namespace OpenBots.Commands.Data
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var inputText = v_InputText.ConvertUserVariableToString(engine);
-			var startIndex = int.Parse(v_StartIndex.ConvertUserVariableToString(engine));
-			var stringLength = v_StringLength.ConvertUserVariableToString(engine);
+			var inputText = (string)await v_InputText.EvaluateCode(engine);
+			var startIndex = (int)await v_StartIndex.EvaluateCode(engine);
+
+			int length = -1;
+
+			if(v_StringLength != "")
+				length = (int)await v_StringLength.EvaluateCode(engine);
 
 			//apply substring
-			if (!string.IsNullOrEmpty(stringLength))
+			if (length > -1)
 			{
-				int length = int.Parse(stringLength);
 				inputText = inputText.Substring(startIndex, length);
 			}
 			else
@@ -80,7 +84,7 @@ namespace OpenBots.Commands.Data
 				inputText = inputText.Substring(startIndex);
 			}
 
-			inputText.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			inputText.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

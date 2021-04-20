@@ -284,8 +284,8 @@ namespace OpenBots.UI.Forms
                 }
             }
 
-            if (ValidateInputs())
-                DialogResult = DialogResult.OK;
+            //if (ValidateInputs())
+            DialogResult = DialogResult.OK;
         }
 
         private bool ValidateInputs()

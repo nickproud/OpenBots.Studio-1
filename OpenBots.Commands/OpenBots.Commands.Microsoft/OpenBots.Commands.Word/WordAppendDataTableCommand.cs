@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
 using DataTable = System.Data.DataTable;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Word
 {
@@ -47,12 +48,12 @@ namespace OpenBots.Commands.Word
 
 			v_InstanceName = "DefaultWord";
 		}
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var wordObject = v_InstanceName.GetAppInstance(engine);
 
-			DataTable dataTable = (DataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
+			DataTable dataTable = (DataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
 			//selecting the word instance and open document
 			Application wordInstance = (Application)wordObject;

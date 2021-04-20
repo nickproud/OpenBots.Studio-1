@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Input
 {
@@ -65,14 +66,14 @@ namespace OpenBots.Commands.Input
 			v_KeyActions.Columns.Add("Action");
 			v_KeyActions.TableName = "SendAdvancedKeyStrokesCommand" + DateTime.Now.ToString("MMddyy.hhmmss");
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_KeyUpDefault = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableWindowName = v_WindowName.ConvertUserVariableToString(engine);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 
 			//activate anything except current window
 			if (variableWindowName != "Current Window")
