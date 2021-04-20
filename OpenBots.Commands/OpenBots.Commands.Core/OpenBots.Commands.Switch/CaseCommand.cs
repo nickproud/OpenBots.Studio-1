@@ -51,7 +51,7 @@ namespace OpenBots.Commands.Switch
 
 		public override string GetDisplayValue()
 		{
-			if (v_CaseValue == "Default")
+			if (v_CaseValue == "\"Default\"")
 				return "Default:";
 			else
 				return base.GetDisplayValue() + $" {v_CaseValue}:";

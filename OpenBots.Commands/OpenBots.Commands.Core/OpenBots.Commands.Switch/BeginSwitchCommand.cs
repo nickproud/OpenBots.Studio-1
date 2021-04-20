@@ -62,13 +62,14 @@ namespace OpenBots.Commands.Switch
 				caseCommandItem = parentCommand.AdditionalScriptCommands[caseIndex];
 				targetCaseCommand = (CaseCommand)caseCommandItem.ScriptCommand;
 
+				var caseValue = (string)await targetCaseCommand.v_CaseValue.EvaluateCode(engine);
 				// Save Default Case Index
-				if (targetCaseCommand.v_CaseValue == "Default")
+				if (caseValue == "Default")
 				{
 					defaultCaseIndex = caseIndex;
 				}
 				// Save index if the value of any Case matches with the Switch value
-				if (vSwitchValue == targetCaseCommand.v_CaseValue)
+				if (vSwitchValue == caseValue)
 				{
 					targetCaseIndex = caseIndex;
 					break;
@@ -78,12 +79,12 @@ namespace OpenBots.Commands.Switch
 			// If Target Case Found
 			if (targetCaseIndex != -1)
 			{
-				ExecuteTargetCaseBlock(sender, parentCommand, targetCaseIndex, endSwitchIndex);
+				await ExecuteTargetCaseBlock(sender, parentCommand, targetCaseIndex, endSwitchIndex);
 			}
 			// Else execute Default block
 			else if (defaultCaseIndex != -1)
 			{
-				ExecuteTargetCaseBlock(sender, parentCommand, defaultCaseIndex, endSwitchIndex);
+				await ExecuteTargetCaseBlock(sender, parentCommand, defaultCaseIndex, endSwitchIndex);
 			}
 		}
 
@@ -146,7 +147,7 @@ namespace OpenBots.Commands.Switch
 			return nextCase;
 		}
 
-		private void ExecuteTargetCaseBlock(object sender, ScriptAction parentCommand, int startCaseIndex, int endCaseIndex)
+		private async Tasks.Task ExecuteTargetCaseBlock(object sender, ScriptAction parentCommand, int startCaseIndex, int endCaseIndex)
 		{
 			//get engine
 			var engine = (IAutomationEngineInstance)sender;
@@ -168,7 +169,7 @@ namespace OpenBots.Commands.Switch
 				if (engine.IsCancellationPending || engine.CurrentLoopCancelled)
 					return;
 
-				engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[caseIndex]);
+				await engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[caseIndex]);
 			}
 		}
 	}
