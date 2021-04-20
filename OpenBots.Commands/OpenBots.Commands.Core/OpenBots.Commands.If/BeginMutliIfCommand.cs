@@ -130,7 +130,7 @@ namespace OpenBots.Commands.If
 				if ((engine.IsCancellationPending) || (engine.CurrentLoopCancelled))
 					return;
 
-				engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[i]);
+				await engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[i]);
 			}
 		}
 

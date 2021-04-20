@@ -210,13 +210,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {
                 dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
-                helloWorldCommand.v_Message = "Hello World";
+                helloWorldCommand.v_Message = "\"Hello World\"";
                 mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
             }
             catch (Exception)
             {
                 var brokenHelloWorldCommand = new BrokenCodeCommentCommand();
-                brokenHelloWorldCommand.v_Comment = "Hello World";
+                brokenHelloWorldCommand.v_Comment = "\"Hello World\"";
                 mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(brokenHelloWorldCommand));
             }
 
@@ -841,13 +841,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         try
                         {
                             dynamic helloWorldCommand = TypeMethods.CreateTypeInstance(AContainer, "ShowMessageCommand");
-                            helloWorldCommand.v_Message = "Hello World";
+                            helloWorldCommand.v_Message = "\"Hello World\"";
                             newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(helloWorldCommand));
                         }
                         catch (Exception)
                         {
                             var brokenHelloWorldCommand = new BrokenCodeCommentCommand();
-                            brokenHelloWorldCommand.v_Comment = "Hello World";
+                            brokenHelloWorldCommand.v_Comment = "\"Hello World\"";
                             newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(brokenHelloWorldCommand));
                         }
 

@@ -48,7 +48,7 @@ namespace OpenBots.Commands.ErrorHandling
                 {
                     var cmd = parentCommand.AdditionalScriptCommands[tryIndex];
                     cmd.IsExceptionIgnored = true;
-                    engine.ExecuteCommand(cmd);
+                    await engine.ExecuteCommand(cmd);
                     if(cmd.ScriptCommand.CommandName == "RunTaskCommand" && engine.ChildScriptFailed && !engine.ChildScriptErrorCaught)
                         throw new Exception("Child Script Failed");
                 }
@@ -91,12 +91,12 @@ namespace OpenBots.Commands.ErrorHandling
                     // If Target Catch Found
                     if (targetCatchIndex != -1)
                     {
-                        ExecuteTargetCatchBlock(sender, parentCommand, targetCatchIndex, endCatch);
+                        await ExecuteTargetCatchBlock(sender, parentCommand, targetCatchIndex, endCatch);
                     }
                     // Else If Generic Exception Catch Found
                     else if(generalCatchIndex != -1)
                     {
-                        ExecuteTargetCatchBlock(sender, parentCommand, generalCatchIndex, endCatch);
+                        await ExecuteTargetCatchBlock(sender, parentCommand, generalCatchIndex, endCatch);
                     }
                     else
                     {
@@ -112,7 +112,7 @@ namespace OpenBots.Commands.ErrorHandling
             {
                 for (var finallyIndex = startFinallyIndex; finallyIndex < endTryIndex; finallyIndex++)
                 {
-                    engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[finallyIndex]);
+                    await engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[finallyIndex]);
                 }
             }
             // If Catch block executes smoothly
@@ -176,7 +176,7 @@ namespace OpenBots.Commands.ErrorHandling
             return nextCatch;
         }
 
-        private void ExecuteTargetCatchBlock(object sender, ScriptAction parentCommand, int startCatchIndex, int endCatchIndex)
+        private async Tasks.Task ExecuteTargetCatchBlock(object sender, ScriptAction parentCommand, int startCatchIndex, int endCatchIndex)
         {
             //get engine
             var engine = (IAutomationEngineInstance)sender;
@@ -200,7 +200,7 @@ namespace OpenBots.Commands.ErrorHandling
             // Execute Target Catch Block
             for (var catchIndex = startCatchIndex; catchIndex < endCatchIndex; catchIndex++)
             {
-                engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[catchIndex]);
+                await engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[catchIndex]);
             }
         }
     }

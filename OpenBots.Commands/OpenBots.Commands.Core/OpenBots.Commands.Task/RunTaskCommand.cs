@@ -23,7 +23,7 @@ using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Task
 {
-	[Serializable]
+    [Serializable]
 	[Category("Task Commands")]
 	[Description("This command executes a Task.")]
 	public class RunTaskCommand : ScriptCommand
@@ -106,13 +106,13 @@ namespace OpenBots.Commands.Task
 			int parentDebugLine = parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.DebugLineNumber;
 
 			//create argument list
-			InitializeArgumentLists(parentAutomationEngineInstance);
+			await InitializeArgumentLists(parentAutomationEngineInstance);
 
 			string projectPath = parentfrmScriptEngine.ScriptEngineContext.ProjectPath;
 
 			EngineContext childEngineContext = new EngineContext(childTaskPath, projectPath, parentAutomationEngineInstance.AutomationEngineContext.Container, CurrentScriptBuilder,
 				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, null, _argumentList, null, parentAutomationEngineInstance.AutomationEngineContext.AppInstances, null, null, 1,
-				parentfrmScriptEngine.ScriptEngineContext.IsDebugMode);
+				parentfrmScriptEngine.ScriptEngineContext.IsDebugMode, true);
 
 			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childEngineContext, false, parentfrmScriptEngine.IsDebugMode);
 
@@ -261,12 +261,12 @@ namespace OpenBots.Commands.Task
 			//load arguments if selected and file exists
 			if (assignArgCheckBox.Checked)
 			{
-				var currentScriptEngine = commandControls.CreateAutomationEngineInstance(null);
+				var currentScriptEngine = commandControls.CreateAutomationEngineInstance(editor.ScriptEngineContext);
 				currentScriptEngine.AutomationEngineContext.Arguments.AddRange(editor.ScriptEngineContext.Arguments);
 
 				var startFile = v_TaskPath;
 				if (startFile.Contains("ProjectPath +"))
-					startFile = startFile.Replace("ProjectPath +", editor.ScriptEngineContext.ProjectPath);
+					startFile = startFile.Replace("ProjectPath +", $"@\"{editor.ScriptEngineContext.ProjectPath}\" + ");
 
 				startFile = (string)await startFile.EvaluateCode(currentScriptEngine);
 
@@ -284,14 +284,14 @@ namespace OpenBots.Commands.Task
 						if (argument.ArgumentName == "ProjectPath")
 							continue;
 
-						DataRow foundArguments = vArgumentAssignmentsCopy.Select("ArgumentName = '" + "{" + argument.ArgumentName + "}" + "'").FirstOrDefault();
+						DataRow foundArguments = vArgumentAssignmentsCopy.Select("ArgumentName = '" + argument.ArgumentName + "'").FirstOrDefault();
 						if (foundArguments != null)
 						{
 							var foundArgumentValue = foundArguments[2];
-							v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentType, foundArgumentValue, argument.Direction.ToString());
+							v_ArgumentAssignments.Rows.Add(argument.ArgumentName, argument.ArgumentType, foundArgumentValue, argument.Direction.ToString());
 						}
 						else
-							v_ArgumentAssignments.Rows.Add("{" + argument.ArgumentName + "}", argument.ArgumentType, argument.ArgumentValue, argument.Direction.ToString());
+							v_ArgumentAssignments.Rows.Add(argument.ArgumentName, argument.ArgumentType, argument.ArgumentValue, argument.Direction.ToString());
 					}
 				}
 				
@@ -324,7 +324,7 @@ namespace OpenBots.Commands.Task
 			string parentTaskPath = parentAutomationEngineInstance.FileName;
 
 			//create argument list
-			InitializeArgumentLists(parentAutomationEngineInstance);
+			await InitializeArgumentLists(parentAutomationEngineInstance);
 
 			object engineLogger = Log.Logger;
 
@@ -354,7 +354,7 @@ namespace OpenBots.Commands.Task
 			Log.Information("Resuming Parent Task: " + Path.GetFileName(parentTaskPath));
 		}
 
-		private async void InitializeArgumentLists(IAutomationEngineInstance parentAutomationEngineInstance)
+		private async Tasks.Task InitializeArgumentLists(IAutomationEngineInstance parentAutomationEngineInstance)
 		{
 			_argumentList = new List<ScriptArgument>();
 
@@ -367,15 +367,11 @@ namespace OpenBots.Commands.Task
 
 				if (argumentDirection == "In" || argumentDirection == "InOut")
                 {
-					if (((string)rw.ItemArray[2]).StartsWith("{") && ((string)rw.ItemArray[2]).EndsWith("}"))
-						argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, typeof(object));
-
-					if (argumentValue is string || argumentValue == null)
-						argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance);
+					argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, typeof(object));
 
 					_argumentList.Add(new ScriptArgument
 					{
-						ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
+						ArgumentName = argumentName,
 						Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection), 
 						ArgumentValue = argumentValue,
 						ArgumentType = argumentType
@@ -387,16 +383,16 @@ namespace OpenBots.Commands.Task
 					//verify whether the assigned variable/argument exists
 					await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, nameof(v_ArgumentAssignments), this);
 
-					var existingArg = _argumentList.Where(x => x.ArgumentName == argumentName.Replace("{", "").Replace("}", "")).FirstOrDefault();
+					var existingArg = _argumentList.Where(x => x.ArgumentName == argumentName).FirstOrDefault();
 					if (existingArg != null)
-						existingArg.AssignedVariable = ((string)rw.ItemArray[2]).Replace("{", "").Replace("}", "");
+						existingArg.AssignedVariable = (string)rw.ItemArray[2];
                     else
                     {
 						_argumentList.Add(new ScriptArgument
 						{
-							ArgumentName = argumentName.Replace("{", "").Replace("}", ""),
+							ArgumentName = argumentName,
 							Direction = (ScriptArgumentDirection)Enum.Parse(typeof(ScriptArgumentDirection), argumentDirection),
-							AssignedVariable = ((string)rw.ItemArray[2]).Replace("{", "").Replace("}", ""),
+							AssignedVariable = (string)rw.ItemArray[2],
 							ArgumentType = argumentType
 						});
 					}					
@@ -419,14 +415,16 @@ namespace OpenBots.Commands.Task
 					var assignedParentVariable = parentVariableList.Where(v => v.VariableName == argument.AssignedVariable).FirstOrDefault();
 					var assignedParentArgument = parentArgumentList.Where(a => a.ArgumentName == argument.AssignedVariable).FirstOrDefault();
 					if (assignedParentVariable != null)
-                    {
-						assignedParentVariable.VariableValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
-					}	
-					else if (assignedParentArgument != null)
-                    {
-						assignedParentArgument.ArgumentValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+					{
+						var newVarValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+						newVarValue.SetVariableValue(parentAutomationEngineIntance, assignedParentVariable.VariableName, assignedParentVariable.VariableType);
 					}
-                    else
+					else if (assignedParentArgument != null)
+					{
+						var newArgValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+						newArgValue.SetVariableValue(parentAutomationEngineIntance, assignedParentArgument.ArgumentName, assignedParentArgument.ArgumentType);
+					}
+					else
                     {
 						throw new ArgumentException($"Unable to assign the value of '{argument.ArgumentName}' to '{argument.AssignedVariable}' " +
 													 "because no variable/argument with this name exists.");

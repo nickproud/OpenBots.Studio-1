@@ -1117,7 +1117,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else if (selectedCommand.CommandName == "BeginSwitchCommand")
             {
                 dynamic caseCommand = TypeMethods.CreateTypeInstance(AContainer, "CaseCommand");
-                caseCommand.v_CaseValue = "Default";
+                caseCommand.v_CaseValue = "\"Default\"";
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(caseCommand));
 
                 dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
