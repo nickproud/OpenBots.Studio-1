@@ -45,7 +45,7 @@ namespace OpenBots.Commands.DataTable.Test
             VariableMethods.CreateTestVariable(inputTable, _engine, "inputTable", typeof(OBData.DataTable));
 
             _removeDataRow.v_DataTable = "{inputTable}";
-            _removeDataRow.v_SearchItem = search;
+            //_removeDataRow.v_SearchItem = search;
             _removeDataRow.v_AndOr = andOr;
 
             _removeDataRow.RunCommand(_engine);

@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Attributes.PropertyAttributes;
+﻿using Newtonsoft.Json;
+using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -32,21 +33,30 @@ namespace OpenBots.Commands.DataTable
 
 		[Required]
 		[DisplayName("Remove Option")]
-		[PropertyUISelectionOption("Tuple")]
 		[PropertyUISelectionOption("Index")]
+		[PropertyUISelectionOption("Data")]
 		[Description("Indicate whether DataRow(s) will be deleted by index or tuple.")]
 		[SampleUsage("")]
 		[Remarks("")]
 		public string v_RemoveOption { get; set; }
 
 		[Required]
-		[DisplayName("Tuple/Index")]
-		[Description("Enter a tuple containing the column name and item you would like to remove or enter the index of DataRow you want to remove.")]
-		[SampleUsage("(ColumnName1,Item1),(ColumnName2,Item2) || ({vColumn1},{vItem1}),({vCloumn2},{vItem2}) || {vTuple} || 0 || {vIndex}")]
+		[DisplayName("Index")]
+		[Description("Enter the index of the DataRow to remove.")]
+		[SampleUsage("0 || {vIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
-		public string v_SearchItem { get; set; }
+		[CompatibleTypes(new Type[] { typeof(int) })]
+		public string v_Index { get; set; }
+
+		[Required]
+		[DisplayName("Data")]
+		[Description("Enter the column name and item of the row to remove.")]
+		[SampleUsage("[ First Name | John ] || [ {vColumn} | {vData} ]")]
+		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(object) })]
+		public OBDataTable v_DataRowDataTable { get; set; }
 
 		[Required]
 		[DisplayName("Overwrite Option")]
@@ -66,6 +76,18 @@ namespace OpenBots.Commands.DataTable
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_OutputUserVariableName { get; set; }
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private List<Control> _indexControls;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private List<Control> _dataControls;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public RemoveDataRowCommand()
 		{
 			CommandName = "RemoveDataRowCommand";
@@ -74,55 +96,45 @@ namespace OpenBots.Commands.DataTable
 			CommandIcon = Resources.command_spreadsheet;
 
 			v_AndOr = "And";
-			v_RemoveOption = "Tuple";
+
+			//initialize data table
+			v_DataRowDataTable = new OBDataTable
+			{
+				TableName = "AddDataDataTable" + DateTime.Now.ToString("MMddyy.hhmmss")
+			};
+
+			v_DataRowDataTable.Columns.Add("Column Name");
+			v_DataRowDataTable.Columns.Add("Data");
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic vSearchItem = await v_SearchItem.EvaluateCode(engine);
+			dynamic vSearchItem = await v_Index.EvaluateCode(engine);
 			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
 			if(v_RemoveOption == "Index")
                 Dt.Rows[(int)vSearchItem].Delete();
             else
             {
-				var t = new List<Tuple<string, string>>();
-				var listPairs = ((string)vSearchItem).Split(')');
-				int i = 0;
-
-				listPairs = listPairs.Take(listPairs.Count() - 1).ToArray();
-
-				foreach (string item in listPairs)
-				{
-					string temp;
-					temp = item.Trim('(', '"');
-					var tempList = temp.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
-
-					for (int z = 0; z < tempList.Count; z++)
-						tempList[z] = tempList[z].Trim('(');
-
-					t.Insert(i, Tuple.Create(tempList[0], tempList[1]));
-					i++;
-				}
-
-				List<DataRow> listrows = Dt.AsEnumerable().ToList();
 				if (v_AndOr == "Or")
 				{
 					List<DataRow> templist = new List<DataRow>();
-					//for each filter
-					foreach (Tuple<string, string> tuple in t)
+		
+					foreach (DataRow rw in v_DataRowDataTable.Rows)
 					{
-						//for each datarow
-						foreach (DataRow item in listrows)
+						var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
+						var data = await rw.Field<dynamic>("Data").EvaluateCode(engine);
+
+						foreach (DataRow row in Dt.Rows)
 						{
-							if (item[tuple.Item1] != null)
+							if (row[columnName] != null)
 							{
-								if (item[tuple.Item1].ToString() == tuple.Item2.ToString())
-								{
+								if (row[columnName] == data)
+                                {
 									//add to list if filter matches
-									if (!templist.Contains(item))
-										templist.Add(item);
+									if (!templist.Contains(row))
+										templist.Add(row);
 								}
 							}
 						}
@@ -135,19 +147,18 @@ namespace OpenBots.Commands.DataTable
 				//If And operation is checked
 				if (v_AndOr == "And")
 				{
+					List<DataRow> listrows = Dt.AsEnumerable().ToList();
 					List<DataRow> templist = new List<DataRow>(listrows);
 
-					//for each tuple
-					foreach (Tuple<string, string> tuple in t)
+					foreach (DataRow rw in v_DataRowDataTable.Rows)
 					{
-						//for each datarow
-						foreach (DataRow drow in Dt.AsEnumerable())
+						var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
+						var data = await rw.Field<dynamic>("Data").EvaluateCode(engine);
+
+						foreach (DataRow row in Dt.Rows)
 						{
-							if (drow[tuple.Item1].ToString() != tuple.Item2)
-							{
-								//remove from list if filter matches
-								templist.Remove(drow);
-							}
+							if (row[columnName] == data)
+								templist.Remove(row);
 						}
 					}
 
@@ -165,8 +176,16 @@ namespace OpenBots.Commands.DataTable
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataTable", this, editor));
+
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_RemoveOption", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SearchItem", this, editor));
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += OptionComboBox_SelectedIndexChanged;
+
+			_indexControls = commandControls.CreateDefaultInputGroupFor("v_Index", this, editor);
+			RenderedControls.AddRange(_indexControls);
+
+			_dataControls = commandControls.CreateDefaultDataGridViewGroupFor("v_DataRowDataTable", this, editor);
+			RenderedControls.AddRange(_dataControls);
+
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_AndOr", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
@@ -175,7 +194,45 @@ namespace OpenBots.Commands.DataTable
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Remove Rows With '{v_SearchItem}' From '{v_DataTable}' - Store DataTable in '{v_OutputUserVariableName}']";
-		}       
+			return base.GetDisplayValue() + $" [Remove Rows From '{v_DataTable}' - Store DataTable in '{v_OutputUserVariableName}']";
+		}
+
+		public override void Shown()
+		{
+			base.Shown();
+			_hasRendered = true;
+			if (v_RemoveOption == null)
+			{
+				v_RemoveOption = "Index";
+				((ComboBox)RenderedControls[4]).Text = v_RemoveOption;
+			}
+			OptionComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void OptionComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[4]).Text == "Index" && _hasRendered)
+			{
+				foreach (var ctrl in _dataControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is DataGridView)
+						v_DataRowDataTable.Rows.Clear();
+				}
+				foreach (var ctrl in _indexControls)
+					ctrl.Visible = true;
+			}
+			else if (_hasRendered)
+			{
+				foreach (var ctrl in _dataControls)
+					ctrl.Visible = true;
+				foreach (var ctrl in _indexControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is TextBox)
+						((TextBox)ctrl).Clear();
+				}
+			}
+		}
 	}
 }

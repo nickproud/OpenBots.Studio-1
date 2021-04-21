@@ -42,7 +42,7 @@ namespace OpenBots.Commands.DataTable.Test
             VariableMethods.CreateTestVariable(null, _engine, "outputTable", typeof(OBData.DataTable));
 
             _filterDataTable.v_DataTable = "{tableToFilter}";
-            _filterDataTable.v_SearchItem = "({col1},{id1})";
+            //_filterDataTable.v_SearchItem = "({col1},{id1})";
             _filterDataTable.v_OutputUserVariableName = "{outputTable}";
 
             _filterDataTable.RunCommand(_engine);

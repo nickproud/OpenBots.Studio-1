@@ -96,7 +96,6 @@ namespace OpenBots.Commands.DataTable
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataTable", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_DataRowDataTable", this, editor));
 
 			CommandItemControl loadSchemaControl = new CommandItemControl();
 			loadSchemaControl.ForeColor = Color.White;
@@ -104,7 +103,15 @@ namespace OpenBots.Commands.DataTable
 			loadSchemaControl.CommandDisplay = "Load Column Names From Existing DataTable";
 			loadSchemaControl.CommandImage = Resources.command_spreadsheet;
 			loadSchemaControl.Click += LoadSchemaControl_Click;
-			RenderedControls.Add(loadSchemaControl);
+
+			var dataRowDataControls = new List<Control>();
+			dataRowDataControls.Add(commandControls.CreateDefaultLabelFor("v_DataRowDataTable", this));
+			var gridview = commandControls.CreateDefaultDataGridViewFor("v_DataRowDataTable", this);
+			dataRowDataControls.AddRange(commandControls.CreateUIHelpersFor("v_DataRowDataTable", this, new Control[] { gridview }, editor));
+			dataRowDataControls.Add(loadSchemaControl);
+			dataRowDataControls.Add(gridview);
+
+			RenderedControls.AddRange(dataRowDataControls);
 
 			_dataTableCreationCommands = editor.ConfiguredCommands.Where(f => f is CreateDataTableCommand)
 																 .Select(f => (CreateDataTableCommand)f)
