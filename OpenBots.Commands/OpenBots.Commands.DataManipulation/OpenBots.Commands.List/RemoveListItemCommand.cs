@@ -62,13 +62,10 @@ namespace OpenBots.Commands.List
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-
 			var vListIndex = (int)await v_ListIndex.EvaluateCode(engine, nameof(v_ListIndex), this);
+			dynamic dynamicList = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
 
-			var vListVariable = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
-			dynamic dynamicList = vListVariable;
 			dynamicList.RemoveAt(vListIndex);
-
 
 			((object)dynamicList).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}

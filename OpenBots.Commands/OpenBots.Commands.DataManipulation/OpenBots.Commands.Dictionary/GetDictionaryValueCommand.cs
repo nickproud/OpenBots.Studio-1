@@ -54,18 +54,14 @@ namespace OpenBots.Commands.Dictionary
 			SelectionName = "Get Dictionary Value";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_dictionary;
-
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
+			dynamic dynamicKey = await v_Key.EvaluateCode(engine, nameof(v_Key), this);
+			dynamic dynamicDict = await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
 
-			var keyVariable = await v_Key.EvaluateCode(engine, nameof(v_Key), this);
-			var dictVariable = await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
-
-			dynamic dynamicDict = dictVariable;
-			dynamic dynamicKey = keyVariable;
 			dynamic dynamicValue = dynamicDict[dynamicKey];
 
 			((object)dynamicValue).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);

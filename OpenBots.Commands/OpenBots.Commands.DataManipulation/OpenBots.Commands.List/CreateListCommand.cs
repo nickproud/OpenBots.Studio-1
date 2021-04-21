@@ -63,8 +63,8 @@ namespace OpenBots.Commands.List
 
 			foreach (DataRow rwColumnName in v_ListItemsDataTable.Rows)
 			{
-				var itemVariable = await rwColumnName.Field<string>("Items").EvaluateCode(engine);
-				dynamic dynamicItem = itemVariable;
+				dynamic dynamicItem = await rwColumnName.Field<string>("Items").EvaluateCode(engine);
+				// = itemVariable;
 				dynamicNewList.Add(dynamicItem);
 			}
 				
