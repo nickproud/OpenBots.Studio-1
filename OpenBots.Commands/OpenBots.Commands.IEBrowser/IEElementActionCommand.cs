@@ -67,7 +67,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("{vParameterValue}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(new Type[] { typeof(string) }, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public DataTable v_WebActionParameterTable { get; set; }
 
         [JsonIgnore]
@@ -436,7 +436,7 @@ namespace OpenBots.Commands.IEBrowser
 
                     string convertedAttribute = Convert.ToString(element.getAttribute(attributeName));
 
-                    convertedAttribute.SetVariableValue(engine, variableName, typeof(string));
+                    convertedAttribute.SetVariableValue(engine, variableName, nameof(v_WebActionParameterTable), this);
                     break;
             }
         }

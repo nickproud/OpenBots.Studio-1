@@ -507,6 +507,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             if (code == null || code == "")
                 code = "null";
+
             List<Assembly> assemblies = NamespaceMethods.GetAssemblies(engine);
             List<string> assemblyNames = engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
 
@@ -578,8 +579,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static Type GetVariableType(this string varName, IAutomationEngineInstance engine)
         {
             return engine.AutomationEngineContext.EngineScriptState.GetVariable(varName).Type;
-        }
-
-        
+        } 
     }
 }

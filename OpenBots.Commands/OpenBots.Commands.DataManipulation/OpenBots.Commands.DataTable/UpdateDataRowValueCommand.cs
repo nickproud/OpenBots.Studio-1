@@ -87,7 +87,7 @@ namespace OpenBots.Commands.DataTable
 				string index = valueIndex;
 				dataRow.SetField(index, dataRowValue);
 			}
-			dataRow.SetVariableValue(engine, v_DataRow, typeof(DataRow));
+			dataRow.SetVariableValue(engine, v_DataRow, nameof(v_DataRow), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

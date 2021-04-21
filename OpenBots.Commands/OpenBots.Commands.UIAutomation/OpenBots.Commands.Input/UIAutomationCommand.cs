@@ -68,7 +68,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("data || {vData} || *Variable Name*: {vNewVariable}")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(string), typeof(bool) }, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(string), typeof(bool) })]
 		public DataTable v_UIAActionParameters { get; set; }
 
 		[Required]
@@ -365,7 +365,7 @@ namespace OpenBots.Commands.Input
 						else
 							searchResult = requiredHandle.Current.Name.ToString();
 
-						((string)searchResult).SetVariableValue(engine, applyToVariable, typeof(string));
+						((string)searchResult).SetVariableValue(engine, applyToVariable, nameof(v_UIAActionParameters), this);
 					}
 
 					else if (v_AutomationType == "Element Exists")
@@ -376,7 +376,7 @@ namespace OpenBots.Commands.Input
 						else
 							searchResult = true;
 
-						((bool)searchResult).SetVariableValue(engine, applyToVariable, typeof(bool));
+						((bool)searchResult).SetVariableValue(engine, applyToVariable, nameof(v_UIAActionParameters), this);
 					}
 					
 					break;
@@ -404,7 +404,7 @@ namespace OpenBots.Commands.Input
 					var requiredValue = requiredHandle.Current.GetType().GetRuntimeProperty(propertyName)?.GetValue(requiredHandle.Current).ToString();
 
 					//store into variable
-					((object)requiredValue).SetVariableValue(engine, applyToVariable2, typeof(string));
+					((object)requiredValue).SetVariableValue(engine, applyToVariable2, nameof(v_UIAActionParameters), this);
 					break;
 				default:
 					throw new NotImplementedException("Automation type '" + v_AutomationType + "' not supported.");

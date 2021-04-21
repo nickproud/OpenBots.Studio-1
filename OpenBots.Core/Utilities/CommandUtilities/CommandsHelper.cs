@@ -474,9 +474,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				{
 
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.SetVariableValue(engine, "Error.Message", typeof(string));
-					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", typeof(string));
-					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", typeof(string));
+					error.ErrorMessage.SetVariableValue(engine, "Error.Message", "v_ActionParameterTable", command);
+					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", "v_ActionParameterTable", command);
+					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", "v_ActionParameterTable", command);
 
 					ifResult = true;
 				}
@@ -498,9 +498,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				else
 				{
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.SetVariableValue(engine, "Error.Message", typeof(string));
-					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", typeof(string));
-					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", typeof(string));
+					error.ErrorMessage.SetVariableValue(engine, "Error.Message", "v_ActionParameterTable", command);
+					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", "v_ActionParameterTable", command);
+					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", "v_ActionParameterTable", command);
 
 					ifResult = false;
 				}
