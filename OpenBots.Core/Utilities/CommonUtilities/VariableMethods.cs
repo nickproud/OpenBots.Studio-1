@@ -37,7 +37,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 return userInputString;
 
             var variableList = engine.AutomationEngineContext.Variables;
-            var systemVariables = CommonMethods.GenerateSystemVariables();
+            //var systemVariables = CommonMethods.GenerateSystemVariables();
             var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new OBScriptVariable {
                 VariableName = arg.ArgumentName,
                 VariableType = arg.ArgumentType,
@@ -253,7 +253,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             OBScriptVariable requiredVariable;
 
             var variableList = engine.AutomationEngineContext.Variables;
-            var systemVariables = CommonMethods.GenerateSystemVariables();
             var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new OBScriptVariable
                                                                                         {
                                                                                             VariableName = arg.ArgumentName,
