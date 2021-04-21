@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Data.Test
             _parseJSONArray.v_OutputUserVariableName = "{output}";
 
             _parseJSONArray.RunCommand(_engine);
-            List<string> outputList = (List<string>)await _parseJSONArray.v_OutputUserVariableName.EvaluateCode(_engine, typeof(List<>));
+            List<string> outputList = (List<string>)await _parseJSONArray.v_OutputUserVariableName.EvaluateCodeForTests(_engine, typeof(List<>));
             for (int i = 0;i < outputList.Count; i++)
             {
                 Assert.Equal(expectedResult[i], outputList[i]);

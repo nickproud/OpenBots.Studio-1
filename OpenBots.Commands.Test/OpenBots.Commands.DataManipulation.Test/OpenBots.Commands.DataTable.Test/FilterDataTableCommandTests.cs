@@ -55,7 +55,7 @@ namespace OpenBots.Commands.DataTable.Test
             row1copy["col2"] = "data1";
             expectedDT.Rows.Add(row1copy);
             
-            OBData.DataTable resultDataTable = (OBData.DataTable)await _filterDataTable.v_OutputUserVariableName.EvaluateCode(_engine, typeof(OBData.DataTable));
+            OBData.DataTable resultDataTable = (OBData.DataTable)await _filterDataTable.v_OutputUserVariableName.EvaluateCodeForTests(_engine, typeof(OBData.DataTable));
             // Check each row / column pair and assert equivalence
             output.WriteLine(expectedDT.Rows[0].ToString());
             output.WriteLine(resultDataTable.Rows[0].ToString());

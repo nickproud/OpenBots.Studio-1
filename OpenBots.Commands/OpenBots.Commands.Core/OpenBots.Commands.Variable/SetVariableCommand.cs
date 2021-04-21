@@ -4,7 +4,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,27 +13,27 @@ using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Variable
 {
-	[Serializable]
+    [Serializable]
 	[Category("Variable Commands")]
-	[Description("This command modifies a variable.")]
+	[Description("This command assigned a value to a variable.")]
 	public class SetVariableCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Input Value")]
 		[Description("Enter the input value for the variable.")]
-		[SampleUsage("Hello || {vNum} || {vNum}+1")]
+		[SampleUsage("\"Hello\" || vNum || vNum + 1")]
 		[Remarks("You can use variables in input if you encase them within braces {vValue}. You can also perform basic math operations.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_Input { get; set; }
 
 		[Required]
 		[Editable(false)]
-		[DisplayName("Output Data Variable")]
+		[DisplayName("Output Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public SetVariableCommand()
@@ -56,7 +55,7 @@ namespace OpenBots.Commands.Variable
 				Type inputType = input.GetType();
 				Type outputType = v_OutputUserVariableName.GetVarArgType(engine);
 
-				if (inputType != outputType)
+				if (inputType.GetRealTypeFullName() != outputType.GetRealTypeFullName())
 					throw new InvalidCastException("Input and Output types do not match");
 			}
 			
@@ -75,7 +74,7 @@ namespace OpenBots.Commands.Variable
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Set '{v_Input}' to Variable '{v_OutputUserVariableName}']";
+			return base.GetDisplayValue() + $" ['{v_OutputUserVariableName}' = '{v_Input}']";
 		}
 	}
 }

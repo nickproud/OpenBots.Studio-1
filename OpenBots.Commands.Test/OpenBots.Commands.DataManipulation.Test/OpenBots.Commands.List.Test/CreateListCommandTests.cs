@@ -62,10 +62,10 @@ namespace OpenBots.Commands.List.Test
                 default:
                     break;
             }
-            output.WriteLine((await "{output}".EvaluateCode(_engine, typeof(List<>))).GetType().ToString());
+            output.WriteLine((await "{output}".EvaluateCodeForTests(_engine, typeof(List<>))).GetType().ToString());
             output.WriteLine(expectedList.GetType().ToString());
 
-            Assert.True(Object.ReferenceEquals((await "{output}".EvaluateCode(_engine, typeof(List<>))).GetType(), expectedList.GetType()));
+            Assert.True(Object.ReferenceEquals((await "{output}".EvaluateCodeForTests(_engine, typeof(List<>))).GetType(), expectedList.GetType()));
         }
 
         [Fact]

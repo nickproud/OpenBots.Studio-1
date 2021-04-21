@@ -55,7 +55,7 @@ namespace OpenBots.Commands.List.Test
 
             _getListItem.RunCommand(_engine);
 
-            Assert.Equal(item2, (OBDataTable)await "{output}".EvaluateCode(_engine, typeof(OBDataTable)));
+            Assert.Equal(item2, (OBDataTable)await "{output}".EvaluateCodeForTests(_engine, typeof(OBDataTable)));
         }
     }
 }

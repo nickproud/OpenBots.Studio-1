@@ -83,7 +83,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _mergeDataTable.RunCommand(_engine);
 
-            OBData.DataTable resultDataTable = (OBData.DataTable)await _mergeDataTable.v_DestinationDataTable.EvaluateCode(_engine, typeof(OBData.DataTable));
+            OBData.DataTable resultDataTable = (OBData.DataTable)await _mergeDataTable.v_DestinationDataTable.EvaluateCodeForTests(_engine, typeof(OBData.DataTable));
 
             Assert.Equal(dt2.GetType(), resultDataTable.GetType());
             // Check each row / column pair and assert equivalence

@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Credential.Test
 
             SecureString expectedPass = plainPassword.ConvertStringToSecureString();
             Assert.Equal(username, (string)await "{username}".EvaluateCode(_engine));
-            Assert.Equal(expectedPass.ToString(),(await "{password}".EvaluateCode(_engine, typeof(SecureString))).ToString());
+            Assert.Equal(expectedPass.ToString(),(await "{password}".EvaluateCodeForTests(_engine, typeof(SecureString))).ToString());
         }
     }
 }

@@ -50,7 +50,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _removeDataRow.RunCommand(_engine);
             
-            OBData.DataTable outputTable = (OBData.DataTable)await _removeDataRow.v_DataTable.EvaluateCode(_engine, typeof(OBData.DataTable));
+            OBData.DataTable outputTable = (OBData.DataTable)await _removeDataRow.v_DataTable.EvaluateCodeForTests(_engine, typeof(OBData.DataTable));
             Assert.True(outputTable.Rows[expectedIndex][0].Equals(expectedName));
         }
     }

@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Variable
 {
     [Serializable]
 	[Category("Variable Commands")]
-	[Description("This command runs a snippet and assigns the output to a variable.")]
+	[Description("This command runs a snippet and updates a variable if it is modified.")]
 	public class ExecuteSnippetCommand : ScriptCommand
 	{
 		[Required]
@@ -22,15 +22,15 @@ namespace OpenBots.Commands.Variable
 		[Description("Enter the input value for the variable.")]
 		[SampleUsage("")]
 		[Remarks("")]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_Input { get; set; }
 
 		[Required]
-		[DisplayName("Output Variable")]
-		[Description("Enter the variable to which the output will be assigned. Leave empty to execute code without assignment.")]
-		[SampleUsage("")]
-		[Remarks("")]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[DisplayName("Output Modified Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ExecuteSnippetCommand()
@@ -44,15 +44,17 @@ namespace OpenBots.Commands.Variable
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			object value;
 
 			if (!string.IsNullOrEmpty(v_OutputUserVariableName))
 			{
-				value = await VariableMethods.EvaluateCode(v_Input, engine);
-				value.SetVariableValue(engine, v_OutputUserVariableName, VariableMethods.GetVariableType(v_OutputUserVariableName, engine));
+				await v_Input.EvaluateUnassignedCode(engine, nameof(v_OutputUserVariableName), this);
+
+				//grabs the modified variable from the Roslyn engine and stores the value into the Studio engine
+				object variableValue = v_OutputUserVariableName.GetVariableValue(engine);
+				variableValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
 			else
-				await v_Input.EvaluateCodeInPlace(engine);
+				await v_Input.EvaluateUnassignedCode(engine, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -68,9 +70,9 @@ namespace OpenBots.Commands.Variable
 		public override string GetDisplayValue()
 		{
 			if (v_OutputUserVariableName != null)
-				return base.GetDisplayValue() + $" ['{v_OutputUserVariableName}' = '{v_Input}']";
+				return base.GetDisplayValue() + $" ['{v_Input}' - Update Variable '{v_OutputUserVariableName}']";
 			else
-				return base.GetDisplayValue() + $"['{v_Input}']";
+				return base.GetDisplayValue() + $" ['{v_Input}']";
 		}
 	}
 }
