@@ -698,9 +698,10 @@ namespace OpenBots.Engine
 
             else
             {
-                error = ErrorsOccured.OrderByDescending(x => x.LineNumber).FirstOrDefault().StackTrace;
-                Log.Error("Error: " + error);
+                if (ErrorsOccured.Count > 0)
+                    error = ErrorsOccured.OrderByDescending(x => x.LineNumber).FirstOrDefault().StackTrace;
 
+                Log.Error("Error: " + error);
                 TaskResult = error;
             }
 
