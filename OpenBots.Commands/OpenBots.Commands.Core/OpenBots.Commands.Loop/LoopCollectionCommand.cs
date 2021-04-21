@@ -1,7 +1,5 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
@@ -9,8 +7,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
-
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,7 +18,7 @@ using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Loop
 {
-	[Serializable]
+    [Serializable]
 	[Category("Loop Commands")]
 	[Description("This command iterates over a collection to let user perform actions on the collection items.")]
 	public class LoopCollectionCommand : ScriptCommand
@@ -34,7 +30,7 @@ namespace OpenBots.Commands.Loop
 		[Remarks("If the collection is a DataTable then the output item will be a DataRow and its column value can be accessed using the " +
 			"dot operator like {vDataRow.ColumnName}.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DataTable), typeof(List<>), typeof(Dictionary<,>), typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(DataRowCollection), typeof(List<>) })]
 		public string v_LoopParameter { get; set; }
 
 		[Required]
@@ -43,7 +39,7 @@ namespace OpenBots.Commands.Loop
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(IWebElement), typeof(MailItem), typeof(MimeMessage), typeof(KeyValuePair<,>), typeof(string)})]
+		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(KeyValuePair<,>), typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public LoopCollectionCommand()
@@ -60,88 +56,16 @@ namespace OpenBots.Commands.Loop
 			LoopCollectionCommand loopCommand = (LoopCollectionCommand)parentCommand.ScriptCommand;
 			var engine = (IAutomationEngineInstance)sender;
 
-			int loopTimes;
-			var complexVariable = await v_LoopParameter.EvaluateCode(engine, nameof(v_LoopParameter), this);           
+			var complexVariable = await v_LoopParameter.EvaluateCode(engine, nameof(v_LoopParameter), this);
+			dynamic dynamicLoopVariable = complexVariable;
 
-			//if still null then throw exception
-			if (complexVariable == null)
-			{
-				throw new System.Exception("Complex Variable '" + v_LoopParameter + 
-					"' not found. Ensure the variable exists before attempting to modify it.");
-			}
-
-			dynamic listToLoop;
-			if (complexVariable is List<string>)
-			{
-				listToLoop = (List<string>)complexVariable;
-			}
-			else if (complexVariable is List<IWebElement>)
-			{
-				listToLoop = (List<IWebElement>)complexVariable;
-			}
-			else if (complexVariable is DataTable)
-			{
-				listToLoop = ((DataTable)complexVariable).Rows;
-			}
-			else if (complexVariable is List<MailItem>)
-			{
-				listToLoop = (List<MailItem>)complexVariable;
-			}
-			else if (complexVariable is List<MimeMessage>)
-			{
-				listToLoop = (List<MimeMessage>)complexVariable;
-			}
-			else if (complexVariable is Dictionary<string, string>)
-			{
-                listToLoop = ((Dictionary<string, string>)complexVariable).ToList();
-            }
-			else if (complexVariable is Dictionary<string, DataTable>)
-			{
-				listToLoop = ((Dictionary<string, DataTable>)complexVariable).ToList();
-			}
-			else if (complexVariable is Dictionary<string, MailItem>)
-			{
-				listToLoop = ((Dictionary<string, MailItem>)complexVariable).ToList();
-			}
-			else if (complexVariable is Dictionary<string, MimeMessage>)
-			{
-				listToLoop = ((Dictionary<string, MimeMessage>)complexVariable).ToList();
-			}
-			else if (complexVariable is Dictionary<string, IWebElement>)
-			{
-				listToLoop = ((Dictionary<string, IWebElement>)complexVariable).ToList();
-			}
-			else if (complexVariable is Dictionary<string, object>)
-			{
-				listToLoop = ((Dictionary<string, object>)complexVariable).ToList();
-			}
-			else if ((complexVariable.ToString().StartsWith("[")) && 
-				(complexVariable.ToString().EndsWith("]")) && 
-				(complexVariable.ToString().Contains(",")))
-			{
-				//automatically handle if user has given a json array
-				JArray jsonArray = JsonConvert.DeserializeObject(complexVariable.ToString()) as JArray;
-
-			   var itemList = new List<string>();
-				foreach (var item in jsonArray)
-				{
-					var value = (JValue)item;
-					itemList.Add(value.ToString());
-				}
-
-				itemList.SetVariableValue(engine, v_LoopParameter, nameof(v_LoopParameter), this);
-				listToLoop = itemList;
-			}
-			else
-				throw new System.Exception("Complex Variable List Type<T> Not Supported");
-
-			loopTimes = listToLoop.Count;
+			int loopTimes = dynamicLoopVariable.Count;
 
 			for (int i = 0; i < loopTimes; i++)
 			{
 				engine.ReportProgress("Starting Loop Number " + (i + 1) + "/" + loopTimes + " From Line " + loopCommand.LineNumber);
 				
-				((object)listToLoop[i]).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				((object)dynamicLoopVariable[i]).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 
 				foreach (var cmd in parentCommand.AdditionalScriptCommands)
 				{

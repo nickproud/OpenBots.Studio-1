@@ -481,32 +481,18 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             StringBuilder stringBuilder = new StringBuilder();
             Type type = pair.GetType().GetGenericArguments()[1];
+            dynamic stringPair = pair;
 
-            if (type == typeof(string))
-            {
-                KeyValuePair<string, string> stringPair = (KeyValuePair<string,string>)pair;
+            if (type == typeof(string) || type.IsPrimitive)
                 stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, stringPair.Value);
-            }
             else if (type == typeof(DataTable))
-            {
-                KeyValuePair<string, DataTable> stringPair = (KeyValuePair<string, DataTable>)pair;
                 stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertDataTableToString(stringPair.Value));
-            }
             else if (type == typeof(MailItem))
-            {
-                KeyValuePair<string, MailItem> stringPair = (KeyValuePair<string, MailItem>)pair;
                 stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertMailItemToString(stringPair.Value));
-            }
             else if (type == typeof(MimeMessage))
-            {
-                KeyValuePair<string, MimeMessage> stringPair = (KeyValuePair<string, MimeMessage>)pair;
                 stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertMimeMessageToString(stringPair.Value));
-            }
             else if (type == typeof(IWebElement))
-            {
-                KeyValuePair<string, IWebElement> stringPair = (KeyValuePair<string, IWebElement>)pair;
                 stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertIWebElementToString(stringPair.Value));
-            }
             else
                 return pair.ToString();
 
