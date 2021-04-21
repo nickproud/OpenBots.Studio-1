@@ -1,20 +1,16 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Dictionary
 {
@@ -52,33 +48,11 @@ namespace OpenBots.Commands.Dictionary
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			//get variable by regular name
-			var DictionaryVariable = await v_DictionaryName.EvaluateCode(engine, nameof(v_DictionaryName), this);
 
-			//if still null then throw exception
-			if (DictionaryVariable == null)
-			{
-				throw new NullReferenceException("Complex Variable '" + v_DictionaryName +
-					"' not found. Ensure the variable exists before using it.");
-			}
+			var dictVariable = await v_DictionaryName.EvaluateCode(engine, nameof(v_DictionaryName), this);
+			dynamic dynamicDict = dictVariable;
 
-			dynamic DictionaryToCount;
-			if (DictionaryVariable is Dictionary<string, string>)
-				DictionaryToCount = (Dictionary<string, string>)DictionaryVariable;
-			else if (DictionaryVariable is Dictionary<string, OBDataTable>)
-				DictionaryToCount = (Dictionary<string, OBDataTable>)DictionaryVariable;
-			else if (DictionaryVariable is Dictionary<string, MailItem>)
-				DictionaryToCount = (Dictionary<string, MailItem>)DictionaryVariable;
-			else if (DictionaryVariable is Dictionary<string, MimeMessage>)
-				DictionaryToCount = (Dictionary<string, MimeMessage>)DictionaryVariable;
-			else if (DictionaryVariable is Dictionary<string, IWebElement>)
-				DictionaryToCount = (Dictionary<string, IWebElement>)DictionaryVariable;
-			else if (DictionaryVariable is Dictionary<string, object>)
-				DictionaryToCount = (Dictionary<string, object>)DictionaryVariable;
-			else
-				throw new DataException("Invalid dictionary type, please provide valid dictionary type.");
-
-			int count = DictionaryToCount.Count;
+			int count = dynamicDict.Count;
 			count.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 

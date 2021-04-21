@@ -37,6 +37,15 @@ namespace OpenBots.Commands.List
 		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_ListItem { get; set; }
 
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output List Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		public string v_OutputUserVariableName { get; set; }
+
 		public AddListItemCommand()
 		{
 			CommandName = "AddListItemCommand";
@@ -56,7 +65,7 @@ namespace OpenBots.Commands.List
 			dynamic dynamicItem = vListItem;
 			dynamicList.Add(dynamicItem);
 
-			((object)dynamicList).SetVariableValue(engine, v_ListName, typeof(List<string>));
+			((object)dynamicList).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -65,13 +74,14 @@ namespace OpenBots.Commands.List
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListItem", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Add Item '{v_ListItem}' to List '{v_ListName}']";
+			return base.GetDisplayValue() + $" [Add Item '{v_ListItem}' to List '{v_ListName}' - Store List in '{v_OutputUserVariableName}']";
 		}
 	}
 }

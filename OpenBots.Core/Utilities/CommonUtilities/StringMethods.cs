@@ -419,7 +419,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 stringDictionary = dictionary;
                 stringBuilder.Append($"Count({stringDictionary.Count}) [");
 
-                foreach (KeyValuePair<string, string> pair in stringDictionary)
+                foreach (dynamic pair in stringDictionary)
                     stringBuilder.AppendFormat("[{0}, {1}], ", pair.Key, pair.Value);
             }
             else if (type == typeof(DataTable))
@@ -427,7 +427,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 stringDictionary = (Dictionary<string, DataTable>)dictionary;
                 stringBuilder.Append($"Count({stringDictionary.Count}) [");
 
-                foreach (KeyValuePair<string, DataTable> pair in stringDictionary)
+                foreach (dynamic pair in stringDictionary)
                     stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertDataTableToString(pair.Value));
             }
             else if (type == typeof(MailItem))
@@ -435,7 +435,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 stringDictionary = (Dictionary<string, MailItem>)dictionary;
                 stringBuilder.Append($"Count({stringDictionary.Count}) [");
 
-                foreach (KeyValuePair<string, MailItem> pair in stringDictionary)
+                foreach (dynamic pair in stringDictionary)
                     stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertMailItemToString(pair.Value));
             }
             else if (type == typeof(MimeMessage))
@@ -443,7 +443,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 stringDictionary = (Dictionary<string, MimeMessage>)dictionary;
                 stringBuilder.Append($"Count({stringDictionary.Count}) [");
 
-                foreach (KeyValuePair<string, MimeMessage> pair in stringDictionary)
+                foreach (dynamic pair in stringDictionary)
                     stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertMimeMessageToString(pair.Value));
             }
             else if (type == typeof(IWebElement))
@@ -451,7 +451,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 stringDictionary = (Dictionary<string, IWebElement>)dictionary;
                 stringBuilder.Append($"Count({stringDictionary.Count}) [");
 
-                foreach (KeyValuePair<string, IWebElement> pair in stringDictionary)
+                foreach (dynamic pair in stringDictionary)
                     stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertIWebElementToString(pair.Value));
             }
             else if (type == typeof(object))
@@ -459,7 +459,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 stringDictionary = (Dictionary<string, object>)dictionary;
                 stringBuilder.Append($"Count({stringDictionary.Count}) [");
 
-                foreach (KeyValuePair<string, object> pair in stringDictionary)
+                foreach (dynamic pair in stringDictionary)
                     stringBuilder.AppendFormat("[{0}, {1}], ", pair.Key, pair.Value == null ?
                                                 string.Empty : pair.Value.ToString());
             }

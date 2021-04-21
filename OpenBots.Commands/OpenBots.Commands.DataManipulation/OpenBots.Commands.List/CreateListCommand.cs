@@ -47,14 +47,14 @@ namespace OpenBots.Commands.List
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic dynamicNewList;
+
 			string[] splitListItems = null;
 
 			if (!string.IsNullOrEmpty(v_ListItems))
 				splitListItems = v_ListItems.Split(',');
 
 			string listTypeName = v_OutputUserVariableName.GetVarArgType(engine).GetRealTypeName();
-			dynamicNewList = await $"new {listTypeName}()".EvaluateCode(engine);
+			dynamic dynamicNewList = await $"new {listTypeName}()".EvaluateCode(engine);
 
 			foreach (string item in splitListItems)
             {

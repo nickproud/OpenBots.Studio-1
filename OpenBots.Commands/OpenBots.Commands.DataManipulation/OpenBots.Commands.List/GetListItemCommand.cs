@@ -1,5 +1,4 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
@@ -7,14 +6,12 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List
 {
@@ -56,15 +53,15 @@ namespace OpenBots.Commands.List
 			SelectionName = "Get List Item";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
-
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var itemIndex = (int)await v_ItemIndex.EvaluateCode(engine);
 
+			var itemIndex = (int)await v_ItemIndex.EvaluateCode(engine, nameof(v_ItemIndex), this);
 			var listVariable = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
+
 			dynamic dynamicList = listVariable;
 			dynamic dynamicItem = dynamicList[itemIndex];
 

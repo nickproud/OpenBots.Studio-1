@@ -46,6 +46,15 @@ namespace OpenBots.Commands.List
 		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_ListIndex { get; set; }
 
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output List Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		public string v_OutputUserVariableName { get; set; }
+
 		public UpdateListItemCommand()
 		{
 			CommandName = "UpdateListItemCommand";
@@ -67,7 +76,7 @@ namespace OpenBots.Commands.List
 			dynamic dynamicItem = vItemVariable;
 			dynamicList[vListIndex] = dynamicItem;
 
-			((object)dynamicList).SetVariableValue(engine, v_ListName, nameof(v_ListName), this);
+			((object)dynamicList).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -77,13 +86,14 @@ namespace OpenBots.Commands.List
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListItem", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListIndex", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Write Item '{v_ListItem}' to List '{v_ListName}' at Index '{v_ListIndex}']";
+			return base.GetDisplayValue() + $" [Write Item '{v_ListItem}' to List '{v_ListName}' at Index '{v_ListIndex}' - Store List in '{v_OutputUserVariableName}']";
 		}
 	}
 }
