@@ -452,7 +452,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 script = script + ";";
             }
 
-
             engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScriptState.ContinueWithAsync(script, ScriptOptions.Default.WithReferences(assemblies).WithImports(assemblyNames));
 
             return engine.AutomationEngineContext.EngineScriptState.GetVariable(varName).Value;
