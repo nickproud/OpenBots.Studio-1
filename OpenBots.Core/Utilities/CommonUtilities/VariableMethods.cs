@@ -46,7 +46,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
             var variableSearchList = new List<OBScriptVariable>();
             variableSearchList.AddRange(variableList);
-            variableSearchList.AddRange(systemVariables);
+            //variableSearchList.AddRange(systemVariables);
             variableSearchList.AddRange(argumentsAsVariablesList);
 
             //variable markers
@@ -67,7 +67,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                     continue;
 
                 string varcheckname = potentialVariable;
-                bool isSystemVar = systemVariables.Any(vars => vars.VariableName == varcheckname);
+                bool isSystemVar = false; //systemVariables.Any(vars => vars.VariableName == varcheckname);
 
                 if (potentialVariable.Split('.').Length >= 2 && !isSystemVar)
                 {
@@ -263,7 +263,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
             var variableSearchList = new List<OBScriptVariable>();
             variableSearchList.AddRange(variableList);
-            variableSearchList.AddRange(systemVariables);
             variableSearchList.AddRange(argumentsAsVariablesList);
 
             requiredVariable = variableSearchList.Where(var => var.VariableName == varArgName).FirstOrDefault();
