@@ -19,10 +19,8 @@ namespace OpenBots.Commands.DataTable
 	[Serializable]
 	[Category("DataTable Commands")]
 	[Description("This command removes specific DataRows from a DataTable.")]
-
 	public class RemoveDataRowCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter an existing DataTable.")]
@@ -47,7 +45,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("(ColumnName1,Item1),(ColumnName2,Item2) || ({vColumn1},{vItem1}),({vCloumn2},{vItem2}) || {vTuple} || 0 || {vIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_SearchItem { get; set; }
 
 		[Required]
@@ -58,6 +56,15 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("")]
 		[Remarks("")]
 		public string v_AndOr { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output DataTable Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		public RemoveDataRowCommand()
 		{
@@ -74,22 +81,18 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			dynamic vSearchItem = await v_SearchItem.EvaluateCode(engine);
-
 			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
 			if(v_RemoveOption == "Index")
-            {
                 Dt.Rows[(int)vSearchItem].Delete();
-				Dt.AcceptChanges();
-				Dt.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
-			}
             else
             {
 				var t = new List<Tuple<string, string>>();
-				var listPairs = vSearchItem.Split(')');
+				var listPairs = ((string)vSearchItem).Split(')');
 				int i = 0;
 
 				listPairs = listPairs.Take(listPairs.Count() - 1).ToArray();
+
 				foreach (string item in listPairs)
 				{
 					string temp;
@@ -97,9 +100,8 @@ namespace OpenBots.Commands.DataTable
 					var tempList = temp.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
 					for (int z = 0; z < tempList.Count; z++)
-					{
 						tempList[z] = tempList[z].Trim('(');
-					}
+
 					t.Insert(i, Tuple.Create(tempList[0], tempList[1]));
 					i++;
 				}
@@ -125,12 +127,9 @@ namespace OpenBots.Commands.DataTable
 							}
 						}
 					}
+
 					foreach (DataRow item in templist)
-					{
 						Dt.Rows.Remove(item);
-					}
-					Dt.AcceptChanges();
-					Dt.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
 				}
 
 				//If And operation is checked
@@ -153,16 +152,12 @@ namespace OpenBots.Commands.DataTable
 					}
 
 					foreach (DataRow item in templist)
-					{
 						Dt.Rows.Remove(item);
-					}
-					Dt.AcceptChanges();
-
-					//Assigns Datatable to newly updated Datatable
-					Dt.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
 				}
 			}
-			
+
+			Dt.AcceptChanges();
+			Dt.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -173,13 +168,14 @@ namespace OpenBots.Commands.DataTable
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_RemoveOption", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SearchItem", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_AndOr", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Remove Rows With '{v_SearchItem}' From '{v_DataTable}']";
+			return base.GetDisplayValue() + $" [Remove Rows With '{v_SearchItem}' From '{v_DataTable}' - Store DataTable in '{v_OutputUserVariableName}']";
 		}       
 	}
 }

@@ -4,7 +4,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,10 +17,8 @@ namespace OpenBots.Commands.DataTable
 	[Serializable]
 	[Category("DataTable Commands")]
 	[Description("This command gets the DataRow Count of a DataTable.")]
-
 	public class GetDataRowCountCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter an existing DataTable.")]

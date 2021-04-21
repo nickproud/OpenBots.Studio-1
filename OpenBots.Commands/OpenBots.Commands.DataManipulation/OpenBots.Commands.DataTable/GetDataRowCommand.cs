@@ -18,10 +18,8 @@ namespace OpenBots.Commands.DataTable
 	[Serializable]
 	[Category("DataTable Commands")]
 	[Description("This command gets a DataRow from a DataTable.")]
-
 	public class GetDataRowCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter an existing DataTable to get rows from.")]
@@ -37,7 +35,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("0 || {vIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_DataRowIndex { get; set; }
 
 		[Required]
@@ -61,8 +59,7 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
-
-			int index = (int)await v_DataRowIndex.EvaluateCode(engine);
+			int index = (int)await v_DataRowIndex.EvaluateCode(engine, nameof(v_DataRowIndex), this);
 
 			DataRow row = dataTable.Rows[index];
 

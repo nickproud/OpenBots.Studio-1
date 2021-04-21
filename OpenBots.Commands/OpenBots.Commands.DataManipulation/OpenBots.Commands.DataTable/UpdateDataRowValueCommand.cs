@@ -45,7 +45,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("0 || vIndex || \"Column1\" || vColumnName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_DataValueIndex { get; set; }
 
 		[Required]
@@ -54,8 +54,18 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("value || {vValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
+
 		public string v_DataRowValue { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output DataRow Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(DataRow) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		public UpdateDataRowValueCommand()
 		{
@@ -70,7 +80,7 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var dataRowValue = (string)await v_DataRowValue.EvaluateCode(engine);
+			var dataRowValue = await v_DataRowValue.EvaluateCode(engine);
 
 			var dataRowVariable = await v_DataRow.EvaluateCode(engine, nameof(v_DataRow), this);
 			DataRow dataRow = (DataRow)dataRowVariable;
@@ -79,14 +89,15 @@ namespace OpenBots.Commands.DataTable
 
 			if (v_Option == "Column Index")
 			{
-				int index = int.Parse(valueIndex);
+				int index = (int)valueIndex;
 				dataRow[index] = dataRowValue;
 			}
 			else if (v_Option == "Column Name")
 			{
-				string index = valueIndex;
-				dataRow.SetField(index, dataRowValue);
+				string columnName = (string)valueIndex;
+				dataRow.SetField(columnName, dataRowValue);
 			}
+
 			dataRow.SetVariableValue(engine, v_DataRow, nameof(v_DataRow), this);
 		}
 
@@ -98,13 +109,14 @@ namespace OpenBots.Commands.DataTable
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataValueIndex", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataRowValue", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Write '{v_DataRowValue}' to Column '{v_DataValueIndex}' in '{v_DataRow}']";
+			return base.GetDisplayValue() + $" [Write '{v_DataRowValue}' to Column '{v_DataValueIndex}' in '{v_DataRow}' - Store DataRow in '{v_OutputUserVariableName}']";
 		}       
 	}
 }

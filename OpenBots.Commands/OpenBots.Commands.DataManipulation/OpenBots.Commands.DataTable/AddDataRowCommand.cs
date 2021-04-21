@@ -23,10 +23,8 @@ namespace OpenBots.Commands.DataTable
 	[Serializable]
 	[Category("DataTable Commands")]
 	[Description("This command adds a DataRow to a DataTable.")]
-
 	public class AddDataRowCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter an existing DataTable to add a DataRow to.")]
@@ -42,8 +40,17 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("[ First Name | John ] || [ {vColumn} | {vData} ]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(object) })]
 		public OBDataTable v_DataRowDataTable { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output DataTable Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
@@ -76,12 +83,12 @@ namespace OpenBots.Commands.DataTable
 			foreach (DataRow rw in v_DataRowDataTable.Rows)
 			{
 				var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
-				var data = (string)await rw.Field<string>("Data").EvaluateCode(engine);
+				var data = await rw.Field<string>("Data").EvaluateCode(engine);
 				newRow.SetField(columnName, data);
 			}
 			Dt.Rows.Add(newRow);
 
-			Dt.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
+			Dt.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -103,12 +110,14 @@ namespace OpenBots.Commands.DataTable
 																 .Select(f => (CreateDataTableCommand)f)
 																 .ToList();
 
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
+
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Add {v_DataRowDataTable.Rows.Count} Field(s) to '{v_DataTable}']";
+			return base.GetDisplayValue() + $" [Add {v_DataRowDataTable.Rows.Count} Field(s) to '{v_DataTable}' - Store DataTable in '{v_OutputUserVariableName}']";
 		}
 
 		private void LoadSchemaControl_Click(object sender, EventArgs e)

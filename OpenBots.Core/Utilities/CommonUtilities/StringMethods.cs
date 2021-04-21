@@ -208,7 +208,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public static string ConvertDataRowToString(DataRow row)
         {
-            if (row == null)
+            if (row == null || row.RowState == DataRowState.Detached)
                 return "null";
 
             StringBuilder stringBuilder = new StringBuilder();

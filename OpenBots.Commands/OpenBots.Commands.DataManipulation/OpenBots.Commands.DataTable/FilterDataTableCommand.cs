@@ -45,7 +45,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("(ColumnName1,Item1),(ColumnName2,Item2) || ({vColumn1},{vItem1}),({vCloumn2},{vItem2}) || {vFilterTuple} || [Employee Age] > 30 || Name <> 'John' || {vRowFilter}")]
 		[Remarks("DataRows must match all provided tuples to be included in the filtered DataTable. Column names containing spaces should be surrounded by [].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SearchItem { get; set; }
 
 		[Required]
@@ -63,7 +63,6 @@ namespace OpenBots.Commands.DataTable
 			SelectionName = "Filter DataTable";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_spreadsheet;
-
 		}
 
 		public async override Task RunCommand(object sender)
