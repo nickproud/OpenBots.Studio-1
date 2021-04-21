@@ -102,7 +102,7 @@ namespace OpenBots.Commands.Loop
 		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var loopResult = await CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
+			var loopResult = await CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable, this);
 			engine.ReportProgress("Starting Loop"); 
 
 			while (loopResult)
@@ -128,7 +128,7 @@ namespace OpenBots.Commands.Loop
 						break;
 					}
 				}
-				loopResult = await CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
+				loopResult = await CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable, this);
 			}
 		}
 

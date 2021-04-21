@@ -269,7 +269,7 @@ namespace OpenBots.Commands.Input
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, typeof(SecureString));
+					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, nameof(v_UIAActionParameters), this);
 
 					secureString = secureStrVariable.ConvertSecureStringToString();
 

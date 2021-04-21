@@ -123,7 +123,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     DataRow[] foundVariables = variableValues.Select("Name = '" + variable.VariableName + "'");
                     if (foundVariables.Length == 0)
                     {
-                        string type = variable.VariableType.FullName;
+                        string type = variable.VariableType.GetRealTypeFullName();
                         if (variable.VariableValue != null && StringMethods.ConvertObjectToString(variable.VariableValue, variable.VariableType).Length > 40000)
                             variableValues.Rows.Add(variable.VariableName, type, StringMethods.ConvertObjectToString(variable.VariableValue, variable.VariableType).Substring(0, 40000));
                         else
@@ -138,7 +138,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     DataRow[] foundArguments = argumentValues.Select("Name = '" + argument.ArgumentName + "'");
                     if (foundArguments.Length == 0)
                     {
-                        string type = argument.ArgumentType.FullName;
+                        string type = argument.ArgumentType.GetRealTypeFullName();
                         argumentValues.Rows.Add(argument.ArgumentName, type, StringMethods.ConvertObjectToString(argument.ArgumentValue, argument.ArgumentType), 
                             argument.Direction.ToString());
                     }
@@ -159,9 +159,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (e.ColumnIndex == 2)
             {
                 string debugName = ((DataGridView)sender).Rows[e.RowIndex].Cells[0].Value.ToString();               
+                string debugType = ((DataGridView)sender).Rows[e.RowIndex].Cells[1].Value.ToString();               
                 string debugValue = ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
 
-                frmDialog debugDialog = new frmDialog(debugValue, debugName, DialogType.CancelOnly, 0);
+                frmDialog debugDialog = new frmDialog($"{debugType}\n\n{debugValue}", debugName, DialogType.CancelOnly, 0);
                 debugDialog.Show();
             }
         }

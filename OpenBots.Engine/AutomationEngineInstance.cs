@@ -237,7 +237,8 @@ namespace OpenBots.Engine
 
                 foreach (OBScriptVariable var in AutomationEngineContext.Variables)
                 {
-                    await VariableMethods.EvaluateCode(var.VariableName, (string)var.VariableValue, var.VariableType, this);
+                    dynamic evaluatedValue = await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, this);
+                    VariableMethods.SetVariableValue(evaluatedValue, this, var.VariableName, var.VariableType);
                 }           
 
                 ReportProgress("Creating Argument List");
@@ -263,15 +264,16 @@ namespace OpenBots.Engine
                 {
                     foreach (ScriptArgument arg in AutomationEngineContext.Arguments)
                     {
-                        await VariableMethods.EvaluateCode(arg.ArgumentName, "", arg.ArgumentType, this);
-                        arg.ArgumentValue.SetVariableValue(this, arg.ArgumentName, arg.ArgumentType);
+                        await VariableMethods.InstantiateVariable(arg.ArgumentName, "", arg.ArgumentType, this);
+                        VariableMethods.SetVariableValue(arg, this, arg.ArgumentName, arg.ArgumentType);
                     }
                 }
                 else
                 {
                     foreach (ScriptArgument arg in AutomationEngineContext.Arguments)
                     {
-                        await VariableMethods.EvaluateCode(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, this);
+                        dynamic evaluatedValue = await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, this);
+                        VariableMethods.SetVariableValue(evaluatedValue, this, arg.ArgumentName, arg.ArgumentType);
                     }
                 }
 

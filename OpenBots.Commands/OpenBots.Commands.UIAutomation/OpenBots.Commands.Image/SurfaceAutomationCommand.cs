@@ -336,7 +336,7 @@ namespace OpenBots.Commands.Image
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 
-						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, typeof(SecureString));
+						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
 
 						secureString = secureStrVariable.ConvertSecureStringToString();
 

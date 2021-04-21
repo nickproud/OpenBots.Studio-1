@@ -306,7 +306,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             return element;
         }
 
-		public async static Task<bool> DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable)
+		public async static Task<bool> DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable, ScriptCommand command)
 		{
 			bool ifResult = false;
 
@@ -444,7 +444,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										where rw.Field<string>("Parameter Name") == "Variable Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var actualVariable = variableName.EvaluateCode(engine, typeof(object));
+				var actualVariable = variableName.EvaluateCode(engine, "v_ActionParameterTable", command);
 
 				if (actualVariable != null)
 					ifResult = true;
@@ -683,7 +683,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				var capturedImage = (Bitmap)await imageName.EvaluateCode(engine, typeof(Bitmap));
+				var capturedImage = (Bitmap)await imageName.EvaluateCode(engine, "v_ActionParameterTable", command);
 				string timeoutString = (from rw in IfActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();

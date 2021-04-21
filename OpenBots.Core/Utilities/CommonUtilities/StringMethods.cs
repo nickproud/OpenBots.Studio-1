@@ -177,7 +177,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static string ConvertDataTableToString(DataTable dt)
         {
             if (dt == null)
-                return "Null";
+                return "null";
 
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -209,7 +209,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static string ConvertDataRowToString(DataRow row)
         {
             if (row == null)
-                return "Null";
+                return "null";
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("[");
@@ -224,7 +224,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static string ConvertMailItemToString(MailItem mail)
         {
             if (mail == null)
-                return "Null";
+                return "null";
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append($"[Subject: {mail.Subject}, \n" +
@@ -252,7 +252,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static string ConvertMimeMessageToString(MimeMessage message)
         {
             if (message == null)
-                return "Null";
+                return "null";
 
             int attachmentCount = 0;
             foreach (var attachment in message.Attachments)
@@ -284,7 +284,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static string ConvertIWebElementToString(IWebElement element)
         {
             if (element == null)
-                return "Null";
+                return "null";
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append($"[Text: {element.Text}, \n" +
@@ -321,7 +321,12 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static string ConvertListToString(object list)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            Type type = list.GetType().GetGenericArguments()[0];
+            Type type = list.GetType();
+            
+            if (type.IsGenericType)
+                type = type.GetGenericArguments()[0];
+            else
+                return "null";
 
             if (type == typeof(string) || type.IsPrimitive)
             {
@@ -411,7 +416,13 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static string ConvertDictionaryToString(object dictionary)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            Type type = dictionary.GetType().GetGenericArguments()[1];
+            Type type = dictionary.GetType();
+
+            if (type.IsGenericType)
+                type = type.GetGenericArguments()[1];
+            else
+                return "null";
+
             dynamic stringDictionary;
 
             if (type == typeof(string) || type.IsPrimitive)
@@ -480,7 +491,13 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         public static string ConvertKeyValuePairToString(object pair)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            Type type = pair.GetType().GetGenericArguments()[1];
+            Type type = pair.GetType();
+
+            if (type.IsGenericType)
+                type = type.GetGenericArguments()[1];
+            else
+                return "null";
+
             dynamic stringPair = pair;
 
             if (type == typeof(string) || type.IsPrimitive)
