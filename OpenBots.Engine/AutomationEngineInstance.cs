@@ -116,11 +116,12 @@ namespace OpenBots.Engine
             ErrorHandlingAction = string.Empty;
 
             //initialize roslyn instance
-            List<Assembly> assemblies = NamespaceMethods.GetAssemblies(this);
-            List<string> assemblyNames = engineContext.ImportedNamespaces.Keys.ToList();
+            AutomationEngineContext.AssembliesList = NamespaceMethods.GetAssemblies(this);
+            AutomationEngineContext.NamespacesList = NamespaceMethods.GetNamespacesList(this);
 
-            engineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(assemblies).WithImports(assemblyNames));
-            engineContext.EngineScriptState = null;
+            AutomationEngineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(AutomationEngineContext.AssembliesList)
+                                                                                                .WithImports(AutomationEngineContext.NamespacesList));
+            AutomationEngineContext.EngineScriptState = null;
         }
 
         public IAutomationEngineInstance CreateAutomationEngineInstance(EngineContext engineContext)

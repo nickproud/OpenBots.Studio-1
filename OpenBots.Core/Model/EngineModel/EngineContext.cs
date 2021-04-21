@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.Scripting;
 using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 using RSScript = Microsoft.CodeAnalysis.Scripting.Script;
 using System;
+using System.Reflection;
 
 namespace OpenBots.Core.Model.EngineModel
 {
@@ -22,14 +23,16 @@ namespace OpenBots.Core.Model.EngineModel
         public List<ScriptElement> Elements { get; set; }
         public Dictionary<string, object> AppInstances { get; set; }
         public Dictionary<string, AssemblyReference> ImportedNamespaces { get; set; }
+        public List<Assembly> AssembliesList { get; set; }
+        public List<string> NamespacesList { get; set; }
         public IfrmScriptEngine ScriptEngine { get; set; }
         public bool IsTest { get; set; } = false;
-        public int StartFromLineNumber { get; set; } = 1;
-        public RSScript EngineScript { get; set; }
-        public ScriptState EngineScriptState { get; set; }
+        public int StartFromLineNumber { get; set; } = 1;       
         public bool IsDebugMode { get; set; }
         public bool IsChildEngine { get; set; }
         public string GuidPlaceholder { get; set; }
+        public RSScript EngineScript { get; set; }
+        public ScriptState EngineScriptState { get; set; }
 
         public EngineContext()
         {
