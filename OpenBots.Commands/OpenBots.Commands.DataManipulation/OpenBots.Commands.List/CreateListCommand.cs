@@ -9,14 +9,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List
 {
     [Serializable]
 	[Category("List Commands")]
-	[Description("This command creates a new List variable.")]
+	[Description("This command creates a new List.")]
 	public class CreateListCommand : ScriptCommand
 	{
 		[DisplayName("List Item(s) (Optional)")]
@@ -25,7 +27,7 @@ namespace OpenBots.Commands.List
 		[Remarks("Multiple items should be delimited by a comma(,). This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(object) })]
-		public string v_ListItems { get; set; }
+		public OBDataTable v_ListItemsDataTable { get; set; }
 
 		[Required]
 		[Editable(false)]
@@ -42,23 +44,27 @@ namespace OpenBots.Commands.List
 			SelectionName = "Create List";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
+
+			//initialize Datatable
+			v_ListItemsDataTable = new OBDataTable
+			{
+				TableName = "ListItemsDataTable" + DateTime.Now.ToString("MMddyy.hhmmss")
+			};
+
+			v_ListItemsDataTable.Columns.Add("Items");
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string[] splitListItems = null;
-
-			if (!string.IsNullOrEmpty(v_ListItems))
-				splitListItems = v_ListItems.Split(',');
-
 			string listTypeName = v_OutputUserVariableName.GetVarArgType(engine).GetRealTypeName();
 			dynamic dynamicNewList = await $"new {listTypeName}()".EvaluateCode(engine);
 
-			foreach (string item in splitListItems)
-            {
-				dynamic dynamicItem = await item.EvaluateCode(engine);
+			foreach (DataRow rwColumnName in v_ListItemsDataTable.Rows)
+			{
+				var itemVariable = await rwColumnName.Field<string>("Items").EvaluateCode(engine);
+				dynamic dynamicItem = itemVariable;
 				dynamicNewList.Add(dynamicItem);
 			}
 				
@@ -69,7 +75,7 @@ namespace OpenBots.Commands.List
 		{
 			base.Render(editor, commandControls);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListItems", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_ListItemsDataTable", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
@@ -77,7 +83,7 @@ namespace OpenBots.Commands.List
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Create New List With Item(s) '{v_ListItems}' - Store List in '{v_OutputUserVariableName}']";
+			return base.GetDisplayValue() + $" [With {v_ListItemsDataTable.Rows.Count} Item(s) - Store List in '{v_OutputUserVariableName}']";
 		}
 	}
 }

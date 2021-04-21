@@ -80,8 +80,8 @@ namespace OpenBots.Commands.List.Test
             VariableMethods.CreateTestVariable(item2, _engine, "item2", typeof(bool));
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
-           // _createList.v_ListType = "DataTable";
-            _createList.v_ListItems = "{item1},{item2}";
+            //_createList.v_ListType = "DataTable";
+            //_createList.v_ListItems = "{item1},{item2}";
             _createList.v_OutputUserVariableName = "{output}";
 
             await Assert.ThrowsAsync<System.ArgumentException>(() => _createList.RunCommand(_engine));

@@ -21,8 +21,7 @@ namespace OpenBots.Commands.Dictionary
 	[Description("This command creates a new Dictionary.")]
 	public class CreateDictionaryCommand : ScriptCommand
 	{
-		[Required]
-		[DisplayName("Keys and Values")]
+		[DisplayName("Keys and Values (Optional)")]
 		[Description("Enter the Keys and Values required for the new dictionary.")]
 		[SampleUsage("[FirstName | John] || [{vKey} | {vValue}]")]
 		[Remarks("")]

@@ -98,7 +98,7 @@ namespace OpenBots.Commands.Dictionary
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Add {v_ColumnNameDataTable.Rows.Count} Item(s) in '{v_DictionaryName}' - Store Dictionary in '{v_OutputUserVariableName}']";
+			return base.GetDisplayValue() + $" [Add {v_ColumnNameDataTable.Rows.Count} Item(s) to Dictionary '{v_DictionaryName}' - Store Dictionary in '{v_OutputUserVariableName}']";
 		}      
 	}
 }

@@ -9,8 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List
 {
@@ -35,7 +37,7 @@ namespace OpenBots.Commands.List
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(object) })]
-		public string v_ListItem { get; set; }
+		public OBDataTable v_ListItemsDataTable { get; set; }
 
 		[Required]
 		[Editable(false)]
@@ -52,6 +54,14 @@ namespace OpenBots.Commands.List
 			SelectionName = "Add List Item";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
+
+			//initialize Datatable
+			v_ListItemsDataTable = new OBDataTable
+			{
+				TableName = "ListItemsDataTable" + DateTime.Now.ToString("MMddyy.hhmmss")
+			};
+
+			v_ListItemsDataTable.Columns.Add("Items");
 		}
 
 		public async override Task RunCommand(object sender)
@@ -59,11 +69,14 @@ namespace OpenBots.Commands.List
 			var engine = (IAutomationEngineInstance)sender;
 
 			var vListVariable = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
-			var vListItem = await v_ListItem.EvaluateCode(engine);
-
 			dynamic dynamicList = vListVariable;
-			dynamic dynamicItem = vListItem;
-			dynamicList.Add(dynamicItem);
+
+			foreach (DataRow rwColumnName in v_ListItemsDataTable.Rows)
+			{
+				var itemVariable = await rwColumnName.Field<string>("Items").EvaluateCode(engine);
+				dynamic dynamicItem = itemVariable;
+				dynamicList.Add(dynamicItem);
+			}
 
 			((object)dynamicList).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
@@ -73,7 +86,7 @@ namespace OpenBots.Commands.List
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListItem", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_ListItemsDataTable", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
@@ -81,7 +94,7 @@ namespace OpenBots.Commands.List
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Add Item '{v_ListItem}' to List '{v_ListName}' - Store List in '{v_OutputUserVariableName}']";
+			return base.GetDisplayValue() + $" [Add {v_ListItemsDataTable.Rows.Count} Item(s) to List '{v_ListName}' - Store List in '{v_OutputUserVariableName}']";
 		}
 	}
 }
