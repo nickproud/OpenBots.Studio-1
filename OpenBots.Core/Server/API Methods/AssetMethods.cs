@@ -108,11 +108,11 @@ namespace OpenBots.Core.Server.API_Methods
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
         }
 
-        public static void AddAsset(RestClient client, Guid? assetId, string value)
+        public static void AddAsset(RestClient client, Guid? assetId, int value)
         {
             var request = new RestRequest("api/v1/Assets/{id}/Add", Method.PUT);
             request.AddUrlSegment("id", assetId.ToString());
-            request.AddQueryParameter("value", value);
+            request.AddQueryParameter("value", value.ToString());
             request.RequestFormat = DataFormat.Json;
 
             var response = client.Execute(request);
@@ -121,11 +121,11 @@ namespace OpenBots.Core.Server.API_Methods
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
         }
 
-        public static void SubtractAsset(RestClient client, Guid? assetId, string value)
+        public static void SubtractAsset(RestClient client, Guid? assetId, int value)
         {
             var request = new RestRequest("api/v1/Assets/{id}/Subtract", Method.PUT);
             request.AddUrlSegment("id", assetId.ToString());
-            request.AddQueryParameter("value", value);
+            request.AddQueryParameter("value", value.ToString());
             request.RequestFormat = DataFormat.Json;
 
             var response = client.Execute(request);

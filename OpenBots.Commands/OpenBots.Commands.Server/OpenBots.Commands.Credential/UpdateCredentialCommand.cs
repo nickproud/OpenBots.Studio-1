@@ -12,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
 using System.Threading.Tasks;
+using System.Security;
 
 namespace OpenBots.Commands.Credential
 {
@@ -41,11 +42,13 @@ namespace OpenBots.Commands.Credential
 		[Required]
 		[DisplayName("Credential Password")]
 		[Description("Enter the Credential password.")]
-		[SampleUsage("john@openbots.com || {vCredentialPassword}")]
-		[Remarks("")]
+		[SampleUsage("vPassword")]
+		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_CredentialPassword { get; set; }
+
+
 
 		public UpdateCredentialCommand()
 		{
@@ -62,7 +65,7 @@ namespace OpenBots.Commands.Credential
 			var engine = (IAutomationEngineInstance)sender;
 			var vCredentialName = (string)await v_CredentialName.EvaluateCode(engine);
 			var vCredentialUsername = (string)await v_CredentialUsername.EvaluateCode(engine);
-			var vCredentialPassword = (string)await v_CredentialPassword.EvaluateCode(engine);
+			var vCredentialPassword = ((SecureString)await v_CredentialPassword.EvaluateCode(engine)).ConvertSecureStringToString();
 
 			var client = AuthMethods.GetAuthToken();
 			var credential = CredentialMethods.GetCredential(client, $"name eq '{vCredentialName}'");
@@ -82,7 +85,7 @@ namespace OpenBots.Commands.Credential
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_CredentialName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_CredentialUsername", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultPasswordInputGroupFor("v_CredentialPassword", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_CredentialPassword", this, editor));
 
 			return RenderedControls;
 		}
