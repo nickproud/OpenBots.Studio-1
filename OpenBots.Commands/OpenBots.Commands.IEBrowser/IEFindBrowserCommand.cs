@@ -57,11 +57,12 @@ namespace OpenBots.Commands.IEBrowser
         {
             var engine = (IAutomationEngineInstance)sender;
 
+            string IEBrowserName = (string)await v_IEBrowserName.EvaluateCode(engine);
             bool browserFound = false;
             var shellWindows = new ShellWindows();
             foreach (IWebBrowser2 shellWindow in shellWindows)
             {
-                if ((shellWindow.Document is HTMLDocument) && (v_IEBrowserName == null || shellWindow.Document.Title == v_IEBrowserName))
+                if ((shellWindow.Document is HTMLDocument) && (IEBrowserName == null || shellWindow.Document.Title == IEBrowserName))
                 {
                     ((object)shellWindow.Application).AddAppInstance(engine, v_InstanceName);
                     browserFound = true;
@@ -75,8 +76,8 @@ namespace OpenBots.Commands.IEBrowser
                 foreach (IWebBrowser2 shellWindow in shellWindows)
                 {
                     if ((shellWindow.Document is HTMLDocument) && 
-                        ((shellWindow.Document.Title.Contains(v_IEBrowserName) || 
-                        shellWindow.Document.Url.Contains(v_IEBrowserName))))
+                        ((shellWindow.Document.Title.Contains(IEBrowserName) || 
+                        shellWindow.Document.Url.Contains(IEBrowserName))))
                     {
                         ((object)shellWindow.Application).AddAppInstance(engine, v_InstanceName);
                         browserFound = true;
