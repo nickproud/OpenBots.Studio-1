@@ -32,7 +32,7 @@ namespace OpenBots.Commands.DataTable.Test
             _updateDataRowValue.v_DataRowValue = updateVal;
 
             _updateDataRowValue.RunCommand(_engine);
-            DataRow outputRow = (DataRow)await _updateDataRowValue.v_DataRow.EvaluateCode(_engine, typeof(DataRow));
+            DataRow outputRow = (DataRow)await _updateDataRowValue.v_DataRow.EvaluateCodeForTests(_engine, typeof(DataRow));
             Assert.Equal(updateVal, outputRow["firstname"]);
         }
     }

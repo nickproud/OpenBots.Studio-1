@@ -34,8 +34,17 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("Column1 || {vColumnName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ColumnName { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output DataTable Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		public AddDataColumnCommand()
 		{
@@ -48,13 +57,12 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-
-			var dataTableVariable = await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
-			OBDataTable dataTable = (OBDataTable)dataTableVariable;
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 			var ColumnName = (string)await v_ColumnName.EvaluateCode(engine);
 
 			dataTable.Columns.Add(ColumnName);
-			dataTable.SetVariableValue(engine, v_DataTable, nameof(v_DataTable), this);
+
+			dataTable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -63,13 +71,14 @@ namespace OpenBots.Commands.DataTable
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataTable", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ColumnName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Add Column {v_ColumnName} to '{v_DataTable}']";
+			return base.GetDisplayValue() + $" [Add Column {v_ColumnName} to '{v_DataTable}' - Store DataTable in '{v_OutputUserVariableName}']";
 		}
 	}
 }

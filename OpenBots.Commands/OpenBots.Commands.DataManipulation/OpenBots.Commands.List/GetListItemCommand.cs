@@ -1,25 +1,21 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List
 {
-	[Serializable]
+    [Serializable]
 	[Category("List Commands")]
 	[Description("This command returns an item (having a specific index) from a List.")]
 	public class GetListItemCommand : ScriptCommand
@@ -28,9 +24,9 @@ namespace OpenBots.Commands.List
 		[DisplayName("List")]
 		[Description("Provide a List variable.")]
 		[SampleUsage("{vList}")]
-		[Remarks("Any type of variable other than a List or JSON array string will cause error.")]
+		[Remarks("Any type of variable other than a List will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(List<>) }, true)]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_ListName { get; set; }
 
 		[Required]
@@ -39,7 +35,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("0 || {vIndex}")]
 		[Remarks("'0' is the index of the first item in a List. Providing an invalid or out-of-bounds index will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_ItemIndex { get; set; }
 
 		[Required]
@@ -48,7 +44,7 @@ namespace OpenBots.Commands.List
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement) })]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetListItemCommand()
@@ -57,71 +53,18 @@ namespace OpenBots.Commands.List
 			SelectionName = "Get List Item";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
-
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var itemIndex = (string)await v_ItemIndex.EvaluateCode(engine);
-			int index = int.Parse(itemIndex);
-			//get variable by regular name
-			var listVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
-			//if still null then throw exception
-			if (listVariable == null)
-			{
-				throw new System.Exception("Complex Variable '" + v_ListName + 
-					"' not found. Ensure the variable exists before attempting to modify it.");
-			}
 
-			dynamic listToIndex;
-			if (listVariable is List<string>)
-			{
-				listToIndex = (List<string>)listVariable;
-			}
-			else if (listVariable is List<OBDataTable>)
-			{
-				listToIndex = (List<OBDataTable>)listVariable;
-			}
-			else if (listVariable is List<MailItem>)
-			{
-				listToIndex = (List<MailItem>)listVariable;
-			}
-			else if (listVariable is List<MimeMessage>)
-			{
-				listToIndex = (List<MimeMessage>)listVariable;
-			}
-			else if (listVariable is List<IWebElement>)
-			{
-				listToIndex = (List<IWebElement>)listVariable;
-			}
-			else if (
-				(listVariable.ToString().StartsWith("[")) && 
-				(listVariable.ToString().EndsWith("]")) && 
-				(listVariable.ToString().Contains(","))
-				)
-			{
-				//automatically handle if user has given a json array
-				JArray jsonArray = JsonConvert.DeserializeObject(listVariable.ToString()) as JArray;
+			var itemIndex = (int)await v_ItemIndex.EvaluateCode(engine, nameof(v_ItemIndex), this);
+			dynamic dynamicList = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
 
-				var itemList = new List<string>();
-				foreach (var jsonItem in jsonArray)
-				{
-					var value = (JValue)jsonItem;
-					itemList.Add(value.ToString());
-				}
+			dynamic dynamicItem = dynamicList[itemIndex];
 
-				itemList.SetVariableValue(engine, v_ListName, nameof(v_ListName), this);
-				listToIndex = itemList;
-			}
-			else
-			{
-				throw new System.Exception("Complex Variable List Type<T> Not Supported");
-			}
-
-			var item = listToIndex[index];
-
-			((object)item).SetVariableValue(engine, v_OutputUserVariableName, typeof(List<>));
+			((object)dynamicItem).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

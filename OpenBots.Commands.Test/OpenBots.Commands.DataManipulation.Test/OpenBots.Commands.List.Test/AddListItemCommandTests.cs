@@ -33,11 +33,11 @@ namespace OpenBots.Commands.List.Test
             VariableMethods.CreateTestVariable(itemToAdd, _engine, "itemToAdd", typeof(string));
 
             _addListItem.v_ListName = "{list}";
-            _addListItem.v_ListItem = "{itemToAdd}";
+            //_addListItem.v_ListItem = "{itemToAdd}";
 
             _addListItem.RunCommand(_engine);
 
-            List<string> outputList = (List<string>)await "{list}".EvaluateCode(_engine, typeof(List<>));
+            List<string> outputList = (List<string>)await "{list}".EvaluateCodeForTests(_engine, typeof(List<>));
             Assert.Equal(itemToAdd, outputList[0]);
         }
 
@@ -55,11 +55,11 @@ namespace OpenBots.Commands.List.Test
             VariableMethods.CreateTestVariable(itemToAdd, _engine, "itemToAdd", typeof(OBDataTable));
 
             _addListItem.v_ListName = "{list}";
-            _addListItem.v_ListItem = "{itemToAdd}";
+            //_addListItem.v_ListItem = "{itemToAdd}";
 
             _addListItem.RunCommand(_engine);
 
-            List<OBDataTable> outputList = (List<OBDataTable>)await "{list}".EvaluateCode(_engine, typeof(List<>));
+            List<OBDataTable> outputList = (List<OBDataTable>)await "{list}".EvaluateCodeForTests(_engine, typeof(List<>));
             Assert.Equal(itemToAdd, outputList[0]);
         }
 
@@ -76,7 +76,7 @@ namespace OpenBots.Commands.List.Test
             VariableMethods.CreateTestVariable(itemToAdd, _engine, "itemToAdd", typeof(string));
 
             _addListItem.v_ListName = "{list}";
-            _addListItem.v_ListItem = "{itemToAdd}";
+            //_addListItem.v_ListItem = "{itemToAdd}";
 
             await Assert.ThrowsAsync<Exception>(() => _addListItem.RunCommand(_engine));
         }

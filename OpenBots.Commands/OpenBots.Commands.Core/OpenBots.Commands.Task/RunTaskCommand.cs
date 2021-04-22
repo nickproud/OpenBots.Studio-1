@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Task
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TaskPath { get; set; }
 
 		[Required]
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.Task
 		[Remarks("For inputs, set ArgumentDirection to *In*. For outputs, set ArgumentDirection to *Out*. " +
 				 "Failure to assign an ArgumentDirection value will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public DataTable v_ArgumentAssignments { get; set; }
 
 		[JsonIgnore]
@@ -367,7 +367,7 @@ namespace OpenBots.Commands.Task
 
 				if (argumentDirection == "In" || argumentDirection == "InOut")
                 {
-					argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, typeof(object));
+					argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, nameof(v_ArgumentAssignments), this);
 
 					_argumentList.Add(new ScriptArgument
 					{

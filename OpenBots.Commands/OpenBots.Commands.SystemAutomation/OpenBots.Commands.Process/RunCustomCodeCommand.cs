@@ -86,7 +86,6 @@ namespace OpenBots.Commands.Process
 				var memberToInvoke = Regex.Match(v_Code, @"\.(\w+)").Groups[1].ToString();
 
 				List<ScriptVariable> variableList = engine.AutomationEngineContext.Variables;
-				variableList.AddRange(CommonMethods.GenerateSystemVariables());
 
 				object invokingVar = (from vars in variableList
 									  where vars.VariableName == userInputtedVariables[0]

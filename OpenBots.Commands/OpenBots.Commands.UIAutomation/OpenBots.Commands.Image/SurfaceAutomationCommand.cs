@@ -68,7 +68,7 @@ namespace OpenBots.Commands.Image
 		[SampleUsage("data || {vData}")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(bool) }, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(bool) })]
 		public DataTable v_ImageActionParameterTable { get; set; }
 
 		[Required]
@@ -336,7 +336,7 @@ namespace OpenBots.Commands.Image
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 
-						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, typeof(SecureString));
+						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
 
 						secureString = secureStrVariable.ConvertSecureStringToString();
 
@@ -358,9 +358,9 @@ namespace OpenBots.Commands.Image
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 						if (element != null)
-							true.SetVariableValue(engine, outputVariable, typeof(bool));
+							true.SetVariableValue(engine, outputVariable, nameof(v_ImageActionParameterTable), this);
 						else
-							false.SetVariableValue(engine, outputVariable, typeof(bool));
+							false.SetVariableValue(engine, outputVariable, nameof(v_ImageActionParameterTable), this);
 						break;
 					default:
 						break;

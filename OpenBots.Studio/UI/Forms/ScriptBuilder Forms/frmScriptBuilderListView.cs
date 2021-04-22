@@ -856,7 +856,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     modifiedBounds.X += indentPixels;
 
                     //draw string
-                    e.Graphics.DrawString(command.GetDisplayValue(), _selectedTabScriptActions.Font,
+                    e.Graphics.DrawString(command.GetDisplayValue().Replace(Environment.NewLine, ""), _selectedTabScriptActions.Font,
                                           commandNameBrush, modifiedBounds);
                     break;  
             }

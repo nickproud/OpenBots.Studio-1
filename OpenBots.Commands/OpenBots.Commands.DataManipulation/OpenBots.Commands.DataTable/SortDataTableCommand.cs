@@ -44,7 +44,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("0 || {vIndex} || Column1 || {vColumnName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_DataValueIndex { get; set; }
 
 		[Required]

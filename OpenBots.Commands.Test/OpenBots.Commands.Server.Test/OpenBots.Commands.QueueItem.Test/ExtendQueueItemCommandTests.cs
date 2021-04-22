@@ -41,7 +41,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemDict = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
+            var queueItemDict = (Dictionary<string, object>)await "{output}".EvaluateCodeForTests(_engine, typeof(Dictionary<,>));
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
             var client = AuthMethods.GetAuthToken();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);

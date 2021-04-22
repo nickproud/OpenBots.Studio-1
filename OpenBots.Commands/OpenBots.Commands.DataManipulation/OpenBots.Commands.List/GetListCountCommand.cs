@@ -1,25 +1,21 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List
 {
-	[Serializable]
+    [Serializable]
 	[Category("List Commands")]
 	[Description("This command returns the count of items contained in a List.")]
 	public class GetListCountCommand : ScriptCommand
@@ -54,48 +50,11 @@ namespace OpenBots.Commands.List
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			//get variable by regular name
-			var listVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
 
-			//if still null then throw exception
-			if (listVariable == null)
-			{
-				throw new System.Exception("Complex Variable '" + v_ListName +
-					"' not found. Ensure the variable exists before attempting to modify it.");
-			}
+			dynamic dynamicList = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
 
-			dynamic listToCount; 
-			if (listVariable is List<string>)
-				listToCount = (List<string>)listVariable;
-			else if (listVariable is List<OBDataTable>)
-				listToCount = (List<OBDataTable>)listVariable;
-			else if (listVariable is List<MailItem>)
-				listToCount = (List<MailItem>)listVariable;
-			else if (listVariable is List<MimeMessage>)
-				listToCount = (List<MimeMessage>)listVariable;
-			else if (listVariable is List<IWebElement>)
-				listToCount = (List<IWebElement>)listVariable;
-			else if (listVariable.ToString().StartsWith("[") && listVariable.ToString().EndsWith("]") && 
-					 listVariable.ToString().Contains(","))
-			{
-				//automatically handle if user has given a json array
-				JArray jsonArray = JsonConvert.DeserializeObject(listVariable.ToString()) as JArray;
-
-				var itemList = new List<string>();
-				foreach (var item in jsonArray)
-				{
-					var value = (JValue)item;
-					itemList.Add(value.ToString());
-				}
-
-				itemList.SetVariableValue(engine, v_ListName, nameof(v_ListName), this);
-				listToCount = itemList;
-			}
-			else
-				throw new System.Exception("Complex Variable List Type<T> Not Supported");
-
-			int count = listToCount.Count;
-			count.SetVariableValue(engine, v_OutputUserVariableName, typeof(int));
+			int count = dynamicList.Count;
+			count.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

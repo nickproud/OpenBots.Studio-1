@@ -1,24 +1,20 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Exception = System.Exception;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.List
 {
-	[Serializable]
+    [Serializable]
 	[Category("List Commands")]
 	[Description("This command updates an item in an existing List variable at a specified index.")]
 	public class UpdateListItemCommand : ScriptCommand
@@ -38,7 +34,7 @@ namespace OpenBots.Commands.List
 		[SampleUsage("Hello || {vItem}")]
 		[Remarks("List item can only be a String, DataTable, MailItem or IWebElement.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement) }, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_ListItem { get; set; }
 
 		[Required]
@@ -47,8 +43,17 @@ namespace OpenBots.Commands.List
 		[SampleUsage("0 || {vIndex}")]
 		[Remarks("Providing an out of range index will produce an exception.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_ListIndex { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output List Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		public UpdateListItemCommand()
 		{
@@ -61,63 +66,15 @@ namespace OpenBots.Commands.List
 
 		public async override Task RunCommand(object sender)
 		{
-			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vListVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
-			var vListIndex = (int)await VariableMethods.EvaluateCode(v_ListIndex, engine, typeof(int));
-			if (vListVariable != null)
-			{
-				if (vListVariable is List<string>)
-				{
-					((List<string>)vListVariable)[vListIndex] = (string)await VariableMethods.EvaluateCode($"{v_ListItem}", engine, typeof(string));
-				}
-				else if (vListVariable is List<OBDataTable>)
-				{
-					OBDataTable dataTable;
-					var dataTableVariable = await VariableMethods.EvaluateCode($"{v_ListItem}", engine, typeof(OBDataTable));
-					if (dataTableVariable != null && dataTableVariable is OBDataTable)
-						dataTable = (OBDataTable)dataTableVariable;
-					else
-						throw new Exception("Invalid List Item type, please provide valid List Item type.");
-					((List<OBDataTable>)vListVariable)[vListIndex] = dataTable;
-				}
-				else if (vListVariable is List<MailItem>)
-				{
-					MailItem mailItem;
-					var mailItemVariable = await VariableMethods.EvaluateCode($"{v_ListItem}", engine, typeof(MailItem));
-					if (mailItemVariable != null && mailItemVariable is MailItem)
-						mailItem = (MailItem)mailItemVariable;
-					else
-						throw new Exception("Invalid List Item type, please provide valid List Item type.");
-					((List<MailItem>)vListVariable)[vListIndex] = mailItem;
-				}
-				else if (vListVariable is List<MimeMessage>)
-				{
-					MimeMessage mimeMessage;
-					var mimeMessageVariable = await VariableMethods.EvaluateCode($"{v_ListItem}", engine, typeof(MimeMessage));
-					if (mimeMessageVariable != null && mimeMessageVariable is MimeMessage)
-						mimeMessage = (MimeMessage)mimeMessageVariable;
-					else
-						throw new Exception("Invalid List Item type, please provide valid List Item type.");
-					((List<MimeMessage>)vListVariable)[vListIndex] = mimeMessage;
-				}
-				else if (vListVariable is List<IWebElement>)
-				{
-					IWebElement webElement;
-					var webElementVariable = await VariableMethods.EvaluateCode($"{v_ListItem}", engine, typeof(IWebElement));
-					if (webElementVariable != null && webElementVariable is IWebElement)
-						webElement = (IWebElement)webElementVariable;
-					else
-						throw new Exception("Invalid List Item type, please provide valid List Item type.");
-					((List<IWebElement>)vListVariable)[vListIndex] = webElement;
-				}
-				else
-					throw new Exception("Complex Variable List Type<T> Not Supported");
-			}
-			else
-				throw new Exception("Attempted to write data to a variable, but the variable was not found. Enclose variables within braces, ex. {vVariable}");
-			vListVariable.SetVariableValue(engine, v_ListName, typeof(List<>));
+			dynamic dynamicList = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
+			dynamic dynamicItem = await v_ListItem.EvaluateCode(engine, nameof(v_ListItem), this);
+			var vListIndex = (int)await v_ListIndex.EvaluateCode(engine, nameof(v_ListName), this);
+
+			dynamicList[vListIndex] = dynamicItem;
+
+			((object)dynamicList).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -127,13 +84,14 @@ namespace OpenBots.Commands.List
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListItem", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListIndex", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Write Item '{v_ListItem}' to List '{v_ListName}' at Index '{v_ListIndex}']";
+			return base.GetDisplayValue() + $" [Write Item '{v_ListItem}' to List '{v_ListName}' at Index '{v_ListIndex}' - Store List in '{v_OutputUserVariableName}']";
 		}
 	}
 }

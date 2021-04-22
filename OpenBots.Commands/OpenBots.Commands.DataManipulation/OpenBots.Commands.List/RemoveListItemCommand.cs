@@ -38,8 +38,17 @@ namespace OpenBots.Commands.List
 		[SampleUsage("0 || {vIndex}")]
 		[Remarks("Providing an out of range index will produce an exception.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_ListIndex { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output List Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		public RemoveListItemCommand()
 		{
@@ -52,31 +61,13 @@ namespace OpenBots.Commands.List
 
 		public async override Task RunCommand(object sender)
 		{
-			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
+			var vListIndex = (int)await v_ListIndex.EvaluateCode(engine, nameof(v_ListIndex), this);
+			dynamic dynamicList = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
 
-			//var vListVariable = v_ListName.ConvertUserVariableToObject(engine, nameof(v_ListName), this);
-			var vListVariable = await VariableMethods.EvaluateCode(v_ListName, engine, typeof(List<>));
-			var vListIndex = (int)await VariableMethods.EvaluateCode(v_ListIndex, engine, typeof(int));
+			dynamicList.RemoveAt(vListIndex);
 
-			if (vListVariable != null)
-			{
-				if (vListVariable is List<string>)
-					((List<string>)vListVariable).RemoveAt(vListIndex);
-				else if (vListVariable is List<OBDataTable>)
-					((List<OBDataTable>)vListVariable).RemoveAt(vListIndex);
-				else if (vListVariable is List<MailItem>)
-					((List<MailItem>)vListVariable).RemoveAt(vListIndex);
-				else if (vListVariable is List<MimeMessage>)
-					((List<MimeMessage>)vListVariable).RemoveAt(vListIndex);
-				else if (vListVariable is List<IWebElement>)
-					((List<IWebElement>)vListVariable).RemoveAt(vListIndex);
-				else
-					throw new Exception("Complex Variable List Type<T> Not Supported");
-			}
-			else
-				throw new Exception("Attempted to write data to a variable, but the variable was not found. Enclose variables within braces, ex. {vVariable}");
-			vListVariable.SetVariableValue(engine, v_ListName, typeof(List<>));
+			((object)dynamicList).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -85,13 +76,14 @@ namespace OpenBots.Commands.List
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ListIndex", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Remove Item from List '{v_ListName}' at Index '{v_ListIndex}']";
+			return base.GetDisplayValue() + $" [Remove Item from List '{v_ListName}' at Index '{v_ListIndex}' - Store List in '{v_OutputUserVariableName}']";
 		}
 	}
 }

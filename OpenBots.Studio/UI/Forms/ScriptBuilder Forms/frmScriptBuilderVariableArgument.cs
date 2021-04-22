@@ -27,7 +27,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _existingVarArgSearchList = new List<string>();
                 _existingVarArgSearchList.AddRange(_scriptArguments.Select(arg => arg.ArgumentName).ToList());
                 _existingVarArgSearchList.AddRange(_scriptVariables.Select(var => var.VariableName).ToList());
-                _existingVarArgSearchList.AddRange(CommonMethods.GenerateSystemVariables().Select(var => var.VariableName).ToList());
             }
             catch (Exception ex)
             {

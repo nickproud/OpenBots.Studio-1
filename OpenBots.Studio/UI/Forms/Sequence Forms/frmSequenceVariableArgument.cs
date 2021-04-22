@@ -26,7 +26,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 _existingVarArgSearchList = new List<string>();
                 _existingVarArgSearchList.AddRange(ScriptArguments.Select(arg => arg.ArgumentName).ToList());
                 _existingVarArgSearchList.AddRange(ScriptVariables.Select(var => var.VariableName).ToList());
-                _existingVarArgSearchList.AddRange(CommonMethods.GenerateSystemVariables().Select(var => var.VariableName).ToList());
             }
             catch (Exception ex)
             {

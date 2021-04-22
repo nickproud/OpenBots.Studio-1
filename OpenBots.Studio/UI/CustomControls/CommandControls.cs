@@ -734,7 +734,6 @@ namespace OpenBots.UI.CustomControls
 
             //get copy of user variables and append system variables, then load to listview
             var variableList = _currentEditor.ScriptEngineContext.Variables.Select(f => f.VariableName).ToList();
-            variableList.AddRange(CommonMethods.GenerateSystemVariables().Select(f => f.VariableName));
             newVariableSelector.lstVariables.Items.AddRange(variableList.ToArray());
 
             //get copy of user arguments, then load to listview

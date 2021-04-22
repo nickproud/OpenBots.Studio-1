@@ -21,14 +21,13 @@ namespace OpenBots.Commands.DataTable
 
 	public class CreateDataTableCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("Column Names")]
 		[Description("Enter the Column Names required for each column of data.")]
 		[SampleUsage("MyColumn || {vColumn}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public OBDataTable v_ColumnNameDataTable { get; set; }
 
 		[Required]
@@ -64,7 +63,8 @@ namespace OpenBots.Commands.DataTable
 
 			foreach(DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 			{
-				Dt.Columns.Add((string)await rwColumnName.Field<string>("Column Name").EvaluateCode(engine));
+				string columnName = (string)await rwColumnName.Field<string>("Column Name").EvaluateCode(engine, nameof(v_ColumnNameDataTable), this);
+				Dt.Columns.Add(columnName);
 			}
 
 			Dt.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);

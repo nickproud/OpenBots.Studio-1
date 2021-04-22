@@ -116,11 +116,12 @@ namespace OpenBots.Engine
             ErrorHandlingAction = string.Empty;
 
             //initialize roslyn instance
-            List<Assembly> assemblies = NamespaceMethods.GetAssemblies(this);
-            List<string> assemblyNames = engineContext.ImportedNamespaces.Keys.ToList();
+            AutomationEngineContext.AssembliesList = NamespaceMethods.GetAssemblies(this);
+            AutomationEngineContext.NamespacesList = NamespaceMethods.GetNamespacesList(this);
 
-            engineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(assemblies).WithImports(assemblyNames));
-            engineContext.EngineScriptState = null;
+            AutomationEngineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(AutomationEngineContext.AssembliesList)
+                                                                                                .WithImports(AutomationEngineContext.NamespacesList));
+            AutomationEngineContext.EngineScriptState = null;
         }
 
         public IAutomationEngineInstance CreateAutomationEngineInstance(EngineContext engineContext)
@@ -237,7 +238,8 @@ namespace OpenBots.Engine
 
                 foreach (OBScriptVariable var in AutomationEngineContext.Variables)
                 {
-                    await VariableMethods.EvaluateCode(var.VariableName, (string)var.VariableValue, var.VariableType, this);
+                    dynamic evaluatedValue = await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, this);
+                    VariableMethods.SetVariableValue(evaluatedValue, this, var.VariableName, var.VariableType);
                 }           
 
                 ReportProgress("Creating Argument List");
@@ -263,15 +265,16 @@ namespace OpenBots.Engine
                 {
                     foreach (ScriptArgument arg in AutomationEngineContext.Arguments)
                     {
-                        await VariableMethods.EvaluateCode(arg.ArgumentName, "", arg.ArgumentType, this);
-                        arg.ArgumentValue.SetVariableValue(this, arg.ArgumentName, arg.ArgumentType);
+                        await VariableMethods.InstantiateVariable(arg.ArgumentName, "", arg.ArgumentType, this);
+                        VariableMethods.SetVariableValue(arg, this, arg.ArgumentName, arg.ArgumentType);
                     }
                 }
                 else
                 {
                     foreach (ScriptArgument arg in AutomationEngineContext.Arguments)
                     {
-                        await VariableMethods.EvaluateCode(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, this);
+                        dynamic evaluatedValue = await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, this);
+                        VariableMethods.SetVariableValue(evaluatedValue, this, arg.ArgumentName, arg.ArgumentType);
                     }
                 }
 
@@ -695,9 +698,10 @@ namespace OpenBots.Engine
 
             else
             {
-                error = ErrorsOccured.OrderByDescending(x => x.LineNumber).FirstOrDefault().StackTrace;
-                Log.Error("Error: " + error);
+                if (ErrorsOccured.Count > 0)
+                    error = ErrorsOccured.OrderByDescending(x => x.LineNumber).FirstOrDefault().StackTrace;
 
+                Log.Error("Error: " + error);
                 TaskResult = error;
             }
 

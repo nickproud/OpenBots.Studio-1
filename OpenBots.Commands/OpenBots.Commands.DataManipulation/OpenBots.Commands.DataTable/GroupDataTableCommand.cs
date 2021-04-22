@@ -45,7 +45,7 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("0 || {vIndex} || Column1 || {vColumnName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_DataValueIndex { get; set; }
 
 		[Required]
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.DataTable
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<OBDataTable>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GroupDataTableCommand()
@@ -70,9 +70,7 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-
 			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
-
 			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
 			string columnName = "";

@@ -36,7 +36,7 @@ namespace OpenBots.Commands.List.Test
 
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
-            _createList.v_ListType = listType;
+           // _createList.v_ListType = listType;
             _createList.v_OutputUserVariableName = "{output}";
 
             _createList.RunCommand(_engine);
@@ -62,10 +62,10 @@ namespace OpenBots.Commands.List.Test
                 default:
                     break;
             }
-            output.WriteLine((await "{output}".EvaluateCode(_engine, typeof(List<>))).GetType().ToString());
+            output.WriteLine((await "{output}".EvaluateCodeForTests(_engine, typeof(List<>))).GetType().ToString());
             output.WriteLine(expectedList.GetType().ToString());
 
-            Assert.True(Object.ReferenceEquals((await "{output}".EvaluateCode(_engine, typeof(List<>))).GetType(), expectedList.GetType()));
+            Assert.True(Object.ReferenceEquals((await "{output}".EvaluateCodeForTests(_engine, typeof(List<>))).GetType(), expectedList.GetType()));
         }
 
         [Fact]
@@ -80,8 +80,8 @@ namespace OpenBots.Commands.List.Test
             VariableMethods.CreateTestVariable(item2, _engine, "item2", typeof(bool));
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
-            _createList.v_ListType = "DataTable";
-            _createList.v_ListItems = "{item1},{item2}";
+            //_createList.v_ListType = "DataTable";
+            //_createList.v_ListItems = "{item1},{item2}";
             _createList.v_OutputUserVariableName = "{output}";
 
             await Assert.ThrowsAsync<System.ArgumentException>(() => _createList.RunCommand(_engine));

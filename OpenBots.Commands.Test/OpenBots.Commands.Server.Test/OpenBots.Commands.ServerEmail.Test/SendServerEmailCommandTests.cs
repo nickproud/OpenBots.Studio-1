@@ -308,7 +308,7 @@ namespace OpenBots.Commands.ServerEmail.Test
 
                 _getEmail.RunCommand(_engine);
 
-                emailMessageList = (List<MailItem>)await "{vTestEmail}".EvaluateCode(_engine, typeof(List<>));
+                emailMessageList = (List<MailItem>)await "{vTestEmail}".EvaluateCodeForTests(_engine, typeof(List<>));
                 if (emailMessageList.Count > 0)
                     emailMessage = emailMessageList[0];
 

@@ -1,20 +1,16 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Dictionary
 {
@@ -38,7 +34,7 @@ namespace OpenBots.Commands.Dictionary
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetKeyFromKeyValuePairCommand()
@@ -51,26 +47,11 @@ namespace OpenBots.Commands.Dictionary
 
 		public async override Task RunCommand(object sender)
 		{
-			//Get Key from KeyValuePair
 			var engine = (IAutomationEngineInstance)sender;
+			dynamic dynamicKVPair = await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this);
+			dynamic dynamicKey = dynamicKVPair.Key;
 
-			dynamic keyValuePair;
-			if (await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, string>)
-				keyValuePair = (KeyValuePair<string, string>)await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this);
-			else if (await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, OBDataTable>)
-				keyValuePair = (KeyValuePair<string, OBDataTable>)await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this);
-			else if (await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, MailItem>)
-				keyValuePair = (KeyValuePair<string, MailItem>)await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this);
-			else if (await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, MimeMessage>)
-				keyValuePair = (KeyValuePair<string, MimeMessage>)await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this);
-			else if (await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, IWebElement>)
-				keyValuePair = (KeyValuePair<string, IWebElement>)await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this);
-			else if (await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, object>)
-				keyValuePair = (KeyValuePair<string, object>)await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this);
-			else
-				throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
-
-			((string)keyValuePair.Key).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)dynamicKey).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

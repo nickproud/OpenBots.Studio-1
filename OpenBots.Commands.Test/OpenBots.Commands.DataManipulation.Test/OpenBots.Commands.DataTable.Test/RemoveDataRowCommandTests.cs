@@ -45,12 +45,12 @@ namespace OpenBots.Commands.DataTable.Test
             VariableMethods.CreateTestVariable(inputTable, _engine, "inputTable", typeof(OBData.DataTable));
 
             _removeDataRow.v_DataTable = "{inputTable}";
-            _removeDataRow.v_SearchItem = search;
+            //_removeDataRow.v_SearchItem = search;
             _removeDataRow.v_AndOr = andOr;
 
             _removeDataRow.RunCommand(_engine);
             
-            OBData.DataTable outputTable = (OBData.DataTable)await _removeDataRow.v_DataTable.EvaluateCode(_engine, typeof(OBData.DataTable));
+            OBData.DataTable outputTable = (OBData.DataTable)await _removeDataRow.v_DataTable.EvaluateCodeForTests(_engine, typeof(OBData.DataTable));
             Assert.True(outputTable.Rows[expectedIndex][0].Equals(expectedName));
         }
     }

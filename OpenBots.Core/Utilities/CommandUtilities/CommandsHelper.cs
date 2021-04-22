@@ -306,7 +306,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             return element;
         }
 
-		public async static Task<bool> DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable)
+		public async static Task<bool> DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable, ScriptCommand command)
 		{
 			bool ifResult = false;
 
@@ -444,7 +444,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										where rw.Field<string>("Parameter Name") == "Variable Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var actualVariable = variableName.EvaluateCode(engine, typeof(object));
+				var actualVariable = variableName.EvaluateCode(engine, "v_ActionParameterTable", command);
 
 				if (actualVariable != null)
 					ifResult = true;
@@ -474,9 +474,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				{
 
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.SetVariableValue(engine, "Error.Message", typeof(string));
-					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", typeof(string));
-					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", typeof(string));
+					error.ErrorMessage.SetVariableValue(engine, "Error.Message", "v_ActionParameterTable", command);
+					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", "v_ActionParameterTable", command);
+					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", "v_ActionParameterTable", command);
 
 					ifResult = true;
 				}
@@ -498,9 +498,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				else
 				{
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.SetVariableValue(engine, "Error.Message", typeof(string));
-					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", typeof(string));
-					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", typeof(string));
+					error.ErrorMessage.SetVariableValue(engine, "Error.Message", "v_ActionParameterTable", command);
+					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", "v_ActionParameterTable", command);
+					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", "v_ActionParameterTable", command);
 
 					ifResult = false;
 				}
@@ -683,7 +683,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				var capturedImage = (Bitmap)await imageName.EvaluateCode(engine, typeof(Bitmap));
+				var capturedImage = (Bitmap)await imageName.EvaluateCode(engine, "v_ActionParameterTable", command);
 				string timeoutString = (from rw in IfActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();

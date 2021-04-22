@@ -1,20 +1,16 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Dictionary
 {
@@ -39,7 +35,7 @@ namespace OpenBots.Commands.Dictionary
 		[SampleUsage("SomeKey || {vKey}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_Key { get; set; }
 
 		[Required]
@@ -48,7 +44,7 @@ namespace OpenBots.Commands.Dictionary
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("{vUserVariable}")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement), typeof(object) })]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 
 		public string v_OutputUserVariableName { get; set; }
 
@@ -58,34 +54,17 @@ namespace OpenBots.Commands.Dictionary
 			SelectionName = "Get Dictionary Value";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_dictionary;
-
 		}
 
 		public async override Task RunCommand(object sender)
 		{
-			//Retrieve Dictionary by name
 			var engine = (IAutomationEngineInstance)sender;
-			var vKey = (string)await v_Key.EvaluateCode(engine);
+			dynamic dynamicKey = await v_Key.EvaluateCode(engine, nameof(v_Key), this);
+			dynamic dynamicDict = await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
 
-			dynamic dict;
+			dynamic dynamicValue = dynamicDict[dynamicKey];
 
-			//Declare local dictionary and assign output
-			if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, string>)
-				dict = (Dictionary<string,string>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
-			else if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, OBDataTable>)
-				dict = (Dictionary<string, OBDataTable>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
-			else if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, MailItem>)
-				dict = (Dictionary<string, MailItem>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
-			else if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, MimeMessage>)
-				dict = (Dictionary<string, MimeMessage>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
-			else if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, IWebElement>)
-				dict = (Dictionary<string, IWebElement>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
-			else if (await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this) is Dictionary<string, object>)
-				dict = (Dictionary<string, object>)await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
-			else
-				throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
-
-			((object)dict[vKey]).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)dynamicValue).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

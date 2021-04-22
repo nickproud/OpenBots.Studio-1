@@ -4,7 +4,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,7 +44,6 @@ namespace OpenBots.Commands.DataTable
 			SelectionName = "Get Column Count";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_spreadsheet;
-
 		}
 
 		public async override Task RunCommand(object sender)
