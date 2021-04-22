@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Input
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -59,7 +59,7 @@ namespace OpenBots.Commands.Input
 		[Description("Use the Element Recorder to generate a listing of potential search parameters.")]
 		[SampleUsage("AutomationId || Name")]
 		[Remarks("Once you have clicked on a valid window the search parameters will be populated. Select a single parameter to find the element.")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_UIASearchParameters { get; set; }
 
 		[Required]
@@ -77,7 +77,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
@@ -122,10 +122,10 @@ namespace OpenBots.Commands.Input
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vTimeout = (int)await v_Timeout.EvaluateCode(engine);
+			var vTimeout = (int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this);
 
 			//create variable window name
-			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
 			if (variableWindowName == "Current Window")
 				variableWindowName = User32Functions.GetActiveWindowTitle();			
 
@@ -180,12 +180,12 @@ namespace OpenBots.Commands.Input
 
 					//parse to int
 					if (!string.IsNullOrEmpty(xAdjust))
-						xAdjustInt = (int)await xAdjust.EvaluateCode(engine);
+						xAdjustInt = (int)await xAdjust.EvaluateCode(engine, nameof(v_UIAActionParameters), this);
 					else
 						xAdjustInt = 0;
 
 					if (!string.IsNullOrEmpty(yAdjust))
-						yAdjustInt = (int)await yAdjust.EvaluateCode(engine);
+						yAdjustInt = (int)await yAdjust.EvaluateCode(engine, nameof(v_UIAActionParameters), this);
 					else
 						yAdjustInt = 0;
 
@@ -212,7 +212,7 @@ namespace OpenBots.Commands.Input
 					if (clearElement == null)
 						clearElement = "No";
 
-					textToSet = (string)await textToSet.EvaluateCode(engine);
+					textToSet = (string)await textToSet.EvaluateCode(engine, nameof(v_UIAActionParameters), this);
 
 					if (encryptedData == "Encrypted")
 						textToSet = EncryptionServices.DecryptString(textToSet, "OPENBOTS");

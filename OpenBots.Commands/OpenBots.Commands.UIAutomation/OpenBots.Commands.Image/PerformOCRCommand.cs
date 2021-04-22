@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Image
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.Image
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFilePath = (string)await v_FilePath.EvaluateCode(engine);
+			var vFilePath = (string)await v_FilePath.EvaluateCode(engine, nameof(v_FilePath), this);
 
 			OneNoteOCR ocrEngine = new OneNoteOCR();
 			OCRText[] ocrTextArray = ocrEngine.OcrTexts(vFilePath).ToArray();

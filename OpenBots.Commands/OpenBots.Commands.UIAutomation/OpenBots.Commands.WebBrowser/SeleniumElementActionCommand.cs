@@ -55,7 +55,7 @@ namespace OpenBots.Commands.WebBrowser
 				 "\n\tLink Text: https://www.mylink.com/")]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_SeleniumSearchParameters { get; set; }
 
 		[Required]
@@ -109,7 +109,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
@@ -158,7 +158,7 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vTimeout = (int)await v_Timeout.EvaluateCode(engine);
+			var vTimeout = (int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this);
 			var seleniumSearchParamRows = (from rw in v_SeleniumSearchParameters.AsEnumerable()
 									   where rw.Field<string>("Enabled") == "True" &&
 									   rw.Field<string>("Parameter Value").ToString() != ""
@@ -200,12 +200,12 @@ namespace OpenBots.Commands.WebBrowser
 					string userXAdjustString = (from rw in v_WebActionParameterTable.AsEnumerable()
 													   where rw.Field<string>("Parameter Name") == "X Adjustment"
 													   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-					int userXAdjust = (int)await userXAdjustString.EvaluateCode(engine);
+					int userXAdjust = (int)await userXAdjustString.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
 
 					string userYAdjustString = (from rw in v_WebActionParameterTable.AsEnumerable()
 													   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 													   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-					int userYAdjust = (int)await userYAdjustString.EvaluateCode(engine);
+					int userYAdjust = (int)await userYAdjustString.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
 
 					var elementLocation = ((IWebElement)element).Location;
 					var seleniumWindowPosition = seleniumInstance.Manage().Window.Position;
@@ -221,7 +221,7 @@ namespace OpenBots.Commands.WebBrowser
 					string textToSetString = (from rw in v_WebActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "Text To Set"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault();
-					string textToSet = (string)await textToSetString.EvaluateCode(engine);
+					string textToSet = (string)await textToSetString.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
 
 					string clearElement = (from rw in v_WebActionParameterTable.AsEnumerable()
 										   where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
@@ -259,7 +259,7 @@ namespace OpenBots.Commands.WebBrowser
 						}
 						else
 						{
-							var convertedChunk = (string)await chunkedString.EvaluateCode(engine);
+							var convertedChunk = (string)await chunkedString.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
 							finalTextToSet += convertedChunk;
 						}
 					}
@@ -316,7 +316,7 @@ namespace OpenBots.Commands.WebBrowser
 					string attribNameString = (from rw in v_WebActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Attribute Name"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
-					string attribName = (string)await attribNameString.EvaluateCode(engine);
+					string attribName = (string)await attribNameString.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
 
 					var optionsItems = new List<string>();
 					var ele = (IWebElement)element;
@@ -341,7 +341,7 @@ namespace OpenBots.Commands.WebBrowser
 					string selectionParamString = (from rw in v_WebActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Selection Parameter"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
-					string selectionParam = (string)await selectionParamString.EvaluateCode(engine);
+					string selectionParam = (string)await selectionParamString.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
 
 					seleniumInstance.SwitchTo().ActiveElement();
 
@@ -386,7 +386,7 @@ namespace OpenBots.Commands.WebBrowser
 					string attributeNameString = (from rw in v_WebActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Attribute Name"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
-					string attributeName = (string)await attributeNameString.EvaluateCode(engine);
+					string attributeName = (string)await attributeNameString.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
 
 					string elementValue;
 					if (v_SeleniumElementAction == "Get Text")

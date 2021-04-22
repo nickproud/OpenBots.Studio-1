@@ -34,7 +34,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("arguments[0].click(); || alert('Welcome to OpenBots'); || {vScript}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ScriptCode { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("button || {vArguments}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Arguments { get; set; }
 
 		[Required]
@@ -68,8 +68,8 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
-			var script = (string)await v_ScriptCode.EvaluateCode(engine);
-			var args = (string)await v_Arguments.EvaluateCode(engine);
+			var script = (string)await v_ScriptCode.EvaluateCode(engine, nameof(v_ScriptCode), this);
+			var args = (string)await v_Arguments.EvaluateCode(engine, nameof(v_Arguments), this);
 			var seleniumInstance = (IWebDriver)browserObject;
 			IJavaScriptExecutor js = (IJavaScriptExecutor)seleniumInstance;
 

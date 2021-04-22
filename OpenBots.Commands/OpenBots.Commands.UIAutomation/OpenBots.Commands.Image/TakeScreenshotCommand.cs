@@ -29,7 +29,7 @@ namespace OpenBots.Commands.Image
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Image
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FolderPath { get; set; }
 
 		[Required]
@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Image
 		[SampleUsage("myFile.png || {vFilename}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FileName { get; set; }
 
 		[Required]
@@ -73,9 +73,9 @@ namespace OpenBots.Commands.Image
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = (string)await v_WindowName.EvaluateCode(engine);
-			string vFolderPath = (string)await v_FolderPath.EvaluateCode(engine);
-			string vFileName = (string)await v_FileName.EvaluateCode(engine);
+			string windowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
+			string vFolderPath = (string)await v_FolderPath.EvaluateCode(engine, nameof(v_FolderPath), this);
+			string vFileName = (string)await v_FileName.EvaluateCode(engine, nameof(v_FileName), this);
 			string vFilePath = Path.Combine(vFolderPath, vFileName);
 
 			Bitmap image;

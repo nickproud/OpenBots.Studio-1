@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Image
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -77,7 +77,7 @@ namespace OpenBots.Commands.Image
 		[SampleUsage("0.8 || 1 || {vAccuracy}")]
 		[Remarks("Accuracy must be a value between 0 and 1.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MatchAccuracy { get; set; }
 
 		[Required]
@@ -86,7 +86,7 @@ namespace OpenBots.Commands.Image
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
@@ -127,8 +127,8 @@ namespace OpenBots.Commands.Image
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = (string)await v_WindowName.EvaluateCode(engine);
-			int timeout = (int)await v_Timeout.EvaluateCode(engine);
+			string windowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
+			int timeout = (int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this);
 			var timeToEnd = DateTime.Now.AddSeconds(timeout);
 
 			bool testMode = TestMode;
@@ -137,7 +137,7 @@ namespace OpenBots.Commands.Image
 			double accuracy;
 			try
 			{
-				accuracy = (double)await v_MatchAccuracy.EvaluateCode(engine);
+				accuracy = Convert.ToDouble(await v_MatchAccuracy.EvaluateCode(engine, nameof(v_MatchAccuracy), this));
 				if (accuracy > 1 || accuracy < 0)
 					throw new ArgumentOutOfRangeException("Accuracy value is out of range (0-1)");
 			}
@@ -271,11 +271,11 @@ namespace OpenBots.Commands.Image
 						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
 						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
 
 						Point clickPositionPoint = GetClickPosition(clickPosition, element);
 
@@ -289,18 +289,18 @@ namespace OpenBots.Commands.Image
 						string textToSet = (from rw in v_ImageActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Text To Set"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						textToSet = (string)await textToSet.EvaluateCode(engine);
+						textToSet = (string)await textToSet.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
 						clickPosition = (from rw in v_ImageActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Click Position"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
 						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
 						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
 						string encryptedData = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												where rw.Field<string>("Parameter Name") == "Encrypted Text"
 												select rw.Field<string>("Parameter Value")).FirstOrDefault();
@@ -330,11 +330,11 @@ namespace OpenBots.Commands.Image
 						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
 						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
 
 						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
 

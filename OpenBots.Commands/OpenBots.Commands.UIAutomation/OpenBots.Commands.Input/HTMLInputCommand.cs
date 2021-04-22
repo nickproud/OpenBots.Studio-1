@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("ShowHTMLBuilder", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputHTML { get; set; }
 
 		[Required]
@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Input
 			}
 
 			//sample for temp testing
-			var htmlInput = (string)await v_InputHTML.EvaluateCode(engine);
+			var htmlInput = (string)await v_InputHTML.EvaluateCode(engine, nameof(v_InputHTML), this);
 
 			//invoke ui for data collection
 			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>

@@ -26,7 +26,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("<!DOCTYPE html><html><head><title>Example</title></head></html> || {vMyHTML}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_HTMLVariable { get; set; }
 
 		[Required]
@@ -35,7 +35,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("@//*[@id=\"aso_search_form_anchor\"]/div/input || {vMyXPath}")]
 		[Remarks("You can use Chrome Dev Tools to click an element and copy the XPath.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_XPathQuery { get; set; }
 
 		[Required]
@@ -60,7 +60,7 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-			doc.LoadHtml((string)await v_HTMLVariable.EvaluateCode(engine));
+			doc.LoadHtml((string)await v_HTMLVariable.EvaluateCode(engine, nameof(v_HTMLVariable), this));
 
 			var div = doc.DocumentNode.SelectSingleNode(v_XPathQuery);
 			string divString = div.InnerText;

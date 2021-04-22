@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Input
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Input
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowEncryptionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSend { get; set; }
 
 		[Required]
@@ -66,12 +66,12 @@ namespace OpenBots.Commands.Input
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
 
 			if (variableWindowName != "Current Window")
 				User32Functions.ActivateWindow(variableWindowName);
 
-			string textToSend = (string)await v_TextToSend.EvaluateCode(engine);
+			string textToSend = (string)await v_TextToSend.EvaluateCode(engine, nameof(v_TextToSend), this);
 
 			if (v_EncryptionOption == "Encrypted")
 				textToSend = EncryptionServices.DecryptString(textToSend, "OPENBOTS");

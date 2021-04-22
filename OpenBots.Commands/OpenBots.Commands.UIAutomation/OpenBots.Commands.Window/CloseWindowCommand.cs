@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Window
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Window
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public CloseWindowCommand()
@@ -53,8 +53,8 @@ namespace OpenBots.Commands.Window
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = (string)await v_WindowName.EvaluateCode(engine);
-			int timeout = (int)await v_Timeout.EvaluateCode(engine);
+			string windowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
+			int timeout = (int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this);
 			DateTime timeToEnd = DateTime.Now.AddSeconds(timeout);
 			List<IntPtr> targetWindows;
 

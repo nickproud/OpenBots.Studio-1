@@ -62,7 +62,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("http://www.url.com || Welcome to Homepage || {vSearchData}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MatchParameter { get; set; }
 
 		public SeleniumSwitchBrowserWindowCommand()
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.WebBrowser
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			var matchParam = (string)await v_MatchParameter.EvaluateCode(engine);
+			var matchParam = (string)await v_MatchParameter.EvaluateCode(engine, nameof(v_MatchParameter), this);
 
 			var handles = seleniumInstance.WindowHandles;
 			var currentHandle = seleniumInstance.CurrentWindowHandle;

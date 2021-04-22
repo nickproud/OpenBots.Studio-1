@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("Please Provide Input || {vHeader}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputHeader { get; set; }
 
 		[Required]
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("Directions: Please fill in the following fields || {vDirections}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputDirections { get; set; }
 
 		[DisplayName("Input Parameters (Optional)")]
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Input
 					 "[ComboBox | Gender | 500,30 | Male,Female,Other | {vGender}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(bool) }, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(bool), typeof(int) })]
 		public DataTable v_UserInputConfig { get; set; }
 
 		[JsonIgnore]
@@ -94,13 +94,13 @@ namespace OpenBots.Commands.Input
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var header = (string)await v_InputHeader.EvaluateCode(engine);
-			var directions = (string)await v_InputDirections.EvaluateCode(engine);
+			var header = (string)await v_InputHeader.EvaluateCode(engine, nameof(v_InputHeader), this);
+			var directions = (string)await v_InputDirections.EvaluateCode(engine, nameof(v_InputDirections), this);
 			
 			//translate variables for each label
 			foreach (DataRow rw in v_UserInputConfig.Rows)
 			{
-				rw["DefaultValue"] = (string)await rw["DefaultValue"].ToString().EvaluateCode(engine);
+				rw["DefaultValue"] = (string)await rw["DefaultValue"].ToString().EvaluateCode(engine, nameof(v_UserInputConfig), this);
 				string targetVariable = rw["StoreInVariable"].ToString();
 
 				if (string.IsNullOrEmpty(targetVariable))
