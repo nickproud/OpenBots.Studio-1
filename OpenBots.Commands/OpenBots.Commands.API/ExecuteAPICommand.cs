@@ -28,7 +28,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("https://example.com || {vMyUrl}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_BaseURL { get; set; }
 
 		[Required]
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("/v2/getUser/1 || {vMyUrl}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_APIEndPoint { get; set; }
 
 		[Required]
@@ -64,14 +64,14 @@ namespace OpenBots.Commands.API
 		[SampleUsage("")]
 		[Remarks("Once you have clicked on a valid window the search parameters will be populated.\n" +
 				 "Enable only the ones required to be a match at runtime.")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_Parameters { get; set; }
 
 		[DisplayName("Advanced Parameters (Optional)")]
 		[Description("Specify a list of advanced parameters.")]
 		[SampleUsage("")]
 		[Remarks("")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_AdvancedParameters { get; set; }
 
 		[Required]
@@ -123,8 +123,8 @@ namespace OpenBots.Commands.API
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get parameters
-			var targetURL = (string)await v_BaseURL.EvaluateCode(engine);
-			var targetEndpoint = (string)await v_APIEndPoint.EvaluateCode(engine);
+			var targetURL = (string)await v_BaseURL.EvaluateCode(engine, nameof(v_BaseURL), this);
+			var targetEndpoint = (string)await v_APIEndPoint.EvaluateCode(engine, nameof(v_APIEndPoint), this);
 
 			//client
 			var client = new RestClient(targetURL);
@@ -144,8 +144,8 @@ namespace OpenBots.Commands.API
 			//for each api parameter
 			foreach (var param in apiParameters)
 			{
-				var paramName = (string)await ((string)param["Parameter Name"]).EvaluateCode(engine);
-				var paramValue = (string)await ((string)param["Parameter Value"]).EvaluateCode(engine);
+				var paramName = (string)await ((string)param["Parameter Name"]).EvaluateCode(engine, nameof(v_Parameters), this);
+				var paramValue = (string)await ((string)param["Parameter Value"]).EvaluateCode(engine, nameof(v_Parameters), this);
 
 				request.AddParameter(paramName, paramValue);
 			}
@@ -153,8 +153,8 @@ namespace OpenBots.Commands.API
 			//for each header
 			foreach (var header in apiHeaders)
 			{
-				var paramName = (string)await ((string)header["Parameter Name"]).EvaluateCode(engine);
-				var paramValue = (string)await ((string)header["Parameter Value"]).EvaluateCode(engine);
+				var paramName = (string)await ((string)header["Parameter Name"]).EvaluateCode(engine, nameof(v_Parameters), this);
+				var paramValue = (string)await ((string)header["Parameter Value"]).EvaluateCode(engine, nameof(v_Parameters), this);
 
 				request.AddHeader(paramName, paramValue);
 			}
@@ -166,7 +166,7 @@ namespace OpenBots.Commands.API
 			//add json body
 			if (jsonBody != null)
 			{
-				var json = (string)await jsonBody.EvaluateCode(engine);
+				var json = (string)await jsonBody.EvaluateCode(engine, nameof(v_Parameters), this);
 				request.AddJsonBody(jsonBody);
 			}
 
@@ -176,9 +176,9 @@ namespace OpenBots.Commands.API
 			//get file
 			if (file != null)
 			{
-				var paramName = (string)await ((string)file["Parameter Name"]).EvaluateCode(engine);
-				var paramValue = (string)await ((string)file["Parameter Value"]).EvaluateCode(engine);
-				var fileData = (string)await paramValue.EvaluateCode(engine);
+				var paramName = (string)await ((string)file["Parameter Name"]).EvaluateCode(engine, nameof(v_Parameters), this);
+				var paramValue = (string)await ((string)file["Parameter Value"]).EvaluateCode(engine, nameof(v_Parameters), this);
+				var fileData = (string)await paramValue.EvaluateCode(engine, nameof(v_Parameters), this);
 				request.AddFile(paramName, fileData);
 
 			}
@@ -186,10 +186,10 @@ namespace OpenBots.Commands.API
 			//add advanced parameters
 			foreach (DataRow rw in v_AdvancedParameters.Rows)
 			{
-				var paramName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine);
-				var paramValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine);
-				var paramType = (string)await rw.Field<string>("Parameter Type").EvaluateCode(engine);
-				var contentType = (string)await rw.Field<string>("Content Type").EvaluateCode(engine);
+				var paramName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine, nameof(v_AdvancedParameters), this);
+				var paramValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine, nameof(v_AdvancedParameters), this);
+				var paramType = (string)await rw.Field<string>("Parameter Type").EvaluateCode(engine, nameof(v_AdvancedParameters), this);
+				var contentType = (string)await rw.Field<string>("Content Type").EvaluateCode(engine, nameof(v_AdvancedParameters), this);
 
 				request.AddParameter(paramName, paramValue, contentType, (ParameterType)Enum.Parse(typeof(ParameterType), paramType));
 			}
