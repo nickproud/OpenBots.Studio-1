@@ -73,7 +73,7 @@ namespace OpenBots.Commands.Asset
         {
             var engine = (IAutomationEngineInstance)sender;
             var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
-            var vAssetActionValue = (string)await v_AssetActionValue.EvaluateCode(engine);
+            var vAssetActionValue = (int)await v_AssetActionValue.EvaluateCode(engine);
 
             var client = AuthMethods.GetAuthToken();
             var asset = AssetMethods.GetAsset(client, vAssetName, "Number");

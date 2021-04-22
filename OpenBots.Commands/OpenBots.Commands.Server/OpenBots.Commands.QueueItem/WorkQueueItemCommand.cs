@@ -31,7 +31,7 @@ namespace OpenBots.Commands.QueueItem
 		[DisplayName("Queue Name")]
 		[Description("Enter the name of the Queue.")]
 		[SampleUsage("Name || {vQueueName}")]
-		[Remarks("QueueItem Text/Json values are store in the 'DataJson' key of a QueueItem Dictionary.\n" +
+		[Remarks("QueueItem Text/Json values are stored in the 'DataJson' key of a QueueItem Dictionary.\n" +
 				 "If a Queue has no workable items, the output value will be set to null.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]

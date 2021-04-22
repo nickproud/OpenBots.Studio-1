@@ -133,7 +133,7 @@ namespace OpenBots.Commands.QueueItem
 			var vSource = (string)await v_Source.EvaluateCode(engine);
 			var vEvent = (string)await v_Event.EvaluateCode(engine);
 			var vJsonType = (string)await v_JsonType.EvaluateCode(engine);            
-			var vPriority = (string)await v_Priority.EvaluateCode(engine);
+			int priority = (int)await v_Priority.EvaluateCode(engine);
 			var vQueueItemTextValue = (string)await v_QueueItemTextValue.EvaluateCode(engine);
 			var vAttachments = (string)await v_Attachments.EvaluateCode(engine);
 
@@ -142,10 +142,6 @@ namespace OpenBots.Commands.QueueItem
 
 			if (queue == null)
 				throw new DataException($"Queue with name '{vQueueName}' not found");
-
-			int priority = 0;
-			if (!string.IsNullOrEmpty(v_Priority))
-				priority = int.Parse(vPriority);
 
             QueueItemModel queueItem = new QueueItemModel()
 			{
