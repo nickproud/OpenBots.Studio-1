@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Text Delimiter")]
 		[Description("Specify the character that will be used to split the text.")]
-		[SampleUsage("Environment.Newline || , || vDelimiter || new List<string>(){\";\", \".\"}|| vDelimeterList")]
+		[SampleUsage("Environment.NewLine || \\n || , || vDelimiter || new List<string>(){\";\", \".\"}|| vDelimeterList")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string), typeof(List<string>) })]
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.Data
 		{
 			base.Render(editor, commandControls);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputText", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputText", this, editor, 100, 300));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SplitCharacter", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

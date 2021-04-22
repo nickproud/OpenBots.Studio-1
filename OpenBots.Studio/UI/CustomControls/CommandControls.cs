@@ -1332,8 +1332,6 @@ namespace OpenBots.UI.CustomControls
 
                 List<string> varArgNames = new List<string>();
 
-                varArgNames.Add("");
-
                 foreach (var variable in ((frmCommandEditor)editor).ScriptEngineContext.Variables)
                 {
                     if (variable.VariableName != "ProjectPath")

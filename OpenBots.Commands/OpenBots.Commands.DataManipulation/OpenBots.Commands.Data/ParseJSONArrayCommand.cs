@@ -22,7 +22,7 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("JSON")]
 		[Description("Provide a variable or JSON array value.")]
-		[SampleUsage("\"{\"rect\":{\"length\":10, \"width\":5}}\" || vArrayVariable")]
+		[SampleUsage("@\"['Small','Medium','Large']\" || vArrayVariable")]
 		[Remarks("Providing data of a type other than a 'JSON Array' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
