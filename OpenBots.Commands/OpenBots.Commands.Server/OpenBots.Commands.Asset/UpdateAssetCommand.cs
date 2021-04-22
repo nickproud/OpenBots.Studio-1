@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Asset
 		[SampleUsage("Name || {vAssetName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetName { get; set; }
 
 		[Required]
@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Asset
 		[Remarks("This input should only be used for File type Assets.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetFilePath { get; set; }
 
 		[Required]
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Asset
 		[SampleUsage("John || {vAssetValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetValue { get; set; }
 
 		[JsonIgnore]
@@ -85,9 +85,9 @@ namespace OpenBots.Commands.Asset
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
-			var vAssetFilePath = (string)await v_AssetFilePath.EvaluateCode(engine);
-			var vAssetValue = (string)await v_AssetValue.EvaluateCode(engine);
+			var vAssetName = (string)await v_AssetName.EvaluateCode(engine, nameof(v_AssetName), this);
+			var vAssetFilePath = (string)await v_AssetFilePath.EvaluateCode(engine, nameof(v_AssetFilePath), this);
+			var vAssetValue = (string)await v_AssetValue.EvaluateCode(engine, nameof(v_AssetValue), this);
 
 			var client = AuthMethods.GetAuthToken();
 			var asset = AssetMethods.GetAsset(client, vAssetName, v_AssetType);

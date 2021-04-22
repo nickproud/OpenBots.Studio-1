@@ -30,7 +30,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Name || {vQueueName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueName { get; set; }
 
 		[Required]
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Name || {vQueueItemName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueItemName { get; set; }
 
 		[DisplayName("Source (Optional)")]
@@ -48,7 +48,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Loan Origination System || Lead Generation System ||{vSource}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Source { get; set; }
 
 		[DisplayName("Event (Optional)")]
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Payment Rejected || New Employee Onboarded || {vEvent}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Event { get; set; }
 
 		[Required]
@@ -75,7 +75,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Company || {vJsonType}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_JsonType { get; set; }
 
 		[Required]
@@ -84,7 +84,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("Value || {vQueueItemValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueItemTextValue { get; set; }
 
 		[DisplayName("Priority (Optional)")]
@@ -93,7 +93,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("Priority determines the order in which QueueItems will be worked.\n" +
 				 "If no priority is set, QueueItems will be ordered by time of creation.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Priority { get; set; }
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
@@ -102,7 +102,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Attachments { get; set; }
 
 		[JsonIgnore]
@@ -128,14 +128,14 @@ namespace OpenBots.Commands.QueueItem
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueName = (string)await v_QueueName.EvaluateCode(engine);
-			var vQueueItemName = (string)await v_QueueItemName.EvaluateCode(engine);
-			var vSource = (string)await v_Source.EvaluateCode(engine);
-			var vEvent = (string)await v_Event.EvaluateCode(engine);
-			var vJsonType = (string)await v_JsonType.EvaluateCode(engine);            
-			int priority = (int)await v_Priority.EvaluateCode(engine);
-			var vQueueItemTextValue = (string)await v_QueueItemTextValue.EvaluateCode(engine);
-			var vAttachments = (string)await v_Attachments.EvaluateCode(engine);
+			var vQueueName = (string)await v_QueueName.EvaluateCode(engine, nameof(v_QueueName), this);
+			var vQueueItemName = (string)await v_QueueItemName.EvaluateCode(engine, nameof(v_QueueItemName), this);
+			var vSource = (string)await v_Source.EvaluateCode(engine, nameof(v_Source), this);
+			var vEvent = (string)await v_Event.EvaluateCode(engine, nameof(v_Event), this);
+			var vJsonType = (string)await v_JsonType.EvaluateCode(engine, nameof(v_JsonType), this);            
+			int priority = (int)await v_Priority.EvaluateCode(engine, nameof(v_Priority), this);
+			var vQueueItemTextValue = (string)await v_QueueItemTextValue.EvaluateCode(engine, nameof(v_QueueItemTextValue), this);
+			var vAttachments = (string)await v_Attachments.EvaluateCode(engine, nameof(v_Attachments), this);
 
 			var client = AuthMethods.GetAuthToken();
 			Queue queue = QueueMethods.GetQueue(client, $"name eq '{vQueueName}'");

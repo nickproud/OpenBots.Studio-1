@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Asset
         [SampleUsage("Name || {vCredentialName}")]
         [Remarks("This command will throw an exception if an asset of the wrong type is used.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_AssetName { get; set; }
 
         [Required]
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Asset
         [SampleUsage("5 || {vAssetValue}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(int) })]
         public string v_AssetActionValue { get; set; }
 
         [JsonIgnore]
@@ -72,8 +72,8 @@ namespace OpenBots.Commands.Asset
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
-            var vAssetActionValue = (int)await v_AssetActionValue.EvaluateCode(engine);
+            var vAssetName = (string)await v_AssetName.EvaluateCode(engine, nameof(v_AssetName), this);
+            var vAssetActionValue = (int)await v_AssetActionValue.EvaluateCode(engine, nameof(v_AssetActionValue), this);
 
             var client = AuthMethods.GetAuthToken();
             var asset = AssetMethods.GetAsset(client, vAssetName, "Number");

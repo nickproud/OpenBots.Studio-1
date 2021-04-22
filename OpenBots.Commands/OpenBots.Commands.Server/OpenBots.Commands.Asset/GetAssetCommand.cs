@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Asset
 		[SampleUsage("Name || {vAssetName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetName { get; set; }
 
 		[Required]
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Asset
 		[Remarks("This input should only be used for File type Assets.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputDirectoryPath { get; set; }
 
 		[Required]
@@ -86,8 +86,8 @@ namespace OpenBots.Commands.Asset
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
-			var vOutputDirectoryPath = (string)await v_OutputDirectoryPath.EvaluateCode(engine);
+			var vAssetName = (string)await v_AssetName.EvaluateCode(engine, nameof(v_AssetName), this);
+			var vOutputDirectoryPath = (string)await v_OutputDirectoryPath.EvaluateCode(engine, nameof(v_OutputDirectoryPath), this);
 
 			var client = AuthMethods.GetAuthToken();
 			var asset = AssetMethods.GetAsset(client, vAssetName, v_AssetType);

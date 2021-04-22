@@ -27,7 +27,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("{vQueueItem}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<string,object>) })]
 		public string v_QueueItem { get; set; }
 
 		[Required]
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("400 || {vStatusCode}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueItemErrorCode { get; set; }
 
 		[DisplayName("QueueItem Error Message (Optional)")]
@@ -53,7 +53,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("File not found || {vStatusMessage}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueItemErrorMessage { get; set; }
 
 		[JsonIgnore]
@@ -79,8 +79,8 @@ namespace OpenBots.Commands.QueueItem
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vQueueItem = (Dictionary<string, object>)await v_QueueItem.EvaluateCode(engine, nameof(v_QueueItem), this);
-			var vQueueItemErrorMessage = (string)await v_QueueItemErrorMessage.EvaluateCode(engine);
-			var vQueueItemErrorCode = (string)await v_QueueItemErrorCode.EvaluateCode(engine);
+			var vQueueItemErrorMessage = (string)await v_QueueItemErrorMessage.EvaluateCode(engine, nameof(v_QueueItemErrorMessage), this);
+			var vQueueItemErrorCode = (string)await v_QueueItemErrorCode.EvaluateCode(engine, nameof(v_QueueItemErrorCode), this);
 
 			var client = AuthMethods.GetAuthToken();
 

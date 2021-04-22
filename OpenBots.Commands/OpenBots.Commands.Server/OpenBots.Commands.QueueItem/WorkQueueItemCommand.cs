@@ -34,7 +34,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("QueueItem Text/Json values are stored in the 'DataJson' key of a QueueItem Dictionary.\n" +
 				 "If a Queue has no workable items, the output value will be set to null.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueName { get; set; }
 
 		[Required]
@@ -53,7 +53,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("This input is optional and will only be used if *Save Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AttachmentDirectory { get; set; }
 
 		[Required]
@@ -62,7 +62,7 @@ namespace OpenBots.Commands.QueueItem
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<string, object>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -87,8 +87,8 @@ namespace OpenBots.Commands.QueueItem
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueName = (string)await v_QueueName.EvaluateCode(engine);
-			var vAttachmentDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
+			var vQueueName = (string)await v_QueueName.EvaluateCode(engine, nameof(v_QueueName), this);
+			var vAttachmentDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine, nameof(v_AttachmentDirectory), this);
 			Dictionary<string, object> queueItemDict = new Dictionary<string, object>();
 
 			var client = AuthMethods.GetAuthToken();

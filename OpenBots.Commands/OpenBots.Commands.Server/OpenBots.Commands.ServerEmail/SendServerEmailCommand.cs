@@ -26,7 +26,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("myRobot || {vAccountName}")]
         [Remarks("If no account name is specified, the default account will be used.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_AccountName { get; set; }
 
         [Required]
@@ -35,7 +35,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
         [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_ToRecipients { get; set; }
 
         [DisplayName("CC Recipient(s) (Optional)")]
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
         [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_CCRecipients { get; set; }
 
         [DisplayName("BCC Recipient(s) (Optional)")]
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
         [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_BCCRecipients { get; set; }
 
         [Required]
@@ -60,7 +60,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("Hello || {vSubject}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_Subject { get; set; }
 
         [Required]
@@ -69,7 +69,7 @@ namespace OpenBots.Commands.ServerEmail
         [SampleUsage("Dear John, ... || {vBody}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_Body { get; set; }
 
         [DisplayName("Attachment File Path(s) (Optional)")]
@@ -78,7 +78,7 @@ namespace OpenBots.Commands.ServerEmail
         [Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_Attachments { get; set; }
 
         public SendServerEmailCommand()
@@ -96,13 +96,13 @@ namespace OpenBots.Commands.ServerEmail
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var vAccountName = (string)await v_AccountName.EvaluateCode(engine);
-            var vToRecipients = (string)await v_ToRecipients.EvaluateCode(engine);
-            var vCCRecipients = (string)await v_CCRecipients.EvaluateCode(engine);
-            var vBCCRecipients = (string)await v_BCCRecipients.EvaluateCode(engine);
-            var vSubject = (string)await v_Subject.EvaluateCode(engine);
-            var vBody = (string)await v_Body.EvaluateCode(engine);
-            var vAttachments = (string)await v_Attachments.EvaluateCode(engine);
+            var vAccountName = (string)await v_AccountName.EvaluateCode(engine, nameof(v_AccountName), this);
+            var vToRecipients = (string)await v_ToRecipients.EvaluateCode(engine, nameof(v_ToRecipients), this);
+            var vCCRecipients = (string)await v_CCRecipients.EvaluateCode(engine, nameof(v_CCRecipients), this);
+            var vBCCRecipients = (string)await v_BCCRecipients.EvaluateCode(engine, nameof(v_BCCRecipients), this);
+            var vSubject = (string)await v_Subject.EvaluateCode(engine, nameof(v_Subject), this);
+            var vBody = (string)await v_Body.EvaluateCode(engine, nameof(v_Body), this);
+            var vAttachments = (string)await v_Attachments.EvaluateCode(engine, nameof(v_Attachments), this);
 
             var toEmailList = ServerEmailMethods.GetEmailList(vToRecipients);
             var ccEmailList = ServerEmailMethods.GetEmailList(vCCRecipients);

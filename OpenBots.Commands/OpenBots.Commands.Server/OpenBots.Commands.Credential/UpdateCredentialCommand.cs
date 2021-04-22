@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Credential
 		[SampleUsage("Name || {vCredentialName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CredentialName { get; set; }
 
 		[Required]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Credential
 		[SampleUsage("john@openbots.com || {vCredentialUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CredentialUsername { get; set; }
 
 		[Required]
@@ -63,9 +63,9 @@ namespace OpenBots.Commands.Credential
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vCredentialName = (string)await v_CredentialName.EvaluateCode(engine);
-			var vCredentialUsername = (string)await v_CredentialUsername.EvaluateCode(engine);
-			var vCredentialPassword = ((SecureString)await v_CredentialPassword.EvaluateCode(engine)).ConvertSecureStringToString();
+			var vCredentialName = (string)await v_CredentialName.EvaluateCode(engine, nameof(v_CredentialName), this);
+			var vCredentialUsername = (string)await v_CredentialUsername.EvaluateCode(engine, nameof(v_CredentialUsername), this);
+			var vCredentialPassword = ((SecureString)await v_CredentialPassword.EvaluateCode(engine, nameof(v_CredentialPassword), this)).ConvertSecureStringToString();
 
 			var client = AuthMethods.GetAuthToken();
 			var credential = CredentialMethods.GetCredential(client, $"name eq '{vCredentialName}'");
