@@ -194,6 +194,9 @@ namespace OpenBots.Commands.Task
 				((Form)parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine).Invoke((Action)delegate()
 				{
 					((Form)parentfrmScriptEngine).TopMost = true;
+
+					if (_childfrmScriptEngine.IsNewTaskCancelled)
+						parentfrmScriptEngine.uiBtnCancel_Click(null, null);
 				});
 			}
 
