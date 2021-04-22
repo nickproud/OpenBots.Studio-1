@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("SELECT OrderID, CustomerID FROM Orders || {vQuery}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Query { get; set; }
 
 		[DisplayName("Query Parameters (Optional)")]
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("[STRING | @name | {vNameValue}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_QueryParameters { get; set; }
 
 		[Required]
@@ -66,7 +66,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueryTimeout { get; set; }
 
 		[Required]
@@ -112,8 +112,8 @@ namespace OpenBots.Commands.Database
 		{
 			//create engine, instance, query
 			var engine = (IAutomationEngineInstance)sender;
-			var query = (string)await v_Query.EvaluateCode(engine);
-			var vQueryTimeout = (string)await v_QueryTimeout.EvaluateCode(engine);
+			var query = (string)await v_Query.EvaluateCode(engine, nameof(v_QueryParameters), this);
+			var vQueryTimeout = (string)await v_QueryTimeout.EvaluateCode(engine, nameof(v_QueryParameters), this);
 
 			//define connection
 			var databaseConnection = (OleDbConnection)v_InstanceName.GetAppInstance(engine);
@@ -125,9 +125,9 @@ namespace OpenBots.Commands.Database
 			//add parameters
 			foreach (DataRow rw in v_QueryParameters.Rows)
 			{
-				var parameterName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine);
-				var parameterValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine);
-				var parameterType = (string)await rw.Field<string>("Parameter Type").EvaluateCode(engine);
+				var parameterName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine, nameof(v_QueryParameters), this);
+				var parameterValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine, nameof(v_QueryParameters), this);
+				var parameterType = (string)await rw.Field<string>("Parameter Type").EvaluateCode(engine, nameof(v_QueryParameters), this);
 
 				object convertedValue = null;
 				switch (parameterType)
