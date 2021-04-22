@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("g || dd\\.hh\\:mm || {vFormat}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ToStringFormat { get; set; }
 
 		[Required]
@@ -81,7 +81,7 @@ namespace OpenBots.Commands.Engine
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var format = (string)await v_ToStringFormat.EvaluateCode(engine);
+			var format = (string)await v_ToStringFormat.EvaluateCode(engine, nameof(v_ToStringFormat), this);
 			
 			Stopwatch stopwatch;
 			switch (v_StopwatchAction)

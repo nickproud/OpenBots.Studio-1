@@ -26,7 +26,7 @@ namespace OpenBots.Commands.SecureData
 		[SampleUsage("Some Text || {vText}")]
 		[Remarks("You can use variables in input if you encase them within braces {vText}. You can also perform basic math operations.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Input { get; set; }
 
 		[Required]
@@ -50,7 +50,7 @@ namespace OpenBots.Commands.SecureData
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			SecureString secureStringValue = ((string)await v_Input.EvaluateCode(engine)).ConvertStringToSecureString();
+			SecureString secureStringValue = ((string)await v_Input.EvaluateCode(engine, nameof(v_Input), this)).ConvertStringToSecureString();
 
 			secureStringValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
 		}

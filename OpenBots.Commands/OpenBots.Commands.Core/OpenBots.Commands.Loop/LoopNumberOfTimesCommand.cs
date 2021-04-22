@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("5 || {vLoopCount}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_LoopParameter { get; set; }
 
 		[Required]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("5 || {vStartIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_LoopStart { get; set; }
 
 		public LoopNumberOfTimesCommand()
@@ -57,10 +57,10 @@ namespace OpenBots.Commands.Loop
 
 			int loopTimes;
 
-			var loopParameter = (string)await loopCommand.v_LoopParameter.EvaluateCode(engine);
+			var loopParameter = (string)await loopCommand.v_LoopParameter.EvaluateCode(engine, nameof(v_LoopParameter), this);
 			loopTimes = int.Parse(loopParameter);
 
-			int startIndex = (int)await v_LoopStart.EvaluateCode(engine);
+			int startIndex = (int)await v_LoopStart.EvaluateCode(engine, nameof(v_LoopStart), this);
 
 			for (int i = startIndex; i < loopTimes; i++)
 			{

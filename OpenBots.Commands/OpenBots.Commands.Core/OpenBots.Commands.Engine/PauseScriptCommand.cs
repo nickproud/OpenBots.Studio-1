@@ -26,7 +26,7 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("1000 || {vTime}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_PauseLength { get; set; }
 
 		public PauseScriptCommand()
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Engine
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var pauseLength = (int)await v_PauseLength.EvaluateCode(engine);
+			var pauseLength = (int)await v_PauseLength.EvaluateCode(engine, nameof(v_PauseLength), this);
 			Thread.Sleep(pauseLength);
 		}
 

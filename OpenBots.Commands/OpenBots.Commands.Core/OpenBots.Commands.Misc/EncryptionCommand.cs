@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("Hello || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputValue { get; set; }
 
 		[Required]
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("OPENBOTS || {vPassPhrase}")]
 		[Remarks("If decrypting, provide the pass phrase used to encypt the original text.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_PassPhrase { get; set; }
 
 		[Required]
@@ -71,8 +71,8 @@ namespace OpenBots.Commands.Misc
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var variableInput = (string)await v_InputValue.EvaluateCode(engine);
-			var passphrase = (string)await v_PassPhrase.EvaluateCode(engine);
+			var variableInput = (string)await v_InputValue.EvaluateCode(engine, nameof(v_InputValue), this);
+			var passphrase = (string)await v_PassPhrase.EvaluateCode(engine, nameof(v_PassPhrase), this);
 
 			string resultData = "";
 			if (v_EncryptionType == "Encrypt")

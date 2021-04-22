@@ -33,7 +33,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[SampleUsage("3 || {vRetryCount}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_RetryCount { get; set; }
 
 		[Required]
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[SampleUsage("5 || {vRetryInterval}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_RetryInterval { get; set; }
 
 		[Required]
@@ -60,7 +60,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[SampleUsage("")]
 		[Remarks("Items in the retry scope will be executed if the condition doesn't satisfy.")]
 		[Editor("ShowIfBuilder", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string) }, true)]
+		[CompatibleTypes(new Type[] { typeof(Bitmap), typeof(DateTime), typeof(string), typeof(double), typeof(int), typeof(bool) })]
 		public DataTable v_IfConditionsTable { get; set; }
 
 		[JsonIgnore]
@@ -93,8 +93,8 @@ namespace OpenBots.Commands.ErrorHandling
 			var engine = (IAutomationEngineInstance)sender;
 			var retryCommand = (BeginRetryCommand)parentCommand.ScriptCommand;
 
-			int retryCount = (int)await retryCommand.v_RetryCount.EvaluateCode(engine);
-			int retryInterval = ((int)await retryCommand.v_RetryInterval.EvaluateCode(engine))*1000;
+			int retryCount = (int)await retryCommand.v_RetryCount.EvaluateCode(engine, nameof(v_RetryCount), this);
+			int retryInterval = ((int)await retryCommand.v_RetryInterval.EvaluateCode(engine, nameof(v_RetryInterval), this))*1000;
 			bool exceptionOccurred;
 
 			for(int startIndex = 0; startIndex < retryCount; startIndex++)

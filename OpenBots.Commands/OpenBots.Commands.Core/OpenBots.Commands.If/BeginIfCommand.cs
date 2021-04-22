@@ -51,7 +51,7 @@ namespace OpenBots.Commands.If
 		[SampleUsage("Param Value || {vParamValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string)}, true)]
+		[CompatibleTypes(new Type[] { typeof(Bitmap), typeof(DateTime), typeof(string), typeof(double), typeof(int), typeof(bool) })]
 		public DataTable v_ActionParameterTable { get; set; }
 
 		[JsonIgnore]

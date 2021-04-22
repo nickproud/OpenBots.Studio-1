@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Switch
 		[SampleUsage("vSwitch")]
 		[Remarks("This value must be a variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SwitchValue { get; set; }
 
 		public BeginSwitchCommand()
@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Switch
 			//get engine
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vSwitchValue = (string)await v_SwitchValue.EvaluateCode(engine);
+			var vSwitchValue = (string)await v_SwitchValue.EvaluateCode(engine, nameof(v_SwitchValue), this);
 
 			//get indexes of commands
 			var caseIndices = FindAllCaseIndices(parentCommand.AdditionalScriptCommands);
@@ -62,7 +62,7 @@ namespace OpenBots.Commands.Switch
 				caseCommandItem = parentCommand.AdditionalScriptCommands[caseIndex];
 				targetCaseCommand = (CaseCommand)caseCommandItem.ScriptCommand;
 
-				var caseValue = (string)await targetCaseCommand.v_CaseValue.EvaluateCode(engine);
+				var caseValue = (string)await targetCaseCommand.v_CaseValue.EvaluateCode(engine, "v_CaseValue", targetCaseCommand);
 				// Save Default Case Index
 				if (caseValue == "Default")
 				{

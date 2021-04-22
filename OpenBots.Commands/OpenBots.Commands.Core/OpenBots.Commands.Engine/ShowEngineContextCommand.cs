@@ -26,7 +26,7 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("0 || 5 || {vSeconds})")]
 		[Remarks("Set value to 0 to remain open indefinitely.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_AutoCloseAfter { get; set; }
 
 		public ShowEngineContextCommand()
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Engine
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
+			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine, nameof(v_AutoCloseAfter), this);
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{

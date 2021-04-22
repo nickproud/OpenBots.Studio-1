@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("Hello || {vTextToSet}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		public SetClipboardTextCommand()
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Misc
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var input = (string)await v_TextToSet.EvaluateCode(engine);
+			var input = (string)await v_TextToSet.EvaluateCode(engine, nameof(v_TextToSet), this);
 
 			User32Functions.SetClipboardText(input);
 		}

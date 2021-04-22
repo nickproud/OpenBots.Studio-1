@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Switch
 		[Description("This block will be executed if the specified case value matches the value in the Switch Command.")]
 		[SampleUsage("1 || \"hello\"")]
 		[Remarks("")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CaseValue { get; set; }
 
 		public CaseCommand()

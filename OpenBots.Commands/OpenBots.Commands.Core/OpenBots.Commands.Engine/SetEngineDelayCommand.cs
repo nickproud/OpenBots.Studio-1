@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("1000 || {vTime}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_EngineDelay { get; set; }
 
 		public SetEngineDelayCommand()
@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Engine
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var delay = (int)await v_EngineDelay.EvaluateCode(engine);
+			var delay = (int)await v_EngineDelay.EvaluateCode(engine, nameof(v_EngineDelay), this);
 
 			//update delay setting
 			engine.EngineSettings.DelayBetweenCommands = delay;
