@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("test@test.com || {vEmail} || test@test.com;test2@test.com || {vEmail1};{vEmail2} || {vEmails}")]
 		[Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Recipients { get; set; }
 
 		public ForwardOutlookEmailCommand()
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Outlook
 			var engine = (IAutomationEngineInstance)sender;
 			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
   
-			var vRecipients = (string)await v_Recipients.EvaluateCode(engine);
+			var vRecipients = (string)await v_Recipients.EvaluateCode(engine, nameof(v_Recipients), this);
 			var splitRecipients = vRecipients.Split(';');
 
 			MailItem newMail = vMailItem.Forward();

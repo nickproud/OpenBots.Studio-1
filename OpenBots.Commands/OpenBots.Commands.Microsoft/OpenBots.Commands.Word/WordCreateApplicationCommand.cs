@@ -51,7 +51,7 @@ namespace OpenBots.Commands.Word
 		[Remarks("This input should only be used for opening existing Documents.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -96,7 +96,7 @@ namespace OpenBots.Commands.Word
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFilePath = (string)await v_FilePath.EvaluateCode(engine);
+			var vFilePath = (string)await v_FilePath.EvaluateCode(engine, nameof(v_FilePath), this);
 
 			if (v_CloseAllInstances == "Yes")
 			{

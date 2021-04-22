@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A || {vColumnLetter}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ColumnLetter { get; set; }
 
 		[Required]
@@ -65,7 +65,7 @@ namespace OpenBots.Commands.Excel
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
 			Worksheet workSheet = excelInstance.ActiveSheet;
-			string vColumnToDelete = (string)await v_ColumnLetter.EvaluateCode(engine);
+			string vColumnToDelete = (string)await v_ColumnLetter.EvaluateCode(engine, nameof(v_ColumnLetter), this);
 
 			var cells = workSheet.Range[vColumnToDelete + "1", Type.Missing];
 			var entireColumn = cells.EntireColumn;

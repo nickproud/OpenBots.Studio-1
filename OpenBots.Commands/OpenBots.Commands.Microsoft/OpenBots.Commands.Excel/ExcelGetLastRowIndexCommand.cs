@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A || {vColumnLetter}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ColumnLetter { get; set; }
 
 		[Required]
@@ -56,13 +56,13 @@ namespace OpenBots.Commands.Excel
 			CommandIcon = Resources.command_spreadsheet;
 
 			v_InstanceName = "DefaultExcel";
-			v_ColumnLetter = "A";
+			v_ColumnLetter = "\"A\"";
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vColumnLetter = (string)await v_ColumnLetter.EvaluateCode(engine);
+			var vColumnLetter = (string)await v_ColumnLetter.EvaluateCode(engine, nameof(v_ColumnLetter), this);
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 
 			var excelInstance = (Application)excelObject;

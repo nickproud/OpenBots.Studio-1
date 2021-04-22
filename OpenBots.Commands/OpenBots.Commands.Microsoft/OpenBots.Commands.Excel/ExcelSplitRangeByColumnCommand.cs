@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A1:B10 || A1: || {vRange} || {vStart}:{vEnd} || {vStart}:")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Range { get; set; }
 
 		[Required]
@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("ColA || {vColumnName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ColumnName { get; set; }
 
 		[Required]
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Excel
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputDirectory { get; set; }
 
 		[Required]
@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Excel
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<DataTable>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ExcelSplitRangeByColumnCommand()
@@ -88,16 +88,16 @@ namespace OpenBots.Commands.Excel
 
 			v_InstanceName = "DefaultExcel";
 			v_FileType = "xlsx";
-			v_Range = "A1:";
+			v_Range = "\"A1:\"";
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vExcelObject = v_InstanceName.GetAppInstance(engine);
-			var vRange = (string)await v_Range.EvaluateCode(engine);
-			var vColumnName = (string)await v_ColumnName.EvaluateCode(engine);
-			var vOutputDirectory = (string)await v_OutputDirectory.EvaluateCode(engine);
+			var vRange = (string)await v_Range.EvaluateCode(engine, nameof(v_Range), this);
+			var vColumnName = (string)await v_ColumnName.EvaluateCode(engine, nameof(v_ColumnName), this);
+			var vOutputDirectory = (string)await v_OutputDirectory.EvaluateCode(engine, nameof(v_OutputDirectory), this);
 			var excelInstance = (Application)vExcelObject;
 
 			excelInstance.DisplayAlerts = false;

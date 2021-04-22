@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A1:B10 || A1: || {vRange} || {vStart}:{vEnd} || {vStart}:")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Range { get; set; }   
 
 		[Required]
@@ -79,14 +79,14 @@ namespace OpenBots.Commands.Excel
 			v_InstanceName = "DefaultExcel";
 			v_AddHeaders = "Yes";
 			v_Formulas = "No";
-			v_Range = "A1:";
+			v_Range = "\"A1:\"";
 		}
 
 		public async override Task RunCommand(object sender)
 		{         
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
-			var vRange = (string)await v_Range.EvaluateCode(engine);
+			var vRange = (string)await v_Range.EvaluateCode(engine, nameof(v_Range), this);
 			var excelInstance = (Application)excelObject;
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;

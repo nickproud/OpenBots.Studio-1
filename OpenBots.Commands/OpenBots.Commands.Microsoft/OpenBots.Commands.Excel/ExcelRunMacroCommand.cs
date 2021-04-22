@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Macro1 || {vMacro}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MacroName { get; set; }
 
 		public ExcelRunMacroCommand()
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.Excel
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vMacro = (string)await v_MacroName.EvaluateCode(engine);
+			var vMacro = (string)await v_MacroName.EvaluateCode(engine, nameof(v_MacroName), this);
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
 			excelInstance.Run(vMacro);           

@@ -133,9 +133,8 @@ namespace OpenBots.Commands.Outlook
                     break;
                 case "Attachments":
                     foreach(Attachment attachment in item.Attachments)
-                    {
                         output = output + attachment.FileName + "\n";
-                    }
+
                     output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "AutoForwarded":

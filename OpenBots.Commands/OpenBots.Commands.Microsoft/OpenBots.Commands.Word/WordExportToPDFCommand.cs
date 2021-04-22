@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Word
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FolderPath { get; set; }
 
 		[Required]
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("myFile.pdf || {vFilename}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FileName { get; set; }
 
 		public WordExportToPDFCommand()
@@ -63,8 +63,8 @@ namespace OpenBots.Commands.Word
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFileName = (string)await v_FileName.EvaluateCode(engine);
-			var vFolderPath = (string)await v_FolderPath.EvaluateCode(engine);
+			var vFileName = (string)await v_FileName.EvaluateCode(engine, nameof(v_FileName), this);
+			var vFolderPath = (string)await v_FolderPath.EvaluateCode(engine, nameof(v_FolderPath), this);
 
 			//get word app object
 			var wordObject = v_InstanceName.GetAppInstance(engine);

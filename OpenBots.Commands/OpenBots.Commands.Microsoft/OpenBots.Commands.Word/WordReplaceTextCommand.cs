@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("old text || {vFindText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FindText { get; set; }
 
 		[Required]
@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("new text || {vReplaceText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ReplaceWithText { get; set; }
 
 		public WordReplaceTextCommand()
@@ -59,8 +59,8 @@ namespace OpenBots.Commands.Word
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFindText = (string)await v_FindText.EvaluateCode(engine);
-			var vReplaceWithText = (string)await v_ReplaceWithText.EvaluateCode(engine);
+			var vFindText = (string)await v_FindText.EvaluateCode(engine, nameof(v_FindText), this);
+			var vReplaceWithText = (string)await v_ReplaceWithText.EvaluateCode(engine, nameof(v_ReplaceWithText), this);
 
 			//get word app object
 			var wordObject = v_InstanceName.GetAppInstance(engine);

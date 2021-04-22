@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("\"Hello World\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		public ExcelAppendCellCommand()
@@ -59,7 +59,7 @@ namespace OpenBots.Commands.Excel
 			var lastUsedRow = excelSheet.Cells.Find("*", Missing.Value, Missing.Value, Missing.Value, XlSearchOrder.xlByRows, 
 													XlSearchDirection.xlPrevious, false, Missing.Value, Missing.Value).Row;
 			var targetAddress = "A" + (lastUsedRow + 1);
-			var vTargetText = (string)await v_TextToSet.EvaluateCode(engine);
+			var vTargetText = (string)await v_TextToSet.EvaluateCode(engine, nameof(v_TextToSet), this);
 			excelSheet.Range[targetAddress].Value = vTargetText;
 		}
 

@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Outlook
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_AttachmentDirectory { get; set; }
 
         [Required]
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Outlook
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("vUserVariable")]
         [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-        [CompatibleTypes(new Type[] { typeof(List<>) })]
+        [CompatibleTypes(new Type[] { typeof(List<string>) })]
         public string v_OutputUserVariableName { get; set; }
         
         public GetOutlookEmailAttachmentsCommand()
@@ -70,8 +70,8 @@ namespace OpenBots.Commands.Outlook
         {
             var engine = (IAutomationEngineInstance)sender;
             MailItem email = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
-            bool includeEmbeds = ((string)await v_IncludeEmbeddedImagesAsAttachments.EvaluateCode(engine)).Equals("Yes");
-            string attDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
+            bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.Equals("Yes");
+            string attDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine, nameof(v_AttachmentDirectory), this);
 
             List<string> attachmentList = new List<string>();
 

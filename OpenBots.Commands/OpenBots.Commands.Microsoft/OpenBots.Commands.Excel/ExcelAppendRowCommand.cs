@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("\"Hello,World\" || vData1+\",\"+vData2 || vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DataRow) }, true)]
+		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(string) })]
 		public string v_RowToSet { get; set; }
 
 		public ExcelAppendRowCommand()
@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Excel
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic vRow = await v_RowToSet.EvaluateCode(engine);
+			dynamic vRow = await v_RowToSet.EvaluateCode(engine, nameof(v_RowToSet), this);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
@@ -90,7 +90,7 @@ namespace OpenBots.Commands.Excel
 			}
 			else
 			{
-				string vRowString = (string)await v_RowToSet.EvaluateCode(engine);
+				string vRowString = (string)await v_RowToSet.EvaluateCode(engine, nameof(v_RowToSet), this);
 				var splittext = vRowString.Split(',');
 				string cellValue;
 				foreach (var item in splittext)

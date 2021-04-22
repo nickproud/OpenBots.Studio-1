@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Name || {vKeyColumn}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_KeyColumn { get; set; }
 
 		[Required]
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Value || {vValueColumn}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ValueColumn { get; set; }
 
 		[Required]
@@ -69,15 +69,15 @@ namespace OpenBots.Commands.Excel
 			CommandIcon = Resources.command_spreadsheet;
 
 			v_InstanceName = "DefaultExcel";
-			v_KeyColumn = "Name";
-			v_ValueColumn = "Value";
+			v_KeyColumn = "\"Name\"";
+			v_ValueColumn = "\"Value\"";
 		}
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			
-			var vKeyColumn = (string)await v_KeyColumn.EvaluateCode(engine);
-			var vValueColumn = (string)await v_ValueColumn.EvaluateCode(engine);
+			var vKeyColumn = (string)await v_KeyColumn.EvaluateCode(engine, nameof(v_KeyColumn), this);
+			var vValueColumn = (string)await v_ValueColumn.EvaluateCode(engine, nameof(v_ValueColumn), this);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;

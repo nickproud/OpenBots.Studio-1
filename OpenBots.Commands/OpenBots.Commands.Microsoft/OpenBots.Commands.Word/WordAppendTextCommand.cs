@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("Hello World || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		[Required]
@@ -109,7 +109,7 @@ namespace OpenBots.Commands.Word
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vText = (string)await v_TextToSet.EvaluateCode(engine);
+			var vText = (string)await v_TextToSet.EvaluateCode(engine, nameof(v_TextToSet), this);
 			var wordObject = v_InstanceName.GetAppInstance(engine);
 
 			Application wordInstance = (Application)wordObject;
@@ -143,7 +143,7 @@ namespace OpenBots.Commands.Word
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToSet", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToSet", this, editor, 100, 300));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_FontName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_FontSize", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_FontBold", this, editor));

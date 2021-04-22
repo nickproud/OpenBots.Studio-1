@@ -34,7 +34,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("TableName || {vTableName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_TableName { get; set; }
 
         [Required]
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNameExcelTable { get; set; }
 
         [Required]
@@ -68,8 +68,8 @@ namespace OpenBots.Commands.Microsoft
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
-            var vTableName = (string)await v_TableName.EvaluateCode(engine);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine, nameof(v_SheetNameExcelTable), this);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine, nameof(v_TableName), this);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;

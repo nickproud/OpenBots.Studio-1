@@ -34,7 +34,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetName { get; set; }
 
         [Required]
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("PivotTable || {vPivotTable}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_PivotTable { get; set; }
 
         public ExcelRefreshPivotTableCommand()
@@ -59,8 +59,8 @@ namespace OpenBots.Commands.Excel
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheet = (string)await v_SheetName.EvaluateCode(engine);
-            var vPivotTable = (string)await v_PivotTable.EvaluateCode(engine);
+            string vSheet = (string)await v_SheetName.EvaluateCode(engine, nameof(v_SheetName), this);
+            var vPivotTable = (string)await v_PivotTable.EvaluateCode(engine, nameof(v_PivotTable), this);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheet = excelInstance.Sheets[vSheet] as Worksheet;

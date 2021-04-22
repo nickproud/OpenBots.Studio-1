@@ -34,7 +34,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("1 || vIndex")]
         [Remarks("The column will be added at the last index if a column index is not provided.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_ColumnIndex { get; set; }
 
         [Required]
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("\"Column1\" || vColumnName")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_ColumnName { get; set; }
 
         [Required]
@@ -52,7 +52,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("\"TableName\" || vTableName")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_TableName { get; set; }
 
         [Required]
@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNameExcelTable { get; set; }
 
         public ExcelAddTableColumnCommand()
@@ -77,10 +77,10 @@ namespace OpenBots.Commands.Microsoft
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
-            var vColumnIndex = (string)await v_ColumnIndex.EvaluateCode(engine);
-            var vTableName = (string)await v_TableName.EvaluateCode(engine);
-            var vColumnName = (string)await v_ColumnName.EvaluateCode(engine);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine, nameof(v_SheetNameExcelTable), this);
+            var vColumnIndex = (string)await v_ColumnIndex.EvaluateCode(engine, nameof(v_ColumnIndex), this);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine, nameof(v_TableName), this);
+            var vColumnName = (string)await v_ColumnName.EvaluateCode(engine, nameof(v_ColumnName), this);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;

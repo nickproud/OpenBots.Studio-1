@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Word
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ImagePath { get; set; }
 
 		public WordAppendImageCommand()
@@ -52,7 +52,7 @@ namespace OpenBots.Commands.Word
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vImagePath = (string)await v_ImagePath.EvaluateCode(engine);
+			var vImagePath = (string)await v_ImagePath.EvaluateCode(engine, nameof(v_ImagePath), this);
 			var wordObject = v_InstanceName.GetAppInstance(engine);
 
 			Application wordInstance = (Application)wordObject;
