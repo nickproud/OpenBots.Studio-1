@@ -547,5 +547,11 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             return engine.AutomationEngineContext.EngineScriptState.GetVariable(varName).Type;
         } 
+
+        public static void SyncVariableValues(IAutomationEngineInstance engine)
+        {
+            engine.AutomationEngineContext.Variables.ForEach(v => v.VariableValue = v.VariableName.GetVariableValue(engine));
+            engine.AutomationEngineContext.Arguments.ForEach(a => a.ArgumentValue = a.ArgumentName.GetVariableValue(engine));
+        }
     }
 }

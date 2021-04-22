@@ -643,7 +643,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     modifiedBounds.X += indentPixels;
 
                     //draw string
-                    e.Graphics.DrawString(command.GetDisplayValue(), SelectedTabScriptActions.Font,
+                    e.Graphics.DrawString(command.GetDisplayValue().Replace(Environment.NewLine, ""), SelectedTabScriptActions.Font,
                                           commandNameBrush, modifiedBounds);
                     break;  
             }
