@@ -71,7 +71,7 @@ namespace OpenBots.Commands.DataTable
 		[Editable(false)]
 		[DisplayName("Output DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -110,7 +110,7 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic vSearchItem = await v_Index.EvaluateCode(engine);
+			dynamic vSearchItem = await v_Index.EvaluateCode(engine, nameof(v_Index), this);
 			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
 			if(v_RemoveOption == "Index")
@@ -123,8 +123,8 @@ namespace OpenBots.Commands.DataTable
 		
 					foreach (DataRow rw in v_DataRowDataTable.Rows)
 					{
-						var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
-						var data = await rw.Field<dynamic>("Data").EvaluateCode(engine);
+						var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
+						var data = await rw.Field<dynamic>("Data").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
 
 						foreach (DataRow row in Dt.Rows)
 						{
@@ -152,8 +152,8 @@ namespace OpenBots.Commands.DataTable
 
 					foreach (DataRow rw in v_DataRowDataTable.Rows)
 					{
-						var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
-						var data = await rw.Field<dynamic>("Data").EvaluateCode(engine);
+						var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
+						var data = await rw.Field<dynamic>("Data").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
 
 						foreach (DataRow row in Dt.Rows)
 						{

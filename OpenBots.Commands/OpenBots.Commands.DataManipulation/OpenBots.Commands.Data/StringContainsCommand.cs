@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Data
         [SampleUsage("Text which contains string || {vFullText}")]
         [Remarks("Providing data of a type other than a 'String' will result in an error.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_FullText { get; set; }
 
         [Required]
@@ -33,14 +33,14 @@ namespace OpenBots.Commands.Data
         [SampleUsage("Text to be compared from a string || {vComparisonText}")]
         [Remarks("Providing data of a type other than a 'String' will result in an error.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_ComparisonText { get; set; }
 
         [Required]
         [Editable(false)]
         [DisplayName("Output Bool Variable")]
         [Description("Create a new variable or select a variable from the list.")]
-        [SampleUsage("{vUserVariable}")]
+        [SampleUsage("vUserVariable")]
         [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
         [CompatibleTypes(new Type[] { typeof(bool) })]
         public string v_OutputUserVariableName { get; set; }
@@ -51,27 +51,30 @@ namespace OpenBots.Commands.Data
             SelectionName = "String Contains";
             CommandEnabled = true;
             CommandIcon = Resources.command_string;
-
         }
+
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var fullText = (string)await v_FullText.EvaluateCode(engine);
-            var comparisonText = (string)await v_ComparisonText.EvaluateCode(engine);
+            var fullText = (string)await v_FullText.EvaluateCode(engine, nameof(v_FullText), this);
+            var comparisonText = (string)await v_ComparisonText.EvaluateCode(engine, nameof(v_ComparisonText), this);
+
             bool outputUserVar = fullText.Contains(comparisonText);
+
             outputUserVar.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
         }
+
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
         {
             base.Render(editor, commandControls);
 
-            //create standard group controls
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FullText", this, editor));
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ComparisonText", this, editor));
             RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
             return RenderedControls;
         }
+
         public override string GetDisplayValue()
         {
             return base.GetDisplayValue() + $" [If '{v_FullText}' Contains '{v_ComparisonText}' - " +

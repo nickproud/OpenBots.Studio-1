@@ -104,7 +104,7 @@ namespace OpenBots.Commands.Outlook
         [Required]
         [DisplayName("Output MailItem Property Variable")]
         [Description("Create a new variable or select a variable from the list.")]
-        [SampleUsage("{vUserVariable}")]
+        [SampleUsage("vUserVariable")]
         [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(string), typeof(DateTime), typeof(bool), typeof(int) })]

@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Dictionary
 		[Editable(false)]
 		[DisplayName("Output Dictionary Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -59,12 +59,12 @@ namespace OpenBots.Commands.Dictionary
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			string dictTypeName = v_OutputUserVariableName.GetVarArgType(engine).GetRealTypeName();
-			dynamic dynamicDict = await $"new {dictTypeName}()".EvaluateCode(engine);
+			dynamic dynamicDict = await $"new {dictTypeName}()".EvaluateCode(engine, nameof(v_OutputUserVariableName), this);
 
 			foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 			{
-				dynamic dynamicKey = await rwColumnName.Field<string>("Keys").EvaluateCode(engine);
-				dynamic dynamicValue = await rwColumnName.Field<string>("Values").EvaluateCode(engine);
+				dynamic dynamicKey = await rwColumnName.Field<string>("Keys").EvaluateCode(engine, nameof(v_ColumnNameDataTable), this);
+				dynamic dynamicValue = await rwColumnName.Field<string>("Values").EvaluateCode(engine, nameof(v_ColumnNameDataTable), this);
 
 				dynamicDict.Add(dynamicKey, dynamicValue);
 			}

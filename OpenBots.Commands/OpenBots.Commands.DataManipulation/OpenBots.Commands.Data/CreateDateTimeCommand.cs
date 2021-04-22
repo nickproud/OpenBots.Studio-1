@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("2020 || {vYear}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Year { get; set; }
 
 		[Required]
@@ -34,7 +34,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("3 || 03 || january || jan || {vMonth}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_Month { get; set; }
 
 		[Required]
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("20 || {vDay}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Day { get; set; }
 
 		[DisplayName("Time (Optional)")]
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("5:15 || 8:30:10 || {vTime}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Time { get; set; }
 
 		[DisplayName("Period (Optional)")]
@@ -66,7 +66,7 @@ namespace OpenBots.Commands.Data
 		[Editable(false)]
 		[DisplayName("Output Date Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(DateTime) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -84,17 +84,19 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vYear = (int)await v_Year.EvaluateCode(engine);
-			var vMonth = await v_Month.EvaluateCode(engine);
-			var vDay = (int)await v_Day.EvaluateCode(engine);
-			var vTime = (string)await v_Time.EvaluateCode(engine);
+			var vYear = (int)await v_Year.EvaluateCode(engine, nameof(v_Year), this);
+			dynamic vMonth = await v_Month.EvaluateCode(engine, nameof(v_Month), this);
+			var vDay = (int)await v_Day.EvaluateCode(engine, nameof(v_Day), this);
+			var vTime = (string)await v_Time.EvaluateCode(engine, nameof(v_Time), this);
 
 			int vMonthInt = 0;
 			string vMonthString = "";
+
 			if (vMonth.GetType() == typeof(string))
 				vMonthString = (string)vMonth;
 			else
 				vMonthInt = (int)vMonth;
+
 			if (vMonthString != "")
 			{
 				Dictionary<string, int> monthDict = new Dictionary<string, int>()

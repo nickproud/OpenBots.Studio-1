@@ -50,7 +50,7 @@ namespace OpenBots.Commands.DataTable
 		[Editable(false)]
 		[DisplayName("Output Value Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -69,7 +69,7 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			DataRow dataRow = (DataRow)await v_DataRow.EvaluateCode(engine, nameof(v_DataRow), this);
-			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
+			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine, nameof(v_DataValueIndex), this);
 
 			dynamic value;
 			if (v_Option == "Column Index")

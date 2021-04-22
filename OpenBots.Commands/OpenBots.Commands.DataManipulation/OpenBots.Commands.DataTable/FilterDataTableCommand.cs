@@ -61,7 +61,7 @@ namespace OpenBots.Commands.DataTable
 		[Editable(false)]
 		[DisplayName("Output Filtered DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable)})]
 		public string v_OutputUserVariableName { get; set; }
@@ -98,14 +98,12 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vSearchItem = (string)await v_RowFilter.EvaluateCode(engine);
-
 			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
 
             if (v_FilterOption == "RowFilter")
             {
 				DataView dv = new DataView(Dt);
-				dv.RowFilter = vSearchItem;
+				dv.RowFilter = (string)await v_RowFilter.EvaluateCode(engine, nameof(v_RowFilter), this);
 				dv.ToTable().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 			}
             else
@@ -114,8 +112,8 @@ namespace OpenBots.Commands.DataTable
 
 				foreach (DataRow rw in v_DataRowDataTable.Rows)
 				{
-					var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
-					var data = await rw.Field<dynamic>("Data").EvaluateCode(engine);
+					var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
+					var data = await rw.Field<dynamic>("Data").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
 
 					foreach (DataRow row in Dt.Rows)
 					{

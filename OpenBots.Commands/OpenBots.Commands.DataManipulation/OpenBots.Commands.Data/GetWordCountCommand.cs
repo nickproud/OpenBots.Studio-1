@@ -4,7 +4,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,14 +24,14 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("Hello World || {vStringVariable}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputValue { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Count Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -43,21 +42,15 @@ namespace OpenBots.Commands.Data
 			SelectionName = "Get Word Count";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
-
 		}
 
 		public async override Task RunCommand(object sender)
 		{
-			//get engine
 			var engine = (IAutomationEngineInstance)sender;
+			var stringRequiringCount = (string)await v_InputValue.EvaluateCode(engine, nameof(v_InputValue), this);
 
-			//get input value
-			var stringRequiringCount = (string)await v_InputValue.EvaluateCode(engine);
-
-			//count number of words
 			var wordCount = stringRequiringCount.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries).Length;
 
-			//store word count into variable
 			wordCount.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
@@ -65,7 +58,6 @@ namespace OpenBots.Commands.Data
 		{
 			base.Render(editor, commandControls);
 
-			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputValue", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

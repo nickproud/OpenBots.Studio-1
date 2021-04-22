@@ -47,7 +47,7 @@ namespace OpenBots.Commands.DataTable
 		[Editable(false)]
 		[DisplayName("Output DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -82,8 +82,8 @@ namespace OpenBots.Commands.DataTable
 
 			foreach (DataRow rw in v_DataRowDataTable.Rows)
 			{
-				var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
-				var data = await rw.Field<string>("Data").EvaluateCode(engine);
+				var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
+				var data = await rw.Field<string>("Data").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
 				newRow.SetField(columnName, data);
 			}
 			Dt.Rows.Add(newRow);

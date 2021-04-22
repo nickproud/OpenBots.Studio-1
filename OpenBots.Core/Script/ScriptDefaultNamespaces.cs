@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Security;
+using System.Text.RegularExpressions;
 using DataTable = System.Data.DataTable;
 using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 using OutlookApplication = Microsoft.Office.Interop.Outlook.Application;
@@ -26,6 +27,7 @@ namespace OpenBots.Core.Script
             { "System.Linq", GetAssemblyReference(typeof(IQueryable)) },
             { "System.Security", GetAssemblyReference(typeof(SecureString)) },
             { "System.Text", GetAssemblyReference(typeof(string)) },
+            { "System.Text.RegularExpressions", GetAssemblyReference(typeof(Regex)) },
             { "System.Threading.Tasks", GetAssemblyReference(typeof(string)) }
         };
 

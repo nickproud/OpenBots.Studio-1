@@ -43,7 +43,7 @@ namespace OpenBots.Commands.List
 		[Editable(false)]
 		[DisplayName("Output List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -72,7 +72,7 @@ namespace OpenBots.Commands.List
 
 			foreach (DataRow rwColumnName in v_ListItemsDataTable.Rows)
 			{
-				dynamic dynamicItem = await rwColumnName.Field<string>("Items").EvaluateCode(engine);
+				dynamic dynamicItem = await rwColumnName.Field<string>("Items").EvaluateCode(engine, nameof(v_ListItemsDataTable), this);
 				dynamicList.Add(dynamicItem);
 			}
 

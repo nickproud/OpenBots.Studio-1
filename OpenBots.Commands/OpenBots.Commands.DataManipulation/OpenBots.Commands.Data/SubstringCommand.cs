@@ -18,14 +18,13 @@ namespace OpenBots.Commands.Data
 	[Description("This command returns a substring from a specified string.")]
 	public class SubstringCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("Text Data")]
 		[Description("Provide a variable or text value.")]
 		[SampleUsage("Sample text to extract substring from || {vTextData}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputText { get; set; }
 
 		[Required]
@@ -34,7 +33,7 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("0 || 1 || {vStartingIndex}")]
 		[Remarks("0 for beginning, 1 for first character, n for nth character")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_StartIndex { get; set; }
 
 		[DisplayName("Substring Length (Optional)")]
@@ -42,14 +41,14 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("1 || {vSubstringLength}")]
 		[Remarks("1 for 1 position after start index, etc.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_StringLength { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Substring Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -60,29 +59,24 @@ namespace OpenBots.Commands.Data
 			SelectionName = "Substring";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_string;
-
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var inputText = (string)await v_InputText.EvaluateCode(engine);
-			var startIndex = (int)await v_StartIndex.EvaluateCode(engine);
+			var inputText = (string)await v_InputText.EvaluateCode(engine, nameof(v_InputText), this);
+			var startIndex = (int)await v_StartIndex.EvaluateCode(engine, nameof(v_StartIndex), this);
 
 			int length = -1;
 
-			if(v_StringLength != "")
-				length = (int)await v_StringLength.EvaluateCode(engine);
+			if(!string.IsNullOrEmpty(v_StringLength))
+				length = (int)await v_StringLength.EvaluateCode(engine, nameof(v_StringLength), this);
 
 			//apply substring
 			if (length > -1)
-			{
 				inputText = inputText.Substring(startIndex, length);
-			}
 			else
-			{
 				inputText = inputText.Substring(startIndex);
-			}
 
 			inputText.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
@@ -91,7 +85,6 @@ namespace OpenBots.Commands.Data
 		{
 			base.Render(editor, commandControls);
 
-			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputText", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_StartIndex", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_StringLength", this, editor));

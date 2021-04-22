@@ -62,7 +62,7 @@ namespace OpenBots.Commands.DataTable
 		[Editable(false)]
 		[DisplayName("Output DataRow Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(DataRow) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -80,12 +80,12 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var dataRowValue = await v_DataRowValue.EvaluateCode(engine);
+			var dataRowValue = await v_DataRowValue.EvaluateCode(engine, nameof(v_DataRowValue), this);
 
 			var dataRowVariable = await v_DataRow.EvaluateCode(engine, nameof(v_DataRow), this);
 			DataRow dataRow = (DataRow)dataRowVariable;
 
-			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
+			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine, nameof(v_DataValueIndex), this);
 
 			if (v_Option == "Column Index")
 			{

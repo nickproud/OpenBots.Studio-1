@@ -10,11 +10,10 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Data
 {
-	[Serializable]
+    [Serializable]
 	[Category("Data Commands")]
 	[Description("This command performs a math calculation and saves the result in a variable.")]
 	public class MathCalculationCommand : ScriptCommand
@@ -22,19 +21,19 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Math Expression")]
 		[Description("Specify either text or a variable that contains a valid math expression.")]
-		[SampleUsage("(2 + 5) * 3 || ({vNumber1} + {vNumber2}) * {vNumber3}")]
-		[Remarks("You can use known numbers or variables.")]
+		[SampleUsage("(2 + 5) * 3 || (vNumber1 + vNumber2) * vNumber3")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(double) })]
 		public string v_MathExpression { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Result Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(double) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public MathCalculationCommand()
@@ -51,17 +50,8 @@ namespace OpenBots.Commands.Data
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			//get variablized string
-			var variableMath = await v_MathExpression.EvaluateCode(engine);
+			var result = Convert.ToDouble(await v_MathExpression.EvaluateCode(engine, nameof(v_MathExpression), this));
 
-			double result = 0.0;
-
-			if (variableMath is int)
-				result = Convert.ToDouble(variableMath);
-			else
-				result = (double)variableMath;
-
-			//store string in variable
 			result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
@@ -69,7 +59,6 @@ namespace OpenBots.Commands.Data
 		{
 			base.Render(editor, commandControls);
 
-			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_MathExpression", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

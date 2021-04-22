@@ -26,10 +26,10 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Text Data")]
 		[Description("Provide a variable or text value.")]
-		[SampleUsage("Sample text to perform text extraction on || {vTextData}")]
+		[SampleUsage("\"Hello, welcome to OpenBots\" || {vTextData}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputText { get; set; }
 
 		[Required]
@@ -45,17 +45,17 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Extraction Parameters")]
 		[Description("Define the required extraction parameters, which is dependent on the type of extraction.")]
-		[SampleUsage("A substring from input text || {vSubstring}")]
+		[SampleUsage("[\"Welcome\", 0] || [vSubstring, vOccurences]")]
 		[Remarks("Set parameter values for each parameter name based on the extraction type.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public OBDataTable v_TextExtractionTable { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Text Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -80,8 +80,7 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			//get variablized input
-			var variableInput = (string)await v_InputText.EvaluateCode(engine);
+			var variableInput = (string)await v_InputText.EvaluateCode(engine, nameof(v_InputText), this);
 
 			string variableLeading, variableTrailing, extractedText;
 			int skipOccurences;
@@ -91,21 +90,21 @@ namespace OpenBots.Commands.Data
 			{
 				case "Extract All After Text":
 					//extract trailing texts            
-					variableLeading = (string)await GetParameterValue("Leading Text").EvaluateCode(engine);
-					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
+					variableLeading = (string)await GetParameterValue("Leading Text").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
+					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
 					extractedText = ExtractLeadingText(variableInput, variableLeading, skipOccurences);
 					break;
 				case "Extract All Before Text":
 					//extract leading text
-					variableTrailing = (string)await GetParameterValue("Trailing Text").EvaluateCode(engine);
-					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
+					variableTrailing = (string)await GetParameterValue("Trailing Text").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
+					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
 					extractedText = ExtractTrailingText(variableInput, variableTrailing, skipOccurences);
 					break;
 				case "Extract All Between Text":
 					//extract leading and then trailing which gives the items between
-					variableLeading = (string)await GetParameterValue("Leading Text").EvaluateCode(engine);
-					variableTrailing = (string)await GetParameterValue("Trailing Text").EvaluateCode(engine);
-					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
+					variableLeading = (string)await GetParameterValue("Leading Text").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
+					variableTrailing = (string)await GetParameterValue("Trailing Text").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
+					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
 
 					//extract leading
 					extractedText = ExtractLeadingText(variableInput, variableLeading, skipOccurences);
@@ -118,7 +117,6 @@ namespace OpenBots.Commands.Data
 					throw new NotImplementedException("Extraction Type Not Implemented: " + v_TextExtractionType);
 			}
 
-			//store variable
 			extractedText.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
 		}
 
@@ -184,9 +182,9 @@ namespace OpenBots.Commands.Data
 
 		private string GetParameterValue(string parameterName)
 		{
-			return ((from rw in v_TextExtractionTable.AsEnumerable()
+			return (from rw in v_TextExtractionTable.AsEnumerable()
 					 where rw.Field<string>("Parameter Name") == parameterName
-					 select rw.Field<string>("Parameter Value")).FirstOrDefault());
+					 select rw.Field<string>("Parameter Value")).FirstOrDefault();
 		}
 
 		private string ExtractLeadingText(string input, string substring, int occurences)
