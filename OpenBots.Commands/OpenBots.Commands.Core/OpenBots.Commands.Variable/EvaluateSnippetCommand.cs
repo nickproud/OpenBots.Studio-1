@@ -15,7 +15,7 @@ namespace OpenBots.Commands.Variable
     [Serializable]
 	[Category("Variable Commands")]
 	[Description("This command runs a snippet and updates a variable if it is modified.")]
-	public class ExecuteSnippetCommand : ScriptCommand
+	public class EvaluateSnippetCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Code Snippet")]
@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Variable
 		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_Input { get; set; }
 
-		public ExecuteSnippetCommand()
+		public EvaluateSnippetCommand()
 		{
 			CommandName = "ExecuteSnippetCommand";
 			SelectionName = "Execute Snippet";
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Variable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			await v_Input.EvaluateUnassignedCode(engine, nameof(v_Input), this);
+			await v_Input.EvaluateSnippet(engine, nameof(v_Input), this);
 
 			VariableMethods.SyncVariableValues(engine);
 		}

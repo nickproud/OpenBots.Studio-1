@@ -499,7 +499,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return engine.AutomationEngineContext.EngineScriptState.GetVariable($"{engine.AutomationEngineContext.GuidPlaceholder}").Value;
         }
 
-        public async static Task<bool> EvaluateUnassignedCode(this string code, IAutomationEngineInstance engine, string parameterName, ScriptCommand parent)
+        public async static Task<bool> EvaluateSnippet(this string code, IAutomationEngineInstance engine, string parameterName, ScriptCommand parent)
         {
             if (engine.AutomationEngineContext.EngineScriptState == null)
                 engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScript.RunAsync();
