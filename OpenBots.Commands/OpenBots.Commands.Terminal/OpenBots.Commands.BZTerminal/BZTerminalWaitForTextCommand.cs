@@ -33,7 +33,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("Hello, World! || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToWaitFor { get; set; }
 
 		[Required]
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public BZTerminalWaitForTextCommand()
@@ -58,8 +58,8 @@ namespace OpenBots.Commands.BZTerminal
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string textToWaitFor = (string)await v_TextToWaitFor.EvaluateCode(engine);
-			var timeout = (int)await v_Timeout.EvaluateCode(engine);
+			string textToWaitFor = (string)await v_TextToWaitFor.EvaluateCode(engine, nameof(v_TextToWaitFor), this);
+			var timeout = (int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)

@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vRowPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_YMousePosition { get; set; }
 
 		[Required]
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vColPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_XMousePosition { get; set; }
 
 		[Required]
@@ -63,7 +63,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("Hello, World! || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FieldText { get; set; }
 
 		[Required]
@@ -110,13 +110,13 @@ namespace OpenBots.Commands.Terminal
 
 			if (v_Option == "Row/Col Position")
             {
-				var mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
-				var mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
+				var mouseX = (int)await v_XMousePosition.EvaluateCode(engine, nameof(v_XMousePosition), this);
+				var mouseY = (int)await v_YMousePosition.EvaluateCode(engine, nameof(v_YMousePosition), this);
 				field = fields.Where(f => (mouseY * 80 + mouseX) >= f.Location.position && (mouseY * 80 + mouseX) < f.Location.position + f.Location.length).FirstOrDefault();
 			}
             else
             {
-				var fieldText = (string)await v_FieldText.EvaluateCode(engine);
+				var fieldText = (string)await v_FieldText.EvaluateCode(engine, nameof(v_FieldText), this);
 				field = fields.Where(f => f.Text != null && f.Text.ToLower().Contains(fieldText.ToLower())).FirstOrDefault();
 			}
 

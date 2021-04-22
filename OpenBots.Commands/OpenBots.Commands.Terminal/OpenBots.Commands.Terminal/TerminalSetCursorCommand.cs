@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vRowPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_YMousePosition { get; set; }
 
 		[Required]
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vColPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_XMousePosition { get; set; }
 
 		public TerminalSetCursorCommand()
@@ -57,8 +57,8 @@ namespace OpenBots.Commands.Terminal
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
-			var mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
+			var mouseX = (int)await v_XMousePosition.EvaluateCode(engine, nameof(v_XMousePosition), this);
+			var mouseY = (int)await v_YMousePosition.EvaluateCode(engine, nameof(v_YMousePosition), this);
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)

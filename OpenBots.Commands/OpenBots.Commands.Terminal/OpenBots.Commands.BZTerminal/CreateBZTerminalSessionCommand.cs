@@ -47,7 +47,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Remarks("This input should only be used for BlueZone Session files.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SessionFilePath { get; set; }
 
 		[Required]
@@ -74,7 +74,7 @@ namespace OpenBots.Commands.BZTerminal
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var sessionFilePath = (string)await v_SessionFilePath.EvaluateCode(engine);
+			var sessionFilePath = (string)await v_SessionFilePath.EvaluateCode(engine, nameof(v_SessionFilePath), this);
 			var terminalContext = new BZTerminalContext();
 
 			if (v_CloseAllInstances == "Yes")

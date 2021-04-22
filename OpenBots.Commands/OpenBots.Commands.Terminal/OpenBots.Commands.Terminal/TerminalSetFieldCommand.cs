@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vFieldIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_FieldIndex { get; set; }
 
 		[Required]
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("Hello, World! || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		public TerminalSetFieldCommand()
@@ -58,8 +58,8 @@ namespace OpenBots.Commands.Terminal
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var fieldIndex = (int)await v_FieldIndex.EvaluateCode(engine);
-			string textToSend = (string)await v_TextToSet.EvaluateCode(engine);
+			var fieldIndex = (int)await v_FieldIndex.EvaluateCode(engine, nameof(v_FieldIndex), this);
+			string textToSend = (string)await v_TextToSet.EvaluateCode(engine, nameof(v_TextToSet), this);
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)

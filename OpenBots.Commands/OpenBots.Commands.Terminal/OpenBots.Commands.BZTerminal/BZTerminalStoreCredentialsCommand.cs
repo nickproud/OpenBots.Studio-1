@@ -34,7 +34,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Username { get; set; }
 
 		[Required]
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.BZTerminal
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vUserName = (string)await v_Username.EvaluateCode(engine);
+			var vUserName = (string)await v_Username.EvaluateCode(engine, nameof(v_Username), this);
 			var vPassword = (SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 

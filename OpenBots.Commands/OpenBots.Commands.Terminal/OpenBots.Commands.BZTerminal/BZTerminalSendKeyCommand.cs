@@ -34,7 +34,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("1 || {vRowPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_YMousePosition { get; set; }
 
 		[DisplayName("Column Position (Optional)")]
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("1 || {vColPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_XMousePosition { get; set; }
 
 		[Required]
@@ -68,10 +68,10 @@ namespace OpenBots.Commands.BZTerminal
 
 			int mouseX = 0, mouseY = 0; 
 			if (!string.IsNullOrEmpty(v_XMousePosition))
-				mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+				mouseX = (int)await v_XMousePosition.EvaluateCode(engine, nameof(v_XMousePosition), this);
 
 			if (!string.IsNullOrEmpty(v_YMousePosition))
-				mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
+				mouseY = (int)await v_YMousePosition.EvaluateCode(engine, nameof(v_YMousePosition), this);
 
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 

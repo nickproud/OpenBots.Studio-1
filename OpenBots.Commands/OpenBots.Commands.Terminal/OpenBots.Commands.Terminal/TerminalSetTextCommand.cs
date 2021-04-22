@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vRowPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_YMousePosition { get; set; }
 
 		[DisplayName("Column Position (Optional)")]
@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vColPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_XMousePosition { get; set; }
 
 		[Required]
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("Hello, World! || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		[Required]
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public TerminalSetTextCommand()
@@ -77,13 +77,13 @@ namespace OpenBots.Commands.Terminal
 
 			int mouseX = 0, mouseY = 0;
 			if (!string.IsNullOrEmpty(v_XMousePosition))
-				mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+				mouseX = (int)await v_XMousePosition.EvaluateCode(engine, nameof(v_XMousePosition), this);
 
 			if (!string.IsNullOrEmpty(v_YMousePosition))
-				mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
+				mouseY = (int)await v_YMousePosition.EvaluateCode(engine, nameof(v_YMousePosition), this);
 
-			string textToSend = (string)await v_TextToSet.EvaluateCode(engine);
-			var timeout = ((int)await v_Timeout.EvaluateCode(engine)) * 1000;
+			string textToSend = (string)await v_TextToSet.EvaluateCode(engine, nameof(v_TextToSet), this);
+			var timeout = ((int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this)) * 1000;
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)
