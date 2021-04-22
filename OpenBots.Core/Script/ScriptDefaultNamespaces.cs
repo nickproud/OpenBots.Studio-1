@@ -1,7 +1,9 @@
-﻿using System;
+﻿using MimeKit;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security;
 using DataTable = System.Data.DataTable;
 using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 using OutlookApplication = Microsoft.Office.Interop.Outlook.Application;
@@ -17,10 +19,12 @@ namespace OpenBots.Core.Script
             { "Microsoft.Office.Interop.Excel", GetAssemblyReference(typeof(ExcelApplication)) },
             { "Microsoft.Office.Interop.Outlook", GetAssemblyReference(typeof(OutlookApplication)) },
             { "Microsoft.Office.Interop.Word", GetAssemblyReference(typeof(WordApplication)) },
+            { "MimeKit", GetAssemblyReference(typeof(MimeMessage)) },
             { "System", GetAssemblyReference(typeof(string)) },
             { "System.Collections.Generic", GetAssemblyReference(typeof(string)) },
             { "System.Data", GetAssemblyReference(typeof(DataTable)) },
             { "System.Linq", GetAssemblyReference(typeof(IQueryable)) },
+            { "System.Security", GetAssemblyReference(typeof(SecureString)) },
             { "System.Text", GetAssemblyReference(typeof(string)) },
             { "System.Threading.Tasks", GetAssemblyReference(typeof(string)) }
         };

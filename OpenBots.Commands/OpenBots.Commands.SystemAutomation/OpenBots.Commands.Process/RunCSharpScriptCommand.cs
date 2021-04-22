@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Process
 				 "If you do not want to stop while the script executes, consider using *Start Process* instead.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ScriptPath { get; set; }
 
 		[Required]
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("-message Hello -t 2 || {vArguments} || -message {vMessage} -t 2")]
 		[Remarks("This input is passed to your script as a string[].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ScriptArgs { get; set; }
 
 		[Required]
@@ -116,7 +116,7 @@ namespace OpenBots.Commands.Process
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string scriptPath = (string)await v_ScriptPath.EvaluateCode(engine);
+			string scriptPath = (string)await v_ScriptPath.EvaluateCode(engine, nameof(v_ScriptPath), this);
 
 			string code = OBFile.ReadAllText(scriptPath);
 			var mainMethod = CSScript.LoadCode(code).CreateObject("*").GetType().GetMethod("Main");
@@ -128,13 +128,8 @@ namespace OpenBots.Commands.Process
 				foreach (DataRow varColumn in v_VariableArgumentsDataTable.Rows)
                 {
 					string var = varColumn.Field<string>("Argument Values").Trim();
-					dynamic input = (string)await var.EvaluateCode(engine);
+					dynamic input = await var.EvaluateCode(engine, nameof(v_VariableArgumentsDataTable), this);
 
-					if (input == var && input.StartsWith("{") && input.EndsWith("}"))
-					{
-						if (await var.EvaluateCode(engine, nameof(v_VariableArgumentsDataTable), this) != null)
-							input = await var.EvaluateCode(engine, nameof(v_VariableArgumentsDataTable), this);
-					}
 					args[i] = input;
 					i++;
 				}
@@ -159,7 +154,7 @@ namespace OpenBots.Commands.Process
 			}
 			else if (v_ArgumentType == "Command Line")
 			{
-				string scriptArgs = (string)await v_ScriptArgs.EvaluateCode(engine);
+				string scriptArgs = (string)await v_ScriptArgs.EvaluateCode(engine, nameof(v_ScriptArgs), this);
 				string[] argStrings = scriptArgs.Trim().Split(' ');
 				if (v_HasOutput == "No")
                 {

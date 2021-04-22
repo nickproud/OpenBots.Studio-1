@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Email
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_IMAPAttachmentDirectory { get; set; }
 
         [Required]
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Email
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("vUserVariable")]
         [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-        [CompatibleTypes(new Type[] { typeof(List<>) })]
+        [CompatibleTypes(new Type[] { typeof(List<string>) })]
         public string v_OutputUserVariableName { get; set; }
 
         public GetIMAPEmailAttachmentsCommand()
@@ -72,9 +72,9 @@ namespace OpenBots.Commands.Email
         {
             var engine = (IAutomationEngineInstance)sender;
             MimeMessage email = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine, nameof(v_IMAPMimeMessage), this);
-            bool includeEmbeds = ((string)await v_IncludeEmbeddedImagesAsAttachments.EvaluateCode(engine)).Equals("Yes");
-            string attDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine);
+            string attDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine, nameof(v_IMAPAttachmentDirectory), this);
 
+            bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.Equals("Yes");
             List<string> attachmentList = new List<string>();
             
             foreach (var attachment in email.Attachments)

@@ -74,13 +74,12 @@ namespace OpenBots.Commands.System
 			SelectionName = "Environment Variable";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_system;
-
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var environmentVariable = (string)await v_EnvVariableName.EvaluateCode(engine);
+			var environmentVariable = (string)await v_EnvVariableName.EvaluateCode(engine, nameof(v_EnvVariableName), this);
 			
 			var envVariables = Environment.GetEnvironmentVariables();
 			var envDict = envVariables.Keys.Cast<object>().ToDictionary(k => k.ToString(), v => envVariables[v]);
@@ -98,7 +97,7 @@ namespace OpenBots.Commands.System
 			base.Render(editor, commandControls);
 
 			var ActionNameComboBoxLabel = commandControls.CreateDefaultLabelFor("v_EnvVariableName", this);
-			_variableNameComboBox = (ComboBox)commandControls.CreateDropdownFor("v_EnvVariableName", this);
+			_variableNameComboBox = commandControls.CreateDropdownFor("v_EnvVariableName", this);
 
 			var envVariables = Environment.GetEnvironmentVariables();
 			var envDict = envVariables.Keys.Cast<object>().ToDictionary(k => k.ToString(), v => envVariables[v]);
@@ -108,7 +107,7 @@ namespace OpenBots.Commands.System
 			{
 				var envVariableKey = env.Key.ToString();
 				var envVariableValue = env.Value.ToString();
-				_variableNameComboBox.Items.Add(envVariableKey);
+				_variableNameComboBox.Items.Add($"\"{envVariableKey}\"");
 			}
 
 			_variableNameComboBox.SelectedValueChanged += VariableNameComboBox_SelectedValueChanged;
@@ -127,10 +126,12 @@ namespace OpenBots.Commands.System
 
 		private void VariableNameComboBox_SelectedValueChanged(object sender, EventArgs e)
 		{
-			var selectedValue = _variableNameComboBox.SelectedItem;
+			string selectedValue;
 
-			if (selectedValue == null)
+			if (_variableNameComboBox.SelectedItem == null)
 				return;
+			else
+				selectedValue = _variableNameComboBox.SelectedItem.ToString().Trim('\"');
 
 			var variable = Environment.GetEnvironmentVariables();
 			var value = variable[selectedValue];

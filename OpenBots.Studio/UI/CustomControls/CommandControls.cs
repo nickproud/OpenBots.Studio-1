@@ -203,7 +203,7 @@ namespace OpenBots.UI.CustomControls
                 if (attribute.CompTypes != null)
                 {                   
                     foreach (var type in attribute.CompTypes)
-                        toolTipText += $"{type.Name}, ";
+                        toolTipText += $"{type.GetRealTypeFullName()}, ";
                 }
                 if (attribute.IsStringOrPrimitive)
                     toolTipText += "any primitive/string";

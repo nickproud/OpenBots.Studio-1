@@ -36,7 +36,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFilePath { get; set; }
 
 		[Required]
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DestinationDirectory { get; set; }
 
 		[Required]
@@ -82,8 +82,8 @@ namespace OpenBots.Commands.File
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine);
-			var destinationFolder = (string)await v_DestinationDirectory.EvaluateCode(engine);
+			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine, nameof(v_SourceFilePath), this);
+			var destinationFolder = (string)await v_DestinationDirectory.EvaluateCode(engine, nameof(v_DestinationDirectory), this);
 
             if (!IO.File.Exists(sourceFile))
             {

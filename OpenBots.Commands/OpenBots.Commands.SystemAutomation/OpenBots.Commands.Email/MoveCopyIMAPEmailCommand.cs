@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("imap.gmail.com || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPHost { get; set; }
 
 		[Required]
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("993 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPPort { get; set; }
 
 		[Required]
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPUserName { get; set; }
 
 		[Required]
@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("New Folder || {vFolderName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPDestinationFolder { get; set; }
 
 		[Required]
@@ -112,11 +112,11 @@ namespace OpenBots.Commands.Email
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			MimeMessage vMimeMessage = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine, nameof(v_IMAPMimeMessage), this);
-			string vIMAPHost = (string)await v_IMAPHost.EvaluateCode(engine);
-			string vIMAPPort = (string)await v_IMAPPort.EvaluateCode(engine);
-			string vIMAPUserName = (string)await v_IMAPUserName.EvaluateCode(engine);
+			string vIMAPHost = (string)await v_IMAPHost.EvaluateCode(engine, nameof(v_IMAPHost), this);
+			string vIMAPPort = (string)await v_IMAPPort.EvaluateCode(engine, nameof(v_IMAPPort), this);
+			string vIMAPUserName = (string)await v_IMAPUserName.EvaluateCode(engine, nameof(v_IMAPUserName), this);
 			string vIMAPPassword = ((SecureString)await v_IMAPPassword.EvaluateCode(engine, nameof(v_IMAPPassword), this)).ConvertSecureStringToString();
-			var vIMAPDestinationFolder = (string)await v_IMAPDestinationFolder.EvaluateCode(engine);
+			var vIMAPDestinationFolder = (string)await v_IMAPDestinationFolder.EvaluateCode(engine, nameof(v_IMAPDestinationFolder), this);
 
 			using (var client = new ImapClient())
 			{

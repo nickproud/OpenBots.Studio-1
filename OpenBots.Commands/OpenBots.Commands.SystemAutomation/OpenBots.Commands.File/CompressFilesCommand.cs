@@ -5,7 +5,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +17,7 @@ using IO = System.IO;
 
 namespace OpenBots.Commands.File
 {
-	[Serializable]
+    [Serializable]
 	[Category("File Operation Commands")]
 	[Description("This command compresses file(s) from a directory into a Zip file.")]
 	public class CompressFilesCommand : ScriptCommand
@@ -30,7 +29,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DirectoryPathOrigin { get; set; }
 
 		[DisplayName("Password (Optional)")]
@@ -48,7 +47,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+				[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_PathDestination { get; set; }
 
 		[Required]
@@ -66,31 +65,26 @@ namespace OpenBots.Commands.File
 			SelectionName = "Compress Files";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_files;
-
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable path to source file
-			var vSourceDirectoryPathOrigin = (string)await v_DirectoryPathOrigin.EvaluateCode(engine);
+			var vSourceDirectoryPathOrigin = (string)await v_DirectoryPathOrigin.EvaluateCode(engine, nameof(v_DirectoryPathOrigin), this);
 
 			// get file path to destination files
-			var vFilePathDestination = (string)await v_PathDestination.EvaluateCode(engine);
+			var vFilePathDestination = (string)await v_PathDestination.EvaluateCode(engine, nameof(v_PathDestination), this);
 
 			var vPassword = "";
 			// get password to extract files
-			if (v_Password != null)
+			if (!string.IsNullOrEmpty(v_Password))
 				vPassword = ((SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this)).ConvertSecureStringToString();
 
             if (IO.File.Exists(vSourceDirectoryPathOrigin))
-            {
 				throw new ArgumentException($"{vSourceDirectoryPathOrigin} is a file when it should be a directory");
-            }
 			else if (!Directory.Exists(vSourceDirectoryPathOrigin))
-            {
 				throw new DirectoryNotFoundException($"{vSourceDirectoryPathOrigin} is not a valid directory");
-            }
 
 			string[] filenames = Directory.GetFiles(vSourceDirectoryPathOrigin, "*.*", SearchOption.AllDirectories);
 			string[] directorynames = Directory.GetDirectories(vSourceDirectoryPathOrigin, "*", SearchOption.AllDirectories);

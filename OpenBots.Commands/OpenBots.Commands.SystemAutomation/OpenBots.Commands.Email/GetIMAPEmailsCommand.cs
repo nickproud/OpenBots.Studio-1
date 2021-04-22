@@ -27,7 +27,6 @@ namespace OpenBots.Commands.Email
 	[Serializable]
 	[Category("Email Commands")]
 	[Description("This command gets selected emails and their attachments using IMAP protocol.")]
-
 	public class GetIMAPEmailsCommand : ScriptCommand
 	{
 
@@ -37,7 +36,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("imap.gmail.com || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPHost { get; set; }
 
 		[Required]
@@ -46,7 +45,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("993 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPPort { get; set; }
 
 		[Required]
@@ -55,7 +54,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPUserName { get; set; }
 
 		[Required]
@@ -73,7 +72,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Inbox || {vFolderName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPSourceFolder { get; set; }
 
 		[Required]
@@ -82,7 +81,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Hello World || myRobot@company.com || {vFilter} || None")]
 		[Remarks("*Warning* Using 'None' as the Filter will return every email in the selected Mail Folder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPFilter { get; set; }
 
 		[Required]
@@ -128,7 +127,7 @@ namespace OpenBots.Commands.Email
 		[Remarks("This input is optional and will only be used if *Save MimeMessages and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPMessageDirectory { get; set; }
 
 		[Required]
@@ -138,7 +137,7 @@ namespace OpenBots.Commands.Email
 		[Remarks("This input is optional and will only be used if *Save MimeMessages and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPAttachmentDirectory { get; set; }
 
 		[Required]
@@ -147,7 +146,7 @@ namespace OpenBots.Commands.Email
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<MimeMessage>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -176,14 +175,14 @@ namespace OpenBots.Commands.Email
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string vIMAPHost = (string)await v_IMAPHost.EvaluateCode(engine);
-			string vIMAPPort = (string)await v_IMAPPort.EvaluateCode(engine);
-			string vIMAPUserName = (string)await v_IMAPUserName.EvaluateCode(engine);
+			string vIMAPHost = (string)await v_IMAPHost.EvaluateCode(engine, nameof(v_IMAPHost), this);
+			string vIMAPPort = (string)await v_IMAPPort.EvaluateCode(engine, nameof(v_IMAPPort), this);
+			string vIMAPUserName = (string)await v_IMAPUserName.EvaluateCode(engine, nameof(v_IMAPUserName), this);
 			string vIMAPPassword = ((SecureString)await v_IMAPPassword.EvaluateCode(engine, nameof(v_IMAPPassword), this)).ConvertSecureStringToString();
-			string vIMAPSourceFolder = (string)await v_IMAPSourceFolder.EvaluateCode(engine);
-			string vIMAPFilter = (string)await v_IMAPFilter.EvaluateCode(engine);
-			string vIMAPMessageDirectory = (string)await v_IMAPMessageDirectory.EvaluateCode(engine);
-			string vIMAPAttachmentDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine);
+			string vIMAPSourceFolder = (string)await v_IMAPSourceFolder.EvaluateCode(engine, nameof(v_IMAPSourceFolder), this);
+			string vIMAPFilter = (string)await v_IMAPFilter.EvaluateCode(engine, nameof(v_IMAPFilter), this);
+			string vIMAPMessageDirectory = (string)await v_IMAPMessageDirectory.EvaluateCode(engine, nameof(v_IMAPMessageDirectory), this);
+			string vIMAPAttachmentDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine, nameof(v_IMAPAttachmentDirectory), this);
 
 			using (var client = new ImapClient())
 			{

@@ -19,10 +19,8 @@ namespace OpenBots.Commands.Email
     [Serializable]
     [Category("Email Commands")]
     [Description("This command gets a property from an email.")]
-
     public class GetMimeMessagePropertyCommand : ScriptCommand
     {
-
         [Required]
         [DisplayName("MimeMessage")]
         [Description("Enter the MimeMessage from which to retrieve the property.")]
@@ -73,7 +71,7 @@ namespace OpenBots.Commands.Email
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("{vUserVariable}")]
         [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-        [CompatibleTypes(new Type[] { typeof(string), typeof(DateTime), typeof(List<>) })]
+        [CompatibleTypes(new Type[] { typeof(string), typeof(DateTime), typeof(List<MimeEntity>) })]
         public string v_OutputUserVariableName { get; set; }
 
         public GetMimeMessagePropertyCommand()
@@ -104,27 +102,22 @@ namespace OpenBots.Commands.Email
                 case "Bcc":
                     output = "";
                     foreach (InternetAddress item in email.Bcc)
-                    {
                         output = output + item.ToString() + ";";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                         break;
                 case "Body":
-                    email.Body.WriteToAsync(itemStream);
+                    await email.Body.WriteToAsync(itemStream);
                     reader.ReadToEnd().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "BodyParts":
                     output = "";
                     foreach (MimeEntity item in email.BodyParts)
                     {
-                        item.WriteToAsync(itemStream);
+                        await item.WriteToAsync(itemStream);
                         output = output + reader.ReadToEnd() + "\n";
                     }
                     output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -132,17 +125,12 @@ namespace OpenBots.Commands.Email
                 case "Cc":
                     output = "";
                     foreach (InternetAddress item in email.Cc)
-                    {
                         output = output + item.ToString() + ";";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "Date":
                     email.Date.UtcDateTime.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -150,24 +138,18 @@ namespace OpenBots.Commands.Email
                 case "From":
                     output = "";
                     foreach (InternetAddress item in email.From)
-                    {
                         output = output + item.ToString() + ";";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "Headers":
                     output = "";
                     foreach (Header item in email.Headers)
-                    {
                         output = output + item.ToString() + "\n";
-                    }
+
                     output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
                     break;
                 case "HtmlBody":
@@ -191,62 +173,42 @@ namespace OpenBots.Commands.Email
                 case "References":
                     output = "";
                     foreach (var item in email.References)
-                    {
                         output = output + item.ToString() + ",";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "ReplyTo":
                     output = "";
                     foreach (InternetAddress item in email.ReplyTo)
-                    {
                         output = output + item.ToString() + ";";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "ResentBcc":
                     output = "";
                     foreach (InternetAddress item in email.ResentBcc)
-                    {
                         output = output + item.ToString() + ";";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "ResentCc":
                     output = "";
                     foreach (InternetAddress item in email.ResentCc)
-                    {
                         output = output + item.ToString() + ";";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "ResentDate":
                     email.ResentDate.UtcDateTime.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -254,17 +216,12 @@ namespace OpenBots.Commands.Email
                 case "ResentFrom":
                     output = "";
                     foreach (InternetAddress item in email.ResentFrom)
-                    {
                         output = output + item.ToString() + ";";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "ResentMessageId":
                     email.ResentMessageId.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -272,52 +229,34 @@ namespace OpenBots.Commands.Email
                 case "ResentReplyTo":
                     output = "";
                     foreach (InternetAddress item in email.ResentReplyTo)
-                    {
                         output = output + item.ToString() + ";";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "ResentSender":
                     if (email.ResentSender == null)
-                    {
                         "null".SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         email.ResentSender.Address.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "ResentTo":
                     output = "";
                     foreach (InternetAddress item in email.ResentTo)
-                    {
                         output = output + item.ToString() + ";";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "Sender":
                     if (email.Sender == null)
-                    {
                         "null".SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         email.Sender.Address.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "Subject":
                     email.Subject.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
@@ -328,17 +267,12 @@ namespace OpenBots.Commands.Email
                 case "To":
                     output = "";
                     foreach (InternetAddress item in email.To)
-                    {
                         output = output + item.ToString() + ";";
-                    }
+
                     if (output != "")
-                    {
                         output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     else
-                    {
                         output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-                    }
                     break;
                 case "XPriority":
                     email.XPriority.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);

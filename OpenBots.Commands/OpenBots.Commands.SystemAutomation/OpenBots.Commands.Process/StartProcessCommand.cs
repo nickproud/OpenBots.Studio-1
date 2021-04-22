@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Process
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ProgramName { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("-a || -version || {vArg}")]
 		[Remarks("You will need to consult documentation to determine if your executable supports arguments or flags on startup.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ProgramArgs { get; set; }
 
 		[Required]
@@ -65,8 +65,8 @@ namespace OpenBots.Commands.Process
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine);
-			string vProgramArgs = (string)await v_ProgramArgs.EvaluateCode(engine);
+			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine, nameof(v_ProgramName), this);
+			string vProgramArgs = (string)await v_ProgramArgs.EvaluateCode(engine, nameof(v_ProgramArgs), this);
 			Diagnostics.Process newProcess = new Diagnostics.Process();
 
 			if (OBFile.Exists(vProgramName))

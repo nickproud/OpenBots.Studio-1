@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Folder
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFolderPath { get; set; }
 
 		public DeleteFolderCommand()
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Folder
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine);
+			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine, nameof(v_SourceFolderPath), this);
 
 			//delete folder
 			Directory.Delete(sourceFolder, true);

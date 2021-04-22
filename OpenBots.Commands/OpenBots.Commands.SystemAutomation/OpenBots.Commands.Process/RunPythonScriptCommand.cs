@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Process
 				 "If you do not want to stop while the script executes, consider using *Start Process* instead.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ScriptPath { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("-message Hello -t 2 || {vArguments}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ScriptArgs { get; set; }
 
 		public RunPythonScriptCommand()
@@ -57,8 +57,8 @@ namespace OpenBots.Commands.Process
 			var engine = (IAutomationEngineInstance)sender;
 			Diagnostics.Process scriptProc = new Diagnostics.Process();
 
-			string scriptPath = (string)await v_ScriptPath.EvaluateCode(engine);
-			string scriptArgs = (string)await v_ScriptArgs.EvaluateCode(engine);
+			string scriptPath = (string)await v_ScriptPath.EvaluateCode(engine, nameof(v_ScriptPath), this);
+			string scriptArgs = (string)await v_ScriptArgs.EvaluateCode(engine, nameof(v_ScriptArgs), this);
 
 			string pythonExecutable = CommonMethods.GetPythonPath(Environment.UserName, "");
 

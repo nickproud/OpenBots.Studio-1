@@ -27,7 +27,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFilePath { get; set; }
 
 		[Required]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.File
 		[SampleUsage("newfile.txt || {vNewFileName}")]
 		[Remarks("Changing the file extension will not automatically convert files.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_NewName { get; set; }
 
 		public RenameFileCommand()
@@ -52,8 +52,8 @@ namespace OpenBots.Commands.File
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine);
-			var newFileName = (string)await v_NewName.EvaluateCode(engine);
+			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine, nameof(v_SourceFilePath), this);
+			var newFileName = (string)await v_NewName.EvaluateCode(engine, nameof(v_NewName), this);
 
 			if (!IO.File.Exists(sourceFile))
             {

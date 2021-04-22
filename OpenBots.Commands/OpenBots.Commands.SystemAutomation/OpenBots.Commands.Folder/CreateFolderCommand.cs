@@ -26,7 +26,7 @@ namespace OpenBots.Commands.Folder
 		[SampleUsage("myFolderName || {vFolderName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_NewFolderName { get; set; }
 
 		[Required]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Folder
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DestinationDirectory { get; set; }
 
 		[Required]
@@ -54,15 +54,14 @@ namespace OpenBots.Commands.Folder
 			SelectionName = "Create Folder";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_folders;
-
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var destinationDirectory = (string)await v_DestinationDirectory.EvaluateCode(engine);
-			var newFolder = (string)await v_NewFolderName.EvaluateCode(engine);
+			var destinationDirectory = (string)await v_DestinationDirectory.EvaluateCode(engine, nameof(v_DestinationDirectory), this);
+			var newFolder = (string)await v_NewFolderName.EvaluateCode(engine, nameof(v_NewFolderName), this);
 
             if (!Directory.Exists(destinationDirectory))
             {
