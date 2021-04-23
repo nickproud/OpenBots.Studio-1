@@ -75,7 +75,7 @@ namespace OpenBots.Commands.File.Test
         }
 
         [Fact]
-        public void HandlesInvalidPath()
+        public async global::System.Threading.Tasks.Task HandlesInvalidPath()
         {
             _engine = new AutomationEngineInstance(null);
             _compressFiles = new CompressFilesCommand();
@@ -92,7 +92,7 @@ namespace OpenBots.Commands.File.Test
             _compressFiles.v_PathDestination = "{outputPath}";
             _compressFiles.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<ArgumentException>(() => _compressFiles.RunCommand(_engine));
+            await Assert.ThrowsAsync<ArgumentException>(() => _compressFiles.RunCommand(_engine));
         }
     }
 }

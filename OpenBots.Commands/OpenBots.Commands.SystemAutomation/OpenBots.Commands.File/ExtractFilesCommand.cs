@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using IO = System.IO;
 
@@ -30,7 +31,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FilePathOrigin { get; set; }
 
 		[DisplayName("Password (Optional)")]
@@ -48,16 +49,16 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_PathDestination { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Extracted File Path(s) List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ExtractFilesCommand()
@@ -66,27 +67,22 @@ namespace OpenBots.Commands.File
 			SelectionName = "Extract Files";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_files;
-
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable path to source file
-			var vSourceFilePathOrigin = v_FilePathOrigin.ConvertUserVariableToString(engine);
+			var vSourceFilePathOrigin = (string)await v_FilePathOrigin.EvaluateCode(engine);
 
 			if (!(IO.File.Exists(vSourceFilePathOrigin) && vSourceFilePathOrigin.Contains(".zip")))
-            {
 				throw new FileNotFoundException($"{vSourceFilePathOrigin} is not a valid zip file");
-            }
 
 			// get file path to destination files
-			var vFilePathDestination = v_PathDestination.ConvertUserVariableToString(engine);
+			var vFilePathDestination = (string)await v_PathDestination.EvaluateCode(engine);
 
 			if (!Directory.Exists(vFilePathDestination))
-            {
 				throw new DirectoryNotFoundException($"{vFilePathDestination} is not a valid directory");
-            }
 
 			vFilePathDestination = Path.Combine(vFilePathDestination, Path.GetFileNameWithoutExtension(vSourceFilePathOrigin));
 
@@ -97,8 +93,9 @@ namespace OpenBots.Commands.File
 
 			// get password to extract files
 			var vPassword = "";
-			if (v_Password != null)
-				vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+			if (string.IsNullOrEmpty(v_Password))
+				vPassword = ((SecureString)await v_Password.EvaluateCode(engine)).ConvertSecureStringToString();
+
 			FileStream fs = IO.File.OpenRead(vSourceFilePathOrigin);
 			ZipFile file = new ZipFile(fs);
 
@@ -145,7 +142,7 @@ namespace OpenBots.Commands.File
 				var filesList = Directory.GetFiles(vFilePathDestination, ".", SearchOption.AllDirectories).ToList();
 
 				//Add File Paths to the output variable
-				filesList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				filesList.SetVariableValue(engine, v_OutputUserVariableName);
 			}           
 		}
 

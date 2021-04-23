@@ -14,6 +14,11 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return engine.AutomationEngineContext.ImportedNamespaces;
         }
 
+        public static List<string> GetNamespacesList(IAutomationEngineInstance engine)
+        {
+            return engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
+        }
+
         public static Assembly GetAssembly(this string namespaceKey, IAutomationEngineInstance engine)
         {
             try

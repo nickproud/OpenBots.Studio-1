@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -35,7 +36,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("https://mycompany.com/orders || {vURL}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_URL { get; set; }
 
 		public SeleniumNavigateToURLCommand()
@@ -46,14 +47,14 @@ namespace OpenBots.Commands.WebBrowser
 			CommandIcon = Resources.command_web;
 
 			v_InstanceName = "DefaultBrowser";
-			v_URL = "https://";
+			v_URL = "\"https://\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
-			var vURL = v_URL.ConvertUserVariableToString(engine);
+			var vURL = (string)await v_URL.EvaluateCode(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
 
 			try

@@ -46,7 +46,7 @@ namespace OpenBots.Commands.File.Test
         }
 
         [Fact]
-        public void HandlesInvalidFilepath()
+        public async global::System.Threading.Tasks.Task HandlesInvalidFilepath()
         {
             _engine = new AutomationEngineInstance(null);
             _moveCopyFile = new MoveCopyFileCommand();
@@ -63,7 +63,7 @@ namespace OpenBots.Commands.File.Test
             _moveCopyFile.v_CreateDirectory = "Yes";
             _moveCopyFile.v_OverwriteFile = "Yes";
 
-            Assert.Throws<FileNotFoundException>(() => _moveCopyFile.RunCommand(_engine));
+            await Assert.ThrowsAsync<FileNotFoundException>(() => _moveCopyFile.RunCommand(_engine));
         }
 
         private void resetMoveTest(string initialDirectory, string movedFile)

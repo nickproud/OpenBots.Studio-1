@@ -15,6 +15,7 @@
 using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
@@ -199,7 +200,7 @@ namespace OpenBots.UI.Forms
             TreeNode typeNode = new TreeNode
             {
                 Name = "Type",
-                Text = _leadingType + argumentType.ToString(),
+                Text = _leadingType + argumentType.GetRealTypeFullName(),
                 Tag = argumentType
             };
 

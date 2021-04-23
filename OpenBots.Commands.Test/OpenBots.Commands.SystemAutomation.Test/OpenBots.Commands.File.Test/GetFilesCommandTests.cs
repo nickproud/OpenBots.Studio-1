@@ -20,7 +20,7 @@ namespace OpenBots.Commands.File.Test
         }
 
         [Fact]
-        public void GetsFiles()
+        public async void GetsFiles()
         {
             _engine = new AutomationEngineInstance(null);
             _getFiles = new GetFilesCommand();
@@ -35,7 +35,7 @@ namespace OpenBots.Commands.File.Test
 
             _getFiles.RunCommand(_engine);
 
-            List<string> fileList = (List<string>)"{output}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> fileList = (List<string>)await "{output}".EvaluateCode(_engine);
 
             List<string> filenames = new List<string>();
 
@@ -52,7 +52,7 @@ namespace OpenBots.Commands.File.Test
         }
 
         [Fact]
-        public void HandlesInvalidFilepath()
+        public async global::System.Threading.Tasks.Task HandlesInvalidFilepath()
         {
             _engine = new AutomationEngineInstance(null);
             _getFiles = new GetFilesCommand();
@@ -65,7 +65,7 @@ namespace OpenBots.Commands.File.Test
             _getFiles.v_SourceFolderPath = "{inputPath}";
             _getFiles.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<DirectoryNotFoundException>(() => _getFiles.RunCommand(_engine));
+            await Assert.ThrowsAsync<DirectoryNotFoundException>(() => _getFiles.RunCommand(_engine));
         }
     }
 }

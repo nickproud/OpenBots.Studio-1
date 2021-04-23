@@ -21,7 +21,7 @@ namespace OpenBots.Commands.DataTable.Test
         [Theory]
         [InlineData("(firstname,john)","And", 0, "jane")]
         [InlineData("(lastname,smith)","Or",0,"jane")]
-        public void removesDataRow(string search, string andOr, int expectedIndex, string expectedName)
+        public async void removesDataRow(string search, string andOr, int expectedIndex, string expectedName)
         {
             _removeDataRow = new RemoveDataRowCommand();
             _engine = new AutomationEngineInstance(null);
@@ -45,12 +45,12 @@ namespace OpenBots.Commands.DataTable.Test
             VariableMethods.CreateTestVariable(inputTable, _engine, "inputTable", typeof(OBData.DataTable));
 
             _removeDataRow.v_DataTable = "{inputTable}";
-            _removeDataRow.v_SearchItem = search;
+            //_removeDataRow.v_SearchItem = search;
             _removeDataRow.v_AndOr = andOr;
 
             _removeDataRow.RunCommand(_engine);
             
-            OBData.DataTable outputTable = (OBData.DataTable)_removeDataRow.v_DataTable.ConvertUserVariableToObject(_engine, typeof(OBData.DataTable));
+            OBData.DataTable outputTable = (OBData.DataTable)await _removeDataRow.v_DataTable.EvaluateCode(_engine);
             Assert.True(outputTable.Rows[expectedIndex][0].Equals(expectedName));
         }
     }

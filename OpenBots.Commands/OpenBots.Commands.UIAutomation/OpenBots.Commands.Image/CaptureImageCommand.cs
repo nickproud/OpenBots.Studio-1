@@ -1,22 +1,20 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Image
 {
-	[Serializable]
+    [Serializable]
 	[Category("Image Commands")]
 	[Description("This command captures an image on screen and stores it as a Bitmap variable.")]
 	public class CaptureImageCommand : ScriptCommand, IImageCommands
@@ -50,13 +48,13 @@ namespace OpenBots.Commands.Image
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
 			//user image to bitmap
 			Bitmap capturedBmp = new Bitmap(CommonMethods.Base64ToImage(v_ImageCapture));
-			capturedBmp.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			capturedBmp.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Management;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -32,7 +33,7 @@ namespace OpenBots.Commands.System
 		[Editable(false)]
 		[DisplayName("Output OS Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -54,10 +55,10 @@ namespace OpenBots.Commands.System
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var systemVariable = v_OSVariableName.ConvertUserVariableToString(engine);
+			var systemVariable = (string)await v_OSVariableName.EvaluateCode(engine);
 
 			ObjectQuery wql = new ObjectQuery("SELECT * FROM Win32_OperatingSystem");
 			ManagementObjectSearcher searcher = new ManagementObjectSearcher(wql);
@@ -70,7 +71,7 @@ namespace OpenBots.Commands.System
 					if (prop.Name == systemVariable.ToString())
 					{
 						var sysValue = prop.Value.ToString();
-						sysValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+						sysValue.SetVariableValue(engine, v_OutputUserVariableName);
 						return;
 					}
 				}
@@ -83,7 +84,7 @@ namespace OpenBots.Commands.System
 			base.Render(editor, commandControls);
 
 			var ActionNameComboBoxLabel = commandControls.CreateDefaultLabelFor("v_OSVariableName", this);
-			_variableNameComboBox = (ComboBox)commandControls.CreateDropdownFor("v_OSVariableName", this);
+			_variableNameComboBox = commandControls.CreateDropdownFor("v_OSVariableName", this);
 
 			ObjectQuery wql = new ObjectQuery("SELECT * FROM Win32_OperatingSystem");
 			ManagementObjectSearcher searcher = new ManagementObjectSearcher(wql);
@@ -92,7 +93,7 @@ namespace OpenBots.Commands.System
 			foreach (ManagementObject result in results)
 			{
 				foreach (PropertyData prop in result.Properties)
-					_variableNameComboBox.Items.Add(prop.Name);
+					_variableNameComboBox.Items.Add($"\"{prop.Name}\"");
 			}
 
 			_variableNameComboBox.SelectedValueChanged += VariableNameComboBox_SelectedValueChanged;
@@ -111,10 +112,12 @@ namespace OpenBots.Commands.System
 
 		private void VariableNameComboBox_SelectedValueChanged(object sender, EventArgs e)
 		{
-			var selectedValue = _variableNameComboBox.SelectedItem;
+			string selectedValue;
 
-			if (selectedValue == null)
+			if (_variableNameComboBox.SelectedItem == null)
 				return;
+			else
+				selectedValue = _variableNameComboBox.SelectedItem.ToString().Trim('\"');
 
 			ObjectQuery wql = new ObjectQuery("SELECT * FROM Win32_OperatingSystem");
 			ManagementObjectSearcher searcher = new ManagementObjectSearcher(wql);
@@ -124,7 +127,7 @@ namespace OpenBots.Commands.System
 			{
 				foreach (PropertyData prop in result.Properties)
 				{
-					if (prop.Name == selectedValue.ToString())
+					if (prop.Name == selectedValue)
 					{
 						_variableValue.Text = prop.Value?.ToString();
 						return;

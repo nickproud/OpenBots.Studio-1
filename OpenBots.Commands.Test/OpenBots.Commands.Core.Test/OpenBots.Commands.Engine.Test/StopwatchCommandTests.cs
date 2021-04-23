@@ -19,7 +19,7 @@ namespace OpenBots.Commands.Engine.Test
         }
 
         [Fact]
-        public void ExecutesStopwatchActionSequence()
+        public async void ExecutesStopwatchActionSequence()
         {
             _engine = new AutomationEngineInstance(null);
             _stopwatch = new StopwatchCommand();
@@ -41,8 +41,8 @@ namespace OpenBots.Commands.Engine.Test
             _stopwatch.v_StopwatchAction = "Measure Stopwatch";
             _stopwatch.RunCommand(_engine);
 
-            output.WriteLine("{output}".ConvertUserVariableToString(_engine));
-            double firstTime = Double.Parse("{output}".ConvertUserVariableToString(_engine));
+            output.WriteLine((string)await "{output}".EvaluateCode(_engine));
+            double firstTime = (Double)await "{output}".EvaluateCode(_engine);
             Assert.True(firstTime > 1.0);
 
             _stopwatch.v_StopwatchAction = "Restart Stopwatch";
@@ -56,8 +56,8 @@ namespace OpenBots.Commands.Engine.Test
             _stopwatch.v_StopwatchAction = "Measure Stopwatch";
             _stopwatch.RunCommand(_engine);
 
-            output.WriteLine("{output}".ConvertUserVariableToString(_engine));
-            double secondTime = Double.Parse("{output}".ConvertUserVariableToString(_engine));
+            output.WriteLine((string)await "{output}".EvaluateCode(_engine));
+            double secondTime = (Double)await "{output}".EvaluateCode(_engine);
             Assert.True(secondTime > 0.5);
 
             _stopwatch.v_StopwatchAction = "Reset Stopwatch";
@@ -66,8 +66,8 @@ namespace OpenBots.Commands.Engine.Test
             _stopwatch.v_StopwatchAction = "Measure Stopwatch";
             _stopwatch.RunCommand(_engine);
 
-            output.WriteLine("{output}".ConvertUserVariableToString(_engine));
-            double thirdTime = Double.Parse("{output}".ConvertUserVariableToString(_engine));
+            output.WriteLine((string)await "{output}".EvaluateCode(_engine));
+            double thirdTime = (Double)await "{output}".EvaluateCode(_engine);
             Assert.Equal(0.0, thirdTime);
         }
     }

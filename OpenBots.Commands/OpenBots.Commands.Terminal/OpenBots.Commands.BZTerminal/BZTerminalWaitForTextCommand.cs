@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.BZTerminal
@@ -32,7 +33,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("Hello, World! || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToWaitFor { get; set; }
 
 		[Required]
@@ -41,7 +42,7 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public BZTerminalWaitForTextCommand()
@@ -54,11 +55,11 @@ namespace OpenBots.Commands.BZTerminal
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string textToWaitFor = v_TextToWaitFor.ConvertUserVariableToString(engine);
-			var timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			string textToWaitFor = (string)await v_TextToWaitFor.EvaluateCode(engine);
+			var timeout = (int)await v_Timeout.EvaluateCode(engine);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)

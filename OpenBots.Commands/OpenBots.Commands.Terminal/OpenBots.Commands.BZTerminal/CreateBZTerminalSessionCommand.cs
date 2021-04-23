@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.BZTerminal
@@ -46,7 +47,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Remarks("This input should only be used for BlueZone Session files.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SessionFilePath { get; set; }
 
 		[Required]
@@ -70,10 +71,10 @@ namespace OpenBots.Commands.BZTerminal
 			v_CloseAllInstances = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var sessionFilePath = v_SessionFilePath.ConvertUserVariableToString(engine);
+			var sessionFilePath = (string)await v_SessionFilePath.EvaluateCode(engine);
 			var terminalContext = new BZTerminalContext();
 
 			if (v_CloseAllInstances == "Yes")

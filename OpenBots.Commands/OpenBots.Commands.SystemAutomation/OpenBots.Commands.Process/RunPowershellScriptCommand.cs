@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
 
@@ -17,7 +18,6 @@ namespace OpenBots.Commands.Process
     [Serializable]
 	[Category("Programs/Process Commands")]
 	[Description("This command runs a Powershell script or program and waits for it to exit before proceeding.")]
-
 	public class RunPowershellScriptCommand : ScriptCommand
 	{
 
@@ -29,7 +29,7 @@ namespace OpenBots.Commands.Process
 				 "If you do not want to stop while the script executes, consider using *Start Process* instead.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ScriptPath { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("-message Hello -t 2 || {vArguments}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ScriptArgs { get; set; }
 
 		public RunPowershellScriptCommand()
@@ -48,13 +48,13 @@ namespace OpenBots.Commands.Process
 			CommandIcon = Resources.command_script;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			Diagnostics.Process scriptProc = new Diagnostics.Process();
 
-			string scriptPath = v_ScriptPath.ConvertUserVariableToString(engine);
-			string scriptArgs = v_ScriptArgs.ConvertUserVariableToString(engine);
+			string scriptPath = (string)await v_ScriptPath.EvaluateCode(engine);
+			string scriptArgs = (string)await v_ScriptArgs.EvaluateCode(engine);
 
 			scriptProc.StartInfo = new ProcessStartInfo()
 			{

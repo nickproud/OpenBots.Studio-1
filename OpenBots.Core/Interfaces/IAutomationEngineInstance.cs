@@ -9,6 +9,7 @@ using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace OpenBots.Core.Infrastructure
 {
@@ -39,7 +40,7 @@ namespace OpenBots.Core.Infrastructure
         void ExecuteScriptAsync();
         void ExecuteScriptAsync(string filePath, string projectPath);
         void ExecuteScriptJson();
-        void ExecuteCommand(ScriptAction command);
+        Task ExecuteCommand(ScriptAction command);
         string GetEngineContext();
         void ReportProgress(string progress, LogEventLevel eventLevel = LogEventLevel.Information);
         string GetProjectPath();

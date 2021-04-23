@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
 using OBFile = System.IO.File;
@@ -30,7 +31,7 @@ namespace OpenBots.Commands.Process
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ProgramName { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -38,7 +39,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("-a || -version || {vArg}")]
 		[Remarks("You will need to consult documentation to determine if your executable supports arguments or flags on startup.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ProgramArgs { get; set; }
 
 		[Required]
@@ -60,12 +61,12 @@ namespace OpenBots.Commands.Process
 			v_WaitForExit = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string vProgramName = v_ProgramName.ConvertUserVariableToString(engine);
-			string vProgramArgs = v_ProgramArgs.ConvertUserVariableToString(engine);
 
+			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine);
+			string vProgramArgs = (string)await v_ProgramArgs.EvaluateCode(engine);
 			Diagnostics.Process newProcess = new Diagnostics.Process();
 
 			if (OBFile.Exists(vProgramName))

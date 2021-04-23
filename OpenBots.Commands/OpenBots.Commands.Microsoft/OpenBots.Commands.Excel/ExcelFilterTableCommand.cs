@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -33,7 +34,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("{vFilterList}")]
         [Remarks("The filter List must be of type string.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(new Type[] { typeof(List<>) })]
+        [CompatibleTypes(new Type[] { typeof(List<string>) })]
         public string v_FilterList { get; set; }
 
         [Required]
@@ -51,7 +52,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("1 || {vIndex} || Column1 || {vColumnName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string), typeof(int)})]
         public string v_DataValueIndex { get; set; }
 
         [Required]
@@ -60,7 +61,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("TableName || {vTableName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_TableName { get; set; }
 
         [Required]
@@ -69,7 +70,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNameExcelTable { get; set; }
 
         public ExcelFilterTableCommand()
@@ -83,24 +84,23 @@ namespace OpenBots.Commands.Microsoft
             v_Option = "Column Index";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = v_SheetNameExcelTable.ConvertUserVariableToString(engine);
-            var vTableName = v_TableName.ConvertUserVariableToString(engine);
-            var vColumnValue = v_DataValueIndex.ConvertUserVariableToString(engine);
-            var vFilterList = v_FilterList.ConvertUserVariableToObject(engine, nameof(v_FilterList), this);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine);
+            dynamic vColumnValue = await v_DataValueIndex.EvaluateCode(engine);
+            var filterArray = ((List<string>)await v_FilterList.EvaluateCode(engine)).ToArray();
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
             var excelTable = workSheetExcelTable.ListObjects[vTableName];
-            var filterArray = ((List<string>)vFilterList).ToArray();
 
             int index;
             if (v_Option == "Column Index")
-                index = int.Parse(vColumnValue);
+                index = (int)vColumnValue;
             else
-                index = excelTable.ListColumns[vColumnValue].Index;
+                index = excelTable.ListColumns[(string)vColumnValue].Index;
 
             //Filter the Excel Table
             if (filterArray.Length <= 0)

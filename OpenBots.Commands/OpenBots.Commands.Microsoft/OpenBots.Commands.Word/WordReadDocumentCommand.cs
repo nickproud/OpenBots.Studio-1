@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Word
 {
@@ -31,7 +32,7 @@ namespace OpenBots.Commands.Word
 		[Editable(false)]
 		[DisplayName("Output Text Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -46,7 +47,7 @@ namespace OpenBots.Commands.Word
 			v_InstanceName = "DefaultWord";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var wordObject = v_InstanceName.GetAppInstance(engine);
@@ -56,7 +57,7 @@ namespace OpenBots.Commands.Word
 
 			//store text in variable
 			string textFromDocument = wordDocument.Content.Text;
-			textFromDocument.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			textFromDocument.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

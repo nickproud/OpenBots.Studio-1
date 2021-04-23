@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using OpenBots.Core.Utilities.CommonUtilities;
+using OpenQA.Selenium;
 using SHDocVw;
 using System;
 using System.Collections.Generic;
@@ -15,13 +16,15 @@ namespace OpenBots.Core.Script
         public static Dictionary<string, Type> DefaultVarArgTypes = new Dictionary<string, Type>()
         {
             { "More Options...", typeof(MoreOptions) },
-            { typeof(string).ToString(), typeof(string) },
-            { typeof(int).ToString(), typeof(int) },
-            { typeof(bool).ToString(), typeof(bool) },
-            { typeof(List<>).ToString(), typeof(List<>) },
-            { typeof(Dictionary<,>).ToString(), typeof(Dictionary<,>) },
-            { typeof(DataTable).ToString(), typeof(DataTable) },
-            { typeof(DataRow).ToString(), typeof(DataRow) }         
+            { typeof(string).GetRealTypeName(), typeof(string) },
+            { typeof(int).GetRealTypeName(), typeof(int) },
+            { typeof(double).GetRealTypeName(), typeof(double) },
+            { typeof(bool).GetRealTypeName(), typeof(bool) },
+            { typeof(object).GetRealTypeName(), typeof(object) },
+            { typeof(List<string>).GetRealTypeName(), typeof(List<string>) },
+            { typeof(Dictionary<string, string>).GetRealTypeName(), typeof(Dictionary<string, string>) },
+            { typeof(DataTable).GetRealTypeName(), typeof(DataTable) },
+            { typeof(DataRow).GetRealTypeName(), typeof(DataRow) }         
         };
 
         public static Dictionary<string, Type> DefaultInstanceTypes = new Dictionary<string, Type>()

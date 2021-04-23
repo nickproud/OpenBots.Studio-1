@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Outlook.Test
          * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
         */
         [Fact]
-        public void DeletesOutlookEmail()
+        public async void DeletesOutlookEmail()
         {
             _engine = new AutomationEngineInstance(null);
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             if(emails.Count == 0)
             {
                 throw new System.ArgumentException("Test email 'toDelete' was not found");
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Outlook.Test
             _getOutlookEmails.v_OutputUserVariableName = "{emails}";
 
             _getOutlookEmails.RunCommand(_engine);
-            List<MailItem> postEmails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<MailItem> postEmails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             resetEmail(_engine);
             Assert.Empty(postEmails);
         }

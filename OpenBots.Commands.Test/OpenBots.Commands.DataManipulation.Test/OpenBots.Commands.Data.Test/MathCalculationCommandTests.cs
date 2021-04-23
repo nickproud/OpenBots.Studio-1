@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Data.Test
         [InlineData("2","-","1","1.00")]
         [InlineData("2","*","2","4.00")]
         [InlineData("3","/","2","1.50")]
-        public void PerformsCalculationCorrectly(string num1, string operation, string num2, string expectedOutput)
+        public async void PerformsCalculationCorrectly(string num1, string operation, string num2, string expectedOutput)
         {
             _mathCalculation = new MathCalculationCommand();
             _engine = new AutomationEngineInstance(null);
@@ -28,11 +28,11 @@ namespace OpenBots.Commands.Data.Test
 
             _mathCalculation.RunCommand(_engine);
 
-            Assert.Equal(expectedOutput, _mathCalculation.v_OutputUserVariableName.ConvertUserVariableToString(_engine));
+            Assert.Equal(expectedOutput, (string)await _mathCalculation.v_OutputUserVariableName.EvaluateCode(_engine));
         }
 
         [Fact]
-        public void HandlesThousandSeparator()
+        public async void HandlesThousandSeparator()
         {
             _mathCalculation = new MathCalculationCommand();
             _engine = new AutomationEngineInstance(null);
@@ -47,16 +47,15 @@ namespace OpenBots.Commands.Data.Test
             string mathExpression = "{num1} + {num2}";
 
             _mathCalculation.v_MathExpression = mathExpression;
-            _mathCalculation.v_ThousandSeparator = "{thouSeparator}";
             _mathCalculation.v_OutputUserVariableName = "{output}";
 
             _mathCalculation.RunCommand(_engine);
 
-            Assert.Equal("11.000.00", _mathCalculation.v_OutputUserVariableName.ConvertUserVariableToString(_engine));
+            Assert.Equal("11.000.00", (string)await _mathCalculation.v_OutputUserVariableName.EvaluateCode(_engine));
         }
 
         [Fact]
-        public void HandlesDecimalSeparator()
+        public async void HandlesDecimalSeparator()
         {
             _mathCalculation = new MathCalculationCommand();
             _engine = new AutomationEngineInstance(null);
@@ -72,12 +71,11 @@ namespace OpenBots.Commands.Data.Test
             string mathExpression = "{num1} + {num2}";
 
             _mathCalculation.v_MathExpression = mathExpression;
-            _mathCalculation.v_DecimalSeparator = "{decSeparator}";
             _mathCalculation.v_OutputUserVariableName = "{output}";
 
             _mathCalculation.RunCommand(_engine);
 
-            Assert.Equal("1:60", _mathCalculation.v_OutputUserVariableName.ConvertUserVariableToString(_engine));
+            Assert.Equal("1:60", (string)await _mathCalculation.v_OutputUserVariableName.EvaluateCode(_engine));
         }
     }
 }

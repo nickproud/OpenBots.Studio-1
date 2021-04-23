@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Folder
@@ -25,7 +26,7 @@ namespace OpenBots.Commands.Folder
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFolderPath { get; set; }
 
 		[Required]
@@ -34,7 +35,7 @@ namespace OpenBots.Commands.Folder
 		[SampleUsage("New Folder Name || {vNewFolderName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_NewName { get; set; }
 
 		public RenameFolderCommand()
@@ -43,20 +44,17 @@ namespace OpenBots.Commands.Folder
 			SelectionName = "Rename Folder";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_folders;
-
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFolder = v_SourceFolderPath.ConvertUserVariableToString(engine);
-			var newFolderName = v_NewName.ConvertUserVariableToString(engine);
+			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine);
+			var newFolderName = (string)await v_NewName.EvaluateCode(engine);
 
 			if (!Directory.Exists(sourceFolder))
-            {
 				throw new DirectoryNotFoundException($"Directory {sourceFolder} does not exist");
-            }
 
 			//get source folder name and info
 			DirectoryInfo sourceFolderInfo = new DirectoryInfo(sourceFolder);

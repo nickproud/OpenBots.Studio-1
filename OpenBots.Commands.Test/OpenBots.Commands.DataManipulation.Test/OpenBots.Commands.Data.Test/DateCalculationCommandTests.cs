@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Data.Test
 
         [Theory]
         [ClassData(typeof(DateTestData))]
-        public void CorrectlyPerformsOperation(DateTime input, string calcMethod, string increment, dynamic expectedResult)
+        public async void CorrectlyPerformsOperation(DateTime input, string calcMethod, string increment, dynamic expectedResult)
         {
             _dateCalculation = new DateCalculationCommand();
             _engine = new AutomationEngineInstance(null);
@@ -37,11 +37,11 @@ namespace OpenBots.Commands.Data.Test
             _dateCalculation.RunCommand(_engine);
             if (expectedResult.GetType() == typeof(DateTime))
             {
-                Assert.Equal(expectedResult.ToString(defaultFormat), _dateCalculation.v_OutputUserVariableName.ConvertUserVariableToString(_engine));
+                Assert.Equal(expectedResult.ToString(defaultFormat), (string)await _dateCalculation.v_OutputUserVariableName.EvaluateCode(_engine));
             }
             else if (expectedResult.GetType() == typeof(int))
             {
-                Assert.Equal(expectedResult, Int32.Parse(_dateCalculation.v_OutputUserVariableName.ConvertUserVariableToString(_engine)));
+                Assert.Equal(expectedResult, (Int32)await _dateCalculation.v_OutputUserVariableName.EvaluateCode(_engine));
             }
         }
 

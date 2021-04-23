@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.ErrorHandling
 {
@@ -22,7 +23,7 @@ namespace OpenBots.Commands.ErrorHandling
 
         }
 
-        public override void RunCommand(object sender)
+        public async override Tasks.Task RunCommand(object sender)
         {
             throw new Exception("Rethrowing Original Exception");
         }

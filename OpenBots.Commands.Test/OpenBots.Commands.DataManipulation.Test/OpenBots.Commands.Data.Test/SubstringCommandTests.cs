@@ -10,7 +10,7 @@ namespace OpenBots.Commands.Data.Test
         private SubstringCommand _substringCommand;
 
         [Fact]
-        public void CreatesSubstring()
+        public async void CreatesSubstring()
         {
             _engine = new AutomationEngineInstance(null);
             _substringCommand = new SubstringCommand();
@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Data.Test
 
             _substringCommand.RunCommand(_engine);
 
-            Assert.Equal("text", "{output}".ConvertUserVariableToString(_engine));
+            Assert.Equal("text", (string)await "{output}".EvaluateCode(_engine));
         }
     }
 }

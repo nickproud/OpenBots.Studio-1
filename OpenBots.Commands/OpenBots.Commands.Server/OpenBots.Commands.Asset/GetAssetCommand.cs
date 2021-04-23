@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Asset
 {
@@ -27,7 +28,7 @@ namespace OpenBots.Commands.Asset
 		[SampleUsage("Name || {vAssetName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetName { get; set; }
 
 		[Required]
@@ -48,14 +49,14 @@ namespace OpenBots.Commands.Asset
 		[Remarks("This input should only be used for File type Assets.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputDirectoryPath { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Asset Value Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string), typeof(double) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -82,11 +83,11 @@ namespace OpenBots.Commands.Asset
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
-			var vOutputDirectoryPath = v_OutputDirectoryPath.ConvertUserVariableToString(engine);
+			var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
+			var vOutputDirectoryPath = (string)await v_OutputDirectoryPath.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			var asset = AssetMethods.GetAsset(client, vAssetName, v_AssetType);
@@ -118,7 +119,7 @@ namespace OpenBots.Commands.Asset
 			}
 			
 			if (v_AssetType != "File")
-				((object)assetValue).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				((object)assetValue).SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

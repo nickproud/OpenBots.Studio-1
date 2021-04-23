@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -45,7 +46,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Editable(false)]
 		[DisplayName("Output Info Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -60,15 +61,14 @@ namespace OpenBots.Commands.WebBrowser
 			v_InstanceName = "DefaultBrowser";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			var requestedInfo = v_InfoType.ConvertUserVariableToString(engine);
 			string info;
 
-			switch (requestedInfo)
+			switch (v_InfoType)
 			{
 				case "Window Title":
 					info = seleniumInstance.Title;
@@ -86,10 +86,10 @@ namespace OpenBots.Commands.WebBrowser
 					info = JsonConvert.SerializeObject(seleniumInstance.WindowHandles);
 					break;
 				default:
-					throw new NotImplementedException($"{requestedInfo} is not implemented for lookup.");
+					throw new NotImplementedException($"{v_InfoType} is not implemented for lookup.");
 			}
 			//store data
-			info.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			info.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

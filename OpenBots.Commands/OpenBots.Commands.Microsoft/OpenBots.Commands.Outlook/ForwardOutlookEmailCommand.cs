@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Outlook
@@ -24,7 +25,7 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("MailItem")]
 		[Description("Enter the MailItem to forward.")]
-		[SampleUsage("{vMailItem}")]
+		[SampleUsage("vMailItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(MailItem)})]
@@ -33,10 +34,10 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("Recipient(s)")]
 		[Description("Enter the email address(es) of the recipient(s).")]
-		[SampleUsage("test@test.com || {vEmail} || test@test.com;test2@test.com || {vEmail1};{vEmail2} || {vEmails}")]
-		[Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"test@test.com\", \"test2@test.com\" } || vEmailsList")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_Recipients { get; set; }
 
 		public ForwardOutlookEmailCommand()
@@ -48,18 +49,17 @@ namespace OpenBots.Commands.Outlook
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
   
-			var vRecipients = v_Recipients.ConvertUserVariableToString(engine);
-			var splitRecipients = vRecipients.Split(';');
+			var vRecipients = (List<string>)await v_Recipients.EvaluateCode(engine);
 
 			MailItem newMail = vMailItem.Forward();
 
-			foreach (var recipient in splitRecipients)
-				newMail.Recipients.Add(recipient.ToString().Trim());
+			foreach (var recipient in vRecipients)
+				newMail.Recipients.Add(recipient);
 
 			newMail.Recipients.ResolveAll();
 			newMail.Send();         

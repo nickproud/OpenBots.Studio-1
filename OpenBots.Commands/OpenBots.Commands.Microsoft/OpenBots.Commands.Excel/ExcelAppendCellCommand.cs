@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -32,10 +33,10 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Cell Value")]
 		[Description("Enter the text value that will be set in the appended cell.")]
-		[SampleUsage("Hello World || {vText}")]
+		[SampleUsage("\"Hello World\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		public ExcelAppendCellCommand()
@@ -48,7 +49,7 @@ namespace OpenBots.Commands.Excel
 			v_InstanceName = "DefaultExcel";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
@@ -58,7 +59,7 @@ namespace OpenBots.Commands.Excel
 			var lastUsedRow = excelSheet.Cells.Find("*", Missing.Value, Missing.Value, Missing.Value, XlSearchOrder.xlByRows, 
 													XlSearchDirection.xlPrevious, false, Missing.Value, Missing.Value).Row;
 			var targetAddress = "A" + (lastUsedRow + 1);
-			var vTargetText = v_TextToSet.ConvertUserVariableToString(engine);
+			var vTargetText = (string)await v_TextToSet.EvaluateCode(engine);
 			excelSheet.Range[targetAddress].Value = vTargetText;
 		}
 

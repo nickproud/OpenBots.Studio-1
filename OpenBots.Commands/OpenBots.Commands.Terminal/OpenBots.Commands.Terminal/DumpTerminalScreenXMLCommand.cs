@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Terminal
@@ -35,7 +36,7 @@ namespace OpenBots.Commands.Terminal
 			v_InstanceName = "DefaultTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);

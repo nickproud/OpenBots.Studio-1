@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBFile = System.IO.File;
 
@@ -27,16 +28,16 @@ namespace OpenBots.Commands.TextFile
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FilePath { get; set; }
 
 		[Required]
 		[DisplayName("Text")]
 		[Description("Indicate the Text to write.")]
 		[SampleUsage("Hello World! || {vText}")]
-		[Remarks("[crLF] inserts a newline.")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToWrite { get; set; }
 
 		[Required]
@@ -59,12 +60,12 @@ namespace OpenBots.Commands.TextFile
 			v_Overwrite = "Append";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//convert variables
-			var filePath = v_FilePath.ConvertUserVariableToString(engine);
-			var outputText = v_TextToWrite.ConvertUserVariableToString(engine).Replace("[crLF]", Environment.NewLine);
+			var filePath = (string)await v_FilePath.EvaluateCode(engine);
+			var outputText = (string)await v_TextToWrite.EvaluateCode(engine);
 
 			//append or overwrite as necessary
 			if (v_Overwrite == "Append")
@@ -78,7 +79,7 @@ namespace OpenBots.Commands.TextFile
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToWrite", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToWrite", this, editor, 100, 300));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Overwrite", this, editor));
 
 			return RenderedControls;

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -17,10 +18,8 @@ namespace OpenBots.Commands.DataTable
 	[Serializable]
 	[Category("DataTable Commands")]
 	[Description("This command gets a DataRow from a DataTable.")]
-
 	public class GetDataRowCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter an existing DataTable to get rows from.")]
@@ -36,14 +35,14 @@ namespace OpenBots.Commands.DataTable
 		[SampleUsage("0 || {vIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_DataRowIndex { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output DataRow Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(DataRow) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -56,17 +55,15 @@ namespace OpenBots.Commands.DataTable
 			CommandIcon = Resources.command_spreadsheet;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			OBDataTable dataTable = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
-
-			var rowIndex = v_DataRowIndex.ConvertUserVariableToString(engine);
-			int index = int.Parse(rowIndex);
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
+			int index = (int)await v_DataRowIndex.EvaluateCode(engine);
 
 			DataRow row = dataTable.Rows[index];
 
-			row.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			row.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -18,7 +18,7 @@ namespace OpenBots.Commands.Outlook.Test
          * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
         */
         [Fact]
-        public void CopiesOutlookEmail()
+        public async void CopiesOutlookEmail()
         {
             _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem originalEmail = emails[0];
             VariableMethods.CreateTestVariable(originalEmail, _engine, "originalEmail", typeof(MailItem));
             string destFolder = "MovedMail";
@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem copyEmail = emails[0];
 
             Assert.Equal("toCopy", originalEmail.Subject);
@@ -71,7 +71,7 @@ namespace OpenBots.Commands.Outlook.Test
         }
 
         [Fact]
-        public void MovesOutlookEmail()
+        public async void MovesOutlookEmail()
         {
             _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
@@ -90,7 +90,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
             string destFolder = "MovedMail";
@@ -114,7 +114,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             email = emails[0];
 
             resetMoveEmail(_engine);
@@ -122,7 +122,7 @@ namespace OpenBots.Commands.Outlook.Test
             Assert.Equal("toMove", email.Subject);
         }
 
-        private void resetCopyEmail(AutomationEngineInstance _engine)
+        private async void resetCopyEmail(AutomationEngineInstance _engine)
         {
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
@@ -140,7 +140,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 
@@ -150,7 +150,7 @@ namespace OpenBots.Commands.Outlook.Test
             _deleteOutlookEmail.RunCommand(_engine);
         }
 
-        private void resetMoveEmail(AutomationEngineInstance _engine)
+        private async void resetMoveEmail(AutomationEngineInstance _engine)
         {
             _deleteOutlookEmail = new DeleteOutlookEmailCommand();
             _getOutlookEmails = new GetOutlookEmailsCommand();
@@ -169,7 +169,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 

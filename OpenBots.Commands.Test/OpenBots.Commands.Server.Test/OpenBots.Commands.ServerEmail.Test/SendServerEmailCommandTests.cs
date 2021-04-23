@@ -5,6 +5,7 @@ using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace OpenBots.Commands.ServerEmail.Test
@@ -266,7 +267,7 @@ namespace OpenBots.Commands.ServerEmail.Test
         }
 
         [Fact]
-        public void HandlesNonExistentRecipients()
+        public async Task HandlesNonExistentRecipients()
         {
             _engine = new AutomationEngineInstance(null);
             _sendServerEmail = new SendServerEmailCommand();
@@ -279,10 +280,10 @@ namespace OpenBots.Commands.ServerEmail.Test
             _sendServerEmail.v_Body = "Test Body";
             _sendServerEmail.v_Attachments = "";
 
-            Assert.Throws<NullReferenceException>(() => _sendServerEmail.RunCommand(_engine));
+            await Assert.ThrowsAsync<NullReferenceException>(() => _sendServerEmail.RunCommand(_engine));
         }
 
-        public MailItem GetEmail(string filePath, string subject)
+        public async Task<MailItem> GetEmail(string filePath, string subject)
         {
             _getEmail = new GetOutlookEmailsCommand();
             VariableMethods.CreateTestVariable(null, _engine, "vTestEmail", typeof(List<>));
@@ -307,7 +308,7 @@ namespace OpenBots.Commands.ServerEmail.Test
 
                 _getEmail.RunCommand(_engine);
 
-                emailMessageList = (List<MailItem>)"{vTestEmail}".ConvertUserVariableToObject(_engine, typeof(List<>));
+                emailMessageList = (List<MailItem>)await "{vTestEmail}".EvaluateCode(_engine);
                 if (emailMessageList.Count > 0)
                     emailMessage = emailMessageList[0];
 
@@ -323,7 +324,7 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             VariableMethods.CreateTestVariable(null, _engine, "vMailItem", typeof(MailItem));
             _deleteEmail.v_MailItem = "{vMailItem}";
-            emailMessage.StoreInUserVariable(_engine, _deleteEmail.v_MailItem, typeof(MailItem));
+            emailMessage.SetVariableValue(_engine, _deleteEmail.v_MailItem);
             _deleteEmail.v_DeleteReadOnly = "Yes";
 
             _deleteEmail.RunCommand(_engine);

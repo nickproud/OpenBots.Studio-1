@@ -17,7 +17,7 @@ namespace OpenBots.Commands.DataTable.Test
         
         [Theory]
         [ClassData(typeof(NullTestData))]
-        public void HandlesNullDataTables(OBData.DataTable dt1, OBData.DataTable dt2)
+        public async System.Threading.Tasks.Task HandlesNullDataTables(OBData.DataTable dt1, OBData.DataTable dt2)
         {
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
@@ -29,12 +29,12 @@ namespace OpenBots.Commands.DataTable.Test
             _mergeDataTable.v_DestinationDataTable = "{dt2}";
             _mergeDataTable.v_MissingSchemaAction = "Add";
 
-            Assert.Throws<ArgumentNullException>(() => _mergeDataTable.RunCommand(_engine));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _mergeDataTable.RunCommand(_engine));
         }
 
         [Theory]
         [ClassData(typeof(IncorrectTypeTestData))]
-        public void HandlesIncorrectTypeInput(object dt1, object dt2)
+        public async System.Threading.Tasks.Task HandlesIncorrectTypeInput(object dt1, object dt2)
         {
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
@@ -46,12 +46,12 @@ namespace OpenBots.Commands.DataTable.Test
             _mergeDataTable.v_DestinationDataTable = "{dt2}";
             _mergeDataTable.v_MissingSchemaAction = "Add";
 
-            Assert.Throws<ArgumentException>(() => _mergeDataTable.RunCommand(_engine));
+            await Assert.ThrowsAsync<ArgumentException>(() => _mergeDataTable.RunCommand(_engine));
         }
 
         [Theory]
         [ClassData(typeof(TableTestData))]
-        public void TableDataIsEqual(OBData.DataTable dt1, OBData.DataTable dt2, string schema)
+        public async void TableDataIsEqual(OBData.DataTable dt1, OBData.DataTable dt2, string schema)
         {
             _engine = new AutomationEngineInstance(null);
             _mergeDataTable = new MergeDataTableCommand();
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _mergeDataTable.RunCommand(_engine);
 
-            OBData.DataTable resultDataTable = (OBData.DataTable)_mergeDataTable.v_DestinationDataTable.ConvertUserVariableToObject(_engine, typeof(OBData.DataTable));
+            OBData.DataTable resultDataTable = (OBData.DataTable)await _mergeDataTable.v_DestinationDataTable.EvaluateCode(_engine);
 
             Assert.Equal(dt2.GetType(), resultDataTable.GetType());
             // Check each row / column pair and assert equivalence

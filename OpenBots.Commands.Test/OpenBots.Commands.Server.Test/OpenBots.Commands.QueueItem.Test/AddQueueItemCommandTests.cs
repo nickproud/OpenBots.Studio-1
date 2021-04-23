@@ -15,7 +15,7 @@ namespace OpenBots.Commands.QueueItem.Test
         private WorkQueueItemCommand _workQueueItem;
 
         [Fact]
-        public void AddTextQueueItem()
+        public async void AddTextQueueItem()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -39,13 +39,13 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItem = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
+            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine);
 
             Assert.Equal("Test Text", queueItem["DataJson"]);
         }
 
         [Fact]
-        public void AddQueueItemOneAttachment()
+        public async void AddQueueItemOneAttachment()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -74,7 +74,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItem = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
+            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine);
 
             Assert.Equal("Test Text", queueItem["DataJson"]);
             Assert.True(File.Exists(attachment));
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.QueueItem.Test
         }
 
         [Fact]
-        public void AddQueueItemMultipleAttachments()
+        public async void AddQueueItemMultipleAttachments()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -115,7 +115,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItem = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
+            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine);
 
             Assert.Equal("Test Text", queueItem["DataJson"]);
             Assert.True(File.Exists(attachment1));
@@ -126,7 +126,7 @@ namespace OpenBots.Commands.QueueItem.Test
         }
 
         [Fact]
-        public void AddJsonQueueItem()
+        public async void AddJsonQueueItem()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -150,13 +150,13 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItem = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
+            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine);
 
             Assert.Equal("{'text':'testText'}", queueItem["DataJson"]);
         }
 
         [Fact]
-        public void HandlesNonExistentQueue()
+        public async System.Threading.Tasks.Task HandlesNonExistentQueue()
         {
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
@@ -169,7 +169,7 @@ namespace OpenBots.Commands.QueueItem.Test
             _addQueueItem.v_QueueItemTextValue = "{'text':'testText'}";
             _addQueueItem.v_Priority = "10";
 
-            Assert.Throws<DataException>(() => _addQueueItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<DataException>(() => _addQueueItem.RunCommand(_engine));
         }
     }
 }

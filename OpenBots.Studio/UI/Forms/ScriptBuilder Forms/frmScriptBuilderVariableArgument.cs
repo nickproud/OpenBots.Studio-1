@@ -27,7 +27,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _existingVarArgSearchList = new List<string>();
                 _existingVarArgSearchList.AddRange(_scriptArguments.Select(arg => arg.ArgumentName).ToList());
                 _existingVarArgSearchList.AddRange(_scriptVariables.Select(var => var.VariableName).ToList());
-                _existingVarArgSearchList.AddRange(CommonMethods.GenerateSystemVariables().Select(var => var.VariableName).ToList());
             }
             catch (Exception ex)
             {
@@ -83,18 +82,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                         dgv.Rows[e.RowIndex].Cells[0].Value = variableName.Trim(); 
                     }
-                }
-                //variable/argument type column
-                else if (e.ColumnIndex == 1)
-                {
-                    Type selectedType = (Type)dgv.Rows[e.RowIndex].Cells[1].Value;
-                    if (selectedType.IsPrimitive || selectedType == typeof(string))
-                        dgv.Rows[e.RowIndex].Cells[2].ReadOnly = false;
-                    else
-                    {
-                        dgv.Rows[e.RowIndex].Cells[2].Value = null;
-                        dgv.Rows[e.RowIndex].Cells[2].ReadOnly = true;
-                    }                       
                 }
 
                 //marks the script as unsaved with changes
@@ -172,8 +159,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         row.Cells[0].ReadOnly = true;
 
                     //adds new type to default list when a script containing non-defaults is loaded
-                    if (!_typeContext.DefaultTypes.ContainsKey(((Type)row.Cells[1].Value)?.ToString()))
-                        _typeContext.DefaultTypes.Add(((Type)row.Cells[1].Value).ToString(), (Type)row.Cells[1].Value);
+                    if (!_typeContext.DefaultTypes.ContainsKey(((Type)row.Cells[1].Value)?.GetRealTypeName()))
+                        _typeContext.DefaultTypes.Add(((Type)row.Cells[1].Value).GetRealTypeName(), (Type)row.Cells[1].Value);
 
                     //sets Value cell to readonly if the Direction is Out
                     if (row.Cells.Count == 4 && row.Cells["Direction"].Value != null && 
@@ -242,15 +229,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     else if (selectedCell.Value is Type && ((Type)selectedCell.Value).Name == "MoreOptions")
                     {
                         //triggers the type form to open if 'More Options...' is selected
-                        frmTypes typeForm = new frmTypes(_typeContext.GroupedTypes);
+                        frmTypes typeForm = new frmTypes(_typeContext);
                         typeForm.ShowDialog();
 
                         //adds type to defaults if new, then commits selection to the cell
                         if (typeForm.DialogResult == DialogResult.OK)
                         {
-                            if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.FullName))
+                            if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.GetRealTypeName()))
                             {
-                                _typeContext.DefaultTypes.Add(typeForm.SelectedType.FullName, typeForm.SelectedType);
+                                _typeContext.DefaultTypes.Add(typeForm.SelectedType.GetRealTypeName(), typeForm.SelectedType);
                                 variableType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
                                 argumentType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
                             }
@@ -264,6 +251,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = _preEditVarArgType;
                             ((DataGridViewComboBoxCell)dgv.Rows[e.RowIndex].Cells[1]).Value = _preEditVarArgType;
                         }
+
+                        typeForm.Dispose();
 
                         //necessary hack to force the set value to update
                         SendKeys.Send("{TAB}");

@@ -13,7 +13,7 @@ namespace OpenBots.Commands.TextFile.Test
         private AutomationEngineInstance _engine;
         
         [Fact]
-        public void ReadsTextFromFile()
+        public async void ReadsTextFromFile()
         {
             _engine = new AutomationEngineInstance(null);
             _readTextFile = new ReadTextFileCommand();
@@ -26,13 +26,13 @@ namespace OpenBots.Commands.TextFile.Test
             _readTextFile.v_FilePath = "{filepath}";
             _readTextFile.RunCommand(_engine);
             var textFromFile = OBIO.File.ReadAllText(filePath);
-            var storedText = _readTextFile.v_OutputUserVariableName.ConvertUserVariableToString(_engine);
+            var storedText = (string)await _readTextFile.v_OutputUserVariableName.EvaluateCode(_engine);
 
             Assert.Equal(textFromFile, storedText);
 
         }
         [Fact]
-        public void HandlesNonexistentFile()
+        public async global::System.Threading.Tasks.Task HandlesNonexistentFile()
         {
             _engine = new AutomationEngineInstance(null);
             _readTextFile = new ReadTextFileCommand();
@@ -41,7 +41,7 @@ namespace OpenBots.Commands.TextFile.Test
             _readTextFile.v_FilePath = Path.Combine(projectDirectory, @"Resources\doesNotExist.txt");
             _readTextFile.v_OutputUserVariableName = "{test}";
 
-            Assert.Throws<FileNotFoundException>(() => _readTextFile.RunCommand(_engine));
+            await Assert.ThrowsAsync<FileNotFoundException>(() => _readTextFile.RunCommand(_engine));
 
         }
     }

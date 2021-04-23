@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Folder.Test
         }
 
         [Fact]
-        public void HandlesInvalidFilepathInput()
+        public async global::System.Threading.Tasks.Task HandlesInvalidFilepathInput()
         {
             _engine = new AutomationEngineInstance(null);
             _createFolder = new CreateFolderCommand();
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Folder.Test
             _createFolder.v_DestinationDirectory = "{inputPath}";
             _createFolder.v_DeleteExisting = "Yes";
 
-            Assert.Throws<DirectoryNotFoundException>(() => _createFolder.RunCommand(_engine));
+            await Assert.ThrowsAsync<DirectoryNotFoundException>(() => _createFolder.RunCommand(_engine));
         }
     }
 }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Engine
 {
@@ -28,7 +29,7 @@ namespace OpenBots.Commands.Engine
 			"Logs are all saved in the OpenBots Studio Root Folder in the 'Logs' folder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_LogFile { get; set; }
 
 		[Required]
@@ -37,7 +38,7 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("Third Step is Complete || {vLogText}")]
 		[Remarks("Provide only text data.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_LogText { get; set; }
 
 		[Required]
@@ -64,13 +65,13 @@ namespace OpenBots.Commands.Engine
 			v_LogType = "Information";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get text to log and log file name       
-			var textToLog = v_LogText.ConvertUserVariableToString(engine);
-			var loggerFilePath = v_LogFile.ConvertUserVariableToString(engine);
+			var textToLog = (string)await v_LogText.EvaluateCode(engine);
+			var loggerFilePath = (string)await v_LogFile.EvaluateCode(engine);
 
 			//determine log file
 			if (v_LogFile == "Engine Logs")

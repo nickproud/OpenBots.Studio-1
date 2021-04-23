@@ -46,7 +46,6 @@ namespace OpenBots.UI.Forms
            //initialize
             _userVariableParentNode = InitializeNodes("My Task Variables", ScriptVariables);
             lblMainLogo.Text = ScriptName + " variables";
-            InitializeNodes("Default Task Variables", CommonMethods.GenerateSystemVariables());
         }
 
         private TreeNode InitializeNodes(string parentName, List<ScriptVariable> variables)
@@ -191,7 +190,7 @@ namespace OpenBots.UI.Forms
             TreeNode typeNode = new TreeNode
             {
                 Name = "Type",
-                Text = _leadingType + variableType.ToString(),
+                Text = _leadingType + variableType.GetRealTypeFullName(),
                 Tag = variableType
             };
 

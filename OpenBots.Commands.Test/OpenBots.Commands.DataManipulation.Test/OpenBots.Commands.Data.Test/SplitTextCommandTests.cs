@@ -11,7 +11,7 @@ namespace OpenBots.Commands.Data.Test
         private AutomationEngineInstance _engine;
 
         [Fact]
-        public void SplitsText()
+        public async void SplitsText()
         {
             _splitText = new SplitTextCommand();
             _engine = new AutomationEngineInstance(null);
@@ -28,13 +28,13 @@ namespace OpenBots.Commands.Data.Test
 
             _splitText.RunCommand(_engine);
 
-            List<string> splitText = (List<string>)"{output}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> splitText = (List<string>)await "{output}".EvaluateCode(_engine);
             Assert.Equal("test", splitText[0]);
             Assert.Equal("text", splitText[1]);
         }
 
         [Fact]
-        public void SplitsTextWithMultipleDelimiters()
+        public async void SplitsTextWithMultipleDelimiters()
         {
             _splitText = new SplitTextCommand();
             _engine = new AutomationEngineInstance(null);
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Data.Test
 
             _splitText.RunCommand(_engine);
 
-            List<string> splitText = (List<string>)"{output}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> splitText = (List<string>)await "{output}".EvaluateCode(_engine);
             Assert.Equal("test", splitText[0]);
             Assert.Equal("text", splitText[1]);
             Assert.Equal("with", splitText[2]);

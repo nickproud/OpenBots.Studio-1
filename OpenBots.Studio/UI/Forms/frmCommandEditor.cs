@@ -284,8 +284,8 @@ namespace OpenBots.UI.Forms
                 }
             }
 
-            if (ValidateInputs())
-                DialogResult = DialogResult.OK;
+            //if (ValidateInputs())
+            DialogResult = DialogResult.OK;
         }
 
         private bool ValidateInputs()
@@ -398,9 +398,9 @@ namespace OpenBots.UI.Forms
 
             var varArgMatches = Regex.Matches(validatingText, @"\{.+\}");
 
-            if (varArgMatches.Count == 0 && validationContext.IsStringOrPrimitive)
+            if (varArgMatches.Count == 0)// && validationContext.IsStringOrPrimitive)
                 return isAllValid;
-            else if (varArgMatches.Count == 0 && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
+            else if (varArgMatches.Count == 0 /*&& !validationContext.IsStringOrPrimitive*/ && !validationContext.IsDropDown)
             {
                 currentControl.BorderColor = Color.Red;
                 _errorToolTip.SetToolTip(currentControl, "Input only accepts variables or arguments.");
@@ -411,7 +411,7 @@ namespace OpenBots.UI.Forms
             foreach (var match in varArgMatches)
             {
                 Type varArgType = match.ToString().GetVarArgType(testEngine);
-                if (varArgType != null && !(validationContext.IsStringOrPrimitive && (varArgType == typeof(string) || varArgType.IsPrimitive)))
+                if (varArgType != null && !(/*validationContext.IsStringOrPrimitive && */(varArgType == typeof(string) || varArgType.IsPrimitive)))
                 {
                     if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType) || x == varArgType)))
                     {
@@ -421,7 +421,7 @@ namespace OpenBots.UI.Forms
                         return isAllValid;
                     }
                 }
-                else if (varArgType == null && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
+                else if (varArgType == null /*&& !validationContext.IsStringOrPrimitive */ && !validationContext.IsDropDown)
                 {
                     currentControl.BorderColor = Color.Red;
                     _errorToolTip.SetToolTip(currentControl, "Input provided is not an existing variable or argument.");

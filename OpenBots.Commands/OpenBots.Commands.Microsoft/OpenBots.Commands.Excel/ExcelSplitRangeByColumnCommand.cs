@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using DataTable = System.Data.DataTable;
@@ -38,7 +39,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A1:B10 || A1: || {vRange} || {vStart}:{vEnd} || {vStart}:")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Range { get; set; }
 
 		[Required]
@@ -47,7 +48,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("ColA || {vColumnName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ColumnName { get; set; }
 
 		[Required]
@@ -57,7 +58,7 @@ namespace OpenBots.Commands.Excel
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputDirectory { get; set; }
 
 		[Required]
@@ -73,9 +74,9 @@ namespace OpenBots.Commands.Excel
 		[Editable(false)]
 		[DisplayName("Output DataTable List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<DataTable>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ExcelSplitRangeByColumnCommand()
@@ -87,16 +88,16 @@ namespace OpenBots.Commands.Excel
 
 			v_InstanceName = "DefaultExcel";
 			v_FileType = "xlsx";
-			v_Range = "A1:";
+			v_Range = "\"A1:\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vExcelObject = v_InstanceName.GetAppInstance(engine);
-			var vRange = v_Range.ConvertUserVariableToString(engine);
-			var vColumnName = v_ColumnName.ConvertUserVariableToString(engine);
-			var vOutputDirectory = v_OutputDirectory.ConvertUserVariableToString(engine);
+			var vRange = (string)await v_Range.EvaluateCode(engine);
+			var vColumnName = (string)await v_ColumnName.EvaluateCode(engine);
+			var vOutputDirectory = (string)await v_OutputDirectory.EvaluateCode(engine);
 			var excelInstance = (Application)vExcelObject;
 
 			excelInstance.DisplayAlerts = false;
@@ -168,7 +169,7 @@ namespace OpenBots.Commands.Excel
 									   .ToList();
 
 			//add list of datatables to output variable
-			result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			result.SetVariableValue(engine, v_OutputUserVariableName);
 
 			//save split datatables in individual workbooks labeled by selected column data
 			if (Directory.Exists(vOutputDirectory))

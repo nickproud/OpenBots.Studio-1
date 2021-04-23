@@ -14,7 +14,7 @@ namespace OpenBots.Commands.List.Test
         private UpdateListItemCommand _updateListItem;
 
         [Fact]
-        public void UpdatesStringListItem()
+        public async void UpdatesStringListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _updateListItem = new UpdateListItemCommand();
@@ -35,12 +35,12 @@ namespace OpenBots.Commands.List.Test
 
             _updateListItem.RunCommand(_engine);
 
-            List<string> outputList = (List<string>)"{inputList}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> outputList = (List<string>)await "{inputList}".EvaluateCode(_engine);
             Assert.Equal("item3", outputList[0]);
         }
 
         [Fact]
-        public void UpdatesDataTableListItem()
+        public async void UpdatesDataTableListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _updateListItem = new UpdateListItemCommand();
@@ -66,12 +66,12 @@ namespace OpenBots.Commands.List.Test
 
             _updateListItem.RunCommand(_engine);
 
-            List<OBDataTable> outputList = (List<OBDataTable>)"{inputList}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<OBDataTable> outputList = (List<OBDataTable>)await "{inputList}".EvaluateCode(_engine);
             Assert.Equal(newitem, outputList[0]);
         }
 
         [Fact]
-        public void HandlesInvalidListItem()
+        public async System.Threading.Tasks.Task HandlesInvalidListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _updateListItem = new UpdateListItemCommand();
@@ -90,7 +90,7 @@ namespace OpenBots.Commands.List.Test
             _updateListItem.v_ListIndex = "{index}";
             _updateListItem.v_ListItem = "{item}";
 
-            Assert.Throws<Exception>(() => _updateListItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<Exception>(() => _updateListItem.RunCommand(_engine));
         }
     }
 }

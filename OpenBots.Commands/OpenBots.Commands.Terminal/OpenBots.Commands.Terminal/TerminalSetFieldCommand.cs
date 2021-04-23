@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Terminal
@@ -32,7 +33,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vFieldIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_FieldIndex { get; set; }
 
 		[Required]
@@ -41,7 +42,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("Hello, World! || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		public TerminalSetFieldCommand()
@@ -54,11 +55,11 @@ namespace OpenBots.Commands.Terminal
 			v_InstanceName = "DefaultTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var fieldIndex = int.Parse(v_FieldIndex.ConvertUserVariableToString(engine));
-			string textToSend = v_TextToSet.ConvertUserVariableToString(engine);
+			var fieldIndex = (int)await v_FieldIndex.EvaluateCode(engine);
+			string textToSend = (string)await v_TextToSet.EvaluateCode(engine);
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Loop
 {
@@ -24,7 +25,7 @@ namespace OpenBots.Commands.Loop
             ScopeStartCommand = true;
         }
 
-        public override void RunCommand(object sender, ScriptAction parentCommand)
+        public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
         {
             LoopContinuouslyCommand loopCommand = (LoopContinuouslyCommand)parentCommand.ScriptCommand;
             var engine = (IAutomationEngineInstance)sender;
@@ -37,7 +38,7 @@ namespace OpenBots.Commands.Loop
                     if (engine.IsCancellationPending)
                         return;
 
-                    engine.ExecuteCommand(cmd);
+                    await engine.ExecuteCommand(cmd);
 
                     if (engine.CurrentLoopCancelled)
                     {

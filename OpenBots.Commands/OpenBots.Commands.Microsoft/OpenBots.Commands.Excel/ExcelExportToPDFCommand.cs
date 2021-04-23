@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -38,7 +39,7 @@ namespace OpenBots.Commands.Excel
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FolderPath { get; set; }
 
 		[Required]
@@ -47,7 +48,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("myFile.pdf || {vFilename}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FileName { get; set; }
 
 		[Required]
@@ -80,11 +81,11 @@ namespace OpenBots.Commands.Excel
 			v_DisplayGridlines = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFileName = v_FileName.ConvertUserVariableToString(engine);
-			var vFolderPath = v_FolderPath.ConvertUserVariableToString(engine);
+			var vFileName = (string)await v_FileName.EvaluateCode(engine);
+			var vFolderPath = (string)await v_FolderPath.EvaluateCode(engine);
 
 			//get excel app object
 			var excelObject = v_InstanceName.GetAppInstance(engine);
