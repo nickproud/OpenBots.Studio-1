@@ -196,6 +196,10 @@
     <Compile Include="Attributes\PropertyAttributes\Remarks.cs" />
     <Compile Include="Attributes\PropertyAttributes\CompatibleTypes.cs" />
     <Compile Include="Attributes\PropertyAttributes\SampleUsage.cs" />
+    <Compile Include="ChromeNativeClient\RequestMessage.cs" />
+    <Compile Include="ChromeNativeClient\NativeRequest.cs" />
+    <Compile Include="ChromeNativeClient\ServerCommunication.cs" />
+    <Compile Include="ChromeNativeClient\WebElement.cs" />
     <Compile Include="Command\BrokenCodeCommentCommand.cs" />
     <Compile Include="Command\ScriptCommand.cs" />
     <Compile Include="Script\ScriptDefaultTypes.cs" />

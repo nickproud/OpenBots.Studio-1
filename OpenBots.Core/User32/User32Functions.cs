@@ -53,6 +53,9 @@ namespace OpenBots.Core.User32
         [DllImport("User32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+        [DllImport("user32.dll")]
+        public static extern bool IsWindow(IntPtr hWnd);
+
         [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
         private static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter,
             int x, int Y,
@@ -502,6 +505,20 @@ namespace OpenBots.Core.User32
                     throw new Exception("Y Position Invalid - " + yPosition);
 
                 SetWindowPosition(targetedWindow, xPos, yPos);
+            }
+        }
+
+        public static void BringChromeWindowToTop()
+        {
+            Process[] procsChrome = Process.GetProcessesByName("chrome");
+
+            foreach (Process chrome in procsChrome)
+            {
+                // the chrome process must have a window
+                if (chrome.MainWindowHandle == IntPtr.Zero)
+                    continue;
+                User32Functions.ActivateWindow(chrome.MainWindowTitle);
+                break;
             }
         }
     }
