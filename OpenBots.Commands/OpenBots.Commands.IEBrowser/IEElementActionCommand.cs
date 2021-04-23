@@ -127,12 +127,6 @@ namespace OpenBots.Commands.IEBrowser
             var elementSearchProperties = from rws in searchTable.AsEnumerable()
                                           where rws.Field<bool>("Enabled").ToString() == "True"
                                           select rws;
-            foreach (DataRow seachCriteria in elementSearchProperties)
-            {
-                string searchPropertyValue = seachCriteria.Field<string>("Property Value");
-                searchPropertyValue = (string)await searchPropertyValue.EvaluateCode(engine);
-                seachCriteria.SetField("Property Value", searchPropertyValue);
-            }
 
             bool qualifyingElementFound = false;
 
@@ -190,12 +184,14 @@ namespace OpenBots.Commands.IEBrowser
             return base.GetDisplayValue() + $" [Perform Action '{v_WebAction} {parameters}' - Instance Name '{v_InstanceName}']";
         }
 
-        private bool FindQualifyingElement(EnumerableRowCollection<DataRow> elementSearchProperties, IHTMLElement element)
+        private async Task<bool> FindQualifyingElement(object sender, EnumerableRowCollection<DataRow> elementSearchProperties, IHTMLElement element)
         {
+            var engine = (IAutomationEngineInstance)sender;
+
             foreach (DataRow seachCriteria in elementSearchProperties)
             {
                 string searchPropertyName = seachCriteria.Field<string>("Property Name");
-                string searchPropertyValue = seachCriteria.Field<string>("Property Value");
+                dynamic searchPropertyValue = await seachCriteria.Field<string>("Property Value").EvaluateCode(engine);
                 string searchPropertyFound = seachCriteria.Field<string>("Match Found");
 
                 string innerHTML = element.innerHTML;
@@ -213,7 +209,7 @@ namespace OpenBots.Commands.IEBrowser
                         return false;
                     }
 
-                    if (searchPropertyName.ToLower() == "href")
+                    if (searchPropertyValue is string && searchPropertyName.ToLower() == "href")
                     {
                         try
                         {
@@ -234,12 +230,11 @@ namespace OpenBots.Commands.IEBrowser
                     }
                     else
                     {
-                        int searchValue;
-                        if (int.TryParse(searchPropertyValue, out searchValue))
+                        if (searchPropertyValue is int)
                         {
                             //int elementValue = (int)element.GetType().GetProperty(searchPropertyName).GetValue(element, null);
                             int elementValue = (int)element.getAttribute(searchPropertyName);
-                            if (elementValue == searchValue)
+                            if (elementValue == searchPropertyValue)
                             {
                                 seachCriteria.SetField("Match Found", "True");
                             }
@@ -485,7 +480,7 @@ namespace OpenBots.Commands.IEBrowser
                         !outerHtml.StartsWith("<head") &&
                         !outerHtml.StartsWith("<!doctype"))
                     {
-                        qualifyingElementFound = FindQualifyingElement(elementSearchProperties, element);
+                        qualifyingElementFound = await FindQualifyingElement(sender, elementSearchProperties, element);
                         if (qualifyingElementFound)
                         {
                             await RunCommandActions(element, sender, browserInstance);
