@@ -17,7 +17,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             string type = varType.GetRealTypeName();
 
-            if (code == null || code == "")
+            if (string.IsNullOrEmpty(code))
                 code = "null";
 
             if (engine.AutomationEngineContext.EngineScriptState == null)
@@ -50,8 +50,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine)
         {
-            if (code == null || code == "")
-                code = "null";
+            if (string.IsNullOrEmpty(code))
+                return null;
 
             if (engine.AutomationEngineContext.EngineScriptState == null)
                 engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScript.RunAsync();
@@ -100,11 +100,11 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
             var variableList = engine.AutomationEngineContext.Variables;
             var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new OBScriptVariable
-            {
-                VariableName = arg.ArgumentName,
-                VariableType = arg.ArgumentType,
-                VariableValue = arg.ArgumentValue
-            })
+                                                                                    {
+                                                                                        VariableName = arg.ArgumentName,
+                                                                                        VariableType = arg.ArgumentType,
+                                                                                        VariableValue = arg.ArgumentValue
+                                                                                    })
                                                                                     .ToList();
 
             var variableSearchList = new List<OBScriptVariable>();
