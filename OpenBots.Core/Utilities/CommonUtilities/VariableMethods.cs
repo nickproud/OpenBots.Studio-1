@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis.Scripting;
-using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -14,52 +13,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 {
     public static class VariableMethods
     {
-        public static Type GetVarArgType(this string varArgName, IAutomationEngineInstance engine)
-        {
-            OBScriptVariable requiredVariable;
-
-            var variableList = engine.AutomationEngineContext.Variables;
-            var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new OBScriptVariable
-                                                                                        {
-                                                                                            VariableName = arg.ArgumentName,
-                                                                                            VariableType = arg.ArgumentType,
-                                                                                            VariableValue = arg.ArgumentValue
-                                                                                        })
-                                                                                    .ToList();
-
-            var variableSearchList = new List<OBScriptVariable>();
-            variableSearchList.AddRange(variableList);
-            variableSearchList.AddRange(argumentsAsVariablesList);
-
-            requiredVariable = variableSearchList.Where(var => var.VariableName == varArgName).FirstOrDefault();
-
-            if (requiredVariable != null)
-                return requiredVariable.VariableType;
-            else
-                return null;
-        }
- 
-        public static SecureString ConvertStringToSecureString(this string value)
-        {
-            SecureString secureString = new NetworkCredential(string.Empty, value).SecurePassword;
-            return secureString;
-        }
-
-        public static string ConvertSecureStringToString(this SecureString secureString)
-        {
-            string strValue = new NetworkCredential(string.Empty, secureString).Password;
-            return strValue;
-        }
-
-        public static void CreateTestVariable(object variableValue, IAutomationEngineInstance engine, string variableName, Type variableType)
-        {
-            OBScriptVariable newVar = new OBScriptVariable();
-            newVar.VariableName = variableName;
-            newVar.VariableValue = variableValue;
-            newVar.VariableType = variableType;
-            engine.AutomationEngineContext.Variables.Add(newVar);
-        }
-
         public async static Task<object> InstantiateVariable(string varName, string code, Type varType, IAutomationEngineInstance engine)
         {
             string type = varType.GetRealTypeName();
@@ -139,6 +92,52 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             engine.AutomationEngineContext.Variables.ForEach(v => v.VariableValue = v.VariableName.GetVariableValue(engine));
             engine.AutomationEngineContext.Arguments.ForEach(a => a.ArgumentValue = a.ArgumentName.GetVariableValue(engine));
+        }
+
+        public static Type GetVarArgType(this string varArgName, IAutomationEngineInstance engine)
+        {
+            OBScriptVariable requiredVariable;
+
+            var variableList = engine.AutomationEngineContext.Variables;
+            var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new OBScriptVariable
+            {
+                VariableName = arg.ArgumentName,
+                VariableType = arg.ArgumentType,
+                VariableValue = arg.ArgumentValue
+            })
+                                                                                    .ToList();
+
+            var variableSearchList = new List<OBScriptVariable>();
+            variableSearchList.AddRange(variableList);
+            variableSearchList.AddRange(argumentsAsVariablesList);
+
+            requiredVariable = variableSearchList.Where(var => var.VariableName == varArgName).FirstOrDefault();
+
+            if (requiredVariable != null)
+                return requiredVariable.VariableType;
+            else
+                return null;
+        }
+
+        public static SecureString ConvertStringToSecureString(this string value)
+        {
+            SecureString secureString = new NetworkCredential(string.Empty, value).SecurePassword;
+            return secureString;
+        }
+
+        public static string ConvertSecureStringToString(this SecureString secureString)
+        {
+            string strValue = new NetworkCredential(string.Empty, secureString).Password;
+            return strValue;
+        }
+
+        public static void CreateTestVariable(object variableValue, IAutomationEngineInstance engine, string variableName, Type variableType)
+        {
+            OBScriptVariable newVar = new OBScriptVariable();
+            newVar.VariableName = variableName;
+            newVar.VariableValue = variableValue;
+            newVar.VariableType = variableType;
+            engine.AutomationEngineContext.Variables.Add(newVar);
         }
     }
 }
