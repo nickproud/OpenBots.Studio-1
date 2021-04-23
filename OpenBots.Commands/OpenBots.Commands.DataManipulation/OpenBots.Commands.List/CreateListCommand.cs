@@ -23,8 +23,8 @@ namespace OpenBots.Commands.List
 	{
 		[DisplayName("List Item(s) (Optional)")]
 		[Description("Enter the item(s) to write to the List.")]
-		[SampleUsage("Hello || {vItem} || Hello,World || {vItem1},{vItem2}")]
-		[Remarks("Multiple items should be delimited by a comma(,). This input is optional.")]
+		[SampleUsage("\"Hello\" || vItem")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(object) })]
 		public OBDataTable v_ListItemsDataTable { get; set; }
@@ -64,7 +64,6 @@ namespace OpenBots.Commands.List
 			foreach (DataRow rwColumnName in v_ListItemsDataTable.Rows)
 			{
 				dynamic dynamicItem = await rwColumnName.Field<string>("Items").EvaluateCode(engine);
-				// = itemVariable;
 				dynamicNewList.Add(dynamicItem);
 			}
 				

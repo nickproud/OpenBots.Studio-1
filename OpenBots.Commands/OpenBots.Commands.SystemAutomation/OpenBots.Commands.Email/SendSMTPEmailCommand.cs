@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Host")]
 		[Description("Define the host/service name that the script should use.")]
-		[SampleUsage("smtp.gmail.com || {vHost}")]
+		[SampleUsage("\"smtp.gmail.com\" || vHost")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Port")]
 		[Description("Define the port number that should be used when contacting the SMTP service.")]
-		[SampleUsage("465 || {vPort}")]
+		[SampleUsage("\"465\" || vPort")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Username")]
 		[Description("Define the username to use when contacting the SMTP service.")]
-		[SampleUsage("myRobot || {vUsername}")]
+		[SampleUsage("\"myRobot\" || vUsername")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Password")]
 		[Description("Define the password to use when contacting the SMTP service.")]
-		[SampleUsage("{vPassword}")]
+		[SampleUsage("vPassword")]
 		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(SecureString) })]
@@ -64,16 +64,16 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Recipient(s)")]
 		[Description("Enter the email address(es) of the recipient(s).")]
-		[SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
-		[Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"test@test.com\", \"test2@test.com\" } || vEmailsList")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_SMTPRecipients { get; set; }
 
 		[Required]
 		[DisplayName("Email Subject")]
 		[Description("Enter the subject of the email.")]
-		[SampleUsage("Hello || {vSubject}")]
+		[SampleUsage("\"Hello\" || vSubject")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -82,7 +82,7 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Email Body")]
 		[Description("Enter text to be used as the email body.")]
-		[SampleUsage("Dear John, ... || {vBody}")]
+		[SampleUsage("\"Dear John, ...\" || vBody")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -90,11 +90,11 @@ namespace OpenBots.Commands.Email
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
 		[Description("Enter the file path(s) of the file(s) to attach.")]
-		[SampleUsage(@"C:\temp\myFile.xlsx || {vFile} || C:\temp\myFile1.xlsx;C:\temp\myFile2.xlsx || {vFile1};{vFile2} || {vFiles}")]
-		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"C:\\temp\\myFile1.xlsx\", \"C:\\temp\\myFile2.xlsx\" } || vFileList")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_SMTPAttachments { get; set; }
 
 		public SendSMTPEmailCommand()
@@ -114,10 +114,9 @@ namespace OpenBots.Commands.Email
 			string vSMTPPort = (string)await v_SMTPPort.EvaluateCode(engine);
 			string vSMTPUserName = (string)await v_SMTPUserName.EvaluateCode(engine);
 			string vSMTPPassword = ((SecureString)await v_SMTPPassword.EvaluateCode(engine)).ConvertSecureStringToString();
-			string vSMTPRecipients = (string)await v_SMTPRecipients.EvaluateCode(engine);
+			List<string> vSMTPRecipients = (List<string>)await v_SMTPRecipients.EvaluateCode(engine);
 			string vSMTPSubject = (string)await v_SMTPSubject.EvaluateCode(engine);
 			string vSMTPBody = (string)await v_SMTPBody.EvaluateCode(engine);
-			string vSMTPAttachments = (string)await v_SMTPAttachments.EvaluateCode(engine);
 
 			using (var client = new SmtpClient())
 			{
@@ -142,8 +141,7 @@ namespace OpenBots.Commands.Email
 					var message = new MimeMessage();
 					message.From.Add(MailboxAddress.Parse(vSMTPUserName));
 
-					var splitRecipients = vSMTPRecipients.Split(';');
-					foreach (var vSMTPToEmail in splitRecipients)
+					foreach (var vSMTPToEmail in vSMTPRecipients)
 						message.To.Add(MailboxAddress.Parse(vSMTPToEmail));
 
 					message.Subject = vSMTPSubject;
@@ -152,10 +150,11 @@ namespace OpenBots.Commands.Email
 					var builder = new BodyBuilder();
 					builder.TextBody = vSMTPBody;
 
-					if (!string.IsNullOrEmpty(vSMTPAttachments))
+					if (!string.IsNullOrEmpty(v_SMTPAttachments))
 					{
-						var splitAttachments = vSMTPAttachments.Split(';');
-						foreach (var vSMTPattachment in splitAttachments)
+						var vSMTPAttachments = (List<string>)await v_SMTPAttachments.EvaluateCode(engine);
+
+						foreach (var vSMTPattachment in vSMTPAttachments)
 						{
 							using (MemoryStream memoryStream = new MemoryStream(OBFile.ReadAllBytes(vSMTPattachment)))
 								builder.Attachments.Add(vSMTPattachment, memoryStream.ToArray());

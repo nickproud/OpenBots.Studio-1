@@ -27,8 +27,8 @@ namespace OpenBots.Commands.Variable
 
 		public EvaluateSnippetCommand()
 		{
-			CommandName = "ExecuteSnippetCommand";
-			SelectionName = "Execute Snippet";
+			CommandName = "EvaluateSnippetCommand";
+			SelectionName = "Evaluate Snippet";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_parse;
 		}
