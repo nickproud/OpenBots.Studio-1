@@ -30,7 +30,7 @@ namespace OpenBots.Commands.List.Test
             _removeListItem.v_ListIndex = "{index}";
 
             _removeListItem.RunCommand(_engine);
-            List<string> outputList = (List<string>)await "{inputList}".EvaluateCodeForTests(_engine, typeof(List<>));
+            List<string> outputList = (List<string>)await "{inputList}".EvaluateCode(_engine, typeof(List<>));
             Assert.Equal("item2", outputList[0]);
         }
 
@@ -56,7 +56,7 @@ namespace OpenBots.Commands.List.Test
             _removeListItem.v_ListIndex = "{index}";
 
             _removeListItem.RunCommand(_engine);
-            List<OBDataTable> outputList = (List<OBDataTable>)await "{inputList}".EvaluateCodeForTests(_engine, typeof(List<>));
+            List<OBDataTable> outputList = (List<OBDataTable>)await "{inputList}".EvaluateCode(_engine, typeof(List<>));
             Assert.Equal(item2, outputList[0]);
         }
     }

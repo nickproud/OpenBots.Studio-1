@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Folder.Test
 
             _getFolders.RunCommand(_engine);
 
-            List<string> folderList = (List<string>)await "{output}".EvaluateCodeForTests(_engine, typeof(List<>));
+            List<string> folderList = (List<string>)await "{output}".EvaluateCode(_engine, typeof(List<>));
 
             Assert.Contains(Path.Combine(inputPath, @"toGet"), folderList);
         }

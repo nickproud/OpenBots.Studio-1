@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine, typeof(List<>));
             MailItem originalEmail = emails[0];
             VariableMethods.CreateTestVariable(originalEmail, _engine, "originalEmail", typeof(MailItem));
             string destFolder = "MovedMail";
@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine, typeof(List<>));
             MailItem copyEmail = emails[0];
 
             Assert.Equal("toCopy", originalEmail.Subject);
@@ -90,7 +90,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine, typeof(List<>));
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
             string destFolder = "MovedMail";
@@ -114,7 +114,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine, typeof(List<>));
             email = emails[0];
 
             resetMoveEmail(_engine);
@@ -140,7 +140,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine, typeof(List<>));
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 
@@ -169,7 +169,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine, typeof(List<>));
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 

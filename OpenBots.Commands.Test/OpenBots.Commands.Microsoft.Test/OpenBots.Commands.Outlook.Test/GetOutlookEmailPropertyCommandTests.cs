@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine, typeof(List<>));
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
             VariableMethods.CreateTestVariable(null, _engine, "property", typeof(string));

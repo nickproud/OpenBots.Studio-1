@@ -39,7 +39,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCodeForTests(_engine, typeof(Dictionary<,>));
+            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
 
             Assert.Equal("Test Text", queueItem["DataJson"]);
         }
@@ -74,7 +74,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCodeForTests(_engine, typeof(Dictionary<,>));
+            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
 
             Assert.Equal("Test Text", queueItem["DataJson"]);
             Assert.True(File.Exists(attachment));
@@ -115,7 +115,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCodeForTests(_engine, typeof(Dictionary<,>));
+            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
 
             Assert.Equal("Test Text", queueItem["DataJson"]);
             Assert.True(File.Exists(attachment1));
@@ -150,7 +150,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCodeForTests(_engine, typeof(Dictionary<,>));
+            var queueItem = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
 
             Assert.Equal("{'text':'testText'}", queueItem["DataJson"]);
         }
