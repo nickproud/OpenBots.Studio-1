@@ -565,6 +565,7 @@ namespace OpenBots.Commands.Loop
 						actionParameters.Rows.Add("Captured Image Variable", "");
 						actionParameters.Rows.Add("Accuracy (0-1)", "0.8");
 						actionParameters.Rows.Add("True When", "It Does Exist");
+						actionParameters.Rows.Add("Timeout (Seconds)", "30");
 						loopActionParameterBox.DataSource = actionParameters;
 					}
 

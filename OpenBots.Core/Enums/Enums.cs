@@ -112,6 +112,13 @@ namespace OpenBots.Core.Enums
         CSScript
     }
 
+    public enum ProjectAction
+    {
+        None,
+        CreateProject,
+        OpenProject
+    }
+
     public enum ScriptArgumentDirection
     {
         In,

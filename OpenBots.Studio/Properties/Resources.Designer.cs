@@ -401,6 +401,65 @@ namespace OpenBots.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Windows.Forms;
+        ///
+        ///public class Script
+        ///{
+        ///	public static void Main (object[] args)
+        ///	{
+        ///		if (args != null)
+        ///		{
+        ///			foreach (var arg in args)
+        ///			{
+        ///				MessageBox.Show(arg.ToString());
+        ///			}
+        ///		}
+        ///		
+        ///		MessageBox.Show(&quot;Hello World!&quot;);		
+        ///	}
+        ///}.
+        /// </summary>
+        internal static string DefaultCSScript {
+            get {
+                return ResourceManager.GetString("DefaultCSScript", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to import ctypes
+        ///import argparse
+        ///
+        ///def main(version):
+        ///  ctypes.windll.user32.MessageBoxW(0, &quot;Hello World! I am running on Python version &quot; + version, &quot;Hello World&quot;, 1)
+        ///
+        ///if __name__ == &apos;__main__&apos;:
+        ///    parser = argparse.ArgumentParser(description=&apos;A tutorial of argparse in OpenBots!&apos;)
+        ///    parser.add_argument(&quot;--MainFunction&quot;, type=str, help=&quot;Main Function argument&quot;)
+        ///    parser.add_argument(&quot;--PythonVersion&quot;, type=str, help=&quot;Python Version argument&quot;)
+        ///    args = parser.parse_args()
+        ///    eval(args.MainFunc [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DefaultPythonScript {
+            get {
+                return ResourceManager.GetString("DefaultPythonScript", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://openbots.ai/
+        ///
+        ///click Register
+        ///
+        ///wait 5.
+        /// </summary>
+        internal static string DefaultTagUIScript {
+            get {
+                return ResourceManager.GetString("DefaultTagUIScript", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap delete {

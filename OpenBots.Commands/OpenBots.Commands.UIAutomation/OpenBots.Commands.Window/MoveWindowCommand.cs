@@ -77,8 +77,12 @@ namespace OpenBots.Commands.Window
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			string windowName = v_WindowName.ConvertUserVariableToString(engine);
-			int timeout = Int32.Parse(v_Timeout);
+			var variableXPosition = v_XMousePosition.ConvertUserVariableToString(engine);
+			var variableYPosition = v_YMousePosition.ConvertUserVariableToString(engine);
+			int timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+
 			DateTime timeToEnd = DateTime.Now.AddSeconds(timeout);
+
 			while (timeToEnd >= DateTime.Now)
             {
 				try
@@ -94,13 +98,12 @@ namespace OpenBots.Commands.Window
 				}
 				catch (Exception)
 				{
-					engine.ReportProgress($"Window '{windowName}' Not Yet Found... " + (timeToEnd - DateTime.Now).Minutes + "m, " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+					engine.ReportProgress($"Window '{windowName}' Not Yet Found... {(timeToEnd - DateTime.Now).Minutes}m, {(timeToEnd - DateTime.Now).Seconds}s remain");
 					Thread.Sleep(500);
 				}
 			}
 
-			var variableXPosition = v_XMousePosition.ConvertUserVariableToString(engine);
-			var variableYPosition = v_YMousePosition.ConvertUserVariableToString(engine);
+			
 
 			User32Functions.MoveWindow(windowName, variableXPosition, variableYPosition);
 		}
@@ -112,7 +115,7 @@ namespace OpenBots.Commands.Window
 			RenderedControls.AddRange(commandControls.CreateDefaultWindowControlGroupFor("v_WindowName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_XMousePosition", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_YMousePosition", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultWindowControlGroupFor("v_Timeout", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Timeout", this, editor));
 
 			return RenderedControls;
 		}

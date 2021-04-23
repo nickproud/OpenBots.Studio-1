@@ -739,6 +739,10 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
+				int timeout = int.Parse((from rw in IfActionParameterTable.AsEnumerable()
+										 where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
+										 select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
 				var imageVariable = imageName.ConvertUserVariableToObject(engine, typeof(Bitmap));
 
 				Bitmap capturedImage;
@@ -747,8 +751,8 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				else
 					throw new ArgumentException("Provided Argument is not a 'Bitmap' Image");
 
-				var element = FindImageElement(capturedImage, accuracy);
-				FormsHelper.ShowAllForms();
+				var element = FindImageElement(capturedImage, accuracy, engine, DateTime.Now.AddSeconds(timeout));
+				FormsHelper.ShowAllForms(engine.AutomationEngineContext.IsDebugMode);
 
 				if (element != null)
 					ifResult = true;
@@ -782,10 +786,11 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 			return ifResult;
 		}
 
-		public static ImageElement FindImageElement(Bitmap smallBmp, double accuracy)
+		public static ImageElement FindImageElement(Bitmap smallBmp, double accuracy, IAutomationEngineInstance engine, DateTime timeToEnd, bool isCaptureTest = false)
 		{
 			FormsHelper.HideAllForms();
 
+			var lastRecordedTime = DateTime.Now;
 			dynamic element = null;
 			double tolerance = 1.0 - accuracy;
 
@@ -827,6 +832,18 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
 				for (int y = 0; y < bigHeight; y++)
 				{
+					if (engine != null && engine.IsCancellationPending)
+						break;
+
+					if (engine != null && lastRecordedTime.Second != DateTime.Now.Second)
+                    {
+						engine.ReportProgress("Element Not Yet Found... " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+						lastRecordedTime = DateTime.Now;
+					}
+
+					if (timeToEnd <= DateTime.Now)
+						break;
+
 					for (int x = 0; x < bigWidth; x++)
 					{
 						byte* pBigBackup = pBig;
@@ -876,6 +893,12 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 								MiddleY = y + smallBmp.Height / 2,
 								BottomY = y + smallBmp.Height
 							};
+
+							if (isCaptureTest)
+                            {
+								element.SmallTestImage = smallTestBmp;
+								element.BigTestImage = bigTestBmp;
+							}
 
 							break;
 						}

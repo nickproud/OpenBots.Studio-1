@@ -202,8 +202,13 @@
     <Compile Include="ChromeNativeClient\WebElement.cs" />
     <Compile Include="Command\BrokenCodeCommentCommand.cs" />
     <Compile Include="Command\ScriptCommand.cs" />
+    <Compile Include="Project\ProjectArgument.cs" />
+    <Compile Include="Script\AssemblyReference.cs" />
+    <Compile Include="Script\ScriptDefaultNamespaces.cs" />
     <Compile Include="Script\ScriptDefaultTypes.cs" />
     <Compile Include="Script\TypeContext.cs" />
+    <Compile Include="Server\Models\Automation.cs" />
+    <Compile Include="Server\Models\AutomationParameter.cs" />
     <Compile Include="Utilities\CommonUtilities\CommonMethods.cs" />
     <Compile Include="Enums\Enums.cs" />
     <Compile Include="Interfaces\Commands\IConditionCommand.cs" />
@@ -287,6 +292,7 @@
     <Compile Include="UI\Controls\UIPictureButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Utilities\CommonUtilities\NamespaceMethods.cs" />
     <Compile Include="Utilities\FormsUtilities\FormsHelper.cs" />
     <Compile Include="UI\DTOs\Class.cs" />
     <Compile Include="UI\DTOs\MachineConfiguration.cs" />

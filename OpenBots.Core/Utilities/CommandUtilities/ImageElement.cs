@@ -1,4 +1,6 @@
-﻿namespace OpenBots.Core.Utilities.CommandUtilities
+﻿using System.Drawing;
+
+namespace OpenBots.Core.Utilities.CommandUtilities
 {
     public class ImageElement
     {
@@ -8,5 +10,7 @@
         public int TopY { get; set; }
         public int MiddleY { get; set; }
         public int BottomY { get; set; }
+        public Bitmap SmallTestImage { get; set; }
+        public Bitmap BigTestImage { get; set; }
     }
 }

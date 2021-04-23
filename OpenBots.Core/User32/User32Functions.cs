@@ -290,7 +290,7 @@ namespace OpenBots.Core.User32
 
         public static void CloseWindow(IntPtr hWnd)
         {
-            const UInt32 WmClose = 0x0010;
+            const uint WmClose = 0x0010;
             SendMessage(hWnd, WmClose, IntPtr.Zero, IntPtr.Zero);
         }
 
@@ -306,9 +306,8 @@ namespace OpenBots.Core.User32
             IntPtr handle = GetForegroundWindow();
 
             if (GetWindowText(handle, Buff, nChars) > 0)
-            {
                 return Buff.ToString();
-            }
+
             return "";
         }
 

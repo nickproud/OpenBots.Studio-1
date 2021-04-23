@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +15,7 @@ using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
 {
-	[Serializable]
+    [Serializable]
 	[Category("Input Commands")]
 	[Description("This command sends advanced keystrokes to a targeted window.")]
 	public class SendAdvancedKeystrokesCommand : ScriptCommand, ISendAdvancedKeystrokesCommand

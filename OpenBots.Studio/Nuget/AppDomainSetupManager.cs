@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using OpenBots.Core.Command;
+using OpenBots.Core.Script;
 using OpenBots.Studio.Utilities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace OpenBots.Nuget
 {
     public class AppDomainSetupManager
     {
-        public static ContainerBuilder LoadBuilder(List<string> assemblyPaths, Dictionary<string, List<Type>> groupedTypes)
+        public static ContainerBuilder LoadBuilder(List<string> assemblyPaths, Dictionary<string, List<Type>> groupedTypes, Dictionary<string, AssemblyReference> allNamespaces)
         {
             List<Assembly> existingAssemblies = new List<Assembly>();
             foreach(var path in assemblyPaths)
@@ -27,7 +28,7 @@ namespace OpenBots.Nuget
                     if (existingAssembly == null && name != "RestSharp" && name != "WebDriver" && name != "OpenBots.Core")
                     {
                         //has to be LoadFile because package manager can't update/uninstall assemblies if LoadFrom
-                        var assembly = Assembly.LoadFile(path);
+                        var assembly = Assembly.LoadFrom(path);
                         existingAssemblies.Add(assembly);
                     }
                     else if (existingAssembly != null)
@@ -41,6 +42,7 @@ namespace OpenBots.Nuget
 
             //TODO: limit types to one in loaded assemblies. Previously getting all assemblies instead of just the ones in existingAssemblies because mscorlib was missing
             TypeMethods.GenerateAllVariableTypes(AppDomain.CurrentDomain.GetAssemblies().ToList(), groupedTypes);
+            TypeMethods.GenerateAllNamespaces(AppDomain.CurrentDomain.GetAssemblies().ToList(), allNamespaces);
 
             //if no commands have been loaded, at least include OpenBots.Core to access the BrokenCodeCommand
             if (existingAssemblies.Count == 0)
