@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Credential.Test
             _getCredential.RunCommand(_engine);
 
 
-            Assert.Equal(newUsername, (string)await "{storedUsername}".EvaluateCodeForTests(_engine));
+            Assert.Equal(newUsername, (string)await "{storedUsername}".EvaluateCode(_engine));
             Assert.Equal(newPassword.ConvertStringToSecureString().ToString(), (await "{storedPassword}".EvaluateCodeForTests(_engine, typeof(SecureString))).ToString());
         }
 

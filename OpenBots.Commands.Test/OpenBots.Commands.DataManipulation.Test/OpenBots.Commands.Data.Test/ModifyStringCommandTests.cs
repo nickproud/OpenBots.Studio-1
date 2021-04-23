@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Data.Test
 
             _modifyString.RunCommand(_engine);
 
-            Assert.Equal(expectedOutput, (string)await _modifyString.v_OutputUserVariableName.EvaluateCodeForTests(_engine));
+            Assert.Equal(expectedOutput, (string)await _modifyString.v_OutputUserVariableName.EvaluateCode(_engine));
         }
     }
 }

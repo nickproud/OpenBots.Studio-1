@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = (string)await "{output}".EvaluateCodeForTests(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
             Assert.Equal(newAsset, outputAsset);
 
             resetAsset(assetName, "49", "Number");
@@ -68,7 +68,7 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = (string)await "{output}".EvaluateCodeForTests(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
             Assert.Equal(newAsset, outputAsset);
 
             resetAsset(assetName, "49", "Number");
@@ -99,7 +99,7 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = (string)await "{output}".EvaluateCodeForTests(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
             Assert.Equal(newAsset, outputAsset);
 
             resetAsset(assetName, "49", "Number");
@@ -130,7 +130,7 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = (string)await "{output}".EvaluateCodeForTests(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
             Assert.Equal(newAsset, outputAsset);
 
             resetAsset(assetName, "49", "Number");

@@ -41,8 +41,8 @@ namespace OpenBots.Commands.Engine.Test
             _stopwatch.v_StopwatchAction = "Measure Stopwatch";
             _stopwatch.RunCommand(_engine);
 
-            output.WriteLine((string)await "{output}".EvaluateCodeForTests(_engine));
-            double firstTime = (Double)await "{output}".EvaluateCodeForTests(_engine);
+            output.WriteLine((string)await "{output}".EvaluateCode(_engine));
+            double firstTime = (Double)await "{output}".EvaluateCode(_engine);
             Assert.True(firstTime > 1.0);
 
             _stopwatch.v_StopwatchAction = "Restart Stopwatch";
@@ -56,8 +56,8 @@ namespace OpenBots.Commands.Engine.Test
             _stopwatch.v_StopwatchAction = "Measure Stopwatch";
             _stopwatch.RunCommand(_engine);
 
-            output.WriteLine((string)await "{output}".EvaluateCodeForTests(_engine));
-            double secondTime = (Double)await "{output}".EvaluateCodeForTests(_engine);
+            output.WriteLine((string)await "{output}".EvaluateCode(_engine));
+            double secondTime = (Double)await "{output}".EvaluateCode(_engine);
             Assert.True(secondTime > 0.5);
 
             _stopwatch.v_StopwatchAction = "Reset Stopwatch";
@@ -66,8 +66,8 @@ namespace OpenBots.Commands.Engine.Test
             _stopwatch.v_StopwatchAction = "Measure Stopwatch";
             _stopwatch.RunCommand(_engine);
 
-            output.WriteLine((string)await "{output}".EvaluateCodeForTests(_engine));
-            double thirdTime = (Double)await "{output}".EvaluateCodeForTests(_engine);
+            output.WriteLine((string)await "{output}".EvaluateCode(_engine));
+            double thirdTime = (Double)await "{output}".EvaluateCode(_engine);
             Assert.Equal(0.0, thirdTime);
         }
     }

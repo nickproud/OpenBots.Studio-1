@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Data.Test
 
             _getTextLength.RunCommand(_engine);
 
-            Assert.Equal(textToMeasure.Length, (Int32)await _getTextLength.v_OutputUserVariableName.EvaluateCodeForTests(_engine));
+            Assert.Equal(textToMeasure.Length, (Int32)await _getTextLength.v_OutputUserVariableName.EvaluateCode(_engine));
         }
     }
 }

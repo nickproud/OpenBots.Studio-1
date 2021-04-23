@@ -26,7 +26,7 @@ namespace OpenBots.Commands.TextFile.Test
             _readTextFile.v_FilePath = "{filepath}";
             _readTextFile.RunCommand(_engine);
             var textFromFile = OBIO.File.ReadAllText(filePath);
-            var storedText = (string)await _readTextFile.v_OutputUserVariableName.EvaluateCodeForTests(_engine);
+            var storedText = (string)await _readTextFile.v_OutputUserVariableName.EvaluateCode(_engine);
 
             Assert.Equal(textFromFile, storedText);
 

@@ -62,11 +62,11 @@ namespace OpenBots.Commands.Switch.Test
 
             if (caseString.Equals("case1"))
             {
-                Assert.Equal("case1Set", (string)await "{switchOutput}".EvaluateCodeForTests(_engine));
+                Assert.Equal("case1Set", (string)await "{switchOutput}".EvaluateCode(_engine));
             }
             else if (caseString.Equals("noCase"))
             {
-                Assert.Equal("defaultCaseSet", (string)await "{switchOutput}".EvaluateCodeForTests(_engine));
+                Assert.Equal("defaultCaseSet", (string)await "{switchOutput}".EvaluateCode(_engine));
             }
         }
     }

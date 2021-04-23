@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Data.Test
 
             _replaceTextCommand.RunCommand(_engine);
 
-            Assert.Equal("Goodbye john", (string)await "{output}".EvaluateCodeForTests(_engine));
+            Assert.Equal("Goodbye john", (string)await "{output}".EvaluateCode(_engine));
         }
     }
 }

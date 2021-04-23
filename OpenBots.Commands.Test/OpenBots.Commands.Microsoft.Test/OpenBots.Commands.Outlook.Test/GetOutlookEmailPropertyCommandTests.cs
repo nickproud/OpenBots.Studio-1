@@ -52,7 +52,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmailProperty.RunCommand(_engine);
 
-            Assert.Equal(propValue, (string)await "{property}".EvaluateCodeForTests(_engine));
+            Assert.Equal(propValue, (string)await "{property}".EvaluateCode(_engine));
         }
     }
 }
