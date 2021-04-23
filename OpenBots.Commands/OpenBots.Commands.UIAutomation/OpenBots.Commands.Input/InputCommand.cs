@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Input
 		[Required]
 		[DisplayName("Header Name")]
 		[Description("Define the header to be displayed on the input form.")]
-		[SampleUsage("Please Provide Input || {vHeader}")]
+		[SampleUsage("\"Please Provide Input\" || vHeader")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Input
 		[Required]
 		[DisplayName("Input Directions")]
 		[Description("Define the directions to give to the user.")]
-		[SampleUsage("Directions: Please fill in the following fields || {vDirections}")]
+		[SampleUsage("\"Directions: Please fill in the following fields\" || vDirections")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -44,12 +44,12 @@ namespace OpenBots.Commands.Input
 
 		[DisplayName("Input Parameters (Optional)")]
 		[Description("Define the required input parameters.")]
-		[SampleUsage("[TextBox | Name | 500,100 | John | {vName}]\n" +
-					 "[CheckBox | Developer | 500,30 | True | {vDeveloper}]\n" +
-					 "[ComboBox | Gender | 500,30 | Male,Female,Other | {vGender}]")]
+		[SampleUsage("[TextBox | Name | 500,100 | \"John\" | vName]\n" +
+					 "[CheckBox | Developer | 500,30 | \"True\" | vDeveloper]\n" +
+					 "[ComboBox | Gender | 500,30 | \"Male,Female,Other\" | vGender]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(bool), typeof(int) })]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(bool) })]
 		public DataTable v_UserInputConfig { get; set; }
 
 		[JsonIgnore]
@@ -87,8 +87,8 @@ namespace OpenBots.Commands.Input
 			v_UserInputConfig.Columns.Add("DefaultValue");
 			v_UserInputConfig.Columns.Add("StoreInVariable");
 
-			v_InputHeader = "Please Provide Input";
-			v_InputDirections = "Directions: Please fill in the following fields";
+			v_InputHeader = "\"Please Provide Input\"";
+			v_InputDirections = "\"Directions: Please fill in the following fields\"";
 		}
 
 		public async override Task RunCommand(object sender)
@@ -100,7 +100,7 @@ namespace OpenBots.Commands.Input
 			//translate variables for each label
 			foreach (DataRow rw in v_UserInputConfig.Rows)
 			{
-				rw["DefaultValue"] = (string)await rw["DefaultValue"].ToString().EvaluateCode(engine);
+				rw["DefaultValue"] = (await rw["DefaultValue"].ToString().EvaluateCode(engine)).ToString();
 				string targetVariable = rw["StoreInVariable"].ToString();
 
 				if (string.IsNullOrEmpty(targetVariable))

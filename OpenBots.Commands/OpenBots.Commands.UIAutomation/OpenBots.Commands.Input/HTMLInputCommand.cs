@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Input
 			CommandEnabled = true;
 			CommandIcon = Resources.command_input;
 
-			v_InputHTML = $"\"{Resources.HTMLInputSample}\"";
+			v_InputHTML = Resources.HTMLInputSample;
 			v_ErrorOnClose = "No";
 		}
 
@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Input
 			}
 
 			//sample for temp testing
-			var htmlInput = (string)await v_InputHTML.EvaluateCode(engine);
+			var htmlInput = v_InputHTML;
 
 			//invoke ui for data collection
 			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
