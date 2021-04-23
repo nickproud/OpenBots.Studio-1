@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("hello || {vValue}")]
 		[Remarks("This input is passed to your script as a object[].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public DataTable v_VariableArgumentsDataTable { get; set; }
 
 		[DisplayName("Command Line Arguments (Optional)")]

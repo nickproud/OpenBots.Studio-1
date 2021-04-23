@@ -6,12 +6,10 @@ namespace OpenBots.Core.Attributes.PropertyAttributes
     public class CompatibleTypes : Attribute
     {
         public Type[] CompTypes { get; private set; }
-        public bool IsStringOrPrimitive { get; private set; }
 
-        public CompatibleTypes(Type[] compTypes, bool isStringOrPrimitive = false)
+        public CompatibleTypes(Type[] compTypes)
         {
             CompTypes = compTypes;
-            IsStringOrPrimitive = isStringOrPrimitive;
         }
     }
 }
