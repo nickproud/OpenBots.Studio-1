@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Terminal
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
 			List<XMLScreenField> fields = terminalObject.TN3270.CurrentScreenXML.Fields.ToList();
-			fields.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			fields.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

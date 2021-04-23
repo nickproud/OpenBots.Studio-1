@@ -88,7 +88,7 @@ namespace OpenBots.Commands.DataTable
 			}
 			Dt.Rows.Add(newRow);
 
-			Dt.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			Dt.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

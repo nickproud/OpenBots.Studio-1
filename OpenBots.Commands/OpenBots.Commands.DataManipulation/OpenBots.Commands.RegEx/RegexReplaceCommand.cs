@@ -75,7 +75,7 @@ namespace OpenBots.Commands.RegEx
 
 			string resultData = Regex.Replace(vInputData, vRegex, vReplaceData);
 
-			resultData.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			resultData.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

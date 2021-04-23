@@ -185,14 +185,14 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Close();
 				
 				dataTable.TableName = v_OutputUserVariableName;
-				dataTable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				dataTable.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 			else if (v_QueryType == "Execute NonQuery")
 			{
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 			else if (v_QueryType == "Execute Stored Procedure")
 			{
@@ -200,7 +200,7 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 			else
 				throw new NotImplementedException($"Query Execution Type '{v_QueryType}' not implemented.");

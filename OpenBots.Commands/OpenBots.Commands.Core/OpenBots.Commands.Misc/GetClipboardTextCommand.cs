@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Misc
         public async override Tasks.Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            User32Functions.GetClipboardText().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+            User32Functions.GetClipboardText().SetVariableValue(engine, v_OutputUserVariableName);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

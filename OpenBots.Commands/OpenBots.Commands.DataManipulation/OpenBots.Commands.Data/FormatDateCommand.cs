@@ -65,7 +65,7 @@ namespace OpenBots.Commands.Data
 
 			string formattedString  = variableDate.ToString(formatting);
 				
-			formattedString.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			formattedString.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

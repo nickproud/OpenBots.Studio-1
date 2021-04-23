@@ -31,7 +31,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem);
             _setQueueItem.v_QueueItemStatusType = "Successful";
 
             _setQueueItem.RunCommand(_engine);
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem);
             _setQueueItem.v_QueueItemStatusType = "Failed - Should Retry";
 
             _setQueueItem.RunCommand(_engine);
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem);
             _setQueueItem.v_QueueItemStatusType = "Failed - Fatal";
 
             _setQueueItem.RunCommand(_engine);
@@ -115,7 +115,7 @@ namespace OpenBots.Commands.QueueItem.Test
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             _setQueueItem.v_QueueItemStatusType = "Successful";
-            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem);
 
             await Assert.ThrowsAsync<NullReferenceException>(() => _setQueueItem.RunCommand(_engine));
         }

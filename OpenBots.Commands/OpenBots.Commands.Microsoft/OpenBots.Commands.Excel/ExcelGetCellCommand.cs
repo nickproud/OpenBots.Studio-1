@@ -81,7 +81,7 @@ namespace OpenBots.Commands.Excel
 			else
 				cellValue = (string)excelSheet.Range[vTargetAddress].Value.ToString();
 
-			cellValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);          
+			cellValue.SetVariableValue(engine, v_OutputUserVariableName);          
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

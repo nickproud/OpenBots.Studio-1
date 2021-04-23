@@ -52,7 +52,7 @@ namespace OpenBots.Commands.Dictionary
 
 			int count = dynamicDict.Count;
 
-			count.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			count.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

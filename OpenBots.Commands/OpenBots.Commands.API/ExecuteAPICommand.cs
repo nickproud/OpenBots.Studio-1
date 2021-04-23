@@ -216,7 +216,7 @@ namespace OpenBots.Commands.API
 				restContent = content;
 			}
 
-			restContent.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			restContent.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

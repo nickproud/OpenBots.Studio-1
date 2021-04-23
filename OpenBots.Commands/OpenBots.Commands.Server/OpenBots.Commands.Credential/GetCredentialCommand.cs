@@ -72,8 +72,8 @@ namespace OpenBots.Commands.Credential
 			string username = credential.UserName;
 			SecureString password = credential.PasswordSecret.ConvertStringToSecureString();
 
-			username.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-			password.SetVariableValue(engine, v_OutputUserVariableName2, nameof(v_OutputUserVariableName2), this);
+			username.SetVariableValue(engine, v_OutputUserVariableName);
+			password.SetVariableValue(engine, v_OutputUserVariableName2);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

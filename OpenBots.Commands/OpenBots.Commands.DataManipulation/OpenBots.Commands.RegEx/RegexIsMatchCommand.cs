@@ -64,7 +64,7 @@ namespace OpenBots.Commands.RegEx
 
 			bool isMatch = Regex.IsMatch(vInputData, vRegex);
 
-			isMatch.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			isMatch.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

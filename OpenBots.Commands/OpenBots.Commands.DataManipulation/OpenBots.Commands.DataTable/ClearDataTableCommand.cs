@@ -52,7 +52,7 @@ namespace OpenBots.Commands.DataTable
 
 			dataTable.Clear();
 
-			dataTable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			dataTable.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

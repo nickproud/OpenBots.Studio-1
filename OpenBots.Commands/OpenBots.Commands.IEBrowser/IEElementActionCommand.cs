@@ -436,7 +436,7 @@ namespace OpenBots.Commands.IEBrowser
 
                     string convertedAttribute = Convert.ToString(element.getAttribute(attributeName));
 
-                    convertedAttribute.SetVariableValue(engine, variableName, nameof(v_WebActionParameterTable), this);
+                    convertedAttribute.SetVariableValue(engine, variableName);
                     break;
             }
         }

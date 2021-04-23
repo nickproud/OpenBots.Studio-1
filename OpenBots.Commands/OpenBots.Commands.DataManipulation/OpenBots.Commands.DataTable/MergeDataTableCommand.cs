@@ -103,7 +103,7 @@ namespace OpenBots.Commands.DataTable
 				}
 
 				// Update Destination Variable Value
-				destinationDT.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);               
+				destinationDT.SetVariableValue(engine, v_OutputUserVariableName);               
 			}
 		}
 

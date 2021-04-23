@@ -104,7 +104,7 @@ namespace OpenBots.Commands.DataTable
             {
 				DataView dv = new DataView(Dt);
 				dv.RowFilter = (string)await v_RowFilter.EvaluateCode(engine, nameof(v_RowFilter), this);
-				dv.ToTable().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				dv.ToTable().SetVariableValue(engine, v_OutputUserVariableName);
 			}
             else
             {
@@ -137,7 +137,7 @@ namespace OpenBots.Commands.DataTable
 				foreach (DataRow item in templist)
 					outputDT.Rows.Add(item.ItemArray);
 
-				outputDT.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				outputDT.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 		}
 

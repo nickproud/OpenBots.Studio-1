@@ -54,7 +54,7 @@ namespace OpenBots.Commands.List
 			dynamic dynamicList = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
 
 			int count = dynamicList.Count;
-			count.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			count.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

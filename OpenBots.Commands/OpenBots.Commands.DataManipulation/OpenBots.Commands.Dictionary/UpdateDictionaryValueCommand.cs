@@ -72,7 +72,7 @@ namespace OpenBots.Commands.Dictionary
 
 			dynamicDict[dynamicKey] = dynamicValue;
 
-			((object)dynamicDict).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)dynamicDict).SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

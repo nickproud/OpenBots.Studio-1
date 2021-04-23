@@ -66,7 +66,7 @@ namespace OpenBots.Commands.RegEx
 			var matches = (from match in Regex.Matches(vInputData, vRegex).Cast<Match>() 
 						   select match.Groups[0].Value).ToList();
 
-			matches.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			matches.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

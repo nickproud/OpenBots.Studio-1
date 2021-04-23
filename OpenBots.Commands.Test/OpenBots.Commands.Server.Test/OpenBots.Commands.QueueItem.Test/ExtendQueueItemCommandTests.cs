@@ -47,7 +47,7 @@ namespace OpenBots.Commands.QueueItem.Test
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
 
             _extendQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.SetVariableValue(_engine, _extendQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _extendQueueItem.v_QueueItem);
 
             _extendQueueItem.RunCommand(_engine);
 
@@ -77,7 +77,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _extendQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.SetVariableValue(_engine, _extendQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _extendQueueItem.v_QueueItem);
 
             await Assert.ThrowsAsync<NullReferenceException>(() => _extendQueueItem.RunCommand(_engine));
         }

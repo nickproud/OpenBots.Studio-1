@@ -124,7 +124,7 @@ namespace OpenBots.Commands.Terminal
 			if (field != null)
 				fieldIndex = Array.IndexOf(terminalObject.TN3270.CurrentScreenXML.Fields, field);
 
-			fieldIndex.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			fieldIndex.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

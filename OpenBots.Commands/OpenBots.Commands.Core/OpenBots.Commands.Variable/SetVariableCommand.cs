@@ -59,7 +59,7 @@ namespace OpenBots.Commands.Variable
 					throw new InvalidCastException("Input and Output types do not match");
 			}
 			
-			((object)input).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)input).SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -51,7 +51,7 @@ namespace OpenBots.Commands.Dictionary
 			dynamic dynamicKVPair = await v_InputKeyValuePair.EvaluateCode(engine, nameof(v_InputKeyValuePair), this);
 			dynamic dynamicKey = dynamicKVPair.Key;
 
-			((object)dynamicKey).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)dynamicKey).SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -169,7 +169,7 @@ namespace OpenBots.Commands.Excel
 									   .ToList();
 
 			//add list of datatables to output variable
-			result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			result.SetVariableValue(engine, v_OutputUserVariableName);
 
 			//save split datatables in individual workbooks labeled by selected column data
 			if (Directory.Exists(vOutputDirectory))

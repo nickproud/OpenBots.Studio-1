@@ -149,7 +149,7 @@ namespace OpenBots.Commands.Process
 					else
 						result = mainMethod.Invoke(null, new object[] { args });
 
-					result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					result.SetVariableValue(engine, v_OutputUserVariableName);
 				}
 			}
 			else if (v_ArgumentType == "Command Line")
@@ -171,7 +171,7 @@ namespace OpenBots.Commands.Process
 					else
 						result = mainMethod.Invoke(null, new object[] { argStrings });
 
-					result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					result.SetVariableValue(engine, v_OutputUserVariableName);
 				}
 			}
 		}

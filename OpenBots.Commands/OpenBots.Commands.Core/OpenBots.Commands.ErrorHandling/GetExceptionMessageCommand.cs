@@ -46,7 +46,7 @@ namespace OpenBots.Commands.ErrorHandling
 			if (error != null)
 				errorMessage = $"Source: {error.SourceFile}, Line: {error.LineNumber}, " +
 					$"Exception Type: {error.ErrorType}, Exception Message: {error.ErrorMessage}";
-			errorMessage.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			errorMessage.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

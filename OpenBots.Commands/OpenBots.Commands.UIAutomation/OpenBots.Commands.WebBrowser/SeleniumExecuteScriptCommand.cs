@@ -81,7 +81,7 @@ namespace OpenBots.Commands.WebBrowser
 
 			//apply result to variable
 			if ((result != null) && (!string.IsNullOrEmpty(v_OutputUserVariableName)))
-				result.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.ToString().SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

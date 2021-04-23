@@ -69,7 +69,7 @@ namespace OpenBots.Commands.Data
 			foreach (var result in arr)
 				resultList.Add(result.ToString());
 
-			resultList.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
+			resultList.SetVariableValue(engine, v_OutputUserVariableName);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

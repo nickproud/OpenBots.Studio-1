@@ -65,7 +65,7 @@ namespace OpenBots.Commands.Loop
 			{
 				engine.ReportProgress("Starting Loop Number " + (i + 1) + "/" + loopTimes + " From Line " + loopCommand.LineNumber);
 				
-				((object)dynamicLoopVariable[i]).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				((object)dynamicLoopVariable[i]).SetVariableValue(engine, v_OutputUserVariableName);
 
 				foreach (var cmd in parentCommand.AdditionalScriptCommands)
 				{

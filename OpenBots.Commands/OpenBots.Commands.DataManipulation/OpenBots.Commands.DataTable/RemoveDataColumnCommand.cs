@@ -75,7 +75,7 @@ namespace OpenBots.Commands.DataTable
 			else
 				dataTable.Columns.Remove((string)column);
 
-			dataTable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			dataTable.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

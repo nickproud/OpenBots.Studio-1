@@ -56,7 +56,7 @@ namespace OpenBots.Commands.TextFile
 			//read text from file
 			var textFromFile = OBFile.ReadAllText(filePath);
 			//assign text to user variable
-			textFromFile.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			textFromFile.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

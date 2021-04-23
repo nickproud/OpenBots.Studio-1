@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Data
 			else
 				throw new InvalidDataException($"{v_SplitCharacter} is not a valid delimeter");
 
-			splitString.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
+			splitString.SetVariableValue(engine, v_OutputUserVariableName);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

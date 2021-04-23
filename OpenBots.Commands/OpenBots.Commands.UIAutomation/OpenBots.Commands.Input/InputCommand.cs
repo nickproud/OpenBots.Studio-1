@@ -151,7 +151,7 @@ namespace OpenBots.Commands.Input
 
 						//store user data in variable
 						if (!string.IsNullOrEmpty(targetVariable))
-							userInputs[i].SetVariableValue(engine, targetVariable, nameof(v_UserInputConfig), this);
+							userInputs[i].SetVariableValue(engine, targetVariable);
 					}
 				}
 		}

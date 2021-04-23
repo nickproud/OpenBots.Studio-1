@@ -330,7 +330,7 @@ namespace OpenBots.Commands.WebBrowser
 						optionsItems.Add(optionValue);
 					}
 
-					optionsItems.SetVariableValue(engine, applyToVarName, nameof(v_WebActionParameterTable), this);
+					optionsItems.SetVariableValue(engine, applyToVarName);
 				   
 					break;
 
@@ -401,7 +401,7 @@ namespace OpenBots.Commands.WebBrowser
 					else
 						elementValue = ((IWebElement)element).GetAttribute(attributeName);
 
-					elementValue.SetVariableValue(engine, VariableName, nameof(v_WebActionParameterTable), this);
+					elementValue.SetVariableValue(engine, VariableName);
 					break;
 
 				case "Get Matching Element(s)":
@@ -417,10 +417,10 @@ namespace OpenBots.Commands.WebBrowser
 						{
 							elementList.Add(item);
 						}
-						elementList.SetVariableValue(engine, variableName, nameof(v_WebActionParameterTable), this);
+						elementList.SetVariableValue(engine, variableName);
 					}
 					else
-						((IWebElement)element).SetVariableValue(engine, variableName, nameof(v_WebActionParameterTable), this);                    
+						((IWebElement)element).SetVariableValue(engine, variableName);                    
 					break;
 
 				case "Get Table":
@@ -456,7 +456,7 @@ namespace OpenBots.Commands.WebBrowser
 					foreach (var row in doc.DocumentNode.SelectNodes("//tr[td]"))
 						DT.Rows.Add(row.SelectNodes("td").Select(td => Regex.Replace(td.InnerText, @"\t|\n|\r", "").Trim()).ToArray());
 
-					DT.SetVariableValue(engine, DTVariableName, nameof(v_WebActionParameterTable), this);
+					DT.SetVariableValue(engine, DTVariableName);
 					break;
 
 				case "Clear Element":
@@ -477,9 +477,9 @@ namespace OpenBots.Commands.WebBrowser
 													select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 					if (element == null)
-						false.SetVariableValue(engine, existsBoolVariableName, nameof(v_WebActionParameterTable), this);
+						false.SetVariableValue(engine, existsBoolVariableName);
 					else
-						true.SetVariableValue(engine, existsBoolVariableName, nameof(v_WebActionParameterTable), this);
+						true.SetVariableValue(engine, existsBoolVariableName);
 
 					break;
 				default:

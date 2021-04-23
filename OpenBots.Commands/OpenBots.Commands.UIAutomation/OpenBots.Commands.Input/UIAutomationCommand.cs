@@ -365,7 +365,7 @@ namespace OpenBots.Commands.Input
 						else
 							searchResult = requiredHandle.Current.Name.ToString();
 
-						((string)searchResult).SetVariableValue(engine, applyToVariable, nameof(v_UIAActionParameters), this);
+						((string)searchResult).SetVariableValue(engine, applyToVariable);
 					}
 
 					else if (v_AutomationType == "Element Exists")
@@ -376,7 +376,7 @@ namespace OpenBots.Commands.Input
 						else
 							searchResult = true;
 
-						((bool)searchResult).SetVariableValue(engine, applyToVariable, nameof(v_UIAActionParameters), this);
+						((bool)searchResult).SetVariableValue(engine, applyToVariable);
 					}
 					
 					break;
@@ -404,7 +404,7 @@ namespace OpenBots.Commands.Input
 					var requiredValue = requiredHandle.Current.GetType().GetRuntimeProperty(propertyName)?.GetValue(requiredHandle.Current).ToString();
 
 					//store into variable
-					((object)requiredValue).SetVariableValue(engine, applyToVariable2, nameof(v_UIAActionParameters), this);
+					((object)requiredValue).SetVariableValue(engine, applyToVariable2);
 					break;
 				default:
 					throw new NotImplementedException("Automation type '" + v_AutomationType + "' not supported.");

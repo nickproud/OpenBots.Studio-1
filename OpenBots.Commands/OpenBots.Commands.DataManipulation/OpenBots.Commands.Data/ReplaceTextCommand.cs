@@ -71,7 +71,7 @@ namespace OpenBots.Commands.Data
 
 			replacementVariable = replacementVariable.Replace(replacementText, replacementValue);
 
-			replacementVariable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			replacementVariable.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

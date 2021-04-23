@@ -87,7 +87,7 @@ namespace OpenBots.Commands.BZTerminal
 
 			int startIndex = (mouseY - 1) * 80 + (mouseX - 1);
 			string extractedText = screentext.ToString().Substring(startIndex, length);
-			extractedText.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			extractedText.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

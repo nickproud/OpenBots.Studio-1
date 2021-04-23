@@ -129,207 +129,207 @@ namespace OpenBots.Commands.Outlook
             switch (v_Property)
             {
                 case "AlternateRecipientAllowed":
-                    item.AlternateRecipientAllowed.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.AlternateRecipientAllowed.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Attachments":
                     foreach(Attachment attachment in item.Attachments)
                         output = output + attachment.FileName + "\n";
 
-                    output.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    output.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "AutoForwarded":
-                    item.AutoForwarded.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.AutoForwarded.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "BCC":
-                    item.BCC.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.BCC.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "BillingInformation":
-                    item.BillingInformation.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.BillingInformation.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Body":
-                    item.Body.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Body.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "BodyFormat":
-                    item.BodyFormat.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.BodyFormat.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Categories":
-                    item.Categories.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Categories.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "CC":
-                    item.CC.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.CC.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Companies":
-                    item.Companies.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Companies.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ConversationID":
-                    item.ConversationID.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ConversationID.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ConversationIndex":
-                    item.ConversationIndex.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ConversationIndex.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ConversationTopic":
-                    item.ConversationTopic.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ConversationTopic.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "CreationTime":
-                    item.CreationTime.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.CreationTime.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "DeferredDeliveryTime":
-                    item.DeferredDeliveryTime.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.DeferredDeliveryTime.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "DeleteAfterSubmit":
-                    item.DeleteAfterSubmit.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.DeleteAfterSubmit.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "DownloadState":
-                    item.DownloadState.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.DownloadState.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "EntryID":
-                    item.EntryID.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.EntryID.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ExpiryTime":
-                    item.ExpiryTime.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ExpiryTime.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "HTMLBody":
-                    item.HTMLBody.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.HTMLBody.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Importance":
-                    item.Importance.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Importance.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "InternetCodepage":
-                    item.InternetCodepage.ToString().Length.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.InternetCodepage.ToString().Length.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "IsConflict":
-                    item.IsConflict.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.IsConflict.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "IsMarkedAsTask":
-                    item.IsMarkedAsTask.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.IsMarkedAsTask.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "LastModificationTime":
-                    item.LastModificationTime.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.LastModificationTime.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "MarkForDownload":
-                    item.MarkForDownload.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.MarkForDownload.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "MessageClass":
-                    item.MessageClass.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.MessageClass.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Mileage":
-                    item.Mileage.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Mileage.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "NoAging":
-                    item.NoAging.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.NoAging.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "OriginatorDeliveryReportRequested":
-                    item.OriginatorDeliveryReportRequested.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.OriginatorDeliveryReportRequested.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Permission":
-                    item.Permission.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Permission.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "PermissionService":
-                    item.PermissionService.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.PermissionService.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "PermissionTemplateGuid":
-                    item.PermissionTemplateGuid.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.PermissionTemplateGuid.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ReadReceiptRequested":
-                    item.ReadReceiptRequested.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ReadReceiptRequested.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ReceivedByEntryID":
-                    item.ReceivedByEntryID.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ReceivedByEntryID.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ReceivedByName":
-                    item.ReceivedByName.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ReceivedByName.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ReceivedOnBehalfOfEntryID":
-                    item.ReceivedOnBehalfOfEntryID.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ReceivedOnBehalfOfEntryID.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ReceivedOnBehalfOfName":
-                    item.ReceivedOnBehalfOfName.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ReceivedOnBehalfOfName.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ReceivedTime":
-                    item.ReceivedTime.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ReceivedTime.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "RecipientReassignmentProhibited":
-                    item.RecipientReassignmentProhibited.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.RecipientReassignmentProhibited.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Recipients":
                     foreach(Recipient rec in item.Recipients)
                     {
                         output = output + rec.Address + ";";
                     }
-                    output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ReminderSet":
-                    item.ReminderSet.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ReminderSet.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ReminderTime":
-                    item.ReminderTime.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ReminderTime.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "RemoteStatus":
-                    item.RemoteStatus.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.RemoteStatus.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ReplyRecipientNames":
-                    item.ReplyRecipientNames.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.ReplyRecipientNames.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "ReplyRecipients":
                     foreach(Recipient rec in item.ReplyRecipients)
                     {
                         output = output + rec.Address + ";";
                     }
-                    output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    output.Substring(0, output.Length - 1).SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "RetentionExpirationDate":
-                    item.RetentionExpirationDate.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.RetentionExpirationDate.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "RetentionPolicyName":
-                    item.RetentionPolicyName.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.RetentionPolicyName.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Saved":
-                    item.Saved.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Saved.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "SenderEmailAddress":
-                    item.SenderEmailAddress.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.SenderEmailAddress.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "SenderEmailType":
-                    item.SenderEmailType.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.SenderEmailType.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "SenderName":
-                    item.SenderName.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.SenderName.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Sent":
-                    item.Sent.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Sent.ToString().SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "SentOn":
-                    item.SentOn.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.SentOn.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "SentOnBehalfOfName":
-                    item.SentOnBehalfOfName.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.SentOnBehalfOfName.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Size":
-                    item.Size.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Size.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Subject":
-                    item.Subject.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Subject.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "Submitted":
-                    item.Submitted.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.Submitted.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "TaskCompletedDate":
-                    item.TaskCompletedDate.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.TaskCompletedDate.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "TaskDueDate":
-                    item.TaskDueDate.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.TaskDueDate.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "TaskStartDate":
-                    item.TaskStartDate.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.TaskStartDate.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "TaskSubject":
-                    item.TaskSubject.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.TaskSubject.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "To":
-                    item.To.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.To.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 case "UnRead":
-                    item.UnRead.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+                    item.UnRead.SetVariableValue(engine, v_OutputUserVariableName);
                     break;
                 default:
                     throw new NotImplementedException($"Property '{v_Property}' has not been implemented.");

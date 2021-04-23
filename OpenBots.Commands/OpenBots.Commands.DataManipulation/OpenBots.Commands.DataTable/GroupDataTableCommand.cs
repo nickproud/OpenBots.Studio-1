@@ -90,7 +90,7 @@ namespace OpenBots.Commands.DataTable
 						group table by new { placeCol = table[columnName] } into dataTableGroup
 						select dataTableGroup.ToList().CopyToDataTable()).ToList();
 
-			dataTableList.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			dataTableList.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

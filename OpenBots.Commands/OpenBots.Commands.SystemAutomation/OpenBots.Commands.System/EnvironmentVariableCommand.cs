@@ -89,7 +89,7 @@ namespace OpenBots.Commands.System
 			if (string.IsNullOrEmpty(envValue))
 				envValue = "null";
 
-			envValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			envValue.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

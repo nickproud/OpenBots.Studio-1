@@ -63,7 +63,7 @@ namespace OpenBots.Commands.DataTable
 
 			DataRow row = dataTable.Rows[index];
 
-			row.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			row.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

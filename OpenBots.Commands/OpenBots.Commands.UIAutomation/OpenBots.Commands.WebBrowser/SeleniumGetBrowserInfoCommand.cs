@@ -89,7 +89,7 @@ namespace OpenBots.Commands.WebBrowser
 					throw new NotImplementedException($"{v_InfoType} is not implemented for lookup.");
 			}
 			//store data
-			info.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			info.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -76,7 +76,7 @@ namespace OpenBots.Commands.List
 				dynamicList.Add(dynamicItem);
 			}
 
-			((object)dynamicList).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)dynamicList).SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

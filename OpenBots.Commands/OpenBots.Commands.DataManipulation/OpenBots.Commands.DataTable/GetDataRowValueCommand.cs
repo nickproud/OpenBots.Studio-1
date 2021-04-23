@@ -83,7 +83,7 @@ namespace OpenBots.Commands.DataTable
 				value = dataRow.Field<dynamic>(columnName);
 			}
 
-			((object)value).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)value).SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

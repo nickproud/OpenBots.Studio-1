@@ -52,7 +52,7 @@ namespace OpenBots.Commands.Data
 
 			var result = Convert.ToDouble(await v_MathExpression.EvaluateCode(engine, nameof(v_MathExpression), this));
 
-			result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			result.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

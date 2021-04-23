@@ -92,7 +92,7 @@ namespace OpenBots.Commands.Data
 				foreach (var result in searchResults)
 					resultList.Add(result.ToString());
 
-				resultList.SetVariableValue(engine, targetVariableName, nameof(v_ParseObjects), this);               
+				resultList.SetVariableValue(engine, targetVariableName);               
 			}
 		}
 

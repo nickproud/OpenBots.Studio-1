@@ -476,9 +476,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				{
 
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.SetVariableValue(engine, "Error.Message", propertyName, parent);
-					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", propertyName, parent);
-					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", propertyName, parent);
+					error.ErrorMessage.SetVariableValue(engine, "Error.Message");
+					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line");
+					error.StackTrace.SetVariableValue(engine, "Error.StackTrace");
 
 					ifResult = true;
 				}
@@ -500,9 +500,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				else
 				{
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.SetVariableValue(engine, "Error.Message", propertyName, parent);
-					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line", propertyName, parent);
-					error.StackTrace.SetVariableValue(engine, "Error.StackTrace", propertyName, parent);
+					error.ErrorMessage.SetVariableValue(engine, "Error.Message");
+					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line");
+					error.StackTrace.SetVariableValue(engine, "Error.StackTrace");
 
 					ifResult = false;
 				}

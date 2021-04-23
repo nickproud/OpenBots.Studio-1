@@ -358,9 +358,9 @@ namespace OpenBots.Commands.Image
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 						if (element != null)
-							true.SetVariableValue(engine, outputVariable, nameof(v_ImageActionParameterTable), this);
+							true.SetVariableValue(engine, outputVariable);
 						else
-							false.SetVariableValue(engine, outputVariable, nameof(v_ImageActionParameterTable), this);
+							false.SetVariableValue(engine, outputVariable);
 						break;
 					default:
 						break;

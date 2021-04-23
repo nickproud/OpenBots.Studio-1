@@ -106,7 +106,7 @@ namespace OpenBots.Commands.Data
 			}
 			pdfDoc.Close();
 
-			result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			result.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

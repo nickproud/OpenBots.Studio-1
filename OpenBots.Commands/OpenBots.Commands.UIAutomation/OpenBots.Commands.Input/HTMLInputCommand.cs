@@ -74,7 +74,7 @@ namespace OpenBots.Commands.Input
 				{
 					//store each one into context
 					foreach (var variable in variables)
-						variable.VariableValue.SetVariableValue(engine, variable.VariableName, variable.VariableType);
+						variable.VariableValue.SetVariableValue(engine, variable.VariableName);
 				}
 				else if (v_ErrorOnClose == "Yes")
 					throw new Exception("Input Form was closed by the user");

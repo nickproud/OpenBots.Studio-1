@@ -128,7 +128,7 @@ namespace OpenBots.Commands.DataTable
 								 orderby Convert.ToInt32(row[columnName]) descending
 								 select row).CopyToDataTable();
 			}
-			dataTable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			dataTable.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

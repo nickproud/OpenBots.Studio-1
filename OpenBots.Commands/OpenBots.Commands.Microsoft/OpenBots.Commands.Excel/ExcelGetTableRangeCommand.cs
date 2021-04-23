@@ -76,7 +76,7 @@ namespace OpenBots.Commands.Microsoft
             var excelTable = workSheetExcelTable.ListObjects[vTableName];
 
             //Extract a range of Excel Table and store in Output Range Variable
-            excelTable.Range.Address.Replace(@"$", string.Empty).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+            excelTable.Range.Address.Replace(@"$", string.Empty).SetVariableValue(engine, v_OutputUserVariableName);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

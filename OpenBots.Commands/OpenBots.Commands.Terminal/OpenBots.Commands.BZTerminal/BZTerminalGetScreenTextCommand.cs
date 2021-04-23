@@ -53,7 +53,7 @@ namespace OpenBots.Commands.BZTerminal
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
 			terminalContext.BZTerminalObj.ReadScreen(out object screentext, 2000, 1, 1);
-			screentext.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			screentext.ToString().SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

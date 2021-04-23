@@ -108,7 +108,7 @@ namespace OpenBots.Commands.Email
                 }
             }
             
-            attachmentList.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+            attachmentList.SetVariableValue(engine, v_OutputUserVariableName);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
