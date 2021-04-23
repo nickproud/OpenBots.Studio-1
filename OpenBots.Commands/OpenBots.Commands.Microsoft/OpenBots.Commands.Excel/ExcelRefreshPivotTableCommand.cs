@@ -59,8 +59,8 @@ namespace OpenBots.Commands.Excel
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheet = (string)await v_SheetName.EvaluateCode(engine, nameof(v_SheetName), this);
-            var vPivotTable = (string)await v_PivotTable.EvaluateCode(engine, nameof(v_PivotTable), this);
+            string vSheet = (string)await v_SheetName.EvaluateCode(engine);
+            var vPivotTable = (string)await v_PivotTable.EvaluateCode(engine);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheet = excelInstance.Sheets[vSheet] as Worksheet;

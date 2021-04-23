@@ -53,8 +53,8 @@ namespace OpenBots.Commands.Process
 			var engine = (IAutomationEngineInstance)sender;
 			Diagnostics.Process scriptProc = new Diagnostics.Process();
 
-			string scriptPath = (string)await v_ScriptPath.EvaluateCode(engine, nameof(v_ScriptPath), this);
-			string scriptArgs = (string)await v_ScriptArgs.EvaluateCode(engine, nameof(v_ScriptArgs), this);
+			string scriptPath = (string)await v_ScriptPath.EvaluateCode(engine);
+			string scriptArgs = (string)await v_ScriptArgs.EvaluateCode(engine);
 
 			scriptProc.StartInfo = new ProcessStartInfo()
 			{

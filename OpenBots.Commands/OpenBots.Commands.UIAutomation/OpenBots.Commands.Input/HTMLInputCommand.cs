@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Input
 			}
 
 			//sample for temp testing
-			var htmlInput = (string)await v_InputHTML.EvaluateCode(engine, nameof(v_InputHTML), this);
+			var htmlInput = (string)await v_InputHTML.EvaluateCode(engine);
 
 			//invoke ui for data collection
 			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>

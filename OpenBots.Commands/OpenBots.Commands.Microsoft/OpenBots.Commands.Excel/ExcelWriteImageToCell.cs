@@ -79,9 +79,9 @@ namespace OpenBots.Commands.Excel
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
-			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine, nameof(v_CellLocation), this);
-			var vImagePath = (string)await v_ImagePath.EvaluateCode(engine, nameof(v_ImagePath), this);
-			var vImageScalePercentage = (int)await v_ImageScalePercentage.EvaluateCode(engine, nameof(v_ImageScalePercentage), this);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
+			var vImagePath = (string)await v_ImagePath.EvaluateCode(engine);
+			var vImageScalePercentage = (int)await v_ImageScalePercentage.EvaluateCode(engine);
 
 			if(vImageScalePercentage < 1)
 				throw new DataException("Invalid Image Scale Percentage value, it should be greater than 0.");

@@ -110,13 +110,13 @@ namespace OpenBots.Commands.Email
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MimeMessage vMimeMessageToReply = (MimeMessage)await v_SMTPMimeMessage.EvaluateCode(engine, nameof(v_SMTPMimeMessage), this);
-			string vSMTPHost = (string)await v_SMTPHost.EvaluateCode(engine, nameof(v_SMTPHost), this);
-			string vSMTPPort = (string)await v_SMTPPort.EvaluateCode(engine, nameof(v_SMTPPort), this);
-			string vSMTPUserName = (string)await v_SMTPUserName.EvaluateCode(engine, nameof(v_SMTPUserName), this);
-			string vSMTPPassword = ((SecureString)await v_SMTPPassword.EvaluateCode(engine, nameof(v_SMTPPassword), this)).ConvertSecureStringToString();
-			string vSMTPBody = (string)await v_SMTPBody.EvaluateCode(engine, nameof(v_SMTPBody), this);
-			string vSMTPAttachments = (string)await v_SMTPAttachments.EvaluateCode(engine, nameof(v_SMTPAttachments), this);
+			MimeMessage vMimeMessageToReply = (MimeMessage)await v_SMTPMimeMessage.EvaluateCode(engine);
+			string vSMTPHost = (string)await v_SMTPHost.EvaluateCode(engine);
+			string vSMTPPort = (string)await v_SMTPPort.EvaluateCode(engine);
+			string vSMTPUserName = (string)await v_SMTPUserName.EvaluateCode(engine);
+			string vSMTPPassword = ((SecureString)await v_SMTPPassword.EvaluateCode(engine)).ConvertSecureStringToString();
+			string vSMTPBody = (string)await v_SMTPBody.EvaluateCode(engine);
+			string vSMTPAttachments = (string)await v_SMTPAttachments.EvaluateCode(engine);
 
 			using (var client = new SmtpClient())
 			{

@@ -69,9 +69,9 @@ namespace OpenBots.Commands.Outlook
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            MailItem email = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
+            MailItem email = (MailItem)await v_MailItem.EvaluateCode(engine);
             bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.Equals("Yes");
-            string attDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine, nameof(v_AttachmentDirectory), this);
+            string attDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
 
             List<string> attachmentList = new List<string>();
 

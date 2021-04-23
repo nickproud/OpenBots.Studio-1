@@ -175,14 +175,14 @@ namespace OpenBots.Commands.Email
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string vIMAPHost = (string)await v_IMAPHost.EvaluateCode(engine, nameof(v_IMAPHost), this);
-			string vIMAPPort = (string)await v_IMAPPort.EvaluateCode(engine, nameof(v_IMAPPort), this);
-			string vIMAPUserName = (string)await v_IMAPUserName.EvaluateCode(engine, nameof(v_IMAPUserName), this);
-			string vIMAPPassword = ((SecureString)await v_IMAPPassword.EvaluateCode(engine, nameof(v_IMAPPassword), this)).ConvertSecureStringToString();
-			string vIMAPSourceFolder = (string)await v_IMAPSourceFolder.EvaluateCode(engine, nameof(v_IMAPSourceFolder), this);
-			string vIMAPFilter = (string)await v_IMAPFilter.EvaluateCode(engine, nameof(v_IMAPFilter), this);
-			string vIMAPMessageDirectory = (string)await v_IMAPMessageDirectory.EvaluateCode(engine, nameof(v_IMAPMessageDirectory), this);
-			string vIMAPAttachmentDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine, nameof(v_IMAPAttachmentDirectory), this);
+			string vIMAPHost = (string)await v_IMAPHost.EvaluateCode(engine);
+			string vIMAPPort = (string)await v_IMAPPort.EvaluateCode(engine);
+			string vIMAPUserName = (string)await v_IMAPUserName.EvaluateCode(engine);
+			string vIMAPPassword = ((SecureString)await v_IMAPPassword.EvaluateCode(engine)).ConvertSecureStringToString();
+			string vIMAPSourceFolder = (string)await v_IMAPSourceFolder.EvaluateCode(engine);
+			string vIMAPFilter = (string)await v_IMAPFilter.EvaluateCode(engine);
+			string vIMAPMessageDirectory = (string)await v_IMAPMessageDirectory.EvaluateCode(engine);
+			string vIMAPAttachmentDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine);
 
 			using (var client = new ImapClient())
 			{

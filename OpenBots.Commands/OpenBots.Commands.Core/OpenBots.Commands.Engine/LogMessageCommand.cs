@@ -70,8 +70,8 @@ namespace OpenBots.Commands.Engine
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get text to log and log file name       
-			var textToLog = (string)await v_LogText.EvaluateCode(engine, nameof(v_LogText), this);
-			var loggerFilePath = (string)await v_LogFile.EvaluateCode(engine, nameof(v_LogFile), this);
+			var textToLog = (string)await v_LogText.EvaluateCode(engine);
+			var loggerFilePath = (string)await v_LogFile.EvaluateCode(engine);
 
 			//determine log file
 			if (v_LogFile == "Engine Logs")

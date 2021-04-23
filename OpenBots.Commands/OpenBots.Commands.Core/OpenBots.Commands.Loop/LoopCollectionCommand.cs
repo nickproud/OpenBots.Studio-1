@@ -56,7 +56,7 @@ namespace OpenBots.Commands.Loop
 			LoopCollectionCommand loopCommand = (LoopCollectionCommand)parentCommand.ScriptCommand;
 			var engine = (IAutomationEngineInstance)sender;
 
-			var complexVariable = await v_LoopParameter.EvaluateCode(engine, nameof(v_LoopParameter), this);
+			var complexVariable = await v_LoopParameter.EvaluateCode(engine);
 			dynamic dynamicLoopVariable = complexVariable;
 
 			int loopTimes = dynamicLoopVariable.Count;

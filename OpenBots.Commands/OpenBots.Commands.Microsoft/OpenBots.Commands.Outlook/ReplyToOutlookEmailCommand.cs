@@ -80,9 +80,9 @@ namespace OpenBots.Commands.Outlook
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
-			var vBody = (string)await v_Body.EvaluateCode(engine, nameof(v_Body), this);
-			var vAttachment = (string)await v_Attachments.EvaluateCode(engine, nameof(v_Attachments), this);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
+			var vBody = (string)await v_Body.EvaluateCode(engine);
+			var vAttachment = (string)await v_Attachments.EvaluateCode(engine);
 		   
 			if (v_OperationType == "Reply")
 			{

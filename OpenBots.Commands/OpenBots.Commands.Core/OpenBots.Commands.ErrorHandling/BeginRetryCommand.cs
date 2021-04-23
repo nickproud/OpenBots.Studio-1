@@ -93,8 +93,8 @@ namespace OpenBots.Commands.ErrorHandling
 			var engine = (IAutomationEngineInstance)sender;
 			var retryCommand = (BeginRetryCommand)parentCommand.ScriptCommand;
 
-			int retryCount = (int)await retryCommand.v_RetryCount.EvaluateCode(engine, nameof(v_RetryCount), this);
-			int retryInterval = ((int)await retryCommand.v_RetryInterval.EvaluateCode(engine, nameof(v_RetryInterval), this))*1000;
+			int retryCount = (int)await retryCommand.v_RetryCount.EvaluateCode(engine);
+			int retryInterval = ((int)await retryCommand.v_RetryInterval.EvaluateCode(engine))*1000;
 			bool exceptionOccurred;
 
 			for(int startIndex = 0; startIndex < retryCount; startIndex++)
@@ -267,8 +267,7 @@ namespace OpenBots.Commands.ErrorHandling
 			{
 				var commandData = rw["CommandData"].ToString();
 				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
-				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable, 
-					"v_ActionParameterTable", ifCommand);
+				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
 
 				if (!statementResult && v_LogicType == "And")
 				{

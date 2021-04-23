@@ -105,9 +105,9 @@ namespace OpenBots.Commands.Data
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine, nameof(v_ToStringFormat), this);
-			var variableIncrement = Convert.ToDouble(await v_Increment.EvaluateCode(engine, nameof(v_Increment), this));
-			DateTime variableDate = (DateTime)await v_InputDate.EvaluateCode(engine, nameof(v_InputDate), this);
+			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine);
+			var variableIncrement = Convert.ToDouble(await v_Increment.EvaluateCode(engine));
+			DateTime variableDate = (DateTime)await v_InputDate.EvaluateCode(engine);
 
 			//get increment value
 			double requiredInterval = variableIncrement;

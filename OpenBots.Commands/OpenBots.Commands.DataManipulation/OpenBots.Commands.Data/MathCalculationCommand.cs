@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Data
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var result = Convert.ToDouble(await v_MathExpression.EvaluateCode(engine, nameof(v_MathExpression), this));
+			var result = Convert.ToDouble(await v_MathExpression.EvaluateCode(engine));
 
 			result.SetVariableValue(engine, v_OutputUserVariableName);
 		}

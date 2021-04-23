@@ -41,7 +41,7 @@ namespace OpenBots.Commands.File
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine, nameof(v_SourceFilePath), this);
+			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine);
 
 			if (!IO.File.Exists(sourceFile))
 				throw new IO.FileNotFoundException($"{sourceFile} is not a valid file path");

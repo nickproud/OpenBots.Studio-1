@@ -58,7 +58,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             var engine = (IAutomationEngineInstance)sender;
 
-            string IEBrowserName = (string)await v_IEBrowserName.EvaluateCode(engine, nameof(v_IEBrowserName), this);
+            string IEBrowserName = (string)await v_IEBrowserName.EvaluateCode(engine);
             bool browserFound = false;
             var shellWindows = new ShellWindows();
             foreach (IWebBrowser2 shellWindow in shellWindows)

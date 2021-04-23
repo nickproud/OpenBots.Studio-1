@@ -112,8 +112,8 @@ namespace OpenBots.Commands.Database
 		{
 			//create engine, instance, query
 			var engine = (IAutomationEngineInstance)sender;
-			var query = (string)await v_Query.EvaluateCode(engine, nameof(v_QueryParameters), this);
-			var vQueryTimeout = (string)await v_QueryTimeout.EvaluateCode(engine, nameof(v_QueryParameters), this);
+			var query = (string)await v_Query.EvaluateCode(engine);
+			var vQueryTimeout = (string)await v_QueryTimeout.EvaluateCode(engine);
 
 			//define connection
 			var databaseConnection = (OleDbConnection)v_InstanceName.GetAppInstance(engine);
@@ -125,9 +125,9 @@ namespace OpenBots.Commands.Database
 			//add parameters
 			foreach (DataRow rw in v_QueryParameters.Rows)
 			{
-				var parameterName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine, nameof(v_QueryParameters), this);
-				var parameterValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine, nameof(v_QueryParameters), this);
-				var parameterType = (string)await rw.Field<string>("Parameter Type").EvaluateCode(engine, nameof(v_QueryParameters), this);
+				var parameterName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine);
+				var parameterValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine);
+				var parameterType = (string)await rw.Field<string>("Parameter Type").EvaluateCode(engine);
 
 				object convertedValue = null;
 				switch (parameterType)

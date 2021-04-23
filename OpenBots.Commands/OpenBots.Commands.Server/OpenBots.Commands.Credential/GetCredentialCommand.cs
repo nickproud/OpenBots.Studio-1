@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Credential
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vCredentialName = (string)await v_CredentialName.EvaluateCode(engine, nameof(v_CredentialName), this);
+			var vCredentialName = (string)await v_CredentialName.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			var credential = CredentialMethods.GetCredential(client, $"name eq '{vCredentialName}'");

@@ -56,11 +56,11 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableInput = (string)await v_JsonObject.EvaluateCode(engine, nameof(v_JsonObject), this);
+			var variableInput = (string)await v_JsonObject.EvaluateCode(engine);
 
 			foreach (DataRow rw in v_ParseObjects.Rows)
 			{
-				var jsonSelector = (string)await rw.Field<string>("Json Selector").EvaluateCode(engine, nameof(v_ParseObjects), this);
+				var jsonSelector = (string)await rw.Field<string>("Json Selector").EvaluateCode(engine);
 				var targetVariableName = rw.Field<string>("Output Variable");
 
 				//create objects

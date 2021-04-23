@@ -110,14 +110,14 @@ namespace OpenBots.Commands.Email
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string vSMTPHost = (string)await v_SMTPHost.EvaluateCode(engine, nameof(v_SMTPHost), this);
-			string vSMTPPort = (string)await v_SMTPPort.EvaluateCode(engine, nameof(v_SMTPPort), this);
-			string vSMTPUserName = (string)await v_SMTPUserName.EvaluateCode(engine, nameof(v_SMTPUserName), this);
-			string vSMTPPassword = ((SecureString)await v_SMTPPassword.EvaluateCode(engine, nameof(v_SMTPPassword), this)).ConvertSecureStringToString();
-			string vSMTPRecipients = (string)await v_SMTPRecipients.EvaluateCode(engine, nameof(v_SMTPRecipients), this);
-			string vSMTPSubject = (string)await v_SMTPSubject.EvaluateCode(engine, nameof(v_SMTPSubject), this);
-			string vSMTPBody = (string)await v_SMTPBody.EvaluateCode(engine, nameof(v_SMTPBody), this);
-			string vSMTPAttachments = (string)await v_SMTPAttachments.EvaluateCode(engine, nameof(v_SMTPAttachments), this);
+			string vSMTPHost = (string)await v_SMTPHost.EvaluateCode(engine);
+			string vSMTPPort = (string)await v_SMTPPort.EvaluateCode(engine);
+			string vSMTPUserName = (string)await v_SMTPUserName.EvaluateCode(engine);
+			string vSMTPPassword = ((SecureString)await v_SMTPPassword.EvaluateCode(engine)).ConvertSecureStringToString();
+			string vSMTPRecipients = (string)await v_SMTPRecipients.EvaluateCode(engine);
+			string vSMTPSubject = (string)await v_SMTPSubject.EvaluateCode(engine);
+			string vSMTPBody = (string)await v_SMTPBody.EvaluateCode(engine);
+			string vSMTPAttachments = (string)await v_SMTPAttachments.EvaluateCode(engine);
 
 			using (var client = new SmtpClient())
 			{

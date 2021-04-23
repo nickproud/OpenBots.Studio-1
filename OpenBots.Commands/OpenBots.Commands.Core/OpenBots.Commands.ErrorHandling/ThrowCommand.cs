@@ -64,7 +64,7 @@ namespace OpenBots.Commands.ErrorHandling
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var exceptionMessage = (string)await v_ExceptionMessage.EvaluateCode(engine, nameof(v_ExceptionMessage), this);
+			var exceptionMessage = (string)await v_ExceptionMessage.EvaluateCode(engine);
 
 			Exception ex;
 			switch(v_ExceptionType)

@@ -79,7 +79,7 @@ namespace OpenBots.Commands.System
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var environmentVariable = (string)await v_EnvVariableName.EvaluateCode(engine, nameof(v_EnvVariableName), this);
+			var environmentVariable = (string)await v_EnvVariableName.EvaluateCode(engine);
 			
 			var envVariables = Environment.GetEnvironmentVariables();
 			var envDict = envVariables.Keys.Cast<object>().ToDictionary(k => k.ToString(), v => envVariables[v]);

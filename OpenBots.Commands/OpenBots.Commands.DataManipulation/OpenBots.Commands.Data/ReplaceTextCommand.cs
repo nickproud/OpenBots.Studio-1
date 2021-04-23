@@ -65,9 +65,9 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string replacementVariable = (string)await v_InputText.EvaluateCode(engine, nameof(v_InputText), this);
-			string replacementText = (string)await v_OldText.EvaluateCode(engine, nameof(v_OldText), this);
-			string replacementValue = (string)await v_NewText.EvaluateCode(engine, nameof(v_NewText), this);
+			string replacementVariable = (string)await v_InputText.EvaluateCode(engine);
+			string replacementText = (string)await v_OldText.EvaluateCode(engine);
+			string replacementValue = (string)await v_NewText.EvaluateCode(engine);
 
 			replacementVariable = replacementVariable.Replace(replacementText, replacementValue);
 

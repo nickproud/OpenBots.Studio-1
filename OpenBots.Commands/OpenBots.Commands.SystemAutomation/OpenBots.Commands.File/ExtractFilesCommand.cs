@@ -73,13 +73,13 @@ namespace OpenBots.Commands.File
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable path to source file
-			var vSourceFilePathOrigin = (string)await v_FilePathOrigin.EvaluateCode(engine, nameof(v_FilePathOrigin), this);
+			var vSourceFilePathOrigin = (string)await v_FilePathOrigin.EvaluateCode(engine);
 
 			if (!(IO.File.Exists(vSourceFilePathOrigin) && vSourceFilePathOrigin.Contains(".zip")))
 				throw new FileNotFoundException($"{vSourceFilePathOrigin} is not a valid zip file");
 
 			// get file path to destination files
-			var vFilePathDestination = (string)await v_PathDestination.EvaluateCode(engine, nameof(v_PathDestination), this);
+			var vFilePathDestination = (string)await v_PathDestination.EvaluateCode(engine);
 
 			if (!Directory.Exists(vFilePathDestination))
 				throw new DirectoryNotFoundException($"{vFilePathDestination} is not a valid directory");
@@ -94,7 +94,7 @@ namespace OpenBots.Commands.File
 			// get password to extract files
 			var vPassword = "";
 			if (string.IsNullOrEmpty(v_Password))
-				vPassword = ((SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+				vPassword = ((SecureString)await v_Password.EvaluateCode(engine)).ConvertSecureStringToString();
 
 			FileStream fs = IO.File.OpenRead(vSourceFilePathOrigin);
 			ZipFile file = new ZipFile(fs);

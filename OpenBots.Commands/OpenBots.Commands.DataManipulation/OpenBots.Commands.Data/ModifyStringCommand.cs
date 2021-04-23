@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var stringValue = (string)await v_InputText.EvaluateCode(engine, nameof(v_InputText), this);
+			var stringValue = (string)await v_InputText.EvaluateCode(engine);
 
 			switch (v_TextOperation)
 			{

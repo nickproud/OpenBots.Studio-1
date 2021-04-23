@@ -69,12 +69,12 @@ namespace OpenBots.Commands.Dictionary
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic dynamicDict = await v_DictionaryName.EvaluateCode(engine, nameof(v_DictionaryName), this);
+			dynamic dynamicDict = await v_DictionaryName.EvaluateCode(engine);
 
 			foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 			{
-				dynamic dynamicKey = await rwColumnName.Field<string>("Keys").EvaluateCode(engine, nameof(v_ColumnNameDataTable), this);
-				dynamic dynamicValue = await rwColumnName.Field<string>("Values").EvaluateCode(engine, nameof(v_ColumnNameDataTable), this);
+				dynamic dynamicKey = await rwColumnName.Field<string>("Keys").EvaluateCode(engine);
+				dynamic dynamicValue = await rwColumnName.Field<string>("Values").EvaluateCode(engine);
 
 				dynamicDict.Add(dynamicKey, dynamicValue);
 			}

@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableInput = (string)await v_JsonArrayName.EvaluateCode(engine, nameof(v_JsonArrayName), this);
+			var variableInput = (string)await v_JsonArrayName.EvaluateCode(engine);
 
 			//create objects
 			JArray arr;

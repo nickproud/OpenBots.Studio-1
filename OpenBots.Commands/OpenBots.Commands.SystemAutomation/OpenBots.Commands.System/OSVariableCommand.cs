@@ -58,7 +58,7 @@ namespace OpenBots.Commands.System
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var systemVariable = (string)await v_OSVariableName.EvaluateCode(engine, nameof(v_OSVariableName), this);
+			var systemVariable = (string)await v_OSVariableName.EvaluateCode(engine);
 
 			ObjectQuery wql = new ObjectQuery("SELECT * FROM Win32_OperatingSystem");
 			ManagementObjectSearcher searcher = new ManagementObjectSearcher(wql);

@@ -80,10 +80,10 @@ namespace OpenBots.Commands.Outlook
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vRecipients = (string)await v_Recipients.EvaluateCode(engine, nameof(v_Recipients), this);
-			var vAttachment = (string)await v_Attachments.EvaluateCode(engine, nameof(v_Attachments), this);
-			var vSubject = (string)await v_Subject.EvaluateCode(engine, nameof(v_Subject), this);
-			var vBody = (string)await v_Body.EvaluateCode(engine, nameof(v_Body), this);
+			var vRecipients = (string)await v_Recipients.EvaluateCode(engine);
+			var vAttachment = (string)await v_Attachments.EvaluateCode(engine);
+			var vSubject = (string)await v_Subject.EvaluateCode(engine);
+			var vBody = (string)await v_Body.EvaluateCode(engine);
 			var splitRecipients = vRecipients.Split(';');
 
 			Application outlookApp = new Application();

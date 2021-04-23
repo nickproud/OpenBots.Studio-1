@@ -80,12 +80,12 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var dataRowValue = await v_DataRowValue.EvaluateCode(engine, nameof(v_DataRowValue), this);
+			var dataRowValue = await v_DataRowValue.EvaluateCode(engine);
 
-			var dataRowVariable = await v_DataRow.EvaluateCode(engine, nameof(v_DataRow), this);
+			var dataRowVariable = await v_DataRow.EvaluateCode(engine);
 			DataRow dataRow = (DataRow)dataRowVariable;
 
-			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine, nameof(v_DataValueIndex), this);
+			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
 			if (v_Option == "Column Index")
 			{

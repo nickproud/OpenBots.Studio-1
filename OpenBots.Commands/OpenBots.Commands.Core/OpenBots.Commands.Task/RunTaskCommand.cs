@@ -97,7 +97,7 @@ namespace OpenBots.Commands.Task
 				return;
 			}
 
-			var childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance, nameof(v_TaskPath), this);
+			var childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance);
 			if (!File.Exists(childTaskPath))
 				throw new FileNotFoundException("Task file was not found");
 
@@ -271,7 +271,7 @@ namespace OpenBots.Commands.Task
 				if (startFile.Contains("ProjectPath +"))
 					startFile = startFile.Replace("ProjectPath +", $"@\"{editor.ScriptEngineContext.ProjectPath}\" + ");
 
-				startFile = (string)await startFile.EvaluateCode(currentScriptEngine, nameof(v_TaskPath), this);
+				startFile = (string)await startFile.EvaluateCode(currentScriptEngine);
 
 				if (!isMouseEnter && File.Exists(startFile))
                 {
@@ -323,7 +323,7 @@ namespace OpenBots.Commands.Task
 		private async void RunServerTask(object sender)
 		{
 			var parentAutomationEngineInstance = (IAutomationEngineInstance)sender;
-			string childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance, nameof(v_TaskPath), this);
+			string childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance);
 			string parentTaskPath = parentAutomationEngineInstance.FileName;
 
 			//create argument list
@@ -370,7 +370,7 @@ namespace OpenBots.Commands.Task
 
 				if (argumentDirection == "In" || argumentDirection == "InOut")
                 {
-					argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, nameof(v_ArgumentAssignments), this);
+					argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance);
 
 					_argumentList.Add(new ScriptArgument
 					{
@@ -384,7 +384,7 @@ namespace OpenBots.Commands.Task
                 if (argumentDirection == "Out" || argumentDirection == "InOut")
                 {
 					//verify whether the assigned variable/argument exists
-					await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, nameof(v_ArgumentAssignments), this);
+					await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance);
 
 					var existingArg = _argumentList.Where(x => x.ArgumentName == argumentName).FirstOrDefault();
 					if (existingArg != null)

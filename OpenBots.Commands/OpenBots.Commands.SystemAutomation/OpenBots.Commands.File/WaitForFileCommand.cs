@@ -53,8 +53,8 @@ namespace OpenBots.Commands.File
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//convert items to variables
-			var fileName = (string)await v_FileName.EvaluateCode(engine, nameof(v_FileName), this);
-			var pauseTime = (int)await v_WaitTime.EvaluateCode(engine, nameof(v_WaitTime), this);
+			var fileName = (string)await v_FileName.EvaluateCode(engine);
+			var pauseTime = (int)await v_WaitTime.EvaluateCode(engine);
 
 			//determine when to stop waiting based on user config
 			var stopWaiting = DateTime.Now.AddSeconds(pauseTime);

@@ -63,7 +63,7 @@ namespace OpenBots.Commands.DataTable
 
 			foreach(DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 			{
-				string columnName = (string)await rwColumnName.Field<string>("Column Name").EvaluateCode(engine, nameof(v_ColumnNameDataTable), this);
+				string columnName = (string)await rwColumnName.Field<string>("Column Name").EvaluateCode(engine);
 				Dt.Columns.Add(columnName);
 			}
 

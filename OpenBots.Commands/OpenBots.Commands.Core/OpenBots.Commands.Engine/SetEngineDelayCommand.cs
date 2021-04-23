@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Engine
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var delay = (int)await v_EngineDelay.EvaluateCode(engine, nameof(v_EngineDelay), this);
+			var delay = (int)await v_EngineDelay.EvaluateCode(engine);
 
 			//update delay setting
 			engine.EngineSettings.DelayBetweenCommands = delay;

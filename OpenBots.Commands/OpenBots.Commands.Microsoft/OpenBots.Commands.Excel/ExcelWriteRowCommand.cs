@@ -64,8 +64,8 @@ namespace OpenBots.Commands.Excel
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;          
-			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine, nameof(v_CellLocation), this);
-			dynamic vRow = await v_RowToSet.EvaluateCode(engine, nameof(v_RowToSet), this);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
+			dynamic vRow = await v_RowToSet.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;

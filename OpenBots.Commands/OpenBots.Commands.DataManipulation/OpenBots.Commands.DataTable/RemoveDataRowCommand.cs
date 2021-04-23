@@ -110,8 +110,8 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic vSearchItem = await v_Index.EvaluateCode(engine, nameof(v_Index), this);
-			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
+			dynamic vSearchItem = await v_Index.EvaluateCode(engine);
+			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine);
 
 			if(v_RemoveOption == "Index")
                 Dt.Rows[(int)vSearchItem].Delete();
@@ -123,8 +123,8 @@ namespace OpenBots.Commands.DataTable
 		
 					foreach (DataRow rw in v_DataRowDataTable.Rows)
 					{
-						var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
-						var data = await rw.Field<dynamic>("Data").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
+						var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
+						var data = await rw.Field<dynamic>("Data").EvaluateCode(engine);
 
 						foreach (DataRow row in Dt.Rows)
 						{
@@ -152,8 +152,8 @@ namespace OpenBots.Commands.DataTable
 
 					foreach (DataRow rw in v_DataRowDataTable.Rows)
 					{
-						var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
-						var data = await rw.Field<dynamic>("Data").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
+						var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
+						var data = await rw.Field<dynamic>("Data").EvaluateCode(engine);
 
 						foreach (DataRow row in Dt.Rows)
 						{

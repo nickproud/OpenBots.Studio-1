@@ -123,7 +123,7 @@ namespace OpenBots.Commands.Outlook
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            MailItem item = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
+            MailItem item = (MailItem)await v_MailItem.EvaluateCode(engine);
 
             string output = "";
             switch (v_Property)

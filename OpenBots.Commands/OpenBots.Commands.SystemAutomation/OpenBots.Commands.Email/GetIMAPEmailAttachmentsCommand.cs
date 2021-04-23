@@ -71,8 +71,8 @@ namespace OpenBots.Commands.Email
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            MimeMessage email = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine, nameof(v_IMAPMimeMessage), this);
-            string attDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine, nameof(v_IMAPAttachmentDirectory), this);
+            MimeMessage email = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine);
+            string attDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine);
 
             bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.Equals("Yes");
             List<string> attachmentList = new List<string>();

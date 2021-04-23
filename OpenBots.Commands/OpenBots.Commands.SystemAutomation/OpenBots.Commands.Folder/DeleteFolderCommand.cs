@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Folder
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine, nameof(v_SourceFolderPath), this);
+			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine);
 
 			//delete folder
 			Directory.Delete(sourceFolder, true);

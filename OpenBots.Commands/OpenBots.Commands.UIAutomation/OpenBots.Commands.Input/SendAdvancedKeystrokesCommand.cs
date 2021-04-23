@@ -71,7 +71,7 @@ namespace OpenBots.Commands.Input
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 
 			//activate anything except current window
 			if (variableWindowName != "Current Window")

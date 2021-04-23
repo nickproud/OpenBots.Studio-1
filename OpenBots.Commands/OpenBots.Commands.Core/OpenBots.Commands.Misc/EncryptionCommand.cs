@@ -71,8 +71,8 @@ namespace OpenBots.Commands.Misc
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var variableInput = (string)await v_InputValue.EvaluateCode(engine, nameof(v_InputValue), this);
-			var passphrase = (string)await v_PassPhrase.EvaluateCode(engine, nameof(v_PassPhrase), this);
+			var variableInput = (string)await v_InputValue.EvaluateCode(engine);
+			var passphrase = (string)await v_PassPhrase.EvaluateCode(engine);
 
 			string resultData = "";
 			if (v_EncryptionType == "Encrypt")

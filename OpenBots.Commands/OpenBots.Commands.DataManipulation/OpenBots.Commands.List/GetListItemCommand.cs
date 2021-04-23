@@ -59,8 +59,8 @@ namespace OpenBots.Commands.List
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var itemIndex = (int)await v_ItemIndex.EvaluateCode(engine, nameof(v_ItemIndex), this);
-			dynamic dynamicList = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
+			var itemIndex = (int)await v_ItemIndex.EvaluateCode(engine);
+			dynamic dynamicList = await v_ListName.EvaluateCode(engine);
 
 			dynamic dynamicItem = dynamicList[itemIndex];
 

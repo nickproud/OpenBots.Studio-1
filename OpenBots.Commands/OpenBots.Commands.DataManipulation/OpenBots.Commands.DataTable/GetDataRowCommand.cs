@@ -58,8 +58,8 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
-			int index = (int)await v_DataRowIndex.EvaluateCode(engine, nameof(v_DataRowIndex), this);
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
+			int index = (int)await v_DataRowIndex.EvaluateCode(engine);
 
 			DataRow row = dataTable.Rows[index];
 

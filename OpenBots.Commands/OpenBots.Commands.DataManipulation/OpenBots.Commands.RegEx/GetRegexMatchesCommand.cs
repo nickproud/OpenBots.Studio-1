@@ -60,8 +60,8 @@ namespace OpenBots.Commands.RegEx
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vInputData = (string)await v_InputText.EvaluateCode(engine, nameof(v_InputText), this);
-			string vRegex = (string)await v_Regex.EvaluateCode(engine, nameof(v_Regex), this);
+			var vInputData = (string)await v_InputText.EvaluateCode(engine);
+			string vRegex = (string)await v_Regex.EvaluateCode(engine);
 
 			var matches = (from match in Regex.Matches(vInputData, vRegex).Cast<Match>() 
 						   select match.Groups[0].Value).ToList();

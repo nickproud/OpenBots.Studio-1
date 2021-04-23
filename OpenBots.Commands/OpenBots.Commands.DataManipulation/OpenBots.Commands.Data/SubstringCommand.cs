@@ -64,13 +64,13 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var inputText = (string)await v_InputText.EvaluateCode(engine, nameof(v_InputText), this);
-			var startIndex = (int)await v_StartIndex.EvaluateCode(engine, nameof(v_StartIndex), this);
+			var inputText = (string)await v_InputText.EvaluateCode(engine);
+			var startIndex = (int)await v_StartIndex.EvaluateCode(engine);
 
 			int length = -1;
 
 			if(!string.IsNullOrEmpty(v_StringLength))
-				length = (int)await v_StringLength.EvaluateCode(engine, nameof(v_StringLength), this);
+				length = (int)await v_StringLength.EvaluateCode(engine);
 
 			//apply substring
 			if (length > -1)

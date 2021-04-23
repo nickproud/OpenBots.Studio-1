@@ -95,7 +95,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return true;
         }
 
-        public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine, string parameterName, ScriptCommand parent)
+        public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine)
         {
             if (code == null || code == "")
                 code = "null";

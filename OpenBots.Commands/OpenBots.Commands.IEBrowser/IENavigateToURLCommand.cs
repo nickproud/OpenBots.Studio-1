@@ -54,7 +54,7 @@ namespace OpenBots.Commands.IEBrowser
             var browserObject = v_InstanceName.GetAppInstance(engine);
             var browserInstance = (InternetExplorer)browserObject;
 
-            browserInstance.Navigate((string)await v_URL.EvaluateCode(engine, nameof(v_URL), this));
+            browserInstance.Navigate((string)await v_URL.EvaluateCode(engine));
             IECreateBrowserCommand.WaitForReadyState(browserInstance);
         }
 

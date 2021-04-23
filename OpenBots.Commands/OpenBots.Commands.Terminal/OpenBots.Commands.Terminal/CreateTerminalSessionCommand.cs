@@ -94,9 +94,9 @@ namespace OpenBots.Commands.Terminal
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var host = (string)await v_Host.EvaluateCode(engine, nameof(v_Host), this);
-			var port = (string)await v_Port.EvaluateCode(engine, nameof(v_Port), this);
-			var terminalType = (string)await v_TerminalType.EvaluateCode(engine, nameof(v_TerminalType), this);
+			var host = (string)await v_Host.EvaluateCode(engine);
+			var port = (string)await v_Port.EvaluateCode(engine);
+			var terminalType = (string)await v_TerminalType.EvaluateCode(engine);
 			bool useSsl;
 
 			if (v_UseSsl == "Yes")

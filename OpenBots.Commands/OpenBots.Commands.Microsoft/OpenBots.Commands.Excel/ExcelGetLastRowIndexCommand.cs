@@ -62,7 +62,7 @@ namespace OpenBots.Commands.Excel
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vColumnLetter = (string)await v_ColumnLetter.EvaluateCode(engine, nameof(v_ColumnLetter), this);
+			var vColumnLetter = (string)await v_ColumnLetter.EvaluateCode(engine);
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 
 			var excelInstance = (Application)excelObject;

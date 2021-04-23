@@ -101,8 +101,8 @@ namespace OpenBots.Commands.Database
 		private async Task<OleDbConnection> CreateConnection(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var connection = (string)await v_ConnectionString.EvaluateCode(engine, nameof(v_ConnectionString), this);
-			var connectionPass = (string)await v_ConnectionStringPassword.EvaluateCode(engine, nameof(v_ConnectionStringPassword), this);
+			var connection = (string)await v_ConnectionString.EvaluateCode(engine);
+			var connectionPass = (string)await v_ConnectionStringPassword.EvaluateCode(engine);
 
 			if (connectionPass.StartsWith("!"))
 			{

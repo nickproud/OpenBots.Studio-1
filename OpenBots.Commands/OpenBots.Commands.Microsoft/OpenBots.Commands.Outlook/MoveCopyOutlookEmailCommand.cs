@@ -73,8 +73,8 @@ namespace OpenBots.Commands.Outlook
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
-			var vDestinationFolder = (string)await v_DestinationFolder.EvaluateCode(engine, nameof(v_DestinationFolder), this);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
+			var vDestinationFolder = (string)await v_DestinationFolder.EvaluateCode(engine);
 			
 			Application outlookApp = new Application();
 			AddressEntry currentUser = outlookApp.Session.CurrentUser.AddressEntry;

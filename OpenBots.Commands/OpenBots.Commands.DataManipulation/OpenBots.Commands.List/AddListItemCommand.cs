@@ -68,11 +68,11 @@ namespace OpenBots.Commands.List
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			dynamic dynamicList = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
+			dynamic dynamicList = await v_ListName.EvaluateCode(engine);
 
 			foreach (DataRow rwColumnName in v_ListItemsDataTable.Rows)
 			{
-				dynamic dynamicItem = await rwColumnName.Field<string>("Items").EvaluateCode(engine, nameof(v_ListItemsDataTable), this);
+				dynamic dynamicItem = await rwColumnName.Field<string>("Items").EvaluateCode(engine);
 				dynamicList.Add(dynamicItem);
 			}
 

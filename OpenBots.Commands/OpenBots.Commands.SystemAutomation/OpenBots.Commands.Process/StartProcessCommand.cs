@@ -65,8 +65,8 @@ namespace OpenBots.Commands.Process
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine, nameof(v_ProgramName), this);
-			string vProgramArgs = (string)await v_ProgramArgs.EvaluateCode(engine, nameof(v_ProgramArgs), this);
+			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine);
+			string vProgramArgs = (string)await v_ProgramArgs.EvaluateCode(engine);
 			Diagnostics.Process newProcess = new Diagnostics.Process();
 
 			if (OBFile.Exists(vProgramName))

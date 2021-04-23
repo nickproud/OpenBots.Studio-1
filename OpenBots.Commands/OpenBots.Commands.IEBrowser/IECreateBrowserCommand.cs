@@ -63,7 +63,7 @@ namespace OpenBots.Commands.IEBrowser
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var webURL = (string)await v_URL.EvaluateCode(engine, nameof(v_URL), this);
+            var webURL = (string)await v_URL.EvaluateCode(engine);
 
             InternetExplorer newBrowserSession = new InternetExplorer();
 

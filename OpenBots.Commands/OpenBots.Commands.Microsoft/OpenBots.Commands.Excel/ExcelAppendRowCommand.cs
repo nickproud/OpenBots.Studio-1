@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Excel
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic vRow = await v_RowToSet.EvaluateCode(engine, nameof(v_RowToSet), this);
+			dynamic vRow = await v_RowToSet.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
@@ -90,7 +90,7 @@ namespace OpenBots.Commands.Excel
 			}
 			else
 			{
-				string vRowString = (string)await v_RowToSet.EvaluateCode(engine, nameof(v_RowToSet), this);
+				string vRowString = (string)await v_RowToSet.EvaluateCode(engine);
 				var splittext = vRowString.Split(',');
 				string cellValue;
 				foreach (var item in splittext)

@@ -75,8 +75,8 @@ namespace OpenBots.Commands.DataTable
 			var engine = (IAutomationEngineInstance)sender;
 
 			// Get Variable Objects
-			var SourceDTVariable = (OBDataTable)await v_SourceDataTable.EvaluateCode(engine, nameof(v_SourceDataTable), this);
-			var DestinationDTVariable = (OBDataTable)await v_DestinationDataTable.EvaluateCode(engine, nameof(v_DestinationDataTable), this);
+			var SourceDTVariable = (OBDataTable)await v_SourceDataTable.EvaluateCode(engine);
+			var DestinationDTVariable = (OBDataTable)await v_DestinationDataTable.EvaluateCode(engine);
 
 			// Same Variable Check
 			if (v_SourceDataTable != v_DestinationDataTable)

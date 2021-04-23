@@ -66,7 +66,7 @@ namespace OpenBots.Commands.WebBrowser
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			dynamic frameIndex = await v_FrameParameter.EvaluateCode(engine, nameof(v_FrameParameter), this);
+			dynamic frameIndex = await v_FrameParameter.EvaluateCode(engine);
 
 			switch (v_SelectionType)
 			{

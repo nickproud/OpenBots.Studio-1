@@ -93,11 +93,11 @@ namespace OpenBots.Commands.Email
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MimeMessage vMimeMessage = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine, nameof(v_IMAPMimeMessage), this);
-			string vIMAPHost = (string)await v_IMAPHost.EvaluateCode(engine, nameof(v_IMAPHost), this);
-			string vIMAPPort = (string)await v_IMAPPort.EvaluateCode(engine, nameof(v_IMAPPort), this);
-			string vIMAPUserName = (string)await v_IMAPUserName.EvaluateCode(engine, nameof(v_IMAPUserName), this);
-			string vIMAPPassword = ((SecureString)await v_IMAPPassword.EvaluateCode(engine, nameof(v_IMAPPassword), this)).ConvertSecureStringToString();
+			MimeMessage vMimeMessage = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine);
+			string vIMAPHost = (string)await v_IMAPHost.EvaluateCode(engine);
+			string vIMAPPort = (string)await v_IMAPPort.EvaluateCode(engine);
+			string vIMAPUserName = (string)await v_IMAPUserName.EvaluateCode(engine);
+			string vIMAPPassword = ((SecureString)await v_IMAPPassword.EvaluateCode(engine)).ConvertSecureStringToString();
 
 			using (var client = new ImapClient())
 			{

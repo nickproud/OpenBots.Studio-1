@@ -57,10 +57,10 @@ namespace OpenBots.Commands.Loop
 
 			int loopTimes;
 
-			var loopParameter = (string)await loopCommand.v_LoopParameter.EvaluateCode(engine, nameof(v_LoopParameter), this);
+			var loopParameter = (string)await loopCommand.v_LoopParameter.EvaluateCode(engine);
 			loopTimes = int.Parse(loopParameter);
 
-			int startIndex = (int)await v_LoopStart.EvaluateCode(engine, nameof(v_LoopStart), this);
+			int startIndex = (int)await v_LoopStart.EvaluateCode(engine);
 
 			for (int i = startIndex; i < loopTimes; i++)
 			{

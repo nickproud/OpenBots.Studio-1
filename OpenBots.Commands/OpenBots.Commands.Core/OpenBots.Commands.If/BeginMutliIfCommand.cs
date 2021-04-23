@@ -70,8 +70,7 @@ namespace OpenBots.Commands.If
 			{
 				var commandData = rw["CommandData"].ToString();
 				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
-				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable, 
-					"v_ActionParameterTable", ifCommand);
+				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
 
 				if (!statementResult && v_LogicType == "And")
 				{

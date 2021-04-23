@@ -90,9 +90,9 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
+			var dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
 
-			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine, nameof(v_DataValueIndex), this);
+			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
 			string columnName = "";
 

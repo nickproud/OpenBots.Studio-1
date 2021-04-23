@@ -81,7 +81,7 @@ namespace OpenBots.Commands.Engine
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var format = (string)await v_ToStringFormat.EvaluateCode(engine, nameof(v_ToStringFormat), this);
+			var format = (string)await v_ToStringFormat.EvaluateCode(engine);
 			
 			Stopwatch stopwatch;
 			switch (v_StopwatchAction)

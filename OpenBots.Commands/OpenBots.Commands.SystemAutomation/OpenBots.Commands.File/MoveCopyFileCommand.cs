@@ -82,8 +82,8 @@ namespace OpenBots.Commands.File
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine, nameof(v_SourceFilePath), this);
-			var destinationFolder = (string)await v_DestinationDirectory.EvaluateCode(engine, nameof(v_DestinationDirectory), this);
+			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine);
+			var destinationFolder = (string)await v_DestinationDirectory.EvaluateCode(engine);
 
             if (!IO.File.Exists(sourceFile))
             {

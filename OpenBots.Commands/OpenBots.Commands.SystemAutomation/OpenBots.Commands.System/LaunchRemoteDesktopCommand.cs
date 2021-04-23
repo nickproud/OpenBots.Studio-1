@@ -81,11 +81,11 @@ namespace OpenBots.Commands.System
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var machineName = (string)await v_MachineName.EvaluateCode(engine, nameof(v_MachineName), this);
-			var userName = (string)await v_UserName.EvaluateCode(engine, nameof(v_UserName), this);
-			var password = ((SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this)).ConvertSecureStringToString();
-			var width = (int)await v_RDPWidth.EvaluateCode(engine, nameof(v_RDPWidth), this);
-			var height = (int)await v_RDPHeight.EvaluateCode(engine, nameof(v_RDPHeight), this);
+			var machineName = (string)await v_MachineName.EvaluateCode(engine);
+			var userName = (string)await v_UserName.EvaluateCode(engine);
+			var password = ((SecureString)await v_Password.EvaluateCode(engine)).ConvertSecureStringToString();
+			var width = (int)await v_RDPWidth.EvaluateCode(engine);
+			var height = (int)await v_RDPHeight.EvaluateCode(engine);
 
 			if (engine.AutomationEngineContext.ScriptEngine != null)
 			{

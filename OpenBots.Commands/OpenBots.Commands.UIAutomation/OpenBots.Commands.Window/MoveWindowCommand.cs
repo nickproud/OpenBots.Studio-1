@@ -77,10 +77,10 @@ namespace OpenBots.Commands.Window
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
-			var variableXPosition = (int)await v_XMousePosition.EvaluateCode(engine, nameof(v_XMousePosition), this);
-			var variableYPosition = (int)await v_YMousePosition.EvaluateCode(engine, nameof(v_YMousePosition), this);
-			int timeout = (int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this);
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			var variableXPosition = (int)await v_XMousePosition.EvaluateCode(engine);
+			var variableYPosition = (int)await v_YMousePosition.EvaluateCode(engine);
+			int timeout = (int)await v_Timeout.EvaluateCode(engine);
 
 			DateTime timeToEnd = DateTime.Now.AddSeconds(timeout);
 

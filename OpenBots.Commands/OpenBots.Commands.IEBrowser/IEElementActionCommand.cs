@@ -130,7 +130,7 @@ namespace OpenBots.Commands.IEBrowser
             foreach (DataRow seachCriteria in elementSearchProperties)
             {
                 string searchPropertyValue = seachCriteria.Field<string>("Property Value");
-                searchPropertyValue = (string)await searchPropertyValue.EvaluateCode(engine, nameof(v_WebSearchParameter), this);
+                searchPropertyValue = (string)await searchPropertyValue.EvaluateCode(engine);
                 seachCriteria.SetField("Property Value", searchPropertyValue);
             }
 
@@ -386,12 +386,12 @@ namespace OpenBots.Commands.IEBrowser
                     string userXAdjustString = (from rw in v_WebActionParameterTable.AsEnumerable()
                                                        where rw.Field<string>("Parameter Name") == "X Adjustment"
                                                        select rw.Field<string>("Parameter Value")).FirstOrDefault();
-                    int userXAdjust = (int)await userXAdjustString.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
+                    int userXAdjust = (int)await userXAdjustString.EvaluateCode(engine);
 
                     string userYAdjustString = (from rw in v_WebActionParameterTable.AsEnumerable()
                                                        where rw.Field<string>("Parameter Name") == "Y Adjustment"
                                                        select rw.Field<string>("Parameter Value")).FirstOrDefault();
-                    int userYAdjust = (int)await userYAdjustString.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
+                    int userYAdjust = (int)await userYAdjustString.EvaluateCode(engine);
 
                     var ieClientLocation = User32Functions.GetWindowPosition(new IntPtr(browserInstance.HWND));
 
@@ -410,7 +410,7 @@ namespace OpenBots.Commands.IEBrowser
                                          where rw.Field<string>("Parameter Name") == "Value To Set"
                                          select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-                    valueToSet = (string)await valueToSet.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
+                    valueToSet = (string)await valueToSet.EvaluateCode(engine);
 
                     element.setAttribute(setAttributeName, valueToSet);
                     break;
@@ -421,7 +421,7 @@ namespace OpenBots.Commands.IEBrowser
                                         where rw.Field<string>("Parameter Name") == "Text To Set"
                                         select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-                    textToSet = (string)await textToSet.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
+                    textToSet = (string)await textToSet.EvaluateCode(engine);
 
                     element.setAttribute(setTextAttributeName, textToSet);
                     break;

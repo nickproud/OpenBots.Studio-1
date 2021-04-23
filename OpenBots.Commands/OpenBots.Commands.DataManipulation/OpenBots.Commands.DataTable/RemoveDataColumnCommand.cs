@@ -67,8 +67,8 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
-			dynamic column = await v_ColumnName.EvaluateCode(engine, nameof(v_ColumnName), this);
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
+			dynamic column = await v_ColumnName.EvaluateCode(engine);
 
 			if (v_Option == "Column Index")
 				dataTable.Columns.RemoveAt((int)column);

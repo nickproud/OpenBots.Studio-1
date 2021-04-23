@@ -105,9 +105,9 @@ namespace OpenBots.Commands.WebBrowser
 
 			string convertedOptions = "";
 			if (!string.IsNullOrEmpty(v_SeleniumOptions))
-				convertedOptions = (string)await v_SeleniumOptions.EvaluateCode(engine, nameof(v_SeleniumOptions), this);
+				convertedOptions = (string)await v_SeleniumOptions.EvaluateCode(engine);
 
-			var vURL = (string)await v_URL.EvaluateCode(engine, nameof(v_URL), this);
+			var vURL = (string)await v_URL.EvaluateCode(engine);
 
 			IWebDriver webDriver;
 

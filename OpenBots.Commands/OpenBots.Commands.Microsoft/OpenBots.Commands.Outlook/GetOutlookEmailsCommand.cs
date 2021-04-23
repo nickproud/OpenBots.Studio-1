@@ -133,10 +133,10 @@ namespace OpenBots.Commands.Outlook
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFolder = (string)await v_SourceFolder.EvaluateCode(engine, nameof(v_SourceFolder), this);
-			var vFilter = (string)await v_Filter.EvaluateCode(engine, nameof(v_Filter), this);
-			var vAttachmentDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine, nameof(v_AttachmentDirectory), this);
-			var vMessageDirectory = (string)await v_MessageDirectory.EvaluateCode(engine, nameof(v_MessageDirectory), this);
+			var vFolder = (string)await v_SourceFolder.EvaluateCode(engine);
+			var vFilter = (string)await v_Filter.EvaluateCode(engine);
+			var vAttachmentDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
+			var vMessageDirectory = (string)await v_MessageDirectory.EvaluateCode(engine);
 
 			if (vFolder == "") 
 				vFolder = "Inbox";

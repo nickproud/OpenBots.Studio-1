@@ -64,8 +64,8 @@ namespace OpenBots.Commands.TextFile
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//convert variables
-			var filePath = (string)await v_FilePath.EvaluateCode(engine, nameof(v_FilePath), this);
-			var outputText = (string)await v_TextToWrite.EvaluateCode(engine, nameof(v_TextToWrite), this);
+			var filePath = (string)await v_FilePath.EvaluateCode(engine);
+			var outputText = (string)await v_TextToWrite.EvaluateCode(engine);
 
 			//append or overwrite as necessary
 			if (v_Overwrite == "Append")

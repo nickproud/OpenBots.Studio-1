@@ -85,9 +85,9 @@ namespace OpenBots.Commands.Asset
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vAssetName = (string)await v_AssetName.EvaluateCode(engine, nameof(v_AssetName), this);
-			var vAssetFilePath = (string)await v_AssetFilePath.EvaluateCode(engine, nameof(v_AssetFilePath), this);
-			var vAssetValue = (string)await v_AssetValue.EvaluateCode(engine, nameof(v_AssetValue), this);
+			var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
+			var vAssetFilePath = (string)await v_AssetFilePath.EvaluateCode(engine);
+			var vAssetValue = (string)await v_AssetValue.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			var asset = AssetMethods.GetAsset(client, vAssetName, v_AssetType);

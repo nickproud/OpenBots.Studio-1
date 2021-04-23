@@ -58,8 +58,8 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var stringVariable = (string)await v_InputText.EvaluateCode(engine, nameof(v_InputText), this);
-			dynamic input = await v_SplitCharacter.EvaluateCode(engine, nameof(v_SplitCharacter), this);
+			var stringVariable = (string)await v_InputText.EvaluateCode(engine);
+			dynamic input = await v_SplitCharacter.EvaluateCode(engine);
 
 			List<string> splitString;
 

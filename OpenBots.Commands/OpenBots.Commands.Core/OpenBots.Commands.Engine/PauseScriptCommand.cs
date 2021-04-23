@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Engine
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var pauseLength = (int)await v_PauseLength.EvaluateCode(engine, nameof(v_PauseLength), this);
+			var pauseLength = (int)await v_PauseLength.EvaluateCode(engine);
 			Thread.Sleep(pauseLength);
 		}
 

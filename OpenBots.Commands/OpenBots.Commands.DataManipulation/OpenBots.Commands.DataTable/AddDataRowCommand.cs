@@ -77,13 +77,13 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
+			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine);
 			var newRow = Dt.NewRow();
 
 			foreach (DataRow rw in v_DataRowDataTable.Rows)
 			{
-				var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
-				var data = await rw.Field<string>("Data").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
+				var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
+				var data = await rw.Field<string>("Data").EvaluateCode(engine);
 				newRow.SetField(columnName, data);
 			}
 			Dt.Rows.Add(newRow);

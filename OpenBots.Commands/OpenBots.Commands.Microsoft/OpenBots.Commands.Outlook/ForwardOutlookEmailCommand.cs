@@ -52,9 +52,9 @@ namespace OpenBots.Commands.Outlook
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
   
-			var vRecipients = (string)await v_Recipients.EvaluateCode(engine, nameof(v_Recipients), this);
+			var vRecipients = (string)await v_Recipients.EvaluateCode(engine);
 			var splitRecipients = vRecipients.Split(';');
 
 			MailItem newMail = vMailItem.Forward();

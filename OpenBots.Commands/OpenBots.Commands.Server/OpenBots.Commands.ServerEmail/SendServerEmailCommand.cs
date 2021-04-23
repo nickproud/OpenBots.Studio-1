@@ -96,13 +96,13 @@ namespace OpenBots.Commands.ServerEmail
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var vAccountName = (string)await v_AccountName.EvaluateCode(engine, nameof(v_AccountName), this);
-            var vToRecipients = (string)await v_ToRecipients.EvaluateCode(engine, nameof(v_ToRecipients), this);
-            var vCCRecipients = (string)await v_CCRecipients.EvaluateCode(engine, nameof(v_CCRecipients), this);
-            var vBCCRecipients = (string)await v_BCCRecipients.EvaluateCode(engine, nameof(v_BCCRecipients), this);
-            var vSubject = (string)await v_Subject.EvaluateCode(engine, nameof(v_Subject), this);
-            var vBody = (string)await v_Body.EvaluateCode(engine, nameof(v_Body), this);
-            var vAttachments = (string)await v_Attachments.EvaluateCode(engine, nameof(v_Attachments), this);
+            var vAccountName = (string)await v_AccountName.EvaluateCode(engine);
+            var vToRecipients = (string)await v_ToRecipients.EvaluateCode(engine);
+            var vCCRecipients = (string)await v_CCRecipients.EvaluateCode(engine);
+            var vBCCRecipients = (string)await v_BCCRecipients.EvaluateCode(engine);
+            var vSubject = (string)await v_Subject.EvaluateCode(engine);
+            var vBody = (string)await v_Body.EvaluateCode(engine);
+            var vAttachments = (string)await v_Attachments.EvaluateCode(engine);
 
             var toEmailList = ServerEmailMethods.GetEmailList(vToRecipients);
             var ccEmailList = ServerEmailMethods.GetEmailList(vCCRecipients);

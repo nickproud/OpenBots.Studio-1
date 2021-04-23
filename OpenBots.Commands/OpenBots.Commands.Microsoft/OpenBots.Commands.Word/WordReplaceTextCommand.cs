@@ -59,8 +59,8 @@ namespace OpenBots.Commands.Word
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFindText = (string)await v_FindText.EvaluateCode(engine, nameof(v_FindText), this);
-			var vReplaceWithText = (string)await v_ReplaceWithText.EvaluateCode(engine, nameof(v_ReplaceWithText), this);
+			var vFindText = (string)await v_FindText.EvaluateCode(engine);
+			var vReplaceWithText = (string)await v_ReplaceWithText.EvaluateCode(engine);
 
 			//get word app object
 			var wordObject = v_InstanceName.GetAppInstance(engine);

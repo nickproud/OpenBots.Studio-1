@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Folder
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine, nameof(v_SourceFolderPath), this);
+			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine);
 
             if (!Directory.Exists(sourceFolder))
 				throw new DirectoryNotFoundException($"Directory {sourceFolder} does not exist");

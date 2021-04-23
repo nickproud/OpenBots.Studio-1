@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var stringRequiringLength = (string)await v_InputValue.EvaluateCode(engine, nameof(v_InputValue), this);
+			var stringRequiringLength = (string)await v_InputValue.EvaluateCode(engine);
 
 			var stringLength = stringRequiringLength.Length;
 

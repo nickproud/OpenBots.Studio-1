@@ -59,7 +59,7 @@ namespace OpenBots.Commands.Excel
 			var lastUsedRow = excelSheet.Cells.Find("*", Missing.Value, Missing.Value, Missing.Value, XlSearchOrder.xlByRows, 
 													XlSearchDirection.xlPrevious, false, Missing.Value, Missing.Value).Row;
 			var targetAddress = "A" + (lastUsedRow + 1);
-			var vTargetText = (string)await v_TextToSet.EvaluateCode(engine, nameof(v_TextToSet), this);
+			var vTargetText = (string)await v_TextToSet.EvaluateCode(engine);
 			excelSheet.Range[targetAddress].Value = vTargetText;
 		}
 

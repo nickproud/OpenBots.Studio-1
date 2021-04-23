@@ -50,7 +50,7 @@ namespace OpenBots.Commands.SecureData
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			SecureString secureStringValue = ((string)await v_Input.EvaluateCode(engine, nameof(v_Input), this)).ConvertStringToSecureString();
+			SecureString secureStringValue = ((string)await v_Input.EvaluateCode(engine)).ConvertStringToSecureString();
 
 			secureStringValue.SetVariableValue(engine, v_OutputUserVariableName);           
 		}

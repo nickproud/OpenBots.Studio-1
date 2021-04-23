@@ -68,8 +68,8 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
-			var script = (string)await v_ScriptCode.EvaluateCode(engine, nameof(v_ScriptCode), this);
-			var args = (string)await v_Arguments.EvaluateCode(engine, nameof(v_Arguments), this);
+			var script = (string)await v_ScriptCode.EvaluateCode(engine);
+			var args = (string)await v_Arguments.EvaluateCode(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
 			IJavaScriptExecutor js = (IJavaScriptExecutor)seleniumInstance;
 

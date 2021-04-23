@@ -86,11 +86,11 @@ namespace OpenBots.Commands.Excel
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine, nameof(v_SheetNameExcelTable), this);
-            string vSheetPivotTable = (string)await v_SheetNamePivotTable.EvaluateCode(engine, nameof(v_SheetNamePivotTable), this);
-            var vTableName = (string)await v_TableName.EvaluateCode(engine, nameof(v_TableName), this);
-            var vCellLocation = (string)await v_CellLocation.EvaluateCode(engine, nameof(v_CellLocation), this);
-            var vPivotTable = (string)await v_PivotTable.EvaluateCode(engine, nameof(v_PivotTable), this);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
+            string vSheetPivotTable = (string)await v_SheetNamePivotTable.EvaluateCode(engine);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine);
+            var vCellLocation = (string)await v_CellLocation.EvaluateCode(engine);
+            var vPivotTable = (string)await v_PivotTable.EvaluateCode(engine);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workBook = excelInstance.ActiveWorkbook;

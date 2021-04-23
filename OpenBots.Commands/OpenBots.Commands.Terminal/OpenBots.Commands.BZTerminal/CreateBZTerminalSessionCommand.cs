@@ -74,7 +74,7 @@ namespace OpenBots.Commands.BZTerminal
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var sessionFilePath = (string)await v_SessionFilePath.EvaluateCode(engine, nameof(v_SessionFilePath), this);
+			var sessionFilePath = (string)await v_SessionFilePath.EvaluateCode(engine);
 			var terminalContext = new BZTerminalContext();
 
 			if (v_CloseAllInstances == "Yes")

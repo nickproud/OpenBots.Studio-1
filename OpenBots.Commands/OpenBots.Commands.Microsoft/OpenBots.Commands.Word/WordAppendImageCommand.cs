@@ -52,7 +52,7 @@ namespace OpenBots.Commands.Word
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vImagePath = (string)await v_ImagePath.EvaluateCode(engine, nameof(v_ImagePath), this);
+			var vImagePath = (string)await v_ImagePath.EvaluateCode(engine);
 			var wordObject = v_InstanceName.GetAppInstance(engine);
 
 			Application wordInstance = (Application)wordObject;

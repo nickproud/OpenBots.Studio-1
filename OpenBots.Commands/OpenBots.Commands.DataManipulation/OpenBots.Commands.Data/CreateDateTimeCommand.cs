@@ -84,10 +84,10 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vYear = (int)await v_Year.EvaluateCode(engine, nameof(v_Year), this);
-			dynamic vMonth = await v_Month.EvaluateCode(engine, nameof(v_Month), this);
-			var vDay = (int)await v_Day.EvaluateCode(engine, nameof(v_Day), this);
-			var vTime = (string)await v_Time.EvaluateCode(engine, nameof(v_Time), this);
+			var vYear = (int)await v_Year.EvaluateCode(engine);
+			dynamic vMonth = await v_Month.EvaluateCode(engine);
+			var vDay = (int)await v_Day.EvaluateCode(engine);
+			var vTime = (string)await v_Time.EvaluateCode(engine);
 
 			int vMonthInt = 0;
 			string vMonthString = "";

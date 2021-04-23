@@ -69,7 +69,7 @@ namespace OpenBots.Commands.NLG
 			var engine = (IAutomationEngineInstance)sender;
 			var p = (SPhraseSpec)v_InstanceName.GetAppInstance(engine);
 
-			var userInput = (string)await v_Parameter.EvaluateCode(engine, nameof(v_Parameter), this);
+			var userInput = (string)await v_Parameter.EvaluateCode(engine);
 
 			switch (v_ParameterType)
 			{

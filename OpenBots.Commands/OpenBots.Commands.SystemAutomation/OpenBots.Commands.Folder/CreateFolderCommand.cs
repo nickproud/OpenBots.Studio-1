@@ -60,8 +60,8 @@ namespace OpenBots.Commands.Folder
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var destinationDirectory = (string)await v_DestinationDirectory.EvaluateCode(engine, nameof(v_DestinationDirectory), this);
-			var newFolder = (string)await v_NewFolderName.EvaluateCode(engine, nameof(v_NewFolderName), this);
+			var destinationDirectory = (string)await v_DestinationDirectory.EvaluateCode(engine);
+			var newFolder = (string)await v_NewFolderName.EvaluateCode(engine);
 
             if (!Directory.Exists(destinationDirectory))
             {

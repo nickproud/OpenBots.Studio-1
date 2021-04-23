@@ -83,7 +83,7 @@ namespace OpenBots.Commands.WebBrowser
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			var matchParam = (string)await v_MatchParameter.EvaluateCode(engine, nameof(v_MatchParameter), this);
+			var matchParam = (string)await v_MatchParameter.EvaluateCode(engine);
 
 			var handles = seleniumInstance.WindowHandles;
 			var currentHandle = seleniumInstance.CurrentWindowHandle;

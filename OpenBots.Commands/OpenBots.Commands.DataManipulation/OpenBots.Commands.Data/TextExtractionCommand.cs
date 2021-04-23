@@ -80,7 +80,7 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableInput = (string)await v_InputText.EvaluateCode(engine, nameof(v_InputText), this);
+			var variableInput = (string)await v_InputText.EvaluateCode(engine);
 
 			string variableLeading, variableTrailing, extractedText;
 			int skipOccurences;
@@ -90,21 +90,21 @@ namespace OpenBots.Commands.Data
 			{
 				case "Extract All After Text":
 					//extract trailing texts            
-					variableLeading = (string)await GetParameterValue("Leading Text").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
-					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
+					variableLeading = (string)await GetParameterValue("Leading Text").EvaluateCode(engine);
+					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
 					extractedText = ExtractLeadingText(variableInput, variableLeading, skipOccurences);
 					break;
 				case "Extract All Before Text":
 					//extract leading text
-					variableTrailing = (string)await GetParameterValue("Trailing Text").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
-					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
+					variableTrailing = (string)await GetParameterValue("Trailing Text").EvaluateCode(engine);
+					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
 					extractedText = ExtractTrailingText(variableInput, variableTrailing, skipOccurences);
 					break;
 				case "Extract All Between Text":
 					//extract leading and then trailing which gives the items between
-					variableLeading = (string)await GetParameterValue("Leading Text").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
-					variableTrailing = (string)await GetParameterValue("Trailing Text").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
-					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine, nameof(v_TextExtractionTable), this);
+					variableLeading = (string)await GetParameterValue("Leading Text").EvaluateCode(engine);
+					variableTrailing = (string)await GetParameterValue("Trailing Text").EvaluateCode(engine);
+					skipOccurences = (int)await GetParameterValue("Skip Past Occurences").EvaluateCode(engine);
 
 					//extract leading
 					extractedText = ExtractLeadingText(variableInput, variableLeading, skipOccurences);

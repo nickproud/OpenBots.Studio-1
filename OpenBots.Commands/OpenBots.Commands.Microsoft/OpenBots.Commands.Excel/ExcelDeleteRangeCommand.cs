@@ -66,7 +66,7 @@ namespace OpenBots.Commands.Excel
 			var excelInstance = (Application)excelObject;
 			Worksheet excelSheet = excelInstance.ActiveSheet;
 
-			string vRange = (string)await v_Range.EvaluateCode(engine, nameof(v_Range), this);
+			string vRange = (string)await v_Range.EvaluateCode(engine);
 			var splitRange = vRange.Split(':');
 			Range cellRange;
             Range sourceRange = excelSheet.UsedRange;

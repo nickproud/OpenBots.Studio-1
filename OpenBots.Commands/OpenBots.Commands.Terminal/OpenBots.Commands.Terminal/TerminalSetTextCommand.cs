@@ -77,13 +77,13 @@ namespace OpenBots.Commands.Terminal
 
 			int mouseX = 0, mouseY = 0;
 			if (!string.IsNullOrEmpty(v_XMousePosition))
-				mouseX = (int)await v_XMousePosition.EvaluateCode(engine, nameof(v_XMousePosition), this);
+				mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
 
 			if (!string.IsNullOrEmpty(v_YMousePosition))
-				mouseY = (int)await v_YMousePosition.EvaluateCode(engine, nameof(v_YMousePosition), this);
+				mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
 
-			string textToSend = (string)await v_TextToSet.EvaluateCode(engine, nameof(v_TextToSet), this);
-			var timeout = ((int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this)) * 1000;
+			string textToSend = (string)await v_TextToSet.EvaluateCode(engine);
+			var timeout = ((int)await v_Timeout.EvaluateCode(engine)) * 1000;
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)

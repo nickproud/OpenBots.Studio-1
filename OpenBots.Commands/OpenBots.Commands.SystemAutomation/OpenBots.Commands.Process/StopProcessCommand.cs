@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Process
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine, nameof(v_ProgramName), this);
+			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine);
 
 			if (OBFile.Exists(vProgramName))
 				vProgramName = Path.GetFileNameWithoutExtension(vProgramName);

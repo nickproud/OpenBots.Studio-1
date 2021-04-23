@@ -50,8 +50,8 @@ namespace OpenBots.Commands.Folder
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine, nameof(v_SourceFolderPath), this);
-			var newFolderName = (string)await v_NewName.EvaluateCode(engine, nameof(v_NewName), this);
+			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine);
+			var newFolderName = (string)await v_NewName.EvaluateCode(engine);
 
 			if (!Directory.Exists(sourceFolder))
 				throw new DirectoryNotFoundException($"Directory {sourceFolder} does not exist");

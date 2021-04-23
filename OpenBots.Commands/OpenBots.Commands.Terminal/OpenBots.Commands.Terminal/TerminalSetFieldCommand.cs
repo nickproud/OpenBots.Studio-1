@@ -58,8 +58,8 @@ namespace OpenBots.Commands.Terminal
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var fieldIndex = (int)await v_FieldIndex.EvaluateCode(engine, nameof(v_FieldIndex), this);
-			string textToSend = (string)await v_TextToSet.EvaluateCode(engine, nameof(v_TextToSet), this);
+			var fieldIndex = (int)await v_FieldIndex.EvaluateCode(engine);
+			string textToSend = (string)await v_TextToSet.EvaluateCode(engine);
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)

@@ -98,12 +98,12 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
+			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine);
 
             if (v_FilterOption == "RowFilter")
             {
 				DataView dv = new DataView(Dt);
-				dv.RowFilter = (string)await v_RowFilter.EvaluateCode(engine, nameof(v_RowFilter), this);
+				dv.RowFilter = (string)await v_RowFilter.EvaluateCode(engine);
 				dv.ToTable().SetVariableValue(engine, v_OutputUserVariableName);
 			}
             else
@@ -112,8 +112,8 @@ namespace OpenBots.Commands.DataTable
 
 				foreach (DataRow rw in v_DataRowDataTable.Rows)
 				{
-					var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
-					var data = await rw.Field<dynamic>("Data").EvaluateCode(engine, nameof(v_DataRowDataTable), this);
+					var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
+					var data = await rw.Field<dynamic>("Data").EvaluateCode(engine);
 
 					foreach (DataRow row in Dt.Rows)
 					{

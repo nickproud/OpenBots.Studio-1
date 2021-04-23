@@ -127,8 +127,8 @@ namespace OpenBots.Commands.Image
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
-			int timeout = (int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this);
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			int timeout = (int)await v_Timeout.EvaluateCode(engine);
 			var timeToEnd = DateTime.Now.AddSeconds(timeout);
 
 			bool testMode = TestMode;
@@ -137,7 +137,7 @@ namespace OpenBots.Commands.Image
 			double accuracy;
 			try
 			{
-				accuracy = Convert.ToDouble(await v_MatchAccuracy.EvaluateCode(engine, nameof(v_MatchAccuracy), this));
+				accuracy = Convert.ToDouble(await v_MatchAccuracy.EvaluateCode(engine));
 				if (accuracy > 1 || accuracy < 0)
 					throw new ArgumentOutOfRangeException("Accuracy value is out of range (0-1)");
 			}
@@ -271,11 +271,11 @@ namespace OpenBots.Commands.Image
 						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = (int)await xAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
 						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						yAdjust = (int)await yAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 
 						Point clickPositionPoint = GetClickPosition(clickPosition, element);
 
@@ -289,18 +289,18 @@ namespace OpenBots.Commands.Image
 						string textToSet = (from rw in v_ImageActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Text To Set"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						textToSet = (string)await textToSet.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
+						textToSet = (string)await textToSet.EvaluateCode(engine);
 						clickPosition = (from rw in v_ImageActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Click Position"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
 						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = (int)await xAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
 						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						yAdjust = (int)await yAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 						string encryptedData = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												where rw.Field<string>("Parameter Name") == "Encrypted Text"
 												select rw.Field<string>("Parameter Value")).FirstOrDefault();
@@ -330,13 +330,13 @@ namespace OpenBots.Commands.Image
 						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = (int)await xAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
 						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						yAdjust = (int)await yAdjustString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 
-						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
+						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine);
 
 						secureString = secureStrVariable.ConvertSecureStringToString();
 

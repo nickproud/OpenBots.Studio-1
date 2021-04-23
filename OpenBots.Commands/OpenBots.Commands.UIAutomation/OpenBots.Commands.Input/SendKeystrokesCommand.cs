@@ -66,12 +66,12 @@ namespace OpenBots.Commands.Input
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 
 			if (variableWindowName != "Current Window")
 				User32Functions.ActivateWindow(variableWindowName);
 
-			string textToSend = (string)await v_TextToSend.EvaluateCode(engine, nameof(v_TextToSend), this);
+			string textToSend = (string)await v_TextToSend.EvaluateCode(engine);
 
 			if (v_EncryptionOption == "Encrypted")
 				textToSend = EncryptionServices.DecryptString(textToSend, "OPENBOTS");

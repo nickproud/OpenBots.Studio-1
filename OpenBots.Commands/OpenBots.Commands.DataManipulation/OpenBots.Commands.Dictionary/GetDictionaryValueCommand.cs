@@ -59,8 +59,8 @@ namespace OpenBots.Commands.Dictionary
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic dynamicKey = await v_Key.EvaluateCode(engine, nameof(v_Key), this);
-			dynamic dynamicDict = await v_InputDictionary.EvaluateCode(engine, nameof(v_InputDictionary), this);
+			dynamic dynamicKey = await v_Key.EvaluateCode(engine);
+			dynamic dynamicDict = await v_InputDictionary.EvaluateCode(engine);
 
 			dynamic dynamicValue = dynamicDict[dynamicKey];
 

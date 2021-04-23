@@ -52,7 +52,7 @@ namespace OpenBots.Commands.TextFile
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//convert variables
-			var filePath = (string)await v_FilePath.EvaluateCode(engine, nameof(v_FilePath), this);
+			var filePath = (string)await v_FilePath.EvaluateCode(engine);
 			//read text from file
 			var textFromFile = OBFile.ReadAllText(filePath);
 			//assign text to user variable

@@ -109,7 +109,7 @@ namespace OpenBots.Commands.Word
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vText = (string)await v_TextToSet.EvaluateCode(engine, nameof(v_TextToSet), this);
+			var vText = (string)await v_TextToSet.EvaluateCode(engine);
 			var wordObject = v_InstanceName.GetAppInstance(engine);
 
 			Application wordInstance = (Application)wordObject;

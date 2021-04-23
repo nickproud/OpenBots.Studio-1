@@ -78,9 +78,9 @@ namespace OpenBots.Commands.QueueItem
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueItem = (Dictionary<string, object>)await v_QueueItem.EvaluateCode(engine, nameof(v_QueueItem), this);
-			var vQueueItemErrorMessage = (string)await v_QueueItemErrorMessage.EvaluateCode(engine, nameof(v_QueueItemErrorMessage), this);
-			var vQueueItemErrorCode = (string)await v_QueueItemErrorCode.EvaluateCode(engine, nameof(v_QueueItemErrorCode), this);
+			var vQueueItem = (Dictionary<string, object>)await v_QueueItem.EvaluateCode(engine);
+			var vQueueItemErrorMessage = (string)await v_QueueItemErrorMessage.EvaluateCode(engine);
+			var vQueueItemErrorCode = (string)await v_QueueItemErrorCode.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 

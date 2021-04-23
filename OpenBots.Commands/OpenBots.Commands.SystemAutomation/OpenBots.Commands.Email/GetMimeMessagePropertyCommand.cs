@@ -88,7 +88,7 @@ namespace OpenBots.Commands.Email
         {
             var engine = (IAutomationEngineInstance)sender;
 
-            MimeMessage email = (MimeMessage)await v_MimeMessage.EvaluateCode(engine, nameof(v_MimeMessage), this);
+            MimeMessage email = (MimeMessage)await v_MimeMessage.EvaluateCode(engine);
 
             Stream itemStream = new MemoryStream();
             StreamReader reader = new StreamReader(itemStream);

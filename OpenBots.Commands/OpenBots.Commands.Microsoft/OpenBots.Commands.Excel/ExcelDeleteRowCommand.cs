@@ -65,7 +65,7 @@ namespace OpenBots.Commands.Excel
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
 			Worksheet workSheet = excelInstance.ActiveSheet;
-			string vRowToDelete = (string)await v_RowNumber.EvaluateCode(engine, nameof(v_RowNumber), this);
+			string vRowToDelete = (string)await v_RowNumber.EvaluateCode(engine);
 
 			var cells = workSheet.Range["A" + vRowToDelete, Type.Missing];
 			var entireRow = cells.EntireRow;

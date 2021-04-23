@@ -93,7 +93,7 @@ namespace OpenBots.Commands.Excel
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFilePath = (string)await v_FilePath.EvaluateCode(engine, nameof(v_FilePath), this);
+			var vFilePath = (string)await v_FilePath.EvaluateCode(engine);
 
 			if (v_CloseAllInstances == "Yes")
 			{

@@ -94,13 +94,13 @@ namespace OpenBots.Commands.Input
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var header = (string)await v_InputHeader.EvaluateCode(engine, nameof(v_InputHeader), this);
-			var directions = (string)await v_InputDirections.EvaluateCode(engine, nameof(v_InputDirections), this);
+			var header = (string)await v_InputHeader.EvaluateCode(engine);
+			var directions = (string)await v_InputDirections.EvaluateCode(engine);
 			
 			//translate variables for each label
 			foreach (DataRow rw in v_UserInputConfig.Rows)
 			{
-				rw["DefaultValue"] = (string)await rw["DefaultValue"].ToString().EvaluateCode(engine, nameof(v_UserInputConfig), this);
+				rw["DefaultValue"] = (string)await rw["DefaultValue"].ToString().EvaluateCode(engine);
 				string targetVariable = rw["StoreInVariable"].ToString();
 
 				if (string.IsNullOrEmpty(targetVariable))

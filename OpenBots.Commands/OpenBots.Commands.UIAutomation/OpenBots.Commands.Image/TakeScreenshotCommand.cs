@@ -73,9 +73,9 @@ namespace OpenBots.Commands.Image
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
-			string vFolderPath = (string)await v_FolderPath.EvaluateCode(engine, nameof(v_FolderPath), this);
-			string vFileName = (string)await v_FileName.EvaluateCode(engine, nameof(v_FileName), this);
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			string vFolderPath = (string)await v_FolderPath.EvaluateCode(engine);
+			string vFileName = (string)await v_FileName.EvaluateCode(engine);
 			string vFilePath = Path.Combine(vFolderPath, vFileName);
 
 			Bitmap image;

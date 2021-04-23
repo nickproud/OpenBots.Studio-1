@@ -95,9 +95,9 @@ namespace OpenBots.Commands.Excel
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vExcelObject = v_InstanceName.GetAppInstance(engine);
-			var vRange = (string)await v_Range.EvaluateCode(engine, nameof(v_Range), this);
-			var vColumnName = (string)await v_ColumnName.EvaluateCode(engine, nameof(v_ColumnName), this);
-			var vOutputDirectory = (string)await v_OutputDirectory.EvaluateCode(engine, nameof(v_OutputDirectory), this);
+			var vRange = (string)await v_Range.EvaluateCode(engine);
+			var vColumnName = (string)await v_ColumnName.EvaluateCode(engine);
+			var vOutputDirectory = (string)await v_OutputDirectory.EvaluateCode(engine);
 			var excelInstance = (Application)vExcelObject;
 
 			excelInstance.DisplayAlerts = false;

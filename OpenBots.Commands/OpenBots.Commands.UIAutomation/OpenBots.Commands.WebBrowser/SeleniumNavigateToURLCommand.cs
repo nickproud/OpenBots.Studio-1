@@ -54,7 +54,7 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
-			var vURL = (string)await v_URL.EvaluateCode(engine, nameof(v_URL), this);
+			var vURL = (string)await v_URL.EvaluateCode(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
 
 			try

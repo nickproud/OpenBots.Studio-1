@@ -122,10 +122,10 @@ namespace OpenBots.Commands.Input
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vTimeout = (int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this);
+			var vTimeout = (int)await v_Timeout.EvaluateCode(engine);
 
 			//create variable window name
-			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine, nameof(v_WindowName), this);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 			if (variableWindowName == "Current Window")
 				variableWindowName = User32Functions.GetActiveWindowTitle();			
 
@@ -139,7 +139,7 @@ namespace OpenBots.Commands.Input
 					if (engine.IsCancellationPending)
 						break;
 
-					requiredHandle = await CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName, nameof(v_UIASearchParameters), this);
+					requiredHandle = await CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
 
 					if (requiredHandle == null)
 						throw new Exception("Element Not Yet Found... ");
@@ -180,12 +180,12 @@ namespace OpenBots.Commands.Input
 
 					//parse to int
 					if (!string.IsNullOrEmpty(xAdjust))
-						xAdjustInt = (int)await xAdjust.EvaluateCode(engine, nameof(v_UIAActionParameters), this);
+						xAdjustInt = (int)await xAdjust.EvaluateCode(engine);
 					else
 						xAdjustInt = 0;
 
 					if (!string.IsNullOrEmpty(yAdjust))
-						yAdjustInt = (int)await yAdjust.EvaluateCode(engine, nameof(v_UIAActionParameters), this);
+						yAdjustInt = (int)await yAdjust.EvaluateCode(engine);
 					else
 						yAdjustInt = 0;
 
@@ -212,7 +212,7 @@ namespace OpenBots.Commands.Input
 					if (clearElement == null)
 						clearElement = "No";
 
-					textToSet = (string)await textToSet.EvaluateCode(engine, nameof(v_UIAActionParameters), this);
+					textToSet = (string)await textToSet.EvaluateCode(engine);
 
 					if (encryptedData == "Encrypted")
 						textToSet = EncryptionServices.DecryptString(textToSet, "OPENBOTS");
@@ -269,7 +269,7 @@ namespace OpenBots.Commands.Input
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, nameof(v_UIAActionParameters), this);
+					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine);
 
 					secureString = secureStrVariable.ConvertSecureStringToString();
 

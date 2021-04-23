@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Engine
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine, nameof(v_AutoCloseAfter), this);
+			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{

@@ -51,7 +51,7 @@ namespace OpenBots.Commands.List
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			dynamic dynamicList = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
+			dynamic dynamicList = await v_ListName.EvaluateCode(engine);
 
 			int count = dynamicList.Count;
 			count.SetVariableValue(engine, v_OutputUserVariableName);

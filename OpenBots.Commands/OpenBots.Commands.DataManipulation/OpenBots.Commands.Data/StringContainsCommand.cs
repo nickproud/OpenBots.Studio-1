@@ -56,8 +56,8 @@ namespace OpenBots.Commands.Data
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var fullText = (string)await v_FullText.EvaluateCode(engine, nameof(v_FullText), this);
-            var comparisonText = (string)await v_ComparisonText.EvaluateCode(engine, nameof(v_ComparisonText), this);
+            var fullText = (string)await v_FullText.EvaluateCode(engine);
+            var comparisonText = (string)await v_ComparisonText.EvaluateCode(engine);
 
             bool outputUserVar = fullText.Contains(comparisonText);
 

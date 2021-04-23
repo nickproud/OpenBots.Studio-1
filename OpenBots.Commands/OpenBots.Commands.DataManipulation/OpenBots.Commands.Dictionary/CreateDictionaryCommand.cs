@@ -59,12 +59,12 @@ namespace OpenBots.Commands.Dictionary
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			string dictTypeName = v_OutputUserVariableName.GetVarArgType(engine).GetRealTypeName();
-			dynamic dynamicDict = await $"new {dictTypeName}()".EvaluateCode(engine, nameof(v_OutputUserVariableName), this);
+			dynamic dynamicDict = await $"new {dictTypeName}()".EvaluateCode(engine);
 
 			foreach (DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 			{
-				dynamic dynamicKey = await rwColumnName.Field<string>("Keys").EvaluateCode(engine, nameof(v_ColumnNameDataTable), this);
-				dynamic dynamicValue = await rwColumnName.Field<string>("Values").EvaluateCode(engine, nameof(v_ColumnNameDataTable), this);
+				dynamic dynamicKey = await rwColumnName.Field<string>("Keys").EvaluateCode(engine);
+				dynamic dynamicValue = await rwColumnName.Field<string>("Values").EvaluateCode(engine);
 
 				dynamicDict.Add(dynamicKey, dynamicValue);
 			}

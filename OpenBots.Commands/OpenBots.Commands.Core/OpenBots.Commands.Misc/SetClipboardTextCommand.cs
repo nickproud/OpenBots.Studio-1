@@ -42,7 +42,7 @@ namespace OpenBots.Commands.Misc
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var input = (string)await v_TextToSet.EvaluateCode(engine, nameof(v_TextToSet), this);
+			var input = (string)await v_TextToSet.EvaluateCode(engine);
 
 			User32Functions.SetClipboardText(input);
 		}

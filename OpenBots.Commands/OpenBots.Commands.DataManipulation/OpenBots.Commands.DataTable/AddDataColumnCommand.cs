@@ -57,8 +57,8 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
-			var ColumnName = (string)await v_ColumnName.EvaluateCode(engine, nameof(v_ColumnName), this);
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
+			var ColumnName = (string)await v_ColumnName.EvaluateCode(engine);
 
 			dataTable.Columns.Add(ColumnName);
 

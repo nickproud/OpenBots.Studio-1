@@ -110,13 +110,13 @@ namespace OpenBots.Commands.Terminal
 
 			if (v_Option == "Row/Col Position")
             {
-				var mouseX = (int)await v_XMousePosition.EvaluateCode(engine, nameof(v_XMousePosition), this);
-				var mouseY = (int)await v_YMousePosition.EvaluateCode(engine, nameof(v_YMousePosition), this);
+				var mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+				var mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
 				field = fields.Where(f => (mouseY * 80 + mouseX) >= f.Location.position && (mouseY * 80 + mouseX) < f.Location.position + f.Location.length).FirstOrDefault();
 			}
             else
             {
-				var fieldText = (string)await v_FieldText.EvaluateCode(engine, nameof(v_FieldText), this);
+				var fieldText = (string)await v_FieldText.EvaluateCode(engine);
 				field = fields.Where(f => f.Text != null && f.Text.ToLower().Contains(fieldText.ToLower())).FirstOrDefault();
 			}
 

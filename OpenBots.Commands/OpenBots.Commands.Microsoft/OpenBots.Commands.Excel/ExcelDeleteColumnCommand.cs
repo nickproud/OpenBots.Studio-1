@@ -65,7 +65,7 @@ namespace OpenBots.Commands.Excel
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
 			Worksheet workSheet = excelInstance.ActiveSheet;
-			string vColumnToDelete = (string)await v_ColumnLetter.EvaluateCode(engine, nameof(v_ColumnLetter), this);
+			string vColumnToDelete = (string)await v_ColumnLetter.EvaluateCode(engine);
 
 			var cells = workSheet.Range[vColumnToDelete + "1", Type.Missing];
 			var entireColumn = cells.EntireColumn;

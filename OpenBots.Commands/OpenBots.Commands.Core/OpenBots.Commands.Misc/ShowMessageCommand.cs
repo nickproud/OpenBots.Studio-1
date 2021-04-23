@@ -53,9 +53,9 @@ namespace OpenBots.Commands.Misc
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine, nameof(v_AutoCloseAfter), this);
+			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
 			
-			var variableMessage = await v_Message.EvaluateCode(engine, nameof(v_Message), this);
+			var variableMessage = await v_Message.EvaluateCode(engine);
 			var message = StringMethods.ConvertObjectToString(variableMessage, variableMessage.GetType());
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)

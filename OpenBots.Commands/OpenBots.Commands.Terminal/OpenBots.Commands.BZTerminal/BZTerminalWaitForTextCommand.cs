@@ -58,8 +58,8 @@ namespace OpenBots.Commands.BZTerminal
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string textToWaitFor = (string)await v_TextToWaitFor.EvaluateCode(engine, nameof(v_TextToWaitFor), this);
-			var timeout = (int)await v_Timeout.EvaluateCode(engine, nameof(v_Timeout), this);
+			string textToWaitFor = (string)await v_TextToWaitFor.EvaluateCode(engine);
+			var timeout = (int)await v_Timeout.EvaluateCode(engine);
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)

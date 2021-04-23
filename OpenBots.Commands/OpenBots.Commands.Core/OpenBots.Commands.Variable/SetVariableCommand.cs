@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Variable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			dynamic input = await v_Input.EvaluateCode(engine, nameof(v_Input), this);
+			dynamic input = await v_Input.EvaluateCode(engine);
 				
 			if (input != null)
             {

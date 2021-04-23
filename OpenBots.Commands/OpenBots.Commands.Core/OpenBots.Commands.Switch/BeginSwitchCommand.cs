@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Switch
 			//get engine
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vSwitchValue = (string)await v_SwitchValue.EvaluateCode(engine, nameof(v_SwitchValue), this);
+			var vSwitchValue = (string)await v_SwitchValue.EvaluateCode(engine);
 
 			//get indexes of commands
 			var caseIndices = FindAllCaseIndices(parentCommand.AdditionalScriptCommands);
@@ -62,7 +62,7 @@ namespace OpenBots.Commands.Switch
 				caseCommandItem = parentCommand.AdditionalScriptCommands[caseIndex];
 				targetCaseCommand = (CaseCommand)caseCommandItem.ScriptCommand;
 
-				var caseValue = (string)await targetCaseCommand.v_CaseValue.EvaluateCode(engine, "v_CaseValue", targetCaseCommand);
+				var caseValue = (string)await targetCaseCommand.v_CaseValue.EvaluateCode(engine);
 				// Save Default Case Index
 				if (caseValue == "Default")
 				{

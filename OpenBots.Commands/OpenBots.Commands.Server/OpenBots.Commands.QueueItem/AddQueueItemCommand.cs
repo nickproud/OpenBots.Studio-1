@@ -128,14 +128,14 @@ namespace OpenBots.Commands.QueueItem
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueName = (string)await v_QueueName.EvaluateCode(engine, nameof(v_QueueName), this);
-			var vQueueItemName = (string)await v_QueueItemName.EvaluateCode(engine, nameof(v_QueueItemName), this);
-			var vSource = (string)await v_Source.EvaluateCode(engine, nameof(v_Source), this);
-			var vEvent = (string)await v_Event.EvaluateCode(engine, nameof(v_Event), this);
-			var vJsonType = (string)await v_JsonType.EvaluateCode(engine, nameof(v_JsonType), this);            
-			int priority = (int)await v_Priority.EvaluateCode(engine, nameof(v_Priority), this);
-			var vQueueItemTextValue = (string)await v_QueueItemTextValue.EvaluateCode(engine, nameof(v_QueueItemTextValue), this);
-			var vAttachments = (string)await v_Attachments.EvaluateCode(engine, nameof(v_Attachments), this);
+			var vQueueName = (string)await v_QueueName.EvaluateCode(engine);
+			var vQueueItemName = (string)await v_QueueItemName.EvaluateCode(engine);
+			var vSource = (string)await v_Source.EvaluateCode(engine);
+			var vEvent = (string)await v_Event.EvaluateCode(engine);
+			var vJsonType = (string)await v_JsonType.EvaluateCode(engine);            
+			int priority = (int)await v_Priority.EvaluateCode(engine);
+			var vQueueItemTextValue = (string)await v_QueueItemTextValue.EvaluateCode(engine);
+			var vAttachments = (string)await v_Attachments.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			Queue queue = QueueMethods.GetQueue(client, $"name eq '{vQueueName}'");

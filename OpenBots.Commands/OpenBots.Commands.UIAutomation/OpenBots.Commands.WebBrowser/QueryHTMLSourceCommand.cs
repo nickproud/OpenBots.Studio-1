@@ -60,7 +60,7 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-			doc.LoadHtml((string)await v_HTMLVariable.EvaluateCode(engine, nameof(v_HTMLVariable), this));
+			doc.LoadHtml((string)await v_HTMLVariable.EvaluateCode(engine));
 
 			var div = doc.DocumentNode.SelectSingleNode(v_XPathQuery);
 			string divString = div.InnerText;

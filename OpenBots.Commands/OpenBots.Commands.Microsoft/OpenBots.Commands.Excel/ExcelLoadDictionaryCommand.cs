@@ -76,8 +76,8 @@ namespace OpenBots.Commands.Excel
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			
-			var vKeyColumn = (string)await v_KeyColumn.EvaluateCode(engine, nameof(v_KeyColumn), this);
-			var vValueColumn = (string)await v_ValueColumn.EvaluateCode(engine, nameof(v_ValueColumn), this);
+			var vKeyColumn = (string)await v_KeyColumn.EvaluateCode(engine);
+			var vValueColumn = (string)await v_ValueColumn.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;

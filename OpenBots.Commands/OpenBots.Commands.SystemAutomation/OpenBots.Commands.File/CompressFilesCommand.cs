@@ -71,15 +71,15 @@ namespace OpenBots.Commands.File
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable path to source file
-			var vSourceDirectoryPathOrigin = (string)await v_DirectoryPathOrigin.EvaluateCode(engine, nameof(v_DirectoryPathOrigin), this);
+			var vSourceDirectoryPathOrigin = (string)await v_DirectoryPathOrigin.EvaluateCode(engine);
 
 			// get file path to destination files
-			var vFilePathDestination = (string)await v_PathDestination.EvaluateCode(engine, nameof(v_PathDestination), this);
+			var vFilePathDestination = (string)await v_PathDestination.EvaluateCode(engine);
 
 			var vPassword = "";
 			// get password to extract files
 			if (!string.IsNullOrEmpty(v_Password))
-				vPassword = ((SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+				vPassword = ((SecureString)await v_Password.EvaluateCode(engine)).ConvertSecureStringToString();
 
             if (IO.File.Exists(vSourceDirectoryPathOrigin))
 				throw new ArgumentException($"{vSourceDirectoryPathOrigin} is a file when it should be a directory");

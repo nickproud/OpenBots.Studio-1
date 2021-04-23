@@ -60,8 +60,8 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine, nameof(v_ToStringFormat), this);
-			DateTime variableDate = (DateTime)await v_InputData.EvaluateCode(engine, nameof(v_InputData), this);
+			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine);
+			DateTime variableDate = (DateTime)await v_InputData.EvaluateCode(engine);
 
 			string formattedString  = variableDate.ToString(formatting);
 				

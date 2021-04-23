@@ -60,8 +60,8 @@ namespace OpenBots.Commands.Excel
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string vSheetToRename = (string)await v_OriginalSheetName.EvaluateCode(engine, nameof(v_OriginalSheetName), this);
-			string vNewSheetName = (string)await v_NewSheetName.EvaluateCode(engine, nameof(v_NewSheetName), this);
+			string vSheetToRename = (string)await v_OriginalSheetName.EvaluateCode(engine);
+			string vNewSheetName = (string)await v_NewSheetName.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;

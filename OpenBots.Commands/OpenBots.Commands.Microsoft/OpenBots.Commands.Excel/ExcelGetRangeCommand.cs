@@ -86,7 +86,7 @@ namespace OpenBots.Commands.Excel
 		{         
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
-			var vRange = (string)await v_Range.EvaluateCode(engine, nameof(v_Range), this);
+			var vRange = (string)await v_Range.EvaluateCode(engine);
 			var excelInstance = (Application)excelObject;
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;

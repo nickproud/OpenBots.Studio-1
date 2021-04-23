@@ -76,13 +76,13 @@ namespace OpenBots.Commands.Excel
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine, nameof(v_CellLocation), this);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 
 			var excelInstance = (Application)excelObject;
 			var excelSheet = (Worksheet)excelInstance.ActiveSheet;
 
-			DataTable Dt = (DataTable)await v_DataTableToSet.EvaluateCode(engine, nameof(v_DataTableToSet), this);
+			DataTable Dt = (DataTable)await v_DataTableToSet.EvaluateCode(engine);
 			if (string.IsNullOrEmpty(vTargetAddress) || vTargetAddress.Contains(":")) 
 				throw new Exception("Cell Location is invalid or empty");
 
