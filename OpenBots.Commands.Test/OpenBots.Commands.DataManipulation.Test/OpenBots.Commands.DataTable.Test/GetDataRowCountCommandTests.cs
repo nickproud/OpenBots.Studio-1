@@ -31,7 +31,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _getDataRowCount.RunCommand(_engine);
 
-            Assert.Equal("1", (string)await _getDataRowCount.v_OutputUserVariableName.EvaluateCode(_engine));
+            Assert.Equal("1", (string)await _getDataRowCount.v_OutputUserVariableName.EvaluateCodeForTests(_engine));
         }
     }
 }

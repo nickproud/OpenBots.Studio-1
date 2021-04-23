@@ -34,7 +34,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("https://example.com/ || {vURL}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_URL { get; set; }
 
         public IENavigateToURLCommand()
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.IEBrowser
             var browserObject = v_InstanceName.GetAppInstance(engine);
             var browserInstance = (InternetExplorer)browserObject;
 
-            browserInstance.Navigate((string)await v_URL.EvaluateCode(engine));
+            browserInstance.Navigate((string)await v_URL.EvaluateCode(engine, nameof(v_URL), this));
             IECreateBrowserCommand.WaitForReadyState(browserInstance);
         }
 

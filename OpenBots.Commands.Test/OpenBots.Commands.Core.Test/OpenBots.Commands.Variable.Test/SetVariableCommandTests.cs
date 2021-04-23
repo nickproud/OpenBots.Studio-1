@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Variable.Test
 
             _setVariable.RunCommand(_engine);
 
-            Assert.Equal("valueToSet", (string)await "{setVariable}".EvaluateCode(_engine));
+            Assert.Equal("valueToSet", (string)await "{setVariable}".EvaluateCodeForTests(_engine));
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Variable.Test
 
             _setVariable.RunCommand(_engine);
 
-            Assert.Equal("2", (string)await "{setVariable}".EvaluateCode(_engine));
+            Assert.Equal("2", (string)await "{setVariable}".EvaluateCodeForTests(_engine));
         }
     }
 }

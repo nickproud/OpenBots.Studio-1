@@ -512,7 +512,7 @@ namespace OpenBots.Engine
                     if (parentCommand.CommandName == "LogMessageCommand")
                     {
                         string displayValue = parentCommand.GetDisplayValue().Replace("Log Message ['", "").Replace("']", "");
-                        string logMessage = (string)await displayValue.Split('-').Last().EvaluateCode(this);
+                        string logMessage = (string)await displayValue.Split('-').Last().EvaluateCode(this, "v_LogText", parentCommand);
                         displayValue = displayValue.Replace(displayValue.Split('-').Last(), logMessage);
                         ReportProgress($"Logging Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? _privateCommandLog : displayValue)}",
                             parentCommand.LogLevel);

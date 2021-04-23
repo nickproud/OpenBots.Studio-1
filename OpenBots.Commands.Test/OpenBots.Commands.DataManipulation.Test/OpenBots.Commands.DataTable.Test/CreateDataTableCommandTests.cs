@@ -34,7 +34,7 @@ namespace OpenBots.Commands.DataTable.Test
             OBData.DataTable expectedDt = new OBData.DataTable();
             foreach (DataRow rwColumnName in columnNameDataTable.Rows)
             {
-                expectedDt.Columns.Add((string)await rwColumnName.Field<string>("Column Name").EvaluateCode(_engine));
+                expectedDt.Columns.Add((string)await rwColumnName.Field<string>("Column Name").EvaluateCodeForTests(_engine));
             }
 
             OBData.DataTable resultDataTable = (OBData.DataTable)await _createDataTableCommand.v_OutputUserVariableName.EvaluateCodeForTests(_engine, typeof(OBData.DataTable));

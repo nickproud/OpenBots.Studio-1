@@ -139,7 +139,7 @@ namespace OpenBots.Commands.Input
 					if (engine.IsCancellationPending)
 						break;
 
-					requiredHandle = await CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
+					requiredHandle = await CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName, nameof(v_UIASearchParameters), this);
 
 					if (requiredHandle == null)
 						throw new Exception("Element Not Yet Found... ");

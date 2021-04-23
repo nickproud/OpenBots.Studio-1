@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Data.Test
 
             _getWordCount.RunCommand(_engine);
 
-            Assert.Equal(3, (Int32)await _getWordCount.v_OutputUserVariableName.EvaluateCode(_engine));
+            Assert.Equal(3, (Int32)await _getWordCount.v_OutputUserVariableName.EvaluateCodeForTests(_engine));
         }
     }
 }

@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Data.Test
 
             _getPDFText.RunCommand(_engine);
 
-            Assert.Equal("Dummy PDF file", (string)await "{outputText}".EvaluateCode(_engine));
+            Assert.Equal("Dummy PDF file", (string)await "{outputText}".EvaluateCodeForTests(_engine));
         }
 
         [Fact]

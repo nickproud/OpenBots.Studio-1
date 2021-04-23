@@ -132,7 +132,7 @@ namespace OpenBots.Commands.Task.Test
 
             _engine.ExecuteCommand(runTaskAction);
 
-            Assert.Equal("outputValue", (string)await "{outputVar}".EvaluateCode(_engine));
+            Assert.Equal("outputValue", (string)await "{outputVar}".EvaluateCodeForTests(_engine));
             Assert.True(OBIO.File.Exists(Path.Combine(filePath, @"test.txt")));
             Assert.Equal("inputValue", OBIO.File.ReadAllText(Path.Combine(filePath, @"test.txt")));
 

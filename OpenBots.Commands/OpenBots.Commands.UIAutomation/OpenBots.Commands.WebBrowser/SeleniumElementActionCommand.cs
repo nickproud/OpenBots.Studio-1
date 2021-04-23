@@ -166,7 +166,8 @@ namespace OpenBots.Commands.WebBrowser
 
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			dynamic element = await CommandsHelper.FindElement(engine, seleniumInstance, seleniumSearchParamRows, v_SeleniumSearchOption, vTimeout);
+			dynamic element = await CommandsHelper.FindElement(engine, seleniumInstance, seleniumSearchParamRows, v_SeleniumSearchOption, 
+				vTimeout, nameof(v_SeleniumSearchParameters), this);
 
 			if (element == null && v_SeleniumElementAction != "Element Exists")
 				throw new ElementNotVisibleException("Unable to find element within the provided time limit");

@@ -153,7 +153,8 @@ namespace OpenBots.Commands.Loop
 			{
 				var commandData = rw["CommandData"].ToString();
 				var loopCommand = JsonConvert.DeserializeObject<BeginLoopCommand>(commandData);
-				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable, this);
+				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable,
+					"v_ActionParameterTable", loopCommand);
 
 				if (!statementResult && v_LogicType == "And")
 				{

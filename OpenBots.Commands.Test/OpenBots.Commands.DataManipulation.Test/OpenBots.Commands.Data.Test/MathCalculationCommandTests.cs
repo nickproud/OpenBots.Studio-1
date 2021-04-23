@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Data.Test
 
             _mathCalculation.RunCommand(_engine);
 
-            Assert.Equal(expectedOutput, (string)await _mathCalculation.v_OutputUserVariableName.EvaluateCode(_engine));
+            Assert.Equal(expectedOutput, (string)await _mathCalculation.v_OutputUserVariableName.EvaluateCodeForTests(_engine));
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.Data.Test
 
             _mathCalculation.RunCommand(_engine);
 
-            Assert.Equal("11.000.00", (string)await _mathCalculation.v_OutputUserVariableName.EvaluateCode(_engine));
+            Assert.Equal("11.000.00", (string)await _mathCalculation.v_OutputUserVariableName.EvaluateCodeForTests(_engine));
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace OpenBots.Commands.Data.Test
 
             _mathCalculation.RunCommand(_engine);
 
-            Assert.Equal("1:60", (string)await _mathCalculation.v_OutputUserVariableName.EvaluateCode(_engine));
+            Assert.Equal("1:60", (string)await _mathCalculation.v_OutputUserVariableName.EvaluateCodeForTests(_engine));
         }
     }
 }

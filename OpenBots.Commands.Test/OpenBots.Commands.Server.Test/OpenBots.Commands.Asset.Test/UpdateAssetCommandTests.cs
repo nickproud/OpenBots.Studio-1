@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCodeForTests(_engine);
             Assert.Equal("newText", outputAsset);
 
             resetAsset(assetName, "testText", "Text");
@@ -72,7 +72,7 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCodeForTests(_engine);
             Assert.Equal("70", outputAsset);
 
             resetAsset(assetName, "42", "Number");
@@ -104,7 +104,7 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            JObject outputAsset = (JObject)await "{output}".EvaluateCode(_engine);
+            JObject outputAsset = (JObject)await "{output}".EvaluateCodeForTests(_engine);
             Assert.Equal("newText", outputAsset["text"]);
 
             resetAsset(assetName, "{ \"text\": \"testText\" }", "JSON");

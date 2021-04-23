@@ -50,7 +50,7 @@ namespace OpenBots.Commands.NLG
 		[SampleUsage("Hello || {vValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Parameter { get; set; }
 
 		public SetNLGParameterCommand()
@@ -69,7 +69,7 @@ namespace OpenBots.Commands.NLG
 			var engine = (IAutomationEngineInstance)sender;
 			var p = (SPhraseSpec)v_InstanceName.GetAppInstance(engine);
 
-			var userInput = (string)await v_Parameter.EvaluateCode(engine);
+			var userInput = (string)await v_Parameter.EvaluateCode(engine, nameof(v_Parameter), this);
 
 			switch (v_ParameterType)
 			{

@@ -41,7 +41,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _getDataRowValue.RunCommand(_engine);
 
-            string outputValue = (string)await _getDataRowValue.v_OutputUserVariableName.EvaluateCode(_engine);
+            string outputValue = (string)await _getDataRowValue.v_OutputUserVariableName.EvaluateCodeForTests(_engine);
             Assert.Equal(inputTable.Rows[0]["col1"], outputValue);
         }
     }

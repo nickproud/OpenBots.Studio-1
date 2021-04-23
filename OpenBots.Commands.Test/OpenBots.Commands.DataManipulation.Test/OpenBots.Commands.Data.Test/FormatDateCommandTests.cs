@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Data.Test
             _formatDate.RunCommand(_engine);
 
             string formattedDate = inputDate.ToString(dateFormat);
-            Assert.Equal(formattedDate, (string)await _formatDate.v_OutputUserVariableName.EvaluateCode(_engine));
+            Assert.Equal(formattedDate, (string)await _formatDate.v_OutputUserVariableName.EvaluateCodeForTests(_engine));
         }
 
         [Fact]

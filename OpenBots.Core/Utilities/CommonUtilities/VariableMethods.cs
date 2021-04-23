@@ -463,7 +463,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return engine.AutomationEngineContext.EngineScriptState.GetVariable($"{engine.AutomationEngineContext.GuidPlaceholder}").Value;
         }
 
-        public async static Task<object> EvaluateCode(this string code, IAutomationEngineInstance engine)
+        public async static Task<object> EvaluateCodeForTests(this string code, IAutomationEngineInstance engine)
         {
             if (code == null || code == "")
                 code = "null";

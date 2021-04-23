@@ -30,7 +30,7 @@ namespace OpenBots.Commands.List.Test
 
             _getListCount.RunCommand(_engine);
 
-            Assert.Equal(inputList.Count, (Int32)await "{output}".EvaluateCode(_engine));
+            Assert.Equal(inputList.Count, (Int32)await "{output}".EvaluateCodeForTests(_engine));
         }
     }
 }

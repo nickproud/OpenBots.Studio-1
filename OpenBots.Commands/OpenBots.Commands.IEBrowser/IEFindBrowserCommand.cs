@@ -37,6 +37,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_IEBrowserName { get; set; }
 
         [JsonIgnore]
@@ -57,7 +58,7 @@ namespace OpenBots.Commands.IEBrowser
         {
             var engine = (IAutomationEngineInstance)sender;
 
-            string IEBrowserName = (string)await v_IEBrowserName.EvaluateCode(engine);
+            string IEBrowserName = (string)await v_IEBrowserName.EvaluateCode(engine, nameof(v_IEBrowserName), this);
             bool browserFound = false;
             var shellWindows = new ShellWindows();
             foreach (IWebBrowser2 shellWindow in shellWindows)
@@ -103,7 +104,7 @@ namespace OpenBots.Commands.IEBrowser
             foreach (IWebBrowser2 shellWindow in shellWindows)
             {
                 if (shellWindow.Document is HTMLDocument)
-                    _ieBrowerNameDropdown.Items.Add(shellWindow.Document.Title);
+                    _ieBrowerNameDropdown.Items.Add($"\"{shellWindow.Document.Title}\"");
             }
             RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_IEBrowserName", this));
             RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_IEBrowserName", this, new Control[] { _ieBrowerNameDropdown }, editor));

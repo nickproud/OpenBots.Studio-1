@@ -44,8 +44,8 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string initialText = (string)await "{initialText}".EvaluateCode(_engine);
-            string updatedAsset = (string)await "{updatedAsset}".EvaluateCode(_engine);
+            string initialText = (string)await "{initialText}".EvaluateCodeForTests(_engine);
+            string updatedAsset = (string)await "{updatedAsset}".EvaluateCodeForTests(_engine);
 
             resetAsset(assetName, initialText, "Text");
 

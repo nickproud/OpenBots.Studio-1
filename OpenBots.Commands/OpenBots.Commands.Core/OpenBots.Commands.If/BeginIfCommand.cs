@@ -99,7 +99,7 @@ namespace OpenBots.Commands.If
 		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var ifResult = await CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable, this);
+			var ifResult = await CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable, nameof(v_ActionParameterTable), this);
 
 			int startIndex, endIndex, elseIndex;
 			if (parentCommand.AdditionalScriptCommands.Any(item => item.ScriptCommand is ElseCommand))

@@ -97,7 +97,7 @@ namespace OpenBots.Commands.Task
 				return;
 			}
 
-			var childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance);
+			var childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance, nameof(v_TaskPath), this);
 			if (!File.Exists(childTaskPath))
 				throw new FileNotFoundException("Task file was not found");
 
@@ -271,7 +271,7 @@ namespace OpenBots.Commands.Task
 				if (startFile.Contains("ProjectPath +"))
 					startFile = startFile.Replace("ProjectPath +", $"@\"{editor.ScriptEngineContext.ProjectPath}\" + ");
 
-				startFile = (string)await startFile.EvaluateCode(currentScriptEngine);
+				startFile = (string)await startFile.EvaluateCode(currentScriptEngine, nameof(v_TaskPath), this);
 
 				if (!isMouseEnter && File.Exists(startFile))
                 {
@@ -323,7 +323,7 @@ namespace OpenBots.Commands.Task
 		private async void RunServerTask(object sender)
 		{
 			var parentAutomationEngineInstance = (IAutomationEngineInstance)sender;
-			string childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance);
+			string childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance, nameof(v_TaskPath), this);
 			string parentTaskPath = parentAutomationEngineInstance.FileName;
 
 			//create argument list

@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Dictionary.Test
 
             _getDictionaryValue.RunCommand(_engine);
 
-            Assert.Equal("val1", (string)await "{outputValue}".EvaluateCode(_engine));
+            Assert.Equal("val1", (string)await "{outputValue}".EvaluateCodeForTests(_engine));
         }
     }
 }

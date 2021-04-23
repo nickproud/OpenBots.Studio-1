@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Data.Test
 
             _textExtraction.RunCommand(_engine);
 
-            Assert.Equal("example sentence", (string)await "{output}".EvaluateCode(_engine));
+            Assert.Equal("example sentence", (string)await "{output}".EvaluateCodeForTests(_engine));
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace OpenBots.Commands.Data.Test
 
             _textExtraction.RunCommand(_engine);
 
-            Assert.Equal("This is", (string)await "{output}".EvaluateCode(_engine));
+            Assert.Equal("This is", (string)await "{output}".EvaluateCodeForTests(_engine));
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace OpenBots.Commands.Data.Test
 
             _textExtraction.RunCommand(_engine);
 
-            Assert.Equal("example", (string)await "{output}".EvaluateCode(_engine));
+            Assert.Equal("example", (string)await "{output}".EvaluateCodeForTests(_engine));
         }
     }
 }

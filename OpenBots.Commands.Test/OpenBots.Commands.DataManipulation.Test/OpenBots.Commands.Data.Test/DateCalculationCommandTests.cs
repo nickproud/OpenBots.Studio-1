@@ -37,11 +37,11 @@ namespace OpenBots.Commands.Data.Test
             _dateCalculation.RunCommand(_engine);
             if (expectedResult.GetType() == typeof(DateTime))
             {
-                Assert.Equal(expectedResult.ToString(defaultFormat), (string)await _dateCalculation.v_OutputUserVariableName.EvaluateCode(_engine));
+                Assert.Equal(expectedResult.ToString(defaultFormat), (string)await _dateCalculation.v_OutputUserVariableName.EvaluateCodeForTests(_engine));
             }
             else if (expectedResult.GetType() == typeof(int))
             {
-                Assert.Equal(expectedResult, (Int32)await _dateCalculation.v_OutputUserVariableName.EvaluateCode(_engine));
+                Assert.Equal(expectedResult, (Int32)await _dateCalculation.v_OutputUserVariableName.EvaluateCodeForTests(_engine));
             }
         }
 

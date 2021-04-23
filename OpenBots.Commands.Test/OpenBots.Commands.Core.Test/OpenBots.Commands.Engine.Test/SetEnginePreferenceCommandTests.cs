@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Engine.Test
             action.ScriptCommand = _setVariable;
             _engine.ExecuteCommand(action);
 
-            Assert.Equal("1+1", (string)await "{output}".EvaluateCode(_engine));
+            Assert.Equal("1+1", (string)await "{output}".EvaluateCodeForTests(_engine));
         }
     }
 }
