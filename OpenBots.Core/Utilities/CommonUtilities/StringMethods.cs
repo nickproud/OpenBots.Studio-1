@@ -407,7 +407,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 int count = 0;
                 foreach (dynamic pair in complexDictionary)
                 {
-                    while (count < 5)
+                    if (count < 5)
                     {
                         stringBuilder.AppendFormat("\n[{0}, {1}], ", ConvertObjectToString(pair.Key, keyType), ConvertObjectToString(pair.Value, valueType));
                         count++;
@@ -423,7 +423,10 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                     stringBuilder.Length = stringBuilder.Length - 2;
 
                 if (complexDictionary.Count > 5)
+                {
+                    stringBuilder.Length = stringBuilder.Length - 1;
                     stringBuilder.Append("...");
+                }
             }
 
             return stringBuilder.ToString();
