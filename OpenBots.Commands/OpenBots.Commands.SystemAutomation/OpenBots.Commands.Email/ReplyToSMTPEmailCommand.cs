@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("smtp.gmail.com || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SMTPHost { get; set; }
 
 		[Required]
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("465 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SMTPPort { get; set; }
 
 		[Required]
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SMTPUserName { get; set; }
 
 		[Required]
@@ -85,7 +85,7 @@ namespace OpenBots.Commands.Email
 		[SampleUsage("Everything ran ok at {DateTime.Now}  || {vBody}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SMTPBody { get; set; }
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
@@ -94,7 +94,7 @@ namespace OpenBots.Commands.Email
 		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SMTPAttachments { get; set; }
 
 		public ReplyToSMTPEmailCommand()
@@ -110,11 +110,11 @@ namespace OpenBots.Commands.Email
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MimeMessage vMimeMessageToReply = (MimeMessage)await v_SMTPMimeMessage.EvaluateCode(engine, nameof(v_SMTPMimeMessage), this);
+			MimeMessage vMimeMessageToReply = (MimeMessage)await v_SMTPMimeMessage.EvaluateCode(engine);
 			string vSMTPHost = (string)await v_SMTPHost.EvaluateCode(engine);
 			string vSMTPPort = (string)await v_SMTPPort.EvaluateCode(engine);
 			string vSMTPUserName = (string)await v_SMTPUserName.EvaluateCode(engine);
-			string vSMTPPassword = ((SecureString)await v_SMTPPassword.EvaluateCode(engine, nameof(v_SMTPPassword), this)).ConvertSecureStringToString();
+			string vSMTPPassword = ((SecureString)await v_SMTPPassword.EvaluateCode(engine)).ConvertSecureStringToString();
 			string vSMTPBody = (string)await v_SMTPBody.EvaluateCode(engine);
 			string vSMTPAttachments = (string)await v_SMTPAttachments.EvaluateCode(engine);
 

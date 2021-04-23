@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("Please Provide Input || {vHeader}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputHeader { get; set; }
 
 		[Required]
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("Directions: Please fill in the following fields || {vDirections}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputDirections { get; set; }
 
 		[DisplayName("Input Parameters (Optional)")]
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Input
 					 "[ComboBox | Gender | 500,30 | Male,Female,Other | {vGender}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(bool) }, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(bool), typeof(int) })]
 		public DataTable v_UserInputConfig { get; set; }
 
 		[JsonIgnore]
@@ -151,7 +151,7 @@ namespace OpenBots.Commands.Input
 
 						//store user data in variable
 						if (!string.IsNullOrEmpty(targetVariable))
-							userInputs[i].SetVariableValue(engine, targetVariable, nameof(v_UserInputConfig), this);
+							userInputs[i].SetVariableValue(engine, targetVariable);
 					}
 				}
 		}

@@ -46,7 +46,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("1 || name || {vSearchData}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_FrameParameter { get; set; }
 
 		public SeleniumSwitchBrowserFrameCommand()
@@ -66,7 +66,7 @@ namespace OpenBots.Commands.WebBrowser
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			var frameIndex = await v_FrameParameter.EvaluateCode(engine);
+			dynamic frameIndex = await v_FrameParameter.EvaluateCode(engine);
 
 			switch (v_SelectionType)
 			{

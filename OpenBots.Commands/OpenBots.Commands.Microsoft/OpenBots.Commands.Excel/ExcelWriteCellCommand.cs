@@ -34,7 +34,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Hello World || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		[Required]
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A1 || {vCellLocation}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CellLocation { get; set; }
 
 		public ExcelWriteCellCommand()
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Excel
 			CommandIcon = Resources.command_spreadsheet;
 
 			v_InstanceName = "DefaultExcel";
-			v_CellLocation = "A1";
+			v_CellLocation = "\"A1\"";
 		}
 
 		public async override Task RunCommand(object sender)

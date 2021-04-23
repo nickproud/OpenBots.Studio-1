@@ -27,14 +27,14 @@ namespace OpenBots.Commands.Credential
 		[SampleUsage("Name || {vCredentialName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CredentialName { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Username Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Credential
 		[Editable(false)]
 		[DisplayName("Output Password Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_OutputUserVariableName2 { get; set; }
@@ -72,8 +72,8 @@ namespace OpenBots.Commands.Credential
 			string username = credential.UserName;
 			SecureString password = credential.PasswordSecret.ConvertStringToSecureString();
 
-			username.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
-			password.SetVariableValue(engine, v_OutputUserVariableName2, nameof(v_OutputUserVariableName2), this);
+			username.SetVariableValue(engine, v_OutputUserVariableName);
+			password.SetVariableValue(engine, v_OutputUserVariableName2);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

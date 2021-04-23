@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Word
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FolderPath { get; set; }
 
 		[Required]
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("myFile.pdf || {vFilename}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FileName { get; set; }
 
 		public WordExportToPDFCommand()

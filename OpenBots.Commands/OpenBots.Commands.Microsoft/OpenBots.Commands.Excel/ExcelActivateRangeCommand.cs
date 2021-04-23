@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("\"A1\" || \"A1:B10\" || \"A1:\" || vRange || vStart+\":+\"vEnd || vStart + \":\"")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Range { get; set; }
 
 		public ExcelActivateRangeCommand()

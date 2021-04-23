@@ -71,7 +71,7 @@ namespace OpenBots.Commands.DataTable
 		[Editable(false)]
 		[DisplayName("Output DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -111,7 +111,7 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			dynamic vSearchItem = await v_Index.EvaluateCode(engine);
-			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
+			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine);
 
 			if(v_RemoveOption == "Index")
                 Dt.Rows[(int)vSearchItem].Delete();
@@ -168,7 +168,7 @@ namespace OpenBots.Commands.DataTable
 			}
 
 			Dt.AcceptChanges();
-			Dt.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			Dt.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

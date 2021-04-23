@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Asset
 		[SampleUsage("Name || {vAssetName}")]
 		[Remarks("This command will throw an exception if an asset of the wrong type is used.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetName { get; set; }
 
 		[Required]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Asset
 		[SampleUsage("Smith || {vAssetValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AppendText { get; set; }
 
 

@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Username { get; set; }
 
 		[Required]
@@ -60,7 +60,7 @@ namespace OpenBots.Commands.Terminal
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var vUserName = (string)await v_Username.EvaluateCode(engine);
-			var vPassword = (SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this);
+			var vPassword = (SecureString)await v_Password.EvaluateCode(engine);
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)

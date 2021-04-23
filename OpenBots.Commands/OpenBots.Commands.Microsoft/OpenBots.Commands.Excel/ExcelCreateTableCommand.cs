@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("A1:B10 || A1: || {vRange} || {vStart}:{vEnd} || {vStart}:")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_Range { get; set; }
 
         [Required]
@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("TableName || {vTableName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_TableName { get; set; }
 
         [Required]
@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNameExcelTable { get; set; }
 
         public ExcelCreateTableCommand()

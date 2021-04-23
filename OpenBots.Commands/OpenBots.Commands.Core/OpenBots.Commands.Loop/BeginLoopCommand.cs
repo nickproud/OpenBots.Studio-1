@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("Param Value || {vParamValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string) }, true)]
+		[CompatibleTypes(new Type[] { typeof(Bitmap), typeof(DateTime), typeof(string), typeof(double), typeof(int), typeof(bool) })]
 		public DataTable v_ActionParameterTable { get; set; }
 
 		[JsonIgnore]
@@ -102,7 +102,7 @@ namespace OpenBots.Commands.Loop
 		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var loopResult = await CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable, this);
+			var loopResult = await CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
 			engine.ReportProgress("Starting Loop"); 
 
 			while (loopResult)
@@ -128,7 +128,7 @@ namespace OpenBots.Commands.Loop
 						break;
 					}
 				}
-				loopResult = await CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable, this);
+				loopResult = await CommandsHelper.DetermineStatementTruth(engine, v_LoopActionType, v_ActionParameterTable);
 			}
 		}
 

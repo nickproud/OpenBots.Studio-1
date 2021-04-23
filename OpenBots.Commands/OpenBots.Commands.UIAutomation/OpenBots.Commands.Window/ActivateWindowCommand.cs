@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Window
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Window
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public ActivateWindowCommand()

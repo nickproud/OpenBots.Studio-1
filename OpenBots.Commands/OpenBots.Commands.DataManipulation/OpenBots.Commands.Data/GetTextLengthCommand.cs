@@ -18,21 +18,20 @@ namespace OpenBots.Commands.Data
 	[Description("This command returns the length of a string.")]
 	public class GetTextLengthCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("Text Data")]
 		[Description("Provide a variable or text value.")]
 		[SampleUsage("Hello World || {vStringVariable}")]
-		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputValue { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Length Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -43,29 +42,22 @@ namespace OpenBots.Commands.Data
 			SelectionName = "Get Text Length";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_function;
-
 		}
 
 		public async override Task RunCommand(object sender)
 		{
-			//get engine
 			var engine = (IAutomationEngineInstance)sender;
-
-			//get input value
 			var stringRequiringLength = (string)await v_InputValue.EvaluateCode(engine);
 
-			//count number of words
 			var stringLength = stringRequiringLength.Length;
 
-			//store word count into variable
-			stringLength.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			stringLength.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
 
-			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputValue", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("Inbox || {vFolderName}")]
 		[Remarks("Source folder cannot be a subfolder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFolder { get; set; }
 
 		[Required]
@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("[Subject] = 'Hello' || [Subject] = 'Hello' and [SenderName] = 'Jane Doe' || {vFilter} || None")]
 		[Remarks("*Warning* Using 'None' as the Filter will return every email in the selected Mail Folder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Filter { get; set; }
 
 		[Required]
@@ -86,7 +86,7 @@ namespace OpenBots.Commands.Outlook
 		[Remarks("This input is optional and will only be used if *Save MailItems and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MessageDirectory { get; set; }
 
 		[Required]
@@ -96,16 +96,16 @@ namespace OpenBots.Commands.Outlook
 		[Remarks("This input is optional and will only be used if *Save MailItems and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AttachmentDirectory { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output MailItem List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<MailItem>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -190,7 +190,7 @@ namespace OpenBots.Commands.Outlook
 					}
 				}
 
-				outMail.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				outMail.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 		}
 

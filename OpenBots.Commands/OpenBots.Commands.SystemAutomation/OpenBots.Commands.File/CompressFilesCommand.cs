@@ -5,7 +5,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +17,7 @@ using IO = System.IO;
 
 namespace OpenBots.Commands.File
 {
-	[Serializable]
+    [Serializable]
 	[Category("File Operation Commands")]
 	[Description("This command compresses file(s) from a directory into a Zip file.")]
 	public class CompressFilesCommand : ScriptCommand
@@ -30,7 +29,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DirectoryPathOrigin { get; set; }
 
 		[DisplayName("Password (Optional)")]
@@ -48,14 +47,14 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+				[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_PathDestination { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Compressed File Path Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -66,7 +65,6 @@ namespace OpenBots.Commands.File
 			SelectionName = "Compress Files";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_files;
-
 		}
 
 		public async override Task RunCommand(object sender)
@@ -80,17 +78,13 @@ namespace OpenBots.Commands.File
 
 			var vPassword = "";
 			// get password to extract files
-			if (v_Password != null)
-				vPassword = ((SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+			if (!string.IsNullOrEmpty(v_Password))
+				vPassword = ((SecureString)await v_Password.EvaluateCode(engine)).ConvertSecureStringToString();
 
             if (IO.File.Exists(vSourceDirectoryPathOrigin))
-            {
 				throw new ArgumentException($"{vSourceDirectoryPathOrigin} is a file when it should be a directory");
-            }
 			else if (!Directory.Exists(vSourceDirectoryPathOrigin))
-            {
 				throw new DirectoryNotFoundException($"{vSourceDirectoryPathOrigin} is not a valid directory");
-            }
 
 			string[] filenames = Directory.GetFiles(vSourceDirectoryPathOrigin, "*.*", SearchOption.AllDirectories);
 			string[] directorynames = Directory.GetDirectories(vSourceDirectoryPathOrigin, "*", SearchOption.AllDirectories);
@@ -143,7 +137,7 @@ namespace OpenBots.Commands.File
 			}
 
 			//Add File Path to the output variable
-			compressedFileName.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			compressedFileName.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

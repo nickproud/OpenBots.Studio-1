@@ -51,7 +51,7 @@ namespace OpenBots.Commands.If
 		[SampleUsage("Param Value || {vParamValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string)}, true)]
+		[CompatibleTypes(new Type[] { typeof(Bitmap), typeof(DateTime), typeof(string), typeof(double), typeof(int), typeof(bool) })]
 		public DataTable v_ActionParameterTable { get; set; }
 
 		[JsonIgnore]
@@ -99,7 +99,7 @@ namespace OpenBots.Commands.If
 		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var ifResult = await CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable, this);
+			var ifResult = await CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
 
 			int startIndex, endIndex, elseIndex;
 			if (parentCommand.AdditionalScriptCommands.Any(item => item.ScriptCommand is ElseCommand))

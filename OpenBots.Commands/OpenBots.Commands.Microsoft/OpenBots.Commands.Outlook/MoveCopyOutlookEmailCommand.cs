@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("New Folder || {vFolderName}")]
 		[Remarks("Destination folder cannot be a subfolder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DestinationFolder { get; set; }
 
 		[Required]
@@ -73,7 +73,7 @@ namespace OpenBots.Commands.Outlook
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
 			var vDestinationFolder = (string)await v_DestinationFolder.EvaluateCode(engine);
 			
 			Application outlookApp = new Application();

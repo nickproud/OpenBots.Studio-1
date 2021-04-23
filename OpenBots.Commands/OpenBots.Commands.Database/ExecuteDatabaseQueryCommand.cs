@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("SELECT OrderID, CustomerID FROM Orders || {vQuery}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Query { get; set; }
 
 		[DisplayName("Query Parameters (Optional)")]
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("[STRING | @name | {vNameValue}]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_QueryParameters { get; set; }
 
 		[Required]
@@ -66,14 +66,14 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueryTimeout { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Dataset Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(DataTable), typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -185,14 +185,14 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Close();
 				
 				dataTable.TableName = v_OutputUserVariableName;
-				dataTable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				dataTable.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 			else if (v_QueryType == "Execute NonQuery")
 			{
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 			else if (v_QueryType == "Execute Stored Procedure")
 			{
@@ -200,7 +200,7 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 			else
 				throw new NotImplementedException($"Query Execution Type '{v_QueryType}' not implemented.");

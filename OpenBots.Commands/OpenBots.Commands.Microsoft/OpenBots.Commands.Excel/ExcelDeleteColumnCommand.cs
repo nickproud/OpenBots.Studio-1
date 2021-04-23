@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A || {vColumnLetter}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ColumnLetter { get; set; }
 
 		[Required]

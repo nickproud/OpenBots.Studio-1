@@ -36,7 +36,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("https://mycompany.com/orders || {vURL}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_URL { get; set; }
 
 		public SeleniumNavigateToURLCommand()
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.WebBrowser
 			CommandIcon = Resources.command_web;
 
 			v_InstanceName = "DefaultBrowser";
-			v_URL = "https://";
+			v_URL = "\"https://\"";
 		}
 
 		public async override Task RunCommand(object sender)

@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Process
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ProgramName { get; set; }
 
 		[Required]
@@ -67,7 +67,6 @@ namespace OpenBots.Commands.Process
 				else if (v_StopOption == "Kill")
 					prc.Kill();
 			}
-					
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

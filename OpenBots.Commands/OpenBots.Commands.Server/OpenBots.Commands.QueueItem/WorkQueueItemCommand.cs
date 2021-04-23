@@ -34,7 +34,7 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("QueueItem Text/Json values are stored in the 'DataJson' key of a QueueItem Dictionary.\n" +
 				 "If a Queue has no workable items, the output value will be set to null.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueName { get; set; }
 
 		[Required]
@@ -53,16 +53,16 @@ namespace OpenBots.Commands.QueueItem
 		[Remarks("This input is optional and will only be used if *Save Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AttachmentDirectory { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output QueueItem Dictionary Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<string, object>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -109,7 +109,7 @@ namespace OpenBots.Commands.QueueItem
 			if (queueItem == null)
 			{
 				queueItemDict = null;
-				queueItemDict.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				queueItemDict.SetVariableValue(engine, v_OutputUserVariableName);
 				return;
 			}
 
@@ -127,7 +127,7 @@ namespace OpenBots.Commands.QueueItem
 													   kvp.Key == "LockedUntilUTC")
 										 .ToDictionary(i => i.Key, i => i.Value);
 
-			queueItemDict.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			queueItemDict.SetVariableValue(engine, v_OutputUserVariableName);
 
 			if (v_SaveAttachments == "Yes")
 			{

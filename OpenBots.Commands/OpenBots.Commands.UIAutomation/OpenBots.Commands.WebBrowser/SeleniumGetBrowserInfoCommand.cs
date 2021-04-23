@@ -46,7 +46,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Editable(false)]
 		[DisplayName("Output Info Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -89,7 +89,7 @@ namespace OpenBots.Commands.WebBrowser
 					throw new NotImplementedException($"{v_InfoType} is not implemented for lookup.");
 			}
 			//store data
-			info.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			info.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

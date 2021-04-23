@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Name || {vKeyColumn}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_KeyColumn { get; set; }
 
 		[Required]
@@ -49,14 +49,14 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Value || {vValueColumn}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ValueColumn { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Dictionary Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -69,8 +69,8 @@ namespace OpenBots.Commands.Excel
 			CommandIcon = Resources.command_spreadsheet;
 
 			v_InstanceName = "DefaultExcel";
-			v_KeyColumn = "Name";
-			v_ValueColumn = "Value";
+			v_KeyColumn = "\"Name\"";
+			v_ValueColumn = "\"Value\"";
 		}
 		public async override Task RunCommand(object sender)
 		{
@@ -129,7 +129,7 @@ namespace OpenBots.Commands.Excel
 				outputDictionary.Add(dict.keys, dict.values);
 			}
 
-			outputDictionary.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			outputDictionary.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

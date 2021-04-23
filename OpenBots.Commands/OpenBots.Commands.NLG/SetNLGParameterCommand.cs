@@ -50,7 +50,7 @@ namespace OpenBots.Commands.NLG
 		[SampleUsage("Hello || {vValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Parameter { get; set; }
 
 		public SetNLGParameterCommand()

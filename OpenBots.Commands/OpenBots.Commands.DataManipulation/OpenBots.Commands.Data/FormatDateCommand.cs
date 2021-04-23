@@ -22,26 +22,26 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Input Date")]
 		[Description("Specify either text or a variable that contains a date requiring formatting.")]
-		[SampleUsage("1/1/2000 || {vDate} || {DateTime.Now}")]
-		[Remarks("Utilize the *Create DateTime* command to provide a DateTime variable")]
+		[SampleUsage("new DateTime(2020, 2, 20) || vDate || DateTime.Now")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DateTime), typeof(string) }, true)]
+		[CompatibleTypes(new Type[] { typeof(DateTime) })]
 		public string v_InputData { get; set; }
 
 		[Required]
 		[DisplayName("Date Format")]
 		[Description("Specify the output data format.")]
-		[SampleUsage("MM/dd/yy, hh:mm:ss || {vDateFormat}")]
+		[SampleUsage("\"MM/dd/yy, hh:mm:ss\" || vDateFormat")]
 		[Remarks("You should specify a valid input data format; invalid formats will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ToStringFormat { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Text Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -61,21 +61,11 @@ namespace OpenBots.Commands.Data
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine);
-
-			dynamic input = await v_InputData.EvaluateCode(engine);
-
-			DateTime variableDate;
-
-			if (input is DateTime)
-				variableDate = (DateTime)input;
-			else if (input is string)
-				variableDate = DateTime.Parse((string)input);
-			else
-				throw new InvalidDataException($"{v_InputData} is not a valid DateTime");
+			DateTime variableDate = (DateTime)await v_InputData.EvaluateCode(engine);
 
 			string formattedString  = variableDate.ToString(formatting);
 				
-			formattedString.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			formattedString.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -45,7 +45,7 @@ namespace OpenBots.Commands.List
 		[Editable(false)]
 		[DisplayName("Output List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -62,12 +62,12 @@ namespace OpenBots.Commands.List
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vListIndex = (int)await v_ListIndex.EvaluateCode(engine, nameof(v_ListIndex), this);
-			dynamic dynamicList = await v_ListName.EvaluateCode(engine, nameof(v_ListName), this);
+			var vListIndex = (int)await v_ListIndex.EvaluateCode(engine);
+			dynamic dynamicList = await v_ListName.EvaluateCode(engine);
 
 			dynamicList.RemoveAt(vListIndex);
 
-			((object)dynamicList).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)dynamicList).SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

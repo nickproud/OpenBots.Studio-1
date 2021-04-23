@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("Hello || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputValue { get; set; }
 
 		[Required]
@@ -45,14 +45,14 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("OPENBOTS || {vPassPhrase}")]
 		[Remarks("If decrypting, provide the pass phrase used to encypt the original text.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_PassPhrase { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Result Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.Misc
 			else if (v_EncryptionType == "Decrypt")
 				resultData = EncryptionServices.DecryptString(variableInput, passphrase);
 
-			resultData.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			resultData.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

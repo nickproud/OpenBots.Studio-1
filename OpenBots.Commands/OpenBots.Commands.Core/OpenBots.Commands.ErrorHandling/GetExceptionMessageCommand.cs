@@ -24,7 +24,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[Editable(false)]
 		[DisplayName("Output Exception Message Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.ErrorHandling
 			if (error != null)
 				errorMessage = $"Source: {error.SourceFile}, Line: {error.LineNumber}, " +
 					$"Exception Type: {error.ErrorType}, Exception Message: {error.ErrorMessage}";
-			errorMessage.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			errorMessage.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

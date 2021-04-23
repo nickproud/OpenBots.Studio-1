@@ -41,7 +41,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public DataTable v_WebSearchParameter { get; set; }
 
         [Required]
@@ -431,7 +431,7 @@ namespace OpenBots.Commands.IEBrowser
 
                     string convertedAttribute = Convert.ToString(element.getAttribute(attributeName));
 
-                    convertedAttribute.SetVariableValue(engine, variableName, nameof(v_WebActionParameterTable), this);
+                    convertedAttribute.SetVariableValue(engine, variableName);
                     break;
             }
         }

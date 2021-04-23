@@ -52,7 +52,7 @@ namespace OpenBots.Commands.Outlook
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
 
 			if (v_DeleteReadOnly == "Yes")
 			{

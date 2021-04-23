@@ -55,7 +55,7 @@ namespace OpenBots.Commands.DataTable
 		[Editable(false)]
 		[DisplayName("Output DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -75,8 +75,8 @@ namespace OpenBots.Commands.DataTable
 			var engine = (IAutomationEngineInstance)sender;
 
 			// Get Variable Objects
-			var SourceDTVariable = (OBDataTable)await v_SourceDataTable.EvaluateCode(engine, nameof(v_SourceDataTable), this);
-			var DestinationDTVariable = (OBDataTable)await v_DestinationDataTable.EvaluateCode(engine, nameof(v_DestinationDataTable), this);
+			var SourceDTVariable = (OBDataTable)await v_SourceDataTable.EvaluateCode(engine);
+			var DestinationDTVariable = (OBDataTable)await v_DestinationDataTable.EvaluateCode(engine);
 
 			// Same Variable Check
 			if (v_SourceDataTable != v_DestinationDataTable)
@@ -103,7 +103,7 @@ namespace OpenBots.Commands.DataTable
 				}
 
 				// Update Destination Variable Value
-				destinationDT.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);               
+				destinationDT.SetVariableValue(engine, v_OutputUserVariableName);               
 			}
 		}
 

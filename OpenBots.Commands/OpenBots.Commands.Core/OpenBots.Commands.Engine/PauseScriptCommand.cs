@@ -26,7 +26,7 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("1000 || {vTime}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_PauseLength { get; set; }
 
 		public PauseScriptCommand()

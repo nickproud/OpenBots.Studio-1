@@ -270,7 +270,6 @@
     <Compile Include="OpenBots.Commands.Folder\MoveCopyFolderCommand.cs" />
     <Compile Include="OpenBots.Commands.Folder\RenameFolderCommand.cs" />
     <Compile Include="OpenBots.Commands.Process\RunCSharpScriptCommand.cs" />
-    <Compile Include="OpenBots.Commands.Process\RunCustomCodeCommand.cs" />
     <Compile Include="OpenBots.Commands.Process\RunPythonScriptCommand.cs" />
     <Compile Include="OpenBots.Commands.Process\RunPowershellScriptCommand.cs" />
     <Compile Include="OpenBots.Commands.Process\StartProcessCommand.cs" />

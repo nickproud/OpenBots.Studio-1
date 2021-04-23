@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("Provider=sqloledb;Data Source=myServerAddress;Initial Catalog=myDataBase;Integrated Security=SSPI; || {vConnectionString}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ConnectionString { get; set; }
 
 		[Required]
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("password || {vPassword}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ConnectionStringPassword { get; set; }
 
 		[Required]

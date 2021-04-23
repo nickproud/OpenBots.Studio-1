@@ -37,7 +37,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("https://example.com/ || {vURL}")]
         [Remarks("This input is optional.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_URL { get; set; }
 
         [Required]

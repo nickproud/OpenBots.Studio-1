@@ -47,7 +47,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Remarks("This input should only be used for BlueZone Session files.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SessionFilePath { get; set; }
 
 		[Required]

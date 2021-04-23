@@ -28,16 +28,16 @@ namespace OpenBots.Commands.TextFile
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FilePath { get; set; }
 
 		[Required]
 		[DisplayName("Text")]
 		[Description("Indicate the Text to write.")]
 		[SampleUsage("Hello World! || {vText}")]
-		[Remarks("[crLF] inserts a newline.")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToWrite { get; set; }
 
 		[Required]
@@ -65,7 +65,7 @@ namespace OpenBots.Commands.TextFile
 			var engine = (IAutomationEngineInstance)sender;
 			//convert variables
 			var filePath = (string)await v_FilePath.EvaluateCode(engine);
-			var outputText = ((string)await v_TextToWrite.EvaluateCode(engine)).Replace("[crLF]", Environment.NewLine);
+			var outputText = (string)await v_TextToWrite.EvaluateCode(engine);
 
 			//append or overwrite as necessary
 			if (v_Overwrite == "Append")
@@ -79,7 +79,7 @@ namespace OpenBots.Commands.TextFile
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToWrite", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToWrite", this, editor, 100, 300));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Overwrite", this, editor));
 
 			return RenderedControls;

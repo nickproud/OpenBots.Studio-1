@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Process
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ProgramName { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Process
 		[SampleUsage("-a || -version || {vArg}")]
 		[Remarks("You will need to consult documentation to determine if your executable supports arguments or flags on startup.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ProgramArgs { get; set; }
 
 		[Required]

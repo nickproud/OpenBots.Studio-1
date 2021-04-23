@@ -24,10 +24,10 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Date")]
 		[Description("Specify either text or a variable that contains the date.")]
-		[SampleUsage("1/1/2000 || {vDate} || {DateTime.Now}")]
-		[Remarks("You can use known text or variables.")]
+		[SampleUsage("new DateTime(2020, 2, 20) || vDate || DateTime.Now")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DateTime), typeof(string) }, true)]
+		[CompatibleTypes(new Type[] { typeof(DateTime) })]
 		public string v_InputDate { get; set; }
 
 		[Required]
@@ -61,22 +61,22 @@ namespace OpenBots.Commands.Data
 		[SampleUsage("15 || {vIncrement}")]
 		[Remarks("You can use negative numbers which will do the opposite, ex. Subtract Days and an increment of -5 will Add Days.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(double) })]
 		public string v_Increment { get; set; }
 
 		[DisplayName("Date Format (Optional)")]
 		[Description("Specify the output date format.")]
-		[SampleUsage("MM/dd/yy hh:mm:ss || MM/dd/yyyy || {vDateFormat}")]
+		[SampleUsage("\"MM/dd/yy hh:mm:ss\" || \"MM/dd/yyyy\" || vDateFormat")]
 		[Remarks("You can specify either a valid DateTime, Date or Time Format; an invalid format will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ToStringFormat { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Date Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -106,18 +106,8 @@ namespace OpenBots.Commands.Data
 			var engine = (IAutomationEngineInstance)sender;
 
 			var formatting = (string)await v_ToStringFormat.EvaluateCode(engine);
-			var variableIncrement = (double)await v_Increment.EvaluateCode(engine);
-
-			dynamic input = await v_InputDate.EvaluateCode(engine);
-
-			DateTime variableDate;
-
-			if (input is DateTime)
-				variableDate = (DateTime)input;
-			else if (input is string)
-				variableDate = DateTime.Parse((string)input);
-			else
-				throw new InvalidDataException($"{v_InputDate} is not a valid DateTime");
+			var variableIncrement = Convert.ToDouble(await v_Increment.EvaluateCode(engine));
+			DateTime variableDate = (DateTime)await v_InputDate.EvaluateCode(engine);
 
 			//get increment value
 			double requiredInterval = variableIncrement;
@@ -146,10 +136,10 @@ namespace OpenBots.Commands.Data
 					dateTimeValue = variableDate.AddYears((int)requiredInterval);
 					break;
 				case "Subtract Second(s)":
-					dateTimeValue = variableDate.AddSeconds((requiredInterval * -1));
+					dateTimeValue = variableDate.AddSeconds(requiredInterval * -1);
 					break;
 				case "Subtract Minute(s)":
-					dateTimeValue = variableDate.AddMinutes((requiredInterval * -1));
+					dateTimeValue = variableDate.AddMinutes(requiredInterval * -1);
 					break;
 				case "Subtract Hour(s)":
 					dateTimeValue = variableDate.AddHours(requiredInterval * -1);
@@ -195,7 +185,7 @@ namespace OpenBots.Commands.Data
 				stringDateFormatted = ((object)dateTimeValue).ToString();
 
 			//store string (Result) in variable
-			stringDateFormatted.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			stringDateFormatted.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -260,7 +250,7 @@ namespace OpenBots.Commands.Data
 				{
 					ctrl.Visible = true;
 					if (ctrl is TextBox && string.IsNullOrEmpty(((TextBox)ctrl).Text))
-						((TextBox)ctrl).Text = "MM/dd/yyyy hh:mm:ss";
+						((TextBox)ctrl).Text = "\"MM/dd/yyyy hh:mm:ss\"";
 				}                                    
 			}
 			else if(_hasRendered)

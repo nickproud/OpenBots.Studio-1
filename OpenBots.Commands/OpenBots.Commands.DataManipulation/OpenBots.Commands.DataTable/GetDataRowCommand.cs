@@ -42,7 +42,7 @@ namespace OpenBots.Commands.DataTable
 		[Editable(false)]
 		[DisplayName("Output DataRow Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(DataRow) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -58,12 +58,12 @@ namespace OpenBots.Commands.DataTable
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
-			int index = (int)await v_DataRowIndex.EvaluateCode(engine, nameof(v_DataRowIndex), this);
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
+			int index = (int)await v_DataRowIndex.EvaluateCode(engine);
 
 			DataRow row = dataTable.Rows[index];
 
-			row.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			row.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

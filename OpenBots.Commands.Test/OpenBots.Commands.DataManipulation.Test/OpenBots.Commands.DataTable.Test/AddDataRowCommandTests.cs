@@ -45,7 +45,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _addDataRow.RunCommand(_engine);
 
-            OBData.DataTable outputTable = (OBData.DataTable)await _addDataRow.v_DataTable.EvaluateCodeForTests(_engine, typeof(OBData.DataTable));
+            OBData.DataTable outputTable = (OBData.DataTable)await _addDataRow.v_DataTable.EvaluateCode(_engine);
             Assert.Equal(inputTable.Rows[0]["firstname"], outputTable.Rows[0]["firstname"]);
             Assert.Equal(inputTable.Rows[0]["lastname"], outputTable.Rows[0]["lastname"]);
         }

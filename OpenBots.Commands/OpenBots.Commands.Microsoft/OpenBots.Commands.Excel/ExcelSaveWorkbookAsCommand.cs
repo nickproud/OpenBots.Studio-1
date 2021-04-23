@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Excel
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FolderPath { get; set; }
 
 		[Required]
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("myFile.xlsx || {vFilename}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FileName { get; set; }
 
 		public ExcelSaveWorkbookAsCommand()

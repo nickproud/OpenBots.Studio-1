@@ -26,10 +26,10 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Text Data")]
 		[Description("Provide a variable or text value.")]
-		[SampleUsage("Sample text to perform text extraction on || {vTextData}")]
+		[SampleUsage("\"Hello, welcome to OpenBots\" || {vTextData}")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputText { get; set; }
 
 		[Required]
@@ -45,17 +45,17 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Extraction Parameters")]
 		[Description("Define the required extraction parameters, which is dependent on the type of extraction.")]
-		[SampleUsage("A substring from input text || {vSubstring}")]
+		[SampleUsage("[\"Welcome\", 0] || [vSubstring, vOccurences]")]
 		[Remarks("Set parameter values for each parameter name based on the extraction type.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public OBDataTable v_TextExtractionTable { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Text Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -80,7 +80,6 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			//get variablized input
 			var variableInput = (string)await v_InputText.EvaluateCode(engine);
 
 			string variableLeading, variableTrailing, extractedText;
@@ -118,8 +117,7 @@ namespace OpenBots.Commands.Data
 					throw new NotImplementedException("Extraction Type Not Implemented: " + v_TextExtractionType);
 			}
 
-			//store variable
-			extractedText.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			extractedText.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -184,9 +182,9 @@ namespace OpenBots.Commands.Data
 
 		private string GetParameterValue(string parameterName)
 		{
-			return ((from rw in v_TextExtractionTable.AsEnumerable()
+			return (from rw in v_TextExtractionTable.AsEnumerable()
 					 where rw.Field<string>("Parameter Name") == parameterName
-					 select rw.Field<string>("Parameter Value")).FirstOrDefault());
+					 select rw.Field<string>("Parameter Value")).FirstOrDefault();
 		}
 
 		private string ExtractLeadingText(string input, string substring, int occurences)

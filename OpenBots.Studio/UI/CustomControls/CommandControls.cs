@@ -203,12 +203,9 @@ namespace OpenBots.UI.CustomControls
                 if (attribute.CompTypes != null)
                 {                   
                     foreach (var type in attribute.CompTypes)
-                        toolTipText += $"{type.Name}, ";
+                        toolTipText += $"{type.GetRealTypeFullName()}, ";
                 }
-                if (attribute.IsStringOrPrimitive)
-                    toolTipText += "any primitive/string";
-                else
-                    toolTipText = toolTipText.Substring(0, (toolTipText.Length - 2));
+                toolTipText = toolTipText.Substring(0, (toolTipText.Length - 2));
             }
             if (sampleUsageAttributesAssigned.Length > 0)
             {
@@ -1331,8 +1328,6 @@ namespace OpenBots.UI.CustomControls
                 cbo.Items.Clear();
 
                 List<string> varArgNames = new List<string>();
-
-                varArgNames.Add("");
 
                 foreach (var variable in ((frmCommandEditor)editor).ScriptEngineContext.Variables)
                 {

@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Email
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_IMAPAttachmentDirectory { get; set; }
 
         [Required]
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Email
         [Description("Create a new variable or select a variable from the list.")]
         [SampleUsage("vUserVariable")]
         [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-        [CompatibleTypes(new Type[] { typeof(List<>) })]
+        [CompatibleTypes(new Type[] { typeof(List<string>) })]
         public string v_OutputUserVariableName { get; set; }
 
         public GetIMAPEmailAttachmentsCommand()
@@ -71,10 +71,10 @@ namespace OpenBots.Commands.Email
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            MimeMessage email = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine, nameof(v_IMAPMimeMessage), this);
-            bool includeEmbeds = ((string)await v_IncludeEmbeddedImagesAsAttachments.EvaluateCode(engine)).Equals("Yes");
+            MimeMessage email = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine);
             string attDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine);
 
+            bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.Equals("Yes");
             List<string> attachmentList = new List<string>();
             
             foreach (var attachment in email.Attachments)
@@ -108,7 +108,7 @@ namespace OpenBots.Commands.Email
                 }
             }
             
-            attachmentList.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+            attachmentList.SetVariableValue(engine, v_OutputUserVariableName);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

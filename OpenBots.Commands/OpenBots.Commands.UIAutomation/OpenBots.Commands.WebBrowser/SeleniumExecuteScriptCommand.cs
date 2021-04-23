@@ -34,7 +34,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("arguments[0].click(); || alert('Welcome to OpenBots'); || {vScript}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ScriptCode { get; set; }
 
 		[DisplayName("Arguments (Optional)")]
@@ -42,14 +42,14 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("button || {vArguments}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Arguments { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Data Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -81,7 +81,7 @@ namespace OpenBots.Commands.WebBrowser
 
 			//apply result to variable
 			if ((result != null) && (!string.IsNullOrEmpty(v_OutputUserVariableName)))
-				result.ToString().SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.ToString().SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

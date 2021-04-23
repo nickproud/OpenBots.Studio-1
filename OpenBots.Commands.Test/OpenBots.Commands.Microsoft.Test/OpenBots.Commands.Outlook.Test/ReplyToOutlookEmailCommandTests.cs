@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 
@@ -63,7 +63,7 @@ namespace OpenBots.Commands.Outlook.Test
 
                 _getOutlookEmails.RunCommand(_engine);
 
-                emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+                emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
                 attempts++;
             } while (emails.Count < 1 && attempts < 8);
             email = emails[0];
@@ -93,7 +93,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            List<MailItem> emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            List<MailItem> emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 
@@ -113,7 +113,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
 
@@ -143,7 +143,7 @@ namespace OpenBots.Commands.Outlook.Test
 
                 _getOutlookEmails.RunCommand(_engine);
 
-                emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+                emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
                 attempts++;
             } while (attempts < 5 && emails.Count < 1);
             email = emails[0];

@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A1 || {vCellLocation}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CellLocation { get; set; }
 
 		[Required]
@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Excel
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ImagePath { get; set; }
 
 		[Required]
@@ -59,7 +59,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("75 || {vImageScalePercentage}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_ImageScalePercentage { get; set; }
 
 		public ExcelWriteImageToCell()
@@ -70,7 +70,7 @@ namespace OpenBots.Commands.Excel
 			CommandIcon = Resources.command_spreadsheet;
 
 			v_InstanceName = "DefaultExcel";
-			v_CellLocation = "A1";
+			v_CellLocation = "\"A1\"";
 			v_ImageScalePercentage = "100";
 		}
 

@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vRowPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_YMousePosition { get; set; }
 
 		[Required]
@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("0 || {vColPosition}")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_XMousePosition { get; set; }
 
 		[Required]
@@ -63,14 +63,14 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("Hello, World! || {vText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FieldText { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Field Index Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -124,7 +124,7 @@ namespace OpenBots.Commands.Terminal
 			if (field != null)
 				fieldIndex = Array.IndexOf(terminalObject.TN3270.CurrentScreenXML.Fields, field);
 
-			fieldIndex.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			fieldIndex.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

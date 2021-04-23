@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Folder
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFolderPath { get; set; }
 
 		[Required]
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Folder
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DestinationDirectory { get; set; }
 
 		[Required]

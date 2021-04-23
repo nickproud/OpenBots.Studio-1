@@ -69,7 +69,7 @@ namespace OpenBots.Commands.DataTable
 		[Editable(false)]
 		[DisplayName("Output Sorted DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -90,7 +90,7 @@ namespace OpenBots.Commands.DataTable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
+			var dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
 
 			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
@@ -128,7 +128,7 @@ namespace OpenBots.Commands.DataTable
 								 orderby Convert.ToInt32(row[columnName]) descending
 								 select row).CopyToDataTable();
 			}
-			dataTable.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			dataTable.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

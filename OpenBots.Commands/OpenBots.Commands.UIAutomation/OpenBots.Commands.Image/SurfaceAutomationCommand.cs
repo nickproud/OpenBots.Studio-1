@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Image
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -77,7 +77,7 @@ namespace OpenBots.Commands.Image
 		[SampleUsage("0.8 || 1 || {vAccuracy}")]
 		[Remarks("Accuracy must be a value between 0 and 1.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MatchAccuracy { get; set; }
 
 		[Required]
@@ -86,7 +86,7 @@ namespace OpenBots.Commands.Image
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
@@ -137,7 +137,7 @@ namespace OpenBots.Commands.Image
 			double accuracy;
 			try
 			{
-				accuracy = (double)await v_MatchAccuracy.EvaluateCode(engine);
+				accuracy = Convert.ToDouble(await v_MatchAccuracy.EvaluateCode(engine));
 				if (accuracy > 1 || accuracy < 0)
 					throw new ArgumentOutOfRangeException("Accuracy value is out of range (0-1)");
 			}
@@ -336,7 +336,7 @@ namespace OpenBots.Commands.Image
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 
-						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, nameof(v_ImageActionParameterTable), this);
+						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine);
 
 						secureString = secureStrVariable.ConvertSecureStringToString();
 
@@ -358,9 +358,9 @@ namespace OpenBots.Commands.Image
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 						if (element != null)
-							true.SetVariableValue(engine, outputVariable, nameof(v_ImageActionParameterTable), this);
+							true.SetVariableValue(engine, outputVariable);
 						else
-							false.SetVariableValue(engine, outputVariable, nameof(v_ImageActionParameterTable), this);
+							false.SetVariableValue(engine, outputVariable);
 						break;
 					default:
 						break;

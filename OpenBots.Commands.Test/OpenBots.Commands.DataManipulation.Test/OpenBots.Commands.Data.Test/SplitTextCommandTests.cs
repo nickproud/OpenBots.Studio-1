@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Data.Test
 
             _splitText.RunCommand(_engine);
 
-            List<string> splitText = (List<string>)await "{output}".EvaluateCodeForTests(_engine, typeof(List<>));
+            List<string> splitText = (List<string>)await "{output}".EvaluateCode(_engine);
             Assert.Equal("test", splitText[0]);
             Assert.Equal("text", splitText[1]);
         }
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Data.Test
 
             _splitText.RunCommand(_engine);
 
-            List<string> splitText = (List<string>)await "{output}".EvaluateCodeForTests(_engine, typeof(List<>));
+            List<string> splitText = (List<string>)await "{output}".EvaluateCode(_engine);
             Assert.Equal("test", splitText[0]);
             Assert.Equal("text", splitText[1]);
             Assert.Equal("with", splitText[2]);

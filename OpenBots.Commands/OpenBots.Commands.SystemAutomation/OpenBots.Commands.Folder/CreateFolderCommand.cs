@@ -26,7 +26,7 @@ namespace OpenBots.Commands.Folder
 		[SampleUsage("myFolderName || {vFolderName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_NewFolderName { get; set; }
 
 		[Required]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Folder
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DestinationDirectory { get; set; }
 
 		[Required]
@@ -54,7 +54,6 @@ namespace OpenBots.Commands.Folder
 			SelectionName = "Create Folder";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_folders;
-
 		}
 
 		public async override Task RunCommand(object sender)

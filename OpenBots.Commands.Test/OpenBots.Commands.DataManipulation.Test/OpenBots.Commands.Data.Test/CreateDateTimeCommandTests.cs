@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Data.Test
 
             _createDateTime.RunCommand(_engine);
 
-            Object output = await _createDateTime.v_OutputUserVariableName.EvaluateCodeForTests(_engine, typeof(DateTime));
+            Object output = await _createDateTime.v_OutputUserVariableName.EvaluateCode(_engine);
             Assert.IsType<DateTime>(output);
             DateTime dateOutput = (DateTime)output;
             Assert.Equal(Int32.Parse(year), dateOutput.Year);

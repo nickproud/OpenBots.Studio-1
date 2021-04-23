@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Variable
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			await v_Input.EvaluateSnippet(engine, nameof(v_Input), this);
+			await v_Input.EvaluateSnippet(engine);
 
 			VariableMethods.SyncVariableValues(engine);
 		}

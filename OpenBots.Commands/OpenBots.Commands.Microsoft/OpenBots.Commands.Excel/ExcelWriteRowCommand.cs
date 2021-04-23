@@ -35,10 +35,10 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Row")]
 		[Description("Enter the text value that will be set in the selected row (Can be a DataRow).")]
-		[SampleUsage("Hello,World || {vData1},{vData2} || {vDataRow}")]
+		[SampleUsage("new List<string>(){\"Hello\", \"World\"} || vList || vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DataRow) }, true)]
+		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(string) })]
 		public string v_RowToSet { get; set; }
 
 		[Required]
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A1 || {vCellLocation}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CellLocation { get; set; }
 
 		public ExcelWriteRowCommand()
@@ -104,13 +104,12 @@ namespace OpenBots.Commands.Excel
 			}
 			else
 			{
-				string vRowString = (string)await v_RowToSet.EvaluateCode(engine);
-				var splittext = vRowString.Split(',');
+				var vRowList = (List<string>)vRow;
 
 				string cellValue;
-				for (int j = 0; j < splittext.Length; j++)
+				for (int j = 0; j < vRowList.Count; j++)
 				{
-					cellValue = splittext[j];
+					cellValue = vRowList[j];
 					if (cellValue == "null")
 					{
 						cellValue = string.Empty;

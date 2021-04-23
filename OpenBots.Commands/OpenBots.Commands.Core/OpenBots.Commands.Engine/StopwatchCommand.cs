@@ -47,14 +47,14 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("g || dd\\.hh\\:mm || {vFormat}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ToStringFormat { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Elapsed Time Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -116,7 +116,7 @@ namespace OpenBots.Commands.Engine
 					else
 						elapsedTime = stopwatch.Elapsed.ToString(format);
 
-					elapsedTime.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					elapsedTime.SetVariableValue(engine, v_OutputUserVariableName);
 					break;
 				default:
 					throw new NotImplementedException("Stopwatch Action '" + v_StopwatchAction + "' not implemented");

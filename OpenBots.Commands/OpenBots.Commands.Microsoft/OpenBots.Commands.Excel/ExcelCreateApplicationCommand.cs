@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Excel
 		[Remarks("This input should only be used for opening existing Workbooks.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -93,7 +93,7 @@ namespace OpenBots.Commands.Excel
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFilePath = (string)await (v_FilePath).EvaluateCode(engine);
+			var vFilePath = (string)await v_FilePath.EvaluateCode(engine);
 
 			if (v_CloseAllInstances == "Yes")
 			{

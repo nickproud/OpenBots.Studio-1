@@ -26,7 +26,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("<!DOCTYPE html><html><head><title>Example</title></head></html> || {vMyHTML}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_HTMLVariable { get; set; }
 
 		[Required]
@@ -35,14 +35,14 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("@//*[@id=\"aso_search_form_anchor\"]/div/input || {vMyXPath}")]
 		[Remarks("You can use Chrome Dev Tools to click an element and copy the XPath.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_XPathQuery { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Query Result Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -65,7 +65,7 @@ namespace OpenBots.Commands.WebBrowser
 			var div = doc.DocumentNode.SelectSingleNode(v_XPathQuery);
 			string divString = div.InnerText;
 
-			divString.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			divString.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -40,7 +40,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("ShowLoopBuilder", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string) }, true)]
+		[CompatibleTypes(new Type[] { typeof(Bitmap), typeof(DateTime), typeof(string), typeof(double), typeof(int), typeof(bool) })]
 		public DataTable v_LoopConditionsTable { get; set; }
 
 		[JsonIgnore]
@@ -153,7 +153,7 @@ namespace OpenBots.Commands.Loop
 			{
 				var commandData = rw["CommandData"].ToString();
 				var loopCommand = JsonConvert.DeserializeObject<BeginLoopCommand>(commandData);
-				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable, this);
+				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, loopCommand.v_LoopActionType, loopCommand.v_ActionParameterTable);
 
 				if (!statementResult && v_LogicType == "And")
 				{

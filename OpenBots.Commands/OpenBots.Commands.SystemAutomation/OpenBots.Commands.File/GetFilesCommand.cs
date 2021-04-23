@@ -28,16 +28,16 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFolderPath { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output File Path(s) List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetFilesCommand()
@@ -56,15 +56,13 @@ namespace OpenBots.Commands.File
 			var sourceFolder = (string)await v_SourceFolderPath.EvaluateCode(engine);
 
 			if (!Directory.Exists(sourceFolder))
-			{
 				throw new DirectoryNotFoundException($"{sourceFolder} is not a valid directory");
-			}
 
 			//Get File Paths from the folder
 			var filesList = Directory.GetFiles(sourceFolder, ".", SearchOption.AllDirectories).ToList();
 
 			//Add File Paths to the output variable
-			filesList.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			filesList.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

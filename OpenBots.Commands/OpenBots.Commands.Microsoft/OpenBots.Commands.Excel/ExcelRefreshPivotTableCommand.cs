@@ -34,7 +34,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetName { get; set; }
 
         [Required]
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("PivotTable || {vPivotTable}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_PivotTable { get; set; }
 
         public ExcelRefreshPivotTableCommand()

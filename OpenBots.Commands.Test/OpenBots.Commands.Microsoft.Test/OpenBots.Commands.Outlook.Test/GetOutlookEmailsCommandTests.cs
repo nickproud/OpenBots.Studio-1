@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)await "{emails}".EvaluateCodeForTests(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem email = emails[0];
             Assert.Equal("testBody \r\n", email.Body);
         }

@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Word
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ImagePath { get; set; }
 
 		public WordAppendImageCommand()

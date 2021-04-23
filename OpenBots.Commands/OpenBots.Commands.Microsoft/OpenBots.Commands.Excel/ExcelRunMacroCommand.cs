@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Macro1 || {vMacro}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MacroName { get; set; }
 
 		public ExcelRunMacroCommand()

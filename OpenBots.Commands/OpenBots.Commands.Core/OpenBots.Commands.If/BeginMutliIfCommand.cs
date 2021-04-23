@@ -39,7 +39,7 @@ namespace OpenBots.Commands.If
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("ShowIfBuilder", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string) }, true)]
+		[CompatibleTypes(new Type[] { typeof(Bitmap), typeof(DateTime), typeof(string), typeof(double), typeof(int), typeof(bool) })]
 		public DataTable v_IfConditionsTable { get; set; }
 
 		[JsonIgnore]
@@ -70,7 +70,7 @@ namespace OpenBots.Commands.If
 			{
 				var commandData = rw["CommandData"].ToString();
 				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
-				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable, this);
+				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
 
 				if (!statementResult && v_LogicType == "And")
 				{

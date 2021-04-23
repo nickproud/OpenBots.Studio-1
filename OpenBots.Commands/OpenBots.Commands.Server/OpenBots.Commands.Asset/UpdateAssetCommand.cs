@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Asset
 		[SampleUsage("Name || {vAssetName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetName { get; set; }
 
 		[Required]
@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Asset
 		[Remarks("This input should only be used for File type Assets.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetFilePath { get; set; }
 
 		[Required]
@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Asset
 		[SampleUsage("John || {vAssetValue}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetValue { get; set; }
 
 		[JsonIgnore]

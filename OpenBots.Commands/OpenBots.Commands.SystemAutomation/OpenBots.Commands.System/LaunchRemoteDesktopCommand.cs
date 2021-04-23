@@ -28,7 +28,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("myMachine || {vMachineName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MachineName { get; set; }
 
 		[Required]
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("myRobot || {vUsername}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_UserName { get; set; }
 
 		[Required]
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("1000 || {vWidth}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_RDPWidth { get; set; }
 
 		[Required]
@@ -64,7 +64,7 @@ namespace OpenBots.Commands.System
 		[SampleUsage("800 || {vHeight}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_RDPHeight { get; set; }
 
 		public LaunchRemoteDesktopCommand()
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.System
 			var engine = (IAutomationEngineInstance)sender;
 			var machineName = (string)await v_MachineName.EvaluateCode(engine);
 			var userName = (string)await v_UserName.EvaluateCode(engine);
-			var password = ((SecureString)await v_Password.EvaluateCode(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+			var password = ((SecureString)await v_Password.EvaluateCode(engine)).ConvertSecureStringToString();
 			var width = (int)await v_RDPWidth.EvaluateCode(engine);
 			var height = (int)await v_RDPHeight.EvaluateCode(engine);
 

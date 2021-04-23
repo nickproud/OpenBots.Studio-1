@@ -53,7 +53,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("https://mycompany.com/orders || {vURL}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_URL { get; set; }
 
 		[Required]
@@ -82,7 +82,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("user-data-dir=c:\\users\\public\\SeleniumOpenBotsProfile || {vOptions}")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SeleniumOptions { get; set; }
 
 		public SeleniumCreateBrowserCommand()

@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Loop
 		[Editable(false)]
 		[DisplayName("Output Collection Item Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(KeyValuePair<,>), typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -56,7 +56,7 @@ namespace OpenBots.Commands.Loop
 			LoopCollectionCommand loopCommand = (LoopCollectionCommand)parentCommand.ScriptCommand;
 			var engine = (IAutomationEngineInstance)sender;
 
-			var complexVariable = await v_LoopParameter.EvaluateCode(engine, nameof(v_LoopParameter), this);
+			var complexVariable = await v_LoopParameter.EvaluateCode(engine);
 			dynamic dynamicLoopVariable = complexVariable;
 
 			int loopTimes = dynamicLoopVariable.Count;
@@ -65,7 +65,7 @@ namespace OpenBots.Commands.Loop
 			{
 				engine.ReportProgress("Starting Loop Number " + (i + 1) + "/" + loopTimes + " From Line " + loopCommand.LineNumber);
 				
-				((object)dynamicLoopVariable[i]).SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				((object)dynamicLoopVariable[i]).SetVariableValue(engine, v_OutputUserVariableName);
 
 				foreach (var cmd in parentCommand.AdditionalScriptCommands)
 				{

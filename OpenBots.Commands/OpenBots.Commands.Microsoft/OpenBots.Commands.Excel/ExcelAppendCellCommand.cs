@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("\"Hello World\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		public ExcelAppendCellCommand()

@@ -26,7 +26,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("Hello World || {vMyText} || Hello {vName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_Message { get; set; }
 
 		[Required]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Misc
 		[SampleUsage("0 || 5 || {vSeconds})")]
 		[Remarks("Set value to 0 to remain open indefinitely.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AutoCloseAfter { get; set; }
 
 		public ShowMessageCommand()

@@ -11,35 +11,33 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Data
 {
-	[Serializable]
+    [Serializable]
 	[Category("Data Commands")]
 	[Description("This command runs a number of queries on a JSON object and saves the results in the specified list variables.")]
 	public class ParseJSONModelCommand : ScriptCommand
 	{
-
 		[Required]
-		[DisplayName("JSON Object")]
+		[DisplayName("JSON")]
 		[Description("Provide a variable or JSON object value.")]
-		[SampleUsage("{\"rect\":{\"length\":10, \"width\":5}} || {vJsonObject}")]
+		[SampleUsage("@\"{animals: ['cat', 'dog']}\" || vJsonObject")]
 		[Remarks("Providing data of a type other than a 'JSON Object' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_JsonObject { get; set; }
 
 		[Required]
 		[DisplayName("Parameters")]
 		[Description("Specify JSON Selector(s) (JPath) and Output Variable(s).")]
-		[SampleUsage("[$.rect.length | {vOutputList}] || [{Selector} | {vOutputList}]")]
-		[Remarks("'$.rect.length' is a JSON Selector to query on an inputted JSON Object and store its results in {vOutputList}.")]
+		[SampleUsage("[\"$.animals.length\" | vOutputList] || [\"animals\" | vOutputList] || [vSelector | vOutputList]")]
+		[Remarks("'$.animals.length' is a JSON Selector to query on an inputted JSON Object and store its results in vOutputList.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(List<>) }, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(List<string>) })]
 		public OBDataTable v_ParseObjects { get; set; }
 
 		public ParseJSONModelCommand()
@@ -58,8 +56,6 @@ namespace OpenBots.Commands.Data
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			
-			//get variablized input
 			var variableInput = (string)await v_JsonObject.EvaluateCode(engine);
 
 			foreach (DataRow rw in v_ParseObjects.Rows)
@@ -96,7 +92,7 @@ namespace OpenBots.Commands.Data
 				foreach (var result in searchResults)
 					resultList.Add(result.ToString());
 
-				resultList.SetVariableValue(engine, targetVariableName, nameof(v_ParseObjects), this);               
+				resultList.SetVariableValue(engine, targetVariableName);               
 			}
 		}
 
@@ -104,7 +100,6 @@ namespace OpenBots.Commands.Data
 		{
 			base.Render(editor, commandControls);
 
-			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_JsonObject", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_ParseObjects", this, editor));
 			

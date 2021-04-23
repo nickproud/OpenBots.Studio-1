@@ -308,7 +308,7 @@ namespace OpenBots.Commands.ServerEmail.Test
 
                 _getEmail.RunCommand(_engine);
 
-                emailMessageList = (List<MailItem>)await "{vTestEmail}".EvaluateCodeForTests(_engine, typeof(List<>));
+                emailMessageList = (List<MailItem>)await "{vTestEmail}".EvaluateCode(_engine);
                 if (emailMessageList.Count > 0)
                     emailMessage = emailMessageList[0];
 
@@ -324,7 +324,7 @@ namespace OpenBots.Commands.ServerEmail.Test
 
             VariableMethods.CreateTestVariable(null, _engine, "vMailItem", typeof(MailItem));
             _deleteEmail.v_MailItem = "{vMailItem}";
-            emailMessage.SetVariableValue(_engine, _deleteEmail.v_MailItem, typeof(MailItem));
+            emailMessage.SetVariableValue(_engine, _deleteEmail.v_MailItem);
             _deleteEmail.v_DeleteReadOnly = "Yes";
 
             _deleteEmail.RunCommand(_engine);

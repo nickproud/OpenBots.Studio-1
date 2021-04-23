@@ -29,7 +29,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
 		[Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Recipients { get; set; }
 
 		[Required]
@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("Hello || {vSubject}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Subject { get; set; }
 
 		[Required]
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("Dear John, ... || {vBody}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Body { get; set; }
 
 		[Required]
@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Outlook
 		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Attachments { get; set; }
 
 		public SendOutlookEmailCommand()

@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Sheet1 || {vSheet}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OriginalSheetName { get; set; }
 
 		[Required]
@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("Sheet1 || {vSheet}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_NewSheetName { get; set; }
 
 		public ExcelRenameSheetCommand()

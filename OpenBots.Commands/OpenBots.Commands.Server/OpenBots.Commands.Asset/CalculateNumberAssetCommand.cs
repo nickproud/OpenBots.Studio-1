@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Asset
         [SampleUsage("Name || {vCredentialName}")]
         [Remarks("This command will throw an exception if an asset of the wrong type is used.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_AssetName { get; set; }
 
         [Required]
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Asset
         [SampleUsage("5 || {vAssetValue}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(int) })]
         public string v_AssetActionValue { get; set; }
 
         [JsonIgnore]

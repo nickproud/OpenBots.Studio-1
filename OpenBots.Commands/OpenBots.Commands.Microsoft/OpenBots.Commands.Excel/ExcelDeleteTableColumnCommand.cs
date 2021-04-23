@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("1 || {vIndex} || Column1 || {vColumnName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_DataValueIndex { get; set; }
 
         [Required]
@@ -52,7 +52,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("TableName || {vTableName}")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_TableName { get; set; }
 
         [Required]
@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Microsoft
         [SampleUsage("Sheet1 || {vSheet}")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNameExcelTable { get; set; }
 
         public ExcelDeleteTableColumnCommand()

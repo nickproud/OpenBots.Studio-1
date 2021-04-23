@@ -55,7 +55,7 @@ namespace OpenBots.Commands.WebBrowser
 				 "\n\tLink Text: https://www.mylink.com/")]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_SeleniumSearchParameters { get; set; }
 
 		[Required]
@@ -109,7 +109,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
@@ -275,7 +275,7 @@ namespace OpenBots.Commands.WebBrowser
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine, nameof(v_WebActionParameterTable), this);
+					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine);
 					secureString = secureStrVariable.ConvertSecureStringToString();
 
 					if (_clearElement == null)
@@ -329,7 +329,7 @@ namespace OpenBots.Commands.WebBrowser
 						optionsItems.Add(optionValue);
 					}
 
-					optionsItems.SetVariableValue(engine, applyToVarName, nameof(v_WebActionParameterTable), this);
+					optionsItems.SetVariableValue(engine, applyToVarName);
 				   
 					break;
 
@@ -400,7 +400,7 @@ namespace OpenBots.Commands.WebBrowser
 					else
 						elementValue = ((IWebElement)element).GetAttribute(attributeName);
 
-					elementValue.SetVariableValue(engine, VariableName, nameof(v_WebActionParameterTable), this);
+					elementValue.SetVariableValue(engine, VariableName);
 					break;
 
 				case "Get Matching Element(s)":
@@ -416,10 +416,10 @@ namespace OpenBots.Commands.WebBrowser
 						{
 							elementList.Add(item);
 						}
-						elementList.SetVariableValue(engine, variableName, nameof(v_WebActionParameterTable), this);
+						elementList.SetVariableValue(engine, variableName);
 					}
 					else
-						((IWebElement)element).SetVariableValue(engine, variableName, nameof(v_WebActionParameterTable), this);                    
+						((IWebElement)element).SetVariableValue(engine, variableName);                    
 					break;
 
 				case "Get Table":
@@ -455,7 +455,7 @@ namespace OpenBots.Commands.WebBrowser
 					foreach (var row in doc.DocumentNode.SelectNodes("//tr[td]"))
 						DT.Rows.Add(row.SelectNodes("td").Select(td => Regex.Replace(td.InnerText, @"\t|\n|\r", "").Trim()).ToArray());
 
-					DT.SetVariableValue(engine, DTVariableName, nameof(v_WebActionParameterTable), this);
+					DT.SetVariableValue(engine, DTVariableName);
 					break;
 
 				case "Clear Element":
@@ -476,9 +476,9 @@ namespace OpenBots.Commands.WebBrowser
 													select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 					if (element == null)
-						false.SetVariableValue(engine, existsBoolVariableName, nameof(v_WebActionParameterTable), this);
+						false.SetVariableValue(engine, existsBoolVariableName);
 					else
-						true.SetVariableValue(engine, existsBoolVariableName, nameof(v_WebActionParameterTable), this);
+						true.SetVariableValue(engine, existsBoolVariableName);
 
 					break;
 				default:

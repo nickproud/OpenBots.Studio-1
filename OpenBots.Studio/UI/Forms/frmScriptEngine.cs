@@ -441,12 +441,12 @@ namespace OpenBots.UI.Forms
                     if (assignedParentVariable != null)
                     {
                         var newVarValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
-                        newVarValue.SetVariableValue(parentAutomationEngineIntance, assignedParentVariable.VariableName, assignedParentVariable.VariableType);
+                        newVarValue.SetVariableValue(parentAutomationEngineIntance, assignedParentVariable.VariableName);
                     }
                     else if (assignedParentArgument != null)
                     {
                         var newArgValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
-                        newArgValue.SetVariableValue(parentAutomationEngineIntance, assignedParentArgument.ArgumentName, assignedParentArgument.ArgumentType);
+                        newArgValue.SetVariableValue(parentAutomationEngineIntance, assignedParentArgument.ArgumentName);
                     }
                     else
                     {

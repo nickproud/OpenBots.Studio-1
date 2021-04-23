@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Outlook
 		[SampleUsage("Dear John, ... || {vBody}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Body { get; set; }
 
 		[Required]
@@ -63,7 +63,7 @@ namespace OpenBots.Commands.Outlook
 		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Attachments { get; set; }
 
 		public ReplyToOutlookEmailCommand()
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.Outlook
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine, nameof(v_MailItem), this);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
 			var vBody = (string)await v_Body.EvaluateCode(engine);
 			var vAttachment = (string)await v_Attachments.EvaluateCode(engine);
 		   

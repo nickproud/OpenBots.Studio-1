@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("12.345.678.910 || {vHost}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Host { get; set; }
 
 		[Required]
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("3270 || {vPort}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Port { get; set; }
 
 		[Required]
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("IBM-3278-2-E || {vTerminalType}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TerminalType { get; set; }
 
 		[Required]

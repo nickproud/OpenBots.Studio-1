@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("old text || {vFindText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FindText { get; set; }
 
 		[Required]
@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("new text || {vReplaceText}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ReplaceWithText { get; set; }
 
 		public WordReplaceTextCommand()

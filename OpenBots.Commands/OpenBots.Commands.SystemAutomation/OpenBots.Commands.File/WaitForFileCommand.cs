@@ -28,7 +28,7 @@ namespace OpenBots.Commands.File
 		[Remarks("{ProjectPath} is the directory path of the current project.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FileName { get; set; }
 
 		[Required]
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.File
 		[SampleUsage("10 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_WaitTime { get; set; }
 
 		public WaitForFileCommand()

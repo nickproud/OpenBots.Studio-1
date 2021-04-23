@@ -4,7 +4,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,19 +22,19 @@ namespace OpenBots.Commands.RegEx
 		[Required]
 		[DisplayName("Text")]
 		[Description("Select or provide text to apply Regex on.")]
-		[SampleUsage("Hello || {vText}")]
+		[SampleUsage("\"Hello\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputText { get; set; }
 
 		[Required]
 		[DisplayName("Regex Pattern")]
 		[Description("Enter a Regex Pattern to apply to the input Text.")]
-		[SampleUsage(@"^([\w\-]+) || vPattern")]
+		[SampleUsage("\"^([\\w\\-]+)\" || vPattern")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Regex { get; set; }
 
 		[Required]
@@ -54,6 +53,7 @@ namespace OpenBots.Commands.RegEx
 			CommandEnabled = true;
 			CommandIcon = Resources.command_regex;
 
+			v_Regex = "@\"\"";
 		}
 
 		public async override Task RunCommand(object sender)
@@ -64,7 +64,7 @@ namespace OpenBots.Commands.RegEx
 
 			bool isMatch = Regex.IsMatch(vInputData, vRegex);
 
-			isMatch.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			isMatch.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

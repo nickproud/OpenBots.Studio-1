@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("5 || {vLoopCount}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_LoopParameter { get; set; }
 
 		[Required]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Loop
 		[SampleUsage("5 || {vStartIndex}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_LoopStart { get; set; }
 
 		public LoopNumberOfTimesCommand()

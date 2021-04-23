@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A1 || {vCellLocation}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CellLocation { get; set; }
 
 		[Required]
@@ -70,7 +70,7 @@ namespace OpenBots.Commands.Excel
 
 			v_InstanceName = "DefaultExcel";
 			v_AddHeaders = "Yes";
-			v_CellLocation = "A1";
+			v_CellLocation = "\"A1\"";
 		}
 
 		public async override Task RunCommand(object sender)
@@ -82,7 +82,7 @@ namespace OpenBots.Commands.Excel
 			var excelInstance = (Application)excelObject;
 			var excelSheet = (Worksheet)excelInstance.ActiveSheet;
 
-			DataTable Dt = (DataTable)await v_DataTableToSet.EvaluateCode(engine, nameof(v_DataTableToSet), this);
+			DataTable Dt = (DataTable)await v_DataTableToSet.EvaluateCode(engine);
 			if (string.IsNullOrEmpty(vTargetAddress) || vTargetAddress.Contains(":")) 
 				throw new Exception("Cell Location is invalid or empty");
 

@@ -29,7 +29,7 @@ namespace OpenBots.Commands.Image
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Image
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FolderPath { get; set; }
 
 		[Required]
@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Image
 		[SampleUsage("myFile.png || {vFilename}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FileName { get; set; }
 
 		[Required]
@@ -86,7 +86,7 @@ namespace OpenBots.Commands.Image
 				image = User32Functions.CaptureWindow(windowName);
 
 			image.Save(vFilePath);
-			image.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			image.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{

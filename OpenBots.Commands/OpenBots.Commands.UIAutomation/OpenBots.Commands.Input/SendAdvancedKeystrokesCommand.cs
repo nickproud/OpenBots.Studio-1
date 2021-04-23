@@ -29,7 +29,7 @@ namespace OpenBots.Commands.Input
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]

@@ -370,7 +370,7 @@ namespace OpenBots.Commands.Task
 
 				if (argumentDirection == "In" || argumentDirection == "InOut")
                 {
-					argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, nameof(v_ArgumentAssignments), this);
+					argumentValue = await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance);
 
 					_argumentList.Add(new ScriptArgument
 					{
@@ -384,7 +384,7 @@ namespace OpenBots.Commands.Task
                 if (argumentDirection == "Out" || argumentDirection == "InOut")
                 {
 					//verify whether the assigned variable/argument exists
-					await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance, nameof(v_ArgumentAssignments), this);
+					await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance);
 
 					var existingArg = _argumentList.Where(x => x.ArgumentName == argumentName).FirstOrDefault();
 					if (existingArg != null)
@@ -420,12 +420,12 @@ namespace OpenBots.Commands.Task
 					if (assignedParentVariable != null)
 					{
 						var newVarValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
-						newVarValue.SetVariableValue(parentAutomationEngineIntance, assignedParentVariable.VariableName, assignedParentVariable.VariableType);
+						newVarValue.SetVariableValue(parentAutomationEngineIntance, assignedParentVariable.VariableName);
 					}
 					else if (assignedParentArgument != null)
 					{
 						var newArgValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
-						newArgValue.SetVariableValue(parentAutomationEngineIntance, assignedParentArgument.ArgumentName, assignedParentArgument.ArgumentType);
+						newArgValue.SetVariableValue(parentAutomationEngineIntance, assignedParentArgument.ArgumentName);
 					}
 					else
                     {

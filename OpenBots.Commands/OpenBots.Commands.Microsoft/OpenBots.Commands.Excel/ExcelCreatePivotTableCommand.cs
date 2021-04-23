@@ -34,7 +34,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("\"Sheet1\" || vSheet")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNameExcelTable { get; set; }
 
         [Required]
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("\"Table\" || vTable")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_TableName { get; set; }
 
         [Required]
@@ -52,7 +52,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("\"Sheet1\" || vSheet")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNamePivotTable { get; set; }
 
         [Required]
@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("\"PivotTable\" || vPivotTable")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_PivotTable { get; set; }
 
         [Required]
@@ -70,7 +70,7 @@ namespace OpenBots.Commands.Excel
         [SampleUsage("\"A1\" || vCellLocation")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_CellLocation { get; set; }
 
         public ExcelCreatePivotTableCommand()

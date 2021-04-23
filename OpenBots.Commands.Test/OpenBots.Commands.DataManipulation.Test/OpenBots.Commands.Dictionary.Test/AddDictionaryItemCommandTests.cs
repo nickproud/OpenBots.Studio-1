@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Dictionary.Test
             VariableMethods.CreateTestVariable(inputTable, _engine, "inputTable", typeof(OBData.DataTable));
 
             _addDictionaryItem.v_DictionaryName = "{inputDict}";
-            _addDictionaryItem.v_ColumnNameDataTable = (OBData.DataTable)await "{inputTable}".EvaluateCodeForTests(_engine, typeof(OBData.DataTable));
+            _addDictionaryItem.v_ColumnNameDataTable = (OBData.DataTable)await "{inputTable}".EvaluateCode(_engine);
 
             _addDictionaryItem.RunCommand(_engine);
 

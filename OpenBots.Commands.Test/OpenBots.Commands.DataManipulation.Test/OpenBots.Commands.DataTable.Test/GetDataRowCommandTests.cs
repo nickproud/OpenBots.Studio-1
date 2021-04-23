@@ -39,7 +39,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _getDataRow.RunCommand(_engine);
 
-            Assert.Equal(inputTable.Rows[0], (DataRow)await _getDataRow.v_OutputUserVariableName.EvaluateCodeForTests(_engine, typeof(OBData.DataRow)));
+            Assert.Equal(inputTable.Rows[0], (DataRow)await _getDataRow.v_OutputUserVariableName.EvaluateCode(_engine));
         }
     }
 }

@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Window
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Window
 		[SampleUsage("800 || {vWidth}")]
 		[Remarks("Maximum value should be the maximum value allowed by your resolution. For 1920x1080, the valid width range would be 0-1920.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_XWindowSize { get; set; }
 
 		[Required]
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Window
 		[SampleUsage("500 || {vHeight}")]
 		[Remarks("Maximum value should be the maximum value allowed by your resolution. For 1920x1080, the valid height range would be 0-1080.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_YWindowSize { get; set; }
 
 		[Required]
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Window
 		[SampleUsage("30 || {vSeconds}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public ResizeWindowCommand()

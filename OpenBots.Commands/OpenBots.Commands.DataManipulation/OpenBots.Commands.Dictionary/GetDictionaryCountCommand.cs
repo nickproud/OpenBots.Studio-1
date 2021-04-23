@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Dictionary
 		[Editable(false)]
 		[DisplayName("Output Count Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -48,11 +48,11 @@ namespace OpenBots.Commands.Dictionary
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic dynamicDict = await v_DictionaryName.EvaluateCode(engine, nameof(v_DictionaryName), this);
+			dynamic dynamicDict = await v_DictionaryName.EvaluateCode(engine);
 
 			int count = dynamicDict.Count;
 
-			count.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			count.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -28,7 +28,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("https://example.com || {vMyUrl}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_BaseURL { get; set; }
 
 		[Required]
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.API
 		[SampleUsage("/v2/getUser/1 || {vMyUrl}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_APIEndPoint { get; set; }
 
 		[Required]
@@ -64,21 +64,21 @@ namespace OpenBots.Commands.API
 		[SampleUsage("")]
 		[Remarks("Once you have clicked on a valid window the search parameters will be populated.\n" +
 				 "Enable only the ones required to be a match at runtime.")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_Parameters { get; set; }
 
 		[DisplayName("Advanced Parameters (Optional)")]
 		[Description("Specify a list of advanced parameters.")]
 		[SampleUsage("")]
 		[Remarks("")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_AdvancedParameters { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Response Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -216,7 +216,7 @@ namespace OpenBots.Commands.API
 				restContent = content;
 			}
 
-			restContent.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			restContent.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

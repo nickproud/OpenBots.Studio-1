@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Word
 			var engine = (IAutomationEngineInstance)sender;
 			var wordObject = v_InstanceName.GetAppInstance(engine);
 
-			DataTable dataTable = (DataTable)await v_DataTable.EvaluateCode(engine, nameof(v_DataTable), this);
+			DataTable dataTable = (DataTable)await v_DataTable.EvaluateCode(engine);
 
 			//selecting the word instance and open document
 			Application wordInstance = (Application)wordObject;

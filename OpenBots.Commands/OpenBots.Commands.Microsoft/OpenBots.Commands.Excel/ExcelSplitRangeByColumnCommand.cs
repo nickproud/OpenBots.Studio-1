@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("A1:B10 || A1: || {vRange} || {vStart}:{vEnd} || {vStart}:")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Range { get; set; }
 
 		[Required]
@@ -48,7 +48,7 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("ColA || {vColumnName}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ColumnName { get; set; }
 
 		[Required]
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Excel
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputDirectory { get; set; }
 
 		[Required]
@@ -74,9 +74,9 @@ namespace OpenBots.Commands.Excel
 		[Editable(false)]
 		[DisplayName("Output DataTable List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<DataTable>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ExcelSplitRangeByColumnCommand()
@@ -88,7 +88,7 @@ namespace OpenBots.Commands.Excel
 
 			v_InstanceName = "DefaultExcel";
 			v_FileType = "xlsx";
-			v_Range = "A1:";
+			v_Range = "\"A1:\"";
 		}
 
 		public async override Task RunCommand(object sender)
@@ -169,7 +169,7 @@ namespace OpenBots.Commands.Excel
 									   .ToList();
 
 			//add list of datatables to output variable
-			result.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			result.SetVariableValue(engine, v_OutputUserVariableName);
 
 			//save split datatables in individual workbooks labeled by selected column data
 			if (Directory.Exists(vOutputDirectory))

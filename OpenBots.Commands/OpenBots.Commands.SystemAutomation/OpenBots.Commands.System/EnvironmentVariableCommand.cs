@@ -31,7 +31,7 @@ namespace OpenBots.Commands.System
 		[Editable(false)]
 		[DisplayName("Output Environment Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -74,7 +74,6 @@ namespace OpenBots.Commands.System
 			SelectionName = "Environment Variable";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_system;
-
 		}
 
 		public async override Task RunCommand(object sender)
@@ -90,7 +89,7 @@ namespace OpenBots.Commands.System
 			if (string.IsNullOrEmpty(envValue))
 				envValue = "null";
 
-			envValue.SetVariableValue(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			envValue.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -98,7 +97,7 @@ namespace OpenBots.Commands.System
 			base.Render(editor, commandControls);
 
 			var ActionNameComboBoxLabel = commandControls.CreateDefaultLabelFor("v_EnvVariableName", this);
-			_variableNameComboBox = (ComboBox)commandControls.CreateDropdownFor("v_EnvVariableName", this);
+			_variableNameComboBox = commandControls.CreateDropdownFor("v_EnvVariableName", this);
 
 			var envVariables = Environment.GetEnvironmentVariables();
 			var envDict = envVariables.Keys.Cast<object>().ToDictionary(k => k.ToString(), v => envVariables[v]);
@@ -108,7 +107,7 @@ namespace OpenBots.Commands.System
 			{
 				var envVariableKey = env.Key.ToString();
 				var envVariableValue = env.Value.ToString();
-				_variableNameComboBox.Items.Add(envVariableKey);
+				_variableNameComboBox.Items.Add($"\"{envVariableKey}\"");
 			}
 
 			_variableNameComboBox.SelectedValueChanged += VariableNameComboBox_SelectedValueChanged;
@@ -127,10 +126,12 @@ namespace OpenBots.Commands.System
 
 		private void VariableNameComboBox_SelectedValueChanged(object sender, EventArgs e)
 		{
-			var selectedValue = _variableNameComboBox.SelectedItem;
+			string selectedValue;
 
-			if (selectedValue == null)
+			if (_variableNameComboBox.SelectedItem == null)
 				return;
+			else
+				selectedValue = _variableNameComboBox.SelectedItem.ToString().Trim('\"');
 
 			var variable = Environment.GetEnvironmentVariables();
 			var value = variable[selectedValue];

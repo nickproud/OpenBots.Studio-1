@@ -62,7 +62,7 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("http://www.url.com || Welcome to Homepage || {vSearchData}")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MatchParameter { get; set; }
 
 		public SeleniumSwitchBrowserWindowCommand()
