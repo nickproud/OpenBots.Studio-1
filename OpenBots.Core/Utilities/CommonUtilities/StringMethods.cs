@@ -139,6 +139,10 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             {
                 switch (type.FullName)
                 {
+                    case "System.String":
+                        return $"\"{obj}\"";
+                    case "System.Boolean":
+                        return obj.ToString().ToLower();
                     case "System.Security.SecureString":
                         return "*Secure String*";
                     case "System.Data.DataTable":
@@ -155,11 +159,11 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                         return ConvertBitmapToString((Bitmap)obj);
                     case "Open3270.TN3270.XMLScreenField":
                         return ConvertXMLScreenFieldToString(obj);
-                    case string a when a.Contains("System.Collections.Generic.List`1"):
+                    case string a when a.StartsWith("System.Collections.Generic.List`1"):
                         return ConvertListToString(obj);
-                    case string a when a.Contains("System.Collections.Generic.Dictionary`2"):
+                    case string a when a.StartsWith("System.Collections.Generic.Dictionary`2"):
                         return ConvertDictionaryToString(obj);
-                    case string a when a.Contains("System.Collections.Generic.KeyValuePair`2"):
+                    case string a when a.StartsWith("System.Collections.Generic.KeyValuePair`2"):
                         return ConvertKeyValuePairToString(obj);
                     case "":
                         return "null";
@@ -334,81 +338,32 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 stringBuilder.Append($"Count({stringList.Count}) [");
 
                 for (int i = 0; i < stringList.Count - 1; i++)
-                    stringBuilder.AppendFormat("{0}, ", stringList[i]);
+                    stringBuilder.AppendFormat("{0}, ", ConvertObjectToString(stringList[i], type));
 
                 if (stringList.Count > 0)
-                    stringBuilder.AppendFormat("{0}]", stringList[stringList.Count - 1]);
+                    stringBuilder.AppendFormat("{0}]", ConvertObjectToString(stringList[stringList.Count - 1], type));
                 else
                     stringBuilder.Length = stringBuilder.Length - 2;
             }
-            else if (type == typeof(DataTable))
-            {
-                List<DataTable> dataTableList = ((List<DataTable>)list).Take(3).ToList();
-                stringBuilder.Append($"Count({dataTableList.Count}) \n[");
-
-                for (int i = 0; i < dataTableList.Count - 1; i++)
-                    stringBuilder.AppendFormat("{0}, \n", ConvertDataTableToString(dataTableList[i]));
-
-                if (dataTableList.Count > 0)
-                    stringBuilder.AppendFormat("{0}]", ConvertDataTableToString(dataTableList[dataTableList.Count - 1]));
-                else
-                    stringBuilder.Length = stringBuilder.Length - 3;
-            }
-            else if (type == typeof(MailItem))
-            {
-                List<MailItem> mailItemList = ((List<MailItem>)list).Take(3).ToList();
-
-                stringBuilder.Append($"Count({mailItemList.Count}) \n[");
-
-                for (int i = 0; i < mailItemList.Count - 1; i++)
-                    stringBuilder.AppendFormat("{0}, \n", ConvertMailItemToString(mailItemList[i]));
-
-                if (mailItemList.Count > 0)
-                    stringBuilder.AppendFormat("{0}]", ConvertMailItemToString(mailItemList[mailItemList.Count - 1]));
-                else
-                    stringBuilder.Length = stringBuilder.Length - 3;
-            }
-            else if (type == typeof(MimeMessage))
-            {
-                List<MimeMessage> mimeMessageList = ((List<MimeMessage>)list).Take(3).ToList();
-                stringBuilder.Append($"Count({mimeMessageList.Count}) \n[");
-
-                for (int i = 0; i < mimeMessageList.Count - 1; i++)
-                    stringBuilder.AppendFormat("{0}, \n", ConvertMimeMessageToString(mimeMessageList[i]));
-
-                if (mimeMessageList.Count > 0)
-                    stringBuilder.AppendFormat("{0}]", ConvertMimeMessageToString(mimeMessageList[mimeMessageList.Count - 1]));
-                else
-                    stringBuilder.Length = stringBuilder.Length - 3;
-            }
-            else if (type == typeof(IWebElement))
-            {
-                List<IWebElement> elementList = ((List<IWebElement>)list).Take(3).ToList();
-                stringBuilder.Append($"Count({elementList.Count}) \n[");
-
-                for (int i = 0; i < elementList.Count - 1; i++)
-                    stringBuilder.AppendFormat("{0}, \n", ConvertIWebElementToString(elementList[i]));
-
-                if (elementList.Count > 0)
-                    stringBuilder.AppendFormat("{0}]", ConvertIWebElementToString(elementList[elementList.Count - 1]));
-                else
-                    stringBuilder.Length = stringBuilder.Length - 3;
-            }
-            else if (type.FullName == "Open3270.TN3270.XMLScreenField")
-            {
-                dynamic fieldList = list;
-                stringBuilder.Append($"Count({fieldList.Count}) \n[");
-
-                for (int i = 0; i < fieldList.Count - 1; i++)
-                    stringBuilder.AppendFormat("{0}, \n", ConvertXMLScreenFieldToString(fieldList[i], i));
-
-                if (fieldList.Count > 0)
-                    stringBuilder.AppendFormat("{0}]", ConvertXMLScreenFieldToString(fieldList[fieldList.Count - 1], fieldList.Count - 1));
-                else
-                    stringBuilder.Length = stringBuilder.Length - 3;
-            }
             else
-                return list.ToString();
+            {
+                dynamic complexList = list;
+                stringBuilder.Append($"Count({complexList.Count}) \n[");
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (i < complexList.Count - 1)
+                        stringBuilder.AppendFormat("{0}, \n", ConvertObjectToString(complexList[i], type));
+                }
+
+                if (complexList.Count > 0)
+                    stringBuilder.AppendFormat("{0}]", ConvertObjectToString(complexList[complexList.Count - 1], type));
+                else
+                    stringBuilder.Length = stringBuilder.Length - 3;
+
+                if (complexList.Count > 5)
+                    stringBuilder.Append("...");
+            }
 
             return stringBuilder.ToString();
         }
@@ -417,73 +372,59 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             StringBuilder stringBuilder = new StringBuilder();
             Type type = dictionary.GetType();
+            Type keyType;
+            Type valueType;
 
             if (type.IsGenericType)
-                type = type.GetGenericArguments()[1];
+            {
+                keyType = type.GetGenericArguments()[0];
+                valueType = type.GetGenericArguments()[1];
+            }
             else
                 return "null";
 
-            dynamic stringDictionary;
-
-            if (type == typeof(string) || type.IsPrimitive)
+            if ((keyType == typeof(string) || keyType.IsPrimitive) && (valueType == typeof(string) || valueType.IsPrimitive))
             {
-                stringDictionary = dictionary;
+                dynamic stringDictionary = dictionary;
                 stringBuilder.Append($"Count({stringDictionary.Count}) [");
 
                 foreach (dynamic pair in stringDictionary)
-                    stringBuilder.AppendFormat("[{0}, {1}], ", pair.Key, pair.Value);
-            }
-            else if (type == typeof(DataTable))
-            {
-                stringDictionary = (Dictionary<string, DataTable>)dictionary;
-                stringBuilder.Append($"Count({stringDictionary.Count}) [");
+                    stringBuilder.AppendFormat("[{0}, {1}], ", ConvertObjectToString(pair.Key, keyType), ConvertObjectToString(pair.Value, valueType));
 
-                foreach (dynamic pair in stringDictionary)
-                    stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertDataTableToString(pair.Value));
-            }
-            else if (type == typeof(MailItem))
-            {
-                stringDictionary = (Dictionary<string, MailItem>)dictionary;
-                stringBuilder.Append($"Count({stringDictionary.Count}) [");
-
-                foreach (dynamic pair in stringDictionary)
-                    stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertMailItemToString(pair.Value));
-            }
-            else if (type == typeof(MimeMessage))
-            {
-                stringDictionary = (Dictionary<string, MimeMessage>)dictionary;
-                stringBuilder.Append($"Count({stringDictionary.Count}) [");
-
-                foreach (dynamic pair in stringDictionary)
-                    stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertMimeMessageToString(pair.Value));
-            }
-            else if (type == typeof(IWebElement))
-            {
-                stringDictionary = (Dictionary<string, IWebElement>)dictionary;
-                stringBuilder.Append($"Count({stringDictionary.Count}) [");
-
-                foreach (dynamic pair in stringDictionary)
-                    stringBuilder.AppendFormat("[{0}, \n{1}], ", pair.Key, ConvertIWebElementToString(pair.Value));
-            }
-            else if (type == typeof(object))
-            {
-                stringDictionary = (Dictionary<string, object>)dictionary;
-                stringBuilder.Append($"Count({stringDictionary.Count}) [");
-
-                foreach (dynamic pair in stringDictionary)
-                    stringBuilder.AppendFormat("[{0}, {1}], ", pair.Key, pair.Value == null ?
-                                                string.Empty : pair.Value.ToString());
+                if (stringDictionary.Count > 0)
+                {
+                    stringBuilder.Length = stringBuilder.Length - 2;
+                    stringBuilder.Append("]");
+                }
+                else
+                    stringBuilder.Length = stringBuilder.Length - 2;
             }
             else
-                return dictionary.ToString();
-
-            if (stringDictionary.Count > 0)
             {
-                stringBuilder.Length = stringBuilder.Length - 2;
-                stringBuilder.Append("]");
+                dynamic complexDictionary = dictionary;
+                stringBuilder.Append($"Count({complexDictionary.Count}) [");
+
+                int count = 0;
+                foreach (dynamic pair in complexDictionary)
+                {
+                    while (count < 5)
+                    {
+                        stringBuilder.AppendFormat("\n[{0}, {1}], ", ConvertObjectToString(pair.Key, keyType), ConvertObjectToString(pair.Value, valueType));
+                        count++;
+                    }
+                }
+
+                if (complexDictionary.Count > 0)
+                {
+                    stringBuilder.Length = stringBuilder.Length - 2;
+                    stringBuilder.Append("]");
+                }
+                else
+                    stringBuilder.Length = stringBuilder.Length - 2;
+
+                if (complexDictionary.Count > 5)
+                    stringBuilder.Append("...");
             }
-            else
-                stringBuilder.Length = stringBuilder.Length - 2;
 
             return stringBuilder.ToString();
         }
@@ -492,26 +433,20 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             StringBuilder stringBuilder = new StringBuilder();
             Type type = pair.GetType();
+            Type keyType;
+            Type valueType;
 
             if (type.IsGenericType)
-                type = type.GetGenericArguments()[1];
+            {
+                keyType = type.GetGenericArguments()[0];
+                valueType = type.GetGenericArguments()[1];
+            }
             else
                 return "null";
 
-            dynamic stringPair = pair;
+            dynamic dynamicPair = pair;
 
-            if (type == typeof(string) || type.IsPrimitive)
-                stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, stringPair.Value);
-            else if (type == typeof(DataTable))
-                stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertDataTableToString(stringPair.Value));
-            else if (type == typeof(MailItem))
-                stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertMailItemToString(stringPair.Value));
-            else if (type == typeof(MimeMessage))
-                stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertMimeMessageToString(stringPair.Value));
-            else if (type == typeof(IWebElement))
-                stringBuilder.AppendFormat("[{0}, {1}]", stringPair.Key, ConvertIWebElementToString(stringPair.Value));
-            else
-                return pair.ToString();
+            stringBuilder.AppendFormat("[{0}, {1}]", ConvertObjectToString(dynamicPair.Key, keyType), ConvertObjectToString(dynamicPair.Value, valueType));
 
             return stringBuilder.ToString();
         }
