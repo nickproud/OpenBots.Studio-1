@@ -35,7 +35,7 @@ namespace OpenBots.Commands.File.Test
 
             _getFiles.RunCommand(_engine);
 
-            List<string> fileList = (List<string>)await "{output}".EvaluateCode(_engine, typeof(List<>));
+            List<string> fileList = (List<string>)await "{output}".EvaluateCode(_engine);
 
             List<string> filenames = new List<string>();
 

@@ -27,12 +27,12 @@ namespace OpenBots.Commands.Dictionary.Test
             VariableMethods.CreateTestVariable(inputDt, _engine, "inputDt", typeof(OBData.DataTable));
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(Dictionary<,>));
 
-            _createDictionary.v_ColumnNameDataTable = (OBData.DataTable)await "{inputDt}".EvaluateCode(_engine, typeof(OBData.DataTable));
+            _createDictionary.v_ColumnNameDataTable = (OBData.DataTable)await "{inputDt}".EvaluateCode(_engine);
             _createDictionary.v_OutputUserVariableName = "{output}";
 
             _createDictionary.RunCommand(_engine);
 
-            Dictionary<string, string> outDict = (Dictionary<string, string>)await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
+            Dictionary<string, string> outDict = (Dictionary<string, string>)await "{output}".EvaluateCode(_engine);
 
             Assert.True(outDict.ContainsKey("key1"));
             Assert.Equal("val1", outDict["key1"]);

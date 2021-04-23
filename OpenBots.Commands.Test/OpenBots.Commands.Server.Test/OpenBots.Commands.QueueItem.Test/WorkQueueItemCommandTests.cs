@@ -41,7 +41,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
+            var queueItemObject = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine);
             var client = AuthMethods.GetAuthToken();
             var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, queueItemObject["LockTransactionKey"].ToString());
 
@@ -78,7 +78,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
+            var queueItemObject = await "{output}".EvaluateCode(_engine);
             string queueItemString = JsonConvert.SerializeObject(queueItemObject);
             var vQueueItem = JsonConvert.DeserializeObject<QueueItemModel>(queueItemString);
 
@@ -124,7 +124,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemObject = await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
+            var queueItemObject = await "{output}".EvaluateCode(_engine);
             string queueItemString = JsonConvert.SerializeObject(queueItemObject);
             var vQueueItem = JsonConvert.DeserializeObject<QueueItemModel>(queueItemString);
 

@@ -35,7 +35,7 @@ namespace OpenBots.Commands.List.Test
 
             _updateListItem.RunCommand(_engine);
 
-            List<string> outputList = (List<string>)await "{inputList}".EvaluateCode(_engine, typeof(List<>));
+            List<string> outputList = (List<string>)await "{inputList}".EvaluateCode(_engine);
             Assert.Equal("item3", outputList[0]);
         }
 
@@ -66,7 +66,7 @@ namespace OpenBots.Commands.List.Test
 
             _updateListItem.RunCommand(_engine);
 
-            List<OBDataTable> outputList = (List<OBDataTable>)await "{inputList}".EvaluateCode(_engine, typeof(List<>));
+            List<OBDataTable> outputList = (List<OBDataTable>)await "{inputList}".EvaluateCode(_engine);
             Assert.Equal(newitem, outputList[0]);
         }
 

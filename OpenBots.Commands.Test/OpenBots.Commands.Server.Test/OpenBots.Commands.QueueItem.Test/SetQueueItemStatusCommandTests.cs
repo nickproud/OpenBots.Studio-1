@@ -146,7 +146,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemDict = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine, typeof(Dictionary<,>));
+            var queueItemDict = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine);
 
             return queueItemDict;
         }

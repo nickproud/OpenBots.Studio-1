@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Outlook.Test
 
                 _getOutlookEmails.RunCommand(_engine);
 
-                emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine, typeof(List<>));
+                emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
                 attempts++;
             } while (emails.Count < 1 && attempts < 5);
             MailItem email = emails[0];
