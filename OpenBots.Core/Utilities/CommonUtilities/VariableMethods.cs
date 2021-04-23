@@ -99,13 +99,14 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             OBScriptVariable requiredVariable;
 
             var variableList = engine.AutomationEngineContext.Variables;
-            var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments.Select(arg => new OBScriptVariable
-                                                                                    {
-                                                                                        VariableName = arg.ArgumentName,
-                                                                                        VariableType = arg.ArgumentType,
-                                                                                        VariableValue = arg.ArgumentValue
-                                                                                    })
-                                                                                    .ToList();
+            var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments
+                .Select(arg => new OBScriptVariable
+                {
+                    VariableName = arg.ArgumentName,
+                    VariableType = arg.ArgumentType,
+                    VariableValue = arg.ArgumentValue
+                })
+                .ToList();
 
             var variableSearchList = new List<OBScriptVariable>();
             variableSearchList.AddRange(variableList);
