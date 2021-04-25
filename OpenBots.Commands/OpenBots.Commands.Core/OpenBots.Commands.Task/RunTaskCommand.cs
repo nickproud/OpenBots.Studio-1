@@ -265,13 +265,24 @@ namespace OpenBots.Commands.Task
 			if (assignArgCheckBox.Checked)
 			{
 				var currentScriptEngine = commandControls.CreateAutomationEngineInstance(editor.ScriptEngineContext);
-				currentScriptEngine.AutomationEngineContext.Arguments.AddRange(editor.ScriptEngineContext.Arguments);
 
-				var startFile = v_TaskPath;
-				if (startFile.Contains("ProjectPath +"))
-					startFile = startFile.Replace("ProjectPath +", $"@\"{editor.ScriptEngineContext.ProjectPath}\" + ");
+				currentScriptEngine.AutomationEngineContext.Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + editor.ScriptEngineContext.ProjectPath + '"';
+				foreach (var var in currentScriptEngine.AutomationEngineContext.Variables)
+					await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, currentScriptEngine);
 
-				startFile = (string)await startFile.EvaluateCode(currentScriptEngine);
+				foreach (var arg in currentScriptEngine.AutomationEngineContext.Arguments)
+					await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, currentScriptEngine);
+
+				string startFile = "";
+
+				try
+                {
+					startFile = (string)await v_TaskPath.EvaluateCode(currentScriptEngine);
+				}
+                catch (Exception)
+                {
+					return;
+                }
 
 				if (!isMouseEnter && File.Exists(startFile))
                 {
