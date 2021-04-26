@@ -34,7 +34,7 @@ namespace OpenBots.Commands.IEBrowser
         [Required]
         [DisplayName("Browser Name (Title)")]
         [Description("Select the Name (Title) of the IE Browser Instance to get attached to.")]
-        [SampleUsage("")]
+        [SampleUsage("\"OpenBots\"")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(string) })]

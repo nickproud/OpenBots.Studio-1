@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Word
 		[Required]
 		[DisplayName("Text")]
 		[Description("Enter the text to append to the Document.")]
-		[SampleUsage("Hello World || {vText}")]
+		[SampleUsage("\"Hello World\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

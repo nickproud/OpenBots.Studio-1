@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Dictionary
 	{
 		[DisplayName("Keys and Values (Optional)")]
 		[Description("Enter the Keys and Values required for the new dictionary.")]
-		[SampleUsage("[FirstName | John] || [{vKey} | {vValue}]")]
+		[SampleUsage("[ \"FirstName\" | \"John\" ] || [ vKey | vValue ]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(object) })]

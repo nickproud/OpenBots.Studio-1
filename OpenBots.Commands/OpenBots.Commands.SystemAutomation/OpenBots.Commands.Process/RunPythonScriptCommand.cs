@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Process
 		[Required]
 		[DisplayName("Script Path")]
 		[Description("Enter a fully qualified path to the script, including the script extension.")]
-		[SampleUsage(@"C:\temp\myscript.ps1 || {vScriptPath} || {ProjectPath}\myscript.ps1")]
+		[SampleUsage("@\"C:\\temp\\myfile.py\" || ProjectPath + @\"\\myfile.py\" || vFilePath")]
 		[Remarks("This command differs from *Start Process* because this command blocks execution until the script has completed. " +
 				 "If you do not want to stop while the script executes, consider using *Start Process* instead.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Process
 
 		[DisplayName("Arguments (Optional)")]
 		[Description("Enter any arguments as a single string.")]
-		[SampleUsage("-message Hello -t 2 || {vArguments}")]
+		[SampleUsage("\"-message Hello -t 2\" || vArguments")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

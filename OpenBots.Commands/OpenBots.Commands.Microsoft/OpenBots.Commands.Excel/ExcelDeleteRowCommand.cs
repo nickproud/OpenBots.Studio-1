@@ -33,10 +33,10 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Row Number")]
 		[Description("Enter the number of the row to be deleted.")]
-		[SampleUsage("1 || {vRowNumber}")]
+		[SampleUsage("1 || vRowNumber")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_RowNumber { get; set; }
 
 		[Required]
@@ -65,9 +65,9 @@ namespace OpenBots.Commands.Excel
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
 			Worksheet workSheet = excelInstance.ActiveSheet;
-			string vRowToDelete = (string)await v_RowNumber.EvaluateCode(engine);
+			var vRowToDelete = (int)await v_RowNumber.EvaluateCode(engine);
 
-			var cells = workSheet.Range["A" + vRowToDelete, Type.Missing];
+			var cells = workSheet.Range["A" + vRowToDelete.ToString(), Type.Missing];
 			var entireRow = cells.EntireRow;
 			if (v_ShiftUp == "Yes")            
 				entireRow.Delete();            

@@ -34,7 +34,7 @@ namespace OpenBots.Commands.IEBrowser
         [Required]
         [DisplayName("URL")]
         [Description("Enter a Web URL to navigate to.")]
-        [SampleUsage("https://example.com/ || {vURL}")]
+        [SampleUsage("\"https://example.com/\" || vURL")]
         [Remarks("This input is optional.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(string) })]

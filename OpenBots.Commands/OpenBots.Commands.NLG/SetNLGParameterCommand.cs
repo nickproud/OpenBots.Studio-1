@@ -47,7 +47,7 @@ namespace OpenBots.Commands.NLG
 		[Required]
 		[DisplayName("Input Value")]
 		[Description("Enter the value that should be associated with the parameter")]
-		[SampleUsage("Hello || {vValue}")]
+		[SampleUsage("\"Hello\" || vValue")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

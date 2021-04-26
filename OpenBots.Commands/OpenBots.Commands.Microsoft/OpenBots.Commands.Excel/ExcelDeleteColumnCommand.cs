@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Column Letter")]
 		[Description("Enter the letter of the column to be deleted.")]
-		[SampleUsage("A || {vColumnLetter}")]
+		[SampleUsage("\"A\" || vColumnLetter")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

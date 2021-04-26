@@ -45,7 +45,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[Required]
 		[DisplayName("Exception Message")]
 		[Description("Enter a custom exception message.")]
-		[SampleUsage("A Custom Message || {vExceptionMessage}")]
+		[SampleUsage("\"A Custom Message\" || vExceptionMessage")]
 		[Remarks("The selected exception with this custom message will be thrown.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Process
 		[Required]
 		[DisplayName("Program Name or Path")]
 		[Description("Provide a valid program name or enter a full path to the script/executable including the extension.")]
-		[SampleUsage(@"notepad || excel || {vApp} || C:\temp\myapp.exe || {ProjectPath}\myapp.exe || {ProjectPath}\myfile.pdf")]
+		[SampleUsage("\"notepad\" || \"excel\" || vAppName || @\"C:\\temp\\myapp.exe || ProjectPath + @\"\\myapp.exe\" || vAppPath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Process
 
 		[DisplayName("Arguments (Optional)")]
 		[Description("Enter any arguments or flags if applicable.")]
-		[SampleUsage("-a || -version || {vArg}")]
+		[SampleUsage("\"-a\" || \"-version\" || vArg")]
 		[Remarks("You will need to consult documentation to determine if your executable supports arguments or flags on startup.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

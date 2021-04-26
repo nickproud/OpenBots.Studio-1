@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Macro Name")]
 		[Description("Enter the name of the macro as it exists in the Worksheet.")]
-		[SampleUsage("Macro1 || {vMacro}")]
+		[SampleUsage("\"Macro1\" || vMacro")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

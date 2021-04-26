@@ -48,7 +48,7 @@ namespace OpenBots.Commands.If
 		[Required]
 		[DisplayName("Additional Parameters")]
 		[Description("Supply or Select the required comparison parameters.")]
-		[SampleUsage("Param Value || {vParamValue}")]
+		[SampleUsage("Param Value || vParamValue")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(Bitmap), typeof(DateTime), typeof(string), typeof(double), typeof(int), typeof(bool) })]

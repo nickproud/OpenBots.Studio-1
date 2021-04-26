@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Input
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to send advanced keystrokes to.")]
-		[SampleUsage("Untitled - Notepad || Current Window || {vWindow}")]
+		[SampleUsage("\"Untitled - Notepad\" || \"Current Window\" || vWindow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]

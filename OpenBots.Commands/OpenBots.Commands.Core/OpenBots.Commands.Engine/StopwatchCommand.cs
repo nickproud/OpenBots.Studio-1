@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Engine
 
 		[DisplayName("String Format (Optional)")]
 		[Description("Specify a TimeSpan string format if required.")]
-		[SampleUsage("g || dd\\.hh\\:mm || {vFormat}")]
+		[SampleUsage("\"g\" || \"dd\\.hh\\:mm\" || vFormat")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

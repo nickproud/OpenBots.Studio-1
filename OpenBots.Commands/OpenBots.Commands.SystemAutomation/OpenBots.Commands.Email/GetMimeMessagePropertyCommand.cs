@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Email
         [Required]
         [DisplayName("MimeMessage")]
         [Description("Enter the MimeMessage from which to retrieve the property.")]
-        [SampleUsage("{vMimeMessage}")]
+        [SampleUsage("vMimeMessage")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(MimeMessage) })]

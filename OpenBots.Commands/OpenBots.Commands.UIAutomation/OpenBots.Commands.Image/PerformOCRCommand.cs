@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Image
 		[Required]
 		[DisplayName("Image File Path")]
 		[Description("Select the image to perform OCR text extraction on.")]
-		[SampleUsage(@"C:\temp\myimages.png || {ProjectPath}\myimages.png || {vImageFile}")]
+		[SampleUsage("@\"C:\\temp\\myfile.png\" || ProjectPath + @\"\\myfile.png\" || vFilePath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]

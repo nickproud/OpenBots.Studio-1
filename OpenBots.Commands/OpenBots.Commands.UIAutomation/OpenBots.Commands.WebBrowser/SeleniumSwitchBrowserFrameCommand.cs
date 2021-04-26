@@ -43,7 +43,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("Frame Search Parameter")]
 		[Description("Provide the parameter to match (ex. Index, Name or ID).")]
-		[SampleUsage("1 || name || {vSearchData}")]
+		[SampleUsage("1 || \"name\" || vSearchData")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]

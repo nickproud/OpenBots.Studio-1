@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Word
 		[Required]
 		[DisplayName("Image File Path")]    
 		[Description("Enter the file path of the image to append to the Document.")]
-		[SampleUsage(@"C:\temp\myImage.png || {vImageFilePath} || {ProjectPath}\myImage.png")]
+		[SampleUsage("@\"C:\\temp\\myfile.png\" || ProjectPath + @\"\\myfile.png\" || vFilePath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]

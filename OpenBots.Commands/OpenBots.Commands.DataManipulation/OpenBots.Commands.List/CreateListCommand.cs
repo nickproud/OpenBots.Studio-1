@@ -23,7 +23,7 @@ namespace OpenBots.Commands.List
 	{
 		[DisplayName("List Item(s) (Optional)")]
 		[Description("Enter the item(s) to write to the List.")]
-		[SampleUsage("\"Hello\" || vItem")]
+		[SampleUsage("\"Hello\" || 1 || vItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(object) })]

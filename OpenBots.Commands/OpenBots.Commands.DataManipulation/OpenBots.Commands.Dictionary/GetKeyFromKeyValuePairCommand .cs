@@ -22,7 +22,7 @@ namespace OpenBots.Commands.Dictionary
 		[Required]
 		[DisplayName("KeyValuePair")]
 		[Description("Specify the KeyValuePair variable to get a key from.")]
-		[SampleUsage("{vKeyValuePair}")]
+		[SampleUsage("vKeyValuePair")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(KeyValuePair<,>) })]

@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Credential
 		[Required]
 		[DisplayName("Credential Name")]
 		[Description("Enter the name of the Credential.")]
-		[SampleUsage("Name || {vCredentialName}")]
+		[SampleUsage("\"Name\" || vCredentialName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

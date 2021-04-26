@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Terminal
 
 		[DisplayName("Row Position (Optional)")]
 		[Description("Input the new vertical position of the terminal. Starts from 0 at the top and increases going down.")]
-		[SampleUsage("0 || {vRowPosition}")]
+		[SampleUsage("0 || vRowPosition")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(int) })]
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.Terminal
 
 		[DisplayName("Column Position (Optional)")]
 		[Description("Input the new horizontal position of the terminal. Starts from 0 on the left and increases going right.")]
-		[SampleUsage("0 || {vColPosition}")]
+		[SampleUsage("0 || vColPosition")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(int) })]
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Terminal
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(int) })]

@@ -31,7 +31,7 @@ namespace OpenBots.Commands.IEBrowser
         [Required]
         [DisplayName("Navigate to URL")]
         [Description("Enter the destination URL that you want the IE instance to navigate to.")]
-        [SampleUsage("https://example.com/ || {vURL}")]
+        [SampleUsage("\"https://example.com/\" || vURL")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(string) })]

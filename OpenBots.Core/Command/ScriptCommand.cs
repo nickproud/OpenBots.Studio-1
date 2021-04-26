@@ -55,7 +55,7 @@ namespace OpenBots.Core.Command
 
 		[DisplayName("Comment Field (Optional)")]
 		[Description("Optional field to enter a custom comment which could potentially describe this command or the need for this command, if required.")]
-		[SampleUsage("I am using this command to ...")]
+		[SampleUsage("\"I am using this command to ...\"")]
 		[Remarks("Optional")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Comment { get; set; }

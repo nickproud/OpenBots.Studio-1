@@ -24,7 +24,7 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("QueueItem")]
 		[Description("Enter a QueueItem Dictionary variable.")]
-		[SampleUsage("{vQueueItem}")]
+		[SampleUsage("vQueueItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(Dictionary<string,object>) })]
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.QueueItem
 
 		[DisplayName("QueueItem Error Code (Optional)")]
 		[Description("Enter the QueueItem code.")]
-		[SampleUsage("400 || {vStatusCode}")]
+		[SampleUsage("\"400\" || vStatusCode")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -50,7 +50,7 @@ namespace OpenBots.Commands.QueueItem
 
 		[DisplayName("QueueItem Error Message (Optional)")]
 		[Description("Enter the QueueItem error message.")]
-		[SampleUsage("File not found || {vStatusMessage}")]
+		[SampleUsage("\"File not found\" || vStatusMessage")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

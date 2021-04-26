@@ -64,7 +64,7 @@ namespace OpenBots.Commands.IEBrowser
         [Required]
         [DisplayName("Action Parameters")]
         [Description("Enter the action parameter values based on the selection of an Element Action.")]
-        [SampleUsage("{vParameterValue}")]
+        [SampleUsage("vParameterValue")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(string) })]

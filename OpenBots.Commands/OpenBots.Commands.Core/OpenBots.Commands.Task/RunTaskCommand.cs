@@ -31,7 +31,7 @@ namespace OpenBots.Commands.Task
 		[Required]
 		[DisplayName("Task File Path")]
 		[Description("Enter or select a valid path to the Task file.")]
-		[SampleUsage(@"C:\temp\mytask.obscript || {vScriptPath} || {ProjectPath}\mytask.obscript")]
+		[SampleUsage("@\"C:\\temp\\myfile.obscript\" || ProjectPath + @\"\\myfile.obscript\" || vFilePath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Task
 
 		[DisplayName("Task Arguments (Optional)")]
 		[Description("Enter an ArgumentValue for each input argument.")]
-		[SampleUsage("Hello World || {vArgumentValue}")]
+		[SampleUsage("\"test\" || vMyVar || new List<string>() { \"Hello\", \"World\" }")]
 		[Remarks("For inputs, set ArgumentDirection to *In*. For outputs, set ArgumentDirection to *Out*. " +
 				 "Failure to assign an ArgumentDirection value will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]

@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("MailItem")]
 		[Description("Enter the MailItem to delete.")]
-		[SampleUsage("{vMailItem}")]
+		[SampleUsage("vMailItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(MailItem) })]

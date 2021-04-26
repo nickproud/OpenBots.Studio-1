@@ -31,7 +31,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("Script Code")]
 		[Description("Enter the script code to execute.")]
-		[SampleUsage("arguments[0].click(); || alert('Welcome to OpenBots'); || {vScript}")]
+		[SampleUsage("\"arguments[0].click();\" || \"alert('Welcome to OpenBots');\" || vScript")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.WebBrowser
 
 		[DisplayName("Arguments (Optional)")]
 		[Description("Enter any necessary arguments.")]
-		[SampleUsage("button || {vArguments}")]
+		[SampleUsage("\"button\" || vArguments")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

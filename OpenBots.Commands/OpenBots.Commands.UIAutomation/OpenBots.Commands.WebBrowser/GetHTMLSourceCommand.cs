@@ -25,7 +25,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("URL")]
 		[Description("Enter a valid URL that you want to collect data from.")]
-		[SampleUsage("http://mycompany.com/news || {vCompany}")]
+		[SampleUsage("\"http://mycompany.com/news\" || vCompany")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

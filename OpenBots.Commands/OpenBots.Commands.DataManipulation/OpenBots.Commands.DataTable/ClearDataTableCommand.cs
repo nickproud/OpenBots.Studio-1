@@ -22,7 +22,7 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter an existing DataTable.")]
-		[SampleUsage("{vDataTable}")]
+		[SampleUsage("vDataTable")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]

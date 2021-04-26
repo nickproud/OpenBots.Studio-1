@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Process
 		[Required]
 		[DisplayName("Script Path")]
 		[Description("Enter a fully qualified path to the script, including the script extension.")]
-		[SampleUsage(@"C:\temp\myscript.ps1 || {vScriptPath} || {ProjectPath}\myscript.ps1")]
+		[SampleUsage("@\"C:\\temp\\myfile.cs\" || ProjectPath + @\"\\myfile.cs\" || vFilePath")]
 		[Remarks("This command differs from *Start Process* because this command blocks execution until the script has completed. " +
 				 "If you do not want to stop while the script executes, consider using *Start Process* instead.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Process
 
 		[DisplayName("Argument Values (Optional)")]
 		[Description("Enter the values to pass into the script.")]
-		[SampleUsage("hello || {vValue}")]
+		[SampleUsage("\"hello\" || vValue")]
 		[Remarks("This input is passed to your script as a object[].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(object) })]
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Process
 
 		[DisplayName("Command Line Arguments (Optional)")]
 		[Description("Enter any arguments as a single string.")]
-		[SampleUsage("-message Hello -t 2 || {vArguments} || -message {vMessage} -t 2")]
+		[SampleUsage("\"-message Hello -t 2\" || vArguments || \"-message \" + vMessage + \" -t 2\"")]
 		[Remarks("This input is passed to your script as a string[].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

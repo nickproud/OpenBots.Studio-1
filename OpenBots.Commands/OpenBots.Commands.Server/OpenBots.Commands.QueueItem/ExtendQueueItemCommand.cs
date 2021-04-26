@@ -23,7 +23,7 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("QueueItem")]
 		[Description("Enter a QueueItem Dictionary variable.")]
-		[SampleUsage("{vQueueItem}")]
+		[SampleUsage("vQueueItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]

@@ -30,7 +30,7 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("Queue Name")]
 		[Description("Enter the name of the Queue.")]
-		[SampleUsage("Name || {vQueueName}")]
+		[SampleUsage("\"Name\" || vQueueName")]
 		[Remarks("QueueItem Text/Json values are stored in the 'DataJson' key of a QueueItem Dictionary.\n" +
 				 "If a Queue has no workable items, the output value will be set to null.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("Output Attachment Directory")]
 		[Description("Enter or Select the path to the directory to store the attachments in.")]
-		[SampleUsage(@"C:\temp\myfolder\attachments || {vFolderPath} || {ProjectPath}\myFolder\attachments")]
+		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
 		[Remarks("This input is optional and will only be used if *Save Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]

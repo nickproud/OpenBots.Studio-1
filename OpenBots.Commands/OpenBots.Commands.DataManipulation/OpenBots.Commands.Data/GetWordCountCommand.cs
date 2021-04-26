@@ -21,7 +21,7 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Text Data")]
 		[Description("Provide a variable or text value.")]
-		[SampleUsage("Hello World || {vStringVariable}")]
+		[SampleUsage("\"Hello World\" || vStringVariable")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

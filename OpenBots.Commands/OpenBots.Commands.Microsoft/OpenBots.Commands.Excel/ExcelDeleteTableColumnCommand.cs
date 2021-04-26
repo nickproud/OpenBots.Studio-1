@@ -40,16 +40,16 @@ namespace OpenBots.Commands.Microsoft
         [Required]
         [DisplayName("Column Search Value")]
         [Description("Enter a valid column index or column name.")]
-        [SampleUsage("1 || {vIndex} || Column1 || {vColumnName}")]
+        [SampleUsage("1 || vIndex || \"Column1\" || vColumnName")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(new Type[] { typeof(string) })]
+        [CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
         public string v_DataValueIndex { get; set; }
 
         [Required]
         [DisplayName("Excel Table Name")]
         [Description("Enter the name of the existing Excel Table.")]
-        [SampleUsage("TableName || {vTableName}")]
+        [SampleUsage("\"TableName\" || vTableName")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(string) })]
@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Microsoft
         [Required]
         [DisplayName("Worksheet Name")]
         [Description("Enter the name of the Worksheet containing the existing Excel Table.")]
-        [SampleUsage("Sheet1 || {vSheet}")]
+        [SampleUsage("\"Sheet1\" || vSheet")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(string) })]
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.Microsoft
             var engine = (IAutomationEngineInstance)sender;
             string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
             var vTableName = (string)await v_TableName.EvaluateCode(engine);
-            var vColumnValue = (string)await v_DataValueIndex.EvaluateCode(engine);
+            dynamic vColumnValue = await v_DataValueIndex.EvaluateCode(engine);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
@@ -88,9 +88,9 @@ namespace OpenBots.Commands.Microsoft
 
             int index;
             if (v_Option == "Column Index")
-                index = int.Parse(vColumnValue);
+                index = (int)vColumnValue;
             else
-                index = excelTable.ListColumns[vColumnValue].Index;
+                index = excelTable.ListColumns[(string)vColumnValue].Index;
 
             var excelColumn = excelTable.ListColumns[index];
             excelColumn.Range.Delete(Type.Missing);

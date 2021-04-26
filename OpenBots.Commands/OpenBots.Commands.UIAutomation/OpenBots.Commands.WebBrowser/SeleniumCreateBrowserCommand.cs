@@ -50,7 +50,7 @@ namespace OpenBots.Commands.WebBrowser
 
 		[DisplayName("URL (Optional)")]
 		[Description("Enter the URL that you want the selenium instance to navigate to.")]
-		[SampleUsage("https://mycompany.com/orders || {vURL}")]
+		[SampleUsage("\"https://mycompany.com/orders\" || vURL")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -79,7 +79,7 @@ namespace OpenBots.Commands.WebBrowser
 
 		[DisplayName("Selenium Command Line Options (Chrome - Optional)")]
 		[Description("Select options to be passed to the Selenium command.")]
-		[SampleUsage("user-data-dir=c:\\users\\public\\SeleniumOpenBotsProfile || {vOptions}")]
+		[SampleUsage("@\"user-data-dir=c:\\users\\public\\SeleniumOpenBotsProfile\" || vOptions")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

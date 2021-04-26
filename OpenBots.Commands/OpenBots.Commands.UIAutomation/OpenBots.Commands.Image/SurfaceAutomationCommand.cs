@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Image
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to activate and bring forward.")]
-		[SampleUsage("Untitled - Notepad || {vWindow}")]
+		[SampleUsage("\"Untitled - Notepad\" || vWindow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
@@ -65,28 +65,28 @@ namespace OpenBots.Commands.Image
 		[Required]
 		[DisplayName("Action Parameters")]
 		[Description("Action Parameters will be required based on the action settings selected.")]
-		[SampleUsage("data || {vData}")]
+		[SampleUsage("\"data\" || vData")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(bool) })]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int), typeof(SecureString), typeof(bool) })]
 		public DataTable v_ImageActionParameterTable { get; set; }
 
 		[Required]
 		[DisplayName("Accuracy (0-1)")]
 		[Description("Enter a value between 0 and 1 to set the match Accuracy. Set to 1 for a perfect match.")]
-		[SampleUsage("0.8 || 1 || {vAccuracy}")]
+		[SampleUsage("0.8 || 1 || vAccuracy")]
 		[Remarks("Accuracy must be a value between 0 and 1.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(double) })]
 		public string v_MatchAccuracy { get; set; }
 
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]

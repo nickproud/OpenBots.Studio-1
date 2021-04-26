@@ -22,7 +22,7 @@ namespace OpenBots.Commands.Dictionary
 		[Required]
 		[DisplayName("Dictionary")]
 		[Description("Provide a Dictionary variable.")]
-		[SampleUsage("{vDictionary}")]
+		[SampleUsage("vDictionary || new Dictionary<string, int>() {{ \"Hello\", 1 }}")]
 		[Remarks("Any type of variable other than Dictionary will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(Dictionary<,>)})]

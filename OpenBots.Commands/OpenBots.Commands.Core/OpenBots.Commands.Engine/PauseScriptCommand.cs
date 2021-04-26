@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Engine
 		[Required]
 		[DisplayName("Pause Time (Milliseconds)")]      
 		[Description("Select or provide a specific amount of time in milliseconds.")]
-		[SampleUsage("1000 || {vTime}")]
+		[SampleUsage("1000 || vTime")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(int) })]

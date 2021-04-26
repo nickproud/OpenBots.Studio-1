@@ -46,13 +46,13 @@ namespace OpenBots.Commands.WebBrowser
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." + 
 			"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("XPath : //*[@id=\"features\"]/div[2]/div/h2/div[{var1}]/div" +
-				 "\n\tID: 1" +
-				 "\n\tName: my{var2}Name" +
-				 "\n\tTag Name: h1" +
-				 "\n\tClass Name: myClass" +
-				 "\n\tCSS Selector: [attribute=value]" +
-				 "\n\tLink Text: https://www.mylink.com/")]
+		[SampleUsage("XPath : \"//*[@id=\"features\"]/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
+				 "\n\tID: \"1\"" +
+				 "\n\tName: \"my\" + var2 + \"Name\"" +
+				 "\n\tTag Name: \"h1\"" +
+				 "\n\tClass Name: \"myClass\"" +
+				 "\n\tCSS Selector: \"[attribute=value]\"" +
+				 "\n\tLink Text: \"https://www.mylink.com/\"")]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -95,7 +95,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("Action Parameters")]
 		[Description("Action Parameters will be determined based on the action settings selected.")]
-		[SampleUsage("data || {vData} || *Variable Name*: {vNewVariable}")]
+		[SampleUsage("\"data\" || vData || vOutputVariable")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.\n"+
 				 "Advanced keystrokes may be set the following way: Hello[tab]World[enter]")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
@@ -106,7 +106,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(int) })]

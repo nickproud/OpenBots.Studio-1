@@ -45,7 +45,7 @@ namespace OpenBots.Commands.QueueItem
 		[DisplayName("Source (Optional)")]
 		[Description("If the item being enqueued is a business event, define the source of the event.\n" +
 					 "This is typically the system name that caused the business event.")]
-		[SampleUsage("\"Loan Origination System\" || \"Lead Generation System\" ||vSource")]
+		[SampleUsage("\"Loan Origination System\" || \"Lead Generation System\" || vSource")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

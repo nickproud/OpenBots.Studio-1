@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Outlook
         [Required]
         [DisplayName("MailItem")]
         [Description("Enter the MailItem from which to retrieve the property.")]
-        [SampleUsage("{vMailItem}")]
+        [SampleUsage("vMailItem")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(MailItem) })]

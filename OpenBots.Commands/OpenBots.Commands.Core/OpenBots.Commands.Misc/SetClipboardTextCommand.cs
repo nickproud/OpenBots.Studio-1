@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Misc
 		[Required]
 		[DisplayName("Text")]
 		[Description("Select or provide the text to set on the clipboard.")]
-		[SampleUsage("Hello || {vTextToSet}")]
+		[SampleUsage("\"Hello\" || vTextToSet")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

@@ -24,7 +24,7 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Column Names")]
 		[Description("Enter the Column Names required for each column of data.")]
-		[SampleUsage("MyColumn || {vColumn}")]
+		[SampleUsage("\"MyColumn\" || vColumn")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Increment Value")]
 		[Description("Specify how many units to increment by.")]
-		[SampleUsage("15 || {vIncrement}")]
+		[SampleUsage("15 || vIncrement")]
 		[Remarks("You can use negative numbers which will do the opposite, ex. Subtract Days and an increment of -5 will Add Days.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(double) })]

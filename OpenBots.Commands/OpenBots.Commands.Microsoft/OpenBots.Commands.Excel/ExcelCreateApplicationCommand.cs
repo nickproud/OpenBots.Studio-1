@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Workbook File Path")]
 		[Description("Enter or Select the path to the Workbook file.")]
-		[SampleUsage(@"C:\temp\myfile.xlsx || {vFilePath} || {ProjectPath}\myfile.xlsx")]
+		[SampleUsage("@\"C:\\temp\\myfile.xlsx\" || ProjectPath + @\"\\myfile.xlsx\" || vFilePath")]
 		[Remarks("This input should only be used for opening existing Workbooks.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]

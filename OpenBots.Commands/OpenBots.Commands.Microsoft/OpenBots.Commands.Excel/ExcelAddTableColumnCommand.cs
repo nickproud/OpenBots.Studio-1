@@ -28,13 +28,12 @@ namespace OpenBots.Commands.Microsoft
         [CompatibleTypes(new Type[] { typeof(Application) })]
         public string v_InstanceName { get; set; }
 
-        [Required]
-        [DisplayName("Column Index")]
+        [DisplayName("Column Index (Optional)")]
         [Description("Enter the index for column to be added at.")]
         [SampleUsage("1 || vIndex")]
         [Remarks("The column will be added at the last index if a column index is not provided.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(new Type[] { typeof(string) })]
+        [CompatibleTypes(new Type[] { typeof(int) })]
         public string v_ColumnIndex { get; set; }
 
         [Required]
@@ -58,7 +57,7 @@ namespace OpenBots.Commands.Microsoft
         [Required]
         [DisplayName("Worksheet Name")]
         [Description("Enter the name of the Worksheet containing the existing Excel Table.")]
-        [SampleUsage("Sheet1 || {vSheet}")]
+        [SampleUsage("\"Sheet1\" || vSheet")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(string) })]
@@ -77,8 +76,7 @@ namespace OpenBots.Commands.Microsoft
         public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
-            var vColumnIndex = (string)await v_ColumnIndex.EvaluateCode(engine);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);          
             var vTableName = (string)await v_TableName.EvaluateCode(engine);
             var vColumnName = (string)await v_ColumnName.EvaluateCode(engine);
             var excelObject = v_InstanceName.GetAppInstance(engine);
@@ -86,7 +84,11 @@ namespace OpenBots.Commands.Microsoft
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
             var excelTable = workSheetExcelTable.ListObjects[vTableName];
 
-            var excelColumn = excelTable.ListColumns.Add(String.IsNullOrEmpty(vColumnIndex) ? excelTable.ListColumns.Count + 1 : int.Parse(vColumnIndex));
+            int vColumnIndex = -1;
+            if (string.IsNullOrEmpty(v_ColumnIndex))
+                vColumnIndex = (int)await v_ColumnIndex.EvaluateCode(engine);
+
+            var excelColumn = excelTable.ListColumns.Add(string.IsNullOrEmpty(v_ColumnIndex) ? excelTable.ListColumns.Count + 1 : vColumnIndex);
             excelColumn.Name = vColumnName;
         }
 

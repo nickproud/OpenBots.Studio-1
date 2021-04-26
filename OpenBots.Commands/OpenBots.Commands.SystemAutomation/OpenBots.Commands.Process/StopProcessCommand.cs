@@ -24,7 +24,7 @@ namespace OpenBots.Commands.Process
 		[Required]
 		[DisplayName("Program Name or Path")]
 		[Description("Provide a valid program name or enter a full path to the script/executable including the extension.")]
-		[SampleUsage(@"notepad || excel || {vApp} || C:\temp\myapp.exe || {ProjectPath}\myapp.exe")]
+		[SampleUsage("\"notepad\" || \"excel\" || vAppName || @\"C:\\temp\\myapp.exe || ProjectPath + @\"\\myapp.exe\" || vAppPath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]

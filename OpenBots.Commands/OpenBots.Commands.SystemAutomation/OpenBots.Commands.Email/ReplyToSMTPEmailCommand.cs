@@ -82,7 +82,7 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Email Body")]
 		[Description("Enter text to be used as the email body.")]
-		[SampleUsage("$\"Everything ran ok at {DateTime.Now}\"  || vBody")]
+		[SampleUsage("$\"Everything ran ok at {DateTime.Now}\" || vBody")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

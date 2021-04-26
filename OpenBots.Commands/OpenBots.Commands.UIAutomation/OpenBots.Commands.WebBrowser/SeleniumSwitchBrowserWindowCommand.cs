@@ -59,7 +59,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("Browser Search Parameter")]
 		[Description("Provide the parameter to match (ex. Window URL, Window Title, Handle ID).")]
-		[SampleUsage("http://www.url.com || Welcome to Homepage || {vSearchData}")]
+		[SampleUsage("\"http://www.url.com\" || \"Welcome to Homepage\" || vSearchData")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

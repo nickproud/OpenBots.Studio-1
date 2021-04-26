@@ -33,7 +33,7 @@ namespace OpenBots.Commands.RegEx
 		[Required]
 		[DisplayName("Regex Pattern")]
 		[Description("Enter a Regex Pattern to apply to the input Text.")]
-		[SampleUsage("\"^([\\w\\-]+)\" || vPattern")]
+		[SampleUsage("@\"^([\\w\\-]+)\" || vPattern")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

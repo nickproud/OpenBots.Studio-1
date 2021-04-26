@@ -26,9 +26,8 @@ namespace OpenBots.Commands.Loop
 		[Required]
 		[DisplayName("Input Collection")]
 		[Description("Provide a collection variable.")]
-		[SampleUsage("{vMyCollection}")]
-		[Remarks("If the collection is a DataTable then the output item will be a DataRow and its column value can be accessed using the " +
-			"dot operator like {vDataRow.ColumnName}.")]
+		[SampleUsage("vMyList || vMyDictionary.ToList() || vMyDataTable.Rows || new List<int>() { 1, 2, 3 }")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(DataRowCollection), typeof(List<>) })]
 		public string v_LoopParameter { get; set; }

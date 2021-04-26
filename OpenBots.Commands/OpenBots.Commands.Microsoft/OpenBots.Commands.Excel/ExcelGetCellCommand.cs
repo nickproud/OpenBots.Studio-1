@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Cell Location")]
 		[Description("Enter the location of the cell to extract.")]
-		[SampleUsage("A1 || {vCellLocation}")]
+		[SampleUsage("\"A1\" || vCellLocation")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

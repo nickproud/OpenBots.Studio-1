@@ -23,7 +23,7 @@ namespace OpenBots.Commands.List
 		[Required]
 		[DisplayName("List")]
 		[Description("Provide a List variable.")]
-		[SampleUsage("{vList}")]
+		[SampleUsage("vList || new List<string>() { \"hello\", \"world\" }")]
 		[Remarks("Providing any type of variable other than a List will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(List<>) })]

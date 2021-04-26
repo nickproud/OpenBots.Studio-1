@@ -33,7 +33,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("URL")]
 		[Description("Enter the URL that you want the selenium instance to navigate to.")]
-		[SampleUsage("https://mycompany.com/orders || {vURL}")]
+		[SampleUsage("\"https://mycompany.com/orders\" || vURL")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]

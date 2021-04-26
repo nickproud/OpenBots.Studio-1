@@ -43,7 +43,7 @@ namespace OpenBots.Commands.BZTerminal
 		[Required]
 		[DisplayName("Session File Path")]
 		[Description("Enter or Select the path of the BlueZone Session file to upload.")]
-		[SampleUsage(@"C:\temp\myfile.zmd || {vFilePath} || {ProjectPath}\myfile.zmd")]
+		[SampleUsage("@\"C:\\temp\\myfile.zmd\" || ProjectPath + @\"\\myfile.zmd\" || vFilePath")]
 		[Remarks("This input should only be used for BlueZone Session files.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]

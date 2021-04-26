@@ -23,7 +23,7 @@ namespace OpenBots.Commands.TextFile
 		[Required]
 		[DisplayName("Text File Path")]
 		[Description("Enter or select the path to the text file.")]
-		[SampleUsage(@"C:\temp\myfile.txt || {ProjectPath}\myText.txt || {vTextFilePath}")]
+		[SampleUsage("@\"C:\\temp\\myfile.txt\" || ProjectPath + @\"\\myfile.txt\" || vFilePath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]

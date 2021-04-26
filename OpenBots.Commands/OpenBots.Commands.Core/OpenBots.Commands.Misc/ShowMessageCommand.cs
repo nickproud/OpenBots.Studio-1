@@ -23,7 +23,7 @@ namespace OpenBots.Commands.Misc
 		[Required]
 		[DisplayName("Message")]      
 		[Description("Specify any text or variable value that should be displayed on screen.")]
-		[SampleUsage("Hello World || {vMyText} || Hello {vName}")]
+		[SampleUsage("\"Hello World\" || vMyVar || \"Hello \" + vName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(object) })]
@@ -32,11 +32,11 @@ namespace OpenBots.Commands.Misc
 		[Required]
 		[DisplayName("Close After X (Seconds)")]
 		[Description("Specify how many seconds to display the message on screen. After the specified time," + 
-							"\nthe message box will be automatically closed and script will resume execution.")]
-		[SampleUsage("0 || 5 || {vSeconds})")]
+					 "\nthe message box will be automatically closed and script will resume execution.")]
+		[SampleUsage("0 || 5 || vSeconds")]
 		[Remarks("Set value to 0 to remain open indefinitely.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_AutoCloseAfter { get; set; }
 
 		public ShowMessageCommand()
