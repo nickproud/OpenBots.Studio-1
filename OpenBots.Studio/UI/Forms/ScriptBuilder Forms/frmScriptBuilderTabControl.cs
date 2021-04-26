@@ -124,7 +124,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     if (result == DialogResult.Cancel)
                         return;
 
-                    uiScriptTabControl.TabPages.RemoveAt(i);
                     tab.Controls[0].Dispose();
                     tab.Dispose();
 
@@ -148,7 +147,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     if (result == DialogResult.Cancel)
                         return;
 
-                    uiScriptTabControl.TabPages.RemoveAt(i);
                     tab.Controls[0].Dispose();
                     tab.Dispose();
 
@@ -179,7 +177,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 tabFilePaths.Add(openTab.ToolTipText);
 
-                uiScriptTabControl.TabPages.Remove(openTab);
                 openTab.Controls[0].Dispose();
                 openTab.Dispose();
             }
@@ -220,7 +217,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (result == DialogResult.Cancel)
                     return allTabsClosed;
 
-                uiScriptTabControl.TabPages.Remove(openTab);
                 openTab.Controls[0].Dispose();
                 openTab.Dispose();
             }
@@ -253,7 +249,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 if (tab.ToolTipText != keepTab.ToolTipText)
                 {
-                    uiScriptTabControl.TabPages.Remove(tab);
                     tab.Controls[0].Dispose();
                     tab.Dispose();
                 }
