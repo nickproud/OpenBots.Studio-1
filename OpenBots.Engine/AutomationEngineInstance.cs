@@ -266,7 +266,7 @@ namespace OpenBots.Engine
                     foreach (ScriptArgument arg in AutomationEngineContext.Arguments)
                     {
                         await VariableMethods.InstantiateVariable(arg.ArgumentName, "", arg.ArgumentType, this);
-                        VariableMethods.SetVariableValue(arg, this, arg.ArgumentName);
+                        VariableMethods.SetVariableValue(arg.ArgumentValue, this, arg.ArgumentName);
                     }
                 }
                 else
