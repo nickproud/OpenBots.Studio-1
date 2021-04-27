@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Windows.Forms;
 using OpenBots.Core.User32;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.NativeMessaging
 {
@@ -21,7 +22,7 @@ namespace OpenBots.Commands.NativeMessaging
 		[Required]
 		[DisplayName("Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
-		[SampleUsage("MyBrowserInstance")]
+		[SampleUsage("\"MyChromeBrowserInstance\"")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
 		[CompatibleTypes(new Type[] { typeof(Process) })]
 		public string v_InstanceName { get; set; }
@@ -30,12 +31,12 @@ namespace OpenBots.Commands.NativeMessaging
 		{
 			CommandName = "NativeMessagingCloseBrowserCommand";
 			SelectionName = "Close Browser";
-			v_InstanceName = "DefaultChromeBrowser";
+			v_InstanceName = "\"DefaultChromeBrowser\"";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);

@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using OpenBots.Core.IO;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.NativeMessaging
 {
@@ -28,10 +29,9 @@ namespace OpenBots.Commands.NativeMessaging
     {
 		[Required]
 		[DisplayName("Browser Instance Name")]
-		[Description("Enter a unique name that will represent the application instance.")]
-		[SampleUsage("MyBrowserInstance")]
-		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
-		 "ensuring that the commands you specify run against the correct application.")]
+		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
+		[SampleUsage("\"MyChromeBrowserInstance\"")]
+		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
 		[CompatibleTypes(new Type[] { typeof(Process) })]
 		public string v_InstanceName { get; set; }
 
@@ -40,8 +40,8 @@ namespace OpenBots.Commands.NativeMessaging
         [SampleUsage("https://mycompany.com/orders || {vURL}")]
         [Remarks("This input is optional.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
-        public string v_URL { get; set; }
+		[CompatibleTypes(new Type[] { typeof(string) })]
+		public string v_URL { get; set; }
 
 		public NativeMessagingCreateBrowserCommand()
         {
@@ -50,14 +50,14 @@ namespace OpenBots.Commands.NativeMessaging
             CommandEnabled = true;
             CommandIcon = Resources.command_web;
 
-			v_InstanceName = "DefaultChromeBrowser";
+			v_InstanceName = "\"DefaultChromeBrowser\"";
 			v_URL = "https://";
         }
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vURL = v_URL.ConvertUserVariableToString(engine);
+			var vURL = (string)await v_URL.EvaluateCode(engine);
 
 			int chromeProcessCount = Process.GetProcessesByName("chrome").Length;
 			var process = Process.Start("chrome.exe", vURL + " --new-window");

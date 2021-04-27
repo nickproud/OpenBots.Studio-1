@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Security;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.NativeMessaging
 {
@@ -28,7 +29,7 @@ namespace OpenBots.Commands.NativeMessaging
 		[Required]
 		[DisplayName("Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
-		[SampleUsage("MyBrowserInstance")]
+		[SampleUsage("\"MyChromeBrowserInstance\"")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
 		[CompatibleTypes(new Type[] { typeof(Process) })]
 		public string v_InstanceName { get; set; }
@@ -37,17 +38,17 @@ namespace OpenBots.Commands.NativeMessaging
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." +
 					"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("XPath : //*[@id=\"features\"]/div[2]/div/h2/div[{var1}]/div" +
+		[SampleUsage("XPath : \"//*[@id=\"features\"]/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
 						 "\n\tRelative XPath : //*[@id=\"features\"]" +
-						 "\n\tID: 1" +
-						 "\n\tName: my{var2}Name" +
-						 "\n\tTag Name: h1" +
-						 "\n\tClass Name: myClass" +
-						 "\n\tCSS Selector: [attribute=value]" +
-						 "\n\tLink Text: https://www.mylink.com/")]
+						 "\n\tID: \"1\"" +
+						 "\n\tName: \"my\" + var2 + \"Name\"" +
+						 "\n\tTag Name: \"h1\"" +
+						 "\n\tClass Name: \"myClass\"" +
+						 "\n\tCSS Selector: \"[attribute=value]\"" +
+						 "\n\tLink Text: \"https://www.mylink.com/\"")]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_NativeSearchParameters { get; set; }
 
 		[Required]
@@ -62,7 +63,7 @@ namespace OpenBots.Commands.NativeMessaging
 		[Required]
 		[DisplayName("Secure String Variable")]
 		[Description("Enter the secure string variable that will be set in the input.")]
-		[SampleUsage("{vSecureText}")]
+		[SampleUsage("vSecureText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(SecureString) })]
@@ -79,7 +80,7 @@ namespace OpenBots.Commands.NativeMessaging
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
-			v_InstanceName = "DefaultChromeBrowser";
+			v_InstanceName = "\"DefaultChromeBrowser\"";
 			v_Option = "Yes";
 			//set up search parameter table
 			v_NativeSearchParameters = new DataTable();
@@ -89,12 +90,12 @@ namespace OpenBots.Commands.NativeMessaging
 			v_NativeSearchParameters.TableName = DateTime.Now.ToString("v_NativeSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var chromeProcess = (Process)browserObject;
-			var secureStrVariable = v_SecureString.ConvertUserVariableToObject(engine, typeof(SecureString));
+			var secureStrVariable = (SecureString)await v_SecureString.EvaluateCode(engine);
 
 			string secureString;
 			if (secureStrVariable is SecureString)

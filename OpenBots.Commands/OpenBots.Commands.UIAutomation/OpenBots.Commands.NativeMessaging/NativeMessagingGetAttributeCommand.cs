@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.NativeMessaging
 {
@@ -27,7 +28,7 @@ namespace OpenBots.Commands.NativeMessaging
 		[Required]
 		[DisplayName("Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
-		[SampleUsage("MyBrowserInstance")]
+		[SampleUsage("\"MyChromeBrowserInstance\"")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
 		[CompatibleTypes(new Type[] { typeof(Process) })]
 		public string v_InstanceName { get; set; }
@@ -36,26 +37,26 @@ namespace OpenBots.Commands.NativeMessaging
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." +
 					"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("XPath : //*[@id=\"features\"]/div[2]/div/h2/div[{var1}]/div" +
+		[SampleUsage("XPath : \"//*[@id=\"features\"]/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
 						 "\n\tRelative XPath : //*[@id=\"features\"]" +
-						 "\n\tID: 1" +
-						 "\n\tName: my{var2}Name" +
-						 "\n\tTag Name: h1" +
-						 "\n\tClass Name: myClass" +
-						 "\n\tCSS Selector: [attribute=value]" +
-						 "\n\tLink Text: https://www.mylink.com/")]
+						 "\n\tID: \"1\"" +
+						 "\n\tName: \"my\" + var2 + \"Name\"" +
+						 "\n\tTag Name: \"h1\"" +
+						 "\n\tClass Name: \"myClass\"" +
+						 "\n\tCSS Selector: \"[attribute=value]\"" +
+						 "\n\tLink Text: \"https://www.mylink.com/\"")]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_NativeSearchParameters { get; set; }
 
 		[Required]
 		[DisplayName("Attribute Name")]
 		[Description("Enter the attribute name to be set.")]
-		[SampleUsage("Hello World || {vAttribute}")]
+		[SampleUsage("\"Hello World\" || vAttribute")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Attribute { get; set; }
 
 		[Required]
@@ -78,7 +79,7 @@ namespace OpenBots.Commands.NativeMessaging
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
-			v_InstanceName = "DefaultChromeBrowser";
+			v_InstanceName = "\"DefaultChromeBrowser\"";
 			//set up search parameter table
 			v_NativeSearchParameters = new DataTable();
 			v_NativeSearchParameters.Columns.Add("Enabled");
@@ -87,12 +88,12 @@ namespace OpenBots.Commands.NativeMessaging
 			v_NativeSearchParameters.TableName = DateTime.Now.ToString("v_NativeSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var chromeProcess = (Process)browserObject;
-			var vTargetText = v_Attribute.ConvertUserVariableToString(engine);
+			var vTargetText = (string)await v_Attribute.EvaluateCode(engine);
 
 			DataRow elementRow = v_NativeSearchParameters.Rows[0];
 			WebElement webElement = NativeHelper.DataTableToWebElement(v_NativeSearchParameters);
@@ -101,7 +102,7 @@ namespace OpenBots.Commands.NativeMessaging
 
 			string elementText;
 			NativeRequest.ProcessRequest("getattribute", JsonConvert.SerializeObject(webElement), out elementText);
-			elementText.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			elementText.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

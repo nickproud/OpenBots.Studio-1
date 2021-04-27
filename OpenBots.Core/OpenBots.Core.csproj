@@ -218,6 +218,7 @@
     <Compile Include="Attributes\PropertyAttributes\Remarks.cs" />
     <Compile Include="Attributes\PropertyAttributes\CompatibleTypes.cs" />
     <Compile Include="Attributes\PropertyAttributes\SampleUsage.cs" />
+    <Compile Include="ChromeNativeClient\NativeResponse.cs" />
     <Compile Include="ChromeNativeClient\RequestMessage.cs" />
     <Compile Include="ChromeNativeClient\NativeRequest.cs" />
     <Compile Include="ChromeNativeClient\ServerCommunication.cs" />
