@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Engine
 {
@@ -22,22 +23,22 @@ namespace OpenBots.Commands.Engine
 		[Required]
 		[DisplayName("Write Log To")]
 		[Description("Specify the corresponding logging option to save logs to Engine Logs or to a custom File.")]
-		[SampleUsage(@"Engine Logs || C:\MyEngineLogs.txt || {vFileVariable}")]
+		[SampleUsage("\"Engine Logs\" || @\"C:\\temp\\myfile.txt\" || ProjectPath + @\"\\myfile.txt\" || vFilePath")]
 		[Remarks("Selecting 'Engine Logs' will result in writing execution logs in the 'Engine Logs'. " +
 			"The current Date and Time will be automatically appended to a local file if a custom file name is provided. " +
 			"Logs are all saved in the OpenBots Studio Root Folder in the 'Logs' folder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_LogFile { get; set; }
 
 		[Required]
 		[DisplayName("Log Text")]
 		[Description("Specify the log text.")]
-		[SampleUsage("Third Step is Complete || {vLogText}")]
+		[SampleUsage("\"Third Step is Complete\" || vLogText")]
 		[Remarks("Provide only text data.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_LogText { get; set; }
 
 		[Required]
@@ -60,17 +61,17 @@ namespace OpenBots.Commands.Engine
 			CommandEnabled = true;
 			CommandIcon = Resources.command_files;
 
-			v_LogFile = "Engine Logs";
+			v_LogFile = "\"Engine Logs\"";
 			v_LogType = "Information";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get text to log and log file name       
-			var textToLog = v_LogText.ConvertUserVariableToString(engine);
-			var loggerFilePath = v_LogFile.ConvertUserVariableToString(engine);
+			var textToLog = (string)await v_LogText.EvaluateCode(engine);
+			var loggerFilePath = (string)await v_LogFile.EvaluateCode(engine);
 
 			//determine log file
 			if (v_LogFile == "Engine Logs")

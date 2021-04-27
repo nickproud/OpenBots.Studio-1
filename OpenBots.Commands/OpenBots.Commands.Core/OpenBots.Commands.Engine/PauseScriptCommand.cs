@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Engine
 {
@@ -22,10 +23,10 @@ namespace OpenBots.Commands.Engine
 		[Required]
 		[DisplayName("Pause Time (Milliseconds)")]      
 		[Description("Select or provide a specific amount of time in milliseconds.")]
-		[SampleUsage("1000 || {vTime}")]
+		[SampleUsage("1000 || vTime")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_PauseLength { get; set; }
 
 		public PauseScriptCommand()
@@ -38,11 +39,10 @@ namespace OpenBots.Commands.Engine
 			v_PauseLength = "1000";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var userPauseLength = v_PauseLength.ConvertUserVariableToString(engine);
-			var pauseLength = int.Parse(userPauseLength);
+			var pauseLength = (int)await v_PauseLength.EvaluateCode(engine);
 			Thread.Sleep(pauseLength);
 		}
 

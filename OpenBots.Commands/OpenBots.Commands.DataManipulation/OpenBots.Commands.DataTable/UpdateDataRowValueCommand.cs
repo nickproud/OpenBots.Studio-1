@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.DataTable
@@ -23,7 +24,7 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("DataRow")]
 		[Description("Enter an existing DataRow to add values to.")]
-		[SampleUsage("{vDataRow}")]
+		[SampleUsage("vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(DataRow) })]
@@ -41,20 +42,30 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Search Value")]
 		[Description("Enter a valid DataRow index or column name.")]
-		[SampleUsage("0 || {vIndex} || Column1 || {vColumnName}")]
+		[SampleUsage("0 || vIndex || \"Column1\" || vColumnName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_DataValueIndex { get; set; }
 
 		[Required]
 		[DisplayName("Cell Value")]
 		[Description("Enter the value to write to the DataRow cell.")]
-		[SampleUsage("value || {vValue}")]
+		[SampleUsage("\"value\" || 525 || vValue")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
+
 		public string v_DataRowValue { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output DataRow Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("vUserVariable")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(DataRow) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		public UpdateDataRowValueCommand()
 		{
@@ -66,26 +77,28 @@ namespace OpenBots.Commands.DataTable
 			v_Option = "Column Index";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var dataRowValue = v_DataRowValue.ConvertUserVariableToString(engine);
+			var dataRowValue = await v_DataRowValue.EvaluateCode(engine);
 
-			var dataRowVariable = v_DataRow.ConvertUserVariableToObject(engine, nameof(v_DataRow), this);
+			var dataRowVariable = await v_DataRow.EvaluateCode(engine);
 			DataRow dataRow = (DataRow)dataRowVariable;
 
-			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);
+			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
 			if (v_Option == "Column Index")
 			{
-				int index = int.Parse(valueIndex);
+				int index = (int)valueIndex;
 				dataRow[index] = dataRowValue;
 			}
 			else if (v_Option == "Column Name")
 			{
-				string index = valueIndex;
-				dataRow.SetField(index, dataRowValue);
+				string columnName = (string)valueIndex;
+				dataRow.SetField(columnName, dataRowValue);
 			}
+
+			dataRow.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -96,13 +109,14 @@ namespace OpenBots.Commands.DataTable
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataValueIndex", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataRowValue", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Write '{v_DataRowValue}' to Column '{v_DataValueIndex}' in '{v_DataRow}']";
+			return base.GetDisplayValue() + $" [Write '{v_DataRowValue}' to Column '{v_DataValueIndex}' in '{v_DataRow}' - Store DataRow in '{v_OutputUserVariableName}']";
 		}       
 	}
 }

@@ -14,7 +14,7 @@ namespace OpenBots.Commands.Data.Test
         [InlineData("UPPERcase","To Lower Case","uppercase")]
         [InlineData("test string","To Base64 String", "dGVzdCBzdHJpbmc=")]
         [InlineData("dGVzdCBzdHJpbmc=", "From Base64 String","test string")]
-        public void ModifiesString(string input, string operation, string expectedOutput)
+        public async void ModifiesString(string input, string operation, string expectedOutput)
         {
             _modifyString = new ModifyStringCommand();
             _engine = new AutomationEngineInstance(null);
@@ -28,7 +28,7 @@ namespace OpenBots.Commands.Data.Test
 
             _modifyString.RunCommand(_engine);
 
-            Assert.Equal(expectedOutput, _modifyString.v_OutputUserVariableName.ConvertUserVariableToString(_engine));
+            Assert.Equal(expectedOutput, (string)await _modifyString.v_OutputUserVariableName.EvaluateCode(_engine));
         }
     }
 }

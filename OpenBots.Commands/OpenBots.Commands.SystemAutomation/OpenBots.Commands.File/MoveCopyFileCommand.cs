@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using IO = System.IO;
 
@@ -31,21 +32,21 @@ namespace OpenBots.Commands.File
 		[Required]
 		[DisplayName("Source File Path")]
 		[Description("Enter or Select the path to the file.")]
-		[SampleUsage(@"C:\temp\myfile.txt || {ProjectPath}\myfile.txt || {vTextFilePath}")]
-		[Remarks("{ProjectPath} is the directory path of the current project.")]
+		[SampleUsage("@\"C:\\temp\\myfile.txt\" || ProjectPath + @\"\\myfile.txt\" || vFilePath")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFilePath { get; set; }
 
 		[Required]
 		[DisplayName("Destination File Path")]
 		[Description("Enter or Select the new (destination) path to the file.")]
-		[SampleUsage(@"C:\temp\new path || {ProjectPath}\new path || {vTextFolderPath}")]
-		[Remarks("{ProjectPath} is the directory path of the current project.")]
+		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DestinationDirectory { get; set; }
 
 		[Required]
@@ -77,12 +78,12 @@ namespace OpenBots.Commands.File
 			v_OverwriteFile = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFile = v_SourceFilePath.ConvertUserVariableToString(engine);
-			var destinationFolder = v_DestinationDirectory.ConvertUserVariableToString(engine);
+			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine);
+			var destinationFolder = (string)await v_DestinationDirectory.EvaluateCode(engine);
 
             if (!IO.File.Exists(sourceFile))
             {

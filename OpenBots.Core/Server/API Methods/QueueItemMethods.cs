@@ -58,18 +58,14 @@ namespace OpenBots.Core.Server.API_Methods
                 throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
         }
 
-        public static void AttachFiles(RestClient client, Guid? queueItemId, string attachments)
+        public static void AttachFiles(RestClient client, Guid? queueItemId, List<string> attachments)
         {
             var request = new RestRequest("api/v1/QueueItems/{queueItemId}/QueueItemAttachments", Method.POST);
             request.RequestFormat = DataFormat.Json;
             request.AddUrlSegment("queueItemId", queueItemId.ToString());
 
-            if (!string.IsNullOrEmpty(attachments))
-            {
-                var splitAttachments = attachments.Split(';');
-                foreach (var vAttachment in splitAttachments)
-                    request.AddFile("files", vAttachment);
-            }
+            foreach (var vAttachment in attachments)
+                request.AddFile("files", vAttachment);
 
             var response = client.Execute(request);
 

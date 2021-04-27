@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Terminal
@@ -31,16 +32,16 @@ namespace OpenBots.Commands.Terminal
 		[Required]
 		[DisplayName("Username")]
 		[Description("Define the username to use when connecting to the terminal.")]
-		[SampleUsage("myRobot || {vUsername}")]
+		[SampleUsage("\"myRobot\" || vUsername")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Username { get; set; }
 
 		[Required]
 		[DisplayName("Password")]
 		[Description("Define the password to use when connecting to the terminal.")]
-		[SampleUsage("{vPassword}")]
+		[SampleUsage("vPassword")]
 		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(SecureString) })]
@@ -55,11 +56,11 @@ namespace OpenBots.Commands.Terminal
 			v_InstanceName = "DefaultTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vUserName = v_Username.ConvertUserVariableToString(engine);
-			var vPassword = (SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this);
+			var vUserName = (string)await v_Username.EvaluateCode(engine);
+			var vPassword = (SecureString)await v_Password.EvaluateCode(engine);
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)

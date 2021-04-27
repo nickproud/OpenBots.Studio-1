@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Core.Command
@@ -54,9 +55,9 @@ namespace OpenBots.Core.Command
 
 		[DisplayName("Comment Field (Optional)")]
 		[Description("Optional field to enter a custom comment which could potentially describe this command or the need for this command, if required.")]
-		[SampleUsage("I am using this command to ...")]
+		[SampleUsage("\"I am using this command to ...\"")]
 		[Remarks("Optional")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Comment { get; set; }
 
 		[JsonIgnore]
@@ -93,11 +94,11 @@ namespace OpenBots.Core.Command
 			CommandID = id.ToString();
 		}
 
-		public virtual void RunCommand(object sender)
+		public async virtual Task RunCommand(object sender)
 		{
 		}
 
-		public virtual void RunCommand(object sender, ScriptAction command)
+		public async virtual Task RunCommand(object sender, ScriptAction command)
 		{
 		}
 

@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -34,19 +35,19 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Row")]
 		[Description("Enter the text value that will be set in the selected row (Can be a DataRow).")]
-		[SampleUsage("Hello,World || {vData1},{vData2} || {vDataRow}")]
+		[SampleUsage("new List<string>() { \"Hello\", \"World\" } || vList || vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DataRow) }, true)]
+		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(string) })]
 		public string v_RowToSet { get; set; }
 
 		[Required]
 		[DisplayName("Cell Location")]
 		[Description("Enter the location of the cell to write the row to.")]
-		[SampleUsage("A1 || {vCellLocation}")]
+		[SampleUsage("\"A1\" || vCellLocation")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CellLocation { get; set; }
 
 		public ExcelWriteRowCommand()
@@ -60,14 +61,11 @@ namespace OpenBots.Commands.Excel
 			v_CellLocation = "A1";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;          
-			var vTargetAddress = v_CellLocation.ConvertUserVariableToString(engine);
-			dynamic vRow = v_RowToSet.ConvertUserVariableToString(engine);
-
-			if (vRow == v_RowToSet && v_RowToSet.StartsWith("{") && v_RowToSet.EndsWith("}"))
-				vRow = v_RowToSet.ConvertUserVariableToObject(engine, nameof(v_RowToSet), this);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
+			dynamic vRow = await v_RowToSet.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
@@ -106,13 +104,12 @@ namespace OpenBots.Commands.Excel
 			}
 			else
 			{
-				string vRowString = v_RowToSet.ConvertUserVariableToString(engine);
-				var splittext = vRowString.Split(',');
+				var vRowList = (List<string>)vRow;
 
 				string cellValue;
-				for (int j = 0; j < splittext.Length; j++)
+				for (int j = 0; j < vRowList.Count; j++)
 				{
-					cellValue = splittext[j];
+					cellValue = vRowList[j];
 					if (cellValue == "null")
 					{
 						cellValue = string.Empty;

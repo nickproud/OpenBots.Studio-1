@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Engine
 {
@@ -43,17 +44,17 @@ namespace OpenBots.Commands.Engine
 
 		[DisplayName("String Format (Optional)")]
 		[Description("Specify a TimeSpan string format if required.")]
-		[SampleUsage("g || dd\\.hh\\:mm || {vFormat}")]
+		[SampleUsage("\"g\" || \"dd\\.hh\\:mm\" || vFormat")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ToStringFormat { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Elapsed Time Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -77,10 +78,10 @@ namespace OpenBots.Commands.Engine
 			v_StopwatchAction = "Start Stopwatch";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var format = v_ToStringFormat.ConvertUserVariableToString(engine);
+			var format = (string)await v_ToStringFormat.EvaluateCode(engine);
 			
 			Stopwatch stopwatch;
 			switch (v_StopwatchAction)
@@ -115,7 +116,7 @@ namespace OpenBots.Commands.Engine
 					else
 						elapsedTime = stopwatch.Elapsed.ToString(format);
 
-					elapsedTime.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					elapsedTime.SetVariableValue(engine, v_OutputUserVariableName);
 					break;
 				default:
 					throw new NotImplementedException("Stopwatch Action '" + v_StopwatchAction + "' not implemented");

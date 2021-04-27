@@ -13,7 +13,7 @@ namespace OpenBots.Commands.List.Test
         private RemoveListItemCommand _removeListItem;
 
         [Fact]
-        public void RemovesStringListItem()
+        public async void RemovesStringListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _removeListItem = new RemoveListItemCommand();
@@ -30,12 +30,12 @@ namespace OpenBots.Commands.List.Test
             _removeListItem.v_ListIndex = "{index}";
 
             _removeListItem.RunCommand(_engine);
-            List<string> outputList = (List<string>)"{inputList}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> outputList = (List<string>)await "{inputList}".EvaluateCode(_engine);
             Assert.Equal("item2", outputList[0]);
         }
 
         [Fact]
-        public void RemovesDataTableListItem()
+        public async void RemovesDataTableListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _removeListItem = new RemoveListItemCommand();
@@ -56,7 +56,7 @@ namespace OpenBots.Commands.List.Test
             _removeListItem.v_ListIndex = "{index}";
 
             _removeListItem.RunCommand(_engine);
-            List<OBDataTable> outputList = (List<OBDataTable>)"{inputList}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<OBDataTable> outputList = (List<OBDataTable>)await "{inputList}".EvaluateCode(_engine);
             Assert.Equal(item2, outputList[0]);
         }
     }

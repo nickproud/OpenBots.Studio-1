@@ -6,7 +6,6 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security;
 using System.Security.Authentication;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Email
@@ -21,14 +21,12 @@ namespace OpenBots.Commands.Email
 	[Serializable]
 	[Category("Email Commands")]
 	[Description("This command forwards a selected email using SMTP protocol.")]
-
 	public class ForwardSMTPEmailCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("MimeMessage")]
 		[Description("Enter the MimeMessage to forward.")]
-		[SampleUsage("{vMimeMessage}")]
+		[SampleUsage("vMimeMessage")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(MimeMessage) })]
@@ -37,34 +35,34 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Host")]
 		[Description("Define the host/service name that the script should use.")]
-		[SampleUsage("smtp.gmail.com || {vHost}")]
+		[SampleUsage("\"smtp.gmail.com\" || vHost")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SMTPHost { get; set; }
 
 		[Required]
 		[DisplayName("Port")]
 		[Description("Define the port number that should be used when contacting the SMTP service.")]
-		[SampleUsage("465 || {vPort}")]
+		[SampleUsage("\"465\" || vPort")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SMTPPort { get; set; }
 
 		[Required]
 		[DisplayName("Username")]
 		[Description("Define the username to use when contacting the SMTP service.")]
-		[SampleUsage("myRobot || {vUsername}")]
+		[SampleUsage("\"myRobot\" || vUsername")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SMTPUserName { get; set; }
 
 		[Required]
 		[DisplayName("Password")]
 		[Description("Define the password to use when contacting the SMTP service.")]
-		[SampleUsage("{vPassword}")]
+		[SampleUsage("vPassword")]
 		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(SecureString) })]
@@ -73,19 +71,19 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Recipient(s)")]
 		[Description("Enter the email address(es) of the recipient(s).")]
-		[SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
-		[Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"test@test.com\", \"test2@test.com\" } || vEmailsList")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_SMTPRecipients { get; set; }
 
 		[Required]
 		[DisplayName("Email Body")]
 		[Description("Enter text to be used as the email body.")]
-		[SampleUsage("Everything ran ok at {DateTime.Now}  || {vBody}")]
+		[SampleUsage("$\"Everything ran ok at {DateTime.Now}\"  || vBody")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SMTPBody { get; set; }
 
 		public ForwardSMTPEmailCommand()
@@ -94,19 +92,18 @@ namespace OpenBots.Commands.Email
 			SelectionName = "Forward SMTP Email";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_smtp;
-
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MimeMessage vMimeMessageToForward = (MimeMessage)v_SMTPMimeMessage.ConvertUserVariableToObject(engine, nameof(v_SMTPMimeMessage), this);
-			string vSMTPHost = v_SMTPHost.ConvertUserVariableToString(engine);
-			string vSMTPPort = v_SMTPPort.ConvertUserVariableToString(engine);
-			string vSMTPUserName = v_SMTPUserName.ConvertUserVariableToString(engine);
-			string vSMTPPassword = ((SecureString)v_SMTPPassword.ConvertUserVariableToObject(engine, nameof(v_SMTPPassword), this)).ConvertSecureStringToString();
-			string vSMTPRecipients = v_SMTPRecipients.ConvertUserVariableToString(engine);
-			string vSMTPBody = v_SMTPBody.ConvertUserVariableToString(engine);
+			MimeMessage vMimeMessageToForward = (MimeMessage)await v_SMTPMimeMessage.EvaluateCode(engine);
+			string vSMTPHost = (string)await v_SMTPHost.EvaluateCode(engine);
+			string vSMTPPort = (string)await v_SMTPPort.EvaluateCode(engine);
+			string vSMTPUserName = (string)await v_SMTPUserName.EvaluateCode(engine);
+			string vSMTPPassword = ((SecureString)await v_SMTPPassword.EvaluateCode(engine)).ConvertSecureStringToString();
+			List<string> vSMTPRecipients = (List<string>)await v_SMTPRecipients.EvaluateCode(engine);
+			string vSMTPBody = (string)await v_SMTPBody.EvaluateCode(engine);
 
 			using (var client = new SmtpClient())
 			{
@@ -132,8 +129,7 @@ namespace OpenBots.Commands.Email
 					message.From.Add(MailboxAddress.Parse(vSMTPUserName));
 					message.ReplyTo.Add(MailboxAddress.Parse(vSMTPUserName));
 
-					var splitRecipients = vSMTPRecipients.Split(';');
-					foreach (var vSMTPToEmail in splitRecipients)
+					foreach (var vSMTPToEmail in vSMTPRecipients)
 						message.To.Add(MailboxAddress.Parse(vSMTPToEmail));
 
 					message.Subject = "Fwd: " + vMimeMessageToForward.Subject;

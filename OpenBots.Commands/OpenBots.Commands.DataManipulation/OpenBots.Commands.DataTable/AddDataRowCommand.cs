@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -22,14 +23,12 @@ namespace OpenBots.Commands.DataTable
 	[Serializable]
 	[Category("DataTable Commands")]
 	[Description("This command adds a DataRow to a DataTable.")]
-
 	public class AddDataRowCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter an existing DataTable to add a DataRow to.")]
-		[SampleUsage("{vDataTable}")]
+		[SampleUsage("vDataTable")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
@@ -38,11 +37,20 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Data")]
 		[Description("Enter Column Names and Data for each column in the DataRow.")]
-		[SampleUsage("[ First Name | John ] || [ {vColumn} | {vData} ]")]
+		[SampleUsage("[ \"First Name\" | \"John\" ] || [ vColumn | vData ]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(object) })]
 		public OBDataTable v_DataRowDataTable { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output DataTable Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("vUserVariable")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
@@ -65,22 +73,22 @@ namespace OpenBots.Commands.DataTable
 			v_DataRowDataTable.Columns.Add("Data");
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
+			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine);
 			var newRow = Dt.NewRow();
 
 			foreach (DataRow rw in v_DataRowDataTable.Rows)
 			{
-				var columnName = rw.Field<string>("Column Name").ConvertUserVariableToString(engine);
-				var data = rw.Field<string>("Data").ConvertUserVariableToString(engine);
+				var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
+				var data = await rw.Field<string>("Data").EvaluateCode(engine);
 				newRow.SetField(columnName, data);
 			}
 			Dt.Rows.Add(newRow);
 
-			Dt.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
+			Dt.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -88,7 +96,6 @@ namespace OpenBots.Commands.DataTable
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataTable", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultDataGridViewGroupFor("v_DataRowDataTable", this, editor));
 
 			CommandItemControl loadSchemaControl = new CommandItemControl();
 			loadSchemaControl.ForeColor = Color.White;
@@ -96,18 +103,28 @@ namespace OpenBots.Commands.DataTable
 			loadSchemaControl.CommandDisplay = "Load Column Names From Existing DataTable";
 			loadSchemaControl.CommandImage = Resources.command_spreadsheet;
 			loadSchemaControl.Click += LoadSchemaControl_Click;
-			RenderedControls.Add(loadSchemaControl);
+
+			var dataRowDataControls = new List<Control>();
+			dataRowDataControls.Add(commandControls.CreateDefaultLabelFor("v_DataRowDataTable", this));
+			var gridview = commandControls.CreateDefaultDataGridViewFor("v_DataRowDataTable", this);
+			dataRowDataControls.AddRange(commandControls.CreateUIHelpersFor("v_DataRowDataTable", this, new Control[] { gridview }, editor));
+			dataRowDataControls.Add(loadSchemaControl);
+			dataRowDataControls.Add(gridview);
+
+			RenderedControls.AddRange(dataRowDataControls);
 
 			_dataTableCreationCommands = editor.ConfiguredCommands.Where(f => f is CreateDataTableCommand)
 																 .Select(f => (CreateDataTableCommand)f)
 																 .ToList();
+
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Add {v_DataRowDataTable.Rows.Count} Field(s) to '{v_DataTable}']";
+			return base.GetDisplayValue() + $" [Add {v_DataRowDataTable.Rows.Count} Field(s) to '{v_DataTable}' - Store DataTable in '{v_OutputUserVariableName}']";
 		}
 
 		private void LoadSchemaControl_Click(object sender, EventArgs e)

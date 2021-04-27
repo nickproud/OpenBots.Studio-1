@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsInput;
 
@@ -31,11 +32,11 @@ namespace OpenBots.Commands.Image
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to activate and bring forward.")]
-		[SampleUsage("Untitled - Notepad || {vWindow}")]
+		[SampleUsage("\"Untitled - Notepad\" || vWindow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -64,28 +65,28 @@ namespace OpenBots.Commands.Image
 		[Required]
 		[DisplayName("Action Parameters")]
 		[Description("Action Parameters will be required based on the action settings selected.")]
-		[SampleUsage("data || {vData}")]
+		[SampleUsage("\"data\" || vData")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(bool) }, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int), typeof(SecureString), typeof(bool) })]
 		public DataTable v_ImageActionParameterTable { get; set; }
 
 		[Required]
 		[DisplayName("Accuracy (0-1)")]
 		[Description("Enter a value between 0 and 1 to set the match Accuracy. Set to 1 for a perfect match.")]
-		[SampleUsage("0.8 || 1 || {vAccuracy}")]
+		[SampleUsage("0.8 || 1 || vAccuracy")]
 		[Remarks("Accuracy must be a value between 0 and 1.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(double) })]
 		public string v_MatchAccuracy { get; set; }
 
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
@@ -111,7 +112,7 @@ namespace OpenBots.Commands.Image
 			CommandEnabled = true;
 			CommandIcon = Resources.command_camera;
 
-			v_WindowName = "None";
+			v_WindowName = "\"None\"";
 			v_MatchAccuracy = "0.8";
 			v_Timeout = "30";
 
@@ -123,11 +124,11 @@ namespace OpenBots.Commands.Image
 			v_ImageActionParameterTable.Columns.Add("Parameter Value");			
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = v_WindowName.ConvertUserVariableToString(engine);
-			int timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			int timeout = (int)await v_Timeout.EvaluateCode(engine);
 			var timeToEnd = DateTime.Now.AddSeconds(timeout);
 
 			bool testMode = TestMode;
@@ -136,7 +137,7 @@ namespace OpenBots.Commands.Image
 			double accuracy;
 			try
 			{
-				accuracy = double.Parse(v_MatchAccuracy.ConvertUserVariableToString(engine));
+				accuracy = Convert.ToDouble(await v_MatchAccuracy.EvaluateCode(engine));
 				if (accuracy > 1 || accuracy < 0)
 					throw new ArgumentOutOfRangeException("Accuracy value is out of range (0-1)");
 			}
@@ -249,11 +250,13 @@ namespace OpenBots.Commands.Image
 			return base.GetDisplayValue() + $" [{v_ImageAction} on Screen - Accuracy '{v_MatchAccuracy}']";
 		}
 
-		public void PerformImageElementAction(IAutomationEngineInstance engine, ImageElement element)
+		public async void PerformImageElementAction(IAutomationEngineInstance engine, ImageElement element)
 		{
 			try
 			{
 				string clickPosition;
+				string xAdjustString;
+				string yAdjustString;
 				int xAdjust;
 				int yAdjust;
 				switch (v_ImageAction)
@@ -265,34 +268,39 @@ namespace OpenBots.Commands.Image
 						clickPosition = (from rw in v_ImageActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Click Position"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
-						yAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
+						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 
 						Point clickPositionPoint = GetClickPosition(clickPosition, element);
 
 						//move mouse to position
-						var mouseX = (clickPositionPoint.X + xAdjust).ToString();
-						var mouseY = (clickPositionPoint.Y + yAdjust).ToString();
+						var mouseX = clickPositionPoint.X + xAdjust;
+						var mouseY = clickPositionPoint.Y + yAdjust;
 						User32Functions.SendMouseMove(mouseX, mouseY, clickType);
 						break;
 
 					case "Set Text":
 						string textToSet = (from rw in v_ImageActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Text To Set"
-											select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine);
+											select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						textToSet = (string)await textToSet.EvaluateCode(engine);
 						clickPosition = (from rw in v_ImageActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Click Position"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
-						yAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
+						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 						string encryptedData = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												where rw.Field<string>("Parameter Name") == "Encrypted Text"
 												select rw.Field<string>("Parameter Value")).FirstOrDefault();
@@ -303,8 +311,8 @@ namespace OpenBots.Commands.Image
 						Point setTextPositionPoint = GetClickPosition(clickPosition, element);
 
 						//move mouse to position and set text
-						var xPos = (setTextPositionPoint.X + xAdjust).ToString();
-						var yPos = (setTextPositionPoint.Y + yAdjust).ToString();
+						var xPos = setTextPositionPoint.X + xAdjust;
+						var yPos = setTextPositionPoint.Y + yAdjust;
 						User32Functions.SendMouseMove(xPos, yPos, "Left Click");
 
 						var simulator = new InputSimulator();
@@ -319,25 +327,24 @@ namespace OpenBots.Commands.Image
 						clickPosition = (from rw in v_ImageActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Click Position"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
-						xAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "X Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
-						yAdjust = Convert.ToInt32((from rw in v_ImageActionParameterTable.AsEnumerable()
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
+						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
-												   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
 
-						var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
+						var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine);
 
-						if (secureStrVariable is SecureString)
-							secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
-						else
-							throw new ArgumentException("Provided Argument is not a 'Secure String'");
+						secureString = secureStrVariable.ConvertSecureStringToString();
 
 						Point setSecureTextPositionPoint = GetClickPosition(clickPosition, element);
 
 						//move mouse to position and set text
-						var xPosition = (setSecureTextPositionPoint.X + xAdjust).ToString();
-						var yPosition = (setSecureTextPositionPoint.Y + yAdjust).ToString();
+						var xPosition = setSecureTextPositionPoint.X + xAdjust;
+						var yPosition = setSecureTextPositionPoint.Y + yAdjust;
 						User32Functions.SendMouseMove(xPosition, yPosition, "Left Click");
 
 						var simulator2 = new InputSimulator();
@@ -351,9 +358,9 @@ namespace OpenBots.Commands.Image
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 						if (element != null)
-							true.StoreInUserVariable(engine, outputVariable, typeof(bool));
+							true.SetVariableValue(engine, outputVariable);
 						else
-							false.StoreInUserVariable(engine, outputVariable, typeof(bool));
+							false.SetVariableValue(engine, outputVariable);
 						break;
 					default:
 						break;
@@ -488,16 +495,16 @@ namespace OpenBots.Commands.Image
 			{
 				var targetElement = _imageGridViewHelper.Rows[0].Cells[1];
 
-				if (string.IsNullOrEmpty(targetElement.Value.ToString()))
+				if (targetElement.Value == null)
 					return;
 
-				var warning = MessageBox.Show($"Warning! Text should only be encrypted one time and is not reversible in the builder. " +
-											   "Would you like to proceed and convert '{targetElement.Value.ToString()}' to an encrypted value?",
+				var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " +
+											   $"Would you like to proceed and convert '{targetElement.Value}' to an encrypted value?",
 											   "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
 				if (warning == DialogResult.Yes)
 				{
-					targetElement.Value = EncryptionServices.EncryptString(targetElement.Value.ToString(), "OPENBOTS");
+					targetElement.Value = $"\"{EncryptionServices.EncryptString(targetElement.Value.ToString().TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
 					_imageGridViewHelper.Rows[4].Cells[1].Value = "Encrypted";
 				}
 			}

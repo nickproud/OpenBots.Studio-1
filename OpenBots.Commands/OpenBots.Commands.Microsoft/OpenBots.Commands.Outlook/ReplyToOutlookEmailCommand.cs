@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Outlook
@@ -24,7 +25,7 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("MailItem")]
 		[Description("Enter the MailItem to reply to.")]
-		[SampleUsage("{vMailItem}")]
+		[SampleUsage("vMailItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(MailItem) })]
@@ -42,10 +43,10 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("Email Body")]
 		[Description("Enter text to be used as the email body.")]
-		[SampleUsage("Dear John, ... || {vBody}")]
+		[SampleUsage("\"Dear John, ...\" || vBody")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Body { get; set; }
 
 		[Required]
@@ -58,11 +59,11 @@ namespace OpenBots.Commands.Outlook
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
 		[Description("Enter the file path(s) of the file(s) to attach.")]
-		[SampleUsage(@"C:\temp\myFile.xlsx || {vFile} || C:\temp\myFile1.xlsx;C:\temp\myFile2.xlsx || {vFile1};{vFile2} || {vFiles}")]
-		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"C:\\temp\\myFile1.xlsx\", \"C:\\temp\\myFile2.xlsx\" } || vFileList")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_Attachments { get; set; }
 
 		public ReplyToOutlookEmailCommand()
@@ -76,22 +77,21 @@ namespace OpenBots.Commands.Outlook
 			v_BodyType = "Plain";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
-			var vBody = v_Body.ConvertUserVariableToString(engine);
-			var vAttachment = v_Attachments.ConvertUserVariableToString(engine);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
+			var vBody = (string)await v_Body.EvaluateCode(engine);
 		   
 			if (v_OperationType == "Reply")
 			{
 				MailItem newMail = vMailItem.Reply();
-				Reply(newMail, vBody, vAttachment);
+				await Reply(engine, newMail, vBody);
 			}
 			else if(v_OperationType == "Reply All")
 			{
 				MailItem newMail = vMailItem.ReplyAll();
-				Reply(newMail, vBody, vAttachment);
+				await Reply(engine, newMail, vBody);
 			}                           
 		}
 
@@ -113,18 +113,18 @@ namespace OpenBots.Commands.Outlook
 			return base.GetDisplayValue() + $" [MailItem '{v_MailItem}']";
 		}
 
-		private void Reply(MailItem mail, string body, string attPath)
+		private async Task Reply(IAutomationEngineInstance engine, MailItem mail, string body)
 		{
 			if (v_BodyType == "HTML")
 				mail.HTMLBody = body;
 			else 
 				mail.Body = body;
 
-			if (!string.IsNullOrEmpty(attPath))
+			if (!string.IsNullOrEmpty(v_Attachments))
 			{
-				var splitAttachments = attPath.Split(';');
+				var vAttachment = (List<string>)await v_Attachments.EvaluateCode(engine);
 
-				foreach (var attachment in splitAttachments)
+				foreach (var attachment in vAttachment)
 					mail.Attachments.Add(attachment);
 			}
 			mail.Send();

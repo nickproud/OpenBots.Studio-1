@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>OpenBots.Commands.API</id>
-    <version>1.4.1.0</version>
+    <version>1.5.0.0</version>
     <title>API Commands</title>
     <authors>OpenBots Inc</authors>
     <owners>OpenBots Inc</owners>
@@ -14,7 +14,7 @@
     <description>OpenBots commands for interacting with various API's. Supports RESTful API's, as well as methods from local DLL files.</description>
     <releaseNotes>https://openbots.ai/category/release-notes/</releaseNotes>
     <copyright>(C) OpenBots Inc 2020-2021</copyright>
-    <tags>OpenBots Studio API Commands ExecuteDLL ExecuteRESTAPI</tags>
+    <tags>OpenBots Studio API Commands ExecuteRESTAPI</tags>
     <dependencies>
       <group targetFramework="net48">
       </group>

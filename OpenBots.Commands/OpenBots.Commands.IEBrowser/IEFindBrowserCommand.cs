@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Core.Properties;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.IEBrowser
 {
@@ -33,9 +34,10 @@ namespace OpenBots.Commands.IEBrowser
         [Required]
         [DisplayName("Browser Name (Title)")]
         [Description("Select the Name (Title) of the IE Browser Instance to get attached to.")]
-        [SampleUsage("")]
+        [SampleUsage("\"OpenBots\"")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_IEBrowserName { get; set; }
 
         [JsonIgnore]
@@ -52,15 +54,16 @@ namespace OpenBots.Commands.IEBrowser
             v_InstanceName = "DefaultIEBrowser";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
 
+            string IEBrowserName = (string)await v_IEBrowserName.EvaluateCode(engine);
             bool browserFound = false;
             var shellWindows = new ShellWindows();
             foreach (IWebBrowser2 shellWindow in shellWindows)
             {
-                if ((shellWindow.Document is HTMLDocument) && (v_IEBrowserName == null || shellWindow.Document.Title == v_IEBrowserName))
+                if ((shellWindow.Document is HTMLDocument) && (IEBrowserName == null || shellWindow.Document.Title == IEBrowserName))
                 {
                     ((object)shellWindow.Application).AddAppInstance(engine, v_InstanceName);
                     browserFound = true;
@@ -74,8 +77,8 @@ namespace OpenBots.Commands.IEBrowser
                 foreach (IWebBrowser2 shellWindow in shellWindows)
                 {
                     if ((shellWindow.Document is HTMLDocument) && 
-                        ((shellWindow.Document.Title.Contains(v_IEBrowserName) || 
-                        shellWindow.Document.Url.Contains(v_IEBrowserName))))
+                        ((shellWindow.Document.Title.Contains(IEBrowserName) || 
+                        shellWindow.Document.Url.Contains(IEBrowserName))))
                     {
                         ((object)shellWindow.Application).AddAppInstance(engine, v_InstanceName);
                         browserFound = true;
@@ -101,7 +104,7 @@ namespace OpenBots.Commands.IEBrowser
             foreach (IWebBrowser2 shellWindow in shellWindows)
             {
                 if (shellWindow.Document is HTMLDocument)
-                    _ieBrowerNameDropdown.Items.Add(shellWindow.Document.Title);
+                    _ieBrowerNameDropdown.Items.Add($"\"{shellWindow.Document.Title}\"");
             }
             RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_IEBrowserName", this));
             RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_IEBrowserName", this, new Control[] { _ieBrowerNameDropdown }, editor));

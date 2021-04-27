@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Window
@@ -23,38 +24,38 @@ namespace OpenBots.Commands.Window
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to resize.")]
-		[SampleUsage("Untitled - Notepad || Current Window || {vWindow}")]
+		[SampleUsage("\"Untitled - Notepad\" || \"Current Window\" || vWindow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
 		[DisplayName("Width (Pixels)")]
 		[Description("Input the new width size of the window.")]
-		[SampleUsage("800 || {vWidth}")]
+		[SampleUsage("800 || vWidth")]
 		[Remarks("Maximum value should be the maximum value allowed by your resolution. For 1920x1080, the valid width range would be 0-1920.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_XWindowSize { get; set; }
 
 		[Required]
 		[DisplayName("Height (Pixels)")]
 		[Description("Input the new height size of the window.")]
-		[SampleUsage("500 || {vHeight}")]
+		[SampleUsage("500 || vHeight")]
 		[Remarks("Maximum value should be the maximum value allowed by your resolution. For 1920x1080, the valid height range would be 0-1080.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_YWindowSize { get; set; }
 
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public ResizeWindowCommand()
@@ -64,18 +65,17 @@ namespace OpenBots.Commands.Window
 			CommandEnabled = true;
 			CommandIcon = Resources.command_window;
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = v_WindowName.ConvertUserVariableToString(engine);
-			var variableXSize = v_XWindowSize.ConvertUserVariableToString(engine);
-			var variableYSize = v_YWindowSize.ConvertUserVariableToString(engine);
-			int timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
-
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			var xSize = (int)await v_XWindowSize.EvaluateCode(engine);
+			var ySize = (int)await v_YWindowSize.EvaluateCode(engine);
+			int timeout = (int)await v_Timeout.EvaluateCode(engine);
 			DateTime timeToEnd = DateTime.Now.AddSeconds(timeout);
 			List<IntPtr> targetWindows;
 
@@ -105,14 +105,7 @@ namespace OpenBots.Commands.Window
 			foreach (var targetedWindow in targetWindows)
 			{
 				User32Functions.SetWindowState(targetedWindow, WindowState.SwShowNormal);
-
-				if (!int.TryParse(variableXSize, out int xPos))
-					throw new Exception("Width Invalid - " + v_XWindowSize);
-
-				if (!int.TryParse(variableYSize, out int yPos))
-					throw new Exception("Height Invalid - " + v_YWindowSize);
-
-				User32Functions.SetWindowSize(targetedWindow, xPos, yPos);
+				User32Functions.SetWindowSize(targetedWindow, xSize, ySize);
 			}
 		}
 

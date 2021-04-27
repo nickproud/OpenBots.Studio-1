@@ -4,11 +4,11 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using IO = System.IO;
 
@@ -22,11 +22,11 @@ namespace OpenBots.Commands.File
 		[Required]
 		[DisplayName("File Path")]
 		[Description("Enter or Select the path to the file.")]
-		[SampleUsage(@"C:\temp\myfile.txt || {ProjectPath}\myfile.txt || {vFilePath}")]
-		[Remarks("{ProjectPath} is the directory path of the current project.")]
+		[SampleUsage("@\"C:\\temp\\myfile.txt\" || ProjectPath + @\"\\myfile.txt\" || vFilePath")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFilePath { get; set; }
 
 		public DeleteFileCommand()
@@ -35,19 +35,16 @@ namespace OpenBots.Commands.File
 			SelectionName = "Delete File";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_files;
-
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFile = v_SourceFilePath.ConvertUserVariableToString(engine);
+			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine);
 
 			if (!IO.File.Exists(sourceFile))
-			{
 				throw new IO.FileNotFoundException($"{sourceFile} is not a valid file path");
-            }
 
 			//delete file
 			IO.File.Delete(sourceFile);
@@ -58,6 +55,7 @@ namespace OpenBots.Commands.File
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SourceFilePath", this, editor));
+
 			return RenderedControls;
 		}
 

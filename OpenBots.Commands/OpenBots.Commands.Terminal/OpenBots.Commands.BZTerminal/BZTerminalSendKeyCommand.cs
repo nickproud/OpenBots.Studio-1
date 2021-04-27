@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using static OpenBots.Commands.Terminal.Library.TerminalKeys;
 
@@ -30,18 +31,18 @@ namespace OpenBots.Commands.BZTerminal
 
 		[DisplayName("Row Position (Optional)")]
 		[Description("Input the new vertical position of the terminal. Starts from 1 at the top and increases going down.")]
-		[SampleUsage("1 || {vRowPosition}")]
+		[SampleUsage("1 || vRowPosition")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_YMousePosition { get; set; }
 
 		[DisplayName("Column Position (Optional)")]
 		[Description("Input the new horizontal position of the terminal. Starts from 1 on the left and increases going right.")]
-		[SampleUsage("1 || {vColPosition}")]
+		[SampleUsage("1 || vColPosition")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_XMousePosition { get; set; }
 
 		[Required]
@@ -61,11 +62,16 @@ namespace OpenBots.Commands.BZTerminal
 			v_InstanceName = "DefaultBZTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = v_XMousePosition.ConvertUserVariableToString(engine);
-			var mouseY = v_YMousePosition.ConvertUserVariableToString(engine);
+
+			int mouseX = 0, mouseY = 0; 
+			if (!string.IsNullOrEmpty(v_XMousePosition))
+				mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+
+			if (!string.IsNullOrEmpty(v_YMousePosition))
+				mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
 
 			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
 
@@ -75,8 +81,8 @@ namespace OpenBots.Commands.BZTerminal
 			BZ3270Keys selectedKey = (BZ3270Keys)Enum.Parse(typeof(BZ3270Keys), v_TerminalKey);
 			string selectedKeyValue = BZTerminalKeysDict[selectedKey];
 
-			if (!string.IsNullOrEmpty(mouseX) && !string.IsNullOrEmpty(mouseY))
-				terminalContext.BZTerminalObj.SetCursor(int.Parse(mouseY), int.Parse(mouseX));
+			if (!string.IsNullOrEmpty(v_XMousePosition) && !string.IsNullOrEmpty(v_YMousePosition))
+				terminalContext.BZTerminalObj.SetCursor(mouseY, mouseX);
 
 			terminalContext.BZTerminalObj.SendKey(selectedKeyValue);
 			terminalContext.BZTerminalObj.WaitForReady();

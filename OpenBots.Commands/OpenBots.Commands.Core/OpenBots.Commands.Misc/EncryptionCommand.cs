@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Misc
 {
@@ -32,26 +33,26 @@ namespace OpenBots.Commands.Misc
 		[Required]
 		[DisplayName("Text")]
 		[Description("Select or provide the text to encrypt/decrypt.")]
-		[SampleUsage("Hello || {vText}")]
+		[SampleUsage("\"Hello\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputValue { get; set; }
 
 		[Required]
 		[DisplayName("Pass Phrase")]
 		[Description("Select or provide a pass phrase for encryption/decryption.")]
-		[SampleUsage("OPENBOTS || {vPassPhrase}")]
+		[SampleUsage("\"OPENBOTS\" || vPassPhrase")]
 		[Remarks("If decrypting, provide the pass phrase used to encypt the original text.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_PassPhrase { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Result Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -66,12 +67,12 @@ namespace OpenBots.Commands.Misc
 			v_EncryptionType = "Encrypt";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var variableInput = v_InputValue.ConvertUserVariableToString(engine);
-			var passphrase = v_PassPhrase.ConvertUserVariableToString(engine);
+			var variableInput = (string)await v_InputValue.EvaluateCode(engine);
+			var passphrase = (string)await v_PassPhrase.EvaluateCode(engine);
 
 			string resultData = "";
 			if (v_EncryptionType == "Encrypt")
@@ -79,7 +80,7 @@ namespace OpenBots.Commands.Misc
 			else if (v_EncryptionType == "Decrypt")
 				resultData = EncryptionServices.DecryptString(variableInput, passphrase);
 
-			resultData.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			resultData.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

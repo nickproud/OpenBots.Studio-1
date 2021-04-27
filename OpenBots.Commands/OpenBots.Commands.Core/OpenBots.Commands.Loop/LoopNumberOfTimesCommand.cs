@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Loop
 {
@@ -23,19 +24,19 @@ namespace OpenBots.Commands.Loop
 		[Required]
 		[DisplayName("Loop Count")]
 		[Description("Enter the amount of times you would like to execute the encased commands.")]
-		[SampleUsage("5 || {vLoopCount}")]
+		[SampleUsage("5 || vLoopCount")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_LoopParameter { get; set; }
 
 		[Required]
 		[DisplayName("Start Index")]
 		[Description("Enter the starting index of the loop.")]
-		[SampleUsage("5 || {vStartIndex}")]
+		[SampleUsage("5 || vStartIndex")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_LoopStart { get; set; }
 
 		public LoopNumberOfTimesCommand()
@@ -49,17 +50,17 @@ namespace OpenBots.Commands.Loop
 			v_LoopStart = "0";
 		}
 
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			LoopNumberOfTimesCommand loopCommand = (LoopNumberOfTimesCommand)parentCommand.ScriptCommand;
 			var engine = (IAutomationEngineInstance)sender;
 
 			int loopTimes;
 
-			var loopParameter = loopCommand.v_LoopParameter.ConvertUserVariableToString(engine);
+			var loopParameter = (string)await loopCommand.v_LoopParameter.EvaluateCode(engine);
 			loopTimes = int.Parse(loopParameter);
 
-			int.TryParse(v_LoopStart.ConvertUserVariableToString(engine), out int startIndex);
+			int startIndex = (int)await v_LoopStart.EvaluateCode(engine);
 
 			for (int i = startIndex; i < loopTimes; i++)
 			{
@@ -70,7 +71,7 @@ namespace OpenBots.Commands.Loop
 					if (engine.IsCancellationPending)
 						return;
 
-					engine.ExecuteCommand(cmd);
+					await engine.ExecuteCommand(cmd);
 
 					if (engine.CurrentLoopCancelled)
 					{

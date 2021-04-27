@@ -643,7 +643,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     modifiedBounds.X += indentPixels;
 
                     //draw string
-                    e.Graphics.DrawString(command.GetDisplayValue(), SelectedTabScriptActions.Font,
+                    e.Graphics.DrawString(command.GetDisplayValue().Replace(Environment.NewLine, ""), SelectedTabScriptActions.Font,
                                           commandNameBrush, modifiedBounds);
                     break;  
             }
@@ -906,7 +906,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             else if (selectedCommand.CommandName == "BeginSwitchCommand")
             {
                 dynamic caseCommand = TypeMethods.CreateTypeInstance(AContainer, "CaseCommand");
-                caseCommand.v_CaseValue = "Default";
+                caseCommand.v_CaseValue = "\"Default\"";
                 SelectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(caseCommand));
 
                 dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");

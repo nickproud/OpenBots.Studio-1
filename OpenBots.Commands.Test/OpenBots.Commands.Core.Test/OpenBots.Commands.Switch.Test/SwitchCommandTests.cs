@@ -26,7 +26,7 @@ namespace OpenBots.Commands.Switch.Test
         [Theory]
         [InlineData("case1")]
         [InlineData("noCase")]
-        public void ProcessesSwitch(string caseString)
+        public async void ProcessesSwitch(string caseString)
         {
             _engine = new AutomationEngineInstance(null);
             _beginSwitch = new BeginSwitchCommand();
@@ -62,11 +62,11 @@ namespace OpenBots.Commands.Switch.Test
 
             if (caseString.Equals("case1"))
             {
-                Assert.Equal("case1Set", "{switchOutput}".ConvertUserVariableToString(_engine));
+                Assert.Equal("case1Set", (string)await "{switchOutput}".EvaluateCode(_engine));
             }
             else if (caseString.Equals("noCase"))
             {
-                Assert.Equal("defaultCaseSet", "{switchOutput}".ConvertUserVariableToString(_engine));
+                Assert.Equal("defaultCaseSet", (string)await "{switchOutput}".EvaluateCode(_engine));
             }
         }
     }

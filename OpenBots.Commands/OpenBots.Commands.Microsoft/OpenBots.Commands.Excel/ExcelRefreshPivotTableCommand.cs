@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -30,19 +31,19 @@ namespace OpenBots.Commands.Excel
         [Required]
         [DisplayName("Worksheet Name")]
         [Description("Specify the name of the Worksheet containing the Pivot Table.")]
-        [SampleUsage("Sheet1 || {vSheet}")]
+        [SampleUsage("\"Sheet1\" || vSheet")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetName { get; set; }
 
         [Required]
         [DisplayName("Pivot Table Name")]
         [Description("Enter the name of Pivot Table to be refreshed.")]
-        [SampleUsage("PivotTable || {vPivotTable}")]
+        [SampleUsage("\"PivotTable\" || vPivotTable")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_PivotTable { get; set; }
 
         public ExcelRefreshPivotTableCommand()
@@ -55,11 +56,11 @@ namespace OpenBots.Commands.Excel
             v_InstanceName = "DefaultExcel";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheet = v_SheetName.ConvertUserVariableToString(engine);
-            var vPivotTable = v_PivotTable.ConvertUserVariableToString(engine);
+            string vSheet = (string)await v_SheetName.EvaluateCode(engine);
+            var vPivotTable = (string)await v_PivotTable.EvaluateCode(engine);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheet = excelInstance.Sheets[vSheet] as Worksheet;

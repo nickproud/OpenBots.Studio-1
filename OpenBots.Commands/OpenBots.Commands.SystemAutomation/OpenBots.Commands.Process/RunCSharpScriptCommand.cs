@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Windows.Forms;
 using OBFile = System.IO.File;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Process
 {
@@ -27,12 +28,12 @@ namespace OpenBots.Commands.Process
 		[Required]
 		[DisplayName("Script Path")]
 		[Description("Enter a fully qualified path to the script, including the script extension.")]
-		[SampleUsage(@"C:\temp\myscript.ps1 || {vScriptPath} || {ProjectPath}\myscript.ps1")]
+		[SampleUsage("@\"C:\\temp\\myfile.cs\" || ProjectPath + @\"\\myfile.cs\" || vFilePath")]
 		[Remarks("This command differs from *Start Process* because this command blocks execution until the script has completed. " +
 				 "If you do not want to stop while the script executes, consider using *Start Process* instead.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ScriptPath { get; set; }
 
 		[Required]
@@ -46,18 +47,18 @@ namespace OpenBots.Commands.Process
 
 		[DisplayName("Argument Values (Optional)")]
 		[Description("Enter the values to pass into the script.")]
-		[SampleUsage("hello || {vValue}")]
+		[SampleUsage("\"hello\" || vValue")]
 		[Remarks("This input is passed to your script as a object[].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public DataTable v_VariableArgumentsDataTable { get; set; }
 
 		[DisplayName("Command Line Arguments (Optional)")]
 		[Description("Enter any arguments as a single string.")]
-		[SampleUsage("-message Hello -t 2 || {vArguments} || -message {vMessage} -t 2")]
+		[SampleUsage("\"-message Hello -t 2\" || vArguments || \"-message \" + vMessage + \" -t 2\"")]
 		[Remarks("This input is passed to your script as a string[].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ScriptArgs { get; set; }
 
 		[Required]
@@ -111,11 +112,11 @@ namespace OpenBots.Commands.Process
 			v_VariableArgumentsDataTable.Columns.Add("Argument Values");
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			string scriptPath = v_ScriptPath.ConvertUserVariableToString(engine);
+			string scriptPath = (string)await v_ScriptPath.EvaluateCode(engine);
 
 			string code = OBFile.ReadAllText(scriptPath);
 			var mainMethod = CSScript.LoadCode(code).CreateObject("*").GetType().GetMethod("Main");
@@ -127,13 +128,8 @@ namespace OpenBots.Commands.Process
 				foreach (DataRow varColumn in v_VariableArgumentsDataTable.Rows)
                 {
 					string var = varColumn.Field<string>("Argument Values").Trim();
-					dynamic input = var.ConvertUserVariableToString(engine);
+					dynamic input = await var.EvaluateCode(engine);
 
-					if (input == var && input.StartsWith("{") && input.EndsWith("}"))
-					{
-						if (var.ConvertUserVariableToObject(engine, nameof(v_VariableArgumentsDataTable), this) != null)
-							input = var.ConvertUserVariableToObject(engine, nameof(v_VariableArgumentsDataTable), this);
-					}
 					args[i] = input;
 					i++;
 				}
@@ -153,12 +149,12 @@ namespace OpenBots.Commands.Process
 					else
 						result = mainMethod.Invoke(null, new object[] { args });
 
-					result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					result.SetVariableValue(engine, v_OutputUserVariableName);
 				}
 			}
 			else if (v_ArgumentType == "Command Line")
 			{
-				string scriptArgs = v_ScriptArgs.ConvertUserVariableToString(engine);
+				string scriptArgs = (string)await v_ScriptArgs.EvaluateCode(engine);
 				string[] argStrings = scriptArgs.Trim().Split(' ');
 				if (v_HasOutput == "No")
                 {
@@ -175,7 +171,7 @@ namespace OpenBots.Commands.Process
 					else
 						result = mainMethod.Invoke(null, new object[] { argStrings });
 
-					result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+					result.SetVariableValue(engine, v_OutputUserVariableName);
 				}
 			}
 		}

@@ -203,12 +203,9 @@ namespace OpenBots.UI.CustomControls
                 if (attribute.CompTypes != null)
                 {                   
                     foreach (var type in attribute.CompTypes)
-                        toolTipText += $"{type.Name}, ";
+                        toolTipText += $"{type.GetRealTypeFullName()}, ";
                 }
-                if (attribute.IsStringOrPrimitive)
-                    toolTipText += "any primitive/string";
-                else
-                    toolTipText = toolTipText.Substring(0, (toolTipText.Length - 2));
+                toolTipText = toolTipText.Substring(0, (toolTipText.Length - 2));
             }
             if (sampleUsageAttributesAssigned.Length > 0)
             {
@@ -276,7 +273,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
 
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptVariableEditor.LastModifiedVariableName + "}");
+                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptVariableEditor.LastModifiedVariableName);
                 }
 
                 scriptVariableEditor.Dispose();
@@ -294,7 +291,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
 
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptArgumentEditor.LastModifiedArgumentName + "}");
+                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptArgumentEditor.LastModifiedArgumentName);
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -408,7 +405,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
 
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        comboBox.Text = string.Concat("{", scriptVariableEditor.LastModifiedVariableName, "}");
+                        comboBox.Text = scriptVariableEditor.LastModifiedVariableName;
                 }
 
                 scriptVariableEditor.Dispose();
@@ -426,7 +423,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
 
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        comboBox.Text = string.Concat("{", scriptArgumentEditor.LastModifiedArgumentName, "}");
+                        comboBox.Text = scriptArgumentEditor.LastModifiedArgumentName;
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -495,7 +492,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
 
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + string.Concat("{", scriptVariableEditor.LastModifiedVariableName, "}");
+                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + scriptVariableEditor.LastModifiedVariableName;
                 }
 
                 scriptVariableEditor.Dispose();
@@ -519,7 +516,7 @@ namespace OpenBots.UI.CustomControls
                     _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
 
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + string.Concat("{", scriptArgumentEditor.LastModifiedArgumentName, "}");
+                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + scriptArgumentEditor.LastModifiedArgumentName;
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -734,7 +731,6 @@ namespace OpenBots.UI.CustomControls
 
             //get copy of user variables and append system variables, then load to listview
             var variableList = _currentEditor.ScriptEngineContext.Variables.Select(f => f.VariableName).ToList();
-            variableList.AddRange(CommonMethods.GenerateSystemVariables().Select(f => f.VariableName));
             newVariableSelector.lstVariables.Items.AddRange(variableList.ToArray());
 
             //get copy of user arguments, then load to listview
@@ -763,15 +759,13 @@ namespace OpenBots.UI.CustomControls
                 {
                     TextBox targetTextbox = (TextBox)inputBox.Tag;
                     //concat variable name with brackets [vVariable] as engine searches for the same
-                    targetTextbox.Text = targetTextbox.Text.Insert(targetTextbox.SelectionStart, string.Concat("{",
-                        newVariableSelector.ReturnVariableArgument, "}"));
+                    targetTextbox.Text = targetTextbox.Text.Insert(targetTextbox.SelectionStart, newVariableSelector.ReturnVariableArgument);
                 }
                 else if (inputBox.Tag is ComboBox)
                 {
                     ComboBox targetCombobox = (ComboBox)inputBox.Tag;
                     //concat variable name with brackets [vVariable] as engine searches for the same
-                    targetCombobox.Text = targetCombobox.Text.Insert(targetCombobox.SelectionStart, string.Concat("{",
-                        newVariableSelector.ReturnVariableArgument, "}"));
+                    targetCombobox.Text = targetCombobox.Text.Insert(targetCombobox.SelectionStart, newVariableSelector.ReturnVariableArgument);
                 }
                 else if (inputBox.Tag is DataGridView)
                 {
@@ -801,7 +795,7 @@ namespace OpenBots.UI.CustomControls
                     }
 
                     targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value = 
-                        targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value + string.Concat("{", newVariableSelector.ReturnVariableArgument, "}");
+                        targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value + newVariableSelector.ReturnVariableArgument;
                     
                     //TODO - Insert variables at cursor position instead of at the end of a cell
                     //targetDGV.CurrentCell = targetDGV.SelectedCells[0];
@@ -865,8 +859,9 @@ namespace OpenBots.UI.CustomControls
 
                 string filePath = ofd.FileName;
 
-                if (filePath.StartsWith(_projectPath))
-                    filePath = filePath.Replace(_projectPath, "{ProjectPath}");
+                filePath = "@\"" + filePath + "\"";
+                if (ofd.FileName.StartsWith(_projectPath))
+                    filePath = filePath.Replace("@\"" + _projectPath, "ProjectPath + @\"");
 
                 targetTextbox.Text = filePath;
             }
@@ -884,8 +879,9 @@ namespace OpenBots.UI.CustomControls
 
                 string folderPath = fbd.SelectedPath;
 
-                if (folderPath.StartsWith(_projectPath))
-                    folderPath = folderPath.Replace(_projectPath, "{ProjectPath}");
+                folderPath = "@\"" + folderPath + "\"";
+                if (fbd.SelectedPath.StartsWith(_projectPath))
+                    folderPath = folderPath.Replace("@\"" + _projectPath, "ProjectPath + @\"");
 
                 targetTextBox.Text = folderPath;
             }
@@ -1191,11 +1187,18 @@ namespace OpenBots.UI.CustomControls
             if (string.IsNullOrEmpty(targetTextbox.Text))
                 return;
 
-            var encrypted = EncryptionServices.EncryptString(targetTextbox.Text, "OPENBOTS");
-            targetTextbox.Text = encrypted;
+            var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " +
+                                         $"Would you like to proceed and convert '{targetTextbox.Text}' to an encrypted value?",
+                                          "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-            ComboBox comboBoxControl = (ComboBox)((frmCommandEditor)editor).flw_InputVariables.Controls["v_EncryptionOption"];
-            comboBoxControl.Text = "Encrypted";
+            if (warning == DialogResult.Yes)
+            {
+                var encrypted = $"\"{EncryptionServices.EncryptString(targetTextbox.Text.TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
+                targetTextbox.Text = encrypted;
+
+                ComboBox comboBoxControl = (ComboBox)((frmCommandEditor)editor).flw_InputVariables.Controls["v_EncryptionOption"];
+                comboBoxControl.Text = "Encrypted";
+            }
         }
 
         private void GetWindowName(object sender, EventArgs e)
@@ -1241,7 +1244,7 @@ namespace OpenBots.UI.CustomControls
                     if (_inputBox.Tag is ComboBox)
                     {
                         ComboBox targetComboBox = (ComboBox)_inputBox.Tag;
-                        targetComboBox.Text = windowName;
+                        targetComboBox.Text = $"\"{windowName}\"";
                     }
                   
                     if (_minimizePreference)
@@ -1296,7 +1299,7 @@ namespace OpenBots.UI.CustomControls
                 return null;
 
             cbo.Items.Clear();
-            cbo.Items.Add("Current Window");
+            cbo.Items.Add("\"Current Window\"");
             
             Process[] processlist = Process.GetProcesses();
 
@@ -1306,11 +1309,11 @@ namespace OpenBots.UI.CustomControls
                 if (!string.IsNullOrEmpty(process.MainWindowTitle))
                 {
                     //add to the control list of available windows
-                    cbo.Items.Add(process.MainWindowTitle);
+                    cbo.Items.Add($"\"{process.MainWindowTitle}\"");
                 }
             }
 
-            cbo.Items.Add("None");
+            cbo.Items.Add("\"None\"");
 
             return cbo;
         }
@@ -1329,11 +1332,11 @@ namespace OpenBots.UI.CustomControls
                 foreach (var variable in ((frmCommandEditor)editor).ScriptEngineContext.Variables)
                 {
                     if (variable.VariableName != "ProjectPath")
-                        varArgNames.Add("{" + variable.VariableName + "}");
+                        varArgNames.Add(variable.VariableName);
                 }
 
                 foreach (var argument in ((frmCommandEditor)editor).ScriptEngineContext.Arguments)
-                    varArgNames.Add("{" + argument.ArgumentName + "}");
+                    varArgNames.Add(argument.ArgumentName);
 
                 cbo.Items.AddRange(varArgNames.OrderBy(x => x).ToArray());               
             }

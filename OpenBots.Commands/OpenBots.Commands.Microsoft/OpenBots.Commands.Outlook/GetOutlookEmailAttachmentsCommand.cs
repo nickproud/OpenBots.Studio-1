@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Outlook
 {
@@ -23,7 +24,7 @@ namespace OpenBots.Commands.Outlook
         [Required]
         [DisplayName("MailItem")]
         [Description("Enter the MailItem to retrieve attachments from.")]
-        [SampleUsage("{vMailItem}")]
+        [SampleUsage("vMailItem")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [CompatibleTypes(new Type[] { typeof(MailItem) })]
@@ -32,11 +33,11 @@ namespace OpenBots.Commands.Outlook
         [Required]
         [DisplayName("Output Attachment Directory")]
         [Description("Enter or Select the path to the directory to store the attachments in.")]
-        [SampleUsage(@"C:\temp\myfolder\attachments || {vFolderPath} || {ProjectPath}\myFolder\attachments")]
+        [SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_AttachmentDirectory { get; set; }
 
         [Required]
@@ -52,9 +53,9 @@ namespace OpenBots.Commands.Outlook
         [Editable(false)]
         [DisplayName("Output Attachment List Variable")]
         [Description("Create a new variable or select a variable from the list.")]
-        [SampleUsage("{vUserVariable}")]
+        [SampleUsage("vUserVariable")]
         [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-        [CompatibleTypes(new Type[] { typeof(List<>) })]
+        [CompatibleTypes(new Type[] { typeof(List<string>) })]
         public string v_OutputUserVariableName { get; set; }
         
         public GetOutlookEmailAttachmentsCommand()
@@ -65,12 +66,12 @@ namespace OpenBots.Commands.Outlook
             CommandIcon = Resources.command_smtp;
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            MailItem email = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
-            bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.ConvertUserVariableToString(engine).Equals("Yes");
-            string attDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
+            MailItem email = (MailItem)await v_MailItem.EvaluateCode(engine);
+            bool includeEmbeds = v_IncludeEmbeddedImagesAsAttachments.Equals("Yes");
+            string attDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
 
             List<string> attachmentList = new List<string>();
 
@@ -89,7 +90,7 @@ namespace OpenBots.Commands.Outlook
                 }
             }
 
-            attachmentList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+            attachmentList.SetVariableValue(engine, v_OutputUserVariableName);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

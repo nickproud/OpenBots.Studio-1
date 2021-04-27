@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -32,17 +33,17 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Column")]
 		[Description("Enter the letter of the column to check.")]
-		[SampleUsage("A || {vColumnLetter}")]
+		[SampleUsage("\"A\" || vColumnLetter")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ColumnLetter { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Last Row Index Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -55,20 +56,20 @@ namespace OpenBots.Commands.Excel
 			CommandIcon = Resources.command_spreadsheet;
 
 			v_InstanceName = "DefaultExcel";
-			v_ColumnLetter = "A";
+			v_ColumnLetter = "\"A\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vColumnLetter = v_ColumnLetter.ConvertUserVariableToString(engine);
+			var vColumnLetter = (string)await v_ColumnLetter.EvaluateCode(engine);
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 
 			var excelInstance = (Application)excelObject;
 			var excelSheet = excelInstance.ActiveSheet;
 			var lastRow = (int)excelSheet.Cells(excelSheet.Rows.Count, vColumnLetter).End(XlDirection.xlUp).Row;
 
-			lastRow.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);   
+			lastRow.SetVariableValue(engine, v_OutputUserVariableName);   
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

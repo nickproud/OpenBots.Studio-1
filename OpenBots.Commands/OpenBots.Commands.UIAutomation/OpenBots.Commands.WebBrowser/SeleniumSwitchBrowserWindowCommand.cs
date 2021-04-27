@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -58,10 +59,10 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("Browser Search Parameter")]
 		[Description("Provide the parameter to match (ex. Window URL, Window Title, Handle ID).")]
-		[SampleUsage("http://www.url.com || Welcome to Homepage || {vSearchData}")]
+		[SampleUsage("\"http://www.url.com\" || \"Welcome to Homepage\" || vSearchData")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MatchParameter { get; set; }
 
 		public SeleniumSwitchBrowserWindowCommand()
@@ -77,12 +78,12 @@ namespace OpenBots.Commands.WebBrowser
 			v_CaseSensitiveMatch = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
-			var matchParam = v_MatchParameter.ConvertUserVariableToString(engine);
+			var matchParam = (string)await v_MatchParameter.EvaluateCode(engine);
 
 			var handles = seleniumInstance.WindowHandles;
 			var currentHandle = seleniumInstance.CurrentWindowHandle;

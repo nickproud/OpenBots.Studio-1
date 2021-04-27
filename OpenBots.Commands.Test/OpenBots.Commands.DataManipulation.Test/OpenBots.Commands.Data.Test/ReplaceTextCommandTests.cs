@@ -10,7 +10,7 @@ namespace OpenBots.Commands.Data.Test
         private AutomationEngineInstance _engine;
 
         [Fact]
-        public void ReplacesText()
+        public async void ReplacesText()
         {
             _engine = new AutomationEngineInstance(null);
             _replaceTextCommand = new ReplaceTextCommand();
@@ -30,7 +30,7 @@ namespace OpenBots.Commands.Data.Test
 
             _replaceTextCommand.RunCommand(_engine);
 
-            Assert.Equal("Goodbye john", "{output}".ConvertUserVariableToString(_engine));
+            Assert.Equal("Goodbye john", (string)await "{output}".EvaluateCode(_engine));
         }
     }
 }

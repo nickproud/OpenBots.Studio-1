@@ -15,6 +15,7 @@ using System.Data;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using DataTable = System.Data.DataTable;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Excel
 {
@@ -35,10 +36,10 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Range")]
 		[Description("Enter the location of the range to extract.")]
-		[SampleUsage("A1:B10 || A1: || {vRange} || {vStart}:{vEnd} || {vStart}:")]
+		[SampleUsage("\"A1:B10\" || \"A1:\" || vRange || vStart + \":\" + vEnd || vStart + \":\"")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Range { get; set; }   
 
 		[Required]
@@ -63,7 +64,7 @@ namespace OpenBots.Commands.Excel
 		[Editable(false)]
 		[DisplayName("Output DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(DataTable) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -78,14 +79,14 @@ namespace OpenBots.Commands.Excel
 			v_InstanceName = "DefaultExcel";
 			v_AddHeaders = "Yes";
 			v_Formulas = "No";
-			v_Range = "A1:";
+			v_Range = "\"A1:\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{         
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
-			var vRange = v_Range.ConvertUserVariableToString(engine);
+			var vRange = (string)await v_Range.EvaluateCode(engine);
 			var excelInstance = (Application)excelObject;
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;
@@ -177,7 +178,7 @@ namespace OpenBots.Commands.Excel
 					}
 				}
 
-				DT.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				DT.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 		}
 

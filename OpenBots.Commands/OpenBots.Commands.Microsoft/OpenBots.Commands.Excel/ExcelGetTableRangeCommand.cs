@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -30,26 +31,26 @@ namespace OpenBots.Commands.Microsoft
         [Required]
         [DisplayName("Excel Table Name")]
         [Description("Enter the name of the Excel Table to get the Range from.")]
-        [SampleUsage("TableName || {vTableName}")]
+        [SampleUsage("\"TableName\" || vTableName")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_TableName { get; set; }
 
         [Required]
         [DisplayName("Worksheet Name")]
         [Description("Enter the name of the Worksheet containing the existing Excel Table.")]
-        [SampleUsage("Sheet1 || {vSheet}")]
+        [SampleUsage("\"Sheet1\" || vSheet")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNameExcelTable { get; set; }
 
         [Required]
         [Editable(false)]
         [DisplayName("Output Range Variable")]
         [Description("Create a new variable or select a variable from the list.")]
-        [SampleUsage("{vUserVariable}")]
+        [SampleUsage("vUserVariable")]
         [Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
         [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_OutputUserVariableName { get; set; }
@@ -64,18 +65,18 @@ namespace OpenBots.Commands.Microsoft
             v_InstanceName = "DefaultExcel";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = v_SheetNameExcelTable.ConvertUserVariableToString(engine);
-            var vTableName = v_TableName.ConvertUserVariableToString(engine);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine);
             var excelObject = v_InstanceName.GetAppInstance(engine);
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
             var excelTable = workSheetExcelTable.ListObjects[vTableName];
 
             //Extract a range of Excel Table and store in Output Range Variable
-            excelTable.Range.Address.Replace(@"$", string.Empty).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+            excelTable.Range.Address.Replace(@"$", string.Empty).SetVariableValue(engine, v_OutputUserVariableName);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

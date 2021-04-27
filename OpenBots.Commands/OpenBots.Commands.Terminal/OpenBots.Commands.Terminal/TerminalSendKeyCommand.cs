@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Terminal
@@ -30,18 +31,18 @@ namespace OpenBots.Commands.Terminal
 
 		[DisplayName("Row Position (Optional)")]
 		[Description("Input the new vertical position of the terminal. Starts from 0 at the top and increases going down.")]
-		[SampleUsage("0 || {vRowPosition}")]
+		[SampleUsage("0 || vRowPosition")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_YMousePosition { get; set; }
 
 		[DisplayName("Column Position (Optional)")]
 		[Description("Input the new horizontal position of the terminal. Starts from 0 on the left and increases going right.")]
-		[SampleUsage("0 || {vColPosition}")]
+		[SampleUsage("0 || vColPosition")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_XMousePosition { get; set; }
 
 		[Required]
@@ -54,10 +55,10 @@ namespace OpenBots.Commands.Terminal
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public TerminalSendKeyKeyCommand()
@@ -71,12 +72,18 @@ namespace OpenBots.Commands.Terminal
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var mouseX = v_XMousePosition.ConvertUserVariableToString(engine);
-			var mouseY = v_YMousePosition.ConvertUserVariableToString(engine);
-			var vTimeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine)) * 1000;
+
+			int mouseX = 0, mouseY = 0;
+			if (!string.IsNullOrEmpty(v_XMousePosition))
+				mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+
+			if (!string.IsNullOrEmpty(v_YMousePosition))
+				mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
+
+			var vTimeout = ((int)await v_Timeout.EvaluateCode(engine)) * 1000;
 			OpenEmulator terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)
@@ -84,8 +91,8 @@ namespace OpenBots.Commands.Terminal
 
 			TnKey selectedKey = (TnKey)Enum.Parse(typeof(TnKey), v_TerminalKey);
 
-			if (!string.IsNullOrEmpty(mouseX) && !string.IsNullOrEmpty(mouseY))
-				terminalObject.TN3270.SetCursor(int.Parse(mouseX), int.Parse(mouseY));
+			if (!string.IsNullOrEmpty(v_XMousePosition) && !string.IsNullOrEmpty(v_YMousePosition))
+				terminalObject.TN3270.SetCursor(mouseX, mouseY);
 
 			terminalObject.TN3270.SendKey(false, selectedKey, vTimeout);
 			terminalObject.Redraw();

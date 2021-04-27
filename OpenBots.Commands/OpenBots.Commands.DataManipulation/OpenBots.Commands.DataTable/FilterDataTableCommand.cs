@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Attributes.PropertyAttributes;
+﻿using Newtonsoft.Json;
+using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -9,13 +10,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.DataTable
 {
-	[Serializable]
+    [Serializable]
 	[Category("DataTable Commands")]
 	[Description("This command filters specific rows from a DataTable into a new Datatable.")]
 	public class FilterDataTableCommand : ScriptCommand
@@ -23,7 +24,7 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Input DataTable")]
 		[Description("Enter the DataTable to filter through.")]
-		[SampleUsage("{vDataTable}")]
+		[SampleUsage("vDataTable")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
@@ -31,30 +32,51 @@ namespace OpenBots.Commands.DataTable
 
 		[Required]
 		[DisplayName("Filter Option")]
-		[PropertyUISelectionOption("Tuple")]
 		[PropertyUISelectionOption("RowFilter")]
+		[PropertyUISelectionOption("Filter Data")]
 		[Description("Indicate whether this command should filter datatable based on a Tuple or RowFilter")]
 		[SampleUsage("")]
 		[Remarks("")]
 		public string v_FilterOption { get; set; }
 
 		[Required]
-		[DisplayName("Filter Tuple/RowFilter")]
-		[Description("Enter a tuple containing the column name and item you would like to filter by or enter a RowFilter")]
-		[SampleUsage("(ColumnName1,Item1),(ColumnName2,Item2) || ({vColumn1},{vItem1}),({vCloumn2},{vItem2}) || {vFilterTuple} || [Employee Age] > 30 || Name <> 'John' || {vRowFilter}")]
+		[DisplayName("RowFilter")]
+		[Description("Enter a RowFilter")]
+		[SampleUsage("\"[Employee Age] > 30\" || \"Name <> 'John'\" || vRowFilter")]
 		[Remarks("DataRows must match all provided tuples to be included in the filtered DataTable. Column names containing spaces should be surrounded by [].")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
-		public string v_SearchItem { get; set; }
+		[CompatibleTypes(new Type[] { typeof(string) })]
+		public string v_RowFilter { get; set; }
+
+		[Required]
+		[DisplayName("Filter Data")]
+		[Description("Enter the column name and item you would like to filter by.")]
+		[SampleUsage("[ \"First Name\" | \"John\" ] || [ vColumn | vData ]")]
+		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(object) })]
+		public OBDataTable v_DataRowDataTable { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Filtered DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable)})]
 		public string v_OutputUserVariableName { get; set; }
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private List<Control> _rowFilterControls;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private List<Control> _dataControls;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
 
 		public FilterDataTableCommand()
 		{
@@ -63,50 +85,42 @@ namespace OpenBots.Commands.DataTable
 			CommandEnabled = true;
 			CommandIcon = Resources.command_spreadsheet;
 
+			//initialize data table
+			v_DataRowDataTable = new OBDataTable
+			{
+				TableName = "AddDataDataTable" + DateTime.Now.ToString("MMddyy.hhmmss")
+			};
+
+			v_DataRowDataTable.Columns.Add("Column Name");
+			v_DataRowDataTable.Columns.Add("Data");
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vSearchItem = v_SearchItem.ConvertUserVariableToString(engine);
-
-			OBDataTable Dt = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
+			OBDataTable Dt = (OBDataTable)await v_DataTable.EvaluateCode(engine);
 
             if (v_FilterOption == "RowFilter")
             {
 				DataView dv = new DataView(Dt);
-				dv.RowFilter = vSearchItem;
-				dv.ToTable().StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				dv.RowFilter = (string)await v_RowFilter.EvaluateCode(engine);
+				dv.ToTable().SetVariableValue(engine, v_OutputUserVariableName);
 			}
             else
             {
-				var t = new List<Tuple<string, string>>();
-				var listPairs = vSearchItem.Split(')');
-				int i = 0;
-
-				listPairs = listPairs.Take(listPairs.Count() - 1).ToArray();
-				foreach (string item in listPairs)
-				{
-					string temp;
-					temp = item.Trim().TrimStart(',').TrimStart('(');
-					var tempList = temp.Split(',');
-					t.Insert(i, Tuple.Create(tempList[0], tempList[1]));
-					i++;
-				}
-
 				List<DataRow> templist = new List<DataRow>();
 
-				foreach (Tuple<string, string> tuple in t)
+				foreach (DataRow rw in v_DataRowDataTable.Rows)
 				{
+					var columnName = (string)await rw.Field<string>("Column Name").EvaluateCode(engine);
+					var data = await rw.Field<dynamic>("Data").EvaluateCode(engine);
+
 					foreach (DataRow row in Dt.Rows)
 					{
-						if (row[tuple.Item1] != null)
+						if (row[columnName] != null)
 						{
-							if (row[tuple.Item1].ToString() == tuple.Item2.ToString() && !templist.Contains(row))
-							{
-								//outputDT.Rows.Remove(row);
+							if (row[columnName] == data && !templist.Contains(row))
 								templist.Add(row);
-							}
 						}
 					}
 				}
@@ -123,9 +137,8 @@ namespace OpenBots.Commands.DataTable
 				foreach (DataRow item in templist)
 					outputDT.Rows.Add(item.ItemArray);
 
-				outputDT.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				outputDT.SetVariableValue(engine, v_OutputUserVariableName);
 			}
-
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -133,8 +146,16 @@ namespace OpenBots.Commands.DataTable
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataTable", this, editor));
+			
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_FilterOption", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SearchItem", this, editor));
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += OptionComboBox_SelectedIndexChanged;
+
+			_rowFilterControls = commandControls.CreateDefaultInputGroupFor("v_RowFilter", this, editor);
+			RenderedControls.AddRange(_rowFilterControls);
+
+			_dataControls = commandControls.CreateDefaultDataGridViewGroupFor("v_DataRowDataTable", this, editor);
+			RenderedControls.AddRange(_dataControls);
+
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
@@ -142,7 +163,45 @@ namespace OpenBots.Commands.DataTable
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue()+ $" [Filter Rows With '{v_SearchItem}' From '{v_DataTable}' - Store Filtered DataTable in '{v_OutputUserVariableName}']";
-		}       
+			return base.GetDisplayValue()+ $" [Filter Rows From '{v_DataTable}' - Store Filtered DataTable in '{v_OutputUserVariableName}']";
+		}
+
+		public override void Shown()
+		{
+			base.Shown();
+			_hasRendered = true;
+			if (v_FilterOption == null)
+			{
+				v_FilterOption = "RowFilter";
+				((ComboBox)RenderedControls[4]).Text = v_FilterOption;
+			}
+			OptionComboBox_SelectedIndexChanged(this, null);
+		}
+
+		private void OptionComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[4]).Text == "RowFilter" && _hasRendered)
+			{
+				foreach (var ctrl in _dataControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is DataGridView)
+						v_DataRowDataTable.Rows.Clear();
+				}
+				foreach (var ctrl in _rowFilterControls)
+					ctrl.Visible = true;
+			}
+			else if (_hasRendered)
+			{
+				foreach (var ctrl in _dataControls)
+					ctrl.Visible = true;
+				foreach (var ctrl in _rowFilterControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is TextBox)
+						((TextBox)ctrl).Clear();
+				}
+			}
+		}
 	}
 }

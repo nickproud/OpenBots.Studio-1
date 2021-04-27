@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using IO = System.IO;
 
@@ -22,20 +23,20 @@ namespace OpenBots.Commands.File
 		[Required]
 		[DisplayName("File Path")]
 		[Description("Enter or Select the path to the file.")]
-		[SampleUsage(@"C:\temp\myfile.txt || {ProjectPath}\myfile.txt || {vTextFilePath}")]
-		[Remarks("{ProjectPath} is the directory path of the current project.")]
+		[SampleUsage("@\"C:\\temp\\myfile.txt\" || ProjectPath + @\"\\myfile.txt\" || vFilePath")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFilePath { get; set; }
 
 		[Required]
 		[DisplayName("New File Name (with extension)")]
 		[Description("Specify new file name with extension.")]
-		[SampleUsage("newfile.txt || {vNewFileName}")]
+		[SampleUsage("@\"newfile.txt\" || vNewFileName")]
 		[Remarks("Changing the file extension will not automatically convert files.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_NewName { get; set; }
 
 		public RenameFileCommand()
@@ -47,12 +48,12 @@ namespace OpenBots.Commands.File
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var sourceFile = v_SourceFilePath.ConvertUserVariableToString(engine);
-			var newFileName = v_NewName.ConvertUserVariableToString(engine);
+			var sourceFile = (string)await v_SourceFilePath.EvaluateCode(engine);
+			var newFileName = (string)await v_NewName.EvaluateCode(engine);
 
 			if (!IO.File.Exists(sourceFile))
             {

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -31,20 +32,20 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Workbook Location")]
 		[Description("Enter or Select the path of the folder to save the Workbook to.")]
-		[SampleUsage(@"C:\temp || {vFolderPath} || {ProjectPath}")]
+		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FolderPath { get; set; }
 
 		[Required]
 		[DisplayName("Workbook File Name")]
 		[Description("Enter or Select the name of the Workbook file.")]
-		[SampleUsage("myFile.xlsx || {vFilename}")]
+		[SampleUsage("@\"myFile.xlsx\" || vFilename")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FileName { get; set; }
 
 		public ExcelSaveWorkbookAsCommand()
@@ -57,11 +58,11 @@ namespace OpenBots.Commands.Excel
 			v_InstanceName = "DefaultExcel";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFolderPath = v_FolderPath.ConvertUserVariableToString(engine);
-			var vFileName = v_FileName.ConvertUserVariableToString(engine);
+			var vFolderPath = (string)await v_FolderPath.EvaluateCode(engine);
+			var vFileName = (string)await v_FileName.EvaluateCode(engine);
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
 

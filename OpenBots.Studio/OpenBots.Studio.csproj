@@ -937,6 +937,9 @@
     <None Include="Supplementary Files\Script Conversion Files\1.2.0.0.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Supplementary Files\Script Conversion Files\1.4.1.0.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Supplementary Files\Script Conversion Files\1.4.0.0.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -995,7 +998,6 @@
     <None Include="Resources\Logo\openbots-logo.png" />
     <None Include="Resources\Logo\openbots-icon.png" />
     <None Include="Resources\Logo\openbots-gallery-icon.png" />
-    <None Include="Resources\Logo\openbots_splash2.png" />
     <None Include="Resources\Logo\nuget-icon.png" />
     <None Include="Resources\Logo\loading-spinner.gif" />
     <None Include="Resources\Logo\about_background.png" />

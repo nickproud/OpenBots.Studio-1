@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -21,7 +22,7 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter an existing DataTable to add a DataColumn to.")]
-		[SampleUsage("{vDataTable}")]
+		[SampleUsage("vDataTable")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
@@ -30,11 +31,20 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Column Name")]
 		[Description("Enter the name of the DataColumn to be added.")]
-		[SampleUsage("Column1 || {vColumnName}")]
+		[SampleUsage("\"Column1\" || vColumnName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ColumnName { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output DataTable Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("vUserVariable")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		public AddDataColumnCommand()
 		{
@@ -44,16 +54,15 @@ namespace OpenBots.Commands.DataTable
 			CommandIcon = Resources.command_spreadsheet;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-
-			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
-			OBDataTable dataTable = (OBDataTable)dataTableVariable;
-			var ColumnName = v_ColumnName.ConvertUserVariableToString(engine);
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
+			var ColumnName = (string)await v_ColumnName.EvaluateCode(engine);
 
 			dataTable.Columns.Add(ColumnName);
-			dataTable.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
+
+			dataTable.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -62,13 +71,14 @@ namespace OpenBots.Commands.DataTable
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataTable", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ColumnName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Add Column {v_ColumnName} to '{v_DataTable}']";
+			return base.GetDisplayValue() + $" [Add Column {v_ColumnName} to '{v_DataTable}' - Store DataTable in '{v_OutputUserVariableName}']";
 		}
 	}
 }

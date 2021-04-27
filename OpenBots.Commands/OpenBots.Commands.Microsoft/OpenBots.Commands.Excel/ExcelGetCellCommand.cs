@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -31,10 +32,10 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Cell Location")]
 		[Description("Enter the location of the cell to extract.")]
-		[SampleUsage("A1 || {vCellLocation}")]
+		[SampleUsage("\"A1\" || vCellLocation")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CellLocation { get; set; }
 
 		[Required]
@@ -50,7 +51,7 @@ namespace OpenBots.Commands.Excel
 		[Editable(false)]
 		[DisplayName("Output Cell Value Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -66,11 +67,11 @@ namespace OpenBots.Commands.Excel
 			v_Formulas = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = v_InstanceName.GetAppInstance(engine);
-			var vTargetAddress = v_CellLocation.ConvertUserVariableToString(engine);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
 			var excelInstance = (Application)excelObject;
 			Worksheet excelSheet = excelInstance.ActiveSheet;
             string cellValue;
@@ -80,7 +81,7 @@ namespace OpenBots.Commands.Excel
 			else
 				cellValue = (string)excelSheet.Range[vTargetAddress].Value.ToString();
 
-			cellValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);          
+			cellValue.SetVariableValue(engine, v_OutputUserVariableName);          
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

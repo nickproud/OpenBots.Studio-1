@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Terminal
@@ -33,28 +34,28 @@ namespace OpenBots.Commands.Terminal
 		[Required]
 		[DisplayName("Host")]
 		[Description("Define the host.")]
-		[SampleUsage("12.345.678.910 || {vHost}")]
+		[SampleUsage("\"12.345.678.910\" || vHost")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Host { get; set; }
 
 		[Required]
 		[DisplayName("Port")]
 		[Description("Define the port number.")]
-		[SampleUsage("3270 || {vPort}")]
+		[SampleUsage("\"3270\" || vPort")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Port { get; set; }
 
 		[Required]
 		[DisplayName("Terminal Type")]
 		[Description("Define the terminal type.")]
-		[SampleUsage("IBM-3278-2-E || {vTerminalType}")]
+		[SampleUsage("\"IBM-3278-2-E\" || vTerminalType")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TerminalType { get; set; }
 
 		[Required]
@@ -89,13 +90,13 @@ namespace OpenBots.Commands.Terminal
 			v_CloseAllInstances = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var host = v_Host.ConvertUserVariableToString(engine);
-			var port = v_Port.ConvertUserVariableToString(engine);
-			var terminalType = v_TerminalType.ConvertUserVariableToString(engine);
+			var host = (string)await v_Host.EvaluateCode(engine);
+			var port = (string)await v_Port.EvaluateCode(engine);
+			var terminalType = (string)await v_TerminalType.EvaluateCode(engine);
 			bool useSsl;
 
 			if (v_UseSsl == "Yes")

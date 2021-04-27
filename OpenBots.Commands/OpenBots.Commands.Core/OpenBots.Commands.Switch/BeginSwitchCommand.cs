@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Switch
 {
@@ -23,10 +24,10 @@ namespace OpenBots.Commands.Switch
 		[Required]
 		[DisplayName("Switch")]
 		[Description("This value will determine the Case block to execute.")]
-		[SampleUsage("{vSwitch}")]
+		[SampleUsage("vSwitch")]
 		[Remarks("This value must be a variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SwitchValue { get; set; }
 
 		public BeginSwitchCommand()
@@ -38,14 +39,12 @@ namespace OpenBots.Commands.Switch
 			ScopeStartCommand = true;
 		}
 
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			//get engine
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vSwitchValue = v_SwitchValue.ConvertUserVariableToString(engine);
-			if (vSwitchValue == v_SwitchValue || !v_SwitchValue.StartsWith("{") || !v_SwitchValue.EndsWith("}"))
-				throw new Exception("Switch value is not a variable");
+			var vSwitchValue = (string)await v_SwitchValue.EvaluateCode(engine);
 
 			//get indexes of commands
 			var caseIndices = FindAllCaseIndices(parentCommand.AdditionalScriptCommands);
@@ -63,13 +62,14 @@ namespace OpenBots.Commands.Switch
 				caseCommandItem = parentCommand.AdditionalScriptCommands[caseIndex];
 				targetCaseCommand = (CaseCommand)caseCommandItem.ScriptCommand;
 
+				var caseValue = (string)await targetCaseCommand.v_CaseValue.EvaluateCode(engine);
 				// Save Default Case Index
-				if (targetCaseCommand.v_CaseValue == "Default")
+				if (caseValue == "Default")
 				{
 					defaultCaseIndex = caseIndex;
 				}
 				// Save index if the value of any Case matches with the Switch value
-				if (vSwitchValue == targetCaseCommand.v_CaseValue)
+				if (vSwitchValue == caseValue)
 				{
 					targetCaseIndex = caseIndex;
 					break;
@@ -79,12 +79,12 @@ namespace OpenBots.Commands.Switch
 			// If Target Case Found
 			if (targetCaseIndex != -1)
 			{
-				ExecuteTargetCaseBlock(sender, parentCommand, targetCaseIndex, endSwitchIndex);
+				await ExecuteTargetCaseBlock(sender, parentCommand, targetCaseIndex, endSwitchIndex);
 			}
 			// Else execute Default block
 			else if (defaultCaseIndex != -1)
 			{
-				ExecuteTargetCaseBlock(sender, parentCommand, defaultCaseIndex, endSwitchIndex);
+				await ExecuteTargetCaseBlock(sender, parentCommand, defaultCaseIndex, endSwitchIndex);
 			}
 		}
 
@@ -147,7 +147,7 @@ namespace OpenBots.Commands.Switch
 			return nextCase;
 		}
 
-		private void ExecuteTargetCaseBlock(object sender, ScriptAction parentCommand, int startCaseIndex, int endCaseIndex)
+		private async Tasks.Task ExecuteTargetCaseBlock(object sender, ScriptAction parentCommand, int startCaseIndex, int endCaseIndex)
 		{
 			//get engine
 			var engine = (IAutomationEngineInstance)sender;
@@ -169,7 +169,7 @@ namespace OpenBots.Commands.Switch
 				if (engine.IsCancellationPending || engine.CurrentLoopCancelled)
 					return;
 
-				engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[caseIndex]);
+				await engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[caseIndex]);
 			}
 		}
 	}

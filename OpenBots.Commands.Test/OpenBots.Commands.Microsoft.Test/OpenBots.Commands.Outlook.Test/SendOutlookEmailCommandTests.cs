@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Outlook.Test
          * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
         */
         [Fact]
-        public void SendsOutlookEmail()
+        public async void SendsOutlookEmail()
         {
             _engine = new AutomationEngineInstance(null);
             _sendOutlookEmail = new SendOutlookEmailCommand();
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Outlook.Test
 
                 _getOutlookEmails.RunCommand(_engine);
 
-                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+                emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
                 attempts++;
             } while (emails.Count < 1 && attempts < 5);
             MailItem email = emails[0];

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.QueueItem
@@ -22,7 +23,7 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("QueueItem")]
 		[Description("Enter a QueueItem Dictionary variable.")]
-		[SampleUsage("{vQueueItem}")]
+		[SampleUsage("vQueueItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
@@ -38,10 +39,10 @@ namespace OpenBots.Commands.QueueItem
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueItem = (Dictionary<string, object>)v_QueueItem.ConvertUserVariableToObject(engine, nameof(v_QueueItem), this);
+			var vQueueItem = (Dictionary<string, object>)await v_QueueItem.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 

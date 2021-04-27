@@ -32,7 +32,7 @@ namespace OpenBots.Commands.File.Test
         }
 
         [Fact]
-        public void HandlesBadFilepath()
+        public async global::System.Threading.Tasks.Task HandlesBadFilepath()
         {
             _engine = new AutomationEngineInstance(null);
             _deleteFile = new DeleteFileCommand();
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.File.Test
 
             _deleteFile.v_SourceFilePath = "{inputPath}";
 
-            Assert.Throws<FileNotFoundException>(() => _deleteFile.RunCommand(_engine));
+            await Assert.ThrowsAsync<FileNotFoundException>(() => _deleteFile.RunCommand(_engine));
         }
     }
 }

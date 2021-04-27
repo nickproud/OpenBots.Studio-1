@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Forms;
 
@@ -31,11 +32,11 @@ namespace OpenBots.Commands.Input
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to automate.")]
-		[SampleUsage("Untitled - Notepad || Current Window || {vWindow}")]
+		[SampleUsage("\"Untitled - Notepad\" || \"Current Window\" || vWindow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -56,27 +57,27 @@ namespace OpenBots.Commands.Input
 		[Required]
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters.")]
-		[SampleUsage("AutomationId || Name")]
+		[SampleUsage("[ AutomationId | \"Name\" ]")]
 		[Remarks("Once you have clicked on a valid window the search parameters will be populated. Select a single parameter to find the element.")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_UIASearchParameters { get; set; }
 
 		[Required]
 		[DisplayName("Action Parameters")]
 		[Description("Action Parameters will be determined based on the action settings selected.")]
-		[SampleUsage("data || {vData} || *Variable Name*: {vNewVariable}")]
+		[SampleUsage("\"data\" || vData || vOutputVariable")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(string), typeof(bool) }, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(string), typeof(bool) })]
 		public DataTable v_UIAActionParameters { get; set; }
 
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
@@ -114,17 +115,17 @@ namespace OpenBots.Commands.Input
 			v_UIAActionParameters.Columns.Add("Parameter Value");
 			v_UIAActionParameters.TableName = DateTime.Now.ToString("UIAActionParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vTimeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			var vTimeout = (int)await v_Timeout.EvaluateCode(engine);
 
 			//create variable window name
-			var variableWindowName = v_WindowName.ConvertUserVariableToString(engine);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 			if (variableWindowName == "Current Window")
 				variableWindowName = User32Functions.GetActiveWindowTitle();			
 
@@ -138,7 +139,7 @@ namespace OpenBots.Commands.Input
 					if (engine.IsCancellationPending)
 						break;
 
-					requiredHandle = CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
+					requiredHandle = await CommandsHelper.SearchForGUIElement(engine, v_UIASearchParameters, variableWindowName);
 
 					if (requiredHandle == null)
 						throw new Exception("Element Not Yet Found... ");
@@ -174,21 +175,17 @@ namespace OpenBots.Commands.Input
 								   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					//convert potential variable
-					var xAdjustVariable = xAdjust.ConvertUserVariableToString(engine);
-					var yAdjustVariable = yAdjust.ConvertUserVariableToString(engine);
-
 					int xAdjustInt;
 					int yAdjustInt;
 
 					//parse to int
-					if (!string.IsNullOrEmpty(xAdjustVariable))
-						xAdjustInt = int.Parse(xAdjustVariable);
+					if (!string.IsNullOrEmpty(xAdjust))
+						xAdjustInt = (int)await xAdjust.EvaluateCode(engine);
 					else
 						xAdjustInt = 0;
 
-					if (!string.IsNullOrEmpty(yAdjustVariable))
-						yAdjustInt = int.Parse(yAdjustVariable);
+					if (!string.IsNullOrEmpty(yAdjust))
+						yAdjustInt = (int)await yAdjust.EvaluateCode(engine);
 					else
 						yAdjustInt = 0;
 
@@ -196,10 +193,7 @@ namespace OpenBots.Commands.Input
 					var newPoint = requiredHandle.GetClickablePoint();
 
 					//send mousemove command
-					User32Functions.SendMouseMove(
-						(newPoint.X + xAdjustInt).ToString(),
-						(newPoint.Y + yAdjustInt).ToString(),
-						clickType);
+					User32Functions.SendMouseMove(Convert.ToInt32(newPoint.X) + xAdjustInt, Convert.ToInt32(newPoint.Y) + yAdjustInt, clickType);
 
 					break;
 				case "Set Text":
@@ -218,10 +212,10 @@ namespace OpenBots.Commands.Input
 					if (clearElement == null)
 						clearElement = "No";
 
+					textToSet = (string)await textToSet.EvaluateCode(engine);
+
 					if (encryptedData == "Encrypted")
 						textToSet = EncryptionServices.DecryptString(textToSet, "OPENBOTS");
-
-					textToSet = textToSet.ConvertUserVariableToString(engine);
 
 					if (requiredHandle.Current.IsEnabled && requiredHandle.Current.IsKeyboardFocusable)
 					{
@@ -275,12 +269,9 @@ namespace OpenBots.Commands.Input
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
+					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine);
 
-					if (secureStrVariable is SecureString)
-						secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
-					else
-						throw new ArgumentException("Provided Argument is not a 'Secure String'");
+					secureString = secureStrVariable.ConvertSecureStringToString();
 
 					if (_clearElement == null)
 						_clearElement = "No";
@@ -374,7 +365,7 @@ namespace OpenBots.Commands.Input
 						else
 							searchResult = requiredHandle.Current.Name.ToString();
 
-						searchResult.StoreInUserVariable(engine, applyToVariable, typeof(string));
+						((string)searchResult).SetVariableValue(engine, applyToVariable);
 					}
 
 					else if (v_AutomationType == "Element Exists")
@@ -385,7 +376,7 @@ namespace OpenBots.Commands.Input
 						else
 							searchResult = true;
 
-						searchResult.StoreInUserVariable(engine, applyToVariable, typeof(bool));
+						((bool)searchResult).SetVariableValue(engine, applyToVariable);
 					}
 					
 					break;
@@ -413,7 +404,7 @@ namespace OpenBots.Commands.Input
 					var requiredValue = requiredHandle.Current.GetType().GetRuntimeProperty(propertyName)?.GetValue(requiredHandle.Current).ToString();
 
 					//store into variable
-					((object)requiredValue).StoreInUserVariable(engine, applyToVariable2, typeof(string));
+					((object)requiredValue).SetVariableValue(engine, applyToVariable2);
 					break;
 				default:
 					throw new NotImplementedException("Automation type '" + v_AutomationType + "' not supported.");
@@ -555,7 +546,7 @@ namespace OpenBots.Commands.Input
 			((Form)newElementRecorder).ShowDialog();
 
 			//window name combobox
-			RenderedControls[3].Text = newElementRecorder.WindowName;
+			RenderedControls[3].Text = $"\"{newElementRecorder.WindowName}\"";
 
 			v_UIASearchParameters.Rows.Clear();
 
@@ -733,16 +724,16 @@ namespace OpenBots.Commands.Input
 			{
 				var targetElement = _actionParametersGridViewHelper.Rows[0].Cells[1];
 
-				if (string.IsNullOrEmpty(targetElement.Value.ToString()))
+				if (targetElement.Value == null)
 					return;
 
-				var warning = MessageBox.Show($"Warning! Text should only be encrypted one time and is not reversible in the builder. " + 
-											  "Would you like to proceed and convert '{targetElement.Value.ToString()}' to an encrypted value?", 
+				var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " + 
+											  $"Would you like to proceed and convert '{targetElement.Value}' to an encrypted value?", 
 											  "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
 				if (warning == DialogResult.Yes)
 				{
-					targetElement.Value = EncryptionServices.EncryptString(targetElement.Value.ToString(), "OPENBOTS");
+					targetElement.Value = $"\"{EncryptionServices.EncryptString(targetElement.Value.ToString().TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
 					_actionParametersGridViewHelper.Rows[2].Cells[1].Value = "Encrypted";
 				}
 			}

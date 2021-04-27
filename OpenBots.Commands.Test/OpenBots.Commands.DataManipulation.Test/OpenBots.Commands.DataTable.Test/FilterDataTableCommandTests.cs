@@ -19,7 +19,7 @@ namespace OpenBots.Commands.DataTable.Test
             this.output = output;
         }
         [Fact]
-        public void filtersDataTable()
+        public async void filtersDataTable()
         {
             _filterDataTable = new FilterDataTableCommand();
             _engine = new AutomationEngineInstance(null);
@@ -42,7 +42,7 @@ namespace OpenBots.Commands.DataTable.Test
             VariableMethods.CreateTestVariable(null, _engine, "outputTable", typeof(OBData.DataTable));
 
             _filterDataTable.v_DataTable = "{tableToFilter}";
-            _filterDataTable.v_SearchItem = "({col1},{id1})";
+            //_filterDataTable.v_SearchItem = "({col1},{id1})";
             _filterDataTable.v_OutputUserVariableName = "{outputTable}";
 
             _filterDataTable.RunCommand(_engine);
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.DataTable.Test
             row1copy["col2"] = "data1";
             expectedDT.Rows.Add(row1copy);
             
-            OBData.DataTable resultDataTable = (OBData.DataTable)_filterDataTable.v_OutputUserVariableName.ConvertUserVariableToObject(_engine, typeof(OBData.DataTable));
+            OBData.DataTable resultDataTable = (OBData.DataTable)await _filterDataTable.v_OutputUserVariableName.EvaluateCode(_engine);
             // Check each row / column pair and assert equivalence
             output.WriteLine(expectedDT.Rows[0].ToString());
             output.WriteLine(resultDataTable.Rows[0].ToString());

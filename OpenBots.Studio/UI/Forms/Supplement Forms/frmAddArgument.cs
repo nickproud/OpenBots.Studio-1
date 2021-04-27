@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private string _editingArgumentName;
         private TypeContext _typeContext;
         private Type _preEditType;
+        private ToolTip _typeToolTip;
 
         public frmAddArgument(TypeContext typeContext)
         {
@@ -29,6 +31,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
             cbxDefaultType.SelectedValue = typeof(string);
             cbxDefaultType.Tag = typeof(string);
+
+            _preEditType = typeof(string);
         }
 
         public frmAddArgument(string argumentName, ScriptArgumentDirection argumentDirection, string argumentValue, Type argumentType,
@@ -48,13 +52,16 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             cbxDefaultType.SelectedValue = argumentType;
             cbxDefaultType.Tag = argumentType;
 
+            _preEditType = argumentType;
+
             _isEditMode = true;
             _editingArgumentName = argumentName;
         }
 
         private void frmAddArgument_Load(object sender, EventArgs e)
         {
-
+            _typeToolTip = AddTypeToolTip();
+            _typeToolTip.SetToolTip(cbxDefaultType, _preEditType.GetRealTypeName());
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
@@ -113,14 +120,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             if (((Type)cbxDefaultType.SelectedValue).Name == "MoreOptions")
             {
-                frmTypes typeForm = new frmTypes(_typeContext.GroupedTypes);
+                frmTypes typeForm = new frmTypes(_typeContext);
                 typeForm.ShowDialog();
 
                 if (typeForm.DialogResult == DialogResult.OK)
                 {
-                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.FullName))
+                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.GetRealTypeName()))
                     {
-                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.FullName, typeForm.SelectedType);
+                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.GetRealTypeName(), typeForm.SelectedType);
                         cbxDefaultType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
                     }
 
@@ -132,19 +139,23 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     cbxDefaultType.SelectedValue = _preEditType;
                     cbxDefaultType.Tag = _preEditType;
                 }
+
+                typeForm.Dispose();
             }
             else
                 cbxDefaultType.Tag = cbxDefaultType.SelectedValue;
 
             _preEditType = (Type)cbxDefaultType.SelectedValue;
+            _typeToolTip.SetToolTip(cbxDefaultType, _preEditType.GetRealTypeName());
+        }
 
-            if (_preEditType == typeof(string) || _preEditType.IsPrimitive)
-                txtDefaultValue.ReadOnly = false;
-            else
-            {
-                txtDefaultValue.ReadOnly = true;
-                txtDefaultValue.Text = "";
-            }
+        public ToolTip AddTypeToolTip()
+        {
+            ToolTip typeToolTip = new ToolTip();
+            typeToolTip.IsBalloon = false;
+            typeToolTip.ShowAlways = true;
+            typeToolTip.AutoPopDelay = 5000;
+            return typeToolTip;
         }
     }
 }

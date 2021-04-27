@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.OleDb;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Database
 {
@@ -36,19 +37,19 @@ namespace OpenBots.Commands.Database
 		[Required]
 		[DisplayName("Connection String")]
 		[Description("Define the string to use when connecting to the OleDb database.")]
-		[SampleUsage("Provider=sqloledb;Data Source=myServerAddress;Initial Catalog=myDataBase;Integrated Security=SSPI; || {vConnectionString}")]
+		[SampleUsage("\"Provider=sqloledb;Data Source=myServerAddress;Initial Catalog=myDataBase;Integrated Security=SSPI; || vConnectionString\"")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ConnectionString { get; set; }
 
 		[Required]
 		[DisplayName("Connection String Password")]
 		[Description("Define the password to use when connecting to the OleDb database.")]
-		[SampleUsage("password || {vPassword}")]
+		[SampleUsage("\"password\" || vPassword")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ConnectionStringPassword { get; set; }
 
 		[Required]
@@ -79,13 +80,13 @@ namespace OpenBots.Commands.Database
 			v_TestConnection = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			//get engine and preference
 			var engine = (IAutomationEngineInstance)sender;
 
 			//create connection
-			var oleDBConnection = CreateConnection(sender);
+			var oleDBConnection = await CreateConnection(sender);
 
 			//attempt to open and close connection
 			if (v_TestConnection == "Yes")
@@ -97,16 +98,16 @@ namespace OpenBots.Commands.Database
 			oleDBConnection.AddAppInstance(engine, v_InstanceName);
 		}
 
-		private OleDbConnection CreateConnection(object sender)
+		private async Task<OleDbConnection> CreateConnection(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var connection = v_ConnectionString.ConvertUserVariableToString(engine);
-			var connectionPass = v_ConnectionStringPassword.ConvertUserVariableToString(engine);
+			var connection = (string)await v_ConnectionString.EvaluateCode(engine);
+			var connectionPass = (string)await v_ConnectionStringPassword.EvaluateCode(engine);
 
 			if (connectionPass.StartsWith("!"))
 			{
 				connectionPass = connectionPass.Substring(1);
-				connectionPass = EncryptionServices.DecryptString(connectionPass, "openbots-database-automation");
+				connectionPass = EncryptionServices.DecryptString(connectionPass, "OPENBOTS");
 			}
 			connection = connection.Replace("#pwd", connectionPass);
 
@@ -196,13 +197,13 @@ namespace OpenBots.Commands.Database
 			return base.GetDisplayValue() + $" [Instance Name '{v_InstanceName}']";
 		}
 
-		private void TestConnection(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
+		private async void TestConnection(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			
 			try
 			{
 				var engine = (IAutomationEngineInstance)commandControls.CreateAutomationEngineInstance(editor.ScriptEngineContext);
-				var oleDBConnection = CreateConnection(engine);
+				var oleDBConnection = await CreateConnection(engine);
 				oleDBConnection.Open();
 				oleDBConnection.Close();
 				MessageBox.Show("Connection Successful", "Test Connection", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -243,14 +244,14 @@ namespace OpenBots.Commands.Database
 			var acknowledgement =  MessageBox.Show("WARNING! This function will encrypt the password locally but " + 
 												   "is not extremely secure as the client knows the secret! " + 
 												   "Consider using a password management service instead. The encrypted " +
-												   "password will be stored with a leading exclamation ('!') whch the " +
+												   "password will be stored with a leading exclamation ('!') which the " +
 												   "automation engine will detect and know to decrypt the value automatically " +
 												   "at run-time. Do not encrypt the password multiple times or the decryption " +
 												   "will be invalid!  Would you like to proceed?", "Encryption Warning", 
 												   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
 			if (acknowledgement == DialogResult.Yes)
-				_connectionStringPassword.Text = string.Concat($"!{EncryptionServices.EncryptString(_connectionStringPassword.Text, "openbots-database-automation")}");
+				_connectionStringPassword.Text = $"\"!{EncryptionServices.EncryptString(_connectionStringPassword.Text.TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
 		}
 
 		public void ShowConnectionBuilder()

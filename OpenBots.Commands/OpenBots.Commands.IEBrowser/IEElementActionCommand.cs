@@ -18,6 +18,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.IEBrowser
 {
@@ -40,7 +41,7 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public DataTable v_WebSearchParameter { get; set; }
 
         [Required]
@@ -63,10 +64,10 @@ namespace OpenBots.Commands.IEBrowser
         [Required]
         [DisplayName("Action Parameters")]
         [Description("Enter the action parameter values based on the selection of an Element Action.")]
-        [SampleUsage("{vParameterValue}")]
+        [SampleUsage("vParameterValue")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(new Type[] { typeof(string) }, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public DataTable v_WebActionParameterTable { get; set; }
 
         [JsonIgnore]
@@ -107,7 +108,7 @@ namespace OpenBots.Commands.IEBrowser
         }
 
         [STAThread]
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             object browserObject = null;
 
@@ -126,12 +127,6 @@ namespace OpenBots.Commands.IEBrowser
             var elementSearchProperties = from rws in searchTable.AsEnumerable()
                                           where rws.Field<bool>("Enabled").ToString() == "True"
                                           select rws;
-            foreach (DataRow seachCriteria in elementSearchProperties)
-            {
-                string searchPropertyValue = seachCriteria.Field<string>("Property Value");
-                searchPropertyValue = searchPropertyValue.ConvertUserVariableToString(engine);
-                seachCriteria.SetField<string>("Property Value", searchPropertyValue);
-            }
 
             bool qualifyingElementFound = false;
 
@@ -139,11 +134,11 @@ namespace OpenBots.Commands.IEBrowser
 
             if (doc == _lastDocFound)
             {
-                qualifyingElementFound = InspectFrame(_lastElementCollectionFound, elementSearchProperties, sender, browserInstance);
+                qualifyingElementFound = await InspectFrame(_lastElementCollectionFound, elementSearchProperties, sender, browserInstance);
             }
             if (!qualifyingElementFound)
             {
-                qualifyingElementFound = InspectFrame(doc.all, elementSearchProperties, sender, browserInstance);
+                qualifyingElementFound = await InspectFrame(doc.all, elementSearchProperties, sender, browserInstance);
             }
             if (qualifyingElementFound)
             {
@@ -189,12 +184,14 @@ namespace OpenBots.Commands.IEBrowser
             return base.GetDisplayValue() + $" [Perform Action '{v_WebAction} {parameters}' - Instance Name '{v_InstanceName}']";
         }
 
-        private bool FindQualifyingElement(EnumerableRowCollection<DataRow> elementSearchProperties, IHTMLElement element)
+        private async Task<bool> FindQualifyingElement(object sender, EnumerableRowCollection<DataRow> elementSearchProperties, IHTMLElement element)
         {
+            var engine = (IAutomationEngineInstance)sender;
+
             foreach (DataRow seachCriteria in elementSearchProperties)
             {
                 string searchPropertyName = seachCriteria.Field<string>("Property Name");
-                string searchPropertyValue = seachCriteria.Field<string>("Property Value");
+                dynamic searchPropertyValue = await seachCriteria.Field<string>("Property Value").EvaluateCode(engine);
                 string searchPropertyFound = seachCriteria.Field<string>("Match Found");
 
                 string innerHTML = element.innerHTML;
@@ -212,7 +209,7 @@ namespace OpenBots.Commands.IEBrowser
                         return false;
                     }
 
-                    if (searchPropertyName.ToLower() == "href")
+                    if (searchPropertyValue is string && searchPropertyName.ToLower() == "href")
                     {
                         try
                         {
@@ -233,12 +230,11 @@ namespace OpenBots.Commands.IEBrowser
                     }
                     else
                     {
-                        int searchValue;
-                        if (int.TryParse(searchPropertyValue, out searchValue))
+                        if (searchPropertyValue is int)
                         {
                             //int elementValue = (int)element.GetType().GetProperty(searchPropertyName).GetValue(element, null);
                             int elementValue = (int)element.getAttribute(searchPropertyName);
-                            if (elementValue == searchValue)
+                            if (elementValue == searchPropertyValue)
                             {
                                 seachCriteria.SetField("Match Found", "True");
                             }
@@ -358,7 +354,7 @@ namespace OpenBots.Commands.IEBrowser
             ((DataGridView)_elementParameterControls[2]).Columns[0].ReadOnly = true;
         }
 
-        private void RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)
+        private async Task RunCommandActions(IHTMLElement element, object sender, InternetExplorer browserInstance)
         {
             var engine = (IAutomationEngineInstance)sender;
             switch (v_WebAction)
@@ -382,18 +378,20 @@ namespace OpenBots.Commands.IEBrowser
 
                     //inputs need to be validated
 
-                    int userXAdjust = Convert.ToInt32((from rw in v_WebActionParameterTable.AsEnumerable()
+                    string userXAdjustString = (from rw in v_WebActionParameterTable.AsEnumerable()
                                                        where rw.Field<string>("Parameter Name") == "X Adjustment"
-                                                       select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+                                                       select rw.Field<string>("Parameter Value")).FirstOrDefault();
+                    int userXAdjust = (int)await userXAdjustString.EvaluateCode(engine);
 
-                    int userYAdjust = Convert.ToInt32((from rw in v_WebActionParameterTable.AsEnumerable()
+                    string userYAdjustString = (from rw in v_WebActionParameterTable.AsEnumerable()
                                                        where rw.Field<string>("Parameter Name") == "Y Adjustment"
-                                                       select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+                                                       select rw.Field<string>("Parameter Value")).FirstOrDefault();
+                    int userYAdjust = (int)await userYAdjustString.EvaluateCode(engine);
 
                     var ieClientLocation = User32Functions.GetWindowPosition(new IntPtr(browserInstance.HWND));
 
-                    var mouseX = ((elementXposition + ieClientLocation.left + 10) + userXAdjust).ToString(); // + 10 gives extra padding
-                    var mouseY = ((elementYposition + ieClientLocation.top + 90 + SystemInformation.CaptionHeight) + userYAdjust).ToString(); // +90 accounts for title bar height
+                    var mouseX = (elementXposition + ieClientLocation.left + 10) + userXAdjust; // + 10 gives extra padding
+                    var mouseY = (elementYposition + ieClientLocation.top + 90 + SystemInformation.CaptionHeight) + userYAdjust; // +90 accounts for title bar height
                     var mouseClick = v_WebAction;
 
                     User32Functions.SendMouseMove(mouseX, mouseY, v_WebAction);
@@ -407,7 +405,7 @@ namespace OpenBots.Commands.IEBrowser
                                          where rw.Field<string>("Parameter Name") == "Value To Set"
                                          select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-                    valueToSet = valueToSet.ConvertUserVariableToString(engine);
+                    valueToSet = (string)await valueToSet.EvaluateCode(engine);
 
                     element.setAttribute(setAttributeName, valueToSet);
                     break;
@@ -418,7 +416,7 @@ namespace OpenBots.Commands.IEBrowser
                                         where rw.Field<string>("Parameter Name") == "Text To Set"
                                         select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-                    textToSet = textToSet.ConvertUserVariableToString(engine);
+                    textToSet = (string)await textToSet.EvaluateCode(engine);
 
                     element.setAttribute(setTextAttributeName, textToSet);
                     break;
@@ -433,7 +431,7 @@ namespace OpenBots.Commands.IEBrowser
 
                     string convertedAttribute = Convert.ToString(element.getAttribute(attributeName));
 
-                    convertedAttribute.StoreInUserVariable(engine, variableName, typeof(string));
+                    convertedAttribute.SetVariableValue(engine, variableName);
                     break;
             }
         }
@@ -468,7 +466,7 @@ namespace OpenBots.Commands.IEBrowser
             return curtop;
         }
 
-        private bool InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, InternetExplorer browserInstance)
+        private async Task<bool> InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, InternetExplorer browserInstance)
         {
             bool qualifyingElementFound = false;
             foreach (IHTMLElement element in elementCollection)
@@ -482,10 +480,10 @@ namespace OpenBots.Commands.IEBrowser
                         !outerHtml.StartsWith("<head") &&
                         !outerHtml.StartsWith("<!doctype"))
                     {
-                        qualifyingElementFound = FindQualifyingElement(elementSearchProperties, element);
+                        qualifyingElementFound = await FindQualifyingElement(sender, elementSearchProperties, element);
                         if (qualifyingElementFound)
                         {
-                            RunCommandActions(element, sender, browserInstance);
+                            await RunCommandActions(element, sender, browserInstance);
                             _lastElementCollectionFound = elementCollection;
                             return (true);
                             //break;
@@ -499,7 +497,7 @@ namespace OpenBots.Commands.IEBrowser
                             }
                             if (frameId != null)
                             {
-                                qualifyingElementFound = InspectFrame(browserInstance.Document.getElementById(frameId).contentDocument.all, elementSearchProperties, sender, browserInstance);
+                                qualifyingElementFound = await InspectFrame(browserInstance.Document.getElementById(frameId).contentDocument.all, elementSearchProperties, sender, browserInstance);
                             }
                         }
                         if (qualifyingElementFound)

@@ -11,7 +11,7 @@ namespace OpenBots.Commands.Dictionary.Test
         private AutomationEngineInstance _engine;
 
         [Fact]
-        public void GetsDictionaryValue()
+        public async void GetsDictionaryValue()
         {
             _getDictionaryValue = new GetDictionaryValueCommand();
             _engine = new AutomationEngineInstance(null);
@@ -27,7 +27,7 @@ namespace OpenBots.Commands.Dictionary.Test
 
             _getDictionaryValue.RunCommand(_engine);
 
-            Assert.Equal("val1", "{outputValue}".ConvertUserVariableToString(_engine));
+            Assert.Equal("val1", (string)await "{outputValue}".EvaluateCode(_engine));
         }
     }
 }

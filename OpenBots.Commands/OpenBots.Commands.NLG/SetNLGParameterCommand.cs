@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.NLG
@@ -46,10 +47,10 @@ namespace OpenBots.Commands.NLG
 		[Required]
 		[DisplayName("Input Value")]
 		[Description("Enter the value that should be associated with the parameter")]
-		[SampleUsage("Hello || {vValue}")]
+		[SampleUsage("\"Hello\" || vValue")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Parameter { get; set; }
 
 		public SetNLGParameterCommand()
@@ -63,12 +64,12 @@ namespace OpenBots.Commands.NLG
 			v_ParameterType = "Set Subject";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var p = (SPhraseSpec)v_InstanceName.GetAppInstance(engine);
 
-			var userInput = v_Parameter.ConvertUserVariableToString(engine);
+			var userInput = (string)await v_Parameter.EvaluateCode(engine);
 
 			switch (v_ParameterType)
 			{

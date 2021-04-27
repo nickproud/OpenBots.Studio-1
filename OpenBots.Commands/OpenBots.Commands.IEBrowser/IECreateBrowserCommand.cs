@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.IEBrowser
@@ -33,10 +34,10 @@ namespace OpenBots.Commands.IEBrowser
         [Required]
         [DisplayName("URL")]
         [Description("Enter a Web URL to navigate to.")]
-        [SampleUsage("https://example.com/ || {vURL}")]
+        [SampleUsage("\"https://example.com/\" || vURL")]
         [Remarks("This input is optional.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_URL { get; set; }
 
         [Required]
@@ -59,10 +60,10 @@ namespace OpenBots.Commands.IEBrowser
             v_InstanceTracking = "Forget Instance";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var webURL = v_URL.ConvertUserVariableToString(engine);
+            var webURL = (string)await v_URL.EvaluateCode(engine);
 
             InternetExplorer newBrowserSession = new InternetExplorer();
 

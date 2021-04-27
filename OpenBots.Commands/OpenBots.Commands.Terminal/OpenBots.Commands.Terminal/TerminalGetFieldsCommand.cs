@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Terminal
 {
@@ -32,7 +33,7 @@ namespace OpenBots.Commands.Terminal
 		[Editable(false)]
 		[DisplayName("Output Fields Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(List<>) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -47,7 +48,7 @@ namespace OpenBots.Commands.Terminal
 			v_InstanceName = "DefaultTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
@@ -56,7 +57,7 @@ namespace OpenBots.Commands.Terminal
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
 			List<XMLScreenField> fields = terminalObject.TN3270.CurrentScreenXML.Fields.ToList();
-			fields.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			fields.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

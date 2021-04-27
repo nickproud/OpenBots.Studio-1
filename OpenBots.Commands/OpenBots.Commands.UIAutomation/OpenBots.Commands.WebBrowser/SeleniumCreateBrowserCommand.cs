@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -49,10 +50,10 @@ namespace OpenBots.Commands.WebBrowser
 
 		[DisplayName("URL (Optional)")]
 		[Description("Enter the URL that you want the selenium instance to navigate to.")]
-		[SampleUsage("https://mycompany.com/orders || {vURL}")]
+		[SampleUsage("\"https://mycompany.com/orders\" || vURL")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_URL { get; set; }
 
 		[Required]
@@ -78,10 +79,10 @@ namespace OpenBots.Commands.WebBrowser
 
 		[DisplayName("Selenium Command Line Options (Chrome - Optional)")]
 		[Description("Select options to be passed to the Selenium command.")]
-		[SampleUsage("user-data-dir=c:\\users\\public\\SeleniumOpenBotsProfile || {vOptions}")]
+		[SampleUsage("@\"user-data-dir=c:\\users\\public\\SeleniumOpenBotsProfile\" || vOptions")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SeleniumOptions { get; set; }
 
 		public SeleniumCreateBrowserCommand()
@@ -95,14 +96,18 @@ namespace OpenBots.Commands.WebBrowser
 			v_InstanceTracking = "Forget Instance";
 			v_BrowserWindowOption = "Maximize";
 			v_EngineType = "Chrome";
-			v_URL = "https://";
+			v_URL = "\"https://\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var convertedOptions = v_SeleniumOptions.ConvertUserVariableToString(engine);
-			var vURL = v_URL.ConvertUserVariableToString(engine);
+
+			string convertedOptions = "";
+			if (!string.IsNullOrEmpty(v_SeleniumOptions))
+				convertedOptions = (string)await v_SeleniumOptions.EvaluateCode(engine);
+
+			var vURL = (string)await v_URL.EvaluateCode(engine);
 
 			IWebDriver webDriver;
 

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Outlook
@@ -23,7 +24,7 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("MailItem")]
 		[Description("Enter the MailItem to delete.")]
-		[SampleUsage("{vMailItem}")]
+		[SampleUsage("vMailItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(MailItem) })]
@@ -48,10 +49,10 @@ namespace OpenBots.Commands.Outlook
 			v_DeleteReadOnly = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
 
 			if (v_DeleteReadOnly == "Yes")
 			{

@@ -14,6 +14,7 @@ using System.Data;
 using System.Data.OleDb;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Database
@@ -45,34 +46,34 @@ namespace OpenBots.Commands.Database
 		[Required]
 		[DisplayName("Query")]
 		[Description("Define the OleDb query to execute.")]
-		[SampleUsage("SELECT OrderID, CustomerID FROM Orders || {vQuery}")]
+		[SampleUsage("\"SELECT OrderID, CustomerID FROM Orders\" || vQuery")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Query { get; set; }
 
 		[DisplayName("Query Parameters (Optional)")]
 		[Description("Define the query parameters.")]
-		[SampleUsage("[STRING | @name | {vNameValue}]")]
+		[SampleUsage("[ STRING | \"@name\" | vNameValue ]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_QueryParameters { get; set; }
 
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_QueryTimeout { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Dataset Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(DataTable), typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -107,26 +108,26 @@ namespace OpenBots.Commands.Database
 			v_QueryTimeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			//create engine, instance, query
 			var engine = (IAutomationEngineInstance)sender;
-			var query = v_Query.ConvertUserVariableToString(engine);
-			var vQueryTimeout = v_QueryTimeout.ConvertUserVariableToString(engine);
+			var query = (string)await v_Query.EvaluateCode(engine);
+			var vQueryTimeout = (int)await v_QueryTimeout.EvaluateCode(engine);
 
 			//define connection
 			var databaseConnection = (OleDbConnection)v_InstanceName.GetAppInstance(engine);
 
 			//define commad
 			var oleCommand = new OleDbCommand(query, databaseConnection);
-			oleCommand.CommandTimeout = Convert.ToInt32(vQueryTimeout);
+			oleCommand.CommandTimeout = vQueryTimeout;
 
 			//add parameters
 			foreach (DataRow rw in v_QueryParameters.Rows)
 			{
-				var parameterName = rw.Field<string>("Parameter Name").ConvertUserVariableToString(engine);
-				var parameterValue = rw.Field<string>("Parameter Value").ConvertUserVariableToString(engine);
-				var parameterType = rw.Field<string>("Parameter Type").ConvertUserVariableToString(engine);
+				var parameterName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine);
+				var parameterValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine);
+				var parameterType = rw.Field<string>("Parameter Type").ToString();
 
 				object convertedValue = null;
 				switch (parameterType)
@@ -184,14 +185,14 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Close();
 				
 				dataTable.TableName = v_OutputUserVariableName;
-				dataTable.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				dataTable.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 			else if (v_QueryType == "Execute NonQuery")
 			{
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 			else if (v_QueryType == "Execute Stored Procedure")
 			{
@@ -199,7 +200,7 @@ namespace OpenBots.Commands.Database
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();
-				result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				result.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 			else
 				throw new NotImplementedException($"Query Execution Type '{v_QueryType}' not implemented.");

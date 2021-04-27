@@ -22,7 +22,7 @@ namespace OpenBots.Commands.Outlook.Test
         [InlineData("UnRead", "False")]
         [InlineData("Recipients", "openbots.test@outlook.com")]
         [InlineData("Size", "57813")]
-        public void GetsOutlookEmailProperty(string prop, string propValue)
+        public async void GetsOutlookEmailProperty(string prop, string propValue)
         {
             _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
@@ -41,7 +41,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
             VariableMethods.CreateTestVariable(null, _engine, "property", typeof(string));
@@ -52,7 +52,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmailProperty.RunCommand(_engine);
 
-            Assert.Equal(propValue, "{property}".ConvertUserVariableToString(_engine));
+            Assert.Equal(propValue, (string)await "{property}".EvaluateCode(_engine));
         }
     }
 }

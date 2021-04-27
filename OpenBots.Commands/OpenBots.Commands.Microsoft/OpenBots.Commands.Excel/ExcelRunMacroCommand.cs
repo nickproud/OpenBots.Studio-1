@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -31,10 +32,10 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Macro Name")]
 		[Description("Enter the name of the macro as it exists in the Worksheet.")]
-		[SampleUsage("Macro1 || {vMacro}")]
+		[SampleUsage("\"Macro1\" || vMacro")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MacroName { get; set; }
 
 		public ExcelRunMacroCommand()
@@ -47,10 +48,10 @@ namespace OpenBots.Commands.Excel
 			v_InstanceName = "DefaultExcel";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vMacro = v_MacroName.ConvertUserVariableToString(engine);
+			var vMacro = (string)await v_MacroName.EvaluateCode(engine);
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
 			excelInstance.Run(vMacro);           

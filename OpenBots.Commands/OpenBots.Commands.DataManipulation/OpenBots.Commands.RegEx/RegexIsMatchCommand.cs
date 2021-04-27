@@ -4,12 +4,12 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.RegEx
@@ -22,26 +22,26 @@ namespace OpenBots.Commands.RegEx
 		[Required]
 		[DisplayName("Text")]
 		[Description("Select or provide text to apply Regex on.")]
-		[SampleUsage("Hello || {vText}")]
+		[SampleUsage("\"Hello\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputText { get; set; }
 
 		[Required]
 		[DisplayName("Regex Pattern")]
 		[Description("Enter a Regex Pattern to apply to the input Text.")]
-		[SampleUsage(@"^([\w\-]+) || {vPattern}")]
+		[SampleUsage("@\"^([\\w\\-]+)\" || vPattern")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Regex { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Result Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(bool) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -53,17 +53,18 @@ namespace OpenBots.Commands.RegEx
 			CommandEnabled = true;
 			CommandIcon = Resources.command_regex;
 
+			v_Regex = "@\"\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vInputData = v_InputText.ConvertUserVariableToString(engine);
-			string vRegex = v_Regex.ConvertUserVariableToString(engine);
+			var vInputData = (string)await v_InputText.EvaluateCode(engine);
+			string vRegex = (string)await v_Regex.EvaluateCode(engine);
 
 			bool isMatch = Regex.IsMatch(vInputData, vRegex);
 
-			isMatch.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			isMatch.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

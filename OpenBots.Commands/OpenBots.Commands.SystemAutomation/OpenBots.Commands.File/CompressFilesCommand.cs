@@ -5,19 +5,19 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using IO = System.IO;
 
 namespace OpenBots.Commands.File
 {
-	[Serializable]
+    [Serializable]
 	[Category("File Operation Commands")]
 	[Description("This command compresses file(s) from a directory into a Zip file.")]
 	public class CompressFilesCommand : ScriptCommand
@@ -25,16 +25,16 @@ namespace OpenBots.Commands.File
 		[Required]
 		[DisplayName("Source Directory Path")]
 		[Description("Enter or Select the Path to the source directory.")]
-		[SampleUsage(@"C:\temp || {ProjectPath}\temp || {vFileSourcePath}")]
-		[Remarks("{ProjectPath} is the directory path of the current project.")]
+		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DirectoryPathOrigin { get; set; }
 
 		[DisplayName("Password (Optional)")]
 		[Description("Define the password to use for file compression.")]
-		[SampleUsage("{vPassword}")]
+		[SampleUsage("vPassword")]
 		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(SecureString) })]
@@ -43,18 +43,18 @@ namespace OpenBots.Commands.File
 		[Required]
 		[DisplayName("Compressed File Directory Path")]
 		[Description("Enter or Select the Folder Path to place the compressed file in.")]
-		[SampleUsage(@"C:\temp || {ProjectPath}\temp || {vFilesPath}")]
-		[Remarks("{ProjectPath} is the directory path of the current project.")]
+		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_PathDestination { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Compressed File Path Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -65,31 +65,26 @@ namespace OpenBots.Commands.File
 			SelectionName = "Compress Files";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_files;
-
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//get variable path to source file
-			var vSourceDirectoryPathOrigin = v_DirectoryPathOrigin.ConvertUserVariableToString(engine);
+			var vSourceDirectoryPathOrigin = (string)await v_DirectoryPathOrigin.EvaluateCode(engine);
 
 			// get file path to destination files
-			var vFilePathDestination = v_PathDestination.ConvertUserVariableToString(engine);
+			var vFilePathDestination = (string)await v_PathDestination.EvaluateCode(engine);
 
 			var vPassword = "";
 			// get password to extract files
-			if (v_Password != null)
-				vPassword = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
+			if (!string.IsNullOrEmpty(v_Password))
+				vPassword = ((SecureString)await v_Password.EvaluateCode(engine)).ConvertSecureStringToString();
 
             if (IO.File.Exists(vSourceDirectoryPathOrigin))
-            {
 				throw new ArgumentException($"{vSourceDirectoryPathOrigin} is a file when it should be a directory");
-            }
 			else if (!Directory.Exists(vSourceDirectoryPathOrigin))
-            {
 				throw new DirectoryNotFoundException($"{vSourceDirectoryPathOrigin} is not a valid directory");
-            }
 
 			string[] filenames = Directory.GetFiles(vSourceDirectoryPathOrigin, "*.*", SearchOption.AllDirectories);
 			string[] directorynames = Directory.GetDirectories(vSourceDirectoryPathOrigin, "*", SearchOption.AllDirectories);
@@ -142,7 +137,7 @@ namespace OpenBots.Commands.File
 			}
 
 			//Add File Path to the output variable
-			compressedFileName.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			compressedFileName.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

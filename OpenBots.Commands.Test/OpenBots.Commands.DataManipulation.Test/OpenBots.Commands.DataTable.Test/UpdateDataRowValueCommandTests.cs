@@ -14,7 +14,7 @@ namespace OpenBots.Commands.DataTable.Test
         [Theory]
         [InlineData("Column Name", "firstname", "jane")]
         [InlineData("Column Index", "0", "")]
-        public void updatesDataRowValue(string option, string searchVal, string updateVal)
+        public async void updatesDataRowValue(string option, string searchVal, string updateVal)
         {
             _updateDataRowValue = new UpdateDataRowValueCommand();
             _engine = new AutomationEngineInstance(null);
@@ -32,7 +32,7 @@ namespace OpenBots.Commands.DataTable.Test
             _updateDataRowValue.v_DataRowValue = updateVal;
 
             _updateDataRowValue.RunCommand(_engine);
-            DataRow outputRow = (DataRow)_updateDataRowValue.v_DataRow.ConvertUserVariableToObject(_engine, typeof(DataRow));
+            DataRow outputRow = (DataRow)await _updateDataRowValue.v_DataRow.EvaluateCode(_engine);
             Assert.Equal(updateVal, outputRow["firstname"]);
         }
     }

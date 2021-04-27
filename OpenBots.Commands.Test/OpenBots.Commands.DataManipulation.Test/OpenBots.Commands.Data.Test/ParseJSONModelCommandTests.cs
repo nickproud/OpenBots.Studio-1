@@ -13,7 +13,7 @@ namespace OpenBots.Commands.Data.Test
         private AutomationEngineInstance _engine;
 
         [Fact]
-        public void ParsesJSONModel()
+        public async void ParsesJSONModel()
         {
             _parseJSONModel = new ParseJSONModelCommand();
             _engine = new AutomationEngineInstance(null);
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Data.Test
             _parseJSONModel.v_ParseObjects = selectorTable;
 
             _parseJSONModel.RunCommand(_engine);
-            List<string> resultList = (List<string>)"{r1output}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> resultList = (List<string>)await "{r1output}".EvaluateCode(_engine);
             Assert.Equal("10", resultList[0]);
         }
     }

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -17,39 +18,38 @@ namespace OpenBots.Commands.Data
 	[Description("This command replaces an existing substring in a string and saves the result in a variable.")]
 	public class ReplaceTextCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("Text Data")]
 		[Description("Provide a variable or text value.")]
-		[SampleUsage("Hello John || {vTextData}")]
+		[SampleUsage("\"Hello John\" || vTextData")]
 		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputText { get; set; }
 
 		[Required]
 		[DisplayName("Old Text")]
 		[Description("Specify the old value of the text that will be replaced.")]
-		[SampleUsage("Hello || {vOldText}")]
+		[SampleUsage("\"Hello\" || vOldText")]
 		[Remarks("'Hello' in 'Hello John' would be targeted for replacement.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OldText { get; set; }
 
 		[Required]
 		[DisplayName("New Text")]
 		[Description("Specify the new value to replace the old value.")]
-		[SampleUsage("Hi || {vNewText}")]
+		[SampleUsage("\"Hi\" || vNewText")]
 		[Remarks("'Hi' would be replaced with 'Hello' to form 'Hi John'.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_NewText { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Text Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -60,31 +60,24 @@ namespace OpenBots.Commands.Data
 			SelectionName = "Replace Text";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_string;
-
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			//get full text
-			string replacementVariable = v_InputText.ConvertUserVariableToString(engine);
+			string replacementVariable = (string)await v_InputText.EvaluateCode(engine);
+			string replacementText = (string)await v_OldText.EvaluateCode(engine);
+			string replacementValue = (string)await v_NewText.EvaluateCode(engine);
 
-			//get replacement text and value
-			string replacementText = v_OldText.ConvertUserVariableToString(engine);
-			string replacementValue = v_NewText.ConvertUserVariableToString(engine);
-
-			//perform replacement
 			replacementVariable = replacementVariable.Replace(replacementText, replacementValue);
 
-			//store in variable
-			replacementVariable.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			replacementVariable.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
 
-			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputText", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_OldText", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_NewText", this, editor));

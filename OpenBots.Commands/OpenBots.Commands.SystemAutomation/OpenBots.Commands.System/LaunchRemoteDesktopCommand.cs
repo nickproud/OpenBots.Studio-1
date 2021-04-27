@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.System
@@ -24,25 +25,25 @@ namespace OpenBots.Commands.System
 		[Required]
 		[DisplayName("Machine Name")]
 		[Description("Define the name of the machine to log on to.")]
-		[SampleUsage("myMachine || {vMachineName}")]
+		[SampleUsage("\"myMachine\" || vMachineName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MachineName { get; set; }
 
 		[Required]
 		[DisplayName("Username")]
 		[Description("Define the username to use when connecting to the machine.")]
-		[SampleUsage("myRobot || {vUsername}")]
+		[SampleUsage("\"myRobot\" || vUsername")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_UserName { get; set; }
 
 		[Required]
 		[DisplayName("Password")]
 		[Description("Define the password to use when connecting to the machine.")]
-		[SampleUsage("{vPassword}")]
+		[SampleUsage("vPassword")]
 		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(SecureString) })]
@@ -51,19 +52,19 @@ namespace OpenBots.Commands.System
 		[Required]
 		[DisplayName("RDP Window Width")]
 		[Description("Define the width for the Remote Desktop Window.")]
-		[SampleUsage("1000 || {vWidth}")]
+		[SampleUsage("1000 || vWidth")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_RDPWidth { get; set; }
 
 		[Required]
 		[DisplayName("RDP Window Height")]
 		[Description("Define the height for the Remote Desktop Window.")]
-		[SampleUsage("800 || {vHeight}")]
+		[SampleUsage("800 || vHeight")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_RDPHeight { get; set; }
 
 		public LaunchRemoteDesktopCommand()
@@ -77,14 +78,14 @@ namespace OpenBots.Commands.System
 			v_RDPHeight = SystemInformation.PrimaryMonitorSize.Height.ToString();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var machineName = v_MachineName.ConvertUserVariableToString(engine);
-			var userName = v_UserName.ConvertUserVariableToString(engine);
-			var password = ((SecureString)v_Password.ConvertUserVariableToObject(engine, nameof(v_Password), this)).ConvertSecureStringToString();
-			var width = int.Parse(v_RDPWidth.ConvertUserVariableToString(engine));
-			var height = int.Parse(v_RDPHeight.ConvertUserVariableToString(engine));
+			var machineName = (string)await v_MachineName.EvaluateCode(engine);
+			var userName = (string)await v_UserName.EvaluateCode(engine);
+			var password = ((SecureString)await v_Password.EvaluateCode(engine)).ConvertSecureStringToString();
+			var width = (int)await v_RDPWidth.EvaluateCode(engine);
+			var height = (int)await v_RDPHeight.EvaluateCode(engine);
 
 			if (engine.AutomationEngineContext.ScriptEngine != null)
 			{

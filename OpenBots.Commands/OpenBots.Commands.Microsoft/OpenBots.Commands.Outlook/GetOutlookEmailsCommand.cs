@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Outlook.Application;
 
@@ -27,19 +28,19 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("Source Mail Folder Name")]
 		[Description("Enter the name of the Outlook mail folder the emails are located in.")]
-		[SampleUsage("Inbox || {vFolderName}")]
+		[SampleUsage("\"Inbox\" || vFolderName")]
 		[Remarks("Source folder cannot be a subfolder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFolder { get; set; }
 
 		[Required]
 		[DisplayName("Filter")]
 		[Description("Enter a valid Outlook filter string.")]
-		[SampleUsage("[Subject] = 'Hello' || [Subject] = 'Hello' and [SenderName] = 'Jane Doe' || {vFilter} || None")]
+		[SampleUsage("\"[Subject] = 'Hello'\" || \"[Subject] = 'Hello' and [SenderName] = 'Jane Doe'\" || vFilter || \"None\"")]
 		[Remarks("*Warning* Using 'None' as the Filter will return every email in the selected Mail Folder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Filter { get; set; }
 
 		[Required]
@@ -81,30 +82,30 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("Output MailItem Directory")]
 		[Description("Enter or Select the path of the directory to store the messages in.")]
-		[SampleUsage(@"C:\temp\myfolder || {vFolderPath} || {ProjectPath}\myFolder")]
+		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
 		[Remarks("This input is optional and will only be used if *Save MailItems and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MessageDirectory { get; set; }
 
 		[Required]
 		[DisplayName("Output Attachment Directory")]
 		[Description("Enter or Select the path to the directory to store the attachments in.")]
-		[SampleUsage(@"C:\temp\myfolder\attachments || {vFolderPath} || {ProjectPath}\myFolder\attachments")]
+		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
 		[Remarks("This input is optional and will only be used if *Save MailItems and Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AttachmentDirectory { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output MailItem List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<MailItem>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -129,13 +130,13 @@ namespace OpenBots.Commands.Outlook
 			v_IncludeEmbeddedImagesAsAttachments = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFolder = v_SourceFolder.ConvertUserVariableToString(engine);
-			var vFilter = v_Filter.ConvertUserVariableToString(engine);
-			var vAttachmentDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
-			var vMessageDirectory = v_MessageDirectory.ConvertUserVariableToString(engine);
+			var vFolder = (string)await v_SourceFolder.EvaluateCode(engine);
+			var vFilter = (string)await v_Filter.EvaluateCode(engine);
+			var vAttachmentDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
+			var vMessageDirectory = (string)await v_MessageDirectory.EvaluateCode(engine);
 
 			if (vFolder == "") 
 				vFolder = "Inbox";
@@ -189,7 +190,7 @@ namespace OpenBots.Commands.Outlook
 					}
 				}
 
-				outMail.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				outMail.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 		}
 

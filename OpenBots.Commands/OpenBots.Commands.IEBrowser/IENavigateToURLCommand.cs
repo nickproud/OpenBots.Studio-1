@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.IEBrowser
@@ -30,10 +31,10 @@ namespace OpenBots.Commands.IEBrowser
         [Required]
         [DisplayName("Navigate to URL")]
         [Description("Enter the destination URL that you want the IE instance to navigate to.")]
-        [SampleUsage("https://example.com/ || {vURL}")]
+        [SampleUsage("\"https://example.com/\" || vURL")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_URL { get; set; }
 
         public IENavigateToURLCommand()
@@ -46,14 +47,14 @@ namespace OpenBots.Commands.IEBrowser
             v_InstanceName = "DefaultIEBrowser";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
 
             var browserObject = v_InstanceName.GetAppInstance(engine);
             var browserInstance = (InternetExplorer)browserObject;
 
-            browserInstance.Navigate(v_URL.ConvertUserVariableToString(engine));
+            browserInstance.Navigate((string)await v_URL.EvaluateCode(engine));
             IECreateBrowserCommand.WaitForReadyState(browserInstance);
         }
 

@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -23,7 +24,7 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter the DataTable to group.")]
-		[SampleUsage("{vDataTable}")]
+		[SampleUsage("vDataTable")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
@@ -41,19 +42,19 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Search Value")]
 		[Description("Enter a valid DataTable index or column name.")]
-		[SampleUsage("0 || {vIndex} || Column1 || {vColumnName}")]
+		[SampleUsage("0 || vIndex || \"Column1\" || vColumnName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_DataValueIndex { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output DataTable List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<OBDataTable>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GroupDataTableCommand()
@@ -66,25 +67,22 @@ namespace OpenBots.Commands.DataTable
 			v_Option = "Column Index";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-
-			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
-			OBDataTable dataTable = (OBDataTable)dataTableVariable;
-
-			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
+			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
 			string columnName = "";
 
 			if (v_Option == "Column Index")
 			{
-				int index = int.Parse(valueIndex);
+				int index = (int)valueIndex;
 				columnName = dataTable.Columns[index].ColumnName;
 			}
 			else if (v_Option == "Column Name")
 			{
-				columnName = valueIndex;
+				columnName = (string)valueIndex;
 			}
 
 			List<OBDataTable> dataTableList = new List<OBDataTable>();
@@ -92,7 +90,7 @@ namespace OpenBots.Commands.DataTable
 						group table by new { placeCol = table[columnName] } into dataTableGroup
 						select dataTableGroup.ToList().CopyToDataTable()).ToList();
 
-			dataTableList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			dataTableList.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

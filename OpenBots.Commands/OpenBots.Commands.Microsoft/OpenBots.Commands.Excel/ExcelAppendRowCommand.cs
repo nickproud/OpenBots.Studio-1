@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -33,10 +34,10 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Row")]
 		[Description("Enter the text value that will be set in the appended row (Can be a DataRow).")]
-		[SampleUsage("Hello,World || {vData1},{vData2} || {vDataRow}")]
+		[SampleUsage("\"Hello,World\" || vData1+\",\"+vData2 || vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DataRow) }, true)]
+		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(string) })]
 		public string v_RowToSet { get; set; }
 
 		public ExcelAppendRowCommand()
@@ -49,13 +50,10 @@ namespace OpenBots.Commands.Excel
 			v_InstanceName = "DefaultExcel";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			dynamic vRow = v_RowToSet.ConvertUserVariableToString(engine);
-
-			if (vRow == v_RowToSet && v_RowToSet.StartsWith("{") && v_RowToSet.EndsWith("}"))
-				vRow = v_RowToSet.ConvertUserVariableToObject(engine, nameof(v_RowToSet), this);
+			dynamic vRow = await v_RowToSet.EvaluateCode(engine);
 
 			var excelObject = v_InstanceName.GetAppInstance(engine);
 			var excelInstance = (Application)excelObject;
@@ -92,7 +90,7 @@ namespace OpenBots.Commands.Excel
 			}
 			else
 			{
-				string vRowString = v_RowToSet.ConvertUserVariableToString(engine);
+				string vRowString = (string)await v_RowToSet.EvaluateCode(engine);
 				var splittext = vRowString.Split(',');
 				string cellValue;
 				foreach (var item in splittext)

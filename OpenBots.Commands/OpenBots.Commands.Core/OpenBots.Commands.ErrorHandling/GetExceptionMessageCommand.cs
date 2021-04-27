@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.ErrorHandling
 {
@@ -23,7 +24,7 @@ namespace OpenBots.Commands.ErrorHandling
 		[Editable(false)]
 		[DisplayName("Output Exception Message Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -37,7 +38,7 @@ namespace OpenBots.Commands.ErrorHandling
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var error = engine.ErrorsOccured.OrderByDescending(x => x.LineNumber).FirstOrDefault();
@@ -45,7 +46,7 @@ namespace OpenBots.Commands.ErrorHandling
 			if (error != null)
 				errorMessage = $"Source: {error.SourceFile}, Line: {error.LineNumber}, " +
 					$"Exception Type: {error.ErrorType}, Exception Message: {error.ErrorMessage}";
-			errorMessage.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			errorMessage.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

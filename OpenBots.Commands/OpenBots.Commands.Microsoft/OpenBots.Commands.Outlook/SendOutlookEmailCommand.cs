@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Outlook.Application;
 
@@ -25,28 +26,28 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("Recipient(s)")]
 		[Description("Enter the email address(es) of the recipient(s).")]
-		[SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
-		[Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"test@test.com\", \"test2@test.com\" } || vEmailsList")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_Recipients { get; set; }
 
 		[Required]
 		[DisplayName("Email Subject")]
 		[Description("Enter the subject of the email.")]
-		[SampleUsage("Hello || {vSubject}")]
+		[SampleUsage("\"Hello\" || vSubject")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Subject { get; set; }
 
 		[Required]
 		[DisplayName("Email Body")]
 		[Description("Enter text to be used as the email body.")]
-		[SampleUsage("Dear John, ... || {vBody}")]
+		[SampleUsage("\"Dear John, ...\" || vBody")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Body { get; set; }
 
 		[Required]
@@ -59,11 +60,11 @@ namespace OpenBots.Commands.Outlook
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
 		[Description("Enter the file path(s) of the file(s) to attach.")]
-		[SampleUsage(@"C:\temp\myFile.xlsx || {vFile} || C:\temp\myFile1.xlsx;C:\temp\myFile2.xlsx || {vFile1};{vFile2} || {vFiles}")]
-		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"C:\\temp\\myFile1.xlsx\", \"C:\\temp\\myFile2.xlsx\" } || vFileList")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_Attachments { get; set; }
 
 		public SendOutlookEmailCommand()
@@ -76,14 +77,12 @@ namespace OpenBots.Commands.Outlook
 			v_BodyType = "Plain";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vRecipients = v_Recipients.ConvertUserVariableToString(engine);
-			var vAttachment = v_Attachments.ConvertUserVariableToString(engine);
-			var vSubject = v_Subject.ConvertUserVariableToString(engine);
-			var vBody = v_Body.ConvertUserVariableToString(engine);
-			var splitRecipients = vRecipients.Split(';');
+			var vRecipients = (List<string>)await v_Recipients.EvaluateCode(engine);
+			var vSubject = (string)await v_Subject.EvaluateCode(engine);
+			var vBody = (string)await v_Body.EvaluateCode(engine);
 
 			Application outlookApp = new Application();
 			MailItem mail = (MailItem)outlookApp.CreateItem(OlItemType.olMailItem);
@@ -92,8 +91,8 @@ namespace OpenBots.Commands.Outlook
 			{
 				ExchangeUser manager = currentUser.GetExchangeUser().GetExchangeUserManager();
 
-				foreach (var t in splitRecipients)
-					mail.Recipients.Add(t.ToString());
+				foreach (var t in vRecipients)
+					mail.Recipients.Add(t);
 
 				mail.Recipients.ResolveAll();
 
@@ -104,10 +103,10 @@ namespace OpenBots.Commands.Outlook
 				else
 					mail.Body = vBody;
  
-				if (!string.IsNullOrEmpty(vAttachment))
+				if (!string.IsNullOrEmpty(v_Attachments))
 				{
-					var splitAttachments = vAttachment.Split(';');
-					foreach (var attachment in splitAttachments)
+					var vAttachment = (List<string>)await v_Attachments.EvaluateCode(engine);
+					foreach (var attachment in vAttachment)
 						mail.Attachments.Add(attachment);
 				}
 				mail.Send();

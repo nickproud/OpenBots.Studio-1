@@ -8,44 +8,42 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
 {
-	[Serializable]
+    [Serializable]
 	[Category("Data Commands")]
 	[Description("This command splits a string by a delimiter and saves the result in a list.")]
 	public class SplitTextCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("Text Data")]
 		[Description("Provide a variable or text value.")]
-		[SampleUsage("Sample text, to be splitted by comma delimiter || {vTextData}")]
-		[Remarks("Providing data of a type other than a 'String' will result in an error.")]
+		[SampleUsage("\"Sample text, to be split by a string\" || vTextData")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputText { get; set; }
 
 		[Required]
 		[DisplayName("Text Delimiter")]
-		[Description("Specify the character that will be used to split the text.")]
-		[SampleUsage("[crLF] || [chars] || , || {vDelimiter} || {vDelimeterList}")]
-		[Remarks("[crLF] can be used for line breaks and [chars] can be used to split each character." +
-				 "To use multiple delimeters, create a List variable of delimeter characters to use as the input.")]
+		[Description("Specify the list of strings that will be used to split the text.")]
+		[SampleUsage("new List<string>(){\";\", \"\\n\"}|| vDelimeterList")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(List<>)}, true)]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_SplitCharacter { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public SplitTextCommand()
@@ -54,71 +52,24 @@ namespace OpenBots.Commands.Data
 			SelectionName = "Split Text";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_string;
-
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var stringVariable = v_InputText.ConvertUserVariableToString(engine);
+			var stringVariable = (string)await v_InputText.EvaluateCode(engine);
+			var splitString = (List<string>)await v_SplitCharacter.EvaluateCode(engine);
 
-			string splitCharacter = "";
-			List<string> splitCharacterList = new List<string>();
-			bool isDelimeterList = false;
+			splitString = stringVariable.Split(splitString.ToArray(), StringSplitOptions.None).ToList();
 
-			dynamic input = v_SplitCharacter.ConvertUserVariableToString(engine);
-
-			if (input == v_SplitCharacter && input.StartsWith("{") && input.EndsWith("}"))
-				input = v_SplitCharacter.ConvertUserVariableToObject(engine, nameof(v_SplitCharacter), this);
-
-			if (input is List<string>)
-			{
-				splitCharacterList = (List<string>)input;
-				isDelimeterList = true;
-			}
-				
-			else if (input is string)
-				splitCharacter = (string)input;
-			else
-				throw new InvalidDataException($"{v_SplitCharacter} is not a valid delimeter");
-
-
-			List<string> splitString;
-			if (isDelimeterList)
-			{
-				splitString = stringVariable.Split(splitCharacterList.ToArray(), StringSplitOptions.None).ToList();
-			}
-			else
-			{
-				
-				if (splitCharacter == "[crLF]")
-				{
-					splitString = stringVariable.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToList();
-				}
-				else if (splitCharacter == "[chars]")
-				{
-					splitString = new List<string>();
-					var chars = stringVariable.ToCharArray();
-					foreach (var c in chars)
-					{
-						splitString.Add(c.ToString());
-					}
-				}
-				else
-				{
-					splitString = stringVariable.Split(new string[] { splitCharacter }, StringSplitOptions.None).ToList();
-				}
-			}
-			
-
-			splitString.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
+			splitString.SetVariableValue(engine, v_OutputUserVariableName);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputText", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputText", this, editor, 100, 300));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SplitCharacter", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

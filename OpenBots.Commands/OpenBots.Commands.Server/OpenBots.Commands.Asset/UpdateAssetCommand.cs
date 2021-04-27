@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Asset
 {
@@ -23,10 +24,10 @@ namespace OpenBots.Commands.Asset
 		[Required]
 		[DisplayName("Asset Name")]
 		[Description("Enter the name of the Asset.")]
-		[SampleUsage("Name || {vAssetName}")]
+		[SampleUsage("\"Name\" || vAssetName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetName { get; set; }
 
 		[Required]
@@ -43,20 +44,20 @@ namespace OpenBots.Commands.Asset
 		[Required]
 		[DisplayName("Asset File Path")]
 		[Description("Enter or Select the path of the file to upload.")]
-		[SampleUsage(@"C:\temp\myfile.txt || {vFilePath} || {ProjectPath}\myfile.txt")]
+		[SampleUsage("@\"C:\\temp\\myfile.txt\" || ProjectPath + @\"\\myfile.txt\" || vFilePath")]
 		[Remarks("This input should only be used for File type Assets.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetFilePath { get; set; }
 
 		[Required]
 		[DisplayName("Asset Value")]
 		[Description("Enter the new value of the Asset.")]
-		[SampleUsage("John || {vAssetValue}")]
+		[SampleUsage("\"John\" || vAssetValue")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AssetValue { get; set; }
 
 		[JsonIgnore]
@@ -81,12 +82,12 @@ namespace OpenBots.Commands.Asset
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
-			var vAssetFilePath = v_AssetFilePath.ConvertUserVariableToString(engine);
-			var vAssetValue = v_AssetValue.ConvertUserVariableToString(engine);
+			var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
+			var vAssetFilePath = (string)await v_AssetFilePath.EvaluateCode(engine);
+			var vAssetValue = (string)await v_AssetValue.EvaluateCode(engine);
 
 			var client = AuthMethods.GetAuthToken();
 			var asset = AssetMethods.GetAsset(client, vAssetName, v_AssetType);

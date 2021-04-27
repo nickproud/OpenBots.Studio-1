@@ -1,19 +1,16 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Dictionary
 {
@@ -25,7 +22,7 @@ namespace OpenBots.Commands.Dictionary
 		[Required]
 		[DisplayName("Dictionary")]
 		[Description("Provide a Dictionary variable.")]
-		[SampleUsage("{vDictionary}")]
+		[SampleUsage("vDictionary || new Dictionary<string, int>() {{ \"Hello\", 1 }}")]
 		[Remarks("Any type of variable other than Dictionary will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
@@ -34,11 +31,20 @@ namespace OpenBots.Commands.Dictionary
 		[Required]
 		[DisplayName("Key")]
 		[Description("Enter key where the value will be removed")]
-		[SampleUsage("Hello || {vKey}")]
+		[SampleUsage("\"Hello\" || 1 || vKey")]
 		[Remarks("Providing a non existing key will produce an exception.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_Key { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output Dictionary Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("vUserVariable")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		public RemoveDictionaryValueCommand()
 		{
@@ -48,33 +54,15 @@ namespace OpenBots.Commands.Dictionary
 			CommandIcon = Resources.command_dictionary;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
-			//get sending instance
 			var engine = (IAutomationEngineInstance)sender;
+			dynamic dynamicDict = await v_DictionaryName.EvaluateCode(engine);
+			dynamic dynamicKey = await v_Key.EvaluateCode(engine);
 
-			var vDictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
-			var vKey = v_Key.ConvertUserVariableToString(engine);
+			dynamicDict[dynamicKey] = null;
 
-			if (vDictionaryVariable != null)
-			{
-				if (vDictionaryVariable is Dictionary<string, string>)
-					((Dictionary<string, string>)vDictionaryVariable)[vKey] = null;
-				else if (vDictionaryVariable is Dictionary<string, OBDataTable>)
-					((Dictionary<string, OBDataTable>)vDictionaryVariable)[vKey] = null;
-				else if (vDictionaryVariable is Dictionary<string, MailItem>)
-					((Dictionary<string, MailItem>)vDictionaryVariable)[vKey] = null;
-				else if (vDictionaryVariable is Dictionary<string, MimeMessage>)
-					((Dictionary<string, MimeMessage>)vDictionaryVariable)[vKey] = null;
-				else if (vDictionaryVariable is Dictionary<string, IWebElement>)
-					((Dictionary<string, IWebElement>)vDictionaryVariable)[vKey] = null;
-				else if (vDictionaryVariable is Dictionary<string, object>)
-					((Dictionary<string, object>)vDictionaryVariable)[vKey] = null;
-				else
-					throw new DataException("Invalid dictionary type, please provide valid dictionary type.");
-			}
-			else
-				throw new NullReferenceException("Attempted to write data to a variable, but the variable was not found. Enclose variables within braces, ex. {vVariable}");
+			((object)dynamicDict).SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -83,13 +71,14 @@ namespace OpenBots.Commands.Dictionary
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DictionaryName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Key", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [From Dictionary '{v_DictionaryName}' at Key '{v_Key}']";
+			return base.GetDisplayValue() + $" [From Dictionary '{v_DictionaryName}' at Key '{v_Key}' - Store Dictionary in '{v_OutputUserVariableName}']";
 		}
 	}
 }

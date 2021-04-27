@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Outlook.Application;
 
@@ -25,7 +26,7 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("MailItem")]
 		[Description("Enter the MailItem to move or copy.")]
-		[SampleUsage("{vMailItem}")]
+		[SampleUsage("vMailItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(MailItem) })]
@@ -34,10 +35,10 @@ namespace OpenBots.Commands.Outlook
 		[Required]
 		[DisplayName("Destination Mail Folder Name")]
 		[Description("Enter the name of the Outlook mail folder the emails are being moved/copied to.")]
-		[SampleUsage("New Folder || {vFolderName}")]
+		[SampleUsage("\"New Folder\" || vFolderName")]
 		[Remarks("Destination folder cannot be a subfolder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DestinationFolder { get; set; }
 
 		[Required]
@@ -69,11 +70,11 @@ namespace OpenBots.Commands.Outlook
 			v_MoveCopyUnreadOnly = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MailItem vMailItem = (MailItem)v_MailItem.ConvertUserVariableToObject(engine, nameof(v_MailItem), this);
-			var vDestinationFolder = v_DestinationFolder.ConvertUserVariableToString(engine);
+			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
+			var vDestinationFolder = (string)await v_DestinationFolder.EvaluateCode(engine);
 			
 			Application outlookApp = new Application();
 			AddressEntry currentUser = outlookApp.Session.CurrentUser.AddressEntry;
