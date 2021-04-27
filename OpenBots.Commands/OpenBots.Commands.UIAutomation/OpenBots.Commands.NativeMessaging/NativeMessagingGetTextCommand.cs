@@ -46,7 +46,7 @@ namespace OpenBots.Commands.NativeMessaging
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(null, true)]
-		public DataTable v_SeleniumSearchParameters { get; set; }
+		public DataTable v_NativeSearchParameters { get; set; }
 
 		[Required]
 		[Editable(false)]
@@ -70,11 +70,11 @@ namespace OpenBots.Commands.NativeMessaging
 
 			v_InstanceName = "DefaultChromeBrowser";
 			//set up search parameter table
-			v_SeleniumSearchParameters = new DataTable();
-			v_SeleniumSearchParameters.Columns.Add("Enabled");
-			v_SeleniumSearchParameters.Columns.Add("Parameter Name");
-			v_SeleniumSearchParameters.Columns.Add("Parameter Value");
-			v_SeleniumSearchParameters.TableName = DateTime.Now.ToString("v_SeleniumSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));
+			v_NativeSearchParameters = new DataTable();
+			v_NativeSearchParameters.Columns.Add("Enabled");
+			v_NativeSearchParameters.Columns.Add("Parameter Name");
+			v_NativeSearchParameters.Columns.Add("Parameter Value");
+			v_NativeSearchParameters.TableName = DateTime.Now.ToString("v_NativeSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));
 		}
 
 		public override void RunCommand(object sender)
@@ -83,8 +83,8 @@ namespace OpenBots.Commands.NativeMessaging
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var chromeProcess = (Process)browserObject;
 
-			DataRow elementRow = v_SeleniumSearchParameters.Rows[0];
-			WebElement webElement = NativeHelper.DataTableToWebElement(v_SeleniumSearchParameters);
+			DataRow elementRow = v_NativeSearchParameters.Rows[0];
+			WebElement webElement = NativeHelper.DataTableToWebElement(v_NativeSearchParameters);
 
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
@@ -108,23 +108,23 @@ namespace OpenBots.Commands.NativeMessaging
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
-			if (v_SeleniumSearchParameters.Rows.Count == 0)
+			if (v_NativeSearchParameters.Rows.Count == 0)
 			{
-				v_SeleniumSearchParameters.Rows.Add(false, "XPath", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Relative XPath", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "ID", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Tag Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Class Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Link Text", "");
-				v_SeleniumSearchParameters.Rows.Add(true, "CSS Selector", "");
+				v_NativeSearchParameters.Rows.Add(false, "XPath", "");
+				v_NativeSearchParameters.Rows.Add(false, "Relative XPath", "");
+				v_NativeSearchParameters.Rows.Add(false, "ID", "");
+				v_NativeSearchParameters.Rows.Add(false, "Name", "");
+				v_NativeSearchParameters.Rows.Add(false, "Tag Name", "");
+				v_NativeSearchParameters.Rows.Add(false, "Class Name", "");
+				v_NativeSearchParameters.Rows.Add(false, "Link Text", "");
+				v_NativeSearchParameters.Rows.Add(true, "CSS Selector", "");
 			}
 			//create search parameters   
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_SeleniumSearchParameters", this));
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_NativeSearchParameters", this));
 			RenderedControls.Add(helperControl);
 
 			//create search param grid
-			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_SeleniumSearchParameters", this);
+			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_NativeSearchParameters", this);
 			_searchParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 
 			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
@@ -144,7 +144,7 @@ namespace OpenBots.Commands.NativeMessaging
 			propertyValue.DataPropertyName = "Parameter Value";
 			_searchParametersGridViewHelper.Columns.Add(propertyValue);
 
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_SeleniumSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
+			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_NativeSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
 			RenderedControls.Add(_searchParametersGridViewHelper);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
@@ -175,12 +175,12 @@ namespace OpenBots.Commands.NativeMessaging
 			{
 				if (SearchParameters != null)
 				{
-					v_SeleniumSearchParameters.Rows.Clear();
+					v_NativeSearchParameters.Rows.Clear();
 
 					foreach (DataRow rw in SearchParameters.Rows)
-						v_SeleniumSearchParameters.ImportRow(rw);
+						v_NativeSearchParameters.ImportRow(rw);
 
-					_searchParametersGridViewHelper.DataSource = v_SeleniumSearchParameters;
+					_searchParametersGridViewHelper.DataSource = v_NativeSearchParameters;
 					_searchParametersGridViewHelper.Refresh();
 				}
 			}
