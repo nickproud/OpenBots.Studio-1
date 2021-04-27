@@ -522,6 +522,12 @@
     <Compile Include="UI\Forms\Supplement Forms\frmTypes.Designer.cs">
       <DependentUpon>frmTypes.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Forms\Supplement Forms\frmExtensionsManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\Supplement Forms\frmExtensionsManager.Designer.cs">
+      <DependentUpon>frmExtensionsManager.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Forms\Supplement Forms\frmUpdating.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -832,6 +838,9 @@
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmTypes.resx">
       <DependentUpon>frmTypes.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\Supplement Forms\frmExtensionsManager.resx">
+      <DependentUpon>frmExtensionsManager.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\Supplement Forms\frmUpdating.resx">
       <DependentUpon>frmUpdating.cs</DependentUpon>
     </EmbeddedResource>
@@ -979,6 +988,7 @@
     <Content Include="Firefox\softokn3.dll" />
     <Content Include="Firefox\xul.dll" />
     <Content Include="OpenBots-ico.ico" />
+    <None Include="Resources\ActionBar\action-bar-extensions.png" />
     <Content Include="Resources\ScriptFiles\DefaultCSScript.txt" />
     <Content Include="Resources\ScriptFiles\DefaultPythonScript.txt" />
     <None Include="Resources\ScriptFiles\DefaultTagUIScript.txt" />
