@@ -84,8 +84,8 @@ namespace OpenBots.Commands.NativeMessaging
 			string responseText;
 			NativeRequest.ProcessRequest("cleartext", JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = (NativeResponse)JsonConvert.DeserializeObject(responseText);
-			if (responseObject.Status == "Failed") { 
-			//Failed
+			if (responseObject.Status == "Failed") {
+				throw new Exception(responseObject.Result);
 			}
 		}
 

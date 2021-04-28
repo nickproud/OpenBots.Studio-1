@@ -90,9 +90,10 @@ namespace OpenBots.Commands.NativeMessaging
 
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
-			string elementText;
-			NativeRequest.ProcessRequest("elementexists", JsonConvert.SerializeObject(webElement), out elementText);
-			bool elementFound = elementText == "Failed" ? false : true;
+			string responseText;
+			NativeRequest.ProcessRequest("elementexists", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeResponse responseObject = (NativeResponse)JsonConvert.DeserializeObject(responseText);
+			bool elementFound = responseObject.Status == "Failed" ? false : true;
 			elementFound.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 

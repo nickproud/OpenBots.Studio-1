@@ -97,9 +97,10 @@ namespace OpenBots.Commands.NativeMessaging
 				v_NativeSearchParameters.Rows[7].ItemArray[2].ToString() : "";
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
-			string elementText;
-			NativeRequest.ProcessRequest("doubleclick", JsonConvert.SerializeObject(webElement), out elementText);
-			if (elementText == "Failed")
+			string responseText;
+			NativeRequest.ProcessRequest("doubleclick", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeResponse responseObject = (NativeResponse)JsonConvert.DeserializeObject(responseText);
+			if (responseObject.Status == "Failed")
 			{
 				//Failed
 			}

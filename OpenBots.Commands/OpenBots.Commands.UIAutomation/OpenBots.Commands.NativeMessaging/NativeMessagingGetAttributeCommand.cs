@@ -100,9 +100,10 @@ namespace OpenBots.Commands.NativeMessaging
 
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
-			string elementText;
-			NativeRequest.ProcessRequest("getattribute", JsonConvert.SerializeObject(webElement), out elementText);
-			elementText.SetVariableValue(engine, v_OutputUserVariableName);
+			string responseText;
+			NativeRequest.ProcessRequest("getattribute", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeResponse responseObject = (NativeResponse)JsonConvert.DeserializeObject(responseText);
+			responseObject.Result.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
