@@ -1,12 +1,12 @@
 ﻿using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -335,6 +335,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
             dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
 
+            TypeMethods.GenerateAllVariableTypes(NamespaceMethods.GetAssemblies(_importedNamespaces), _typeContext.GroupedTypes);
+
             var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
             variableType.DataSource = defaultTypesBinding;
             argumentType.DataSource = defaultTypesBinding;
@@ -435,6 +437,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 var importedNameSpacesBinding = new BindingSource(_importedNamespaces, null);
                 lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
 
+                TypeMethods.GenerateAllVariableTypes(NamespaceMethods.GetAssemblies(_importedNamespaces), _typeContext.GroupedTypes);
+
                 //marks the script as unsaved with changes
                 if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
@@ -456,6 +460,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 removaList.ForEach(x => _importedNamespaces.Remove(x));
                 var importedNameSpacesBinding = new BindingSource(_importedNamespaces, null);
                 lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
+
+                TypeMethods.GenerateAllVariableTypes(NamespaceMethods.GetAssemblies(_importedNamespaces), _typeContext.GroupedTypes);
 
                 //marks the script as unsaved with changes
                 if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))

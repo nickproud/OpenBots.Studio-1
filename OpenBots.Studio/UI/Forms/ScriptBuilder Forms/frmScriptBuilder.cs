@@ -246,7 +246,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             var defaultTypes = ScriptDefaultTypes.DefaultVarArgTypes;
             _typeContext = new TypeContext(groupedTypes, defaultTypes);
-            _importedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+            _importedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
             _allNamespaces = new Dictionary<string, AssemblyReference>() 
             { 
                 { 
@@ -806,7 +806,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             NotifySync("Loading package assemblies...", Color.White);
             string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-            _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces);            
+            _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _importedNamespaces);            
             AContainer = _builder.Build();
             LoadCommands(this);
             ReloadAllFiles();

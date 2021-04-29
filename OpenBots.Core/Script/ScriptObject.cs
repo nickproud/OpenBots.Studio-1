@@ -14,7 +14,7 @@ namespace OpenBots.Core.Script
             ScriptVariables = new List<ScriptVariable>();
             ScriptArguments = new List<ScriptArgument>();
             ScriptElements = new List<ScriptElement>();
-            ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+            ImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
         }
 
         public ScriptObject(List<ScriptVariable> scriptVariables, List<ScriptArgument> scriptArguments, List<ScriptElement> scriptElements,

@@ -62,5 +62,27 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 throw ex;
             }
         }
+
+        public static List<Assembly> GetAssemblies(Dictionary<string, AssemblyReference> importedNamespaces)
+        {
+            try
+            {
+                if (importedNamespaces != null && importedNamespaces.Count > 0)
+                {
+                    return importedNamespaces.Select(x => AppDomain.CurrentDomain.GetAssemblies()
+                                                                                 .Where(y => y.GetName().Name == x.Value.AssemblyName &&
+                                                                                             y.GetName().Version == Version.Parse(x.Value.AssemblyVersion))
+                                                                                 .FirstOrDefault())
+                                             .Distinct()
+                                             .ToList();
+                }
+
+                throw new Exception($"ImportedNamespaces is null or empty!");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

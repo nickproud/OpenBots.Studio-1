@@ -1,6 +1,7 @@
 ﻿using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
@@ -321,6 +322,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             dgvVariables.DataSource = new BindingList<ScriptVariable>(ScriptVariables);
             dgvArguments.DataSource = new BindingList<ScriptArgument>(ScriptArguments);
 
+            TypeMethods.GenerateAllVariableTypes(NamespaceMethods.GetAssemblies(ImportedNamespaces), TypeContext.GroupedTypes);
+
             var defaultTypesBinding = new BindingSource(TypeContext.DefaultTypes, null);
             variableType.DataSource = defaultTypesBinding;
             argumentType.DataSource = defaultTypesBinding;
@@ -372,6 +375,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 var importedNameSpacesBinding = new BindingSource(ImportedNamespaces, null);
                 lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
 
+                TypeMethods.GenerateAllVariableTypes(NamespaceMethods.GetAssemblies(ImportedNamespaces), TypeContext.GroupedTypes);
+
                 //marks the script as unsaved with changes
                 if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
@@ -393,6 +398,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 removaList.ForEach(x => ImportedNamespaces.Remove(x));
                 var importedNameSpacesBinding = new BindingSource(ImportedNamespaces, null);
                 lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
+
+                TypeMethods.GenerateAllVariableTypes(NamespaceMethods.GetAssemblies(ImportedNamespaces), TypeContext.GroupedTypes);
 
                 //marks the script as unsaved with changes
                 if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))

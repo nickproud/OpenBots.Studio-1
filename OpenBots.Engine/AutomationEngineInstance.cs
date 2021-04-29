@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 using Newtonsoft.Json;
 using OpenBots.Core.App;
 using OpenBots.Core.Command;
@@ -22,15 +24,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis;
 using OBScript = OpenBots.Core.Script.Script;
 using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
-using RSScript = Microsoft.CodeAnalysis.Scripting.Script;
-using System.Threading.Tasks;
 
 namespace OpenBots.Engine
 {
@@ -105,7 +102,7 @@ namespace OpenBots.Engine
                 AutomationEngineContext.AppInstances = new Dictionary<string, object>();
 
             if (AutomationEngineContext.ImportedNamespaces == null)
-                AutomationEngineContext.ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+                AutomationEngineContext.ImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
 
             ServiceResponses = new List<IRestResponse>();
             DataTables = new List<DataTable>();
@@ -308,7 +305,7 @@ namespace OpenBots.Engine
 
                 if (AutomationEngineContext.ImportedNamespaces == null)
                 {
-                    AutomationEngineContext.ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+                    AutomationEngineContext.ImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
                 }
 
                 //execute commands

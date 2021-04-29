@@ -60,7 +60,7 @@ namespace OpenBots.Core.Script
             Arguments = new List<ScriptArgument>();
             Elements = new List<ScriptElement>();
             Commands = new List<ScriptAction>();
-            ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+            ImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
         }
 
         /// <summary>
