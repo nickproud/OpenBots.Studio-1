@@ -1,14 +1,11 @@
-﻿using Autofac;
-using OpenBots.Core.Command;
+﻿using OpenBots.Core.Command;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using RestSharp;
-using Serilog.Core;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Threading.Tasks;
 
 namespace OpenBots.Core.Infrastructure
@@ -26,6 +23,7 @@ namespace OpenBots.Core.Infrastructure
         bool CurrentLoopCancelled { get; set; }
         bool CurrentLoopContinuing { get; set; }
         EngineSettings EngineSettings { get; set; }
+        string PrivateCommandLog { get; set; }
         string FileName { get; set; }
         bool IsServerExecution { get; set; }
         bool IsServerChildExecution { get; set; }

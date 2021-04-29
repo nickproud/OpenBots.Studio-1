@@ -76,10 +76,6 @@ namespace OpenBots.Core.Command
 		[Browsable(false)]
 		public IfrmScriptBuilder CurrentScriptBuilder { get; set; }
 
-		[JsonIgnore]
-		[Browsable(false)]
-		public LogEventLevel LogLevel { get; set; } = LogEventLevel.Information;
-
 		public ScriptCommand()
 		{
 			CommandEnabled = false;

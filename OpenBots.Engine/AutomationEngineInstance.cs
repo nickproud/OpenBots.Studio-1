@@ -52,7 +52,7 @@ namespace OpenBots.Engine
         private Stopwatch _stopWatch { get; set; }
         private EngineStatus _currentStatus { get; set; }
         public EngineSettings EngineSettings { get; set; }
-        private string _privateCommandLog { get; set; }
+        public string PrivateCommandLog { get; set; }
         public List<DataTable> DataTables { get; set; }
         public string FileName { get; set; }
         public bool IsServerExecution { get; set; }
@@ -77,7 +77,7 @@ namespace OpenBots.Engine
                 Log.Information("Engine Class has been initialized");
             }
             
-            _privateCommandLog = "Can't log display value as the command contains sensitive data";
+            PrivateCommandLog = "Can't log display value as the command contains sensitive data";
 
             //initialize error tracking list
             ErrorsOccured = new List<ScriptError>();
@@ -387,7 +387,7 @@ namespace OpenBots.Engine
                 {
                     _currentStatus = EngineStatus.Paused;
                     ReportProgress("Paused on Line " + parentCommand.LineNumber + ": "
-                        + (parentCommand.v_IsPrivate ? _privateCommandLog : parentCommand.GetDisplayValue()));
+                        + (parentCommand.v_IsPrivate ? PrivateCommandLog : parentCommand.GetDisplayValue()));
                     ReportProgress("[Please select 'Resume' when ready]");
                     isFirstWait = false;
                 }
@@ -436,7 +436,7 @@ namespace OpenBots.Engine
 
             //report intended execution
             if (parentCommand.CommandName != "LogMessageCommand")
-                ReportProgress($"Running Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? _privateCommandLog : parentCommand.GetDisplayValue())}", parentCommand.LogLevel);
+                ReportProgress($"Running Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? PrivateCommandLog : parentCommand.GetDisplayValue())}");
 
             //handle any errors
             try
@@ -504,15 +504,6 @@ namespace OpenBots.Engine
                             default:
                                 throw ex;
                         }
-                    }
-
-                    if (parentCommand.CommandName == "LogMessageCommand")
-                    {
-                        string displayValue = parentCommand.GetDisplayValue().Replace("Log Message ['", "").Replace("']", "");
-                        string logMessage = (string)await displayValue.Split('-').Last().EvaluateCode(this);
-                        displayValue = displayValue.Replace(displayValue.Split('-').Last(), logMessage);
-                        ReportProgress($"Logging Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? _privateCommandLog : displayValue)}",
-                            parentCommand.LogLevel);
                     }
                 }
             }

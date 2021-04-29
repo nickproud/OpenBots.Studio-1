@@ -73,32 +73,32 @@ namespace OpenBots.Commands.Engine
 			var textToLog = (string)await v_LogText.EvaluateCode(engine);
 			var loggerFilePath = (string)await v_LogFile.EvaluateCode(engine);
 
+			LogEventLevel logLevel = LogEventLevel.Information;
+
 			//determine log file
-			if (v_LogFile == "Engine Logs")
+			switch (v_LogType)
 			{
-				switch (v_LogType)
-				{
-					case "Verbose":
-						LogLevel = LogEventLevel.Verbose;
-						break;
-					case "Debug":
-						LogLevel = LogEventLevel.Debug;
-						break;
-					case "Information":
-						LogLevel = LogEventLevel.Information;
-						break;
-					case "Warning":
-						LogLevel = LogEventLevel.Warning;
-						break;
-					case "Error":
-						LogLevel = LogEventLevel.Error;
-						break;
-					case "Fatal":
-						LogLevel = LogEventLevel.Fatal;
-						break;
-				}
+				case "Verbose":
+					logLevel = LogEventLevel.Verbose;
+					break;
+				case "Debug":
+					logLevel = LogEventLevel.Debug;
+					break;
+				case "Information":
+					logLevel = LogEventLevel.Information;
+					break;
+				case "Warning":
+					logLevel = LogEventLevel.Warning;
+					break;
+				case "Error":
+					logLevel = LogEventLevel.Error;
+					break;
+				case "Fatal":
+					logLevel = LogEventLevel.Fatal;
+					break;
 			}
-			else
+
+			if (loggerFilePath != "Engine Logs")
 			{
 				//create new logger and log to custom file
 				using (var logger = new Logging().CreateFileLogger(loggerFilePath, RollingInterval.Infinite))
@@ -126,6 +126,9 @@ namespace OpenBots.Commands.Engine
 					}                  
 				}
 			}
+
+			string logMessage = $"{v_LogType} - {textToLog}";
+			engine.ReportProgress($"Logging Line {LineNumber}: {(v_IsPrivate ? engine.PrivateCommandLog : logMessage)}", logLevel);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -142,10 +145,7 @@ namespace OpenBots.Commands.Engine
 
 		public override string GetDisplayValue()
 		{
-			if (v_LogFile == "Engine Logs")
-				return base.GetDisplayValue() + $" ['{v_LogType} - {v_LogText}']";
-			else
-				return base.GetDisplayValue() + $" ['{v_LogType} - {v_LogText}' to '{v_LogFile}']";
+			return base.GetDisplayValue() + $" [{v_LogType} - '{v_LogText}' to '{v_LogFile}']";
 		}
 	}
 }
