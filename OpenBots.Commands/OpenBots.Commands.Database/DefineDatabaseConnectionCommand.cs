@@ -16,6 +16,7 @@ using System.Data.OleDb;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+using System.Security;
 
 namespace OpenBots.Commands.Database
 {
@@ -37,19 +38,19 @@ namespace OpenBots.Commands.Database
 		[Required]
 		[DisplayName("Connection String")]
 		[Description("Define the string to use when connecting to the OleDb database.")]
-		[SampleUsage("\"Provider=sqloledb;Data Source=myServerAddress;Initial Catalog=myDataBase;Integrated Security=SSPI; || vConnectionString\"")]
+		[SampleUsage("\"Provider=sqloledb;Data Source=myServerAddress;Initial Catalog=myDataBase;Integrated Security=SSPI;\" || vConnectionString")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ConnectionString { get; set; }
 
-		[Required]
-		[DisplayName("Connection String Password")]
-		[Description("Define the password to use when connecting to the OleDb database.")]
-		[SampleUsage("\"password\" || vPassword")]
-		[Remarks("")]
+		[DisplayName("Connection String Password (Optional)")]
+		[Description("Optional field to define the password to use when connecting to the OleDb database.")]
+		[SampleUsage("vPassword")]
+		[Remarks("If storing the password in the textbox below, please ensure the connection string " +
+				"above contains a database-specific placeholder with #pwd to be replaced at runtime. (;Password=#pwd)")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_ConnectionStringPassword { get; set; }
 
 		[Required]
@@ -64,10 +65,6 @@ namespace OpenBots.Commands.Database
 		[JsonIgnore]
 		[Browsable(false)]
 		private TextBox _connectionString;
-
-		[JsonIgnore]
-		[Browsable(false)]
-		private TextBox _connectionStringPassword;
 
 		public DefineDatabaseConnectionCommand()
 		{
@@ -102,13 +99,11 @@ namespace OpenBots.Commands.Database
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var connection = (string)await v_ConnectionString.EvaluateCode(engine);
-			var connectionPass = (string)await v_ConnectionStringPassword.EvaluateCode(engine);
+			var connectionSecurePass = (SecureString)await v_ConnectionStringPassword.EvaluateCode(engine);
+			var connectionPass = "";
+			if(connectionSecurePass != null)
+				connectionPass = connectionSecurePass.ConvertSecureStringToString();
 
-			if (connectionPass.StartsWith("!"))
-			{
-				connectionPass = connectionPass.Substring(1);
-				connectionPass = EncryptionServices.DecryptString(connectionPass, "OPENBOTS");
-			}
 			connection = connection.Replace("#pwd", connectionPass);
 
 			return new OleDbConnection(connection);
@@ -148,45 +143,7 @@ namespace OpenBots.Commands.Database
 			RenderedControls.Add(testConnectionControl);
 			RenderedControls.Add(_connectionString);
 
-			_connectionStringPassword = commandControls.CreateDefaultInputFor("v_ConnectionStringPassword", this);
-
-			var connectionPassLabel = commandControls.CreateDefaultLabelFor("v_ConnectionStringPassword", this);
-			var connectionPassHelpers = commandControls.CreateUIHelpersFor("v_ConnectionStringPassword", this, new[] { _connectionStringPassword }, editor);
-
-			RenderedControls.Add(connectionPassLabel);
-			RenderedControls.AddRange(connectionPassHelpers);
-
-			CommandItemControl passwordHelperControl = new CommandItemControl();
-			passwordHelperControl.Padding = new Padding(10, 0, 0, 0);
-			passwordHelperControl.ForeColor = Color.AliceBlue;
-			passwordHelperControl.Font = new Font("Segoe UI Semilight", 10);
-			passwordHelperControl.Name = "show_pass_helper";
-			passwordHelperControl.CommandImage = Resources.command_password;
-			passwordHelperControl.CommandDisplay = "Show Password";
-			passwordHelperControl.Click += (sender, e) => TogglePasswordChar(passwordHelperControl, e);
-			RenderedControls.Add(passwordHelperControl);
-
-			CommandItemControl encryptHelperControl = new CommandItemControl();
-			encryptHelperControl.Padding = new Padding(10, 0, 0, 0);
-			encryptHelperControl.ForeColor = Color.AliceBlue;
-			encryptHelperControl.Font = new Font("Segoe UI Semilight", 10);
-			encryptHelperControl.Name = "show_pass_helper";
-			encryptHelperControl.CommandImage = Resources.command_password;
-			encryptHelperControl.CommandDisplay = "Encrypt Password";
-			encryptHelperControl.Click += (sender, e) => EncryptPassword(passwordHelperControl, e);
-			RenderedControls.Add(encryptHelperControl);
-		   
-			var label = new Label();
-			label.AutoSize = true;
-			label.Font = new Font("Segoe UI Semilight", 9);
-			label.ForeColor = Color.White;
-			label.Text = "NOTE: If storing the password in the textbox below, please ensure the connection string " +
-				"above contains a database-specific placeholder with #pwd to be replaced at runtime. (;Password=#pwd)";
-			RenderedControls.Add(label);
-
-			RenderedControls.Add(_connectionStringPassword);
-			_connectionStringPassword.PasswordChar = '*';
-
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ConnectionStringPassword", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_TestConnection", this, editor));
 
 			return RenderedControls;
@@ -219,41 +176,6 @@ namespace OpenBots.Commands.Database
 			ShowConnectionBuilder();
 		}
 
-		private void TogglePasswordChar(CommandItemControl sender, EventArgs e)
-		{
-			//if password is hidden
-			if (_connectionStringPassword.PasswordChar == '*')
-			{
-				//show password plain text
-				sender.CommandDisplay = "Hide Password";
-				_connectionStringPassword.PasswordChar = '\0';
-			}
-			else
-			{
-				//mask password with chars
-				sender.CommandDisplay = "Show Password";
-				_connectionStringPassword.PasswordChar = '*';
-			}
-		}
-
-		private void EncryptPassword(CommandItemControl sender, EventArgs e)
-		{
-			if (string.IsNullOrEmpty(_connectionStringPassword.Text))
-				return;
-
-			var acknowledgement =  MessageBox.Show("WARNING! This function will encrypt the password locally but " + 
-												   "is not extremely secure as the client knows the secret! " + 
-												   "Consider using a password management service instead. The encrypted " +
-												   "password will be stored with a leading exclamation ('!') which the " +
-												   "automation engine will detect and know to decrypt the value automatically " +
-												   "at run-time. Do not encrypt the password multiple times or the decryption " +
-												   "will be invalid!  Would you like to proceed?", "Encryption Warning", 
-												   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-			if (acknowledgement == DialogResult.Yes)
-				_connectionStringPassword.Text = $"\"!{EncryptionServices.EncryptString(_connectionStringPassword.Text.TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
-		}
-
 		public void ShowConnectionBuilder()
 		{
 			var MSDASCObj = new MSDASC.DataLinks();
@@ -261,7 +183,7 @@ namespace OpenBots.Commands.Database
 			MSDASCObj.PromptEdit(connection);
 
 			if (!string.IsNullOrEmpty(connection.ConnectionString))
-				_connectionString.Text = connection.ConnectionString;
+				_connectionString.Text = "@\"" + connection.ConnectionString + "\"";
 		}
 	}
 }
