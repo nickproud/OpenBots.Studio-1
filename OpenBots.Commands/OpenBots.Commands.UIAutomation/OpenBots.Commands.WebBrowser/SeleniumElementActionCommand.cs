@@ -258,10 +258,7 @@ namespace OpenBots.Commands.WebBrowser
 							finalTextToSet += keyPress;
 						}
 						else
-						{
-							var convertedChunk = (string)await chunkedString.EvaluateCode(engine);
-							finalTextToSet += convertedChunk;
-						}
+							finalTextToSet += chunkedString;
 					}
 					((IWebElement)element).SendKeys(finalTextToSet);
 					break;

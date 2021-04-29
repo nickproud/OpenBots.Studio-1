@@ -478,7 +478,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             dynamic navigateToURLCommand = TypeMethods.CreateTypeInstance(_container, "SeleniumNavigateToURLCommand");
             navigateToURLCommand.v_InstanceName = _browserInstanceName;
-            navigateToURLCommand.v_URL = url;
+            navigateToURLCommand.v_URL = $"\"{url}\"";
             _sequenceCommandList.Add(navigateToURLCommand);
         }
 
@@ -538,7 +538,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 //append chars to previously created command
                 //this makes editing easier for the user because only 1 command is issued rather than multiples
                 var previouslyInputChars = lastCreatedSendKeysCommand.v_WebActionParameterTable.Rows[0][1].ToString();
-                lastCreatedSendKeysCommand.v_WebActionParameterTable.Rows[0][1] = previouslyInputChars + selectedKey;
+                lastCreatedSendKeysCommand.v_WebActionParameterTable.Rows[0][1] = previouslyInputChars.Insert(previouslyInputChars.Length - 1, selectedKey);
             }
             else
             {
@@ -550,7 +550,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 DataTable webActionDT = setTextElementActionCommand.v_WebActionParameterTable;
                 DataRow textToSetRow = webActionDT.NewRow();
                 textToSetRow["Parameter Name"] = "Text To Set";
-                textToSetRow["Parameter Value"] = selectedKey;
+                textToSetRow["Parameter Value"] = $"\"{selectedKey}\"";
                 webActionDT.Rows.Add(textToSetRow);
 
                 _sequenceCommandList.Add(setTextElementActionCommand);

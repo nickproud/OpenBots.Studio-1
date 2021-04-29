@@ -116,7 +116,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     }
 
                     dynamic activateWindowCommand = TypeMethods.CreateTypeInstance(_container, "ActivateWindowCommand");
-                    activateWindowCommand.v_WindowName = WindowName;
+                    activateWindowCommand.v_WindowName = $"\"{WindowName}\"";
                     _sequenceCommandList.Add(activateWindowCommand);
                 }
 
@@ -372,7 +372,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void BuildActivateWindowCommand()
         {
             dynamic activateWindowCommand = TypeMethods.CreateTypeInstance(_container, "ActivateWindowCommand");
-            activateWindowCommand.v_WindowName = WindowName;
+            activateWindowCommand.v_WindowName = $"\"{WindowName}\"";
 
             _sequenceCommandList.Add(activateWindowCommand);
         }
@@ -380,7 +380,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void BuildElementClickActionCommand(string clickType)
         {
             dynamic clickElementActionCommand = TypeMethods.CreateTypeInstance(_container, "UIAutomationCommand");
-            clickElementActionCommand.v_WindowName = WindowName;
+            clickElementActionCommand.v_WindowName = $"\"{WindowName}\"";
             clickElementActionCommand.v_UIASearchParameters = SearchParameters;
             clickElementActionCommand.v_AutomationType = "Click Element";
 
@@ -443,20 +443,20 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 //append chars to previously created command
                 //this makes editing easier for the user because only 1 command is issued rather than multiples
                 var previouslyInputChars = lastCreatedSendKeysCommand.v_UIAActionParameters.Rows[0][1].ToString();
-                lastCreatedSendKeysCommand.v_UIAActionParameters.Rows[0][1] = previouslyInputChars + selectedKey;
+                lastCreatedSendKeysCommand.v_UIAActionParameters.Rows[0][1] = previouslyInputChars.Insert(previouslyInputChars.Length - 1, selectedKey);
             }
             else
             {
                 //build keyboard command
                 dynamic setTextElementActionCommand = TypeMethods.CreateTypeInstance(_container, "UIAutomationCommand");
-                setTextElementActionCommand.v_WindowName = WindowName;
+                setTextElementActionCommand.v_WindowName = $"\"{WindowName}\"";
                 setTextElementActionCommand.v_UIASearchParameters = SearchParameters;
                 setTextElementActionCommand.v_AutomationType = "Set Text";
            
                 DataTable webActionDT = setTextElementActionCommand.v_UIAActionParameters;
                 DataRow textToSetRow = webActionDT.NewRow();
                 textToSetRow["Parameter Name"] = "Text To Set";
-                textToSetRow["Parameter Value"] = selectedKey;
+                textToSetRow["Parameter Value"] = $"\"{selectedKey}\"";
                 webActionDT.Rows.Add(textToSetRow);
 
                 _sequenceCommandList.Add(setTextElementActionCommand);
