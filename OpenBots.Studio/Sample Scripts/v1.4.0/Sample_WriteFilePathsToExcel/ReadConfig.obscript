@@ -1,0 +1,447 @@
+{
+  "$type": "OpenBots.Core.Script.Script, OpenBots.Core",
+  "Commands": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "6623f09c-fbf3-4509-ab1f-c66bdfdeddf6",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 1,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "Read Configuration excel file and save information to dictionary"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "d0950ae2-3905-4b5c-a93c-159a7c96934d",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 2,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "Precondition: Config file available at indicated path"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "7f6a54b7-1750-4191-98a0-b970183e05ce",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 3,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "Variables out: {vConfig}"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "bdc99f9d-2163-46cb-b556-5c4565a2280e",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 4,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "==================================================="
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+        "v_LogFile": "Engine Logs",
+        "v_LogText": "Read Config started",
+        "v_LogType": "Information",
+        "CommandID": "4afd8695-a8e2-4cb0-93fb-28c412c273d8",
+        "CommandName": "LogMessageCommand",
+        "SelectionName": "Log Message",
+        "LineNumber": 5,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.ErrorHandling.BeginTryCommand, OpenBots.Commands.Core",
+        "CommandID": "112eb5f0-b531-448e-8689-0665acf815c1",
+        "CommandName": "BeginTryCommand",
+        "SelectionName": "Try",
+        "LineNumber": 6,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": true,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": [
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "48e0c55f-bdb4-474a-b223-c7efbc55e316",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 7,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Items in this section will be handled if error occurs"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Excel.ExcelCreateApplicationCommand, OpenBots.Commands.Microsoft",
+            "v_InstanceName": "DefaultExcel",
+            "v_NewOpenWorkbook": "Open Workbook",
+            "v_FilePath": "{ProjectPath}\\Config\\Config.xlsx",
+            "v_Visible": "No",
+            "v_CloseAllInstances": "Yes",
+            "CommandID": "7bbf4a5e-1ef2-40a9-98ef-e2c06f0db268",
+            "CommandName": "ExcelCreateApplicationCommand",
+            "SelectionName": "Create Excel Application",
+            "LineNumber": 8,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Variable.SetVariableCommand, OpenBots.Commands.Core",
+            "v_Input": "{ProjectPath}\\Config\\Config.xlsx",
+            "v_OutputUserVariableName": "{vConfigPath}",
+            "CommandID": "3f943efd-285f-404c-be78-79f91e83b0ac",
+            "CommandName": "SetVariableCommand",
+            "SelectionName": "Set Variable",
+            "LineNumber": 9,
+            "IsCommented": true,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+            "v_LogFile": "Engine Logs",
+            "v_LogText": "Reading Config file located at '{vConfigPath}'",
+            "v_LogType": "Information",
+            "CommandID": "fc12e2d8-c05a-4bb1-bae1-e26dd618886f",
+            "CommandName": "LogMessageCommand",
+            "SelectionName": "Log Message",
+            "LineNumber": 10,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "bbbbe3c3-4857-4560-b57e-c9f11c25db63",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 11,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Loading Config file to dictionary"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Excel.LoadDictionaryCommand, OpenBots.Commands.Microsoft",
+            "v_InstanceName": "DefaultExcel",
+            "v_KeyColumn": "Name",
+            "v_ValueColumn": "Values",
+            "v_OutputUserVariableName": "{varDictionary}",
+            "CommandID": "661cb8c2-2ac3-485c-bc98-15937c669f57",
+            "CommandName": "LoadDictionaryCommand",
+            "SelectionName": "Load Dictionary",
+            "LineNumber": 12,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "7a166fb5-4b15-48ee-80d1-7cee39bdd33d",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 13,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "==================================================="
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Excel.ExcelCloseApplicationCommand, OpenBots.Commands.Microsoft",
+            "v_InstanceName": "DefaultExcel",
+            "v_ExcelSaveOnExit": "Yes",
+            "CommandID": "c9def87b-1da3-4dee-9d04-78f09e92e3da",
+            "CommandName": "ExcelCloseApplicationCommand",
+            "SelectionName": "Close Excel Application",
+            "LineNumber": 14,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.CatchCommand, OpenBots.Commands.Core",
+            "v_ExceptionType": "Exception",
+            "CommandID": "0b278944-3030-426e-b4d6-db1963c24124",
+            "CommandName": "CatchCommand",
+            "SelectionName": "Catch",
+            "LineNumber": 15,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "e85020f2-3507-4e84-ac9d-c014985bf9c3",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 16,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "This section executes if error occurs above"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.GetExceptionMessageCommand, OpenBots.Commands.Core",
+            "v_OutputUserVariableName": "{vErrorMessage}",
+            "CommandID": "10da6d04-8612-44af-bf7c-10aaffb799f5",
+            "CommandName": "GetExceptionMessageCommand",
+            "SelectionName": "Get Exception Message",
+            "LineNumber": 17,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+            "v_LogFile": "Engine Logs",
+            "v_LogText": "Error reading config file- '{vErrorMessage}'",
+            "v_LogType": "Error",
+            "CommandID": "f2d671e4-14b7-4c6c-aec6-f26b79ea51a8",
+            "CommandName": "LogMessageCommand",
+            "SelectionName": "Log Message",
+            "LineNumber": 18,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.RethrowCommand, OpenBots.Commands.Core",
+            "CommandID": "e0bba60f-f5a8-41ec-8a47-76fb18255bea",
+            "CommandName": "RethrowCommand",
+            "SelectionName": "Rethrow",
+            "LineNumber": 19,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.EndTryCommand, OpenBots.Commands.Core",
+            "CommandID": "704efd58-d790-4207-9b57-e4102e97f6cb",
+            "CommandName": "EndTryCommand",
+            "SelectionName": "End Try",
+            "LineNumber": 20,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        }
+      ]
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+        "v_LogFile": "Engine Logs",
+        "v_LogText": "Read Config ended",
+        "v_LogType": "Information",
+        "CommandID": "e18787a8-3bdc-488b-a76b-45fb4791cbee",
+        "CommandName": "LogMessageCommand",
+        "SelectionName": "Log Message",
+        "LineNumber": 21,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    }
+  ],
+  "Variables": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vConfigPath",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "ProjectPath",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": "Value Provided at Runtime"
+    }
+  ],
+  "Arguments": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptArgument, OpenBots.Core",
+      "ArgumentName": "varDictionary",
+      "Direction": 1,
+      "ArgumentType": "System.Collections.Generic.Dictionary`2, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "ArgumentValue": null,
+      "AssignedVariable": null,
+      "IsSecureString": false
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptArgument, OpenBots.Core",
+      "ArgumentName": "vErrorMessage",
+      "Direction": 1,
+      "ArgumentType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "ArgumentValue": null,
+      "AssignedVariable": null,
+      "IsSecureString": false
+    }
+  ],
+  "Elements": [],
+  "Version": "1.4.0.0"
+}

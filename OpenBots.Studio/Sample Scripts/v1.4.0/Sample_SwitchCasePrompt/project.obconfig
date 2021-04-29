@@ -1,0 +1,1 @@
+{"ProjectID":"1f08f26a-9d30-4796-bbe6-f276af5ae33a","ProjectName":"Sample_SwitchCasePrompt","ProjectType":"OpenBots","Main":"Main.obscript","Version":"1.4.0.0","Dependencies":{"OpenBots.Commands.Core":"1.4.0","OpenBots.Commands.DataManipulation":"1.4.0","OpenBots.Commands.Microsoft":"1.4.0","OpenBots.Commands.SystemAutomation":"1.4.0","OpenBots.Commands.UIAutomation":"1.4.0"}}
