@@ -40,7 +40,7 @@ namespace OpenBots.Core.Infrastructure
         void ExecuteScriptJson();
         Task ExecuteCommand(ScriptAction command);
         string GetEngineContext();
-        void ReportProgress(string progress, LogEventLevel eventLevel = LogEventLevel.Information);
+        void ReportProgress(string progress, string eventLevel = "Information");
         string GetProjectPath();
         IAutomationEngineInstance CreateAutomationEngineInstance(EngineContext engineContext);
         void ExecuteScriptSync();
