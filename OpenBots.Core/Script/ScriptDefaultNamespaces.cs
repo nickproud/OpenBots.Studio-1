@@ -1,6 +1,7 @@
 ﻿using MimeKit;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Security;
@@ -24,6 +25,7 @@ namespace OpenBots.Core.Script
             { "System", GetAssemblyReference(typeof(string)) },
             { "System.Collections.Generic", GetAssemblyReference(typeof(string)) },
             { "System.Data", GetAssemblyReference(typeof(DataTable)) },
+            { "System.Drawing", GetAssemblyReference(typeof(Bitmap)) },
             { "System.Linq", GetAssemblyReference(typeof(IQueryable)) },
             { "System.Security", GetAssemblyReference(typeof(SecureString)) },
             { "System.Text", GetAssemblyReference(typeof(string)) },

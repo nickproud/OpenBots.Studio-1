@@ -3,6 +3,7 @@ using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,6 +19,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private TypeContext _typeContext;
         private Type _preEditType;
         private ToolTip _typeToolTip;
+        private CodeDomProvider _provider;
 
         public frmAddArgument(TypeContext typeContext)
         {
@@ -62,6 +64,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             _typeToolTip = AddTypeToolTip();
             _typeToolTip.SetToolTip(cbxDefaultType, _preEditType.GetRealTypeName());
+            _provider = CodeDomProvider.CreateProvider("C#");
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
@@ -70,6 +73,12 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             if (txtArgumentName.Text == string.Empty)
             {
                 lblArgumentNameError.Text = "Argument Name not provided";
+                return;
+            }
+
+            if (!_provider.IsValidIdentifier(txtArgumentName.Text))
+            {
+                lblArgumentNameError.Text = "Argument Name is invalid";
                 return;
             }
 

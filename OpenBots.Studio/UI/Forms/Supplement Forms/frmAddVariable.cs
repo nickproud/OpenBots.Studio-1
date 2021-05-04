@@ -2,6 +2,7 @@
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -17,6 +18,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private TypeContext _typeContext;
         private Type _preEditType;
         private ToolTip _typeToolTip;
+        private CodeDomProvider _provider;
 
         public frmAddVariable(TypeContext typeContext)
         {
@@ -58,6 +60,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             _typeToolTip = AddTypeToolTip();
             _typeToolTip.SetToolTip(cbxDefaultType, _preEditType.GetRealTypeName());
+            _provider = CodeDomProvider.CreateProvider("C#");
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
@@ -66,6 +69,12 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             if (txtVariableName.Text == string.Empty)
             {
                 lblVariableNameError.Text = "Variable Name not provided";
+                return;
+            }
+
+            if (!_provider.IsValidIdentifier(txtVariableName.Text))
+            {
+                lblVariableNameError.Text = "Variable Name is invalid";
                 return;
             }
 

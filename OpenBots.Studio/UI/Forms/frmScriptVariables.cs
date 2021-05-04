@@ -40,6 +40,7 @@ namespace OpenBots.UI.Forms
             InitializeComponent();
             _typeContext = typeContext;
             LastModifiedVariableName = string.Empty;
+            ExpandUserVariableNode();
         }
         private void frmScriptVariables_Load(object sender, EventArgs e)
         {

@@ -4,6 +4,7 @@ using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -46,9 +47,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 {
                     var cellValue = dgv.Rows[e.RowIndex].Cells[0].Value;
 
+                    CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
+
                     //deletes an empty row if it's created without assigning values
                     if ((cellValue == null && _preEditVarArgName != null) ||
-                        (cellValue != null && string.IsNullOrEmpty(cellValue.ToString().Trim())))
+                        (cellValue != null && string.IsNullOrEmpty(cellValue.ToString().Trim())) ||
+                        (cellValue != null && !provider.IsValidIdentifier(cellValue.ToString())))
                     {
                         dgv.Rows.RemoveAt(e.RowIndex);
                         return;
