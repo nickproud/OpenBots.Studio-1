@@ -128,7 +128,7 @@ namespace OpenBots.Commands.Engine
 			}
 
 			string logMessage = $"{v_LogType} - {textToLog}";
-			engine.ReportProgress($"Logging Line {LineNumber}: {(v_IsPrivate ? engine.PrivateCommandLog : logMessage)}", logLevel);
+			engine.ReportProgress($"Logging Line {LineNumber}: {(v_IsPrivate ? engine.PrivateCommandLog : logMessage)}", Enum.GetName(typeof(LogEventLevel), logLevel));
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

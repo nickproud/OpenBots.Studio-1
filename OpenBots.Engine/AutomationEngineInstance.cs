@@ -494,11 +494,11 @@ namespace OpenBots.Engine
                         switch (ErrorHandlingAction)
                         {
                             case "Ignore Error":
-                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), LogEventLevel.Error);
+                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), Enum.GetName(typeof(LogEventLevel), LogEventLevel.Error));
                                 ReportProgress("Ignoring Per Error Handling");
                                 break;
                             case "Report Error":
-                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), LogEventLevel.Error);
+                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), Enum.GetName(typeof(LogEventLevel), LogEventLevel.Error));
                                 ReportProgress("Handling Error and Attempting to Continue");
                                 throw ex;
                             default:
@@ -541,7 +541,7 @@ namespace OpenBots.Engine
                     DialogResult result = DialogResult.OK;
                     if (ErrorHandlingAction != "Ignore Error")
                         result = AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.LoadErrorForm(errorMessage);
-                    ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), LogEventLevel.Debug);
+                    ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), Enum.GetName(typeof(LogEventLevel), LogEventLevel.Debug));
                     AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.IsUnhandledException = false;
 
                     if (result == DialogResult.OK)
@@ -604,11 +604,12 @@ namespace OpenBots.Engine
             _isScriptSteppedIntoBeforeException = true;
         }
 
-        public virtual void ReportProgress(string progress, LogEventLevel eventLevel = LogEventLevel.Information)
+        public virtual void ReportProgress(string progress, string eventLevel = "Information")
         {
             ReportProgressEventArgs args = new ReportProgressEventArgs();
+            LogEventLevel logEventLevel = (LogEventLevel)Enum.Parse(typeof(LogEventLevel), eventLevel);
 
-            switch (eventLevel)
+            switch (logEventLevel)
             {
                 case LogEventLevel.Verbose:
                     Log.Verbose(progress);
