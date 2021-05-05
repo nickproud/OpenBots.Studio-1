@@ -62,7 +62,6 @@ namespace OpenBots.Core.Enums
         ShowHTMLBuilder,
         ShowIfBuilder,
         ShowLoopBuilder,
-        ShowEncryptionHelper,
         CaptureWindowHelper
     }
 

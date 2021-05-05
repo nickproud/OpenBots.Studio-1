@@ -206,16 +206,10 @@ namespace OpenBots.Commands.Input
 										   where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					string encryptedData = (from rw in v_UIAActionParameters.AsEnumerable()
-											where rw.Field<string>("Parameter Name") == "Encrypted Text"
-											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 					if (clearElement == null)
 						clearElement = "No";
 
 					textToSet = (string)await textToSet.EvaluateCode(engine);
-
-					if (encryptedData == "Encrypted")
-						textToSet = EncryptionServices.DecryptString(textToSet, "OPENBOTS");
 
 					if (requiredHandle.Current.IsEnabled && requiredHandle.Current.IsKeyboardFocusable)
 					{
@@ -426,6 +420,7 @@ namespace OpenBots.Commands.Input
 			DataGridViewTextBoxColumn propertyName = new DataGridViewTextBoxColumn();
 			propertyName.HeaderText = "Parameter Name";
 			propertyName.DataPropertyName = "Parameter Name";
+			propertyName.ReadOnly = true;
 			_searchParametersGridViewHelper.Columns.Add(propertyName);
 
 			DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
@@ -601,19 +596,6 @@ namespace OpenBots.Commands.Input
 					{
 						actionParameters.Rows.Add("Text To Set");
 						actionParameters.Rows.Add("Clear Element Before Setting Text");
-						actionParameters.Rows.Add("Encrypted Text");
-						actionParameters.Rows.Add("Optional - Click to Encrypt 'Text To Set'");
-
-						DataGridViewComboBoxCell encryptedBox = new DataGridViewComboBoxCell();
-						encryptedBox.Items.Add("Not Encrypted");
-						encryptedBox.Items.Add("Encrypted");
-						_actionParametersGridViewHelper.Rows[2].Cells[1] = encryptedBox;
-						_actionParametersGridViewHelper.Rows[2].Cells[1].Value = "Not Encrypted";
-
-						var buttonCell = new DataGridViewButtonCell();
-						_actionParametersGridViewHelper.Rows[3].Cells[1] = buttonCell;
-						_actionParametersGridViewHelper.Rows[3].Cells[1].Value = "Encrypt Text";
-						_actionParametersGridViewHelper.CellContentClick += ElementsGridViewHelper_CellContentClick;
 					}
 
 					DataGridViewComboBoxCell comparisonComboBox = new DataGridViewComboBoxCell();
@@ -714,29 +696,6 @@ namespace OpenBots.Commands.Input
 			}
 			_actionParametersGridViewHelper.Columns[0].ReadOnly = true;
 			_actionParametersGridViewHelper.DataSource = v_UIAActionParameters;
-		}
-
-		private void ElementsGridViewHelper_CellContentClick(object sender, DataGridViewCellEventArgs e)
-		{
-			var targetCell = _actionParametersGridViewHelper.Rows[e.RowIndex].Cells[e.ColumnIndex];
-
-			if (targetCell is DataGridViewButtonCell && targetCell.Value.ToString() == "Encrypt Text")
-			{
-				var targetElement = _actionParametersGridViewHelper.Rows[0].Cells[1];
-
-				if (targetElement.Value == null)
-					return;
-
-				var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " + 
-											  $"Would you like to proceed and convert '{targetElement.Value}' to an encrypted value?", 
-											  "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-				if (warning == DialogResult.Yes)
-				{
-					targetElement.Value = $"\"{EncryptionServices.EncryptString(targetElement.Value.ToString().TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
-					_actionParametersGridViewHelper.Rows[2].Cells[1].Value = "Encrypted";
-				}
-			}
 		}
 	}
 }

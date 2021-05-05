@@ -44,9 +44,9 @@ namespace OpenBots.Commands.Input
 
 		[DisplayName("Input Parameters (Optional)")]
 		[Description("Define the required input parameters.")]
-		[SampleUsage("[TextBox | Name | 500,100 | \"John\" | vName]\n" +
-					 "[CheckBox | Developer | 500,30 | \"True\" | vDeveloper]\n" +
-					 "[ComboBox | Gender | 500,30 | \"Male,Female,Other\" | vGender]")]
+		[SampleUsage("[TextBox | \"Name\" | \"500,100\" | \"John\" | vName]\n" +
+					 "[CheckBox | \"Developer\" | \"500,30\" | \"True\" | vDeveloper]\n" +
+					 "[ComboBox | \"Gender\" | \"500,30\" | \"Male,Female,Other\" | vGender]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string), typeof(bool) })]
@@ -100,6 +100,8 @@ namespace OpenBots.Commands.Input
 			//translate variables for each label
 			foreach (DataRow rw in v_UserInputConfig.Rows)
 			{
+				rw["Label"] = (string)await rw["Label"].ToString().EvaluateCode(engine);
+				rw["Size"] = (string)await rw["Size"].ToString().EvaluateCode(engine);
 				rw["DefaultValue"] = (await rw["DefaultValue"].ToString().EvaluateCode(engine)).ToString();
 				string targetVariable = rw["StoreInVariable"].ToString();
 
@@ -226,7 +228,7 @@ namespace OpenBots.Commands.Input
 		private void AddInputParameter(object sender, EventArgs e, IfrmCommandEditor editor)
 		{
 			var newRow = v_UserInputConfig.NewRow();
-			newRow["Size"] = "500,30";
+			newRow["Size"] = "\"500,30\"";
 			v_UserInputConfig.Rows.Add(newRow);
 		}
 

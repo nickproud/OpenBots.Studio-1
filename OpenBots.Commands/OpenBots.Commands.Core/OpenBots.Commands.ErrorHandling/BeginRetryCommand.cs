@@ -210,14 +210,11 @@ namespace OpenBots.Commands.ErrorHandling
 					editor.EditingCommand = ifCommand;
 					editor.OriginalCommand = ifCommand;
 					editor.CreationModeInstance = CreationMode.Edit;
-					editor.ScriptEngineContext = parentEditor.ScriptEngineContext;
+					editor.ScriptContext = parentEditor.ScriptContext;
 					editor.TypeContext = parentEditor.TypeContext;
 
 					if (((Form)editor).ShowDialog() == DialogResult.OK)
 					{
-						parentEditor.ScriptEngineContext = editor.ScriptEngineContext;
-						parentEditor.TypeContext = editor.TypeContext;
-
 						var editedCommand = editor.SelectedCommand as BeginIfCommand;
 						var displayText = editedCommand.GetDisplayValue();
 						var serializedData = JsonConvert.SerializeObject(editedCommand);
@@ -243,7 +240,7 @@ namespace OpenBots.Commands.ErrorHandling
 			var automationCommands = new List<AutomationCommand>() { CommandsHelper.ConvertToAutomationCommand(commandControls.GetCommandType("BeginIfCommand")) };
             IfrmCommandEditor editor = commandControls.CreateCommandEditorForm(automationCommands, null);
 			editor.SelectedCommand = commandControls.CreateBeginIfCommand();
-			editor.ScriptEngineContext = parentEditor.ScriptEngineContext;
+			editor.ScriptContext = parentEditor.ScriptContext;
 			editor.TypeContext = parentEditor.TypeContext;
 
 			if (((Form)editor).ShowDialog() == DialogResult.OK)
@@ -252,7 +249,7 @@ namespace OpenBots.Commands.ErrorHandling
 				var configuredCommand = editor.SelectedCommand;
 				var displayText = configuredCommand.GetDisplayValue();
 				var serializedData = JsonConvert.SerializeObject(configuredCommand);
-				parentEditor.ScriptEngineContext = editor.ScriptEngineContext;
+				parentEditor.ScriptContext = editor.ScriptContext;
 				parentEditor.TypeContext = editor.TypeContext;
 
 				//add to list

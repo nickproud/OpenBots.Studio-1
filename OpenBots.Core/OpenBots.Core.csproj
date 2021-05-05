@@ -222,6 +222,7 @@
     <Compile Include="Command\ScriptCommand.cs" />
     <Compile Include="Project\ProjectArgument.cs" />
     <Compile Include="Script\AssemblyReference.cs" />
+    <Compile Include="Script\ScriptContext.cs" />
     <Compile Include="Script\ScriptDefaultNamespaces.cs" />
     <Compile Include="Script\ScriptDefaultTypes.cs" />
     <Compile Include="Script\TypeContext.cs" />
@@ -267,7 +268,6 @@
     <Compile Include="Script\ScriptArgument.cs" />
     <Compile Include="Script\ScriptAutofacContractResolver.cs" />
     <Compile Include="Script\ScriptElement.cs" />
-    <Compile Include="Script\ScriptObject.cs" />
     <Compile Include="Script\ScriptVariable.cs" />
     <Compile Include="Server\API Methods\AgentMethods.cs" />
     <Compile Include="Server\API Methods\AssetMethods.cs" />

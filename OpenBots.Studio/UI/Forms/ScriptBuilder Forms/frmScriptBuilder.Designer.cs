@@ -1460,6 +1460,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvVariables.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvVariablesArguments_DefaultValuesNeeded);
             this.dgvVariables.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvVariables.SelectionChanged += new System.EventHandler(this.dgvVariables_SelectionChanged);
+            this.dgvVariables.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvVariablesArguments_UserDeletedRow);
             this.dgvVariables.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
             this.dgvVariables.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
             // 
@@ -1522,6 +1523,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvArguments.SelectionChanged += new System.EventHandler(this.dgvArguments_SelectionChanged);
             this.dgvArguments.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
             this.dgvArguments.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
+            this.dgvArguments.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvVariablesArguments_UserDeletedRow);
+
             // 
             // argumentName
             // 

@@ -49,19 +49,26 @@ namespace OpenBots.UI.CustomControls
         {
         }
 
-        public CommandControls(frmCommandEditor editor, EngineContext engineContext, TypeContext typeContext)
+        public CommandControls(frmCommandEditor editor, TypeContext typeContext, IContainer container,
+            string projectPath)
         {
             _currentEditor = editor;
-            _container = engineContext.Container;
-            _projectPath = engineContext.ProjectPath;
+            _container = container;
+            _projectPath = projectPath;
             _typeContext = typeContext;
         }
 
-        public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300)
+        public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300, bool shouldValidate = true)
         {
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
-            var input = CreateDefaultInputFor(parameterName, parent, height, width);
+
+            Control input;
+            if (shouldValidate)
+                input = CreateDefaultInputFor(parameterName, parent, height, width);
+            else
+                input = CreateDefaultNoValidationInputFor(parameterName, parent, height, width);
+
             var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { input }, editor);
 
             controlList.Add(label);
@@ -236,6 +243,7 @@ namespace OpenBots.UI.CustomControls
         public TextBox CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300)
         {
             var inputBox = new UITextBox();
+
             inputBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
             inputBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             inputBox.Height = height;
@@ -257,21 +265,42 @@ namespace OpenBots.UI.CustomControls
             return inputBox;
         }
 
+        public TextBox CreateDefaultNoValidationInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300)
+        {
+            var inputBox = new TextBox();
+
+            inputBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
+            inputBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
+            inputBox.Height = height;
+            inputBox.Width = width;
+
+            inputBox.Tag = new CommandControlValidationContext(parameterName, parent);
+
+            if (height > 30)
+            {
+                inputBox.Multiline = true;
+            }
+
+            inputBox.Name = parameterName;
+            inputBox.KeyDown += InputBox_KeyDown;
+            inputBox.KeyPress += InputBox_KeyPress;
+
+            if (parameterName == "v_Comment")
+                inputBox.Margin = new Padding(0, 0, 0, 20);
+            return inputBox;
+        }
+
         private void InputBox_KeyDown(object sender, KeyEventArgs e)
         {
             TextBox inputBox = (TextBox)sender;
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
-                {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
-                };
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext);
+
+                scriptVariableEditor.ScriptContext = _currentEditor.ScriptContext;
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
                         inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptVariableEditor.LastModifiedVariableName);
                 }
@@ -282,14 +311,11 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
+                    ScriptContext = _currentEditor.ScriptContext
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
                         inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptArgumentEditor.LastModifiedArgumentName);
                 }
@@ -394,16 +420,12 @@ namespace OpenBots.UI.CustomControls
             var comboBox = ((ComboBox)sender);
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
-                {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
-                };
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext);
+
+                scriptVariableEditor.ScriptContext = _currentEditor.ScriptContext;
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
                         comboBox.Text = scriptVariableEditor.LastModifiedVariableName;
                 }
@@ -414,14 +436,11 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
+                    ScriptContext = _currentEditor.ScriptContext
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
                         comboBox.Text = scriptArgumentEditor.LastModifiedArgumentName;
                 }
@@ -481,16 +500,12 @@ namespace OpenBots.UI.CustomControls
                 if (targetDGV.SelectedCells[0].ReadOnly == true || targetDGV.SelectedCells[0] is DataGridViewComboBoxCell)
                     return;
 
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
-                {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
-                };
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext);
+
+                scriptVariableEditor.ScriptContext = _currentEditor.ScriptContext;
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
                         targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + scriptVariableEditor.LastModifiedVariableName;
                 }
@@ -507,14 +522,11 @@ namespace OpenBots.UI.CustomControls
 
                 frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
+                    ScriptContext = _currentEditor.ScriptContext
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
                         targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + scriptArgumentEditor.LastModifiedArgumentName;
                 }
@@ -672,13 +684,7 @@ namespace OpenBots.UI.CustomControls
                         //show loop builder
                         helperControl.CommandImage = Resources.command_startloop;
                         helperControl.CommandDisplay = "Add New Loop Statement";
-                        break;
-                    case UIAdditionalHelperType.ShowEncryptionHelper:
-                        //show encryption helper
-                        helperControl.CommandImage = Resources.command_password;
-                        helperControl.CommandDisplay = "Encrypt Text";
-                        helperControl.Click += (sender, e) => EncryptText(sender, e, (frmCommandEditor)editor);
-                        break;
+                        break;                   
                     case UIAdditionalHelperType.CaptureWindowHelper:
                         //show window name helper
                         helperControl.CommandImage = Resources.command_window;
@@ -730,11 +736,11 @@ namespace OpenBots.UI.CustomControls
             frmVariableArgumentSelector newVariableSelector = new frmVariableArgumentSelector();
 
             //get copy of user variables and append system variables, then load to listview
-            var variableList = _currentEditor.ScriptEngineContext.Variables.Select(f => f.VariableName).ToList();
+            var variableList = _currentEditor.ScriptContext.Variables.Select(f => f.VariableName).ToList();
             newVariableSelector.lstVariables.Items.AddRange(variableList.ToArray());
 
             //get copy of user arguments, then load to listview
-            var argumentList = _currentEditor.ScriptEngineContext.Arguments.Select(f => f.ArgumentName).ToList();
+            var argumentList = _currentEditor.ScriptContext.Arguments.Select(f => f.ArgumentName).ToList();
             newVariableSelector.lstArguments.Items.AddRange(argumentList.ToArray());
 
             //if user pressed "OK"
@@ -815,7 +821,7 @@ namespace OpenBots.UI.CustomControls
             frmElementSelector newElementSelector = new frmElementSelector();
 
             //get copy of user element and append system elements, then load to combobox
-            var elementList = _currentEditor.ScriptEngineContext.Elements.Select(f => f.ElementName).ToList();
+            var elementList = _currentEditor.ScriptContext.Elements.Select(f => f.ElementName).ToList();
 
             newElementSelector.lstElements.Items.AddRange(elementList.ToArray());
 
@@ -837,7 +843,7 @@ namespace OpenBots.UI.CustomControls
                 {
                     DataGridView targetDGV = (DataGridView)inputBox.Tag;
 
-                    targetDGV.DataSource = _currentEditor.ScriptEngineContext.Elements
+                    targetDGV.DataSource = _currentEditor.ScriptContext.Elements
                         .Where(x => x.ElementName == newElementSelector.lstElements.SelectedItem.ToString().Replace("<", "").Replace(">", ""))
                         .FirstOrDefault().ElementValue;
                 }
@@ -1179,28 +1185,6 @@ namespace OpenBots.UI.CustomControls
             htmlForm.Dispose();
         }
 
-        private void EncryptText(object sender, EventArgs e, IfrmCommandEditor editor)
-        {
-            CommandItemControl inputBox = (CommandItemControl)sender;
-            TextBox targetTextbox = (TextBox)inputBox.Tag;
-
-            if (string.IsNullOrEmpty(targetTextbox.Text))
-                return;
-
-            var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " +
-                                         $"Would you like to proceed and convert '{targetTextbox.Text}' to an encrypted value?",
-                                          "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-            if (warning == DialogResult.Yes)
-            {
-                var encrypted = $"\"{EncryptionServices.EncryptString(targetTextbox.Text.TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
-                targetTextbox.Text = encrypted;
-
-                ComboBox comboBoxControl = (ComboBox)((frmCommandEditor)editor).flw_InputVariables.Controls["v_EncryptionOption"];
-                comboBoxControl.Text = "Encrypted";
-            }
-        }
-
         private void GetWindowName(object sender, EventArgs e)
         {
             GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
@@ -1329,13 +1313,13 @@ namespace OpenBots.UI.CustomControls
 
                 List<string> varArgNames = new List<string>();
 
-                foreach (var variable in ((frmCommandEditor)editor).ScriptEngineContext.Variables)
+                foreach (var variable in ((frmCommandEditor)editor).ScriptContext.Variables)
                 {
                     if (variable.VariableName != "ProjectPath")
                         varArgNames.Add(variable.VariableName);
                 }
 
-                foreach (var argument in ((frmCommandEditor)editor).ScriptEngineContext.Arguments)
+                foreach (var argument in ((frmCommandEditor)editor).ScriptContext.Arguments)
                     varArgNames.Add(argument.ArgumentName);
 
                 cbo.Items.AddRange(varArgNames.OrderBy(x => x).ToArray());               
@@ -1352,7 +1336,7 @@ namespace OpenBots.UI.CustomControls
             {
                 cbo.Items.Clear();
 
-                foreach (var element in editor.ScriptEngineContext.Elements)
+                foreach (var element in editor.ScriptContext.Elements)
                     cbo.Items.Add("<" + element.ElementName + ">");
             }
             return cbo;
@@ -1381,7 +1365,6 @@ namespace OpenBots.UI.CustomControls
         public IfrmCommandEditor CreateCommandEditorForm(List<AutomationCommand> commands, List<ScriptCommand> existingCommands)
         {
             frmCommandEditor editor = new frmCommandEditor(commands, existingCommands, null);
-            editor.ScriptEngineContext.Container = _container;
 
             return editor;
         }

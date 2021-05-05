@@ -61,6 +61,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 dgvVariables.DataBindingComplete -= dgvVariablesArguments_DataBindingComplete;
                 dgvVariables.RowsAdded -= dgvVariablesArguments_RowsAdded;
                 dgvVariables.UserDeletingRow -= dgvVariablesArguments_UserDeletingRow;
+                dgvVariables.UserDeletedRow -= dgvVariablesArguments_UserDeletedRow;
                 dgvVariables.KeyDown -= dgvVariablesArguments_KeyDown;
                 dgvVariables.CurrentCellDirtyStateChanged -= dgvVariablesArguments_CurrentCellDirtyStateChanged;
                 dgvVariables.DefaultValuesNeeded -= dgvVariablesArguments_DefaultValuesNeeded;
@@ -75,6 +76,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 dgvArguments.DefaultValuesNeeded -= dgvVariablesArguments_DefaultValuesNeeded;
                 dgvArguments.RowsAdded -= dgvVariablesArguments_RowsAdded;
                 dgvArguments.UserDeletingRow -= dgvVariablesArguments_UserDeletingRow;
+                dgvArguments.UserDeletedRow -= dgvVariablesArguments_UserDeletedRow;
                 dgvArguments.KeyDown -= dgvVariablesArguments_KeyDown;
                 lbxImportedNamespaces.KeyDown -= lbxImportedNamespaces_KeyDown;
                 lbxImportedNamespaces.KeyPress -= lbxImportedNamespaces_KeyPress;
@@ -741,6 +743,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.dgvVariables.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvVariables.SelectionChanged += new System.EventHandler(this.dgvVariables_SelectionChanged);
             this.dgvVariables.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
+            this.dgvVariables.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvVariablesArguments_UserDeletedRow);
             this.dgvVariables.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
             // 
             // variableName
@@ -801,6 +804,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             this.dgvArguments.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvArguments.SelectionChanged += new System.EventHandler(this.dgvArguments_SelectionChanged);
             this.dgvArguments.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
+            this.dgvArguments.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvVariablesArguments_UserDeletedRow);
             this.dgvArguments.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvVariablesArguments_KeyDown);
             // 
             // argumentName

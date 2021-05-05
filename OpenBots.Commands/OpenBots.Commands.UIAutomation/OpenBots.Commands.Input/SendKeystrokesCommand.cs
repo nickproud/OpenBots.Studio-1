@@ -39,18 +39,8 @@ namespace OpenBots.Commands.Input
 		[SampleUsage("\"Hello, World!\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[Editor("ShowEncryptionHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSend { get; set; }
-
-		[Required]
-		[DisplayName("Text Encrypted")]
-		[PropertyUISelectionOption("Not Encrypted")]
-		[PropertyUISelectionOption("Encrypted")]
-		[Description("Indicate whether the text in *Text to Send* is encrypted.")]
-		[SampleUsage("")]
-		[Remarks("")]
-		public string v_EncryptionOption { get; set; }
 
 		public SendKeystrokesCommand()
 		{
@@ -60,7 +50,6 @@ namespace OpenBots.Commands.Input
 			CommandIcon = Resources.command_input;
 
 			v_WindowName = "\"Current Window\"";
-			v_EncryptionOption = "Not Encrypted";
 		}
 
 		public async override Task RunCommand(object sender)
@@ -73,9 +62,6 @@ namespace OpenBots.Commands.Input
 
 			string textToSend = (string)await v_TextToSend.EvaluateCode(engine);
 
-			if (v_EncryptionOption == "Encrypted")
-				textToSend = EncryptionServices.DecryptString(textToSend, "OPENBOTS");
-
 			SendKeys.SendWait(Regex.Replace(textToSend, "[+^%~(){}]", "{$0}"));
 
 			Thread.Sleep(500);
@@ -87,7 +73,6 @@ namespace OpenBots.Commands.Input
 
 			RenderedControls.AddRange(commandControls.CreateDefaultWindowControlGroupFor("v_WindowName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToSend", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_EncryptionOption", this, editor));
 
 			return RenderedControls;
 		}

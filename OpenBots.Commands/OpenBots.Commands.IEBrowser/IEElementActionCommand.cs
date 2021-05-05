@@ -190,7 +190,7 @@ namespace OpenBots.Commands.IEBrowser
 
             foreach (DataRow seachCriteria in elementSearchProperties)
             {
-                string searchPropertyName = seachCriteria.Field<string>("Property Name");
+                string searchPropertyName = (string)await seachCriteria.Field<string>("Property Name").EvaluateCode(engine);
                 dynamic searchPropertyValue = await seachCriteria.Field<string>("Property Value").EvaluateCode(engine);
                 string searchPropertyFound = seachCriteria.Field<string>("Match Found");
 
@@ -466,7 +466,8 @@ namespace OpenBots.Commands.IEBrowser
             return curtop;
         }
 
-        private async Task<bool> InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, InternetExplorer browserInstance)
+        private async Task<bool> InspectFrame(IHTMLElementCollection elementCollection, EnumerableRowCollection<DataRow> elementSearchProperties, object sender, 
+            InternetExplorer browserInstance)
         {
             bool qualifyingElementFound = false;
             foreach (IHTMLElement element in elementCollection)

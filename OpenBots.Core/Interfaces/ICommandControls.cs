@@ -1,9 +1,6 @@
-﻿using Autofac;
-using OpenBots.Core.Command;
+﻿using OpenBots.Core.Command;
 using OpenBots.Core.Model.EngineModel;
-using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -12,7 +9,7 @@ namespace OpenBots.Core.Infrastructure
 {
     public interface ICommandControls
     {
-        List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300);
+        List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300, bool shouldValidate = true);
         List<Control> CreateDefaultPasswordInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         List<Control> CreateDefaultOutputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         List<Control> CreateDefaultDropdownGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);

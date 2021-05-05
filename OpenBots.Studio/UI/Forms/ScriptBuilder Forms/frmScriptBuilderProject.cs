@@ -74,7 +74,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 NotifySync("Loading package assemblies...", Color.White);               
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _importedNamespaces);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _scriptContext.ImportedNamespaces);
                 AContainer = _builder.Build();
 
                 string mainScriptPath = Path.Combine(ScriptProjectPath, ScriptProjectPath, ScriptProject.Main);
@@ -122,7 +122,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     NotifySync("Loading package assemblies...", Color.White);
 
                     var assemblyList = NugetPackageManager.LoadPackageAssemblies(existingConfigPath);
-                    _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _importedNamespaces);
+                    _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _scriptContext.ImportedNamespaces);
                     AContainer = _builder.Build();
 
                     ScriptProject = project;
@@ -325,7 +325,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     throw new Exception("Main script not found");
 
                 var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _importedNamespaces);
+                _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _scriptContext.ImportedNamespaces);
                 AContainer = _builder.Build();
 
                 _mainFileName = mainFileName;

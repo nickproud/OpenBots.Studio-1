@@ -46,7 +46,7 @@ namespace OpenBots.Commands.WebBrowser
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." + 
 			"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("XPath : \"//*[@id=\"features\"]/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
+		[SampleUsage("XPath : \"//*[@id=\'features\']/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
 				 "\n\tID: \"1\"" +
 				 "\n\tName: \"my\" + var2 + \"Name\"" +
 				 "\n\tTag Name: \"h1\"" +
@@ -227,18 +227,11 @@ namespace OpenBots.Commands.WebBrowser
 										   where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					string encryptedData = (from rw in v_WebActionParameterTable.AsEnumerable()
-										   where rw.Field<string>("Parameter Name") == "Encrypted Text"
-											select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
 					if (clearElement == null)
 						clearElement = "No";
 
 					if (clearElement.ToLower() == "yes")
 						((IWebElement)element).Clear();
-
-					if (encryptedData == "Encrypted")
-						textToSet = EncryptionServices.DecryptString(textToSet, "OPENBOTS");
 
 					string[] potentialKeyPresses = textToSet.Split('[', ']');
 
@@ -500,13 +493,13 @@ namespace OpenBots.Commands.WebBrowser
 
 			if (v_SeleniumSearchParameters.Rows.Count == 0)
 			{
-				v_SeleniumSearchParameters.Rows.Add(true, "XPath", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "ID", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Tag Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Class Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Link Text", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "CSS Selector", "");
+				v_SeleniumSearchParameters.Rows.Add(true, "\"XPath\"", "");
+				v_SeleniumSearchParameters.Rows.Add(false, "\"ID\"", "");
+				v_SeleniumSearchParameters.Rows.Add(false, "\"Name\"", "");
+				v_SeleniumSearchParameters.Rows.Add(false, "\"Tag Name\"", "");
+				v_SeleniumSearchParameters.Rows.Add(false, "\"Class Name\"", "");
+				v_SeleniumSearchParameters.Rows.Add(false, "\"Link Text\"", "");
+				v_SeleniumSearchParameters.Rows.Add(false, "\"CSS Selector\"", "");
 			}
 			//create search parameters   
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_SeleniumSearchParameters", this));
@@ -585,13 +578,12 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			//create recorder
 			IfrmWebElementRecorder newElementRecorder = commandControls.CreateWebElementRecorderForm(editor.HTMLElementRecorderURL);
-			newElementRecorder.ScriptElements = editor.ScriptEngineContext.Elements;
+			newElementRecorder.ScriptContext = editor.ScriptContext;
 			newElementRecorder.CheckBox_StopOnClick(true);
 			//show form
 			((Form)newElementRecorder).ShowDialog();
 
 			editor.HTMLElementRecorderURL = newElementRecorder.StartURL;
-			editor.ScriptEngineContext.Elements = newElementRecorder.ScriptElements;
 
 			try
 			{
@@ -650,19 +642,6 @@ namespace OpenBots.Commands.WebBrowser
 					{
 						actionParameters.Rows.Add("Text To Set");
 						actionParameters.Rows.Add("Clear Element Before Setting Text");
-						actionParameters.Rows.Add("Encrypted Text");
-						actionParameters.Rows.Add("Optional - Click to Encrypt 'Text To Set'");
-
-						DataGridViewComboBoxCell encryptedBox = new DataGridViewComboBoxCell();
-						encryptedBox.Items.Add("Not Encrypted");
-						encryptedBox.Items.Add("Encrypted");
-						_actionParametersGridViewHelper.Rows[2].Cells[1] = encryptedBox;
-						_actionParametersGridViewHelper.Rows[2].Cells[1].Value = "Not Encrypted";
-
-						var buttonCell = new DataGridViewButtonCell();
-						_actionParametersGridViewHelper.Rows[3].Cells[1] = buttonCell;
-						_actionParametersGridViewHelper.Rows[3].Cells[1].Value = "Encrypt Text";
-						_actionParametersGridViewHelper.CellContentClick += ElementsGridViewHelper_CellContentClick;
 					}
 
 					DataGridViewComboBoxCell comparisonComboBox = new DataGridViewComboBoxCell();
@@ -783,29 +762,6 @@ namespace OpenBots.Commands.WebBrowser
 
 			_actionParametersGridViewHelper.Columns[0].ReadOnly = true;
 			_actionParametersGridViewHelper.DataSource = v_WebActionParameterTable;
-		}
-
-		private void ElementsGridViewHelper_CellContentClick(object sender, DataGridViewCellEventArgs e)
-		{
-			var targetCell = _actionParametersGridViewHelper.Rows[e.RowIndex].Cells[e.ColumnIndex];
-
-			if (targetCell is DataGridViewButtonCell && targetCell.Value.ToString() == "Encrypt Text")
-			{
-				var targetElement = _actionParametersGridViewHelper.Rows[0].Cells[1];
-
-				if (targetElement.Value == null)
-					return;
-
-				var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " +
-											   $"Would you like to proceed and convert '{targetElement.Value}' to an encrypted value?", 
-											   "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-				if (warning == DialogResult.Yes)
-				{
-					targetElement.Value = $"\"{EncryptionServices.EncryptString(targetElement.Value.ToString().TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
-					_actionParametersGridViewHelper.Rows[2].Cells[1].Value = "Encrypted";
-				}
-			}
 		}
 	}
 }

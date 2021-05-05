@@ -11,10 +11,11 @@ namespace OpenBots.UI.Forms
 {
     public partial class frmScriptElements : UIForm
     {
-        public List<ScriptElement> ScriptElements { get; set; }
+        public ScriptContext ScriptContext { get; set; }
         public string ScriptName { get; set; }
         private TreeNode _userElementParentNode;
         private string _emptyValue = "(no default value)";
+        private List<ScriptElement> _elementsCopy;
 
         #region Initialization and Form Load
         public frmScriptElements()
@@ -25,8 +26,9 @@ namespace OpenBots.UI.Forms
         private void frmScriptElements_Load(object sender, EventArgs e)
         {
             //initialize
-            ScriptElements = ScriptElements.OrderBy(x => x.ElementName).ToList();
-            _userElementParentNode = InitializeNodes("My Task Elements", ScriptElements);
+            _elementsCopy = new List<ScriptElement>(ScriptContext.Elements);
+            _elementsCopy = _elementsCopy.OrderBy(x => x.ElementName).ToList();
+            _userElementParentNode = InitializeNodes("My Task Elements", _elementsCopy);
             ExpandUserElementNode();
             lblMainLogo.Text = ScriptName + " elements";
         }
@@ -51,8 +53,9 @@ namespace OpenBots.UI.Forms
 
         #region Add/Cancel Buttons
         private void uiBtnOK_Click(object sender, EventArgs e)
-        {          
+        {
             //return success result
+            ScriptContext.Elements = _elementsCopy;
             DialogResult = DialogResult.OK;
         }
 
@@ -68,7 +71,8 @@ namespace OpenBots.UI.Forms
         {
             //create element editing form
             frmAddElement addElementForm = new frmAddElement();
-            addElementForm.ScriptElements = ScriptElements;
+            addElementForm.ScriptContext = ScriptContext;
+            addElementForm.ElementsCopy = _elementsCopy;
 
             ExpandUserElementNode();
 
@@ -78,7 +82,7 @@ namespace OpenBots.UI.Forms
                 //add newly edited node
                 AddUserElementNode(_userElementParentNode, addElementForm.txtElementName.Text, addElementForm.ElementValueDT);
 
-                ScriptElements.Add(new ScriptElement
+                _elementsCopy.Add(new ScriptElement
                 {
                     ElementName = addElementForm.txtElementName.Text,
                     ElementValue = addElementForm.ElementValueDT
@@ -120,12 +124,13 @@ namespace OpenBots.UI.Forms
                 elementName = tvScriptElements.SelectedNode.Text;
             }
 
-            element = ScriptElements.Where(x => x.ElementName == elementName).FirstOrDefault();
+            element = _elementsCopy.Where(x => x.ElementName == elementName).FirstOrDefault();
             elementValue = element.ElementValue;
 
             //create element editing form
             frmAddElement addElementForm = new frmAddElement(elementName, elementValue);
-            addElementForm.ScriptElements = ScriptElements;
+            addElementForm.ScriptContext = ScriptContext;
+            addElementForm.ElementsCopy = _elementsCopy;
 
             ExpandUserElementNode();
 
@@ -205,8 +210,8 @@ namespace OpenBots.UI.Forms
 
                 //remove parent node
                 string elementName = parentNode.Text;
-                ScriptElement element = ScriptElements.Where(x => x.ElementName == elementName).FirstOrDefault();
-                ScriptElements.Remove(element);
+                ScriptElement element = _elementsCopy.Where(x => x.ElementName == elementName).FirstOrDefault();
+                _elementsCopy.Remove(element);
                 parentNode.Remove();
             }
         }

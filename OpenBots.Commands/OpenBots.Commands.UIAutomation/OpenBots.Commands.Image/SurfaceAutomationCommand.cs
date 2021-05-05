@@ -301,12 +301,6 @@ namespace OpenBots.Commands.Image
 												   where rw.Field<string>("Parameter Name") == "Y Adjustment"
 												   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
-						string encryptedData = (from rw in v_ImageActionParameterTable.AsEnumerable()
-												where rw.Field<string>("Parameter Name") == "Encrypted Text"
-												select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-						if (encryptedData == "Encrypted")
-							textToSet = EncryptionServices.DecryptString(textToSet, "OPENBOTS");
 
 						Point setTextPositionPoint = GetClickPosition(clickPosition, element);
 
@@ -428,27 +422,15 @@ namespace OpenBots.Commands.Image
 					foreach (var ctrl in _imageParameterControls)
 						ctrl.Show();
 
-					DataGridViewComboBoxCell encryptedBox = new DataGridViewComboBoxCell();
-					encryptedBox.Items.Add("Not Encrypted");
-					encryptedBox.Items.Add("Encrypted");
-
 					if (sender != null)
 					{
 						actionParameters.Rows.Add("Text To Set");
 						actionParameters.Rows.Add("Click Position", "Center");
 						actionParameters.Rows.Add("X Adjustment", 0);
-						actionParameters.Rows.Add("Y Adjustment", 0);
-						actionParameters.Rows.Add("Encrypted Text", "Not Encrypted");
-						actionParameters.Rows.Add("Optional - Click to Encrypt 'Text To Set'");
-
-						var buttonCell = new DataGridViewButtonCell();
-						_imageGridViewHelper.Rows[5].Cells[1] = buttonCell;
-						_imageGridViewHelper.Rows[5].Cells[1].Value = "Encrypt Text";
-						_imageGridViewHelper.CellContentClick += ImageGridViewHelper_CellContentClick;
+						actionParameters.Rows.Add("Y Adjustment", 0);		
 					}
 
 					_imageGridViewHelper.Rows[1].Cells[1] = mouseClickPositionBox;
-					_imageGridViewHelper.Rows[4].Cells[1] = encryptedBox;
 
 					break;
 
@@ -485,29 +467,6 @@ namespace OpenBots.Commands.Image
 					break;
 			}
 			_imageGridViewHelper.Columns[0].ReadOnly = true;
-		}
-
-		private void ImageGridViewHelper_CellContentClick(object sender, DataGridViewCellEventArgs e)
-		{
-			var targetCell = _imageGridViewHelper.Rows[e.RowIndex].Cells[e.ColumnIndex];
-
-			if (targetCell is DataGridViewButtonCell && targetCell.Value.ToString() == "Encrypt Text")
-			{
-				var targetElement = _imageGridViewHelper.Rows[0].Cells[1];
-
-				if (targetElement.Value == null)
-					return;
-
-				var warning = MessageBox.Show("Warning! Text should only be encrypted one time and is not reversible in the builder. " +
-											   $"Would you like to proceed and convert '{targetElement.Value}' to an encrypted value?",
-											   "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-				if (warning == DialogResult.Yes)
-				{
-					targetElement.Value = $"\"{EncryptionServices.EncryptString(targetElement.Value.ToString().TrimStart('\"').TrimEnd('\"'), "OPENBOTS")}\"";
-					_imageGridViewHelper.Rows[4].Cells[1].Value = "Encrypted";
-				}
-			}
 		}
 
 		private Point GetClickPosition(string clickPosition, ImageElement element)

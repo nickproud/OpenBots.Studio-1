@@ -1053,7 +1053,6 @@
     <None Include="Resources\ActionBar\action_bar_close.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="UI\DTOs\" />
     <Folder Include="UI\FormEventArgs\" />
   </ItemGroup>
   <ItemGroup>
