@@ -24,8 +24,8 @@ namespace OpenBots.Commands.NativeMessaging
 {
 	[Serializable]
 	[Category("Native Messaging Commands")]
-	[Description("This command performs left click on specified element in chrome.")]
-	public class NativeMessagingLeftClickCommand : ScriptCommand
+	[Description("This command scrolls the specified element into the visible area of the chrome browser window.")]
+	public class NativeMessagingScrollToElementCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Browser Instance Name")]
@@ -56,10 +56,10 @@ namespace OpenBots.Commands.NativeMessaging
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingLeftClickCommand()
+		public NativeMessagingScrollToElementCommand()
 		{
-			CommandName = "NativeMessagingLeftClickCommand";
-			SelectionName = "Left Click";
+			CommandName = "NativeMessagingScrollToElementCommand";
+			SelectionName = "Scroll To Element";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.NativeMessaging
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
 			string responseText;
-			NativeRequest.ProcessRequest("leftclick", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest("scrolltoelement", JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
@@ -156,7 +156,7 @@ namespace OpenBots.Commands.NativeMessaging
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Left Click on {searchParameterName}" +
+			return base.GetDisplayValue() + $" [Scroll To Element by {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		private void ActionParametersGridViewHelper_MouseEnter(object sender, EventArgs e)

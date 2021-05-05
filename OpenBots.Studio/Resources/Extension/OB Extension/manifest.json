@@ -1,0 +1,21 @@
+{
+  "name": "OpenBots Web Automation",
+  "description": "Web Automation!",
+	"version": "1.0",
+		"content_scripts": [
+		{
+			"matches": ["http://*/*", "https://*/*"],
+			"run_at": "document_idle",
+			"js": ["jquery.min.js", "contentScript.js","ContentLibrary.js","ContentListener.js"]
+		}
+	],
+  "background": {
+    "scripts": ["jquery.min.js", "main.js"],
+    "persistent": true
+  },
+	"permissions": [
+		"nativeMessaging"
+	],
+	"browser_action": {},
+	"manifest_version": 2
+}

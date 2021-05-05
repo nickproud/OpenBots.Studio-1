@@ -1,5 +1,7 @@
-﻿using OpenBots.Core.UI.Forms;
+﻿using OpenBots.Core.ChromeNativeMessaging.Extension;
+using OpenBots.Core.UI.Forms;
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.Supplement_Forms
@@ -16,7 +18,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void frmExtentionsManager_Load(object sender, EventArgs e)
         {
             //Determine if CNM is installed or not here, and set the flag accordingly here
-
+            ChromeExtensionRegistryManager registryManager = new ChromeExtensionRegistryManager();
+            _isChromeNativeMessagingInstalled = registryManager.IsExtensionInstalled();
             if (_isChromeNativeMessagingInstalled)
                 btnInstallChromeNativeMessaging.Text = "Uninstall";
             else if (!_isChromeNativeMessagingInstalled)
@@ -28,10 +31,16 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             if (btnInstallChromeNativeMessaging.Text == "Install")
             {
                 //Install here
+                var converted = BrowserExtensions.CreateForChrome(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\Extension\OBExtension"), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\Extension\OBExtension.crx"));
+                ChromeExtensionRegistryManager registryManager = new ChromeExtensionRegistryManager();
+                registryManager.PathValue = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,@"Resources\Extension\OBExtension.crx");
+                registryManager.VersionValue = "1.0";
             }
             else
             {
                 //Uninstall here
+                ChromeExtensionRegistryManager registryManager = new ChromeExtensionRegistryManager();
+                registryManager.DeleteSubKey();
             }
 
             //if installation/uninstallation succeeds, return a DialogResult.Ok

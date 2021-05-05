@@ -42,6 +42,8 @@ namespace OpenBots.Core.ChromeNativeClient
                         serverCommunication.SendMessage(messageRequestStr);
                         JObject responseObject = serverCommunication.ReadMessageAsJObject();
                         output = responseObject["text"].ToString();
+                        if (output == "Failed to communicate with chrome extension")
+                            throw new Exception(output);
 
                         return true;
                     }

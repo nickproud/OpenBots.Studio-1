@@ -17,6 +17,8 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using OpenBots.Commands.Library.NativeMessaging;
+using System.Linq;
 
 namespace OpenBots.Commands.NativeMessaging
 {
@@ -28,7 +30,7 @@ namespace OpenBots.Commands.NativeMessaging
 		[Required]
 		[DisplayName("Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
-		[SampleUsage("\"MyChromeBrowserInstance\"")]
+		[SampleUsage("MyChromeBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
 		[CompatibleTypes(new Type[] { typeof(Process) })]
 		public string v_InstanceName { get; set; }
@@ -61,7 +63,7 @@ namespace OpenBots.Commands.NativeMessaging
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
-			v_InstanceName = "\"DefaultChromeBrowser\"";
+			v_InstanceName = "DefaultChromeBrowser";
 			//set up search parameter table
 			v_NativeSearchParameters = new DataTable();
 			v_NativeSearchParameters.Columns.Add("Enabled");
@@ -76,17 +78,15 @@ namespace OpenBots.Commands.NativeMessaging
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var chromeProcess = (Process)browserObject;
 
-			DataRow elementRow = v_NativeSearchParameters.Rows[0];
-			WebElement webElement = NativeHelper.DataTableToWebElement(v_NativeSearchParameters);
+			WebElement webElement = await NativeHelper.DataTableToWebElement(v_NativeSearchParameters, engine);
 
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
-			string elementText;
-			NativeRequest.ProcessRequest("middleclick", JsonConvert.SerializeObject(webElement), out elementText);
-			if (elementText == "Failed")
-			{
-				//Failed
-			}
+			string responseText;
+			NativeRequest.ProcessRequest("middleclick", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
+			if (responseObject.Status == "Failed")
+				throw new Exception(responseObject.Result);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -106,14 +106,14 @@ namespace OpenBots.Commands.NativeMessaging
 
 			if (v_NativeSearchParameters.Rows.Count == 0)
 			{
-				v_NativeSearchParameters.Rows.Add(false, "XPath", "");
-				v_NativeSearchParameters.Rows.Add(false, "Relative XPath", "");
-				v_NativeSearchParameters.Rows.Add(false, "ID", "");
-				v_NativeSearchParameters.Rows.Add(false, "Name", "");
-				v_NativeSearchParameters.Rows.Add(false, "Tag Name", "");
-				v_NativeSearchParameters.Rows.Add(false, "Class Name", "");
-				v_NativeSearchParameters.Rows.Add(false, "Link Text", "");
-				v_NativeSearchParameters.Rows.Add(true, "CSS Selector", "");
+				v_NativeSearchParameters.Rows.Add(false, "\"XPath\"", "");
+				v_NativeSearchParameters.Rows.Add(false, "\"Relative XPath\"", "");
+				v_NativeSearchParameters.Rows.Add(false, "\"ID\"", "");
+				v_NativeSearchParameters.Rows.Add(false, "\"Name\"", "");
+				v_NativeSearchParameters.Rows.Add(false, "\"Tag Name\"", "");
+				v_NativeSearchParameters.Rows.Add(false, "\"Class Name\"", "");
+				v_NativeSearchParameters.Rows.Add(false, "\"Link Text\"", "");
+				v_NativeSearchParameters.Rows.Add(true, "\"CSS Selector\"", "");
 			}
 			//create search parameters   
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_NativeSearchParameters", this));
@@ -148,7 +148,16 @@ namespace OpenBots.Commands.NativeMessaging
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Instance Name '{v_InstanceName}']";
+			string searchParameterName = (from rw in v_NativeSearchParameters.AsEnumerable()
+										  where rw.Field<string>("Enabled") == "True"
+										  select rw.Field<string>("Parameter Name")).FirstOrDefault();
+
+			string searchParameterValue = (from rw in v_NativeSearchParameters.AsEnumerable()
+										   where rw.Field<string>("Enabled") == "True"
+										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+			return base.GetDisplayValue() + $" [Middle Click on {searchParameterName}" +
+											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		private void ActionParametersGridViewHelper_MouseEnter(object sender, EventArgs e)
 		{
@@ -156,31 +165,37 @@ namespace OpenBots.Commands.NativeMessaging
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
-			User32Functions.BringChromeWindowToTop();
-
-			string webElementStr;
-			NativeRequest.ProcessRequest("getelement", "", out webElementStr);
-			WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
-			Process process = Process.GetCurrentProcess();
-			User32Functions.ActivateWindow(process.MainWindowTitle);
-			DataTable SearchParameters = NativeHelper.WebElementToDataTable(webElement);
-
 			try
 			{
-				if (SearchParameters != null)
+				User32Functions.BringChromeWindowToTop();
+
+				string webElementStr;
+				NativeRequest.ProcessRequest("getelement", "", out webElementStr);
+				if (!string.IsNullOrEmpty(webElementStr))
 				{
-					v_NativeSearchParameters.Rows.Clear();
+					WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
+					DataTable SearchParameters = NativeHelper.WebElementToDataTable(webElement);
 
-					foreach (DataRow rw in SearchParameters.Rows)
-						v_NativeSearchParameters.ImportRow(rw);
+					if (SearchParameters != null)
+					{
+						v_NativeSearchParameters.Rows.Clear();
 
-					_searchParametersGridViewHelper.DataSource = v_NativeSearchParameters;
-					_searchParametersGridViewHelper.Refresh();
+						foreach (DataRow rw in SearchParameters.Rows)
+							v_NativeSearchParameters.ImportRow(rw);
+
+						_searchParametersGridViewHelper.DataSource = v_NativeSearchParameters;
+						_searchParametersGridViewHelper.Refresh();
+					}
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				//Search parameter not found
+				// Throw Error in Message Box
+			}
+			finally
+			{
+				Process process = Process.GetCurrentProcess();
+				User32Functions.ActivateWindow(process.MainWindowTitle);
 			}
 		}
 	}

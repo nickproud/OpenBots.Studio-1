@@ -934,6 +934,12 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Resources\Extension\OBExtension\manifest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Extension\OBExtension\README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Supplementary Files\Script Conversion Files\0.0.0.0.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -989,6 +995,33 @@
     <Content Include="Firefox\xul.dll" />
     <Content Include="OpenBots-ico.ico" />
     <None Include="Resources\ActionBar\action-bar-extensions.png" />
+    <Content Include="Resources\Extension\OBExtension\background.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Extension\OBExtension\ContentLibrary.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Extension\OBExtension\contentScript.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Extension\OBExtension\ElementAction.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Extension\OBExtension\icon-128.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Extension\OBExtension\jquery.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Extension\OBExtension\main.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Extension\OBExtension\main.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Extension\OBExtension\New Text Document.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\ScriptFiles\DefaultCSScript.txt" />
     <Content Include="Resources\ScriptFiles\DefaultPythonScript.txt" />
     <None Include="Resources\ScriptFiles\DefaultTagUIScript.txt" />

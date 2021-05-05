@@ -246,6 +246,8 @@
     <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingElementExistsCommand.cs.cs" />
     <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingGetTextCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingLeftClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingRightClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingScrollToElementCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingSetOptionCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingSetSecureTextCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingSetTextCommand.cs" />
