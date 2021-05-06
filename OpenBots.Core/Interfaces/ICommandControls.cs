@@ -9,7 +9,7 @@ namespace OpenBots.Core.Infrastructure
 {
     public interface ICommandControls
     {
-        List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300, bool shouldValidate = true);
+        List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300, bool shouldValidate = true, bool isEvaluateSnippet = false);
         List<Control> CreateDefaultPasswordInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         List<Control> CreateDefaultOutputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         List<Control> CreateDefaultDropdownGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
@@ -19,7 +19,7 @@ namespace OpenBots.Core.Infrastructure
         List<Control> CreateDefaultWindowControlGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         Label CreateDefaultLabelFor(string parameterName, ScriptCommand parent);
         void CreateDefaultToolTipFor(string parameterName, ScriptCommand parent, Control label);
-        TextBox CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300);
+        TextBox CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300, bool isEvaluateSnippet = false);
         CheckBox CreateCheckBoxFor(string parameterName, ScriptCommand parent);
         ComboBox CreateDropdownFor(string parameterName, ScriptCommand parent);
         ComboBox CreateStandardComboboxFor(string parameterName, ScriptCommand parent);

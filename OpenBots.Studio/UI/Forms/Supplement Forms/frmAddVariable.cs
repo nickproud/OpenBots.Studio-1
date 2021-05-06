@@ -65,7 +65,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             _provider = CodeDomProvider.CreateProvider("C#");
         }
 
-        private async void uiBtnOk_Click(object sender, EventArgs e)
+        private void uiBtnOk_Click(object sender, EventArgs e)
         {
             txtVariableName.ForeColor = Color.SteelBlue;
             txtDefaultValue.ForeColor = Color.SteelBlue;

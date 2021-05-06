@@ -14,6 +14,7 @@
 //limitations under the License.
 using Autofac;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Emit;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -255,7 +256,7 @@ namespace OpenBots.UI.Forms
         #region Save/Close Buttons
 
         //handles returning DialogResult
-        public async void uiBtnAdd_Click(object sender, EventArgs e)
+        public void uiBtnAdd_Click(object sender, EventArgs e)
         {
             //commit any datagridviews
             foreach (Control ctrl in flw_InputVariables.Controls)
@@ -409,20 +410,16 @@ namespace OpenBots.UI.Forms
 
             foreach(var compType in validationContext.CompatibleTypes) 
             {
-                var result = ScriptContext.EvaluateInput(compType, validatingText);
+                EmitResult result;
+                if(currentControl is UITextBox && currentControl.IsEvaluateSnippet)
+                    result = ScriptContext.EvaluateSnippet(validatingText);
+                else
+                    result = ScriptContext.EvaluateInput(compType, validatingText);
+
                 if (result.Success)
                     return isAllValid;
                 else
                     errorMessage = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
-                //try
-                //{
-                    
-                //    return isAllValid;
-                //}
-                //catch(Exception ex)
-                //{
-                //    errorMessage = ex.Message;
-                //}
             }
  
             isAllValid = false;

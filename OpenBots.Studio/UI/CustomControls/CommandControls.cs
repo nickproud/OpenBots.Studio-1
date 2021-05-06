@@ -58,14 +58,15 @@ namespace OpenBots.UI.CustomControls
             _typeContext = typeContext;
         }
 
-        public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300, bool shouldValidate = true)
+        public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300, 
+            bool shouldValidate = true, bool isEvaluateSnippet = false)
         {
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
 
             Control input;
             if (shouldValidate)
-                input = CreateDefaultInputFor(parameterName, parent, height, width);
+                input = CreateDefaultInputFor(parameterName, parent, height, width, isEvaluateSnippet);
             else
                 input = CreateDefaultNoValidationInputFor(parameterName, parent, height, width);
 
@@ -240,7 +241,7 @@ namespace OpenBots.UI.CustomControls
             inputToolTip.SetToolTip(label, toolTipText);
         }
 
-        public TextBox CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300)
+        public TextBox CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300, bool isEvaluateSnippet = false)
         {
             var inputBox = new UITextBox();
 
@@ -250,6 +251,7 @@ namespace OpenBots.UI.CustomControls
             inputBox.Width = width;
             inputBox.IsDoubleBuffered = true;
             inputBox.Tag = new CommandControlValidationContext(parameterName, parent);
+            inputBox.IsEvaluateSnippet = isEvaluateSnippet;
 
             if (height > 30)
             {

@@ -98,6 +98,24 @@ namespace OpenBots.Core.Script
             var result = compilation.Emit("CSharp");
 
             return result;
-        }  
+        }
+
+        public EmitResult EvaluateSnippet(string code)
+        {
+            if (string.IsNullOrEmpty(code))
+                code = "null";
+
+            var script = "";
+            Variables.ForEach(v => script += $"{v.VariableType.GetRealTypeName()}? {v.VariableName} = {(v.VariableValue == null ? "null" : v.VariableValue)};");
+            Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeName()}? {a.ArgumentName} = {(a.ArgumentValue == null ? "null" : a.ArgumentValue)};");
+
+            script += $"{code};";
+
+            var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(SourceText.From(script, Encoding.UTF8), new CSharpParseOptions(languageVersion: LanguageVersion.CSharp8, kind: SourceCodeKind.Script), "");
+            var compilation = CSharpCompilation.Create("CSharp", new SyntaxTree[] { parsedSyntaxTree }, DefaultReferences, DefaultCompilationOptions);
+            var result = compilation.Emit("CSharp");
+
+            return result;
+        }
     }
 }
