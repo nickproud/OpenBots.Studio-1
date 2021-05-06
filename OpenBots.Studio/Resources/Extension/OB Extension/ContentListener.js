@@ -194,6 +194,9 @@ chrome.runtime.onMessage.addListener(
 					responseObj = {result: "Element not found!",status:"Failed"};
 				}
 			}
+			else if (request.responseType == "stoplisteners") {
+				stopListerners();
+			}
 			var responseJson = JSON.stringify(responseObj);
 			chrome.runtime.sendMessage({ response: responseJson });
 		}

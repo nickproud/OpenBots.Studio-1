@@ -1,3 +1,3 @@
-#dataDyne-Chrome-Extension
+#OpenBots-Chrome-Extension
 
-The Chrome Extension used to communicate with the dataDyne Server Host Console Application
+The Chrome Extension used to communicate with the OpenBots Server Host Console Application

@@ -36,6 +36,7 @@ function onClickEvent(event) {
 //Inspect Element MouseOverEvent
 function mouseOverEvent(event) {
 	let target = event.target;
+	target.setAttribute('obhighlightedelement', '1');
 	target.style.background = 'lightblue';
 
 	// text.value += `over -> ${target.tagname}\n`;
@@ -46,25 +47,31 @@ function mouseOverEvent(event) {
 function mouseOutEvent(event) {
 	let target = event.target;
 	target.style.background = '';
-
+	target.removeAttribute('obhighlightedelement');
 	// text.value += `out <- ${target.tagName}\n`;
 	// text.scrollTop = text.scrollHeight;
+}
+function stopListerners(){
+	document.removeEventListener("click", onClickEvent);
+	document.removeEventListener("mouseover", mouseOverEvent);
+	document.removeEventListener("mouseout", mouseOutEvent);
+	var element = document.querySelector('[obhighlightedelement="1"]');
+	if(element){
+		element.removeAttribute('obhighlightedelement');
+		element.style.background = '';
+	}
 }
 
 
 $(document).keydown(function (keyPressed) {
 	//Esc pressed
 	if (keyPressed.keyCode == 27) {
-		document.removeEventListener("click", onClickEvent);
-		document.removeEventListener("mouseover", mouseOverEvent);
-		document.removeEventListener("mouseout", mouseOutEvent);
+		stopListerners();
 		chrome.runtime.sendMessage({ response: ""});
 	}
 	//F2 pressed
 	if (keyPressed.keyCode == 113) {
-		document.removeEventListener("click", onClickEvent);
-		document.removeEventListener("mouseover", mouseOverEvent);
-		document.removeEventListener("mouseout", mouseOutEvent);
+		stopListerners();
 		chrome.runtime.sendMessage({ response: "delay" });
 	}
 });

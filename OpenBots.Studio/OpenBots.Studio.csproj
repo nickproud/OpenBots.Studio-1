@@ -991,16 +991,13 @@
     <Content Include="Firefox\xul.dll" />
     <Content Include="OpenBots-ico.ico" />
     <None Include="Resources\ActionBar\action-bar-extensions.png" />
-    <Content Include="Resources\Extension\OB Extension\background.js" />
     <Content Include="Resources\Extension\OB Extension\ContentLibrary.js" />
     <Content Include="Resources\Extension\OB Extension\ContentListener.js" />
     <Content Include="Resources\Extension\OB Extension\contentScript.js" />
-    <Content Include="Resources\Extension\OB Extension\ElementAction.js" />
     <Content Include="Resources\Extension\OB Extension\icon-128.png" />
+    <Content Include="Resources\Extension\OB Extension\icon.png" />
     <Content Include="Resources\Extension\OB Extension\jquery.min.js" />
-    <Content Include="Resources\Extension\OB Extension\main.html" />
     <Content Include="Resources\Extension\OB Extension\main.js" />
-    <Content Include="Resources\Extension\OB Extension\New Text Document.txt" />
     <Content Include="Resources\ScriptFiles\DefaultCSScript.txt" />
     <Content Include="Resources\ScriptFiles\DefaultPythonScript.txt" />
     <None Include="Resources\ScriptFiles\DefaultTagUIScript.txt" />
