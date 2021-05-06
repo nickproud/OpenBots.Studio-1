@@ -19,5 +19,7 @@ namespace OpenBots.Core.Infrastructure
         List<ScriptCommand> ConfiguredCommands { get; set; }
         string HTMLElementRecorderURL { get; set; }
         TypeContext TypeContext { get; set; }
+
+        void ShowMessage(string message, string title, DialogType dialogType, int closeAfter);
     }
 }

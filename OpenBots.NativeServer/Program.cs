@@ -109,6 +109,8 @@ namespace OpenBots.NativeServer
                 {
                     //Reponse failed
                     response = "{\"text\": \"Failed to communicate with chrome extension\"}";
+                    var stopMessage = new ResponseConfirmation("stoplisteners");
+                    Host.SendMessage(stopMessage.GetJObject());
                 }
 
                 PipeServer.RunAsClient(() => serverCommunication.SendMessage(response));

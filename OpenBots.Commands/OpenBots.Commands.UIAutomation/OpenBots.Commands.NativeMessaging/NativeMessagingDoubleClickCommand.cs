@@ -190,6 +190,11 @@ namespace OpenBots.Commands.NativeMessaging
 			catch (Exception ex)
 			{
 				// Throw Error in Message Box
+				var result = ((Form)editor).Invoke(new Action(() =>
+				{
+					editor.ShowMessage(ex.Message, "MessageBox", DialogType.OkOnly, 10);
+				}
+				));
 			}
 			finally
 			{

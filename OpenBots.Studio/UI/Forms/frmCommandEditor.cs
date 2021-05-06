@@ -448,5 +448,28 @@ namespace OpenBots.UI.Forms
             DialogResult = DialogResult.Cancel;
         }
         #endregion Save/Close Buttons
+
+        /// <summary>
+        /// Delegate for showing message box
+        /// </summary>
+        /// <param name="message"></param>
+        public delegate void ShowMessageDelegate(string message, string title, DialogType dialogType, int closeAfter);
+        /// <summary>
+        /// Used by the automation engine to show a message to the user on-screen. If UI is not available, a standard messagebox will be invoked instead.
+        /// </summary>
+        public void ShowMessage(string message, string title, DialogType dialogType, int closeAfter)
+        {
+            if (InvokeRequired)
+            {
+                var d = new ShowMessageDelegate(ShowMessage);
+                Invoke(d, new object[] { message, title, dialogType, closeAfter });
+            }
+            else
+            {
+                var confirmationForm = new frmDialog(message, title, dialogType, closeAfter);
+                confirmationForm.ShowDialog();
+                confirmationForm.Dispose();
+            }
+        }
     }
 }
