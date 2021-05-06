@@ -1,13 +1,14 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis.Text;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using System.Text;
 using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
-using RSScript = Microsoft.CodeAnalysis.Scripting.Script;
 
 namespace OpenBots.Core.Script
 {
@@ -19,8 +20,8 @@ namespace OpenBots.Core.Script
         public Dictionary<string, AssemblyReference> ImportedNamespaces { get; set; }
         public List<Assembly> AssembliesList { get; set; }
         public List<string> NamespacesList { get; set; }
-        public RSScript EngineScript { get; set; }
-        public ScriptState EngineScriptState { get; set; }
+        public CSharpCompilationOptions DefaultCompilationOptions { get; set; }
+        public List<MetadataReference> DefaultReferences { get; set; }
         public string GuidPlaceholder { get; set; }
 
         public ScriptContext()
@@ -33,163 +34,70 @@ namespace OpenBots.Core.Script
             AssembliesList = NamespaceMethods.GetAssemblies(ImportedNamespaces);
             NamespacesList = NamespaceMethods.GetNamespacesList(ImportedNamespaces);
 
-            EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(AssembliesList)
-                                                                    .WithImports(NamespacesList));
-     
+            DefaultCompilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithOverflowChecks(true)
+                                                                                                         .WithOptimizationLevel(OptimizationLevel.Release)
+                                                                                                         .WithUsings(NamespacesList);
+
+            DefaultReferences = AssembliesList.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x.Location)).ToList();
+
+            GenerateGuidPlaceHolder();
+        }
+
+        public void ReloadCompilerObjects()
+        {
+            AssembliesList = NamespaceMethods.GetAssemblies(ImportedNamespaces);
+            NamespacesList = NamespaceMethods.GetNamespacesList(ImportedNamespaces);
+
+            DefaultCompilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithOverflowChecks(true)
+                                                                                                         .WithOptimizationLevel(OptimizationLevel.Release)
+                                                                                                         .WithUsings(NamespacesList);
+
+            DefaultReferences = AssembliesList.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x.Location)).ToList();
+        }
+
+        public void GenerateGuidPlaceHolder()
+        {
             GuidPlaceholder = $"v{Guid.NewGuid()}".Replace("-", "");
         }
 
-        public async Task ReinitializeEngineScript()
-        {
-
-            EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(AssembliesList)
-                                                                    .WithImports(NamespacesList));
-
-            EngineScriptState = await EngineScript.RunAsync();
-        }
-
-        public async Task AddVariable(string varName, Type varType, string code)
+        public EmitResult EvaluateVariable(string varName, Type varType, string code)
         {
             if (string.IsNullOrEmpty(code))
                 code = "null";
-
-            if (EngineScriptState == null)
-                EngineScriptState = await EngineScript.RunAsync();
 
             string script = $"{varType.GetRealTypeName()}? {varName} = {code};";
 
-            EngineScriptState = await EngineScriptState
-                .ContinueWithAsync(script, ScriptOptions.Default
-                .WithReferences(AssembliesList)
-                .WithImports(NamespacesList));
+            var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(SourceText.From(script, Encoding.UTF8), new CSharpParseOptions(languageVersion: LanguageVersion.CSharp8, kind: SourceCodeKind.Script), "");
+            var compilation = CSharpCompilation.Create("CSharp", new SyntaxTree[] { parsedSyntaxTree }, DefaultReferences, DefaultCompilationOptions);
+            var result = compilation.Emit("CSharp");
+
+            return result;
         }
 
-        public async Task UpdateVariable(string varName, Type varType, string code)
+        public EmitResult EvaluateInput(Type varType, string code)
         {
             if (string.IsNullOrEmpty(code))
                 code = "null";
 
-            var existingVariable = EngineScriptState.Variables.Where(x => x.Name == varName).LastOrDefault();
-
-            if (existingVariable != null && (existingVariable.Type.GetRealTypeName() == varType.GetRealTypeName() ||
-                                             existingVariable.Type.GetRealTypeName() == $"Nullable<{varType.GetRealTypeName()}>"))
-            {
-                if (EngineScriptState == null)
-                    EngineScriptState = await EngineScript.RunAsync();
-
-                string script = $"{varName} = {code};";
-
-                EngineScriptState = await EngineScriptState
-                   .ContinueWithAsync(script, ScriptOptions.Default
-                   .WithReferences(AssembliesList)
-                   .WithImports(NamespacesList));
-            }
-            else if (existingVariable != null)
-            {
-                var errors = await ResetEngineVariables();
-                if (errors.Count > 0)
-                    throw errors.Last();
-            }
-            else
-                await AddVariable(varName, varType, code);
-        }
-
-        public async Task<List<Exception>> ResetEngineVariables()
-        {
-            List<Exception> errors = new List<Exception>();
-
-            await ReinitializeEngineScript();
-
-            foreach (var variable in Variables)
-            {
-                try
-                {
-                    await AddVariable(variable.VariableName, variable.VariableType, variable.VariableValue?.ToString());
-                }
-                catch (Exception ex)
-                {
-                    errors.Add(ex);
-                }
-            }
-
-            foreach (var argument in Arguments)
-            {
-                try
-                {
-                    await AddVariable(argument.ArgumentName, argument.ArgumentType, argument.ArgumentValue.ToString());
-                }
-                catch (Exception ex)
-                {
-                    errors.Add(ex);
-                }
-            }
-
-            return errors;
-        }
-
-        public async Task EvaluateInput(Type varType, string code)
-        {
-            if (string.IsNullOrEmpty(code))
-                code = "null";
-
-            if (EngineScriptState == null)
-                EngineScriptState = await EngineScript.RunAsync();
+            var script = "";
+            Variables.ForEach(v => script += $"{v.VariableType.GetRealTypeName()}? {v.VariableName} = {(v.VariableValue == null ? "null" : v.VariableValue)};");
+            Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeName()}? {a.ArgumentName} = {(a.ArgumentValue == null ? "null" : a.ArgumentValue)};");
 
             string type;
-            if (varType.IsGenericType)
+            var test = varType.GetGenericArguments();
+            if (varType.IsGenericType && varType.GetGenericArguments()[0].Name == "T")
                 type = "object";
             else
                 type = varType.GetRealTypeName();
 
-            string script = $"{type} {GuidPlaceholder} = {code};";
+            GenerateGuidPlaceHolder();
+            script += $"{type}? {GuidPlaceholder} = {code};";
 
-            EngineScriptState = await EngineScriptState
-                .ContinueWithAsync(script, ScriptOptions.Default
-                .WithReferences(AssembliesList)
-                .WithImports(NamespacesList));
+            var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(SourceText.From(script, Encoding.UTF8), new CSharpParseOptions(languageVersion: LanguageVersion.CSharp8, kind: SourceCodeKind.Script), "");
+            var compilation = CSharpCompilation.Create("CSharp", new SyntaxTree[] { parsedSyntaxTree }, DefaultReferences, DefaultCompilationOptions);
+            var result = compilation.Emit("CSharp");
 
-            var value = EngineScriptState.GetVariable($"{GuidPlaceholder}").Value;
-
-            if (varType.IsGenericType && !value.GetType().FullName.StartsWith(varType.FullName))
-                throw new Exception("Input value is an invalid Type.");
-        }
-
-        public async Task<object> InstantiateVariable(string varName, string code, Type varType)
-        {
-            string type = varType.GetRealTypeName();
-
-            if (string.IsNullOrEmpty(code))
-                code = "null";
-
-            if (EngineScriptState == null)
-                EngineScriptState = await EngineScript.RunAsync();
-
-            string script = $"{type}? {varName} = {code};";
-
-            EngineScriptState = await EngineScriptState
-                .ContinueWithAsync(script, ScriptOptions.Default
-                .WithReferences(AssembliesList)
-                .WithImports(NamespacesList));
-
-            return EngineScriptState.GetVariable(varName).Value;
-        }
-
-        public async Task<object> EvaluateCode(string code)
-        {
-            if (string.IsNullOrEmpty(code))
-                return null;
-
-            if (EngineScriptState == null)
-                EngineScriptState = await EngineScript.RunAsync();
-
-            string script = $"object {GuidPlaceholder} = {code};";
-
-            EngineScriptState = await EngineScriptState
-                .ContinueWithAsync(script, ScriptOptions.Default
-                .WithReferences(AssembliesList)
-                .WithImports(NamespacesList));
-
-            return EngineScriptState.GetVariable($"{GuidPlaceholder}").Value;
-        }
+            return result;
+        }  
     }
 }

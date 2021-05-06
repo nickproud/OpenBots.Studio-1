@@ -1228,7 +1228,7 @@ namespace OpenBots.UI.CustomControls
                     if (_inputBox.Tag is ComboBox)
                     {
                         ComboBox targetComboBox = (ComboBox)_inputBox.Tag;
-                        targetComboBox.Text = $"\"{windowName}\"";
+                        targetComboBox.Text = $"@\"{windowName}\"";
                     }
                   
                     if (_minimizePreference)
@@ -1283,7 +1283,7 @@ namespace OpenBots.UI.CustomControls
                 return null;
 
             cbo.Items.Clear();
-            cbo.Items.Add("\"Current Window\"");
+            cbo.Items.Add("@\"Current Window\"");
             
             Process[] processlist = Process.GetProcesses();
 
@@ -1293,11 +1293,11 @@ namespace OpenBots.UI.CustomControls
                 if (!string.IsNullOrEmpty(process.MainWindowTitle))
                 {
                     //add to the control list of available windows
-                    cbo.Items.Add($"\"{process.MainWindowTitle}\"");
+                    cbo.Items.Add($"@\"{process.MainWindowTitle}\"");
                 }
             }
 
-            cbo.Items.Add("\"None\"");
+            cbo.Items.Add("@\"None\"");
 
             return cbo;
         }

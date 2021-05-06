@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Enums;
+﻿using Microsoft.CodeAnalysis;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -116,17 +117,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 return;
             }
 
-            try
+            var result = ScriptContext.EvaluateVariable(newArgumentName, (Type)cbxDefaultType.Tag, txtDefaultValue.Text);
+            if (!result.Success)
             {
-                if (!_isEditMode)
-                    await ScriptContext.AddVariable(newArgumentName, (Type)cbxDefaultType.Tag, txtDefaultValue.Text);
-                else
-                    await ScriptContext.UpdateVariable(newArgumentName, (Type)cbxDefaultType.Tag, txtDefaultValue.Text);
-
-            }
-            catch (Exception ex)
-            {
-                lblArgumentValueError.Text = ex.Message;
+                lblArgumentValueError.Text = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
                 txtDefaultValue.ForeColor = Color.Red;
                 return;
             }

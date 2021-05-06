@@ -54,11 +54,7 @@ namespace OpenBots.Commands.Loop
 		{
 			LoopNumberOfTimesCommand loopCommand = (LoopNumberOfTimesCommand)parentCommand.ScriptCommand;
 			var engine = (IAutomationEngineInstance)sender;
-
-			int loopTimes;
-
-			var loopParameter = (int)await loopCommand.v_LoopParameter.EvaluateCode(engine);
-			loopTimes = int.Parse(loopParameter);
+			int  loopTimes = (int)await loopCommand.v_LoopParameter.EvaluateCode(engine);
 
 			int startIndex = (int)await v_LoopStart.EvaluateCode(engine);
 

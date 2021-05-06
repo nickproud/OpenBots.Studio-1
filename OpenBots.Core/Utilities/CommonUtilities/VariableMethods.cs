@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.Scripting;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,27 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return engine.AutomationEngineContext.EngineScriptState.GetVariable(varName).Value;
         }
 
-        
+        public async static Task<object> InstantiateVariable(string varName, string code, Type varType, EngineContext engineContext)
+        {
+            string type = varType.GetRealTypeName();
+
+            if (string.IsNullOrEmpty(code))
+                code = "null";
+
+            if (engineContext.EngineScriptState == null)
+                engineContext.EngineScriptState = await engineContext.EngineScript.RunAsync();
+
+            string script = $"{type}? {varName} = {code};";
+
+            engineContext.EngineScriptState = await engineContext.EngineScriptState
+                .ContinueWithAsync(script, ScriptOptions.Default
+                .WithReferences(engineContext.AssembliesList)
+                .WithImports(engineContext.NamespacesList));
+
+            return engineContext.EngineScriptState.GetVariable(varName).Value;
+        }
+
+
 
         public async static Task<bool> EvaluateSnippet(this string code, IAutomationEngineInstance engine)
         {
@@ -67,6 +88,24 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                 .WithImports(engine.AutomationEngineContext.NamespacesList));
 
             return engine.AutomationEngineContext.EngineScriptState.GetVariable($"{engine.AutomationEngineContext.GuidPlaceholder}").Value;
+        }
+
+        public async static Task<object> EvaluateCode(this string code, EngineContext engineContext)
+        {
+            if (string.IsNullOrEmpty(code))
+                return null;
+
+            if (engineContext.EngineScriptState == null)
+                engineContext.EngineScriptState = await engineContext.EngineScript.RunAsync();
+
+            string script = $"object {engineContext.GuidPlaceholder} = {code};";
+
+            engineContext.EngineScriptState = await engineContext.EngineScriptState
+                .ContinueWithAsync(script, ScriptOptions.Default
+                .WithReferences(engineContext.AssembliesList)
+                .WithImports(engineContext.NamespacesList));
+
+            return engineContext.EngineScriptState.GetVariable($"{engineContext.GuidPlaceholder}").Value;
         }
 
         public static void SetVariableValue(this object newVal, IAutomationEngineInstance engine, string varName)

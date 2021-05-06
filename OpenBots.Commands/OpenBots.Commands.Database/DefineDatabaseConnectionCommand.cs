@@ -18,6 +18,8 @@ using System.Windows.Forms;
 using System.Threading.Tasks;
 using OpenBots.Core.Script;
 using System.Security;
+using System.Reflection;
+using System.Linq;
 
 namespace OpenBots.Commands.Database
 {
@@ -109,10 +111,24 @@ namespace OpenBots.Commands.Database
 			return new OleDbConnection(connection);
 		}
 
-		private async Task<OleDbConnection> CreateConnection(ScriptContext scriptContext)
+		private async Task<OleDbConnection> CreateConnection(IfrmCommandEditor editor)
 		{
-			var connection = (string)await scriptContext.EvaluateCode(v_ConnectionString);
-			var connectionPass = (string)await scriptContext.EvaluateCode(v_ConnectionStringPassword);
+			var engineContext = new EngineContext();
+
+			engineContext.Variables = new List<ScriptVariable>((List<ScriptVariable>)CommonMethods.Clone(editor.ScriptContext.Variables));
+			engineContext.Arguments = new List<ScriptArgument>(editor.ScriptContext.Arguments);
+			engineContext.AssembliesList = new List<Assembly>(editor.ScriptContext.AssembliesList);
+			engineContext.NamespacesList = new List<string>(editor.ScriptContext.NamespacesList);
+
+			engineContext.Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + editor.ProjectPath + '"';
+			foreach (var var in engineContext.Variables)
+				await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, engineContext);
+
+			foreach (var arg in engineContext.Arguments)
+				await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, engineContext);
+
+			var connection = (string)await VariableMethods.EvaluateCode(v_ConnectionString, engineContext);
+			var connectionPass = (string)await VariableMethods.EvaluateCode(v_ConnectionStringPassword, engineContext);
 
 			if (connectionPass.StartsWith("!"))
 			{
@@ -174,7 +190,7 @@ namespace OpenBots.Commands.Database
 			
 			try
 			{
-				var oleDBConnection = await CreateConnection(editor.ScriptContext);
+				var oleDBConnection = await CreateConnection(editor);
 				oleDBConnection.Open();
 				oleDBConnection.Close();
 				MessageBox.Show("Connection Successful", "Test Connection", MessageBoxButtons.OK, MessageBoxIcon.Information);

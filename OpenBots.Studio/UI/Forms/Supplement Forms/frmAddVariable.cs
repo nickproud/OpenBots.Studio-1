@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Script;
+﻿using Microsoft.CodeAnalysis;
+using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -111,18 +112,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 txtVariableName.ForeColor = Color.Red;
                 return;
             }
-            
-            try
-            {
-                if (!_isEditMode)
-                    await ScriptContext.AddVariable(newVariableName, (Type)cbxDefaultType.Tag, txtDefaultValue.Text);
-                else
-                    await ScriptContext.UpdateVariable(newVariableName, (Type)cbxDefaultType.Tag, txtDefaultValue.Text);
 
-            }
-            catch (Exception ex)
+            var result = ScriptContext.EvaluateVariable(newVariableName, (Type)cbxDefaultType.Tag, txtDefaultValue.Text);
+            if (!result.Success)
             {
-                lblVariableValueError.Text = ex.Message;
+                lblVariableValueError.Text = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
                 txtDefaultValue.ForeColor = Color.Red;
                 return;
             }

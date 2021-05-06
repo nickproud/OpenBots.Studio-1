@@ -184,7 +184,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         }
 
         public delegate void OpenFileDelegate(string filepath, bool isRunTaskCommand);
-        public async void OpenOpenBotsFile(string filePath, bool isRunTaskCommand = false)
+        public void OpenOpenBotsFile(string filePath, bool isRunTaskCommand = false)
         {
             if (InvokeRequired)
             {
@@ -256,8 +256,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _scriptContext.ImportedNamespaces.AddRange(deserializedScript.ImportedNamespaces);
 
                     uiScriptTabControl.SelectedTab.Tag = _scriptContext;
-
-                    await _scriptContext.ResetEngineVariables();
 
                     //populate commands
                     PopulateExecutionCommands(deserializedScript.Commands);

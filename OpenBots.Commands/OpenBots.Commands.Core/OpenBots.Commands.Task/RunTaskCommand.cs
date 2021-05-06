@@ -18,6 +18,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using Tasks = System.Threading.Tasks;
 
@@ -264,23 +265,25 @@ namespace OpenBots.Commands.Task
 			//load arguments if selected and file exists
 			if (assignArgCheckBox.Checked)
 			{
-				var scriptContext = new ScriptContext();
+				var engineContext = new EngineContext();
 
-				scriptContext.Variables.AddRange((List<ScriptVariable>)CommonMethods.Clone(editor.ScriptContext.Variables));
-				scriptContext.Arguments.AddRange(editor.ScriptContext.Arguments);
+				engineContext.Variables = new List<ScriptVariable>((List<ScriptVariable>)CommonMethods.Clone(editor.ScriptContext.Variables));
+				engineContext.Arguments = new List<ScriptArgument>(editor.ScriptContext.Arguments);
+				engineContext.AssembliesList = new List<Assembly>(editor.ScriptContext.AssembliesList);
+				engineContext.NamespacesList = new List<string>(editor.ScriptContext.NamespacesList);
 
-				scriptContext.Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + editor.ProjectPath + '"';
-				foreach (var var in scriptContext.Variables)
-					await scriptContext.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType);
+				engineContext.Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + editor.ProjectPath + '"';
+				foreach (var var in engineContext.Variables)
+					await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, engineContext);
 
-				foreach (var arg in scriptContext.Arguments)
-					await scriptContext.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType);
+				foreach (var arg in engineContext.Arguments)
+					await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, engineContext);
 
 				string startFile = "";
 
 				try
                 {
-					startFile = (string)await scriptContext.EvaluateCode(v_TaskPath);
+					startFile = (string)await VariableMethods.EvaluateCode(v_TaskPath, engineContext);
 				}
                 catch (Exception)
                 {
