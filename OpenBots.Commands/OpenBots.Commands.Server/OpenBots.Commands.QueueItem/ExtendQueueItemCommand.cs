@@ -26,7 +26,7 @@ namespace OpenBots.Commands.QueueItem
 		[SampleUsage("vQueueItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<string,object>) })]
 		public string v_QueueItem { get; set; }
 
 		public ExtendQueueItemCommand()

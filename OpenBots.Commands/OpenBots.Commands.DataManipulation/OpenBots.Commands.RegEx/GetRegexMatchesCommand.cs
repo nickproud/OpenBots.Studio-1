@@ -45,7 +45,7 @@ namespace OpenBots.Commands.RegEx
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetRegexMatchesCommand()
