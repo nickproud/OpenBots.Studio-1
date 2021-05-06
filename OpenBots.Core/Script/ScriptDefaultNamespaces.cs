@@ -1,10 +1,12 @@
 ﻿using MimeKit;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using DataTable = System.Data.DataTable;
 using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 using OutlookApplication = Microsoft.Office.Interop.Outlook.Application;
@@ -24,11 +26,13 @@ namespace OpenBots.Core.Script
             { "System", GetAssemblyReference(typeof(string)) },
             { "System.Collections.Generic", GetAssemblyReference(typeof(string)) },
             { "System.Data", GetAssemblyReference(typeof(DataTable)) },
+            { "System.Drawing", GetAssemblyReference(typeof(Bitmap)) },
             { "System.Linq", GetAssemblyReference(typeof(IQueryable)) },
             { "System.Security", GetAssemblyReference(typeof(SecureString)) },
             { "System.Text", GetAssemblyReference(typeof(string)) },
             { "System.Text.RegularExpressions", GetAssemblyReference(typeof(Regex)) },
-            { "System.Threading.Tasks", GetAssemblyReference(typeof(string)) }
+            { "System.Threading.Tasks", GetAssemblyReference(typeof(string)) },
+            { "System.Windows.Forms", GetAssemblyReference(typeof(MessageBox)) }
         };
 
         private static AssemblyReference GetAssemblyReference(Type type)

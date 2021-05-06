@@ -203,7 +203,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             foreach (var row in searchParameterRows)
             {
                 string parameter = (string)await row[2].ToString().EvaluateCode(engine);
-                switch (row[1].ToString())
+				string parameterName = (string)await row[1].ToString().EvaluateCode(engine);
+
+				switch (parameterName)
                 {
                     case string a when a.ToLower().Contains("xpath"):
                         by = By.XPath(parameter);

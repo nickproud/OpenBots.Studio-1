@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.Scripting;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Script;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -32,6 +33,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
             return engine.AutomationEngineContext.EngineScriptState.GetVariable(varName).Value;
         }
+
+        
 
         public async static Task<bool> EvaluateSnippet(this string code, IAutomationEngineInstance engine)
         {

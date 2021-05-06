@@ -16,12 +16,10 @@ using Autofac;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using OpenBots.UI.CustomControls;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
@@ -31,7 +29,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms
@@ -41,7 +39,9 @@ namespace OpenBots.UI.Forms
         //list of available commands
         public List<AutomationCommand> CommandList { get; set; } = new List<AutomationCommand>();
         //engine context assigned from frmScriptBuilder
-        public EngineContext ScriptEngineContext { get; set; } = new EngineContext();
+        public ScriptContext ScriptContext { get; set; }
+        public string ProjectPath { get; set; }
+        public IContainer AContainer { get; set; }
         //reference to currently selected command
         public ScriptCommand SelectedCommand { get; set; }
         //reference to original command
@@ -73,7 +73,7 @@ namespace OpenBots.UI.Forms
         private void frmNewCommand_Load(object sender, EventArgs e)
         {
             // Initialize CommandControls with Current Editor
-            _commandControls = new CommandControls(this, ScriptEngineContext, TypeContext);
+            _commandControls = new CommandControls(this, TypeContext, AContainer, ProjectPath);
             _errorToolTip = AddValidationErrorToolTip();
 
             //order list
@@ -254,7 +254,7 @@ namespace OpenBots.UI.Forms
         #region Save/Close Buttons
 
         //handles returning DialogResult
-        public void uiBtnAdd_Click(object sender, EventArgs e)
+        public async void uiBtnAdd_Click(object sender, EventArgs e)
         {
             //commit any datagridviews
             foreach (Control ctrl in flw_InputVariables.Controls)
@@ -284,14 +284,15 @@ namespace OpenBots.UI.Forms
                 }
             }
 
-            //if (ValidateInputs())
-            DialogResult = DialogResult.OK;
+            bool success = await ValidateInputs();
+            if (success)
+                DialogResult = DialogResult.OK;
         }
 
-        private bool ValidateInputs()
+        private async Task<bool> ValidateInputs()
         {
             bool isAllValid = true;
-            AutomationEngineInstance testEngine = new AutomationEngineInstance(ScriptEngineContext);
+            await ScriptContext.ResetEngineVariables();
             dynamic currentControl;
             _errorToolTip.RemoveAll();
 
@@ -324,12 +325,15 @@ namespace OpenBots.UI.Forms
                                     {
                                         foreach (DataGridViewCell cell in row.Cells)
                                         {
-                                            bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl, testEngine);
-                                            if (!isCellValid)
+                                            if (cell is DataGridViewTextBoxCell && !cell.OwningColumn.ReadOnly)
                                             {
-                                                isAllValid = false;
-                                                break;
-                                            }                                               
+                                                bool isCellValid = await ValidateInput(true, cell.Value?.ToString(), currentControl);
+                                                if (!isCellValid)
+                                                {
+                                                    isAllValid = false;
+                                                    break;
+                                                }
+                                            }
                                         }
                                     }                                   
                                 }
@@ -337,12 +341,15 @@ namespace OpenBots.UI.Forms
                                 {
                                     foreach (DataGridViewCell cell in row.Cells)
                                     {
-                                        bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl, testEngine);
-
-                                        if (!isCellValid)
+                                        if (cell is DataGridViewTextBoxCell && !cell.OwningColumn.ReadOnly)
                                         {
-                                            isAllValid = false;
-                                            break;
+                                            bool isCellValid = await ValidateInput(true, cell.Value?.ToString(), currentControl);
+
+                                            if (!isCellValid)
+                                            {
+                                                isAllValid = false;
+                                                break;
+                                            }
                                         }
                                     }
                                 }                             
@@ -353,19 +360,19 @@ namespace OpenBots.UI.Forms
                     {
                         currentControl = (UITextBox)ctrl;
                         currentControl.BorderColor = Color.Transparent;
-                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                        isAllValid = await ValidateInput(isAllValid, currentControl.Text, currentControl);
                     }
                     else if (ctrl is UIComboBox)
                     {
                         currentControl = (UIComboBox)ctrl;
                         currentControl.BorderColor = Color.Transparent;
-                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                        isAllValid = await ValidateInput(isAllValid, currentControl.Text, currentControl);
                     }
                     else if(ctrl is UIPictureBox)
                     {
                         currentControl = (UIPictureBox)ctrl;
                         currentControl.BorderColor = Color.Transparent;
-                        isAllValid = ValidateInput(isAllValid, currentControl.EncodedImage, currentControl, testEngine);
+                        isAllValid = await ValidateInput(isAllValid, currentControl.EncodedImage, currentControl);
                     }
                     else
                         continue;
@@ -374,9 +381,10 @@ namespace OpenBots.UI.Forms
             return isAllValid;
         }
 
-        private bool ValidateInput(bool isAllValid, string validatingText, dynamic currentControl, AutomationEngineInstance testEngine)
+        private async Task<bool> ValidateInput(bool isAllValid, string validatingText, dynamic currentControl)
         {
             var validationContext = (CommandControlValidationContext)currentControl.Tag;
+            string errorMessage = "";
 
             //check whether input is required
             if (string.IsNullOrEmpty(validatingText) && validationContext.IsRequired == true)
@@ -396,39 +404,25 @@ namespace OpenBots.UI.Forms
             if (validationContext.IsImageCapture)
                 return isAllValid;
 
-            var varArgMatches = Regex.Matches(validatingText, @"\{.+\}");
-
-            if (varArgMatches.Count == 0)// && validationContext.IsStringOrPrimitive)
+            if (validationContext.IsDropDown)
                 return isAllValid;
-            else if (varArgMatches.Count == 0 /*&& !validationContext.IsStringOrPrimitive*/ && !validationContext.IsDropDown)
-            {
-                currentControl.BorderColor = Color.Red;
-                _errorToolTip.SetToolTip(currentControl, "Input only accepts variables or arguments.");
-                isAllValid = false;
-                return isAllValid;
-            }
 
-            foreach (var match in varArgMatches)
-            {
-                Type varArgType = match.ToString().GetVarArgType(testEngine);
-                if (varArgType != null && !(/*validationContext.IsStringOrPrimitive && */(varArgType == typeof(string) || varArgType.IsPrimitive)))
+            foreach(var compType in validationContext.CompatibleTypes) 
+            { 
+                try
                 {
-                    if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType) || x == varArgType)))
-                    {
-                        currentControl.BorderColor = Color.Red;
-                        _errorToolTip.SetToolTip(currentControl, "Input value is not of a compatible Type.");
-                        isAllValid = false;
-                        return isAllValid;
-                    }
-                }
-                else if (varArgType == null /*&& !validationContext.IsStringOrPrimitive */ && !validationContext.IsDropDown)
-                {
-                    currentControl.BorderColor = Color.Red;
-                    _errorToolTip.SetToolTip(currentControl, "Input provided is not an existing variable or argument.");
-                    isAllValid = false;
+                    await ScriptContext.EvaluateInput(compType, validatingText);
                     return isAllValid;
                 }
+                catch(Exception ex)
+                {
+                    errorMessage = ex.Message;
+                }
             }
+ 
+            isAllValid = false;
+            currentControl.BorderColor = Color.Red;
+            _errorToolTip.SetToolTip(currentControl, errorMessage);
             return isAllValid;
         }
 

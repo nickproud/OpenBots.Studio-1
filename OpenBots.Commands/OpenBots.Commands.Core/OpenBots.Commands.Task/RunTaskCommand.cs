@@ -264,20 +264,23 @@ namespace OpenBots.Commands.Task
 			//load arguments if selected and file exists
 			if (assignArgCheckBox.Checked)
 			{
-				var currentScriptEngine = commandControls.CreateAutomationEngineInstance(editor.ScriptEngineContext);
+				var scriptContext = new ScriptContext();
 
-				currentScriptEngine.AutomationEngineContext.Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + editor.ScriptEngineContext.ProjectPath + '"';
-				foreach (var var in currentScriptEngine.AutomationEngineContext.Variables)
-					await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, currentScriptEngine);
+				scriptContext.Variables.AddRange((List<ScriptVariable>)CommonMethods.Clone(editor.ScriptContext.Variables));
+				scriptContext.Arguments.AddRange(editor.ScriptContext.Arguments);
 
-				foreach (var arg in currentScriptEngine.AutomationEngineContext.Arguments)
-					await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, currentScriptEngine);
+				scriptContext.Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + editor.ProjectPath + '"';
+				foreach (var var in scriptContext.Variables)
+					await scriptContext.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType);
+
+				foreach (var arg in scriptContext.Arguments)
+					await scriptContext.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType);
 
 				string startFile = "";
 
 				try
                 {
-					startFile = (string)await v_TaskPath.EvaluateCode(currentScriptEngine);
+					startFile = (string)await scriptContext.EvaluateCode(v_TaskPath);
 				}
                 catch (Exception)
                 {
@@ -315,14 +318,19 @@ namespace OpenBots.Commands.Task
 					typeComboBox.Items.Add(v_ArgumentAssignments.Rows[i].ItemArray[1]);
 					typeComboBox.Tag = v_ArgumentAssignments.Rows[i].ItemArray[1];
 					_assignmentsGridViewHelper.Rows[i].Cells[1] = typeComboBox;
-					_assignmentsGridViewHelper.Rows[i].Cells[1].ReadOnly = true;
 
 					DataGridViewComboBoxCell returnComboBox = new DataGridViewComboBoxCell();
 					returnComboBox.Items.Add("In");
 					returnComboBox.Items.Add("Out");
 					returnComboBox.Items.Add("InOut");
-					_assignmentsGridViewHelper.Rows[i].Cells[3] = returnComboBox;
-					_assignmentsGridViewHelper.Rows[i].Cells[3].ReadOnly = true;					
+					_assignmentsGridViewHelper.Rows[i].Cells[3] = returnComboBox;					
+				}
+
+				if (_assignmentsGridViewHelper.Columns.Count > 0)
+                {
+					_assignmentsGridViewHelper.Columns[0].ReadOnly = true;
+					_assignmentsGridViewHelper.Columns[1].ReadOnly = true;
+					_assignmentsGridViewHelper.Columns[3].ReadOnly = true;
 				}
 			}
 			else if (!assignArgCheckBox.Checked)

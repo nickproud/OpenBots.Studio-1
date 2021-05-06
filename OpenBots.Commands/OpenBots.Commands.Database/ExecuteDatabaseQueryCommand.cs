@@ -57,7 +57,7 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("[ STRING | \"@name\" | vNameValue ]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public DataTable v_QueryParameters { get; set; }
 
 		[Required]
@@ -126,7 +126,7 @@ namespace OpenBots.Commands.Database
 			foreach (DataRow rw in v_QueryParameters.Rows)
 			{
 				var parameterName = (string)await rw.Field<string>("Parameter Name").EvaluateCode(engine);
-				var parameterValue = (string)await rw.Field<string>("Parameter Value").EvaluateCode(engine);
+				var parameterValue = await rw.Field<string>("Parameter Value").EvaluateCode(engine);
 				var parameterType = rw.Field<string>("Parameter Type").ToString();
 
 				object convertedValue = null;
@@ -160,13 +160,13 @@ namespace OpenBots.Commands.Database
 						convertedValue = Convert.ToSingle(parameterValue);
 						break;
 					case "GUID":
-						convertedValue = Guid.Parse(parameterValue);
+						convertedValue = Guid.Parse(parameterValue.ToString());
 						break;
 					case "BYTE":
 						convertedValue = Convert.ToByte(parameterValue);
 						break;
 					case "BYTE[]":
-						convertedValue = Encoding.UTF8.GetBytes(parameterValue);
+						convertedValue = Encoding.UTF8.GetBytes(parameterValue.ToString());
 						break;
 					default:
 						throw new NotImplementedException($"Parameter Type '{parameterType}' not implemented!");

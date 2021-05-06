@@ -25,8 +25,7 @@ namespace OpenBots.UI.Forms
 {
     public partial class frmScriptArguments : UIForm
     {
-        public List<ScriptVariable> ScriptVariables { get; set; }
-        public List<ScriptArgument> ScriptArguments { get; set; }
+        public ScriptContext ScriptContext { get; set; }
         public string ScriptName { get; set; }
         public string LastModifiedArgumentName { get; set; }
         private TreeNode _userArgumentParentNode;
@@ -36,6 +35,7 @@ namespace OpenBots.UI.Forms
         private string _leadingDirection = "Direction: ";
         private string _leadingType = "Type: ";
         private TypeContext _typeContext;
+        private List<ScriptArgument> _argumentsCopy;
 
         #region Initialization and Form Load
         public frmScriptArguments(TypeContext typeContext)
@@ -46,8 +46,9 @@ namespace OpenBots.UI.Forms
         }
         private void frmScriptArguments_Load(object sender, EventArgs e)
         {
-           //initialize
-            _userArgumentParentNode = InitializeNodes("My Task Arguments", ScriptArguments);
+            //initialize
+            _argumentsCopy = new List<ScriptArgument>(ScriptContext.Arguments);
+            _userArgumentParentNode = InitializeNodes("My Task Arguments", _argumentsCopy);
             lblMainLogo.Text = ScriptName + " arguments";
             ExpandUserArgumentNode();
         }
@@ -77,6 +78,7 @@ namespace OpenBots.UI.Forms
         {
             ResetArguments();
 
+            ScriptContext.Arguments = _argumentsCopy;
             //return success result
             DialogResult = DialogResult.OK;
         }
@@ -93,8 +95,8 @@ namespace OpenBots.UI.Forms
         {
             //create argument editing form
             frmAddArgument addArgumentForm = new frmAddArgument(_typeContext);
-            addArgumentForm.ScriptArguments = ScriptArguments;
-            addArgumentForm.ScriptVariables = ScriptVariables;
+            addArgumentForm.ScriptContext = ScriptContext;
+            addArgumentForm.ArgumentsCopy = _argumentsCopy;
 
             ExpandUserArgumentNode();
 
@@ -162,8 +164,8 @@ namespace OpenBots.UI.Forms
 
             //create argument editing form
             frmAddArgument addArgumentForm = new frmAddArgument(argumentName, argumentDirection, argumentValue, argumentType, _typeContext);
-            addArgumentForm.ScriptArguments = ScriptArguments;
-            addArgumentForm.ScriptVariables = ScriptVariables;
+            addArgumentForm.ScriptContext = ScriptContext;
+            addArgumentForm.ArgumentsCopy = _argumentsCopy;
 
             ExpandUserArgumentNode();
 
@@ -219,7 +221,7 @@ namespace OpenBots.UI.Forms
             }
         }
 
-        private void tvScriptArguments_KeyDown(object sender, KeyEventArgs e)
+        private async void tvScriptArguments_KeyDown(object sender, KeyEventArgs e)
         {
             //handling outside
             if (tvScriptArguments.SelectedNode == null)
@@ -262,6 +264,7 @@ namespace OpenBots.UI.Forms
                 //remove parent node
                 parentNode.Remove();
                 ResetArguments();
+                await ScriptContext.ResetEngineVariables();
             }
         }
 
@@ -279,7 +282,7 @@ namespace OpenBots.UI.Forms
         private void ResetArguments()
         {
             //remove all variables
-            ScriptArguments.Clear();
+            _argumentsCopy.Clear();
 
             //loop each variable and add
             for (int i = 0; i < _userArgumentParentNode.Nodes.Count; i++)
@@ -291,7 +294,7 @@ namespace OpenBots.UI.Forms
                 var argumentType = (Type)_userArgumentParentNode.Nodes[i].Nodes[2].Tag;
 
                 //add to list
-                ScriptArguments.Add(new ScriptArgument()
+                _argumentsCopy.Add(new ScriptArgument()
                 {
                     ArgumentName = argumentName,
                     Direction = argumentDirection,

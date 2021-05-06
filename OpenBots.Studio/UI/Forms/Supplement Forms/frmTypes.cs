@@ -4,7 +4,6 @@ using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.Supplement_Forms
@@ -126,6 +125,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     }
                     childNodefound = false;
                 }
+
+                tvTypes.ExpandAll();
             }
             else
             {

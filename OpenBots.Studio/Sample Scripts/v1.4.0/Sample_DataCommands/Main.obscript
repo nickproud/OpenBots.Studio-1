@@ -1,0 +1,852 @@
+{
+  "$type": "OpenBots.Core.Script.Script, OpenBots.Core",
+  "Commands": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "d56bc79c-c047-4578-ae8c-230a9b405a35",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 1,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "Project Details"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "0493b813-61bf-472c-8c10-5d279054fffc",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 2,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "Get two numbers and perform division operation"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "5aa5dcb4-a154-435b-9069-9f22b141b380",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 3,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "Get date using 'Create Date' and Add days // Format the result "
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "ccf39fa7-9947-4572-9fd2-46b01599f8e6",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 4,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "Read a json data and extract names using Json commands"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "0a7c5e18-edbf-4836-a40b-87a1cb37c3a3",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 5,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "-------------------------------------"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+        "v_LogFile": "Engine Logs",
+        "v_LogText": "Data commands started",
+        "v_LogType": "Information",
+        "CommandID": "5a556a67-4c2f-46a5-af2a-1e281b9443c7",
+        "CommandName": "LogMessageCommand",
+        "SelectionName": "Log Message",
+        "LineNumber": 6,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.ErrorHandling.BeginTryCommand, OpenBots.Commands.Core",
+        "CommandID": "257d09d8-ba16-4392-8291-a660015b4638",
+        "CommandName": "BeginTryCommand",
+        "SelectionName": "Try",
+        "LineNumber": 7,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": true,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": [
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "c88ea10c-c69d-40d2-8980-7c373bce9198",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 8,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Items in this section will be handled if error occurs"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "5d9b3df0-65e7-4b2d-88b6-30b51c3b245e",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 9,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "-------------------------------------"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "97581964-0bad-4b69-acb7-ffc2128005c5",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 10,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Get two numbers and perform division operation"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Variable.SetVariableCommand, OpenBots.Commands.Core",
+            "v_Input": "255",
+            "v_OutputUserVariableName": "{strData}",
+            "CommandID": "47ae8796-d4ef-4f2f-b4ca-c9acbd456d58",
+            "CommandName": "SetVariableCommand",
+            "SelectionName": "Set Variable",
+            "LineNumber": 11,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Variable.SetVariableCommand, OpenBots.Commands.Core",
+            "v_Input": "5",
+            "v_OutputUserVariableName": "{strData2}",
+            "CommandID": "9582b65b-ad11-4164-80d8-e31146ef38fc",
+            "CommandName": "SetVariableCommand",
+            "SelectionName": "Set Variable",
+            "LineNumber": 12,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Data.MathCalculationCommand, OpenBots.Commands.DataManipulation",
+            "v_MathExpression": "{strData}/{strData2}",
+            "v_ThousandSeparator": ",",
+            "v_DecimalSeparator": ".",
+            "v_AcceptUndefined": "No",
+            "v_OutputUserVariableName": "{varResult}",
+            "CommandID": "02ae31a7-64cf-4ae6-b86f-637617e2054a",
+            "CommandName": "MathCalculationCommand",
+            "SelectionName": "Math Calculation",
+            "LineNumber": 13,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.ShowMessageCommand, OpenBots.Commands.Core",
+            "v_Message": "{varResult}",
+            "v_AutoCloseAfter": "3",
+            "CommandID": "1bbb3973-f0a8-4150-8952-c44d392738d2",
+            "CommandName": "MessageBoxCommand",
+            "SelectionName": "Show Message",
+            "LineNumber": 14,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "89f92ef8-b069-4264-8e86-a6b789a33002",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 15,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "-------------------------------------"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "68a1ccbd-57c7-4e7d-80e2-db14b6f6c10b",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 16,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "'Create Date' and Add 3 days save result then change the Format of the result "
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Data.CreateDateTimeCommand, OpenBots.Commands.DataManipulation",
+            "v_Year": "2020",
+            "v_Month": "11",
+            "v_Day": "25",
+            "v_Time": null,
+            "v_AMorPM": "PM",
+            "v_OutputUserVariableName": "{strCreateDate}",
+            "CommandID": "a029fecc-c3bc-425b-81e9-4cef1d6e05d0",
+            "CommandName": "CreateDateTimeCommand",
+            "SelectionName": "Create DateTime",
+            "LineNumber": 17,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.ShowMessageCommand, OpenBots.Commands.Core",
+            "v_Message": "{strCreateDate}",
+            "v_AutoCloseAfter": "3",
+            "CommandID": "3af22ae5-5c94-4292-8200-95a3e890d027",
+            "CommandName": "MessageBoxCommand",
+            "SelectionName": "Show Message",
+            "LineNumber": 18,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Data.DateCalculationCommand, OpenBots.Commands.DataManipulation",
+            "v_InputDate": "{DateTime.Now}",
+            "v_CalculationMethod": "Add Day(s)",
+            "v_Increment": "3",
+            "v_ToStringFormat": "",
+            "v_OutputUserVariableName": "{strDate}",
+            "CommandID": "662ba872-72f8-46db-8ce2-423250a29a33",
+            "CommandName": "DateCalculationCommand",
+            "SelectionName": "Date Calculation",
+            "LineNumber": 19,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.ShowMessageCommand, OpenBots.Commands.Core",
+            "v_Message": "{strDate}",
+            "v_AutoCloseAfter": "3",
+            "CommandID": "5af24689-c4ed-4fe3-ae39-7da1b6a44934",
+            "CommandName": "MessageBoxCommand",
+            "SelectionName": "Show Message",
+            "LineNumber": 20,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Data.FormatDateCommand, OpenBots.Commands.DataManipulation",
+            "v_InputData": "{strDate}",
+            "v_ToStringFormat": "dd/MM/yyyy",
+            "v_OutputUserVariableName": "{strFormatDate}",
+            "CommandID": "740cd020-621a-4921-948a-0d24a74794fb",
+            "CommandName": "FormatDateCommand",
+            "SelectionName": "Format Date",
+            "LineNumber": 21,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.ShowMessageCommand, OpenBots.Commands.Core",
+            "v_Message": "{strFormatDate}",
+            "v_AutoCloseAfter": "3",
+            "CommandID": "b3b3776d-9c47-413e-b78b-94eaeaf8df76",
+            "CommandName": "MessageBoxCommand",
+            "SelectionName": "Show Message",
+            "LineNumber": 22,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "29d31ebc-a6b7-4b73-9539-9b264c1927e9",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 23,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "-------------------------------------"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "cf63c764-623e-4d0c-bf9f-2f0e3c72cf82",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 24,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Read Json data from text file and access data "
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.TextFile.ReadTextFileCommand, OpenBots.Commands.SystemAutomation",
+            "v_FilePath": "{ProjectPath}\\Input\\search.txt",
+            "v_OutputUserVariableName": "{Text}",
+            "CommandID": "b24a5fc6-0b2e-4556-a2c9-1c04115f1f53",
+            "CommandName": "ReadTextFileCommand",
+            "SelectionName": "Read Text File",
+            "LineNumber": 25,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Data.ParseJSONArrayCommand, OpenBots.Commands.DataManipulation",
+            "v_JsonArrayName": "{Text}",
+            "v_OutputUserVariableName": "{JsonArray}",
+            "CommandID": "94bea519-3e26-4d75-8522-da1af7f5b7d6",
+            "CommandName": "ParseJSONArrayCommand",
+            "SelectionName": "Parse JSON Array",
+            "LineNumber": 26,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Loop.LoopCollectionCommand, OpenBots.Commands.Core",
+            "v_LoopParameter": "{JsonArray}",
+            "v_OutputUserVariableName": "{JsonItem}",
+            "CommandID": "30e1c709-36f5-44da-9280-4d23c497112b",
+            "CommandName": "LoopCollectionCommand",
+            "SelectionName": "Loop Collection",
+            "LineNumber": 27,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": true,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": [
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "da50b2a7-3c74-4bb2-a367-27d184b2c6aa",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 28,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "Get name value"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Data.ParseJSONModelCommand, OpenBots.Commands.DataManipulation",
+                "v_JsonObject": "{JsonItem}",
+                "v_ParseObjects": [
+                  {
+                    "Json Selector": "$.name",
+                    "Output Variable": "{NameList}"
+                  }
+                ],
+                "CommandID": "aafcd37f-6ad4-45db-a2cc-eb25ae12c961",
+                "CommandName": "ParseJSONModelCommand",
+                "SelectionName": "Parse JSON Model",
+                "LineNumber": 29,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.List.GetListItemCommand, OpenBots.Commands.DataManipulation",
+                "v_ListName": "{NameList}",
+                "v_ItemIndex": "0",
+                "v_OutputUserVariableName": "{Name}",
+                "CommandID": "daed55cc-6b80-4da8-8995-f827f9f9501b",
+                "CommandName": "GetListItemCommand",
+                "SelectionName": "Get List Item",
+                "LineNumber": 30,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.ShowMessageCommand, OpenBots.Commands.Core",
+                "v_Message": "{Name}",
+                "v_AutoCloseAfter": "3",
+                "CommandID": "2e9e1b7b-9278-40f8-b876-6c4803dd9456",
+                "CommandName": "MessageBoxCommand",
+                "SelectionName": "Show Message",
+                "LineNumber": 31,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Loop.EndLoopCommand, OpenBots.Commands.Core",
+                "CommandID": "5c7a99e6-8ca1-4514-ba58-76cd800be635",
+                "CommandName": "EndLoopCommand",
+                "SelectionName": "End Loop",
+                "LineNumber": 32,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            }
+          ]
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "3611c468-a167-43a6-ae5d-05bad8588455",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 33,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "-------------------------------------"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.CatchCommand, OpenBots.Commands.Core",
+            "v_ExceptionType": "Exception",
+            "CommandID": "cdf23923-550d-4faf-a058-a8ed56d61bd0",
+            "CommandName": "CatchCommand",
+            "SelectionName": "Catch",
+            "LineNumber": 34,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "7e0237f6-17ca-4f43-9cb5-2f41928e3c94",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 35,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "This section executes if error occurs above"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.GetExceptionMessageCommand, OpenBots.Commands.Core",
+            "v_OutputUserVariableName": "{strError}",
+            "CommandID": "1e910b84-19ba-4d94-89bf-c0724b36aad8",
+            "CommandName": "GetExceptionMessageCommand",
+            "SelectionName": "Get Exception Message",
+            "LineNumber": 36,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+            "v_LogFile": "Engine Logs",
+            "v_LogText": "Error running main - {strError}",
+            "v_LogType": "Error",
+            "CommandID": "03c74fbd-5806-4a8b-8d21-0e6d6fb37c0c",
+            "CommandName": "LogMessageCommand",
+            "SelectionName": "Log Message",
+            "LineNumber": 37,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.EndTryCommand, OpenBots.Commands.Core",
+            "CommandID": "4d443208-280d-4911-acab-d25421b494ab",
+            "CommandName": "EndTryCommand",
+            "SelectionName": "End Try",
+            "LineNumber": 38,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        }
+      ]
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+        "v_LogFile": "Engine Logs",
+        "v_LogText": "Data commands ended",
+        "v_LogType": "Information",
+        "CommandID": "08d150b7-8d8a-41cf-abe8-af15b5c3fba8",
+        "CommandName": "LogMessageCommand",
+        "SelectionName": "Log Message",
+        "LineNumber": 39,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    }
+  ],
+  "Variables": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "strError",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": ""
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "strData",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "strData2",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "varResult",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "strCreateDate",
+      "VariableType": "System.DateTime, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "strDate",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "strFormatDate",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "Text",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "JsonArray",
+      "VariableType": "System.Collections.Generic.List`1, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "JsonItem",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "NameList",
+      "VariableType": "System.Collections.Generic.List`1, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "Name",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "ProjectPath",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": "Value Provided at Runtime"
+    }
+  ],
+  "Arguments": [],
+  "Elements": [],
+  "Version": "1.4.0.0"
+}

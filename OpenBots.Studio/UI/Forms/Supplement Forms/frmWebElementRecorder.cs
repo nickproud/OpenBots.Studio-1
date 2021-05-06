@@ -23,13 +23,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 {
     public partial class frmWebElementRecorder : UIForm, IfrmWebElementRecorder
     {
-        public List<ScriptElement> ScriptElements { get; set; }
+        public ScriptContext ScriptContext { get; set; }
         public DataTable SearchParameters { get; set; }
         public string LastItemClicked { get; set; }
         public string StartURL { get; set; }
         public bool IsRecordingSequence { get; set; }
         public bool IsCommandItemSelected { get; set; }
         public frmScriptBuilder CallBackForm { get; set; }
+
         private List<ScriptCommand> _sequenceCommandList;
 
         private string _browserInstanceName;
@@ -56,7 +57,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private string _errorMessage = "Error cloning element. Please Try Again.";
 
         public frmWebElementRecorder(IContainer container, string startURL)
-        {
+        { 
             _container = container;
             _appSettings = new ApplicationSettings();
             _appSettings = _appSettings.GetOrCreateApplicationSettings();
@@ -300,40 +301,40 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     switch (row[1].ToString())
                     {
                         case "XPath":
-                            SearchParameters.Rows.Add(row[0], "XPath", $"\"{_xPath}\"");
+                            SearchParameters.Rows.Add(row[0], "\"XPath\"", $"\"{_xPath}\"");
                             break;
                         case "ID":
-                            SearchParameters.Rows.Add(row[0], "ID", $"\"{_id}\"");
+                            SearchParameters.Rows.Add(row[0], "\"ID\"", $"\"{_id}\"");
                             break;
                         case "Name":
-                            SearchParameters.Rows.Add(row[0], "Name", $"\"{_name}\"");
+                            SearchParameters.Rows.Add(row[0], "\"Name\"", $"\"{_name}\"");
                             break;
                         case "Tag Name":
-                            SearchParameters.Rows.Add(row[0], "Tag Name", $"\"{_tagName}\"");
+                            SearchParameters.Rows.Add(row[0], "\"Tag Name\"", $"\"{_tagName}\"");
                             break;
                         case "Class Name":
-                            SearchParameters.Rows.Add(row[0], "Class Name", $"\"{_className}\"");
+                            SearchParameters.Rows.Add(row[0], "\"Class Name\"", $"\"{_className}\"");
                             break;
                         case "Link Text":
-                            SearchParameters.Rows.Add(row[0], "Link Text", $"\"{_linkText}\"");
+                            SearchParameters.Rows.Add(row[0], "\"Link Text\"", $"\"{_linkText}\"");
                             break;
                         case "CSS Selector":
                             for (int i = 0; i < _cssSelectors.Count; i++)
-                                SearchParameters.Rows.Add(row[0], $"CSS Selector {i + 1}", $"\"{_cssSelectors[i]}\"");
+                                SearchParameters.Rows.Add(row[0], $"\"CSS Selector {i + 1}\"", $"\"{_cssSelectors[i]}\"");
                             break;
                     }
                 }
             }
             else
             {
-                SearchParameters.Rows.Add(true, "XPath", $"\"{_xPath}\"");
-                SearchParameters.Rows.Add(false, "ID", $"\"{_id}\"");
-                SearchParameters.Rows.Add(false, "Name", $"\"{_name}\"");
-                SearchParameters.Rows.Add(false, "Tag Name", $"\"{_tagName}\"");
-                SearchParameters.Rows.Add(false, "Class Name", $"\"{_className}\"");
-                SearchParameters.Rows.Add(false, "Link Text", $"\"{_linkText}\"");
+                SearchParameters.Rows.Add(true, "\"XPath\"", $"\"{_xPath}\"");
+                SearchParameters.Rows.Add(false, "\"ID\"", $"\"{_id}\"");
+                SearchParameters.Rows.Add(false, "\"Name\"", $"\"{_name}\"");
+                SearchParameters.Rows.Add(false, "\"Tag Name\"", $"\"{_tagName}\"");
+                SearchParameters.Rows.Add(false, "\"Class Name\"", $"\"{_className}\"");
+                SearchParameters.Rows.Add(false, "\"Link Text\"", $"\"{_linkText}\"");
                 for (int i = 0; i < _cssSelectors.Count; i++)
-                    SearchParameters.Rows.Add(false, $"CSS Selector {i + 1}", $"\"{_cssSelectors[i]}\"");
+                    SearchParameters.Rows.Add(false, $"\"CSS Selector {i + 1}\"", $"\"{_cssSelectors[i]}\"");
             }
         }
 
@@ -396,8 +397,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void pbSave_Click(object sender, EventArgs e)
         {
+            if (SearchParameters == null)
+                return;
+
             frmAddElement addElementForm = new frmAddElement("", SearchParameters);
-            addElementForm.ScriptElements = ScriptElements;
+            addElementForm.ScriptContext = ScriptContext;
             addElementForm.ShowDialog();
 
             if (addElementForm.DialogResult == DialogResult.OK)
@@ -408,7 +412,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     ElementValue = addElementForm.ElementValueDT
                 };
 
-                ScriptElements.Add(newElement);
+                ScriptContext.Elements.Add(newElement);
             }
 
             addElementForm.Dispose();
@@ -417,11 +421,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void pbElements_Click(object sender, EventArgs e)
         {
             frmScriptElements scriptElementForm = new frmScriptElements();
-            scriptElementForm.ScriptElements = new List<ScriptElement>(ScriptElements);
+            scriptElementForm.ScriptContext = ScriptContext;
             scriptElementForm.ShowDialog();
-
-            if (scriptElementForm.DialogResult == DialogResult.OK)
-                ScriptElements = scriptElementForm.ScriptElements;
 
             scriptElementForm.Dispose();
         }
@@ -478,7 +479,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             dynamic navigateToURLCommand = TypeMethods.CreateTypeInstance(_container, "SeleniumNavigateToURLCommand");
             navigateToURLCommand.v_InstanceName = _browserInstanceName;
-            navigateToURLCommand.v_URL = url;
+            navigateToURLCommand.v_URL = $"\"{url}\"";
             _sequenceCommandList.Add(navigateToURLCommand);
         }
 
@@ -538,7 +539,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 //append chars to previously created command
                 //this makes editing easier for the user because only 1 command is issued rather than multiples
                 var previouslyInputChars = lastCreatedSendKeysCommand.v_WebActionParameterTable.Rows[0][1].ToString();
-                lastCreatedSendKeysCommand.v_WebActionParameterTable.Rows[0][1] = previouslyInputChars + selectedKey;
+                lastCreatedSendKeysCommand.v_WebActionParameterTable.Rows[0][1] = previouslyInputChars.Insert(previouslyInputChars.Length - 1, selectedKey);
             }
             else
             {
@@ -550,7 +551,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 DataTable webActionDT = setTextElementActionCommand.v_WebActionParameterTable;
                 DataRow textToSetRow = webActionDT.NewRow();
                 textToSetRow["Parameter Name"] = "Text To Set";
-                textToSetRow["Parameter Value"] = selectedKey;
+                textToSetRow["Parameter Value"] = $"\"{selectedKey}\"";
                 webActionDT.Rows.Add(textToSetRow);
 
                 _sequenceCommandList.Add(setTextElementActionCommand);

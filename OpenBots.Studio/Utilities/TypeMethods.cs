@@ -117,7 +117,7 @@ namespace OpenBots.Studio.Utilities
                              .Where(n => !string.IsNullOrEmpty(n.Key) && !n.Key.StartsWith("<"))
                              .GroupBy(x => x.Key)
                              .OrderBy(n => n.Key)
-                             .ToDictionary(x => x.Key, x => x.First().Value));
+                             .ToDictionary(x => x.Key, x => x.Last().Value));
             }
             catch (Exception ex)
             {

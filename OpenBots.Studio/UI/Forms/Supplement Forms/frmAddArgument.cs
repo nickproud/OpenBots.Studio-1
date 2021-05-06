@@ -3,7 +3,9 @@ using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -11,13 +13,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 {
     public partial class frmAddArgument : UIForm
     {
-        public List<ScriptVariable> ScriptVariables { get; set; }
-        public List<ScriptArgument> ScriptArguments { get; set; }
+        public ScriptContext ScriptContext { get; set; }
         private bool _isEditMode;
         private string _editingArgumentName;
         private TypeContext _typeContext;
         private Type _preEditType;
         private ToolTip _typeToolTip;
+        public List<ScriptArgument> ArgumentsCopy { get; set; }
+        private CodeDomProvider _provider;
 
         public frmAddArgument(TypeContext typeContext)
         {
@@ -62,25 +65,46 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             _typeToolTip = AddTypeToolTip();
             _typeToolTip.SetToolTip(cbxDefaultType, _preEditType.GetRealTypeName());
+            _provider = CodeDomProvider.CreateProvider("C#");
         }
 
-        private void uiBtnOk_Click(object sender, EventArgs e)
+        private async void uiBtnOk_Click(object sender, EventArgs e)
         {
+            txtArgumentName.ForeColor = Color.SteelBlue;
+            txtDefaultValue.ForeColor = Color.SteelBlue;
+            lblArgumentNameError.Text = "";
+            lblArgumentValueError.Text = "";
+
             txtArgumentName.Text = txtArgumentName.Text.Trim();
             if (txtArgumentName.Text == string.Empty)
             {
                 lblArgumentNameError.Text = "Argument Name not provided";
+                txtArgumentName.ForeColor = Color.Red;
+                return;
+            }
+
+            if (!_provider.IsValidIdentifier(txtArgumentName.Text))
+            {
+                lblArgumentNameError.Text = "Argument Name is invalid";
+                txtArgumentName.ForeColor = Color.Red;
+                return;
+            }
+
+            if (!_provider.IsValidIdentifier(txtArgumentName.Text))
+            {
+                lblArgumentNameError.Text = "Argument Name is invalid";
                 return;
             }
 
             string newArgumentName = txtArgumentName.Text;
-            var existingVariable = ScriptVariables.Where(var => var.VariableName == newArgumentName).FirstOrDefault();
-            var existingArgument = ScriptArguments.Where(var => var.ArgumentName == newArgumentName).FirstOrDefault();
+            var existingVariable = ScriptContext.Variables.Where(var => var.VariableName == newArgumentName).FirstOrDefault();
+            var existingArgument = ArgumentsCopy.Where(var => var.ArgumentName == newArgumentName).FirstOrDefault();
             if (existingArgument != null || existingVariable != null)
             {
                 if (!_isEditMode || existingArgument.ArgumentName != _editingArgumentName)
                 {
                     lblArgumentNameError.Text = "An Argument or Variable with this name already exists";
+                    txtArgumentName.ForeColor = Color.Red;
                     return;
                 }
             }
@@ -88,6 +112,22 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             if (txtArgumentName.Text.StartsWith("{") || txtArgumentName.Text.EndsWith("}"))
             {
                 lblArgumentNameError.Text = "Argument markers '{' and '}' should not be included";
+                txtArgumentName.ForeColor = Color.Red;
+                return;
+            }
+
+            try
+            {
+                if (!_isEditMode)
+                    await ScriptContext.AddVariable(newArgumentName, (Type)cbxDefaultType.Tag, txtDefaultValue.Text);
+                else
+                    await ScriptContext.UpdateVariable(newArgumentName, (Type)cbxDefaultType.Tag, txtDefaultValue.Text);
+
+            }
+            catch (Exception ex)
+            {
+                lblArgumentValueError.Text = ex.Message;
+                txtDefaultValue.ForeColor = Color.Red;
                 return;
             }
 

@@ -23,9 +23,8 @@ namespace OpenBots.Commands.Input
 		[DisplayName("HTML")]
 		[Description("Define the form to be displayed using the HTML Builder.")]
 		[SampleUsage("")]
-		[Remarks("")]
+		[Remarks("Should not be enclosed in quotation marks since the HTML is not evaluated as C# code.")]
 		[Editor("ShowHTMLBuilder", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputHTML { get; set; }
 
 		[Required]
@@ -86,7 +85,7 @@ namespace OpenBots.Commands.Input
 		{
 			base.Render(editor, commandControls);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputHTML", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputHTML", this, editor, 200, 300, false));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_ErrorOnClose", this, editor));
 			
 			return RenderedControls;

@@ -60,7 +60,7 @@ namespace OpenBots.Core.Script
             Arguments = new List<ScriptArgument>();
             Elements = new List<ScriptElement>();
             Commands = new List<ScriptAction>();
-            ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+            ImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
         }
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace OpenBots.Core.Script
             {
                 VariableName = "ProjectPath",
                 VariableType = typeof(string),
-                VariableValue = "Value Provided at Runtime"
+                VariableValue = "\"Value Provided at Runtime\""
             };
             deserializedData.Variables.Add(projectPathVariable);
 

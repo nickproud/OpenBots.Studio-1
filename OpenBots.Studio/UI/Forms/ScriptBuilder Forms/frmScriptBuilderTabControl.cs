@@ -40,19 +40,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         break;
                 }
 
-                ScriptObject scriptObject = (ScriptObject)uiScriptTabControl.SelectedTab.Tag;
-                if (scriptObject != null)
-                {
-                    _scriptVariables = scriptObject.ScriptVariables;
-                    _scriptArguments = scriptObject.ScriptArguments;
-                    _scriptElements = scriptObject.ScriptElements;
-                    _importedNamespaces = scriptObject.ImportedNamespaces;
+                if (uiScriptTabControl.SelectedTab.Tag != null)
+                    _scriptContext = (ScriptContext)uiScriptTabControl.SelectedTab.Tag;
 
-                    if (!_isRunTaskCommand)
-                    {
-                        ResetVariableArgumentBindings();
-                    }
-                }
+                if (!_isRunTaskCommand)
+                    ResetVariableArgumentBindings();
             }
         }
 

@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 using Newtonsoft.Json;
 using OpenBots.Core.App;
 using OpenBots.Core.Command;
@@ -22,15 +24,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis;
 using OBScript = OpenBots.Core.Script.Script;
 using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
-using RSScript = Microsoft.CodeAnalysis.Scripting.Script;
-using System.Threading.Tasks;
 
 namespace OpenBots.Engine
 {
@@ -55,7 +52,7 @@ namespace OpenBots.Engine
         private Stopwatch _stopWatch { get; set; }
         private EngineStatus _currentStatus { get; set; }
         public EngineSettings EngineSettings { get; set; }
-        private string _privateCommandLog { get; set; }
+        public string PrivateCommandLog { get; set; }
         public List<DataTable> DataTables { get; set; }
         public string FileName { get; set; }
         public bool IsServerExecution { get; set; }
@@ -80,7 +77,7 @@ namespace OpenBots.Engine
                 Log.Information("Engine Class has been initialized");
             }
             
-            _privateCommandLog = "Can't log display value as the command contains sensitive data";
+            PrivateCommandLog = "Can't log display value as the command contains sensitive data";
 
             //initialize error tracking list
             ErrorsOccured = new List<ScriptError>();
@@ -105,7 +102,7 @@ namespace OpenBots.Engine
                 AutomationEngineContext.AppInstances = new Dictionary<string, object>();
 
             if (AutomationEngineContext.ImportedNamespaces == null)
-                AutomationEngineContext.ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+                AutomationEngineContext.ImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
 
             ServiceResponses = new List<IRestResponse>();
             DataTables = new List<DataTable>();
@@ -308,7 +305,7 @@ namespace OpenBots.Engine
 
                 if (AutomationEngineContext.ImportedNamespaces == null)
                 {
-                    AutomationEngineContext.ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;
+                    AutomationEngineContext.ImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
                 }
 
                 //execute commands
@@ -390,7 +387,7 @@ namespace OpenBots.Engine
                 {
                     _currentStatus = EngineStatus.Paused;
                     ReportProgress("Paused on Line " + parentCommand.LineNumber + ": "
-                        + (parentCommand.v_IsPrivate ? _privateCommandLog : parentCommand.GetDisplayValue()));
+                        + (parentCommand.v_IsPrivate ? PrivateCommandLog : parentCommand.GetDisplayValue()));
                     ReportProgress("[Please select 'Resume' when ready]");
                     isFirstWait = false;
                 }
@@ -439,7 +436,7 @@ namespace OpenBots.Engine
 
             //report intended execution
             if (parentCommand.CommandName != "LogMessageCommand")
-                ReportProgress($"Running Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? _privateCommandLog : parentCommand.GetDisplayValue())}", parentCommand.LogLevel);
+                ReportProgress($"Running Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? PrivateCommandLog : parentCommand.GetDisplayValue())}");
 
             //handle any errors
             try
@@ -497,25 +494,16 @@ namespace OpenBots.Engine
                         switch (ErrorHandlingAction)
                         {
                             case "Ignore Error":
-                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), LogEventLevel.Error);
+                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), Enum.GetName(typeof(LogEventLevel), LogEventLevel.Error));
                                 ReportProgress("Ignoring Per Error Handling");
                                 break;
                             case "Report Error":
-                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), LogEventLevel.Error);
+                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), Enum.GetName(typeof(LogEventLevel), LogEventLevel.Error));
                                 ReportProgress("Handling Error and Attempting to Continue");
                                 throw ex;
                             default:
                                 throw ex;
                         }
-                    }
-
-                    if (parentCommand.CommandName == "LogMessageCommand")
-                    {
-                        string displayValue = parentCommand.GetDisplayValue().Replace("Log Message ['", "").Replace("']", "");
-                        string logMessage = (string)await displayValue.Split('-').Last().EvaluateCode(this);
-                        displayValue = displayValue.Replace(displayValue.Split('-').Last(), logMessage);
-                        ReportProgress($"Logging Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? _privateCommandLog : displayValue)}",
-                            parentCommand.LogLevel);
                     }
                 }
             }
@@ -553,7 +541,7 @@ namespace OpenBots.Engine
                     DialogResult result = DialogResult.OK;
                     if (ErrorHandlingAction != "Ignore Error")
                         result = AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.LoadErrorForm(errorMessage);
-                    ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), LogEventLevel.Debug);
+                    ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), Enum.GetName(typeof(LogEventLevel), LogEventLevel.Debug));
                     AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.IsUnhandledException = false;
 
                     if (result == DialogResult.OK)
@@ -616,11 +604,12 @@ namespace OpenBots.Engine
             _isScriptSteppedIntoBeforeException = true;
         }
 
-        public virtual void ReportProgress(string progress, LogEventLevel eventLevel = LogEventLevel.Information)
+        public virtual void ReportProgress(string progress, string eventLevel = "Information")
         {
             ReportProgressEventArgs args = new ReportProgressEventArgs();
+            LogEventLevel logEventLevel = (LogEventLevel)Enum.Parse(typeof(LogEventLevel), eventLevel);
 
-            switch (eventLevel)
+            switch (logEventLevel)
             {
                 case LogEventLevel.Verbose:
                     Log.Verbose(progress);

@@ -197,13 +197,11 @@ namespace OpenBots.Commands.Loop
 					editor.EditingCommand = loopCommand;
 					editor.OriginalCommand = loopCommand;
 					editor.CreationModeInstance = CreationMode.Edit;
-					editor.ScriptEngineContext = parentEditor.ScriptEngineContext;
+					editor.ScriptContext = parentEditor.ScriptContext;
 					editor.TypeContext = parentEditor.TypeContext;
 
 					if (((Form)editor).ShowDialog() == DialogResult.OK)
 					{
-						parentEditor.ScriptEngineContext = editor.ScriptEngineContext;
-						parentEditor.TypeContext = editor.TypeContext;
 
 						var editedCommand = editor.SelectedCommand as BeginLoopCommand;
 						var displayText = editedCommand.GetDisplayValue();
@@ -230,7 +228,7 @@ namespace OpenBots.Commands.Loop
 			var automationCommands = new List<AutomationCommand>() { CommandsHelper.ConvertToAutomationCommand(typeof(BeginLoopCommand)) };
 			IfrmCommandEditor editor = commandControls.CreateCommandEditorForm(automationCommands, null);
 			editor.SelectedCommand = new BeginLoopCommand();
-			editor.ScriptEngineContext = parentEditor.ScriptEngineContext;
+			editor.ScriptContext = parentEditor.ScriptContext;
 			editor.TypeContext = parentEditor.TypeContext;
 
 			if (((Form)editor).ShowDialog() == DialogResult.OK)
@@ -239,7 +237,7 @@ namespace OpenBots.Commands.Loop
 				var configuredCommand = editor.SelectedCommand as BeginLoopCommand;
 				var displayText = configuredCommand.GetDisplayValue();
 				var serializedData = JsonConvert.SerializeObject(configuredCommand);
-				parentEditor.ScriptEngineContext = editor.ScriptEngineContext;
+				parentEditor.ScriptContext = editor.ScriptContext;
 				parentEditor.TypeContext = editor.TypeContext;
 
 				//add to list

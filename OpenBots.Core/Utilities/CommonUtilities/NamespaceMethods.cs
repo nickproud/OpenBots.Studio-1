@@ -19,6 +19,11 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
         }
 
+        public static List<string> GetNamespacesList(Dictionary<string, AssemblyReference> importedNamespaces)
+        {
+            return importedNamespaces.Keys.ToList();
+        }
+
         public static Assembly GetAssembly(this string namespaceKey, IAutomationEngineInstance engine)
         {
             try
@@ -45,6 +50,28 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             try
             {
                 var importedNamespaces = engine.AutomationEngineContext.ImportedNamespaces;
+                if (importedNamespaces != null && importedNamespaces.Count > 0)
+                {
+                    return importedNamespaces.Select(x => AppDomain.CurrentDomain.GetAssemblies()
+                                                                                 .Where(y => y.GetName().Name == x.Value.AssemblyName &&
+                                                                                             y.GetName().Version == Version.Parse(x.Value.AssemblyVersion))
+                                                                                 .FirstOrDefault())
+                                             .Distinct()
+                                             .ToList();
+                }
+
+                throw new Exception($"ImportedNamespaces is null or empty!");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static List<Assembly> GetAssemblies(Dictionary<string, AssemblyReference> importedNamespaces)
+        {
+            try
+            {
                 if (importedNamespaces != null && importedNamespaces.Count > 0)
                 {
                     return importedNamespaces.Select(x => AppDomain.CurrentDomain.GetAssemblies()
