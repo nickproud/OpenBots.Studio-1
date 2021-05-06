@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
@@ -21,6 +23,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Tasks = System.Threading.Tasks;
+using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 
 namespace OpenBots.Commands.Task
 {
@@ -226,7 +229,7 @@ namespace OpenBots.Commands.Task
 			_passParameters.Font = new Font("Segoe UI Light", 12);
 			_passParameters.ForeColor = Color.White;
 			_passParameters.DataBindings.Add("Checked", this, "v_AssignArguments", false, DataSourceUpdateMode.OnPropertyChanged);
-			_passParameters.CheckedChanged += (sender, e) => PassParametersCheckbox_CheckedChanged(sender, e, editor, commandControls);
+			_passParameters.CheckedChanged += (sender, e) => PassParametersCheckbox_CheckedChanged(sender, e, editor);
 			commandControls.CreateDefaultToolTipFor("v_AssignArguments", this, _passParameters);
 			RenderedControls.Add(_passParameters);
 
@@ -235,7 +238,7 @@ namespace OpenBots.Commands.Task
 			_assignmentsGridViewHelper.AllowUserToAddRows = false;
 			_assignmentsGridViewHelper.AllowUserToDeleteRows = false;
 			//refresh gridview
-            _assignmentsGridViewHelper.MouseEnter += (sender, e) => PassParametersCheckbox_CheckedChanged(_passParameters, null, editor, commandControls, true);
+            _assignmentsGridViewHelper.MouseEnter += (sender, e) => PassParametersCheckbox_CheckedChanged(_passParameters, null, editor, true);
 
 			if (!_passParameters.Checked)
 				_assignmentsGridViewHelper.Hide();
@@ -257,7 +260,7 @@ namespace OpenBots.Commands.Task
 			_passParameters.Checked = false;
 		}
 
-		private async void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls, bool isMouseEnter = false)
+		private async void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, bool isMouseEnter = false)
 		{			
 			var assignArgCheckBox = (CheckBox)sender;
 			_assignmentsGridViewHelper.Visible = assignArgCheckBox.Checked;
@@ -267,10 +270,12 @@ namespace OpenBots.Commands.Task
 			{
 				var engineContext = new EngineContext();
 
-				engineContext.Variables = new List<ScriptVariable>((List<ScriptVariable>)CommonMethods.Clone(editor.ScriptContext.Variables));
+				engineContext.Variables = new List<OBScriptVariable>((List<OBScriptVariable>)CommonMethods.Clone(editor.ScriptContext.Variables));
 				engineContext.Arguments = new List<ScriptArgument>(editor.ScriptContext.Arguments);
 				engineContext.AssembliesList = new List<Assembly>(editor.ScriptContext.AssembliesList);
 				engineContext.NamespacesList = new List<string>(editor.ScriptContext.NamespacesList);
+				engineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(engineContext.AssembliesList)
+																						  .WithImports(engineContext.NamespacesList));
 
 				engineContext.Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + editor.ProjectPath + '"';
 				foreach (var var in engineContext.Variables)

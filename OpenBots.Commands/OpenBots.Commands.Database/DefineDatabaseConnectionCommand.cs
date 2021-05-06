@@ -20,6 +20,9 @@ using OpenBots.Core.Script;
 using System.Security;
 using System.Reflection;
 using System.Linq;
+using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 
 namespace OpenBots.Commands.Database
 {
@@ -115,10 +118,12 @@ namespace OpenBots.Commands.Database
 		{
 			var engineContext = new EngineContext();
 
-			engineContext.Variables = new List<ScriptVariable>((List<ScriptVariable>)CommonMethods.Clone(editor.ScriptContext.Variables));
+			engineContext.Variables = new List<OBScriptVariable>((List<OBScriptVariable>)CommonMethods.Clone(editor.ScriptContext.Variables));
 			engineContext.Arguments = new List<ScriptArgument>(editor.ScriptContext.Arguments);
 			engineContext.AssembliesList = new List<Assembly>(editor.ScriptContext.AssembliesList);
 			engineContext.NamespacesList = new List<string>(editor.ScriptContext.NamespacesList);
+			engineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(engineContext.AssembliesList)
+																				      .WithImports(engineContext.NamespacesList));
 
 			engineContext.Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + editor.ProjectPath + '"';
 			foreach (var var in engineContext.Variables)
