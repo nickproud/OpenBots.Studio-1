@@ -18,7 +18,7 @@ namespace OpenBots.Core.Script
         public List<OBScriptVariable> Variables { get; set; }
         public List<ScriptArgument> Arguments { get; set; }
         public List<ScriptElement> Elements { get; set; }
-        public Dictionary<string, AssemblyReference> ImportedNamespaces { get; set; }
+        public Dictionary<string, List<AssemblyReference>> ImportedNamespaces { get; set; }
         public List<Assembly> AssembliesList { get; set; }
         public List<string> NamespacesList { get; set; }
         public CSharpCompilationOptions DefaultCompilationOptions { get; set; }
@@ -30,7 +30,7 @@ namespace OpenBots.Core.Script
             Variables = new List<OBScriptVariable>();
             Arguments = new List<ScriptArgument>();
             Elements = new List<ScriptElement>();
-            ImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
+            ImportedNamespaces = new Dictionary<string, List<AssemblyReference>>(ScriptDefaultNamespaces.DefaultNamespaces);
 
             AssembliesList = NamespaceMethods.GetAssemblies(ImportedNamespaces);
             NamespacesList = NamespaceMethods.GetNamespacesList(ImportedNamespaces);

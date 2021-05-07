@@ -91,7 +91,7 @@ namespace OpenBots.Studio.Utilities
             }
         }
 
-        public static void GenerateAllNamespaces(List<Assembly> assemblyList, Dictionary<string, AssemblyReference> allNamespaces)
+        public static void GenerateAllNamespaces(List<Assembly> assemblyList, Dictionary<string, List<AssemblyReference>> allNamespaces)
         {
             allNamespaces.Clear();
 
@@ -117,7 +117,7 @@ namespace OpenBots.Studio.Utilities
                              .Where(n => !string.IsNullOrEmpty(n.Key) && !n.Key.StartsWith("<"))
                              .GroupBy(x => x.Key)
                              .OrderBy(n => n.Key)
-                             .ToDictionary(x => x.Key, x => x.Last().Value));
+                             .ToDictionary(x => x.Key, x => x.Select(y => y.Value).ToList()));
             }
             catch (Exception ex)
             {

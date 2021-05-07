@@ -9,7 +9,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 {
     public static class NamespaceMethods
     {
-        public static Dictionary<string, AssemblyReference> GetNamespacesDict(IAutomationEngineInstance engine)
+        public static Dictionary<string, List<AssemblyReference>> GetNamespacesDict(IAutomationEngineInstance engine)
         {
             return engine.AutomationEngineContext.ImportedNamespaces;
         }
@@ -19,22 +19,25 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return engine.AutomationEngineContext.ImportedNamespaces.Keys.ToList();
         }
 
-        public static List<string> GetNamespacesList(Dictionary<string, AssemblyReference> importedNamespaces)
+        public static List<string> GetNamespacesList(Dictionary<string, List<AssemblyReference>> importedNamespaces)
         {
             return importedNamespaces.Keys.ToList();
         }
 
-        public static Assembly GetAssembly(this string namespaceKey, IAutomationEngineInstance engine)
+        public static List<Assembly> GetAssemblies(this string namespaceKey, IAutomationEngineInstance engine)
         {
             try
             {
+                List<Assembly> assemblies = new List<Assembly>();
                 var importedNamespaces = engine.AutomationEngineContext.ImportedNamespaces;
-                if (importedNamespaces.TryGetValue(namespaceKey, out AssemblyReference assemblyReference))
+                if (importedNamespaces.TryGetValue(namespaceKey, out List<AssemblyReference> assemblyReferences))
                 {
-                    return AppDomain.CurrentDomain.GetAssemblies()
-                                                  .Where(x => x.GetName().Name == assemblyReference.AssemblyName && 
-                                                              x.GetName().Version == Version.Parse(assemblyReference.AssemblyVersion))
-                                                  .FirstOrDefault();
+                    assemblyReferences.ForEach(y => assemblies
+                                      .Add(AppDomain.CurrentDomain.GetAssemblies()
+                                      .Where(x => x.GetName().Name == y.AssemblyName && x.GetName().Version == Version.Parse(y.AssemblyVersion))
+                                      .FirstOrDefault()));
+                   
+                    return assemblies;
                 }
                 
                 throw new Exception($"Assembly for Namespace '{namespaceKey}' not found!");
@@ -49,15 +52,20 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         {
             try
             {
+                List<Assembly> assemblyList = new List<Assembly>();
                 var importedNamespaces = engine.AutomationEngineContext.ImportedNamespaces;
                 if (importedNamespaces != null && importedNamespaces.Count > 0)
                 {
-                    return importedNamespaces.Select(x => AppDomain.CurrentDomain.GetAssemblies()
-                                                                                 .Where(y => y.GetName().Name == x.Value.AssemblyName &&
-                                                                                             y.GetName().Version == Version.Parse(x.Value.AssemblyVersion))
-                                                                                 .FirstOrDefault())
-                                             .Distinct()
-                                             .ToList();
+                    importedNamespaces.ToList()
+                                      .ForEach(z => assemblyList
+                                      .AddRange(z.Value
+                                      .Select(x => AppDomain.CurrentDomain.GetAssemblies()
+                                      .Where(y => y.GetName().Name == x.AssemblyName && y.GetName().Version == Version.Parse(x.AssemblyVersion))
+                                      .FirstOrDefault())
+                                      .Distinct()
+                                      .ToList()));
+
+                    return assemblyList;
                 }
 
                 throw new Exception($"ImportedNamespaces is null or empty!");
@@ -68,18 +76,23 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             }
         }
 
-        public static List<Assembly> GetAssemblies(Dictionary<string, AssemblyReference> importedNamespaces)
+        public static List<Assembly> GetAssemblies(Dictionary<string, List<AssemblyReference>> importedNamespaces)
         {
             try
             {
+                List<Assembly> assemblyList = new List<Assembly>();
                 if (importedNamespaces != null && importedNamespaces.Count > 0)
                 {
-                    return importedNamespaces.Select(x => AppDomain.CurrentDomain.GetAssemblies()
-                                                                                 .Where(y => y.GetName().Name == x.Value.AssemblyName &&
-                                                                                             y.GetName().Version == Version.Parse(x.Value.AssemblyVersion))
-                                                                                 .FirstOrDefault())
-                                             .Distinct()
-                                             .ToList();
+                    importedNamespaces.ToList()
+                                     .ForEach(z => assemblyList
+                                     .AddRange(z.Value
+                                     .Select(x => AppDomain.CurrentDomain.GetAssemblies()
+                                     .Where(y => y.GetName().Name == x.AssemblyName && y.GetName().Version == Version.Parse(x.AssemblyVersion))
+                                     .FirstOrDefault())
+                                     .Distinct()
+                                     .ToList()));
+
+                    return assemblyList;
                 }
 
                 throw new Exception($"ImportedNamespaces is null or empty!");

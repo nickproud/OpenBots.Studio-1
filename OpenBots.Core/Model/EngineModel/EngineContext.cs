@@ -22,7 +22,7 @@ namespace OpenBots.Core.Model.EngineModel
         public List<ScriptArgument> Arguments { get; set; }
         public List<ScriptElement> Elements { get; set; }
         public Dictionary<string, object> AppInstances { get; set; }
-        public Dictionary<string, AssemblyReference> ImportedNamespaces { get; set; }
+        public Dictionary<string, List<AssemblyReference>> ImportedNamespaces { get; set; }
         public List<Assembly> AssembliesList { get; set; }
         public List<string> NamespacesList { get; set; }
         public IfrmScriptEngine ScriptEngine { get; set; }
@@ -41,7 +41,7 @@ namespace OpenBots.Core.Model.EngineModel
 
         public EngineContext(string filePath, string projectPath, IContainer container, IfrmScriptBuilder scriptBuilder, Logger engineLogger,
             List<OBScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, object> appInstances, 
-            Dictionary<string, AssemblyReference> importedNamespaces, IfrmScriptEngine scriptEngine, int startFromLineNumber, bool isDebugMode, bool isChildEngine)
+            Dictionary<string, List<AssemblyReference>> importedNamespaces, IfrmScriptEngine scriptEngine, int startFromLineNumber, bool isDebugMode, bool isChildEngine)
         {
             FilePath = filePath;
             ProjectPath = projectPath;

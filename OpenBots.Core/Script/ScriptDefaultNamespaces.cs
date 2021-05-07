@@ -1,6 +1,7 @@
 ﻿using MimeKit;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -16,23 +17,23 @@ namespace OpenBots.Core.Script
 {
     public class ScriptDefaultNamespaces
     {
-        public static Dictionary<string, AssemblyReference> DefaultNamespaces = new Dictionary<string, AssemblyReference>()
+        public static Dictionary<string, List<AssemblyReference>> DefaultNamespaces = new Dictionary<string, List<AssemblyReference>>()
         {
             //all default namespaces are part of mscorlib
-            { "Microsoft.Office.Interop.Excel", GetAssemblyReference(typeof(ExcelApplication)) },
-            { "Microsoft.Office.Interop.Outlook", GetAssemblyReference(typeof(OutlookApplication)) },
-            { "Microsoft.Office.Interop.Word", GetAssemblyReference(typeof(WordApplication)) },
-            { "MimeKit", GetAssemblyReference(typeof(MimeMessage)) },
-            { "System", GetAssemblyReference(typeof(string)) },
-            { "System.Collections.Generic", GetAssemblyReference(typeof(string)) },
-            { "System.Data", GetAssemblyReference(typeof(DataTable)) },
-            { "System.Drawing", GetAssemblyReference(typeof(Bitmap)) },
-            { "System.Linq", GetAssemblyReference(typeof(IQueryable)) },
-            { "System.Security", GetAssemblyReference(typeof(SecureString)) },
-            { "System.Text", GetAssemblyReference(typeof(string)) },
-            { "System.Text.RegularExpressions", GetAssemblyReference(typeof(Regex)) },
-            { "System.Threading.Tasks", GetAssemblyReference(typeof(string)) },
-            { "System.Windows.Forms", GetAssemblyReference(typeof(MessageBox)) }
+            { "Microsoft.Office.Interop.Excel", new List<AssemblyReference> { GetAssemblyReference(typeof(ExcelApplication)) } },
+            { "Microsoft.Office.Interop.Outlook", new List<AssemblyReference> {GetAssemblyReference(typeof(OutlookApplication)) } },
+            { "Microsoft.Office.Interop.Word", new List<AssemblyReference> { GetAssemblyReference(typeof(WordApplication)) } },
+            { "MimeKit", new List<AssemblyReference> { GetAssemblyReference(typeof(MimeMessage)) } },
+            { "System", new List<AssemblyReference> { GetAssemblyReference(typeof(string)) } },
+            { "System.Collections.Generic", new List<AssemblyReference> { GetAssemblyReference(typeof(string)) } },
+            { "System.Data", new List<AssemblyReference> { GetAssemblyReference(typeof(DataTable)), GetAssemblyReference(typeof(DataRowComparer)) } },
+            { "System.Drawing", new List<AssemblyReference> { GetAssemblyReference(typeof(Bitmap)) } },
+            { "System.Linq", new List<AssemblyReference> { GetAssemblyReference(typeof(IQueryable)) } },
+            { "System.Security", new List<AssemblyReference> { GetAssemblyReference(typeof(SecureString)) } },
+            { "System.Text", new List<AssemblyReference> { GetAssemblyReference(typeof(string)) } },
+            { "System.Text.RegularExpressions", new List<AssemblyReference> { GetAssemblyReference(typeof(Regex)) } },
+            { "System.Threading.Tasks", new List<AssemblyReference> { GetAssemblyReference(typeof(string)) } },
+            { "System.Windows.Forms", new List<AssemblyReference> { GetAssemblyReference(typeof(MessageBox)) } }
         };
 
         private static AssemblyReference GetAssemblyReference(Type type)

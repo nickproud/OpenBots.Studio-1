@@ -26,7 +26,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         //engine context variables
         private List<ListViewItem> _rowsSelectedForCopy;
         public ScriptContext ScriptContext { get; set; }
-        public Dictionary<string, AssemblyReference> AllNamespaces { get; set; }
+        public Dictionary<string, List<AssemblyReference>> AllNamespaces { get; set; }
         public Project ScriptProject { get; set; }
         public string ScriptProjectPath { get; set; }       
 

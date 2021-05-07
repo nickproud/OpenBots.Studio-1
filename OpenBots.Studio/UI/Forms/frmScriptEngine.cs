@@ -256,8 +256,8 @@ namespace OpenBots.UI.Forms
             {
                 List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, true);
                 Dictionary<string, List<Type>> groupedTypes = new Dictionary<string, List<Type>>();
-                Dictionary<string, AssemblyReference> allNamespaces = new Dictionary<string, AssemblyReference>();
-                Dictionary<string, AssemblyReference> importedNamespaces = new Dictionary<string, AssemblyReference>();
+                Dictionary<string, List<AssemblyReference>> allNamespaces = new Dictionary<string, List<AssemblyReference>>();
+                Dictionary<string, List<AssemblyReference>> importedNamespaces = new Dictionary<string, List<AssemblyReference>>();
                 var builder = AppDomainSetupManager.LoadBuilder(assemblyList, groupedTypes, allNamespaces, importedNamespaces);
                 ScriptEngineContext.Container = builder.Build();
             }
