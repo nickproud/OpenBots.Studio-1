@@ -34,11 +34,11 @@ namespace OpenBots.Commands.Excel
 
 		[Required]
 		[DisplayName("Row")]
-		[Description("Enter the text value that will be set in the selected row (Can be a DataRow).")]
+		[Description("Enter the row value to set at the selected cell.")]
 		[SampleUsage("new List<string>() { \"Hello\", \"World\" } || vList || vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(List<string>) })]
 		public string v_RowToSet { get; set; }
 
 		[Required]
@@ -105,7 +105,6 @@ namespace OpenBots.Commands.Excel
 			else
 			{
 				var vRowList = (List<string>)vRow;
-
 				string cellValue;
 				for (int j = 0; j < vRowList.Count; j++)
 				{

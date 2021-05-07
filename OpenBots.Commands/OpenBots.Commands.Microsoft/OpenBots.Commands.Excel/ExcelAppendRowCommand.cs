@@ -33,11 +33,11 @@ namespace OpenBots.Commands.Excel
 
 		[Required]
 		[DisplayName("Row")]
-		[Description("Enter the text value that will be set in the appended row (Can be a DataRow).")]
-		[SampleUsage("\"Hello,World\" || vData1+\",\"+vData2 || vDataRow")]
+		[Description("Enter the row value to appended.")]
+		[SampleUsage("new List<string>() { \"Hello\", \"World\" } || vList || vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(List<string>) })]
 		public string v_RowToSet { get; set; }
 
 		public ExcelAppendRowCommand()
@@ -90,10 +90,9 @@ namespace OpenBots.Commands.Excel
 			}
 			else
 			{
-				string vRowString = (string)await v_RowToSet.EvaluateCode(engine);
-				var splittext = vRowString.Split(',');
+				var vRowList = (List<string>)vRow;
 				string cellValue;
-				foreach (var item in splittext)
+				foreach (var item in vRowList)
 				{
 					cellValue = item;
 					if (cellValue == "null")
