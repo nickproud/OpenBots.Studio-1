@@ -221,7 +221,7 @@ namespace OpenBots.UI.Forms
             }
         }
 
-        private async void tvScriptArguments_KeyDown(object sender, KeyEventArgs e)
+        private void tvScriptArguments_KeyDown(object sender, KeyEventArgs e)
         {
             //handling outside
             if (tvScriptArguments.SelectedNode == null)
@@ -264,7 +264,6 @@ namespace OpenBots.UI.Forms
                 //remove parent node
                 parentNode.Remove();
                 ResetArguments();
-                await ScriptContext.ResetEngineVariables();
             }
         }
 

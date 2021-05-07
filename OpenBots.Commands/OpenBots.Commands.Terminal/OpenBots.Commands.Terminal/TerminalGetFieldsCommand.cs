@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Terminal
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<XMLScreenField>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public TerminalGetFieldsCommand()

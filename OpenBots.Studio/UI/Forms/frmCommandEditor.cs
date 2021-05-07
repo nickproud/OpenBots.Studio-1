@@ -13,6 +13,8 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 using Autofac;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Emit;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -254,7 +256,7 @@ namespace OpenBots.UI.Forms
         #region Save/Close Buttons
 
         //handles returning DialogResult
-        public async void uiBtnAdd_Click(object sender, EventArgs e)
+        public void uiBtnAdd_Click(object sender, EventArgs e)
         {
             //commit any datagridviews
             foreach (Control ctrl in flw_InputVariables.Controls)
@@ -284,15 +286,14 @@ namespace OpenBots.UI.Forms
                 }
             }
 
-            bool success = await ValidateInputs();
+            bool success = ValidateInputs();
             if (success)
                 DialogResult = DialogResult.OK;
         }
 
-        private async Task<bool> ValidateInputs()
+        private bool ValidateInputs()
         {
             bool isAllValid = true;
-            await ScriptContext.ResetEngineVariables();
             dynamic currentControl;
             _errorToolTip.RemoveAll();
 
@@ -327,7 +328,7 @@ namespace OpenBots.UI.Forms
                                         {
                                             if (cell is DataGridViewTextBoxCell && !cell.OwningColumn.ReadOnly)
                                             {
-                                                bool isCellValid = await ValidateInput(true, cell.Value?.ToString(), currentControl);
+                                                bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl);
                                                 if (!isCellValid)
                                                 {
                                                     isAllValid = false;
@@ -343,7 +344,7 @@ namespace OpenBots.UI.Forms
                                     {
                                         if (cell is DataGridViewTextBoxCell && !cell.OwningColumn.ReadOnly)
                                         {
-                                            bool isCellValid = await ValidateInput(true, cell.Value?.ToString(), currentControl);
+                                            bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl);
 
                                             if (!isCellValid)
                                             {
@@ -360,19 +361,19 @@ namespace OpenBots.UI.Forms
                     {
                         currentControl = (UITextBox)ctrl;
                         currentControl.BorderColor = Color.Transparent;
-                        isAllValid = await ValidateInput(isAllValid, currentControl.Text, currentControl);
+                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl);
                     }
                     else if (ctrl is UIComboBox)
                     {
                         currentControl = (UIComboBox)ctrl;
                         currentControl.BorderColor = Color.Transparent;
-                        isAllValid = await ValidateInput(isAllValid, currentControl.Text, currentControl);
+                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl);
                     }
                     else if(ctrl is UIPictureBox)
                     {
                         currentControl = (UIPictureBox)ctrl;
                         currentControl.BorderColor = Color.Transparent;
-                        isAllValid = await ValidateInput(isAllValid, currentControl.EncodedImage, currentControl);
+                        isAllValid = ValidateInput(isAllValid, currentControl.EncodedImage, currentControl);
                     }
                     else
                         continue;
@@ -381,7 +382,7 @@ namespace OpenBots.UI.Forms
             return isAllValid;
         }
 
-        private async Task<bool> ValidateInput(bool isAllValid, string validatingText, dynamic currentControl)
+        private bool ValidateInput(bool isAllValid, string validatingText, dynamic currentControl)
         {
             var validationContext = (CommandControlValidationContext)currentControl.Tag;
             string errorMessage = "";
@@ -408,16 +409,17 @@ namespace OpenBots.UI.Forms
                 return isAllValid;
 
             foreach(var compType in validationContext.CompatibleTypes) 
-            { 
-                try
-                {
-                    await ScriptContext.EvaluateInput(compType, validatingText);
+            {
+                EmitResult result;
+                if(currentControl is UITextBox && currentControl.IsEvaluateSnippet)
+                    result = ScriptContext.EvaluateSnippet(validatingText);
+                else
+                    result = ScriptContext.EvaluateInput(compType, validatingText);
+
+                if (result.Success)
                     return isAllValid;
-                }
-                catch(Exception ex)
-                {
-                    errorMessage = ex.Message;
-                }
+                else
+                    errorMessage = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
             }
  
             isAllValid = false;

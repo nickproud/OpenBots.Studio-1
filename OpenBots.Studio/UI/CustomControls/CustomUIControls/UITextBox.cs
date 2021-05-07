@@ -21,8 +21,9 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
         [DllImport("user32.dll")]
         static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprc, IntPtr hrgn, uint flags);
 
-        private Color _borderColor;
+        public bool IsEvaluateSnippet { get; set; }
 
+        private Color _borderColor;
         public Color BorderColor
         {
             get 

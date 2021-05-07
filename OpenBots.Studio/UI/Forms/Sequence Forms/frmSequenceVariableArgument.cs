@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Enums;
+﻿using Microsoft.CodeAnalysis;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Studio.Utilities;
@@ -36,7 +37,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             }
         }
 
-        private async void dgvVariablesArguments_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void dgvVariablesArguments_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
@@ -58,7 +59,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                         (cellValue != null && !provider.IsValidIdentifier(cellValue.ToString())))
                     {
                         dgv.Rows.RemoveAt(e.RowIndex);
-                        await ScriptContext.ResetEngineVariables();
                         return;
                     }
                     //removes an empty uncommitted row
@@ -74,7 +74,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                     {
                         Notify($"An Error Occurred: A variable or argument with the name '{variableName}' already exists", Color.Red);
                         dgv.Rows.RemoveAt(e.RowIndex);
-                        await ScriptContext.ResetEngineVariables();
                         return;
                     }
                     //if the variable/argument name is valid, set value cell's readonly as false
@@ -84,21 +83,18 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                             cell.ReadOnly = false;
 
                         nameCell.Value = variableName.Trim();
-
-                        await ScriptContext.AddVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
                     }
                 }
 
                 else if (e.ColumnIndex == 2)
                 {
-                    try
-                    {
-                        await ScriptContext.UpdateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
+                    var result = ScriptContext.EvaluateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
+                    if (result.Success)
                         valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Black };
-                    }
-                    catch (Exception)
+                    else
                     {
                         valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Red };
+                        string errorMessage = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
                     }
                 }
 
@@ -157,19 +153,11 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             }
         }
 
-        private async void dgvVariablesArguments_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
-        {
-            await ScriptContext.ResetEngineVariables();
-        }
-
-        private async void dgvVariablesArguments_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        private void dgvVariablesArguments_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             try
             {
                 DataGridView dgv = (DataGridView)sender;
-
-                if (dgv.Name == "dgvVariables")
-                    await ScriptContext.ReinitializeEngineScript();
 
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
@@ -196,14 +184,14 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                         (ScriptArgumentDirection)row.Cells["Direction"].Value == ScriptArgumentDirection.InOut))
                         row.Cells["ArgumentValue"].ReadOnly = true;
 
-                    try
-                    {
-                        await ScriptContext.AddVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
+     
+                    var result = ScriptContext.EvaluateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
+                    if (result.Success)
                         valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Black };
-                    }
-                    catch (Exception)
+                    else
                     {
                         valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Red };
+                        string errorMessage = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
                     }
                 }
             }
@@ -238,7 +226,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             }
         }
 
-        private async void dgvVariablesArguments_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void dgvVariablesArguments_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
@@ -301,14 +289,13 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                         SendKeys.Send("+{TAB}");
                     }
 
-                    try
-                    {
-                        await ScriptContext.UpdateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
+                    var result = ScriptContext.EvaluateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
+                    if (result.Success)
                         valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Black };
-                    }
-                    catch (Exception)
+                    else
                     {
                         valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Red };
+                        string errorMessage = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
                     }
                 }
 
@@ -441,6 +428,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
 
                 TypeMethods.GenerateAllVariableTypes(NamespaceMethods.GetAssemblies(ScriptContext.ImportedNamespaces), TypeContext.GroupedTypes);
+                ScriptContext.ReloadCompilerObjects();
 
                 //marks the script as unsaved with changes
                 if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))
@@ -465,6 +453,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
 
                 TypeMethods.GenerateAllVariableTypes(NamespaceMethods.GetAssemblies(ScriptContext.ImportedNamespaces), TypeContext.GroupedTypes);
+                ScriptContext.ReloadCompilerObjects();
 
                 //marks the script as unsaved with changes
                 if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))

@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Variable
 		{
 			base.Render(editor, commandControls);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Input", this, editor, 200, 300));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Input", this, editor, 200, 300, true, true));
 
 			return RenderedControls;
 		}

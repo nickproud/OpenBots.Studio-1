@@ -58,7 +58,7 @@ namespace OpenBots.Commands.Excel
 		[Description("Create a new variable or select a variable from the list.")]
 		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<string,string>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public LoadDictionaryCommand()
