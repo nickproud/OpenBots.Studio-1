@@ -9,7 +9,6 @@ chrome.runtime.onMessage.addListener(
 			document.addEventListener("click", onClickEvent);
 			document.addEventListener("mouseover", mouseOverEvent);
 			document.addEventListener("mouseout", mouseOutEvent);
-			//sendResponse({targetHTML: clickPoints});
 		}
 		else{
 			if (request.responseType == "leftclick") {
