@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Excel
 
 		[Required]
 		[DisplayName("Row")]
-		[Description("Enter the row value to appended.")]
+		[Description("Enter the row value to append.")]
 		[SampleUsage("new List<string>() { \"Hello\", \"World\" } || vList || vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
