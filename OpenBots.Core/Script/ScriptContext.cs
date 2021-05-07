@@ -65,7 +65,7 @@ namespace OpenBots.Core.Script
             if (string.IsNullOrEmpty(code))
                 code = "null";
 
-            string script = $"{varType.GetRealTypeName()}? {varName} = {code};";
+            string script = $"{varType.GetRealTypeFullName()}? {varName} = {code};";
 
             var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(SourceText.From(script, Encoding.UTF8), new CSharpParseOptions(languageVersion: LanguageVersion.CSharp8, kind: SourceCodeKind.Script), "");
             var compilation = CSharpCompilation.Create("CSharp", new SyntaxTree[] { parsedSyntaxTree }, DefaultReferences, DefaultCompilationOptions);
@@ -80,15 +80,15 @@ namespace OpenBots.Core.Script
                 code = "null";
 
             var script = "";
-            Variables.ForEach(v => script += $"{v.VariableType.GetRealTypeName()}? {v.VariableName} = {(v.VariableValue == null ? "null" : v.VariableValue)};");
-            Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeName()}? {a.ArgumentName} = {(a.ArgumentValue == null ? "null" : a.ArgumentValue)};");
+            Variables.ForEach(v => script += $"{v.VariableType.GetRealTypeFullName()}? {v.VariableName} = {(v.VariableValue == null ? "null" : v.VariableValue)};");
+            Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeFullName()}? {a.ArgumentName} = {(a.ArgumentValue == null ? "null" : a.ArgumentValue)};");
 
             string type;
             var test = varType.GetGenericArguments();
             if (varType.IsGenericType && varType.GetGenericArguments()[0].Name == "T")
                 type = "object";
             else
-                type = varType.GetRealTypeName();
+                type = varType.GetRealTypeFullName();
 
             GenerateGuidPlaceHolder();
             script += $"{type}? {GuidPlaceholder} = {code};";
@@ -106,8 +106,8 @@ namespace OpenBots.Core.Script
                 code = "null";
 
             var script = "";
-            Variables.ForEach(v => script += $"{v.VariableType.GetRealTypeName()}? {v.VariableName} = {(v.VariableValue == null ? "null" : v.VariableValue)};");
-            Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeName()}? {a.ArgumentName} = {(a.ArgumentValue == null ? "null" : a.ArgumentValue)};");
+            Variables.ForEach(v => script += $"{v.VariableType.GetRealTypeFullName()}? {v.VariableName} = {(v.VariableValue == null ? "null" : v.VariableValue)};");
+            Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeFullName()}? {a.ArgumentName} = {(a.ArgumentValue == null ? "null" : a.ArgumentValue)};");
 
             script += $"{code};";
 
