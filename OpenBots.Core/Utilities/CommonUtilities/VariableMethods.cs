@@ -17,7 +17,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
     {
         public async static Task<object> InstantiateVariable(string varName, string code, Type varType, IAutomationEngineInstance engine)
         {
-            string type = varType.GetRealTypeName();
+            string type = varType.GetRealTypeFullName();
 
             if (string.IsNullOrEmpty(code))
                 code = "null";
@@ -37,7 +37,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public async static Task<object> InstantiateVariable(string varName, string code, Type varType, EngineContext engineContext)
         {
-            string type = varType.GetRealTypeName();
+            string type = varType.GetRealTypeFullName();
 
             if (string.IsNullOrEmpty(code))
                 code = "null";
