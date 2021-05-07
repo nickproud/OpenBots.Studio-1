@@ -308,6 +308,7 @@ namespace OpenBots.Commands.Image
 						var xPos = setTextPositionPoint.X + xAdjust;
 						var yPos = setTextPositionPoint.Y + yAdjust;
 						User32Functions.SendMouseMove(xPos, yPos, "Left Click");
+						Thread.Sleep(250);
 
 						var simulator = new InputSimulator();
 						simulator.Keyboard.TextEntry(textToSet);
@@ -340,6 +341,7 @@ namespace OpenBots.Commands.Image
 						var xPosition = setSecureTextPositionPoint.X + xAdjust;
 						var yPosition = setSecureTextPositionPoint.Y + yAdjust;
 						User32Functions.SendMouseMove(xPosition, yPosition, "Left Click");
+						Thread.Sleep(250);
 
 						var simulator2 = new InputSimulator();
 						simulator2.Keyboard.TextEntry(secureString);
