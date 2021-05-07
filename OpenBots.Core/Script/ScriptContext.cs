@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Text;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -39,6 +40,7 @@ namespace OpenBots.Core.Script
                                                                                                          .WithUsings(NamespacesList);
 
             DefaultReferences = AssembliesList.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x.Location)).ToList();
+            DefaultReferences.Add(MetadataReference.CreateFromFile(typeof(DataRowComparer).Assembly.Location));
 
             GenerateGuidPlaceHolder();
         }
@@ -53,6 +55,7 @@ namespace OpenBots.Core.Script
                                                                                                          .WithUsings(NamespacesList);
 
             DefaultReferences = AssembliesList.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x.Location)).ToList();
+            DefaultReferences.Add(MetadataReference.CreateFromFile(typeof(DataRowComparer).Assembly.Location));
         }
 
         public void GenerateGuidPlaceHolder()
