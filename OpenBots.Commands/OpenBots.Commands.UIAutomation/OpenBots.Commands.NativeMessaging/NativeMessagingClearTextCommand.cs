@@ -39,7 +39,7 @@ namespace OpenBots.Commands.NativeMessaging
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." +
 					"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("XPath : \"//*[@id=\"features\"]/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
+		[SampleUsage("XPath : \"//*[@id='features']/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
 						 "\n\tRelative XPath : //*[@id=\"features\"]" +
 						 "\n\tID: \"1\"" +
 						 "\n\tName: \"my\" + var2 + \"Name\"" +
