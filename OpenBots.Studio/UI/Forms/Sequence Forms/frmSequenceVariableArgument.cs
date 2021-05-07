@@ -83,8 +83,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                             cell.ReadOnly = false;
 
                         nameCell.Value = variableName.Trim();
-
-                        var result = ScriptContext.EvaluateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
                     }
                 }
 

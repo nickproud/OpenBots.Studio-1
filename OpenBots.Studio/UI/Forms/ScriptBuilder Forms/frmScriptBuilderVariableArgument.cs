@@ -10,7 +10,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.CodeDom.Compiler;
 using Microsoft.CodeAnalysis;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
@@ -90,8 +89,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             dgv.Rows[e.RowIndex].Cells[2].ReadOnly = false;
 
                         nameCell.Value = variableName.Trim();
-
-                        _scriptContext.EvaluateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
                     }
                 }
 
