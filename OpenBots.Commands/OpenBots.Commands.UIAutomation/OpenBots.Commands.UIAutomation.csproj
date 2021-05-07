@@ -224,11 +224,11 @@
       <DependentUpon>frmUserInput.cs</DependentUpon>
     </Compile>
     <Compile Include="Library\NativeHelper.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingDoubleClickCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingGetAttributeCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingGetOptionsCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingGetTableCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingMiddleClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeDoubleClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetAttributeCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetOptionsCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetTableCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeMiddleClickCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\CaptureImageCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\PerformOCRCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\SurfaceAutomationCommand.cs" />
@@ -240,17 +240,17 @@
     <Compile Include="OpenBots.Commands.Input\SendMouseClickCommand.cs" />
     <Compile Include="OpenBots.Commands.Input\SendMouseMoveCommand.cs" />
     <Compile Include="OpenBots.Commands.Input\UIAutomationCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingClearTextCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingCloseBrowserCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingCreateBrowserCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingElementExistsCommand.cs.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingGetTextCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingLeftClickCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingRightClickCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingScrollToElementCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingSetOptionCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingSetSecureTextCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeMessaging\NativeMessagingSetTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeClearTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeCloseBrowserCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeCreateBrowserCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeElementExistsCommand.cs.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeLeftClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeRightClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeScrollToElementCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeSetOptionCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeSetSecureTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeSetTextCommand.cs" />
     <Compile Include="OpenBots.Commands.WebBrowser\GetHTMLSourceCommand.cs" />
     <Compile Include="OpenBots.Commands.Window\ActivateWindowCommand.cs" />
     <Compile Include="OpenBots.Commands.Window\CloseWindowCommand.cs" />

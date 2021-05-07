@@ -28,7 +28,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
-using OpenBots.Commands.Library.NativeMessaging;
+using OpenBots.Commands.UIAutomation.Library;
 
 namespace OpenBots.Commands.WebBrowser
 {

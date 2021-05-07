@@ -16,16 +16,16 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
 using System.Linq;
+using System.Threading.Tasks;
+using OpenBots.Commands.UIAutomation.Library;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
-	[Description("This command performs double click on specified element in chrome.")]
-	public class NativeMessagingDoubleClickCommand : ScriptCommand
+	[Category("Native Chrome Commands")]
+	[Description("This command get options from web element in chrome.")]
+	public class NativeChromeGetOptionsCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -52,14 +52,23 @@ namespace OpenBots.Commands.NativeMessaging
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_NativeSearchParameters { get; set; }
 
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output List Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
+		public string v_OutputUserVariableName { get; set; }
+
 		[JsonIgnore]
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingDoubleClickCommand()
+		public NativeChromeGetOptionsCommand()
 		{
-			CommandName = "NativeMessagingDoubleClickCommand";
-			SelectionName = "Double Click";
+			CommandName = "NativeChromeGetOptionsCommand";
+			SelectionName = "Get Options";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
@@ -79,13 +88,16 @@ namespace OpenBots.Commands.NativeMessaging
 			var chromeProcess = (Process)browserObject;
 
 			WebElement webElement = await NativeHelper.DataTableToWebElement(v_NativeSearchParameters, engine);
+
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
 			string responseText;
-			NativeRequest.ProcessRequest("doubleclick", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest("readtext", JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
+			var optionsList = responseObject.Result.Split(',').ToList();
+			optionsList.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -141,6 +153,8 @@ namespace OpenBots.Commands.NativeMessaging
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_NativeSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
 			RenderedControls.Add(_searchParametersGridViewHelper);
 
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
+
 			return RenderedControls;
 		}
 
@@ -154,7 +168,7 @@ namespace OpenBots.Commands.NativeMessaging
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Double Click by {searchParameterName}" +
+			return base.GetDisplayValue() + $" [Get Options by {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)

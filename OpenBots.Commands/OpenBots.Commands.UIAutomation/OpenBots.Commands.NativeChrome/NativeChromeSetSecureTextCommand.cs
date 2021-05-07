@@ -18,15 +18,15 @@ using System.Data;
 using System.Diagnostics;
 using System.Security;
 using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
+using OpenBots.Commands.UIAutomation.Library;
 using System.Linq;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
+	[Category("Native Chrome Commands")]
 	[Description("This command sets secure text to input in chrome.")]
-	public class NativeMessagingSetSecureTextCommand : ScriptCommand
+	public class NativeChromeSetSecureTextCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -75,9 +75,9 @@ namespace OpenBots.Commands.NativeMessaging
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingSetSecureTextCommand()
+		public NativeChromeSetSecureTextCommand()
 		{
-			CommandName = "NativeMessagingSetSecureTextCommand";
+			CommandName = "NativeChromeSetSecureTextCommand";
 			SelectionName = "Set Secure Text";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;

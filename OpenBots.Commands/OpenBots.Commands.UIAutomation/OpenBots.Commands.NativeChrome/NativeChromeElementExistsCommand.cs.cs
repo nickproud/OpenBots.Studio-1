@@ -17,15 +17,15 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
+using OpenBots.Commands.UIAutomation.Library;
 using System.Linq;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
+	[Category("Native Chrome Commands")]
 	[Description("This command checks if element exists in chrome.")]
-	public class NativeMessagingElementExistsCommand : ScriptCommand
+	public class NativeChromeElementExistsCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -65,9 +65,9 @@ namespace OpenBots.Commands.NativeMessaging
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingElementExistsCommand()
+		public NativeChromeElementExistsCommand()
 		{
-			CommandName = "NativeMessagingElementExistsCommand";
+			CommandName = "NativeChromeElementExistsCommand";
 			SelectionName = "Element Exists";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;

@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OpenBots.Commands.Library.NativeMessaging
+namespace OpenBots.Commands.UIAutomation.Library
 {
     public class NativeHelper
     {

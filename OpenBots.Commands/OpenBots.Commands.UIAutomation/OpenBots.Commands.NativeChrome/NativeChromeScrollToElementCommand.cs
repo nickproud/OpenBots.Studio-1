@@ -17,15 +17,15 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
+using OpenBots.Commands.UIAutomation.Library;
 using System.Linq;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
-	[Description("This command clears text from input in chrome.")]
-	public class NativeMessagingClearTextCommand : ScriptCommand
+	[Category("Native Chrome Commands")]
+	[Description("This command scrolls the specified element into the visible area of the chrome browser window.")]
+	public class NativeChromeScrollToElementCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -56,10 +56,10 @@ namespace OpenBots.Commands.NativeMessaging
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingClearTextCommand()
+		public NativeChromeScrollToElementCommand()
 		{
-			CommandName = "NativeMessagingClearTextCommand";
-			SelectionName = "Clear Text";
+			CommandName = "NativeChromeScrollToElementCommand";
+			SelectionName = "Scroll To Element";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.NativeMessaging
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
 			string responseText;
-			NativeRequest.ProcessRequest("cleartext", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest("scrolltoelement", JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
@@ -155,7 +155,7 @@ namespace OpenBots.Commands.NativeMessaging
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Clear Text by {searchParameterName}" +
+			return base.GetDisplayValue() + $" [Scroll To Element by {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)

@@ -16,17 +16,17 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
+using OpenBots.Commands.UIAutomation.Library;
+using System.Linq;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
-	[Description("This command get options from web element in chrome.")]
-	public class NativeMessagingGetOptionsCommand : ScriptCommand
-	{
+	[Category("Native Chrome Commands")]
+	[Description("This command gets text from web element in chrome.")]
+    public class NativeChromeGetTextCommand : ScriptCommand
+    {
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
@@ -54,21 +54,21 @@ namespace OpenBots.Commands.NativeMessaging
 
 		[Required]
 		[Editable(false)]
-		[DisplayName("Output List Variable")]
+		[DisplayName("Output Text Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<string>) })]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingGetOptionsCommand()
+		public NativeChromeGetTextCommand()
 		{
-			CommandName = "NativeMessagingGetOptionsCommand";
-			SelectionName = "Get Options";
+			CommandName = "NativeChromeGetTextCommand";
+			SelectionName = "Get Text";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
@@ -96,8 +96,8 @@ namespace OpenBots.Commands.NativeMessaging
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
-			var optionsList = responseObject.Result.Split(',').ToList();
-			optionsList.SetVariableValue(engine, v_OutputUserVariableName);
+
+			responseObject.Result.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -168,7 +168,7 @@ namespace OpenBots.Commands.NativeMessaging
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Get Options by {searchParameterName}" +
+			return base.GetDisplayValue() + $" [Get Text by {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)

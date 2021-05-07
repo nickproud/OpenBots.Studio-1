@@ -17,15 +17,15 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
+using OpenBots.Commands.UIAutomation.Library;
 using System.Linq;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
-	[Description("This command gets attribute from specified element in chrome.")]
-	public class NativeMessagingGetAttributeCommand : ScriptCommand
+	[Category("Native Chrome Commands")]
+	[Description("This command performs right click on specified element in chrome.")]
+	public class NativeChromeRightClickCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -52,32 +52,14 @@ namespace OpenBots.Commands.NativeMessaging
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_NativeSearchParameters { get; set; }
 
-		[Required]
-		[DisplayName("Attribute Name")]
-		[Description("Enter the attribute name to be set.")]
-		[SampleUsage("\"ID\" || vAttribute")]
-		[Remarks("")]
-		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
-		public string v_Attribute { get; set; }
-
-		[Required]
-		[Editable(false)]
-		[DisplayName("Output Text Variable")]
-		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
-		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(string) })]
-		public string v_OutputUserVariableName { get; set; }
-
 		[JsonIgnore]
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingGetAttributeCommand()
+		public NativeChromeRightClickCommand()
 		{
-			CommandName = "NativeMessagingGetAttributeCommand";
-			SelectionName = "Get Attribute";
+			CommandName = "NativeChromeRightClickCommand";
+			SelectionName = "Right Click";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
@@ -95,19 +77,22 @@ namespace OpenBots.Commands.NativeMessaging
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var chromeProcess = (Process)browserObject;
-			var vTargetText = (string)await v_Attribute.EvaluateCode(engine);
 
 			WebElement webElement = await NativeHelper.DataTableToWebElement(v_NativeSearchParameters, engine);
 
-			webElement.SelectionRules = vTargetText;
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
 			string responseText;
-			NativeRequest.ProcessRequest("getattribute", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest("getxypoints", JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
-			responseObject.Result.SetVariableValue(engine, v_OutputUserVariableName);
+			var resolutionsArr = responseObject.Result.Split(',');
+			Rect rect = new Rect();
+			chromeProcess.Refresh();
+			User32Functions.GetWindowRect(chromeProcess.MainWindowHandle, out rect);
+			User32Functions.SendMouseMove(rect.left + Convert.ToInt32(resolutionsArr[0]), rect.top + Convert.ToInt32(resolutionsArr[1])
+				,"Right Click");
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -163,9 +148,6 @@ namespace OpenBots.Commands.NativeMessaging
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_NativeSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
 			RenderedControls.Add(_searchParametersGridViewHelper);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Attribute", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
-
 			return RenderedControls;
 		}
 
@@ -179,7 +161,7 @@ namespace OpenBots.Commands.NativeMessaging
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Get Attribute by {searchParameterName}" +
+			return base.GetDisplayValue() + $" [Right Click on {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)

@@ -17,15 +17,15 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
+using OpenBots.Commands.UIAutomation.Library;
 using System.Linq;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
-	[Description("This command performs left click on specified element in chrome.")]
-	public class NativeMessagingLeftClickCommand : ScriptCommand
+	[Category("Native Chrome Commands")]
+	[Description("This command sets option on dropdown list in chrome.")]
+	public class NativeChromeSetOptionCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -52,18 +52,38 @@ namespace OpenBots.Commands.NativeMessaging
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_NativeSearchParameters { get; set; }
 
+		[Required]
+		[DisplayName("Selection Rule")]
+		[PropertyUISelectionOption("Select By Index")]
+		[PropertyUISelectionOption("Select By Value")]
+		[PropertyUISelectionOption("Select By Text")]
+		[Description("Select whether the option should be selected by which of the follwoing.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_Option { get; set; }
+
+		[Required]
+		[DisplayName("Selection Value")]
+		[Description("Enter the value that will be set in the dropdown.")]
+		[SampleUsage("\"Hello World\" || vText")]
+		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(string) })]
+		public string v_SelectionValue { get; set; }
+
 		[JsonIgnore]
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingLeftClickCommand()
+		public NativeChromeSetOptionCommand()
 		{
-			CommandName = "NativeMessagingLeftClickCommand";
-			SelectionName = "Left Click";
+			CommandName = "NativeChromeSetOptionCommand";
+			SelectionName = "Set Option";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
 			v_InstanceName = "DefaultChromeBrowser";
+			v_Option = "Select By Index";
 			//set up search parameter table
 			v_NativeSearchParameters = new DataTable();
 			v_NativeSearchParameters.Columns.Add("Enabled");
@@ -77,13 +97,16 @@ namespace OpenBots.Commands.NativeMessaging
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var chromeProcess = (Process)browserObject;
+			var vTargetText = (string)await v_SelectionValue.EvaluateCode(engine);
 
 			WebElement webElement = await NativeHelper.DataTableToWebElement(v_NativeSearchParameters, engine);
 
+			webElement.Value = vTargetText;
+			webElement.SelectionRules = v_Option;
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
 			string responseText;
-			NativeRequest.ProcessRequest("leftclick", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest("setoption", JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
@@ -142,6 +165,9 @@ namespace OpenBots.Commands.NativeMessaging
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_NativeSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
 			RenderedControls.Add(_searchParametersGridViewHelper);
 
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SelectionValue", this, editor));
+
 			return RenderedControls;
 		}
 
@@ -155,7 +181,7 @@ namespace OpenBots.Commands.NativeMessaging
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Left Click on {searchParameterName}" +
+			return base.GetDisplayValue() + $" [Set Options for {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)

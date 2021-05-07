@@ -17,15 +17,15 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
+using OpenBots.Commands.UIAutomation.Library;
 using System.Linq;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
-	[Description("This command sets option on dropdown list in chrome.")]
-	public class NativeMessagingSetOptionCommand : ScriptCommand
+	[Category("Native Chrome Commands")]
+	[Description("This command gets attribute from specified element in chrome.")]
+	public class NativeChromeGetAttributeCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -53,37 +53,35 @@ namespace OpenBots.Commands.NativeMessaging
 		public DataTable v_NativeSearchParameters { get; set; }
 
 		[Required]
-		[DisplayName("Selection Rule")]
-		[PropertyUISelectionOption("Select By Index")]
-		[PropertyUISelectionOption("Select By Value")]
-		[PropertyUISelectionOption("Select By Text")]
-		[Description("Select whether the option should be selected by which of the follwoing.")]
-		[SampleUsage("")]
-		[Remarks("")]
-		public string v_Option { get; set; }
-
-		[Required]
-		[DisplayName("Selection Value")]
-		[Description("Enter the value that will be set in the dropdown.")]
-		[SampleUsage("\"Hello World\" || vText")]
+		[DisplayName("Attribute Name")]
+		[Description("Enter the attribute name to be set.")]
+		[SampleUsage("\"ID\" || vAttribute")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
-		public string v_SelectionValue { get; set; }
+		public string v_Attribute { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output Text Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingSetOptionCommand()
+		public NativeChromeGetAttributeCommand()
 		{
-			CommandName = "NativeMessagingSetOptionCommand";
-			SelectionName = "Set Option";
+			CommandName = "NativeChromeGetAttributeCommand";
+			SelectionName = "Get Attribute";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
 			v_InstanceName = "DefaultChromeBrowser";
-			v_Option = "Select By Index";
 			//set up search parameter table
 			v_NativeSearchParameters = new DataTable();
 			v_NativeSearchParameters.Columns.Add("Enabled");
@@ -97,19 +95,19 @@ namespace OpenBots.Commands.NativeMessaging
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var chromeProcess = (Process)browserObject;
-			var vTargetText = (string)await v_SelectionValue.EvaluateCode(engine);
+			var vTargetText = (string)await v_Attribute.EvaluateCode(engine);
 
 			WebElement webElement = await NativeHelper.DataTableToWebElement(v_NativeSearchParameters, engine);
 
-			webElement.Value = vTargetText;
-			webElement.SelectionRules = v_Option;
+			webElement.SelectionRules = vTargetText;
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
 			string responseText;
-			NativeRequest.ProcessRequest("setoption", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest("getattribute", JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
+			responseObject.Result.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -165,8 +163,8 @@ namespace OpenBots.Commands.NativeMessaging
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_NativeSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
 			RenderedControls.Add(_searchParametersGridViewHelper);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SelectionValue", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Attribute", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
@@ -181,7 +179,7 @@ namespace OpenBots.Commands.NativeMessaging
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Set Options for {searchParameterName}" +
+			return base.GetDisplayValue() + $" [Get Attribute by {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)

@@ -17,15 +17,15 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
+using OpenBots.Commands.UIAutomation.Library;
 using System.Linq;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
-	[Description("This command performs middle click on specified element in chrome.")]
-	public class NativeMessagingMiddleClickCommand : ScriptCommand
+	[Category("Native Chrome Commands")]
+	[Description("This command performs left click on specified element in chrome.")]
+	public class NativeChromeLeftClickCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -56,10 +56,10 @@ namespace OpenBots.Commands.NativeMessaging
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingMiddleClickCommand()
+		public NativeChromeLeftClickCommand()
 		{
-			CommandName = "NativeMessagingMiddleClickCommand";
-			SelectionName = "Middle Click";
+			CommandName = "NativeChromeLeftClickCommand";
+			SelectionName = "Left Click";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
@@ -83,7 +83,7 @@ namespace OpenBots.Commands.NativeMessaging
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
 			string responseText;
-			NativeRequest.ProcessRequest("middleclick", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest("leftclick", JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
@@ -155,7 +155,7 @@ namespace OpenBots.Commands.NativeMessaging
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Middle Click on {searchParameterName}" +
+			return base.GetDisplayValue() + $" [Left Click on {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)

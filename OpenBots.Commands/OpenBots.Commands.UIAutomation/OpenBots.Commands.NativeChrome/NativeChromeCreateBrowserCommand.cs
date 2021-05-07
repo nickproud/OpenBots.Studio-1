@@ -13,12 +13,12 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
-    [Serializable]
-    [Category("Native Messaging Commands")]
-    [Description("This command creates a new web browser session which enables automation for websites.")]
-    public class NativeMessagingCreateBrowserCommand : ScriptCommand
+	[Serializable]
+	[Category("Native Chrome Commands")]
+	[Description("This command creates a new web browser session which enables automation for websites.")]
+    public class NativeChromeCreateBrowserCommand : ScriptCommand
     {
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -36,9 +36,9 @@ namespace OpenBots.Commands.NativeMessaging
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_URL { get; set; }
 
-		public NativeMessagingCreateBrowserCommand()
+		public NativeChromeCreateBrowserCommand()
         {
-            CommandName = "NativeMessagingCreateBrowserCommand";
+            CommandName = "NativeChromeCreateBrowserCommand";
             SelectionName = "Create Browser";
             CommandEnabled = true;
             CommandIcon = Resources.command_web;

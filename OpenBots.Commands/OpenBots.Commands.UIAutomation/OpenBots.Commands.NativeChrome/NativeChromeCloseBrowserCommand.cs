@@ -12,12 +12,12 @@ using System.Windows.Forms;
 using OpenBots.Core.User32;
 using System.Threading.Tasks;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
+	[Category("Native Chrome Commands")]
 	[Description("This command closes a native web browser session.")]
-	public class NativeMessagingCloseBrowserCommand : ScriptCommand
+	public class NativeChromeCloseBrowserCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -27,9 +27,9 @@ namespace OpenBots.Commands.NativeMessaging
 		[CompatibleTypes(new Type[] { typeof(Process) })]
 		public string v_InstanceName { get; set; }
 
-		public NativeMessagingCloseBrowserCommand()
+		public NativeChromeCloseBrowserCommand()
 		{
-			CommandName = "NativeMessagingCloseBrowserCommand";
+			CommandName = "NativeChromeCloseBrowserCommand";
 			SelectionName = "Close Browser";
 			v_InstanceName = "DefaultChromeBrowser";
 			CommandEnabled = true;

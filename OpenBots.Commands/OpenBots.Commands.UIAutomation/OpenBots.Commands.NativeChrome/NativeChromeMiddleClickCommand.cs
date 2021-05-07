@@ -17,16 +17,16 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
+using OpenBots.Commands.UIAutomation.Library;
 using System.Linq;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
-    [Serializable]
-    [Category("Native Messaging Commands")]
-    [Description("This command gets text from web element in chrome.")]
-    public class NativeMessagingGetTextCommand : ScriptCommand
-    {
+	[Serializable]
+	[Category("Native Chrome Commands")]
+	[Description("This command performs middle click on specified element in chrome.")]
+	public class NativeChromeMiddleClickCommand : ScriptCommand
+	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
@@ -52,23 +52,14 @@ namespace OpenBots.Commands.NativeMessaging
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_NativeSearchParameters { get; set; }
 
-		[Required]
-		[Editable(false)]
-		[DisplayName("Output Text Variable")]
-		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("vUserVariable")]
-		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(string) })]
-		public string v_OutputUserVariableName { get; set; }
-
 		[JsonIgnore]
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingGetTextCommand()
+		public NativeChromeMiddleClickCommand()
 		{
-			CommandName = "NativeMessagingGetTextCommand";
-			SelectionName = "Get Text";
+			CommandName = "NativeChromeMiddleClickCommand";
+			SelectionName = "Middle Click";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
@@ -92,12 +83,10 @@ namespace OpenBots.Commands.NativeMessaging
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
 			string responseText;
-			NativeRequest.ProcessRequest("readtext", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest("middleclick", JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
-
-			responseObject.Result.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -153,8 +142,6 @@ namespace OpenBots.Commands.NativeMessaging
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_NativeSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
 			RenderedControls.Add(_searchParametersGridViewHelper);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
-
 			return RenderedControls;
 		}
 
@@ -168,7 +155,7 @@ namespace OpenBots.Commands.NativeMessaging
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Get Text by {searchParameterName}" +
+			return base.GetDisplayValue() + $" [Middle Click on {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)

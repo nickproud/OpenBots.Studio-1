@@ -16,21 +16,25 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using OpenBots.Commands.Library.NativeMessaging;
+using HtmlDocument = HtmlAgilityPack.HtmlDocument;
+using HtmlAgilityPack;
+using System.Text.RegularExpressions;
 using System.Linq;
+using OBDataTable = System.Data.DataTable;
+using System.Threading.Tasks;
+using OpenBots.Commands.UIAutomation.Library;
 
-namespace OpenBots.Commands.NativeMessaging
+namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
-	[Category("Native Messaging Commands")]
-	[Description("This command sets text to input in chrome.")]
-	public class NativeMessagingSetTextCommand : ScriptCommand
+	[Category("Native Chrome Commands")]
+	[Description("This command gets table from web element in chrome.")]
+	public class NativeChromeGetTableCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
-		[SampleUsage("MyChromeBrowserInstance")]
+		[SampleUsage("\"MyChromeBrowserInstance\"")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
 		[CompatibleTypes(new Type[] { typeof(Process) })]
 		public string v_InstanceName { get; set; }
@@ -53,36 +57,26 @@ namespace OpenBots.Commands.NativeMessaging
 		public DataTable v_NativeSearchParameters { get; set; }
 
 		[Required]
-		[DisplayName("Clear Text")]
-		[PropertyUISelectionOption("Yes")]
-		[PropertyUISelectionOption("No")]
-		[Description("Select whether the element should be cleared before setting text.")]
-		[SampleUsage("")]
-		[Remarks("")]
-		public string v_Option { get; set; }
-
-		[Required]
-		[DisplayName("Text To Set")]
-		[Description("Enter the text value that will be set in the input.")]
-		[SampleUsage("\"Hello World\" || vText")]
-		[Remarks("")]
-		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
-		public string v_TextToSet { get; set; }
+		[Editable(false)]
+		[DisplayName("Output DataTable Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("{vUserVariable}")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeMessagingSetTextCommand()
+		public NativeChromeGetTableCommand()
 		{
-			CommandName = "NativeMessagingSetTextCommand";
-			SelectionName = "Set Text";
+			CommandName = "NativeChromeGetTableCommand";
+			SelectionName = "Get Table";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
 			v_InstanceName = "DefaultChromeBrowser";
-			v_Option = "Yes";
 			//set up search parameter table
 			v_NativeSearchParameters = new DataTable();
 			v_NativeSearchParameters.Columns.Add("Enabled");
@@ -96,19 +90,44 @@ namespace OpenBots.Commands.NativeMessaging
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = v_InstanceName.GetAppInstance(engine);
 			var chromeProcess = (Process)browserObject;
-			var vTargetText = (string)await v_TextToSet.EvaluateCode(engine);
 
 			WebElement webElement = await NativeHelper.DataTableToWebElement(v_NativeSearchParameters, engine);
 
-			webElement.Value = vTargetText;
-			webElement.SelectionRules = v_Option;
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
 			string responseText;
-			NativeRequest.ProcessRequest("settext", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest("gettable", JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
+
+			HtmlDocument doc = new HtmlDocument();
+
+			//Load Source (String) as HTML Document
+			doc.LoadHtml(responseObject.Result);
+
+			//Get Header Tags
+			var headers = doc.DocumentNode.SelectNodes("//tr/th");
+			DataTable DT = new DataTable();
+
+			//If headers found
+			if (headers != null && headers.Count != 0)
+			{
+				// add columns from th (headers)
+				foreach (HtmlNode header in headers)
+					DT.Columns.Add(Regex.Replace(header.InnerText, @"\t|\n|\r", "").Trim());
+			}
+			else
+			{
+				var columnsCount = doc.DocumentNode.SelectSingleNode("//tr[1]").ChildNodes.Where(node => node.Name == "td").Count();
+				DT.Columns.AddRange((Enumerable.Range(1, columnsCount).Select(dc => new DataColumn())).ToArray());
+			}
+
+			// select rows with td elements and load each row (containing <td> tags) into DataTable
+			foreach (var row in doc.DocumentNode.SelectNodes("//tr[td]"))
+				DT.Rows.Add(row.SelectNodes("td").Select(td => Regex.Replace(td.InnerText, @"\t|\n|\r", "").Trim()).ToArray());
+
+			DT.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -164,8 +183,7 @@ namespace OpenBots.Commands.NativeMessaging
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_NativeSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
 			RenderedControls.Add(_searchParametersGridViewHelper);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToSet", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
@@ -180,7 +198,7 @@ namespace OpenBots.Commands.NativeMessaging
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Set Text by {searchParameterName}" +
+			return base.GetDisplayValue() + $" [Get Table by {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
