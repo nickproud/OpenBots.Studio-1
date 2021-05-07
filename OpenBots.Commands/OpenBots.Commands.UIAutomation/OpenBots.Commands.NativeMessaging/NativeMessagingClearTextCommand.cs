@@ -28,7 +28,7 @@ namespace OpenBots.Commands.NativeMessaging
 	public class NativeMessagingClearTextCommand : ScriptCommand
 	{
 		[Required]
-		[DisplayName("Browser Instance Name")]
+		[DisplayName("Chrome Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyChromeBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
@@ -121,7 +121,6 @@ namespace OpenBots.Commands.NativeMessaging
 
 			//create search param grid
 			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_NativeSearchParameters", this);
-			_searchParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 
 			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
 			enabled.HeaderText = "Enabled";
@@ -158,10 +157,6 @@ namespace OpenBots.Commands.NativeMessaging
 
 			return base.GetDisplayValue() + $" [Clear Text by {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
-		}
-		private void ActionParametersGridViewHelper_MouseEnter(object sender, EventArgs e)
-		{
-			//SeleniumAction_SelectionChangeCommitted(null, null);
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{

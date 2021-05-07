@@ -20,9 +20,9 @@ namespace OpenBots.Commands.NativeMessaging
 	public class NativeMessagingCloseBrowserCommand : ScriptCommand
 	{
 		[Required]
-		[DisplayName("Browser Instance Name")]
+		[DisplayName("Chrome Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
-		[SampleUsage("\"MyChromeBrowserInstance\"")]
+		[SampleUsage("MyChromeBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
 		[CompatibleTypes(new Type[] { typeof(Process) })]
 		public string v_InstanceName { get; set; }
@@ -31,7 +31,7 @@ namespace OpenBots.Commands.NativeMessaging
 		{
 			CommandName = "NativeMessagingCloseBrowserCommand";
 			SelectionName = "Close Browser";
-			v_InstanceName = "\"DefaultChromeBrowser\"";
+			v_InstanceName = "DefaultChromeBrowser";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 		}

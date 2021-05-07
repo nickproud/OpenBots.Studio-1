@@ -32,7 +32,7 @@ namespace OpenBots.Commands.NativeMessaging
 	public class NativeMessagingGetTableCommand : ScriptCommand
 	{
 		[Required]
-		[DisplayName("Browser Instance Name")]
+		[DisplayName("Chrome Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("\"MyChromeBrowserInstance\"")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
@@ -43,7 +43,7 @@ namespace OpenBots.Commands.NativeMessaging
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." +
 					"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("XPath : \"//*[@id=\"features\"]/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
+		[SampleUsage("XPath : \"//*[@id='features']/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
 						 "\n\tRelative XPath : //*[@id=\"features\"]" +
 						 "\n\tID: \"1\"" +
 						 "\n\tName: \"my\" + var2 + \"Name\"" +
@@ -162,7 +162,6 @@ namespace OpenBots.Commands.NativeMessaging
 
 			//create search param grid
 			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_NativeSearchParameters", this);
-			_searchParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 
 			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
 			enabled.HeaderText = "Enabled";
@@ -201,10 +200,6 @@ namespace OpenBots.Commands.NativeMessaging
 
 			return base.GetDisplayValue() + $" [Get Table by {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
-		}
-		private void ActionParametersGridViewHelper_MouseEnter(object sender, EventArgs e)
-		{
-			//SeleniumAction_SelectionChangeCommitted(null, null);
 		}
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{

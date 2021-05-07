@@ -3,21 +3,14 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Core.ChromeNativeClient;
-using OpenBots.Core.User32;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using System.Data;
 using System.Diagnostics;
-using OpenBots.Core.IO;
 using System.Threading.Tasks;
 
 namespace OpenBots.Commands.NativeMessaging
@@ -28,16 +21,16 @@ namespace OpenBots.Commands.NativeMessaging
     public class NativeMessagingCreateBrowserCommand : ScriptCommand
     {
 		[Required]
-		[DisplayName("Browser Instance Name")]
+		[DisplayName("Chrome Browser Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
-		[SampleUsage("\"MyChromeBrowserInstance\"")]
+		[SampleUsage("MyChromeBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
 		[CompatibleTypes(new Type[] { typeof(Process) })]
 		public string v_InstanceName { get; set; }
 
 		[DisplayName("URL (Optional)")]
         [Description("Enter the URL that you want the selenium instance to navigate to.")]
-        [SampleUsage("https://mycompany.com/orders || {vURL}")]
+        [SampleUsage("\"https://mycompany.com/orders\" || vURL")]
         [Remarks("This input is optional.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -50,8 +43,8 @@ namespace OpenBots.Commands.NativeMessaging
             CommandEnabled = true;
             CommandIcon = Resources.command_web;
 
-			v_InstanceName = "\"DefaultChromeBrowser\"";
-			v_URL = "https://";
+			v_InstanceName = "DefaultChromeBrowser";
+			v_URL = "\"https://\"";
         }
 
 		public async override Task RunCommand(object sender)
@@ -70,8 +63,8 @@ namespace OpenBots.Commands.NativeMessaging
 					process.Refresh();
 				}
 			}
-			//Delay 7 seconds
-			System.Threading.Thread.Sleep(7000);
+			//Delay 3 seconds
+			System.Threading.Thread.Sleep(3000);
 
 			Process[] procsChrome = Process.GetProcessesByName("chrome");
 
