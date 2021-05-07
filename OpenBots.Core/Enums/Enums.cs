@@ -36,6 +36,7 @@ namespace OpenBots.Core.Enums
     {
         RootFolder,
         SettingsFolder,
+        StudioFolder,
         ScriptsFolder,
         LogFolder,
         TempFolder,

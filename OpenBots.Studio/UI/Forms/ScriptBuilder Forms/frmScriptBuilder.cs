@@ -298,12 +298,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             var importedNameSpacesBinding = new BindingSource(_scriptContext.ImportedNamespaces, null);
             lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
             lbxImportedNamespaces.DisplayMember = "Key";
-            lbxImportedNamespaces.ValueMember = "Value";
 
             var allNameSpacesBinding = new BindingSource(_allNamespaces, null);
             cbxAllNamespaces.DataSource = allNameSpacesBinding;
             cbxAllNamespaces.DisplayMember = "Key";
-            cbxAllNamespaces.ValueMember = "Value";
 
             //set controls double buffered
             foreach (Control control in Controls)
