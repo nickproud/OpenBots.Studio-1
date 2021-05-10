@@ -3,7 +3,6 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 using WordApplication = Microsoft.Office.Interop.Word.Application;
@@ -12,18 +11,10 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 {
     public static class InstanceMethods
     {
-        public static bool InstanceExists(this string instanceName, IAutomationEngineInstance engine)
+        public static bool InstanceExists(this object appObject)
         {          
             try
             {
-                object appObject = null;
-                var existingVar = engine.AutomationEngineContext.Variables.Where(x => x.VariableName == instanceName).FirstOrDefault();
-                if (existingVar != null)
-                    appObject = existingVar.VariableValue;
-                var existingArg = engine.AutomationEngineContext.Arguments.Where(x => x.ArgumentName == instanceName).FirstOrDefault();
-                if (existingArg != null)
-                    appObject = existingArg.ArgumentValue;
-
                 if (appObject != null)
                 {                   
                     string appType = appObject.GetType().ToString();

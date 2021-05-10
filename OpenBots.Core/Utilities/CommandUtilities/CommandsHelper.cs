@@ -714,7 +714,12 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				ifResult = instanceName.InstanceExists(engine);
+				var appInstanceObj = (OBAppInstance)await instanceName.EvaluateCode(engine);
+
+				if (appInstanceObj == null)
+					ifResult = false;
+				else
+					ifResult = appInstanceObj.Value.InstanceExists();
 
 				if (trueWhenImageExists == "It Does Not Exist")
 					ifResult = !ifResult;

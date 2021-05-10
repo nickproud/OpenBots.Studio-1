@@ -91,6 +91,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newTabPage.Controls.Add(NewTextEditorActions(ProjectType.Python, title));
                     newTabPage.Tag = _scriptContext;
                     uiScriptTabControl.SelectedTab = newTabPage;
+                    _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
 
                     //assign pythonVersion and mainFunction arguments
                     var mainFunctionArgument = new ScriptArgument
@@ -117,6 +118,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newTabPage.Controls.Add(NewTextEditorActions(ProjectType.TagUI, title));
                     newTabPage.Tag = _scriptContext;
                     uiScriptTabControl.SelectedTab = newTabPage;
+                    _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
 
                     var reportArgument = new ScriptArgument
                     {
@@ -133,6 +135,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newTabPage.Controls.Add(NewTextEditorActions(ProjectType.CSScript, title));
                     newTabPage.Tag = _scriptContext;
                     uiScriptTabControl.SelectedTab = newTabPage;
+                    _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
 
                     SetVarArgTabControlSettings(ScriptProject.ProjectType);
                     ResetVariableArgumentBindings();
@@ -393,10 +396,24 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //define default output path
                 if (string.IsNullOrEmpty(ScriptFilePath) || saveAs)
                 {
+                    switch (ScriptProject.ProjectType)
+                    {
+                        case ProjectType.CSScript:
+                            _scriptFileExtension = ".cs";
+                            break;
+                        case ProjectType.Python:
+                            _scriptFileExtension = ".py";
+                            break;
+                        case ProjectType.TagUI:
+                            _scriptFileExtension = ".tag";
+                            break;
+                    }
+
                     SaveFileDialog saveFileDialog = new SaveFileDialog
                     {
                         InitialDirectory = ScriptProjectPath,
                         RestoreDirectory = true,
+                        Filter = $"{_scriptFileExtension.TrimStart('.')} (*{_scriptFileExtension})|*{_scriptFileExtension}"
                     };
 
                     if (saveFileDialog.ShowDialog() != DialogResult.OK)
@@ -593,6 +610,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 {
                     InitialDirectory = ScriptProjectPath,
                     RestoreDirectory = true,
+                    Filter = "obscript (*.obscript)|*.obscript"
                 };
 
                 if (saveFileDialog.ShowDialog() != DialogResult.OK)
