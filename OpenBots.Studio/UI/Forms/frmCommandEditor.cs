@@ -415,7 +415,10 @@ namespace OpenBots.UI.Forms
                 if (result.Success)
                     return isAllValid;
                 else
-                    errorMessage = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
+                {
+                    var errorMessages = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).Select(x => x.ToString()).ToArray();
+                    errorMessage = string.Join(Environment.NewLine, errorMessages);
+                }
             }
  
             isAllValid = false;
