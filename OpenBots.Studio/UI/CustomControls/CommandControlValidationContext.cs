@@ -11,7 +11,6 @@ namespace OpenBots.UI.CustomControls
         public Type[] CompatibleTypes { get; set; }
         public bool IsRequired { get; set; }
         public bool IsDropDown { get; set; }
-        public bool IsInstance { get; set; }
         public bool IsImageCapture { get; set; }
         public string ParameterName { get; set; }
         public ScriptCommand Command { get; set; }
@@ -35,9 +34,6 @@ namespace OpenBots.UI.CustomControls
 
             if (requiredAttributesAssigned.Length > 0)
                 IsRequired = true;
-
-            if (parameterName == "v_InstanceName")
-                IsInstance = true;
 
             if (parameterName == "v_ImageCapture")
                 IsImageCapture = true;

@@ -4,7 +4,6 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-
 using SHDocVw;
 using System;
 using System.Collections.Generic;
@@ -14,6 +13,7 @@ using System.Windows.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Core.Properties;
 using System.Threading.Tasks;
+using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.IEBrowser
 {
@@ -28,7 +28,8 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("MyIEBrowserInstance")]
         [Remarks("This unique name allows you to refer to the instance by name in future commands, " +
                  "ensuring that the commands you specify run against the correct application.")]
-        [CompatibleTypes(new Type[] { typeof(InternetExplorer) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -65,7 +66,8 @@ namespace OpenBots.Commands.IEBrowser
             {
                 if ((shellWindow.Document is HTMLDocument) && (IEBrowserName == null || shellWindow.Document.Title == IEBrowserName))
                 {
-                    ((object)shellWindow.Application).AddAppInstance(engine, v_InstanceName);
+                    new OBAppInstance(v_InstanceName, (object)shellWindow.Application).SetVariableValue(engine, v_InstanceName);
+
                     browserFound = true;
                     break;
                 }
@@ -80,7 +82,8 @@ namespace OpenBots.Commands.IEBrowser
                         ((shellWindow.Document.Title.Contains(IEBrowserName) || 
                         shellWindow.Document.Url.Contains(IEBrowserName))))
                     {
-                        ((object)shellWindow.Application).AddAppInstance(engine, v_InstanceName);
+                        new OBAppInstance(v_InstanceName, (object)shellWindow.Application).SetVariableValue(engine, v_InstanceName);
+
                         browserFound = true;
                         break;
                     }

@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -28,7 +29,8 @@ namespace OpenBots.Commands.Word
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyWordInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -67,7 +69,7 @@ namespace OpenBots.Commands.Word
 			var vFolderPath = (string)await v_FolderPath.EvaluateCode(engine);
 
 			//get word app object
-			var wordObject = v_InstanceName.GetAppInstance(engine);
+			var wordObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 
 			//convert object
 			Application wordInstance = (Application)wordObject;

@@ -23,6 +23,7 @@ using System.Linq;
 using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
+using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.Database
 {
@@ -38,7 +39,8 @@ namespace OpenBots.Commands.Database
 		[SampleUsage("MyDatabaseInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(OleDbConnection) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -98,7 +100,7 @@ namespace OpenBots.Commands.Database
 				oleDBConnection.Close();
 			}
 
-			oleDBConnection.AddAppInstance(engine, v_InstanceName);
+			new OBAppInstance(v_InstanceName, oleDBConnection).SetVariableValue(engine, v_InstanceName);
 		}
 
 		private async Task<OleDbConnection> CreateConnection(IAutomationEngineInstance engine)

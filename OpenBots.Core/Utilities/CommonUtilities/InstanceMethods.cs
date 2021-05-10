@@ -3,6 +3,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
 using WordApplication = Microsoft.Office.Interop.Word.Application;
@@ -11,63 +12,19 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 {
     public static class InstanceMethods
     {
-        public static void AddAppInstance(this object appObject, IAutomationEngineInstance engine, string instanceName)
-        {
-
-            if (engine.AutomationEngineContext.AppInstances.ContainsKey(instanceName) && engine.EngineSettings.OverrideExistingAppInstances)
-                engine.AutomationEngineContext.AppInstances.Remove(instanceName);
-
-            else if (engine.AutomationEngineContext.AppInstances.ContainsKey(instanceName) && !engine.EngineSettings.OverrideExistingAppInstances)
-            {
-                throw new Exception("App Instance already exists and override has been disabled in engine settings! " +
-                    "Enable override existing app instances or use unique instance names!");
-            }
-
-            try
-            {
-                engine.AutomationEngineContext.AppInstances.Add(instanceName, appObject);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public static object GetAppInstance(this string instanceName, IAutomationEngineInstance engine)
-        {
-            try
-            {
-                if (engine.AutomationEngineContext.AppInstances.TryGetValue(instanceName, out object appObject))
-                    return appObject;
-
-                throw new Exception($"App Instance '{instanceName}' not found!");
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public static void RemoveAppInstance(this string instanceName, IAutomationEngineInstance engine)
-        {
-            try
-            {
-                if (engine.AutomationEngineContext.AppInstances.ContainsKey(instanceName))
-                    engine.AutomationEngineContext.AppInstances.Remove(instanceName);
-                else
-                    throw new Exception($"App Instance '{instanceName}' not found!");
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         public static bool InstanceExists(this string instanceName, IAutomationEngineInstance engine)
         {          
             try
             {
-                if (engine.AutomationEngineContext.AppInstances.TryGetValue(instanceName, out object appObject))
+                object appObject = null;
+                var existingVar = engine.AutomationEngineContext.Variables.Where(x => x.VariableName == instanceName).FirstOrDefault();
+                if (existingVar != null)
+                    appObject = existingVar.VariableValue;
+                var existingArg = engine.AutomationEngineContext.Arguments.Where(x => x.ArgumentName == instanceName).FirstOrDefault();
+                if (existingArg != null)
+                    appObject = existingArg.ArgumentValue;
+
+                if (appObject != null)
                 {                   
                     string appType = appObject.GetType().ToString();
 

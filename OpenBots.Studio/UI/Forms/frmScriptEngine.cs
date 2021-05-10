@@ -457,9 +457,6 @@ namespace OpenBots.UI.Forms
                 }
             }
 
-            //get updated app instance dictionary after the new engine finishes running
-            parentAutomationEngineIntance.AutomationEngineContext.AppInstances = childEngine.AutomationEngineContext.AppInstances;
-
             //get errors from new engine (if any)
             var newEngineErrors = childEngine.ErrorsOccured;
             if (newEngineErrors.Count > 0 && !(parentAutomationEngineIntance.LastExecutedCommand.CommandName == "RunTaskCommand" && parentAutomationEngineIntance.LastExecutedCommand.v_ErrorHandling == "Ignore Error"))

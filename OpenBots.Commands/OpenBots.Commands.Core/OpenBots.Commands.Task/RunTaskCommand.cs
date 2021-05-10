@@ -115,7 +115,7 @@ namespace OpenBots.Commands.Task
 			string projectPath = parentfrmScriptEngine.ScriptEngineContext.ProjectPath;
 
 			EngineContext childEngineContext = new EngineContext(childTaskPath, projectPath, parentAutomationEngineInstance.AutomationEngineContext.Container, CurrentScriptBuilder,
-				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, null, _argumentList, null, parentAutomationEngineInstance.AutomationEngineContext.AppInstances, null, null, 1,
+				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, null, _argumentList, null, null, null, 1,
 				parentfrmScriptEngine.ScriptEngineContext.IsDebugMode, true);
 
 			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childEngineContext, false, parentfrmScriptEngine.IsDebugMode);
@@ -373,7 +373,6 @@ namespace OpenBots.Commands.Task
 
 			childAutomationEngineInstance.AutomationEngineContext.IsTest = parentAutomationEngineInstance.AutomationEngineContext.IsTest;
 			childAutomationEngineInstance.AutomationEngineContext.Arguments = _argumentList;
-			childAutomationEngineInstance.AutomationEngineContext.AppInstances = parentAutomationEngineInstance.AutomationEngineContext.AppInstances;
 			childAutomationEngineInstance.IsServerChildExecution = true;
 
 			Log.Information("Executing Child Task: " + Path.GetFileName(childTaskPath));
@@ -461,9 +460,6 @@ namespace OpenBots.Commands.Task
                     }
                 }
             }
-
-			//get updated app instance dictionary after the new engine finishes running
-			parentAutomationEngineIntance.AutomationEngineContext.AppInstances = childAutomationEngineInstance.AutomationEngineContext.AppInstances;
 
 			//get errors from new engine (if any)
 			var newEngineErrors = childAutomationEngineInstance.ErrorsOccured;

@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -27,7 +28,8 @@ namespace OpenBots.Commands.Engine
 		[SampleUsage("MyStopwatchInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(Stopwatch) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -82,34 +84,34 @@ namespace OpenBots.Commands.Engine
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var format = (string)await v_ToStringFormat.EvaluateCode(engine);
-			
+
 			Stopwatch stopwatch;
 			switch (v_StopwatchAction)
 			{
 				case "Start Stopwatch":
 					//start a new stopwatch
 					stopwatch = new Stopwatch();
-					stopwatch.AddAppInstance(engine, v_InstanceName);
+					new OBAppInstance(v_InstanceName, stopwatch).SetVariableValue(engine, v_InstanceName);
 					stopwatch.Start();
 					break;
 				case "Stop Stopwatch":
 					//stop existing stopwatch
-					stopwatch = (Stopwatch)engine.AutomationEngineContext.AppInstances[v_InstanceName];
+					stopwatch = (Stopwatch)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 					stopwatch.Stop();
 					break;
 				case "Restart Stopwatch":
 					//restart which sets to 0 and automatically starts
-					stopwatch = (Stopwatch)engine.AutomationEngineContext.AppInstances[v_InstanceName];
+					stopwatch = (Stopwatch)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 					stopwatch.Restart();
 					break;
 				case "Reset Stopwatch":
 					//reset which sets to 0
-					stopwatch = (Stopwatch)engine.AutomationEngineContext.AppInstances[v_InstanceName];
+					stopwatch = (Stopwatch)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 					stopwatch.Reset();
 					break;
 				case "Measure Stopwatch":
 					//check elapsed which gives measure
-					stopwatch = (Stopwatch)engine.AutomationEngineContext.AppInstances[v_InstanceName];
+					stopwatch = (Stopwatch)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 					string elapsedTime;
 					if (string.IsNullOrEmpty(format))
 						elapsedTime = stopwatch.Elapsed.ToString();
