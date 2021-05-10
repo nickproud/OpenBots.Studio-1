@@ -1285,7 +1285,7 @@ namespace OpenBots.UI.CustomControls
                 return null;
 
             cbo.Items.Clear();
-            cbo.Items.Add("@\"Current Window\"");
+            cbo.Items.Add("\"Current Window\"");
             
             Process[] processlist = Process.GetProcesses();
 
@@ -1299,7 +1299,7 @@ namespace OpenBots.UI.CustomControls
                 }
             }
 
-            cbo.Items.Add("@\"None\"");
+            cbo.Items.Add("\"None\"");
 
             return cbo;
         }
