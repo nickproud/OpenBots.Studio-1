@@ -205,7 +205,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             List<ScriptVariable> mainScriptVariables = new List<ScriptVariable>();
             List<ScriptArgument> mainScriptArguments = new List<ScriptArgument>();
             List<ScriptElement> mainScriptElements = new List<ScriptElement>();
-            Dictionary<string, AssemblyReference> mainImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
+            Dictionary<string, List<AssemblyReference>> mainImportedNamespaces = new Dictionary<string, List<AssemblyReference>>(ScriptDefaultNamespaces.DefaultNamespaces);
 
             try
             {
@@ -836,7 +836,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         List<ScriptVariable> newScriptVariables = new List<ScriptVariable>();
                         List<ScriptArgument> newScriptArguments = new List<ScriptArgument>();
                         List<ScriptElement> newScriptElements = new List<ScriptElement>();
-                        Dictionary<string, AssemblyReference> newScriptImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
+                        Dictionary<string, List<AssemblyReference>> newScriptImportedNamespaces = new Dictionary<string, List<AssemblyReference>>(ScriptDefaultNamespaces.DefaultNamespaces);
 
                         try
                         {

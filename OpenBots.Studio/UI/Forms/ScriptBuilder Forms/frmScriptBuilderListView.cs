@@ -357,7 +357,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             List<ScriptArgument> originalStudioArguments = new List<ScriptArgument>();
             originalStudioArguments.AddRange(_scriptContext.Arguments);
 
-            Dictionary<string, AssemblyReference> originalStudioNamespaces = new Dictionary<string, AssemblyReference>();
+            Dictionary<string, List<AssemblyReference>> originalStudioNamespaces = new Dictionary<string, List<AssemblyReference>>();
             originalStudioNamespaces.AddRange(_scriptContext.ImportedNamespaces);
 
             //get sequence events

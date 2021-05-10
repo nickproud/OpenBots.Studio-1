@@ -420,7 +420,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         #region Imported Namespaces
         private void cbxAllNamespaces_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            var pair = (KeyValuePair<string, AssemblyReference>)cbxAllNamespaces.SelectedItem;
+            var pair = (KeyValuePair<string, List<AssemblyReference>>)cbxAllNamespaces.SelectedItem;
             if (!ScriptContext.ImportedNamespaces.ContainsKey(pair.Key))
             {
                 ScriptContext.ImportedNamespaces.Add(pair.Key, pair.Value);

@@ -123,7 +123,7 @@ namespace OpenBots.Commands.Outlook
 			CommandEnabled = true;
 			CommandIcon = Resources.command_smtp;
 
-			v_SourceFolder = "Inbox";
+			v_SourceFolder = "\"Inbox\"";
 			v_GetUnreadOnly = "No";
 			v_MarkAsRead = "Yes";
 			v_SaveMessagesAndAttachments = "No";

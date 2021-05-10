@@ -12,8 +12,8 @@ namespace OpenBots.Nuget
 {
     public class AppDomainSetupManager
     {
-        public static ContainerBuilder LoadBuilder(List<string> assemblyPaths, Dictionary<string, List<Type>> groupedTypes, Dictionary<string, AssemblyReference> allNamespaces,
-            Dictionary<string, AssemblyReference> importedNamespaces)
+        public static ContainerBuilder LoadBuilder(List<string> assemblyPaths, Dictionary<string, List<Type>> groupedTypes, Dictionary<string, List<AssemblyReference>> allNamespaces,
+            Dictionary<string, List<AssemblyReference>> importedNamespaces)
         {
             List<Assembly> existingAssemblies = new List<Assembly>();
             foreach(var path in assemblyPaths)

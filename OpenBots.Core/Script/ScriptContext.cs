@@ -2,13 +2,16 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Folders = OpenBots.Core.IO.Folders;
 using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 
 namespace OpenBots.Core.Script
@@ -18,19 +21,20 @@ namespace OpenBots.Core.Script
         public List<OBScriptVariable> Variables { get; set; }
         public List<ScriptArgument> Arguments { get; set; }
         public List<ScriptElement> Elements { get; set; }
-        public Dictionary<string, AssemblyReference> ImportedNamespaces { get; set; }
+        public Dictionary<string, List<AssemblyReference>> ImportedNamespaces { get; set; }
         public List<Assembly> AssembliesList { get; set; }
         public List<string> NamespacesList { get; set; }
         public CSharpCompilationOptions DefaultCompilationOptions { get; set; }
         public List<MetadataReference> DefaultReferences { get; set; }
         public string GuidPlaceholder { get; set; }
+        public string CSharpPath { get; set; }
 
         public ScriptContext()
         {
             Variables = new List<OBScriptVariable>();
             Arguments = new List<ScriptArgument>();
             Elements = new List<ScriptElement>();
-            ImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
+            ImportedNamespaces = new Dictionary<string, List<AssemblyReference>>(ScriptDefaultNamespaces.DefaultNamespaces);
 
             AssembliesList = NamespaceMethods.GetAssemblies(ImportedNamespaces);
             NamespacesList = NamespaceMethods.GetNamespacesList(ImportedNamespaces);
@@ -40,8 +44,7 @@ namespace OpenBots.Core.Script
                                                                                                          .WithUsings(NamespacesList);
 
             DefaultReferences = AssembliesList.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x.Location)).ToList();
-            DefaultReferences.Add(MetadataReference.CreateFromFile(typeof(DataRowComparer).Assembly.Location));
-
+            CSharpPath = Path.Combine(Folders.GetFolder(FolderType.StudioFolder), "CSharp");
             GenerateGuidPlaceHolder();
         }
 
@@ -55,7 +58,6 @@ namespace OpenBots.Core.Script
                                                                                                          .WithUsings(NamespacesList);
 
             DefaultReferences = AssembliesList.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x.Location)).ToList();
-            DefaultReferences.Add(MetadataReference.CreateFromFile(typeof(DataRowComparer).Assembly.Location));
         }
 
         public void GenerateGuidPlaceHolder()
@@ -72,7 +74,7 @@ namespace OpenBots.Core.Script
 
             var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(SourceText.From(script, Encoding.UTF8), new CSharpParseOptions(languageVersion: LanguageVersion.CSharp8, kind: SourceCodeKind.Script), "");
             var compilation = CSharpCompilation.Create("CSharp", new SyntaxTree[] { parsedSyntaxTree }, DefaultReferences, DefaultCompilationOptions);
-            var result = compilation.Emit("CSharp");
+            var result = compilation.Emit(CSharpPath);
 
             return result;
         }
@@ -100,7 +102,7 @@ namespace OpenBots.Core.Script
 
             var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(SourceText.From(script, Encoding.UTF8), new CSharpParseOptions(languageVersion: LanguageVersion.CSharp8, kind: SourceCodeKind.Script), "");
             var compilation = CSharpCompilation.Create("CSharp", new SyntaxTree[] { parsedSyntaxTree }, DefaultReferences, DefaultCompilationOptions);
-            var result = compilation.Emit("CSharp");
+            var result = compilation.Emit(CSharpPath);
 
             return result;
         }
@@ -118,7 +120,7 @@ namespace OpenBots.Core.Script
 
             var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(SourceText.From(script, Encoding.UTF8), new CSharpParseOptions(languageVersion: LanguageVersion.CSharp8, kind: SourceCodeKind.Script), "");
             var compilation = CSharpCompilation.Create("CSharp", new SyntaxTree[] { parsedSyntaxTree }, DefaultReferences, DefaultCompilationOptions);
-            var result = compilation.Emit("CSharp");
+            var result = compilation.Emit(CSharpPath);
 
             return result;
         }

@@ -164,7 +164,7 @@ namespace OpenBots.Commands.Email
 			CommandEnabled = true;
 			CommandIcon = Resources.command_smtp;
 
-			v_IMAPSourceFolder = "INBOX";
+			v_IMAPSourceFolder = "\"INBOX\"";
 			v_IMAPGetUnreadOnly = "No";
 			v_IMAPMarkAsRead = "Yes";
 			v_IMAPSaveMessagesAndAttachments = "No";

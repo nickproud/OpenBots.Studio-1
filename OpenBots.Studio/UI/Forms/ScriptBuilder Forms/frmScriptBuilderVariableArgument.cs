@@ -480,7 +480,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region Imported Namespaces
         private void cbxAllNamespaces_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            var pair = (KeyValuePair<string, AssemblyReference>)cbxAllNamespaces.SelectedItem;
+            var pair = (KeyValuePair<string, List<AssemblyReference>>)cbxAllNamespaces.SelectedItem;
             if (!_scriptContext.ImportedNamespaces.ContainsKey(pair.Key))
             {
                 _scriptContext.ImportedNamespaces.Add(pair.Key, pair.Value);

@@ -48,7 +48,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         //engine context variables
         private ScriptContext _scriptContext;
         private List<ListViewItem> _rowsSelectedForCopy;
-        private Dictionary<string, AssemblyReference> _allNamespaces;
+        private Dictionary<string, List<AssemblyReference>> _allNamespaces;
         private string _scriptFilePath;
         public string ScriptFilePath
         {
@@ -244,12 +244,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             var defaultTypes = ScriptDefaultTypes.DefaultVarArgTypes;
             _typeContext = new TypeContext(groupedTypes, defaultTypes);
-            _scriptContext.ImportedNamespaces = new Dictionary<string, AssemblyReference>(ScriptDefaultNamespaces.DefaultNamespaces);
-            _allNamespaces = new Dictionary<string, AssemblyReference>() 
+            _scriptContext.ImportedNamespaces = new Dictionary<string, List<AssemblyReference>>(ScriptDefaultNamespaces.DefaultNamespaces);
+            _allNamespaces = new Dictionary<string, List<AssemblyReference>>() 
             { 
                 { 
-                    "System", new AssemblyReference(Assembly.GetAssembly(typeof(string)).GetName().Name, 
-                                                    Assembly.GetAssembly(typeof(string)).GetName().Version.ToString())
+                    "System", new List<AssemblyReference>()
+                    {
+                        new AssemblyReference(Assembly.GetAssembly(typeof(string)).GetName().Name, Assembly.GetAssembly(typeof(string)).GetName().Version.ToString()) 
+                    }
                 } 
             };
         }
@@ -296,12 +298,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             var importedNameSpacesBinding = new BindingSource(_scriptContext.ImportedNamespaces, null);
             lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
             lbxImportedNamespaces.DisplayMember = "Key";
-            lbxImportedNamespaces.ValueMember = "Value";
 
             var allNameSpacesBinding = new BindingSource(_allNamespaces, null);
             cbxAllNamespaces.DataSource = allNameSpacesBinding;
             cbxAllNamespaces.DisplayMember = "Key";
-            cbxAllNamespaces.ValueMember = "Value";
 
             //set controls double buffered
             foreach (Control control in Controls)
