@@ -1,29 +1,27 @@
-﻿using OpenBots.Core.Attributes.PropertyAttributes;
+﻿using Newtonsoft.Json;
+using OpenBots.Commands.UIAutomation.Library;
+using OpenBots.Core.Attributes.PropertyAttributes;
+using OpenBots.Core.ChromeNativeClient;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
-using OpenBots.Core.UI.Controls;
-using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Core.ChromeNativeClient;
 using OpenBots.Core.User32;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing;
-using System.Windows.Forms;
-using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using OpenBots.Commands.UIAutomation.Library;
 using System.Linq;
-using OpenBots.Core.Model.ApplicationModel;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace OpenBots.Commands.NativeChrome
 {
-	[Serializable]
+    [Serializable]
 	[Category("Native Chrome Commands")]
 	[Description("This command scrolls the specified element into the visible area of the chrome browser window.")]
 	public class NativeChromeScrollToElementCommand : ScriptCommand
@@ -53,10 +51,6 @@ namespace OpenBots.Commands.NativeChrome
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_NativeSearchParameters { get; set; }
-
-		[JsonIgnore]
-		[Browsable(false)]
-		private DataGridView _searchParametersGridViewHelper;
 
 		public NativeChromeScrollToElementCommand()
 		{
@@ -95,15 +89,6 @@ namespace OpenBots.Commands.NativeChrome
 		{
 			base.Render(editor, commandControls);
 
-			//create helper control
-			CommandItemControl helperControl = new CommandItemControl();
-			helperControl.Padding = new Padding(10, 0, 0, 0);
-			helperControl.ForeColor = Color.AliceBlue;
-			helperControl.Font = new Font("Segoe UI Semilight", 10);
-			helperControl.CommandImage = Resources.command_camera;
-			helperControl.CommandDisplay = "Chrome Element Recorder";
-			helperControl.Click += new EventHandler((s, e) => NativeHelper.GetUIElement(s, e, v_NativeSearchParameters, editor, commandControls));
-
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
 			if (v_NativeSearchParameters.Rows.Count == 0)
@@ -117,32 +102,8 @@ namespace OpenBots.Commands.NativeChrome
 				v_NativeSearchParameters.Rows.Add(false, "\"Link Text\"", "");
 				v_NativeSearchParameters.Rows.Add(true, "\"CSS Selector\"", "");
 			}
-			//create search parameters   
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_NativeSearchParameters", this));
-			RenderedControls.Add(helperControl);
 
-			//create search param grid
-			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_NativeSearchParameters", this);
-
-			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
-			enabled.HeaderText = "Enabled";
-			enabled.DataPropertyName = "Enabled";
-			enabled.FillWeight = 30;
-			_searchParametersGridViewHelper.Columns.Add(enabled);
-
-			DataGridViewTextBoxColumn propertyName = new DataGridViewTextBoxColumn();
-			propertyName.HeaderText = "Parameter Name";
-			propertyName.DataPropertyName = "Parameter Name";
-			propertyName.FillWeight = 40;
-			_searchParametersGridViewHelper.Columns.Add(propertyName);
-
-			DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
-			propertyValue.HeaderText = "Parameter Value";
-			propertyValue.DataPropertyName = "Parameter Value";
-			_searchParametersGridViewHelper.Columns.Add(propertyValue);
-
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_NativeSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
-			RenderedControls.Add(_searchParametersGridViewHelper);
+			RenderedControls.AddRange(commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_NativeSearchParameters", this, editor, new Control[] { NativeHelper.NativeChromeRecorderControl(v_NativeSearchParameters, editor) }));
 
 			return RenderedControls;
 		}

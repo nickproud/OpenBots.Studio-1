@@ -14,6 +14,7 @@ namespace OpenBots.Core.Infrastructure
         List<Control> CreateDefaultOutputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         List<Control> CreateDefaultDropdownGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         List<Control> CreateDefaultDataGridViewGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
+        List<Control> CreateDefaultWebElementDataGridViewGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, Control[] additionalHelpers);
         DataGridView CreateDefaultDataGridViewFor(string parameterName, ScriptCommand parent);
         PictureBox CreateDefaultPictureBoxFor(string parameterName, ScriptCommand parent);
         List<Control> CreateDefaultWindowControlGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);

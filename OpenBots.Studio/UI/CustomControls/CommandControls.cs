@@ -90,7 +90,7 @@ namespace OpenBots.UI.CustomControls
             controlList.AddRange(helpers);
             controlList.Add(passwordInput);
 
-            ((TextBox)passwordInput).PasswordChar = '*';
+            passwordInput.PasswordChar = '*';
 
             return controlList;
         }
@@ -141,6 +141,42 @@ namespace OpenBots.UI.CustomControls
             
             controlList.Add(label);
             controlList.AddRange(helpers);
+            controlList.Add(gridview);
+
+            return controlList;
+        }
+
+        public List<Control> CreateDefaultWebElementDataGridViewGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, Control[] additionalHelpers = null)
+        {
+            var controlList = new List<Control>();
+            var label = CreateDefaultLabelFor(parameterName, parent);
+            var gridview = CreateDefaultDataGridViewFor(parameterName, parent);
+
+            DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
+            enabled.HeaderText = "Enabled";
+            enabled.DataPropertyName = "Enabled";
+            enabled.FillWeight = 30;
+            gridview.Columns.Add(enabled);
+
+            DataGridViewTextBoxColumn propertyName = new DataGridViewTextBoxColumn();
+            propertyName.HeaderText = "Parameter Name";
+            propertyName.DataPropertyName = "Parameter Name";
+            propertyName.FillWeight = 40;
+            gridview.Columns.Add(propertyName);
+
+            DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
+            propertyValue.HeaderText = "Parameter Value";
+            propertyValue.DataPropertyName = "Parameter Value";
+            gridview.Columns.Add(propertyValue);
+
+            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { gridview }, editor);
+
+            controlList.Add(label);
+
+            if (additionalHelpers != null)
+                controlList.AddRange(additionalHelpers);
+
+            controlList.AddRange(helpers);           
             controlList.Add(gridview);
 
             return controlList;

@@ -2,12 +2,14 @@
 using OpenBots.Core.ChromeNativeClient;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -77,7 +79,7 @@ namespace OpenBots.Commands.UIAutomation.Library
 			searchParameters.TableName = DateTime.Now.ToString("UIASearchParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 			return searchParameters;
 		}
-		public static void GetUIElement(object sender, EventArgs e, DataTable NativeSearchParameters, IfrmCommandEditor editor, ICommandControls commandControls)
+		public static void GetUIElement(object sender, EventArgs e, DataTable NativeSearchParameters, IfrmCommandEditor editor)
 		{
 			try
 			{
@@ -88,7 +90,7 @@ namespace OpenBots.Commands.UIAutomation.Library
 				if (!string.IsNullOrEmpty(webElementStr))
 				{
 					WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
-					DataTable SearchParameters = NativeHelper.WebElementToDataTable(webElement);
+					DataTable SearchParameters = WebElementToDataTable(webElement);
 
 					if (SearchParameters != null)
 					{
@@ -113,6 +115,19 @@ namespace OpenBots.Commands.UIAutomation.Library
 				Process process = Process.GetCurrentProcess();
 				User32Functions.ActivateWindow(process.MainWindowTitle);
 			}
+		}
+
+		public static CommandItemControl NativeChromeRecorderControl(DataTable NativeSearchParameters, IfrmCommandEditor editor)
+        {
+			CommandItemControl helperControl = new CommandItemControl();
+			helperControl.Padding = new Padding(10, 0, 0, 0);
+			helperControl.ForeColor = Color.AliceBlue;
+			helperControl.Font = new Font("Segoe UI Semilight", 10);
+			helperControl.CommandImage = Resources.command_camera;
+			helperControl.CommandDisplay = "Chrome Element Recorder";
+			helperControl.Click += new EventHandler((s, e) => GetUIElement(s, e, NativeSearchParameters, editor));
+
+			return helperControl;
 		}
 	}
 }
