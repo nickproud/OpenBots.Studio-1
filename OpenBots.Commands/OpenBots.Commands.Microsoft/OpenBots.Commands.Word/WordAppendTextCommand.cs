@@ -115,27 +115,31 @@ namespace OpenBots.Commands.Word
 			Application wordInstance = (Application)wordObject;
 			Document wordDocument = wordInstance.ActiveDocument;
 
-			Paragraph paragraph = wordDocument.Content.Paragraphs.Add();
-			paragraph.Range.Text = vText;
-			paragraph.Range.Font.Name = v_FontName;
-			paragraph.Range.Font.Size = float.Parse(v_FontSize);
+			var lines = vText.Split('\n');
 
-			if (v_FontBold == "Yes")
-				paragraph.Range.Font.Bold = 1;
-			else 
-				paragraph.Range.Font.Bold = 0;
+			foreach (string textToAdd in lines) {
+				Paragraph paragraph = wordDocument.Content.Paragraphs.Add();
+				paragraph.Range.Text = textToAdd;
+				paragraph.Range.Font.Name = v_FontName;
+				paragraph.Range.Font.Size = float.Parse(v_FontSize);
 
-			if (v_FontItalic == "Yes")
-				paragraph.Range.Font.Italic = 1;
-			else 
-				paragraph.Range.Font.Italic = 0;
+				if (v_FontBold == "Yes")
+					paragraph.Range.Font.Bold = 1;
+				else
+					paragraph.Range.Font.Bold = 0;
 
-			if (v_FontUnderline == "Yes")
-				paragraph.Range.Font.Underline = WdUnderline.wdUnderlineSingle;
-			else 
-				paragraph.Range.Font.Underline = WdUnderline.wdUnderlineNone;
+				if (v_FontItalic == "Yes")
+					paragraph.Range.Font.Italic = 1;
+				else
+					paragraph.Range.Font.Italic = 0;
 
-			paragraph.Range.InsertParagraphAfter();
+				if (v_FontUnderline == "Yes")
+					paragraph.Range.Font.Underline = WdUnderline.wdUnderlineSingle;
+				else
+					paragraph.Range.Font.Underline = WdUnderline.wdUnderlineNone;
+
+				paragraph.Range.InsertParagraphAfter();
+			}
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
