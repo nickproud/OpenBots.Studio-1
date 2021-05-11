@@ -143,6 +143,16 @@ namespace OpenBots.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap action_bar_extensions {
+            get {
+                object obj = ResourceManager.GetObject("action_bar_extensions", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap action_bar_import {
             get {
                 object obj = ResourceManager.GetObject("action_bar_import", resourceCulture);

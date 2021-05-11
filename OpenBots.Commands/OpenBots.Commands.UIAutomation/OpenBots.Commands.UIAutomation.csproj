@@ -223,6 +223,11 @@
     <Compile Include="Forms\frmUserInput.Designer.cs">
       <DependentUpon>frmUserInput.cs</DependentUpon>
     </Compile>
+    <Compile Include="Library\NativeHelper.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetAttributeCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetOptionsCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetTableCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeMaximizeBrowserCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\CaptureImageCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\PerformOCRCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\SurfaceAutomationCommand.cs" />
@@ -234,6 +239,16 @@
     <Compile Include="OpenBots.Commands.Input\SendMouseClickCommand.cs" />
     <Compile Include="OpenBots.Commands.Input\SendMouseMoveCommand.cs" />
     <Compile Include="OpenBots.Commands.Input\UIAutomationCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeClearTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeCloseBrowserCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeCreateBrowserCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeElementExistsCommand.cs.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeScrollToElementCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeSetOptionCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeSetSecureTextCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeSetTextCommand.cs" />
     <Compile Include="OpenBots.Commands.WebBrowser\GetHTMLSourceCommand.cs" />
     <Compile Include="OpenBots.Commands.Window\ActivateWindowCommand.cs" />
     <Compile Include="OpenBots.Commands.Window\CloseWindowCommand.cs" />
@@ -277,7 +292,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Library\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>

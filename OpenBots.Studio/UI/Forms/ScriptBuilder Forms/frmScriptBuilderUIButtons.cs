@@ -1430,6 +1430,26 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             shortcutMenuToolStripMenuItem_Click(sender, e);
         }
         #endregion
+
+        #region Recorder Buttons
+        private void extensionManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var extensionsForm = new frmExtentionsManager();
+            extensionsForm.ShowDialog();
+
+            if (extensionsForm.DialogResult == DialogResult.Cancel)
+            {
+                Notify(extensionsForm.ErrorMessage, Color.Red);
+            }
+
+            extensionsForm.Dispose();
+        }
+
+        private void uiBtnExtensionsManager_Click(object sender, EventArgs e)
+        {
+            extensionManagerToolStripMenuItem_Click(sender, e);
+        }
+        #endregion
         #endregion
     }
 }

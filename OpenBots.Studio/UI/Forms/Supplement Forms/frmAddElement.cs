@@ -26,6 +26,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             ElementValueDT.TableName = DateTime.Now.ToString("ElementValueDT" + DateTime.Now.ToString("MMddyy.hhmmss"));
 
             ElementValueDT.Rows.Add(true, "\"XPath\"", "");
+            ElementValueDT.Rows.Add(true, "\"Relative XPath\"", "");
             ElementValueDT.Rows.Add(false, "\"ID\"", "");
             ElementValueDT.Rows.Add(false, "\"Name\"", "");
             ElementValueDT.Rows.Add(false, "\"Tag Name\"", "");
