@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
 using Tasks = System.Threading.Tasks;
@@ -115,7 +116,9 @@ namespace OpenBots.Commands.Word
 			Application wordInstance = (Application)wordObject;
 			Document wordDocument = wordInstance.ActiveDocument;
 
-			var lines = vText.Split('\n');
+			var newLineRegex = new Regex(@"\r\n|\n|\r", RegexOptions.Singleline);
+			var lines = newLineRegex.Split(vText);
+			
 
 			foreach (string textToAdd in lines) {
 				Paragraph paragraph = wordDocument.Content.Paragraphs.Add();
