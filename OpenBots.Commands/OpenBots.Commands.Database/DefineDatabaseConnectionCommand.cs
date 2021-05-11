@@ -1,12 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Properties;
+using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
@@ -14,19 +16,16 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.OleDb;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Threading.Tasks;
-using OpenBots.Core.Script;
-using System.Security;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
+using System.Security;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
-using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
 
 namespace OpenBots.Commands.Database
 {
-	[Serializable]
+    [Serializable]
 	[Category("Database Commands")]
 	[Description("This command connects to an OleDb database.")]
 	public class DefineDatabaseConnectionCommand : ScriptCommand
@@ -114,7 +113,7 @@ namespace OpenBots.Commands.Database
 			return new OleDbConnection(connection);
 		}
 
-		private async Task<OleDbConnection> CreateConnection(IfrmCommandEditor editor)
+		private async Task<OleDbConnection> CreateTestConnection(IfrmCommandEditor editor)
 		{
 			var engineContext = new EngineContext();
 
@@ -133,14 +132,9 @@ namespace OpenBots.Commands.Database
 				await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, engineContext);
 
 			var connection = (string)await VariableMethods.EvaluateCode(v_ConnectionString, engineContext);
-			var connectionPass = (string)await VariableMethods.EvaluateCode(v_ConnectionStringPassword, engineContext);
+			var connectionPass = (SecureString)await VariableMethods.EvaluateCode(v_ConnectionStringPassword, engineContext);
 
-			if (connectionPass.StartsWith("!"))
-			{
-				connectionPass = connectionPass.Substring(1);
-				connectionPass = EncryptionServices.DecryptString(connectionPass, "OPENBOTS");
-			}
-			connection = connection.Replace("#pwd", connectionPass);
+			connection = connection.Replace("#pwd", connectionPass.ConvertSecureStringToString());
 
 			return new OleDbConnection(connection);
 		}
@@ -190,19 +184,19 @@ namespace OpenBots.Commands.Database
 			return base.GetDisplayValue() + $" [Instance Name '{v_InstanceName}']";
 		}
 
-		private async void TestConnection(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
+		private async Task TestConnection(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			
 			try
 			{
-				var oleDBConnection = await CreateConnection(editor);
+				OleDbConnection oleDBConnection = await CreateTestConnection(editor);
 				oleDBConnection.Open();
 				oleDBConnection.Close();
 				MessageBox.Show("Connection Successful", "Test Connection", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Connection Failed: {ex}", "Test Connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show($"Connection Failed: Could not establish connection", "Test Connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
