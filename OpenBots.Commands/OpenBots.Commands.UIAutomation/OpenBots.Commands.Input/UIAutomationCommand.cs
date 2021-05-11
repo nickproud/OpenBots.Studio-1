@@ -454,7 +454,7 @@ namespace OpenBots.Commands.Input
 			helperControl.ForeColor = Color.AliceBlue;
 			helperControl.Font = new Font("Segoe UI Semilight", 10);         
 			helperControl.CommandImage = Resources.command_camera;
-			helperControl.CommandDisplay = "Element Recorder";
+			helperControl.CommandDisplay = "UI Element Recorder";
 			helperControl.Click += (sender, e) => ShowRecorder(sender, e, commandControls);
 
 			//window name

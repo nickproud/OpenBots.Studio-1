@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using OpenBots.Commands.UIAutomation.Library;
 using System.Linq;
+using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.NativeChrome
 {
@@ -32,7 +33,8 @@ namespace OpenBots.Commands.NativeChrome
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyChromeBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Process) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -40,7 +42,7 @@ namespace OpenBots.Commands.NativeChrome
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." +
 					"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
 		[SampleUsage("XPath : \"//*[@id='features']/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
-						 "\n\tRelative XPath : //*[@id=\"features\"]" +
+						 "\n\tRelative XPath : //*[@id='features']" +
 						 "\n\tID: \"1\"" +
 						 "\n\tName: \"my\" + var2 + \"Name\"" +
 						 "\n\tTag Name: \"h1\"" +
@@ -75,7 +77,7 @@ namespace OpenBots.Commands.NativeChrome
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var browserObject = v_InstanceName.GetAppInstance(engine);
+			var browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var chromeProcess = (Process)browserObject;
 
 			WebElement webElement = await NativeHelper.DataTableToWebElement(v_NativeSearchParameters, engine);
@@ -99,7 +101,7 @@ namespace OpenBots.Commands.NativeChrome
 			helperControl.ForeColor = Color.AliceBlue;
 			helperControl.Font = new Font("Segoe UI Semilight", 10);
 			helperControl.CommandImage = Resources.command_camera;
-			helperControl.CommandDisplay = "Element Recorder";
+			helperControl.CommandDisplay = "Chrome Element Recorder";
 			helperControl.Click += new EventHandler((s, e) => NativeHelper.GetUIElement(s, e, v_NativeSearchParameters, editor, commandControls));
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));

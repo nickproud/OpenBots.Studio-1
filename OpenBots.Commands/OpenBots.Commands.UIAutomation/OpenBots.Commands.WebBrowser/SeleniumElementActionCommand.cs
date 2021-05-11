@@ -486,13 +486,21 @@ namespace OpenBots.Commands.WebBrowser
 			base.Render(editor, commandControls);
 
 			//create helper control
+			CommandItemControl helperControlNative = new CommandItemControl();
+			helperControlNative.Padding = new Padding(10, 0, 0, 0);
+			helperControlNative.ForeColor = Color.AliceBlue;
+			helperControlNative.Font = new Font("Segoe UI Semilight", 10);
+			helperControlNative.CommandImage = Resources.command_camera;
+			helperControlNative.CommandDisplay = "Chrome Element Recorder";
+			helperControlNative.Click += new EventHandler((s, e) => NativeRecorder(s, e, editor, commandControls));
+
 			CommandItemControl helperControl = new CommandItemControl();
 			helperControl.Padding = new Padding(10, 0, 0, 0);
 			helperControl.ForeColor = Color.AliceBlue;
 			helperControl.Font = new Font("Segoe UI Semilight", 10);
 			helperControl.CommandImage = Resources.command_camera;
-			helperControl.CommandDisplay = "Element Recorder";
-			helperControl.Click += new EventHandler((s, e) => NativeRecorder(s, e, editor, commandControls));
+			helperControl.CommandDisplay = "OB Element Recorder";
+			helperControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
@@ -510,6 +518,7 @@ namespace OpenBots.Commands.WebBrowser
 			//create search parameters   
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_SeleniumSearchParameters", this));
 			RenderedControls.Add(helperControl);
+			RenderedControls.Add(helperControlNative);
 
 			//create search param grid
 			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_SeleniumSearchParameters", this);
