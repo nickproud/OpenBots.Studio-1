@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
+using OpenBots.Core.ChromeNativeClient;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -19,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -27,6 +29,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
+using OpenBots.Commands.UIAutomation.Library;
 
 namespace OpenBots.Commands.WebBrowser
 {
@@ -489,13 +492,14 @@ namespace OpenBots.Commands.WebBrowser
 			helperControl.Font = new Font("Segoe UI Semilight", 10);
 			helperControl.CommandImage = Resources.command_camera;
 			helperControl.CommandDisplay = "Element Recorder";
-			helperControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
+			helperControl.Click += new EventHandler((s, e) => NativeRecorder(s, e, editor, commandControls));
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
 			if (v_SeleniumSearchParameters.Rows.Count == 0)
 			{
 				v_SeleniumSearchParameters.Rows.Add(true, "\"XPath\"", "");
+				v_SeleniumSearchParameters.Rows.Add(false, "\"Relative XPath\"", "");
 				v_SeleniumSearchParameters.Rows.Add(false, "\"ID\"", "");
 				v_SeleniumSearchParameters.Rows.Add(false, "\"Name\"", "");
 				v_SeleniumSearchParameters.Rows.Add(false, "\"Tag Name\"", "");
@@ -574,6 +578,36 @@ namespace OpenBots.Commands.WebBrowser
 		private void ActionParametersGridViewHelper_MouseEnter(object sender, EventArgs e)
 		{
 			SeleniumAction_SelectionChangeCommitted(null, null);
+		}
+
+		public void NativeRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
+		{
+			User32Functions.BringChromeWindowToTop();
+
+			string webElementStr;
+			NativeRequest.ProcessRequest("getelement", "", out webElementStr);
+			WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
+			Process process = Process.GetCurrentProcess();
+			User32Functions.ActivateWindow(process.MainWindowTitle);
+			DataTable SearchParameters = NativeHelper.WebElementToSeleniumDataTable(webElement);
+			
+			try
+			{
+				if (SearchParameters != null)
+				{
+					v_SeleniumSearchParameters.Rows.Clear();
+
+					foreach (DataRow rw in SearchParameters.Rows)
+						v_SeleniumSearchParameters.ImportRow(rw);
+
+					_searchParametersGridViewHelper.DataSource = v_SeleniumSearchParameters;
+					_searchParametersGridViewHelper.Refresh();
+				}
+			}
+			catch (Exception)
+			{
+				//Search parameter not found
+			}
 		}
 
 		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
