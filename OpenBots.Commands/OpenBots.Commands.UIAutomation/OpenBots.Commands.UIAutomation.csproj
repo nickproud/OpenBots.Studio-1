@@ -224,11 +224,10 @@
       <DependentUpon>frmUserInput.cs</DependentUpon>
     </Compile>
     <Compile Include="Library\NativeHelper.cs" />
-    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeDoubleClickCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetAttributeCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetOptionsCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetTableCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeMiddleClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeMaximizeBrowserCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\CaptureImageCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\PerformOCRCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\SurfaceAutomationCommand.cs" />
@@ -245,8 +244,7 @@
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeCreateBrowserCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeElementExistsCommand.cs.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetTextCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeLeftClickCommand.cs" />
-    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeRightClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeClickCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeScrollToElementCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeSetOptionCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeSetSecureTextCommand.cs" />

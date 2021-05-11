@@ -1,14 +1,20 @@
-﻿using OpenBots.Core.ChromeNativeClient;
+﻿using Newtonsoft.Json;
+using OpenBots.Core.ChromeNativeClient;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.UI.Controls;
+using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace OpenBots.Commands.UIAutomation.Library
 {
-    public class NativeHelper
+    public static class NativeHelper
     {
         public async static Task<WebElement> DataTableToWebElement(DataTable SearchParametersDT, IAutomationEngineInstance engine) 
         {
@@ -71,5 +77,42 @@ namespace OpenBots.Commands.UIAutomation.Library
 			searchParameters.TableName = DateTime.Now.ToString("UIASearchParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 			return searchParameters;
 		}
-    }
+		public static void GetUIElement(object sender, EventArgs e, DataTable NativeSearchParameters, IfrmCommandEditor editor, ICommandControls commandControls)
+		{
+			try
+			{
+				User32Functions.BringChromeWindowToTop();
+
+				string webElementStr;
+				NativeRequest.ProcessRequest("getelement", "", out webElementStr);
+				if (!string.IsNullOrEmpty(webElementStr))
+				{
+					WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
+					DataTable SearchParameters = NativeHelper.WebElementToDataTable(webElement);
+
+					if (SearchParameters != null)
+					{
+						NativeSearchParameters.Rows.Clear();
+
+						foreach (DataRow rw in SearchParameters.Rows)
+							NativeSearchParameters.ImportRow(rw);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				// Throw Error in Message Box
+				var result = ((Form)editor).Invoke(new Action(() =>
+				{
+					editor.ShowMessage(ex.Message, "MessageBox", DialogType.OkOnly, 10);
+				}
+				));
+			}
+			finally
+			{
+				Process process = Process.GetCurrentProcess();
+				User32Functions.ActivateWindow(process.MainWindowTitle);
+			}
+		}
+	}
 }

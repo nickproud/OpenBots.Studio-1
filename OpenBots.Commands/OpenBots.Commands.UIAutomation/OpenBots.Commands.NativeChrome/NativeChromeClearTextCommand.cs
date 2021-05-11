@@ -100,7 +100,7 @@ namespace OpenBots.Commands.NativeChrome
 			helperControl.Font = new Font("Segoe UI Semilight", 10);
 			helperControl.CommandImage = Resources.command_camera;
 			helperControl.CommandDisplay = "Element Recorder";
-			helperControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
+			helperControl.Click += new EventHandler((s, e) => NativeHelper.GetUIElement(s, e, v_NativeSearchParameters, editor, commandControls));
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
@@ -157,46 +157,6 @@ namespace OpenBots.Commands.NativeChrome
 
 			return base.GetDisplayValue() + $" [Clear Text by {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
-		}
-		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
-		{
-			try
-			{
-				User32Functions.BringChromeWindowToTop();
-
-				string webElementStr;
-				NativeRequest.ProcessRequest("getelement", "", out webElementStr);
-				if (!string.IsNullOrEmpty(webElementStr))
-				{
-					WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
-					DataTable SearchParameters = NativeHelper.WebElementToDataTable(webElement);
-
-					if (SearchParameters != null)
-					{
-						v_NativeSearchParameters.Rows.Clear();
-
-						foreach (DataRow rw in SearchParameters.Rows)
-							v_NativeSearchParameters.ImportRow(rw);
-
-						_searchParametersGridViewHelper.DataSource = v_NativeSearchParameters;
-						_searchParametersGridViewHelper.Refresh();
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				// Throw Error in Message Box
-				var result = ((Form)editor).Invoke(new Action(() =>
-				{
-					editor.ShowMessage(ex.Message, "MessageBox", DialogType.OkOnly, 10);
-				}
-				));
-			}
-			finally
-			{
-				Process process = Process.GetCurrentProcess();
-				User32Functions.ActivateWindow(process.MainWindowTitle);
-			}
 		}
 	}
 }

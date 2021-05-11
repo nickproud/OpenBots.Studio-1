@@ -1,6 +1,6 @@
 {
   "name": "OpenBots Web Automation",
-  "description": "Web Automation!",
+  "description": "OpenBots extension for browser communication",
 	"version": "1.0",
 		"content_scripts": [
 		{

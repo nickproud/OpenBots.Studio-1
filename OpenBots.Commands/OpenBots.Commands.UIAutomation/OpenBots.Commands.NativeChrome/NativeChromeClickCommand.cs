@@ -24,8 +24,8 @@ namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command performs right click on specified element in chrome.")]
-	public class NativeChromeRightClickCommand : ScriptCommand
+	[Description("This command performs click on specified element in chrome.")]
+	public class NativeChromeClickCommand : ScriptCommand
 	{
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
@@ -52,16 +52,27 @@ namespace OpenBots.Commands.NativeChrome
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_NativeSearchParameters { get; set; }
 
+		[Required]
+		[DisplayName("Click Button")]
+		[PropertyUISelectionOption("Left")]
+		[PropertyUISelectionOption("Middle")]
+		//[PropertyUISelectionOption("Right")]
+		[Description("Please specify the mouse button used for click action.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_ClickButton { get; set; }
+
 		[JsonIgnore]
 		[Browsable(false)]
 		private DataGridView _searchParametersGridViewHelper;
 
-		public NativeChromeRightClickCommand()
+		public NativeChromeClickCommand()
 		{
-			CommandName = "NativeChromeRightClickCommand";
-			SelectionName = "Right Click";
+			CommandName = "NativeChromeClickCommand";
+			SelectionName = "Click";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
+			v_ClickButton = "Left";
 
 			v_InstanceName = "DefaultChromeBrowser";
 			//set up search parameter table
@@ -82,17 +93,13 @@ namespace OpenBots.Commands.NativeChrome
 
 			User32Functions.BringWindowToFront(chromeProcess.Handle);
 
+			string clickButton = v_ClickButton.ToLower() + "click";
+
 			string responseText;
-			NativeRequest.ProcessRequest("getxypoints", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest(clickButton, JsonConvert.SerializeObject(webElement), out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
-			var resolutionsArr = responseObject.Result.Split(',');
-			Rect rect = new Rect();
-			chromeProcess.Refresh();
-			User32Functions.GetWindowRect(chromeProcess.MainWindowHandle, out rect);
-			User32Functions.SendMouseMove(rect.left + Convert.ToInt32(resolutionsArr[0]), rect.top + Convert.ToInt32(resolutionsArr[1])
-				,"Right Click");
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -106,7 +113,7 @@ namespace OpenBots.Commands.NativeChrome
 			helperControl.Font = new Font("Segoe UI Semilight", 10);
 			helperControl.CommandImage = Resources.command_camera;
 			helperControl.CommandDisplay = "Element Recorder";
-			helperControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
+			helperControl.Click += new EventHandler((s, e) => NativeHelper.GetUIElement(s, e, v_NativeSearchParameters, editor, commandControls));
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
@@ -148,6 +155,8 @@ namespace OpenBots.Commands.NativeChrome
 			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_NativeSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
 			RenderedControls.Add(_searchParametersGridViewHelper);
 
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_ClickButton", this, editor));
+
 			return RenderedControls;
 		}
 
@@ -161,48 +170,8 @@ namespace OpenBots.Commands.NativeChrome
 										   where rw.Field<string>("Enabled") == "True"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-			return base.GetDisplayValue() + $" [Right Click on {searchParameterName}" +
+			return base.GetDisplayValue() + $" ['{v_ClickButton}' Click on {searchParameterName}" +
 											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
-		}
-		public void ShowRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
-		{
-			try
-			{
-				User32Functions.BringChromeWindowToTop();
-
-				string webElementStr;
-				NativeRequest.ProcessRequest("getelement", "", out webElementStr);
-				if (!string.IsNullOrEmpty(webElementStr))
-				{
-					WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
-					DataTable SearchParameters = NativeHelper.WebElementToDataTable(webElement);
-
-					if (SearchParameters != null)
-					{
-						v_NativeSearchParameters.Rows.Clear();
-
-						foreach (DataRow rw in SearchParameters.Rows)
-							v_NativeSearchParameters.ImportRow(rw);
-
-						_searchParametersGridViewHelper.DataSource = v_NativeSearchParameters;
-						_searchParametersGridViewHelper.Refresh();
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				// Throw Error in Message Box
-				var result = ((Form)editor).Invoke(new Action(() =>
-				{
-					editor.ShowMessage(ex.Message, "MessageBox", DialogType.OkOnly, 10);
-				}
-				));
-			}
-			finally
-			{
-				Process process = Process.GetCurrentProcess();
-				User32Functions.ActivateWindow(process.MainWindowTitle);
-			}
 		}
 	}
 }
