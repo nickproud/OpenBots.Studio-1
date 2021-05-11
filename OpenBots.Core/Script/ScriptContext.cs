@@ -45,6 +45,8 @@ namespace OpenBots.Core.Script
 
             DefaultReferences = AssembliesList.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x.Location)).ToList();
             CSharpPath = Path.Combine(Folders.GetFolder(FolderType.StudioFolder), "CSharp");
+            if (!Directory.Exists(Folders.GetFolder(FolderType.StudioFolder)))
+                Directory.CreateDirectory(Folders.GetFolder(FolderType.StudioFolder));
             GenerateGuidPlaceHolder();
         }
 
