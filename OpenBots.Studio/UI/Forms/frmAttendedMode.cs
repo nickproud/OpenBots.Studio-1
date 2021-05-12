@@ -36,8 +36,6 @@ namespace OpenBots.UI.Forms
 
             //setup file system watcher
             _publishedProjectsPath = Folders.GetFolder(FolderType.PublishedFolder);
-            if (!Directory.Exists(_publishedProjectsPath))
-                Directory.CreateDirectory(_publishedProjectsPath);
 
             attendedScriptWatcher.Path = _publishedProjectsPath;
             attendedScriptWatcher.Filter = "*.*";

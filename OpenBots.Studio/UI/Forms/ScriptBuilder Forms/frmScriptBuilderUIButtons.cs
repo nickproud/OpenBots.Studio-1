@@ -1139,8 +1139,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 packageManagerToolStripMenuItem.Enabled = false;
                 uiBtnPackageManager.Enabled = false;
 
-                Directory.CreateDirectory(localPackagesPath);
-
                 //require admin access to move/download packages and their dependency .nupkg files to Program Files
                 await NugetPackageManager.DownloadCommandDependencyPackages();
 

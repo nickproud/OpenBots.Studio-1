@@ -398,8 +398,6 @@ namespace OpenBots.Nuget
             string openBotsPackagesBuildPath = Path.Combine(new DirectoryInfo(projectDirectory).Parent.Parent.Parent.FullName, "OpenBots.Packages");
 
             string programPackagesSource = Folders.GetFolder(FolderType.ProgramFilesPackagesFolder);
-            if (!Directory.Exists(programPackagesSource))
-                Directory.CreateDirectory(programPackagesSource);
 
             string applicationVersion = Application.ProductVersion;
             var commandVersion = Regex.Matches(applicationVersion, @"\d+\.\d+\.\d+")[0].ToString();
