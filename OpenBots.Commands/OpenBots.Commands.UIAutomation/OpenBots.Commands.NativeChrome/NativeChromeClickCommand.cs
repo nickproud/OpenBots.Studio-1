@@ -49,7 +49,7 @@ namespace OpenBots.Commands.NativeChrome
 		[PropertyUISelectionOption("Left")]
 		[PropertyUISelectionOption("Middle")]
 		//[PropertyUISelectionOption("Right")]
-		[Description("Please specify the mouse button used for click action.")]
+		[Description("Please specify the mouse button used for the click action.")]
 		[SampleUsage("")]
 		[Remarks("")]
 		public string v_ClickButton { get; set; }

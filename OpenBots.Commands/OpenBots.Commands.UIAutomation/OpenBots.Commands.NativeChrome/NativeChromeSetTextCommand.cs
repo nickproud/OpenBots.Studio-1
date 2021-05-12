@@ -55,7 +55,7 @@ namespace OpenBots.Commands.NativeChrome
 
 		[Required]
 		[DisplayName("Text To Set")]
-		[Description("Enter the text value that will be set in the input.")]
+		[Description("Enter the text value to set in the input.")]
 		[SampleUsage("\"Hello World\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]

@@ -55,8 +55,8 @@ namespace OpenBots.Commands.NativeChrome
 		public string v_Option { get; set; }
 
 		[Required]
-		[DisplayName("Secure String Variable")]
-		[Description("Enter the secure string variable that will be set in the input.")]
+		[DisplayName("SecureString To Set")]
+		[Description("Enter the SecureString variable to set in the input.")]
 		[SampleUsage("vSecureText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]

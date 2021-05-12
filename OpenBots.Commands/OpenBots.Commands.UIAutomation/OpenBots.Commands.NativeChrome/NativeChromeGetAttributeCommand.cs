@@ -46,7 +46,7 @@ namespace OpenBots.Commands.NativeChrome
 
 		[Required]
 		[DisplayName("Attribute Name")]
-		[Description("Enter the attribute name to be set.")]
+		[Description("Enter the name of the attribute to retrieve.")]
 		[SampleUsage("\"ID\" || vAttribute")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
@@ -55,9 +55,9 @@ namespace OpenBots.Commands.NativeChrome
 
 		[Required]
 		[Editable(false)]
-		[DisplayName("Output Text Variable")]
+		[DisplayName("Output Attribute Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }

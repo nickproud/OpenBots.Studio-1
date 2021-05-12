@@ -48,7 +48,7 @@ namespace OpenBots.Commands.NativeChrome
 		[Editable(false)]
 		[DisplayName("Output Boolean Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(bool) })]
 		public string v_OutputUserVariableName { get; set; }

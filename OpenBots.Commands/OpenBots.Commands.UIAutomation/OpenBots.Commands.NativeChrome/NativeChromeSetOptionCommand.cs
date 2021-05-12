@@ -49,18 +49,18 @@ namespace OpenBots.Commands.NativeChrome
 		[PropertyUISelectionOption("Select By Index")]
 		[PropertyUISelectionOption("Select By Value")]
 		[PropertyUISelectionOption("Select By Text")]
-		[Description("Select whether the option should be selected by which of the follwoing.")]
+		[Description("Select the method by which the dropdown option should be selected.")]
 		[SampleUsage("")]
 		[Remarks("")]
 		public string v_Option { get; set; }
 
 		[Required]
 		[DisplayName("Selection Value")]
-		[Description("Enter the value that will be set in the dropdown.")]
-		[SampleUsage("\"Hello World\" || vText")]
+		[Description("Enter the value that will be used to select the option in the dropdown.")]
+		[SampleUsage("\"Hello World\" || 0 || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_SelectionValue { get; set; }
 
 		public NativeChromeSetOptionCommand()
@@ -80,7 +80,7 @@ namespace OpenBots.Commands.NativeChrome
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var chromeProcess = (Process)browserObject;
-			var vTargetText = (string)await v_SelectionValue.EvaluateCode(engine);
+			var vTargetText = (await v_SelectionValue.EvaluateCode(engine)).ToString();
 
 			WebElement webElement = await NativeHelper.DataTableToWebElement(v_NativeSearchParameters, engine);
 
