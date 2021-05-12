@@ -611,9 +611,7 @@ namespace OpenBots.UI.CustomControls
             var controlList = new List<Control>();
 
             if (propertyUIHelpers.Count() == 0)
-            {
                 return controlList;
-            }
 
             foreach (EditorAttribute attrib in propertyUIHelpers)
             {
