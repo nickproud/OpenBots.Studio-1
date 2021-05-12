@@ -39,14 +39,7 @@ namespace OpenBots.Commands.NativeChrome
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." +
 					"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("XPath : \"//*[@id='features']/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
-						 "\n\tRelative XPath : //*[@id='features']" +
-						 "\n\tID: \"1\"" +
-						 "\n\tName: \"my\" + var2 + \"Name\"" +
-						 "\n\tTag Name: \"h1\"" +
-						 "\n\tClass Name: \"myClass\"" +
-						 "\n\tCSS Selector: \"[attribute=value]\"" +
-						 "\n\tLink Text: \"https://www.mylink.com/\"")]
+		[SampleUsage(NativeHelper.SearchParameterSample)]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
