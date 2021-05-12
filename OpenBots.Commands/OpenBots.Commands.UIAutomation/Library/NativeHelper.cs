@@ -132,6 +132,16 @@ namespace OpenBots.Commands.UIAutomation.Library
 			return helperControl;
 		}
 
+		public static DataTable CreateSearchParametersDT()
+        {
+			DataTable searchParamtersDT = new DataTable();
+			searchParamtersDT.Columns.Add("Enabled");
+			searchParamtersDT.Columns.Add("Parameter Name");
+			searchParamtersDT.Columns.Add("Parameter Value");
+			searchParamtersDT.TableName = DateTime.Now.ToString("SearchParametersDT" + DateTime.Now.ToString("MMddyy.hhmmss"));
+			return searchParamtersDT;
+		}
+
 		public static void AddDefaultSearchRows(DataTable searchParametersDT)
         {
 			if (searchParametersDT.Rows.Count == 0)

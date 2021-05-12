@@ -15,7 +15,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -72,12 +71,7 @@ namespace OpenBots.Commands.NativeChrome
 
 			v_InstanceName = "DefaultChromeBrowser";
 			v_Option = "Yes";
-			//set up search parameter table
-			v_NativeSearchParameters = new DataTable();
-			v_NativeSearchParameters.Columns.Add("Enabled");
-			v_NativeSearchParameters.Columns.Add("Parameter Name");
-			v_NativeSearchParameters.Columns.Add("Parameter Value");
-			v_NativeSearchParameters.TableName = DateTime.Now.ToString("v_NativeSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));
+			v_NativeSearchParameters = NativeHelper.CreateSearchParametersDT();
 		}
 
 		public async override Task RunCommand(object sender)

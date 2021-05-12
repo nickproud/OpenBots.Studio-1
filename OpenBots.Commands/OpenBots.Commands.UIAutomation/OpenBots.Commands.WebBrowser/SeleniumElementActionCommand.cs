@@ -138,12 +138,7 @@ namespace OpenBots.Commands.WebBrowser
 			v_WebActionParameterTable.Columns.Add("Parameter Name");
 			v_WebActionParameterTable.Columns.Add("Parameter Value");
 
-			//set up search parameter table
-			v_SeleniumSearchParameters = new DataTable();
-			v_SeleniumSearchParameters.Columns.Add("Enabled");
-			v_SeleniumSearchParameters.Columns.Add("Parameter Name");
-			v_SeleniumSearchParameters.Columns.Add("Parameter Value");
-			v_SeleniumSearchParameters.TableName = DateTime.Now.ToString("v_SeleniumSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));		
+			v_SeleniumSearchParameters = NativeHelper.CreateSearchParametersDT();
 		}
 
 		public async override Task RunCommand(object sender)
