@@ -201,12 +201,7 @@ namespace OpenBots.Commands.Input
 			_userInputGridViewHelper.DragOver += UserInputGridViewHelper_DragOver;
 			_userInputGridViewHelper.DragDrop += UserInputGridViewHelper_DragDrop;
 
-			_addRowControl = new CommandItemControl();
-			_addRowControl.Padding = new Padding(10, 0, 0, 0);
-			_addRowControl.ForeColor = Color.AliceBlue;
-			_addRowControl.Font = new Font("Segoe UI Semilight", 10);
-			_addRowControl.CommandImage = Resources.command_input;
-			_addRowControl.CommandDisplay = "Add Input Parameter";
+			_addRowControl = new CommandItemControl("AddInput", Resources.command_input, "Add Input Parameter");
 			_addRowControl.Click += (sender, e) => AddInputParameter(sender, e, editor);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputHeader", this, editor));

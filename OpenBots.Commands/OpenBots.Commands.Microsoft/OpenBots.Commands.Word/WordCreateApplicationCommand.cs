@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -32,7 +33,8 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("MyWordInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -114,7 +116,7 @@ namespace OpenBots.Commands.Word
 			else
 				newWordSession.Visible = false;
 
-			newWordSession.AddAppInstance(engine, v_InstanceName);
+			new OBAppInstance(v_InstanceName, newWordSession).SetVariableValue(engine, v_InstanceName);
 
 			if (v_NewOpenDocument == "New Document")
 			{

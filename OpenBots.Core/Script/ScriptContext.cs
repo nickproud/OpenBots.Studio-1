@@ -45,8 +45,6 @@ namespace OpenBots.Core.Script
 
             DefaultReferences = AssembliesList.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x.Location)).ToList();
             CSharpPath = Path.Combine(Folders.GetFolder(FolderType.StudioFolder), "CSharp");
-            if (!Directory.Exists(Folders.GetFolder(FolderType.StudioFolder)))
-                Directory.CreateDirectory(Folders.GetFolder(FolderType.StudioFolder));
             GenerateGuidPlaceHolder();
         }
 
@@ -115,8 +113,10 @@ namespace OpenBots.Core.Script
                 code = "null";
 
             var script = "";
-            Variables.ForEach(v => script += $"{v.VariableType.GetRealTypeFullName()}? {v.VariableName} = {(v.VariableValue == null ? "null" : v.VariableValue)};");
-            Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeFullName()}? {a.ArgumentName} = {(a.ArgumentValue == null ? "null" : a.ArgumentValue)};");
+            Variables.ForEach(v => script += $"{v.VariableType.GetRealTypeFullName()}? {v.VariableName} = " +
+               $"{(v.VariableValue == null || (v.VariableValue is string && string.IsNullOrEmpty(v.VariableValue.ToString())) ? "null" : v.VariableValue)};");
+            Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeFullName()}? {a.ArgumentName} = " +
+                $"{(a.ArgumentValue == null || (a.ArgumentValue is string && string.IsNullOrEmpty(a.ArgumentValue.ToString())) ? "null" : a.ArgumentValue)};");
 
             script += $"{code};";
 

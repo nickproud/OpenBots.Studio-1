@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -25,7 +26,8 @@ namespace OpenBots.Commands.Microsoft
         [Description("Enter the unique instance that was specified in the **Create Application** command.")]
         [SampleUsage("MyExcelInstance")]
         [Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-        [CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -91,7 +93,7 @@ namespace OpenBots.Commands.Microsoft
             var vTableName = (string)await v_TableName.EvaluateCode(engine);
             dynamic vColumnValue = await v_DataValueIndex.EvaluateCode(engine);
             var filterArray = ((List<string>)await v_FilterList.EvaluateCode(engine)).ToArray();
-            var excelObject = v_InstanceName.GetAppInstance(engine);
+            var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
             var excelTable = workSheetExcelTable.ListObjects[vTableName];

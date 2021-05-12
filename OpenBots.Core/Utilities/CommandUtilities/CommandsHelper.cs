@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -170,8 +171,8 @@ namespace OpenBots.Core.Utilities.CommandUtilities
                 string.Empty, searchMethod, parameterName
             });
 
-            //get stored app object
-            var browserObject = instanceName.GetAppInstance(engine);
+			//get stored app object
+			var browserObject = ((OBAppInstance)await instanceName.EvaluateCode(engine)).Value;
 
             //get selenium instance driver
             var seleniumInstance = (ChromeDriver)browserObject;
@@ -713,7 +714,12 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				ifResult = instanceName.InstanceExists(engine);
+				var appInstanceObj = (OBAppInstance)await instanceName.EvaluateCode(engine);
+
+				if (appInstanceObj == null)
+					ifResult = false;
+				else
+					ifResult = appInstanceObj.Value.InstanceExists();
 
 				if (trueWhenImageExists == "It Does Not Exist")
 					ifResult = !ifResult;

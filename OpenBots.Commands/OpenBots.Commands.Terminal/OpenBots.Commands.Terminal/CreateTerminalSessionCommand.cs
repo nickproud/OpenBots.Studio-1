@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -10,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -28,7 +28,8 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("MyTerminalInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(OpenEmulator) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -108,9 +109,6 @@ namespace OpenBots.Commands.Terminal
 			{
 				var terminalForms = Application.OpenForms.Cast<Form>().Where(f => f is frmTerminal).Select(f => (frmTerminal)f).ToList();
 				terminalForms.ForEach(f => f.CloseForm());
-
-				var terminalInstances = engine.AutomationEngineContext.AppInstances.Where(t => t.Value is OpenEmulator).Select(t => t.Key).ToList();
-				terminalInstances.ForEach(i => i.RemoveAppInstance(engine));
 			}
 
 			if (engine.AutomationEngineContext.ScriptEngine != null)
@@ -123,20 +121,14 @@ namespace OpenBots.Commands.Terminal
 			else
 				LaunchTerminalSession(host, port, terminalType, useSsl);
 
-			_emulator.AddAppInstance(engine, v_InstanceName);
+			new OBAppInstance(v_InstanceName, _emulator).SetVariableValue(engine, v_InstanceName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
 
-			CommandItemControl helperControl = new CommandItemControl();
-
-			helperControl.Padding = new Padding(10, 0, 0, 0);
-			helperControl.ForeColor = Color.AliceBlue;
-			helperControl.Font = new Font("Segoe UI Semilight", 10);
-			helperControl.CommandImage = Resources.command_system;
-			helperControl.CommandDisplay = "Launch Terminal Emulator";
+			CommandItemControl helperControl = new CommandItemControl("LaunchTerminal", Resources.command_system, "Launch Terminal Emulator");
 			helperControl.Click += new EventHandler((s, e) => LaunchTerminalSession(s, e));
 
 			RenderedControls.Add(helperControl);

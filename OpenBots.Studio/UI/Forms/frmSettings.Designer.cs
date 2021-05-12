@@ -70,7 +70,6 @@
             this.chkAutoCalcVariables = new System.Windows.Forms.CheckBox();
             this.lblEndScriptHotKey = new System.Windows.Forms.Label();
             this.cbxCancellationKey = new System.Windows.Forms.ComboBox();
-            this.chkOverrideInstances = new System.Windows.Forms.CheckBox();
             this.lblDelay = new System.Windows.Forms.Label();
             this.chkTrackMetrics = new System.Windows.Forms.CheckBox();
             this.lblAutomationEngine = new System.Windows.Forms.Label();
@@ -483,7 +482,6 @@
             this.tabDebugSettings.Controls.Add(this.chkAutoCalcVariables);
             this.tabDebugSettings.Controls.Add(this.lblEndScriptHotKey);
             this.tabDebugSettings.Controls.Add(this.cbxCancellationKey);
-            this.tabDebugSettings.Controls.Add(this.chkOverrideInstances);
             this.tabDebugSettings.Controls.Add(this.lblDelay);
             this.tabDebugSettings.Controls.Add(this.chkTrackMetrics);
             this.tabDebugSettings.Controls.Add(this.lblAutomationEngine);
@@ -501,7 +499,7 @@
             // 
             // btnFileManager
             // 
-            this.btnFileManager.Location = new System.Drawing.Point(787, 444);
+            this.btnFileManager.Location = new System.Drawing.Point(787, 404);
             this.btnFileManager.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnFileManager.Name = "btnFileManager";
             this.btnFileManager.Size = new System.Drawing.Size(36, 34);
@@ -514,7 +512,7 @@
             // 
             this.cbxMinLogLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxMinLogLevel.FormattingEnabled = true;
-            this.cbxMinLogLevel.Location = new System.Drawing.Point(595, 397);
+            this.cbxMinLogLevel.Location = new System.Drawing.Point(595, 357);
             this.cbxMinLogLevel.Margin = new System.Windows.Forms.Padding(4);
             this.cbxMinLogLevel.Name = "cbxMinLogLevel";
             this.cbxMinLogLevel.Size = new System.Drawing.Size(188, 36);
@@ -527,7 +525,7 @@
             this.lblMinLogLevel.BackColor = System.Drawing.Color.Transparent;
             this.lblMinLogLevel.Font = new System.Drawing.Font("Segoe UI Semilight", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMinLogLevel.ForeColor = System.Drawing.Color.SteelBlue;
-            this.lblMinLogLevel.Location = new System.Drawing.Point(391, 400);
+            this.lblMinLogLevel.Location = new System.Drawing.Point(391, 360);
             this.lblMinLogLevel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblMinLogLevel.Name = "lblMinLogLevel";
             this.lblMinLogLevel.Size = new System.Drawing.Size(180, 28);
@@ -536,7 +534,7 @@
             // 
             // txtLogging1
             // 
-            this.txtLogging1.Location = new System.Drawing.Point(189, 442);
+            this.txtLogging1.Location = new System.Drawing.Point(189, 402);
             this.txtLogging1.Margin = new System.Windows.Forms.Padding(4);
             this.txtLogging1.Name = "txtLogging1";
             this.txtLogging1.Size = new System.Drawing.Size(592, 34);
@@ -544,7 +542,7 @@
             // 
             // txtCommandDelay
             // 
-            this.txtCommandDelay.Location = new System.Drawing.Point(444, 251);
+            this.txtCommandDelay.Location = new System.Drawing.Point(444, 217);
             this.txtCommandDelay.Margin = new System.Windows.Forms.Padding(4);
             this.txtCommandDelay.Name = "txtCommandDelay";
             this.txtCommandDelay.Size = new System.Drawing.Size(101, 34);
@@ -556,7 +554,7 @@
             this.lblLogging1.BackColor = System.Drawing.Color.Transparent;
             this.lblLogging1.Font = new System.Drawing.Font("Segoe UI Semilight", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLogging1.ForeColor = System.Drawing.Color.SteelBlue;
-            this.lblLogging1.Location = new System.Drawing.Point(8, 446);
+            this.lblLogging1.Location = new System.Drawing.Point(8, 406);
             this.lblLogging1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblLogging1.Name = "lblLogging1";
             this.lblLogging1.Size = new System.Drawing.Size(86, 28);
@@ -567,7 +565,7 @@
             // 
             this.cbxSinkType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxSinkType.FormattingEnabled = true;
-            this.cbxSinkType.Location = new System.Drawing.Point(189, 397);
+            this.cbxSinkType.Location = new System.Drawing.Point(189, 357);
             this.cbxSinkType.Margin = new System.Windows.Forms.Padding(4);
             this.cbxSinkType.Name = "cbxSinkType";
             this.cbxSinkType.Size = new System.Drawing.Size(188, 36);
@@ -580,7 +578,7 @@
             this.lblSinkType.BackColor = System.Drawing.Color.Transparent;
             this.lblSinkType.Font = new System.Drawing.Font("Segoe UI Semilight", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSinkType.ForeColor = System.Drawing.Color.SteelBlue;
-            this.lblSinkType.Location = new System.Drawing.Point(8, 400);
+            this.lblSinkType.Location = new System.Drawing.Point(8, 360);
             this.lblSinkType.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSinkType.Name = "lblSinkType";
             this.lblSinkType.Size = new System.Drawing.Size(94, 28);
@@ -593,7 +591,7 @@
             this.lblLoggingSettings.BackColor = System.Drawing.Color.Transparent;
             this.lblLoggingSettings.Font = new System.Drawing.Font("Segoe UI Light", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLoggingSettings.ForeColor = System.Drawing.Color.SteelBlue;
-            this.lblLoggingSettings.Location = new System.Drawing.Point(8, 352);
+            this.lblLoggingSettings.Location = new System.Drawing.Point(8, 312);
             this.lblLoggingSettings.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblLoggingSettings.Name = "lblLoggingSettings";
             this.lblLoggingSettings.Size = new System.Drawing.Size(204, 37);
@@ -606,7 +604,7 @@
             this.chkAutoCalcVariables.BackColor = System.Drawing.Color.Transparent;
             this.chkAutoCalcVariables.Font = new System.Drawing.Font("Segoe UI Semilight", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkAutoCalcVariables.ForeColor = System.Drawing.Color.SteelBlue;
-            this.chkAutoCalcVariables.Location = new System.Drawing.Point(13, 206);
+            this.chkAutoCalcVariables.Location = new System.Drawing.Point(13, 180);
             this.chkAutoCalcVariables.Margin = new System.Windows.Forms.Padding(4);
             this.chkAutoCalcVariables.Name = "chkAutoCalcVariables";
             this.chkAutoCalcVariables.Size = new System.Drawing.Size(309, 32);
@@ -620,7 +618,7 @@
             this.lblEndScriptHotKey.BackColor = System.Drawing.Color.Transparent;
             this.lblEndScriptHotKey.Font = new System.Drawing.Font("Segoe UI Semilight", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblEndScriptHotKey.ForeColor = System.Drawing.Color.SteelBlue;
-            this.lblEndScriptHotKey.Location = new System.Drawing.Point(8, 295);
+            this.lblEndScriptHotKey.Location = new System.Drawing.Point(8, 261);
             this.lblEndScriptHotKey.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblEndScriptHotKey.Name = "lblEndScriptHotKey";
             this.lblEndScriptHotKey.Size = new System.Drawing.Size(164, 28);
@@ -631,25 +629,11 @@
             // 
             this.cbxCancellationKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbxCancellationKey.FormattingEnabled = true;
-            this.cbxCancellationKey.Location = new System.Drawing.Point(189, 295);
+            this.cbxCancellationKey.Location = new System.Drawing.Point(189, 260);
             this.cbxCancellationKey.Margin = new System.Windows.Forms.Padding(4);
             this.cbxCancellationKey.Name = "cbxCancellationKey";
             this.cbxCancellationKey.Size = new System.Drawing.Size(188, 36);
             this.cbxCancellationKey.TabIndex = 36;
-            // 
-            // chkOverrideInstances
-            // 
-            this.chkOverrideInstances.AutoSize = true;
-            this.chkOverrideInstances.BackColor = System.Drawing.Color.Transparent;
-            this.chkOverrideInstances.Font = new System.Drawing.Font("Segoe UI Semilight", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkOverrideInstances.ForeColor = System.Drawing.Color.SteelBlue;
-            this.chkOverrideInstances.Location = new System.Drawing.Point(13, 178);
-            this.chkOverrideInstances.Margin = new System.Windows.Forms.Padding(4);
-            this.chkOverrideInstances.Name = "chkOverrideInstances";
-            this.chkOverrideInstances.Size = new System.Drawing.Size(230, 32);
-            this.chkOverrideInstances.TabIndex = 35;
-            this.chkOverrideInstances.Text = "Override App Instances";
-            this.chkOverrideInstances.UseVisualStyleBackColor = false;
             // 
             // lblDelay
             // 
@@ -657,7 +641,7 @@
             this.lblDelay.BackColor = System.Drawing.Color.Transparent;
             this.lblDelay.Font = new System.Drawing.Font("Segoe UI Semilight", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDelay.ForeColor = System.Drawing.Color.SteelBlue;
-            this.lblDelay.Location = new System.Drawing.Point(8, 250);
+            this.lblDelay.Location = new System.Drawing.Point(8, 217);
             this.lblDelay.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDelay.Name = "lblDelay";
             this.lblDelay.Size = new System.Drawing.Size(430, 28);
@@ -810,7 +794,6 @@
         internal System.Windows.Forms.CheckBox chkAutoCalcVariables;
         private System.Windows.Forms.Label lblEndScriptHotKey;
         private System.Windows.Forms.ComboBox cbxCancellationKey;
-        internal System.Windows.Forms.CheckBox chkOverrideInstances;
         private System.Windows.Forms.Label lblDelay;
         private System.Windows.Forms.CheckBox chkTrackMetrics;
         private System.Windows.Forms.Label lblAutomationEngine;

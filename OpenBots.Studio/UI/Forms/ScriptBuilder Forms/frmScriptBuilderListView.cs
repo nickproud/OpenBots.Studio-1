@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
-using NuGet;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.DTOs;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Properties;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Sequence_Forms;
@@ -348,17 +346,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void LoadSequenceCommand(ListViewItem selectedCommandItem, ScriptCommand currentCommand)
         {
-            List<ScriptVariable> originalStudioVariables = new List<ScriptVariable>();
-            originalStudioVariables.AddRange(_scriptContext.Variables);
-
-            List<ScriptElement> originalStudioElements = new List<ScriptElement>();
-            originalStudioElements.AddRange(_scriptContext.Elements);
-
-            List<ScriptArgument> originalStudioArguments = new List<ScriptArgument>();
-            originalStudioArguments.AddRange(_scriptContext.Arguments);
-
-            Dictionary<string, List<AssemblyReference>> originalStudioNamespaces = new Dictionary<string, List<AssemblyReference>>();
-            originalStudioNamespaces.AddRange(_scriptContext.ImportedNamespaces);
+            List<ScriptVariable> originalStudioVariables = CommonMethods.Clone(_scriptContext.Variables);
+            List<ScriptElement> originalStudioElements = CommonMethods.Clone(_scriptContext.Elements);
+            List<ScriptArgument> originalStudioArguments = CommonMethods.Clone(_scriptContext.Arguments);
+            Dictionary<string, List<AssemblyReference>> originalStudioNamespaces = CommonMethods.Clone(_scriptContext.ImportedNamespaces);
 
             //get sequence events
             ISequenceCommand sequence = currentCommand as ISequenceCommand;
@@ -366,7 +357,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //apply editor style format
             newSequence.Text = sequence.v_Comment;
-
             newSequence.ScriptProject = ScriptProject;
             newSequence.ScriptProjectPath = ScriptProjectPath;
             newSequence.AContainer = AContainer;
@@ -391,9 +381,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //append to new builder
             foreach (var cmd in sequence.ScriptActions)
-            {
                 newSequence.SelectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(cmd));
-            }
 
             try
             {

@@ -1,6 +1,8 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -26,7 +28,8 @@ namespace OpenBots.Commands.NLG
 		[SampleUsage("MyNLGInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(SPhraseSpec) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		public CreateNLGInstanceCommand()
@@ -47,7 +50,7 @@ namespace OpenBots.Commands.NLG
 			NLGFactory nlgFactory = new NLGFactory(lexicon);
 			SPhraseSpec p = nlgFactory.createClause();
 
-			p.AddAppInstance(engine, v_InstanceName);
+			new OBAppInstance(v_InstanceName, p).SetVariableValue(engine, v_InstanceName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

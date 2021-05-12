@@ -172,6 +172,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             DirectoryInfo projectDirectoryInfo = new DirectoryInfo(ScriptProjectPath);
             TreeNode projectNode = new TreeNode(projectDirectoryInfo.Name);
+            projectNode.Name = projectDirectoryInfo.Name;
             projectNode.Text = projectDirectoryInfo.Name;
             projectNode.Tag = projectDirectoryInfo.FullName;
             projectNode.Nodes.Add("Empty");
@@ -344,10 +345,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //show fail dialog
                 Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
-        
+     
 
             DirectoryInfo projectDirectoryInfo = new DirectoryInfo(ScriptProjectPath);
             TreeNode projectNode = new TreeNode(projectDirectoryInfo.Name);
+            projectNode.Name = projectDirectoryInfo.Name;
             projectNode.Text = projectDirectoryInfo.Name;
             projectNode.Tag = projectDirectoryInfo.FullName;
             projectNode.Nodes.Add("Empty");
@@ -810,6 +812,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (!Path.HasExtension(newName))
                     throw new FileFormatException($"No extension provided for '{newName}'");
 
+                if (newName.Trim() == Path.GetExtension(newName))
+                    throw new FileFormatException($"No file name provided");
+
                 string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
                 string newFilePath = Path.Combine(selectedNodePath, newName);
                 string extension = Path.GetExtension(newFilePath);
@@ -966,6 +971,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     if (!Path.HasExtension(newName))
                         throw new FileFormatException($"No extension provided for '{newName}'");
+
+                    if (newName.Trim() == Path.GetExtension(newName))
+                        throw new FileFormatException($"No file name provided");
 
                     string newPath = Path.Combine(selectedNodeDirectoryInfo.DirectoryName, newName);
 

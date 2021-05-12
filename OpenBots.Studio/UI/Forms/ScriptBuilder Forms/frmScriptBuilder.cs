@@ -236,8 +236,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
 
-            if (!Directory.Exists(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder)))
-                Directory.CreateDirectory(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder));
+            Folders.GetFolder(FolderType.LocalAppDataPackagesFolder);
 
             _builder = new ContainerBuilder();
             var groupedTypes = new Dictionary<string, List<Type>>();
@@ -321,7 +320,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LoadActionBarPreference();
             
             //get scripts folder
-            var rpaScriptsFolder = Folders.GetFolder(FolderType.ScriptsFolder);
+            var rpaScriptsFolder = Folders.GetFolder(FolderType.ScriptsFolder, false);
 
             if (!Directory.Exists(rpaScriptsFolder))
             {

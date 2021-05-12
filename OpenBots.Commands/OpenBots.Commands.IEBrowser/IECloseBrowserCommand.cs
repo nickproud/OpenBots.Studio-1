@@ -1,6 +1,8 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -24,7 +26,8 @@ namespace OpenBots.Commands.IEBrowser
         [Description("Enter the unique instance that was specified in the **IE Create Browser** command.")]
         [SampleUsage("MyIEBrowserInstance")]
         [Remarks("Failure to enter the correct instance name or failure to first call the **IE Create Browser** command will cause an error.")]
-        [CompatibleTypes(new Type[] { typeof(InternetExplorer) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
         public string v_InstanceName { get; set; }
 
         public IECloseBrowserCommand()
@@ -41,11 +44,9 @@ namespace OpenBots.Commands.IEBrowser
         {
             var engine = (IAutomationEngineInstance)sender;
 
-            var browserObject = v_InstanceName.GetAppInstance(engine);
+            var browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
             var browserInstance = (InternetExplorer)browserObject;
             browserInstance.Quit();
-
-            v_InstanceName.RemoveAppInstance(engine);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

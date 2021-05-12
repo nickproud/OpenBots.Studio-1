@@ -12,24 +12,28 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using OpenBots.Core.Model.ApplicationModel;
+using System.Threading;
 
 namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command creates a new web browser session which enables automation for websites.")]
+	[Description("This command creates a new Chrome browser session to enable automation for websites.")]
     public class NativeChromeCreateBrowserCommand : ScriptCommand
     {
 		[Required]
 		[DisplayName("Chrome Browser Instance Name")]
-		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
-		[SampleUsage("MyChromeBrowserInstance")]
-		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Process) })]
+		[Description("Enter a unique name that will represent the application instance.")]
+		[SampleUsage("MyBrowserInstance")]
+		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
+				 "ensuring that the commands you specify run against the correct application.")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[DisplayName("URL (Optional)")]
-        [Description("Enter the URL that you want the selenium instance to navigate to.")]
+        [Description("Enter the URL that you want the chrome instance to navigate to.")]
         [SampleUsage("\"https://mycompany.com/orders\" || vURL")]
         [Remarks("This input is optional.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
@@ -59,12 +63,12 @@ namespace OpenBots.Commands.NativeChrome
             {
 				while (process.HasExited == false)
 				{
-					System.Threading.Thread.Sleep(100);
+					Thread.Sleep(100);
 					process.Refresh();
 				}
 			}
-			//Delay 3 seconds
-			System.Threading.Thread.Sleep(3000);
+			//Delay 7 seconds
+			Thread.Sleep(7000);
 
 			Process[] procsChrome = Process.GetProcessesByName("chrome");
 
@@ -77,7 +81,7 @@ namespace OpenBots.Commands.NativeChrome
 				break;
 			}
 
-			process.AddAppInstance(engine, v_InstanceName);
+			new OBAppInstance(v_InstanceName, process).SetVariableValue(engine, v_InstanceName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -92,7 +96,7 @@ namespace OpenBots.Commands.NativeChrome
 
 		public override string GetDisplayValue()
 		{
-			return $"Create Browser [Navigate To URL '{v_URL}']";
+			return base.GetDisplayValue() + $" [Navigate To URL '{v_URL}']";
 		}
 	}
 }

@@ -4,6 +4,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -26,7 +27,8 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("MyBZTerminalInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(BZTerminalContext) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -120,7 +122,7 @@ namespace OpenBots.Commands.BZTerminal
 			terminalContext.BZTerminalObj.Connect(session);
 			terminalContext.BZTerminalObj.WaitForReady();
 
-			terminalContext.AddAppInstance(engine, v_InstanceName);
+			new OBAppInstance(v_InstanceName, terminalContext).SetVariableValue(engine, v_InstanceName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

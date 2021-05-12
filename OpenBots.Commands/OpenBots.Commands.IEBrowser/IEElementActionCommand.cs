@@ -19,6 +19,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.IEBrowser
 {
@@ -32,7 +33,8 @@ namespace OpenBots.Commands.IEBrowser
         [Description("Enter the unique instance that was specified in the **IE Create Browser** command.")]
         [SampleUsage("MyIEBrowserInstance")]
         [Remarks("Failure to enter the correct instance name or failure to first call the **IE Create Browser** command will cause an error.")]
-        [CompatibleTypes(new Type[] { typeof(InternetExplorer) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -114,7 +116,7 @@ namespace OpenBots.Commands.IEBrowser
 
             var engine = (IAutomationEngineInstance)sender;
 
-            browserObject = v_InstanceName.GetAppInstance(engine);
+            browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
             var browserInstance = (InternetExplorer)browserObject;
 
             DataTable searchTable = CommonMethods.Clone(v_WebSearchParameter);

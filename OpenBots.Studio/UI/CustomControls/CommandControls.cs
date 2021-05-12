@@ -90,7 +90,7 @@ namespace OpenBots.UI.CustomControls
             controlList.AddRange(helpers);
             controlList.Add(passwordInput);
 
-            ((TextBox)passwordInput).PasswordChar = '*';
+            passwordInput.PasswordChar = '*';
 
             return controlList;
         }
@@ -141,6 +141,42 @@ namespace OpenBots.UI.CustomControls
             
             controlList.Add(label);
             controlList.AddRange(helpers);
+            controlList.Add(gridview);
+
+            return controlList;
+        }
+
+        public List<Control> CreateDefaultWebElementDataGridViewGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, Control[] additionalHelpers = null)
+        {
+            var controlList = new List<Control>();
+            var label = CreateDefaultLabelFor(parameterName, parent);
+            var gridview = CreateDefaultDataGridViewFor(parameterName, parent);
+
+            DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
+            enabled.HeaderText = "Enabled";
+            enabled.DataPropertyName = "Enabled";
+            enabled.FillWeight = 30;
+            gridview.Columns.Add(enabled);
+
+            DataGridViewTextBoxColumn propertyName = new DataGridViewTextBoxColumn();
+            propertyName.HeaderText = "Parameter Name";
+            propertyName.DataPropertyName = "Parameter Name";
+            propertyName.FillWeight = 40;
+            gridview.Columns.Add(propertyName);
+
+            DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
+            propertyValue.HeaderText = "Parameter Value";
+            propertyValue.DataPropertyName = "Parameter Value";
+            gridview.Columns.Add(propertyValue);
+
+            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { gridview }, editor);
+
+            controlList.Add(label);
+
+            if (additionalHelpers != null)
+                controlList.AddRange(additionalHelpers);
+
+            controlList.AddRange(helpers);           
             controlList.Add(gridview);
 
             return controlList;
@@ -575,16 +611,11 @@ namespace OpenBots.UI.CustomControls
             var controlList = new List<Control>();
 
             if (propertyUIHelpers.Count() == 0)
-            {
                 return controlList;
-            }
 
             foreach (EditorAttribute attrib in propertyUIHelpers)
             {
                 CommandItemControl helperControl = new CommandItemControl();
-                helperControl.Padding = new Padding(10, 0, 0, 0);
-                helperControl.ForeColor = Color.AliceBlue;
-                helperControl.Font = new Font("Segoe UI Semilight", 10);
                 helperControl.Name = parameterName + "_helper";
                 helperControl.Tag = targetControls.FirstOrDefault();
                 helperControl.HelperType = (UIAdditionalHelperType)Enum.Parse(typeof(UIAdditionalHelperType), attrib.EditorTypeName, true);
@@ -1285,7 +1316,7 @@ namespace OpenBots.UI.CustomControls
                 return null;
 
             cbo.Items.Clear();
-            cbo.Items.Add("@\"Current Window\"");
+            cbo.Items.Add("\"Current Window\"");
             
             Process[] processlist = Process.GetProcesses();
 
@@ -1299,7 +1330,7 @@ namespace OpenBots.UI.CustomControls
                 }
             }
 
-            cbo.Items.Add("@\"None\"");
+            cbo.Items.Add("\"None\"");
 
             return cbo;
         }

@@ -21,12 +21,7 @@ using System.Windows.Forms;
 namespace OpenBots.Core.UI.Controls
 {
     public partial class CommandItemControl : UserControl
-    {
-        public CommandItemControl()
-        {
-            InitializeComponent();
-            CommandImage = Resources.command_comment;
-        }
+    {      
         public UIAdditionalHelperType HelperType { get; set; }
         public object DataSource { get; set; }
         public string FunctionalDescription { get; set; }
@@ -56,6 +51,26 @@ namespace OpenBots.Core.UI.Controls
                 commandImage = value;
                 Invalidate();
             }
+        }
+
+        public CommandItemControl()
+        {
+            InitializeComponent();
+            Padding = new Padding(10, 0, 0, 0);
+            ForeColor = Color.AliceBlue;
+            Font = new Font("Segoe UI Semilight", 10);
+            CommandImage = Resources.command_comment;
+        }
+
+        public CommandItemControl(string name, Bitmap commandImage, string commandDisplay)
+        {
+            InitializeComponent();
+            Padding = new Padding(10, 0, 0, 0);
+            ForeColor = Color.AliceBlue;
+            Font = new Font("Segoe UI Semilight", 10);
+            Name = name;
+            CommandImage = commandImage;
+            CommandDisplay = commandDisplay;
         }
 
         private void CommandItemControl_MouseEnter(object sender, EventArgs e)

@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Utilities.CommonUtilities;
+﻿using OpenBots.Core.Model.ApplicationModel;
+using OpenBots.Core.Utilities.CommonUtilities;
 using OpenQA.Selenium;
 using SHDocVw;
 using System;
@@ -24,7 +25,8 @@ namespace OpenBots.Core.Script
             { typeof(List<string>).GetRealTypeName(), typeof(List<string>) },
             { typeof(Dictionary<string, string>).GetRealTypeName(), typeof(Dictionary<string, string>) },
             { typeof(DataTable).GetRealTypeName(), typeof(DataTable) },
-            { typeof(DataRow).GetRealTypeName(), typeof(DataRow) }         
+            { typeof(DataRow).GetRealTypeName(), typeof(DataRow) },         
+            { typeof(OBAppInstance).GetRealTypeName(), typeof(OBAppInstance) }         
         };
 
         public static Dictionary<string, Type> DefaultInstanceTypes = new Dictionary<string, Type>()

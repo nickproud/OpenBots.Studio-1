@@ -334,7 +334,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App\GlobalAppInstances.cs" />
     <Compile Include="Attributes\PropertyAttributes\PropertyUISelectionOption.cs" />
     <Compile Include="Attributes\PropertyAttributes\Remarks.cs" />
     <Compile Include="Attributes\PropertyAttributes\CompatibleTypes.cs" />
@@ -346,6 +345,7 @@
     <Compile Include="ChromeNativeClient\WebElement.cs" />
     <Compile Include="Command\BrokenCodeCommentCommand.cs" />
     <Compile Include="Command\ScriptCommand.cs" />
+    <Compile Include="Model\ApplicationModel\OBAppInstance.cs" />
     <Compile Include="Project\ProjectArgument.cs" />
     <Compile Include="Script\AssemblyReference.cs" />
     <Compile Include="Script\ScriptContext.cs" />

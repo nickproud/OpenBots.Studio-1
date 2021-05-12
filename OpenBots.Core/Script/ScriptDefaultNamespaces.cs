@@ -1,4 +1,5 @@
 ﻿using MimeKit;
+using OpenBots.Core.Model.ApplicationModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,6 +25,7 @@ namespace OpenBots.Core.Script
             { "Microsoft.Office.Interop.Outlook", new List<AssemblyReference> {GetAssemblyReference(typeof(OutlookApplication)) } },
             { "Microsoft.Office.Interop.Word", new List<AssemblyReference> { GetAssemblyReference(typeof(WordApplication)) } },
             { "MimeKit", new List<AssemblyReference> { GetAssemblyReference(typeof(MimeMessage)) } },
+            { "OpenBots.Core.Model.ApplicationModel", new List<AssemblyReference> { GetAssemblyReference(typeof(OBAppInstance)) } },
             { "System", new List<AssemblyReference> { GetAssemblyReference(typeof(string)) } },
             { "System.Collections.Generic", new List<AssemblyReference> { GetAssemblyReference(typeof(string)) } },
             { "System.Data", new List<AssemblyReference> { GetAssemblyReference(typeof(DataTable)), GetAssemblyReference(typeof(DataRowComparer)) } },

@@ -18,6 +18,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Data;
 using System.Threading.Tasks;
+using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.Excel
 {
@@ -31,7 +32,8 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -77,7 +79,7 @@ namespace OpenBots.Commands.Excel
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var excelObject = v_InstanceName.GetAppInstance(engine);
+			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var excelInstance = (Application)excelObject;
 			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
 			var vImagePath = (string)await v_ImagePath.EvaluateCode(engine);

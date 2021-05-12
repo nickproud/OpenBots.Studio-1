@@ -17,7 +17,6 @@ namespace OpenBots.Core.Settings
         public bool TrackExecutionMetrics { get; set; }
         public Keys CancellationKey { get; set; }
         public int DelayBetweenCommands { get; set; }
-        public bool OverrideExistingAppInstances { get; set; }
         public bool EnableDiagnosticLogging { get; set; }
         public bool AutoCloseMessagesOnServerExecution { get; set; }
         public bool AutoCloseDebugWindowOnServerExecution { get; set; }
@@ -37,7 +36,6 @@ namespace OpenBots.Core.Settings
             TrackExecutionMetrics = true;
             CancellationKey = Keys.Pause;
             DelayBetweenCommands = 250;
-            OverrideExistingAppInstances = true;
             EnableDiagnosticLogging = true;
             AutoCloseMessagesOnServerExecution = true;
             AutoCloseDebugWindowOnServerExecution = true;

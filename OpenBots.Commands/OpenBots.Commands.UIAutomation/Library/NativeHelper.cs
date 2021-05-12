@@ -2,6 +2,7 @@
 using OpenBots.Core.ChromeNativeClient;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -16,7 +17,16 @@ namespace OpenBots.Commands.UIAutomation.Library
 {
     public static class NativeHelper
     {
-        public async static Task<WebElement> DataTableToWebElement(DataTable SearchParametersDT, IAutomationEngineInstance engine) 
+		public const string SearchParameterSample = "XPath : \"//*[@id='features']/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
+													 "\n\tRelative XPath : //*[@id='features']" +
+													 "\n\tID: \"1\"" +
+													 "\n\tName: \"my\" + var2 + \"Name\"" +
+													 "\n\tTag Name: \"h1\"" +
+													 "\n\tClass Name: \"myClass\"" +
+													 "\n\tCSS Selector: \"[attribute=value]\"" +
+													 "\n\tLink Text: \"https://www.mylink.com/\"";
+
+		public async static Task<WebElement> DataTableToWebElement(DataTable SearchParametersDT, IAutomationEngineInstance engine) 
         {
 			WebElement webElement = new WebElement();
 			webElement.XPath = (SearchParametersDT.Rows[0].ItemArray[0].ToString().ToLower() == "true") ?
@@ -77,7 +87,7 @@ namespace OpenBots.Commands.UIAutomation.Library
 			searchParameters.TableName = DateTime.Now.ToString("UIASearchParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 			return searchParameters;
 		}
-		public static void GetUIElement(object sender, EventArgs e, DataTable NativeSearchParameters, IfrmCommandEditor editor, ICommandControls commandControls)
+		public static void GetUIElement(object sender, EventArgs e, DataTable NativeSearchParameters, IfrmCommandEditor editor)
 		{
 			try
 			{
@@ -88,7 +98,7 @@ namespace OpenBots.Commands.UIAutomation.Library
 				if (!string.IsNullOrEmpty(webElementStr))
 				{
 					WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
-					DataTable SearchParameters = NativeHelper.WebElementToDataTable(webElement);
+					DataTable SearchParameters = WebElementToDataTable(webElement);
 
 					if (SearchParameters != null)
 					{
@@ -113,6 +123,51 @@ namespace OpenBots.Commands.UIAutomation.Library
 				Process process = Process.GetCurrentProcess();
 				User32Functions.ActivateWindow(process.MainWindowTitle);
 			}
+		}
+
+		public static CommandItemControl NativeChromeRecorderControl(DataTable NativeSearchParameters, IfrmCommandEditor editor)
+        {
+			CommandItemControl helperControl = new CommandItemControl("ChromeRecorder", Resources.command_camera, "Chrome Element Recorder");
+			helperControl.Click += new EventHandler((s, e) => GetUIElement(s, e, NativeSearchParameters, editor));
+			return helperControl;
+		}
+
+		public static DataTable CreateSearchParametersDT()
+        {
+			DataTable searchParamtersDT = new DataTable();
+			searchParamtersDT.Columns.Add("Enabled");
+			searchParamtersDT.Columns.Add("Parameter Name");
+			searchParamtersDT.Columns.Add("Parameter Value");
+			searchParamtersDT.TableName = DateTime.Now.ToString("SearchParametersDT" + DateTime.Now.ToString("MMddyy.hhmmss"));
+			return searchParamtersDT;
+		}
+
+		public static void AddDefaultSearchRows(DataTable searchParametersDT)
+        {
+			if (searchParametersDT.Rows.Count == 0)
+			{
+				searchParametersDT.Rows.Add(false, "\"XPath\"", "");
+				searchParametersDT.Rows.Add(false, "\"Relative XPath\"", "");
+				searchParametersDT.Rows.Add(false, "\"ID\"", "");
+				searchParametersDT.Rows.Add(false, "\"Name\"", "");
+				searchParametersDT.Rows.Add(false, "\"Tag Name\"", "");
+				searchParametersDT.Rows.Add(false, "\"Class Name\"", "");
+				searchParametersDT.Rows.Add(false, "\"Link Text\"", "");
+				searchParametersDT.Rows.Add(true, "\"CSS Selector\"", "");
+			}
+		}
+
+		public static string GetSearchNameValue(DataTable searchParametersDT)
+        {
+			string searchParameterName = (from rw in searchParametersDT.AsEnumerable()
+										  where rw.Field<string>("Enabled") == "True"
+										  select rw.Field<string>("Parameter Name")).FirstOrDefault();
+
+			string searchParameterValue = (from rw in searchParametersDT.AsEnumerable()
+										   where rw.Field<string>("Enabled") == "True"
+										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+			return $"{searchParameterName} = {searchParameterValue}";
 		}
 	}
 }

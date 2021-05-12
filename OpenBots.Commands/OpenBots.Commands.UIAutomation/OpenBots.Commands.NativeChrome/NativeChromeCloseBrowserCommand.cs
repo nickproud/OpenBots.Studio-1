@@ -11,12 +11,14 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using OpenBots.Core.User32;
 using System.Threading.Tasks;
+using OpenBots.Core.Enums;
+using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command closes a native web browser session.")]
+	[Description("This command closes a Chrome browser session.")]
 	public class NativeChromeCloseBrowserCommand : ScriptCommand
 	{
 		[Required]
@@ -24,7 +26,8 @@ namespace OpenBots.Commands.NativeChrome
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyChromeBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Process) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		public NativeChromeCloseBrowserCommand()
@@ -39,10 +42,9 @@ namespace OpenBots.Commands.NativeChrome
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var browserObject = v_InstanceName.GetAppInstance(engine);
+			var browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var chromeProcess = (Process)browserObject;
 			User32Functions.CloseWindow(chromeProcess.MainWindowHandle);
-			v_InstanceName.RemoveAppInstance(engine);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

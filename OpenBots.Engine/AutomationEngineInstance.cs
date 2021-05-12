@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using Newtonsoft.Json;
-using OpenBots.Core.App;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -97,9 +96,6 @@ namespace OpenBots.Engine
 
             if (AutomationEngineContext.Elements == null)
                 AutomationEngineContext.Elements = new List<ScriptElement>();
-
-            if (AutomationEngineContext.AppInstances == null)
-                AutomationEngineContext.AppInstances = new Dictionary<string, object>();
 
             if (AutomationEngineContext.ImportedNamespaces == null)
                 AutomationEngineContext.ImportedNamespaces = new Dictionary<string, List<AssemblyReference>>(ScriptDefaultNamespaces.DefaultNamespaces);
@@ -290,18 +286,6 @@ namespace OpenBots.Engine
                 }
 
                 AutomationEngineContext.Elements = automationScript.Elements;
-
-                ReportProgress("Creating App Instance Tracking List");
-                //create app instances and merge in global instances
-                if (AutomationEngineContext.AppInstances == null)
-                {
-                    AutomationEngineContext.AppInstances = new Dictionary<string, object>();
-                }
-                var GlobalInstances = GlobalAppInstances.GetInstances();
-                foreach (var instance in GlobalInstances)
-                {
-                    AutomationEngineContext.AppInstances[instance.Key] = instance.Value;
-                }
 
                 if (AutomationEngineContext.ImportedNamespaces == null)
                 {

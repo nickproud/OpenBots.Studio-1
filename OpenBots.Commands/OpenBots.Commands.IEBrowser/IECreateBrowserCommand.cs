@@ -1,11 +1,10 @@
-﻿using OpenBots.Core.App;
-using OpenBots.Core.Attributes.PropertyAttributes;
+﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using SHDocVw;
 using System;
 using System.Collections.Generic;
@@ -28,7 +27,8 @@ namespace OpenBots.Commands.IEBrowser
         [SampleUsage("MyIEBrowserInstance")]
         [Remarks("This unique name allows you to refer to the instance by name in future commands, " +
                  "ensuring that the commands you specify run against the correct application.")]
-        [CompatibleTypes(new Type[] { typeof(InternetExplorer) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
         public string v_InstanceName { get; set; }
 
         [Required]
@@ -40,15 +40,6 @@ namespace OpenBots.Commands.IEBrowser
         [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_URL { get; set; }
 
-        [Required]
-        [DisplayName("Instance Tracking (after task ends)")]
-        [PropertyUISelectionOption("Forget Instance")]
-        [PropertyUISelectionOption("Keep Instance Alive")]
-        [Description("Specify if OpenBots should remember this instance name after the script has finished executing.")]
-        [SampleUsage("")]
-        [Remarks("Calling the **Close Browser** command or closing the application will end the instance.")]
-        public string v_InstanceTracking { get; set; }
-
         public IECreateBrowserCommand()
         {
             CommandName = "IECreateBrowserCommand";
@@ -57,7 +48,6 @@ namespace OpenBots.Commands.IEBrowser
             CommandIcon = Resources.command_web;
 
             v_InstanceName = "DefaultIEBrowser";
-            v_InstanceTracking = "Forget Instance";
         }
 
         public async override Task RunCommand(object sender)
@@ -82,11 +72,7 @@ namespace OpenBots.Commands.IEBrowser
             }
                 
             //add app instance
-            newBrowserSession.AddAppInstance(engine, v_InstanceName);
-
-            //handle app instance tracking
-            if (v_InstanceTracking == "Keep Instance Alive")
-                GlobalAppInstances.AddInstance(v_InstanceName, newBrowserSession);
+            new OBAppInstance(v_InstanceName, newBrowserSession).SetVariableValue(engine, v_InstanceName);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -95,7 +81,6 @@ namespace OpenBots.Commands.IEBrowser
 
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
             RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_URL", this, editor));
-            RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_InstanceTracking", this, editor));
 
             return RenderedControls;
         }

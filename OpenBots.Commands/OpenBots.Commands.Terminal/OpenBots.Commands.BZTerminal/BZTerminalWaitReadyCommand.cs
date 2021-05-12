@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -24,7 +25,8 @@ namespace OpenBots.Commands.BZTerminal
 		[Description("Enter the unique instance that was specified in the **Create BZ Terminal Session** command.")]
 		[SampleUsage("MyBZTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create BZ Terminal Session** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(BZTerminalContext) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -61,7 +63,7 @@ namespace OpenBots.Commands.BZTerminal
 			var engine = (IAutomationEngineInstance)sender;
 			var timeout = (int)await v_Timeout.EvaluateCode(engine);
 			var extrawait = ((int)await v_ExtraWait.EvaluateCode(engine)) * 1000;
-			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
+			var terminalContext = (BZTerminalContext)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");

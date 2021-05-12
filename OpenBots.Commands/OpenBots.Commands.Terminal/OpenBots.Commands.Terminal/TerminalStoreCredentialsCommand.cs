@@ -4,6 +4,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -26,7 +27,8 @@ namespace OpenBots.Commands.Terminal
 		[Description("Enter the unique instance that was specified in the **Create Terminal Session** command.")]
 		[SampleUsage("MyTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Terminal Session** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(OpenEmulator) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -61,7 +63,7 @@ namespace OpenBots.Commands.Terminal
 			var engine = (IAutomationEngineInstance)sender;
 			var vUserName = (string)await v_Username.EvaluateCode(engine);
 			var vPassword = (SecureString)await v_Password.EvaluateCode(engine);
-			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
+			var terminalObject = (OpenEmulator)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
