@@ -113,8 +113,10 @@ namespace OpenBots.Core.Script
                 code = "null";
 
             var script = "";
-            Variables.ForEach(v => script += $"{v.VariableType.GetRealTypeFullName()}? {v.VariableName} = {(v.VariableValue == null ? "null" : v.VariableValue)};");
-            Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeFullName()}? {a.ArgumentName} = {(a.ArgumentValue == null ? "null" : a.ArgumentValue)};");
+            Variables.ForEach(v => script += $"{v.VariableType.GetRealTypeFullName()}? {v.VariableName} = " +
+               $"{(v.VariableValue == null || (v.VariableValue is string && string.IsNullOrEmpty(v.VariableValue.ToString())) ? "null" : v.VariableValue)};");
+            Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeFullName()}? {a.ArgumentName} = " +
+                $"{(a.ArgumentValue == null || (a.ArgumentValue is string && string.IsNullOrEmpty(a.ArgumentValue.ToString())) ? "null" : a.ArgumentValue)};");
 
             script += $"{code};";
 
