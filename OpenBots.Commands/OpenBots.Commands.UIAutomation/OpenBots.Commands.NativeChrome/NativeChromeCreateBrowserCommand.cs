@@ -96,7 +96,7 @@ namespace OpenBots.Commands.NativeChrome
 
 		public override string GetDisplayValue()
 		{
-			return $"Create Browser [Navigate To URL '{v_URL}']";
+			return base.GetDisplayValue() + $" [Navigate To URL '{v_URL}']";
 		}
 	}
 }

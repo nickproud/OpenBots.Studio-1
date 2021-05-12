@@ -17,7 +17,16 @@ namespace OpenBots.Commands.UIAutomation.Library
 {
     public static class NativeHelper
     {
-        public async static Task<WebElement> DataTableToWebElement(DataTable SearchParametersDT, IAutomationEngineInstance engine) 
+		public const string SearchParameterSample = "XPath : \"//*[@id='features']/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
+													 "\n\tRelative XPath : //*[@id='features']" +
+													 "\n\tID: \"1\"" +
+													 "\n\tName: \"my\" + var2 + \"Name\"" +
+													 "\n\tTag Name: \"h1\"" +
+													 "\n\tClass Name: \"myClass\"" +
+													 "\n\tCSS Selector: \"[attribute=value]\"" +
+													 "\n\tLink Text: \"https://www.mylink.com/\"";
+
+		public async static Task<WebElement> DataTableToWebElement(DataTable SearchParametersDT, IAutomationEngineInstance engine) 
         {
 			WebElement webElement = new WebElement();
 			webElement.XPath = (SearchParametersDT.Rows[0].ItemArray[0].ToString().ToLower() == "true") ?
@@ -136,6 +145,19 @@ namespace OpenBots.Commands.UIAutomation.Library
 				searchParametersDT.Rows.Add(false, "\"Link Text\"", "");
 				searchParametersDT.Rows.Add(true, "\"CSS Selector\"", "");
 			}
+		}
+
+		public static string GetSearchNameValue(DataTable searchParametersDT)
+        {
+			string searchParameterName = (from rw in searchParametersDT.AsEnumerable()
+										  where rw.Field<string>("Enabled") == "True"
+										  select rw.Field<string>("Parameter Name")).FirstOrDefault();
+
+			string searchParameterValue = (from rw in searchParametersDT.AsEnumerable()
+										   where rw.Field<string>("Enabled") == "True"
+										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+			return $"{searchParameterName} = {searchParameterValue}";
 		}
 	}
 }

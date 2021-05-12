@@ -112,7 +112,8 @@ namespace OpenBots.Commands.NativeChrome
 
 			NativeHelper.AddDefaultSearchRows(v_NativeSearchParameters);
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_NativeSearchParameters", this, editor, new Control[] { NativeHelper.NativeChromeRecorderControl(v_NativeSearchParameters, editor) }));
+			RenderedControls.AddRange(commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_NativeSearchParameters", this, editor, 
+				new Control[] { NativeHelper.NativeChromeRecorderControl(v_NativeSearchParameters, editor) }));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Attribute", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
@@ -121,16 +122,8 @@ namespace OpenBots.Commands.NativeChrome
 
 		public override string GetDisplayValue()
 		{
-			string searchParameterName = (from rw in v_NativeSearchParameters.AsEnumerable()
-										  where rw.Field<string>("Enabled") == "True"
-										  select rw.Field<string>("Parameter Name")).FirstOrDefault();
-
-			string searchParameterValue = (from rw in v_NativeSearchParameters.AsEnumerable()
-										   where rw.Field<string>("Enabled") == "True"
-										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-			return base.GetDisplayValue() + $" [Get Attribute by {searchParameterName}" +
-											$" '{searchParameterValue}' - Store Attribute in '{v_OutputUserVariableName}' - Instance Name '{v_InstanceName}']";
+			return base.GetDisplayValue() + $" [{NativeHelper.GetSearchNameValue(v_NativeSearchParameters)} - Store Attribute in '{v_OutputUserVariableName}'" +
+				$" - Instance Name '{v_InstanceName}']";
 		}
 	}
 }

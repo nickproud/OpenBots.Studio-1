@@ -48,13 +48,7 @@ namespace OpenBots.Commands.WebBrowser
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." + 
 			"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("XPath : \"//*[@id=\'features\']/div[2]/div/h2/div[\" + var1 + \"]/div\"" +
-				 "\n\tID: \"1\"" +
-				 "\n\tName: \"my\" + var2 + \"Name\"" +
-				 "\n\tTag Name: \"h1\"" +
-				 "\n\tClass Name: \"myClass\"" +
-				 "\n\tCSS Selector: \"[attribute=value]\"" +
-				 "\n\tLink Text: \"https://www.mylink.com/\"")]
+		[SampleUsage(NativeHelper.SearchParameterSample)]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
@@ -484,7 +478,8 @@ namespace OpenBots.Commands.WebBrowser
 			CommandItemControl helperControl = new CommandItemControl("OBWebRecorder", Resources.command_camera, "OB Web Element Recorder");
 			helperControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
 
-			RenderedControls.AddRange(commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_SeleniumSearchParameters", this, editor, new Control[] { helperControl, NativeHelper.NativeChromeRecorderControl(v_SeleniumSearchParameters, editor) }));
+			RenderedControls.AddRange(commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_SeleniumSearchParameters", this, editor, 
+				new Control[] { helperControl, NativeHelper.NativeChromeRecorderControl(v_SeleniumSearchParameters, editor) }));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SeleniumSearchOption", this, editor));
 
 			_elementActionDropdown = commandControls.CreateDropdownFor("v_SeleniumElementAction", this);
@@ -501,7 +496,8 @@ namespace OpenBots.Commands.WebBrowser
 			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
 			_actionParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 
-			_actionParametersControls.AddRange(commandControls.CreateUIHelpersFor("v_WebActionParameterTable", this, new Control[] { _actionParametersGridViewHelper }, editor));
+			_actionParametersControls.AddRange(commandControls.CreateUIHelpersFor("v_WebActionParameterTable", this, 
+				new Control[] { _actionParametersGridViewHelper }, editor));
 			_actionParametersControls.Add(_actionParametersGridViewHelper);
 			RenderedControls.AddRange(_actionParametersControls);
 
@@ -512,17 +508,8 @@ namespace OpenBots.Commands.WebBrowser
 
 		public override string GetDisplayValue()
 		{
-			string searchParameterName = (from rw in v_SeleniumSearchParameters.AsEnumerable()
-										  where rw.Field<string>("Enabled") == "True"
-										  select rw.Field<string>("Parameter Name")).FirstOrDefault();
-
-			string searchParameterValue = (from rw in v_SeleniumSearchParameters.AsEnumerable()
-										  where rw.Field<string>("Enabled") == "True"
-										  select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-
-			return base.GetDisplayValue() + $" [{v_SeleniumElementAction} - {v_SeleniumSearchOption} by {searchParameterName}" + 
-											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
+			return base.GetDisplayValue() + $" [{v_SeleniumElementAction} - {v_SeleniumSearchOption} by {NativeHelper.GetSearchNameValue(v_SeleniumSearchParameters)}" +
+				$" - Instance Name '{v_InstanceName}']";
 		}
 
 		private void ActionParametersGridViewHelper_MouseEnter(object sender, EventArgs e)
