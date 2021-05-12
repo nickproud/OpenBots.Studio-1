@@ -122,5 +122,20 @@ namespace OpenBots.Commands.UIAutomation.Library
 			helperControl.Click += new EventHandler((s, e) => GetUIElement(s, e, NativeSearchParameters, editor));
 			return helperControl;
 		}
+
+		public static void AddDefaultSearchRows(DataTable searchParametersDT)
+        {
+			if (searchParametersDT.Rows.Count == 0)
+			{
+				searchParametersDT.Rows.Add(false, "\"XPath\"", "");
+				searchParametersDT.Rows.Add(false, "\"Relative XPath\"", "");
+				searchParametersDT.Rows.Add(false, "\"ID\"", "");
+				searchParametersDT.Rows.Add(false, "\"Name\"", "");
+				searchParametersDT.Rows.Add(false, "\"Tag Name\"", "");
+				searchParametersDT.Rows.Add(false, "\"Class Name\"", "");
+				searchParametersDT.Rows.Add(false, "\"Link Text\"", "");
+				searchParametersDT.Rows.Add(true, "\"CSS Selector\"", "");
+			}
+		}
 	}
 }

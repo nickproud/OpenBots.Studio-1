@@ -100,20 +100,8 @@ namespace OpenBots.Commands.NativeChrome
 		{
 			base.Render(editor, commandControls);
 
+			NativeHelper.AddDefaultSearchRows(v_NativeSearchParameters);
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
-
-			if (v_NativeSearchParameters.Rows.Count == 0)
-			{
-				v_NativeSearchParameters.Rows.Add(false, "\"XPath\"", "");
-				v_NativeSearchParameters.Rows.Add(false, "\"Relative XPath\"", "");
-				v_NativeSearchParameters.Rows.Add(false, "\"ID\"", "");
-				v_NativeSearchParameters.Rows.Add(false, "\"Name\"", "");
-				v_NativeSearchParameters.Rows.Add(false, "\"Tag Name\"", "");
-				v_NativeSearchParameters.Rows.Add(false, "\"Class Name\"", "");
-				v_NativeSearchParameters.Rows.Add(false, "\"Link Text\"", "");
-				v_NativeSearchParameters.Rows.Add(true, "\"CSS Selector\"", "");
-			}
-
 			RenderedControls.AddRange(commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_NativeSearchParameters", this, editor, new Control[] { NativeHelper.NativeChromeRecorderControl(v_NativeSearchParameters, editor) }));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

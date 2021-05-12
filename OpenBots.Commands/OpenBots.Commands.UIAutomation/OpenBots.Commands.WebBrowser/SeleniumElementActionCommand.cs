@@ -478,19 +478,8 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			base.Render(editor, commandControls);
 
+			NativeHelper.AddDefaultSearchRows(v_SeleniumSearchParameters);
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
-
-			if (v_SeleniumSearchParameters.Rows.Count == 0)
-			{
-				v_SeleniumSearchParameters.Rows.Add(true, "\"XPath\"", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "\"Relative XPath\"", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "\"ID\"", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "\"Name\"", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "\"Tag Name\"", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "\"Class Name\"", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "\"Link Text\"", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "\"CSS Selector\"", "");
-			}
 
 			CommandItemControl helperControl = new CommandItemControl("OBWebRecorder", Resources.command_camera, "OB Web Element Recorder");
 			helperControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
