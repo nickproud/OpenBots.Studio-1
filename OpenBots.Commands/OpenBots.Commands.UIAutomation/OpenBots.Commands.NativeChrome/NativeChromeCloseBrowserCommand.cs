@@ -18,7 +18,7 @@ namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command closes a native web browser session.")]
+	[Description("This command closes a Chrome browser session.")]
 	public class NativeChromeCloseBrowserCommand : ScriptCommand
 	{
 		[Required]

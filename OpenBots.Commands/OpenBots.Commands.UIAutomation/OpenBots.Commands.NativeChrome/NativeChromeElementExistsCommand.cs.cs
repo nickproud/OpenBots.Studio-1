@@ -22,7 +22,7 @@ namespace OpenBots.Commands.NativeChrome
 {
     [Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command checks if element exists in chrome.")]
+	[Description("This command checks if a specified element exists in Chrome.")]
 	public class NativeChromeElementExistsCommand : ScriptCommand
 	{
 		[Required]

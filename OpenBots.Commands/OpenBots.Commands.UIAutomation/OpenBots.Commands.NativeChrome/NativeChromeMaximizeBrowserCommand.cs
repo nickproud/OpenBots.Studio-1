@@ -18,7 +18,7 @@ namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command maximize a native web browser.")]
+	[Description("This command maximizes a Chrome browser.")]
 	public class NativeChromeMaximizeBrowserCommand : ScriptCommand
 	{
 		[Required]

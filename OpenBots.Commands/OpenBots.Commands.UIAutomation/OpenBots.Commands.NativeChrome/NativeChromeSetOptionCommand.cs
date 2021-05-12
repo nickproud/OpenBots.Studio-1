@@ -22,7 +22,7 @@ namespace OpenBots.Commands.NativeChrome
 {
     [Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command sets option on dropdown list in chrome.")]
+	[Description("This command sets the option of a specified dropdown in Chrome.")]
 	public class NativeChromeSetOptionCommand : ScriptCommand
 	{
 		[Required]

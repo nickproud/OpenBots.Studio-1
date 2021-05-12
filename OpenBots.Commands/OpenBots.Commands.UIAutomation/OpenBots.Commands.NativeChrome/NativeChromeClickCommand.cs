@@ -22,7 +22,7 @@ namespace OpenBots.Commands.NativeChrome
 {
     [Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command performs click on specified element in chrome.")]
+	[Description("This command performs a click on a specified element in Chrome.")]
 	public class NativeChromeClickCommand : ScriptCommand
 	{
 		[Required]

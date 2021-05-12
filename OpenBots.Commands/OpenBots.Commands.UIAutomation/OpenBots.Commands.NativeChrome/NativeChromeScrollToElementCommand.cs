@@ -22,7 +22,7 @@ namespace OpenBots.Commands.NativeChrome
 {
     [Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command scrolls the specified element into the visible area of the chrome browser window.")]
+	[Description("This command scrolls to a specified element in Chrome.")]
 	public class NativeChromeScrollToElementCommand : ScriptCommand
 	{
 		[Required]

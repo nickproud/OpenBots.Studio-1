@@ -23,7 +23,7 @@ namespace OpenBots.Commands.NativeChrome
 {
     [Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command get options from web element in chrome.")]
+	[Description("This command gets a list of options from a specified dropdown in Chrome.")]
 	public class NativeChromeGetOptionsCommand : ScriptCommand
 	{
 		[Required]

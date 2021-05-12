@@ -22,7 +22,7 @@ namespace OpenBots.Commands.NativeChrome
 {
     [Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command sets text to input in chrome.")]
+	[Description("This command sets text to a specified input in Chrome.")]
 	public class NativeChromeSetTextCommand : ScriptCommand
 	{
 		[Required]

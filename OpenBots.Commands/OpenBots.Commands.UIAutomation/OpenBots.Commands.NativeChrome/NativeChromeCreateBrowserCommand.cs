@@ -19,7 +19,7 @@ namespace OpenBots.Commands.NativeChrome
 {
 	[Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command creates a new web browser session which enables automation for websites.")]
+	[Description("This command creates a new Chrome browser session to enable automation for websites.")]
     public class NativeChromeCreateBrowserCommand : ScriptCommand
     {
 		[Required]

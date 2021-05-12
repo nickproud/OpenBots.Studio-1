@@ -22,7 +22,7 @@ namespace OpenBots.Commands.NativeChrome
 {
     [Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command clears text from input in chrome.")]
+	[Description("This command clears text from a specified input in Chrome.")]
 	public class NativeChromeClearTextCommand : ScriptCommand
 	{
 		[Required]

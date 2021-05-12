@@ -22,7 +22,7 @@ namespace OpenBots.Commands.NativeChrome
 {
     [Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command gets attribute from specified element in chrome.")]
+	[Description("This command gets an attribute from a specified element in Chrome.")]
 	public class NativeChromeGetAttributeCommand : ScriptCommand
 	{
 		[Required]

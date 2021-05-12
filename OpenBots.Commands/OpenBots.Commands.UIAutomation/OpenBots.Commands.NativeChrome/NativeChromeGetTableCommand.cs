@@ -26,7 +26,7 @@ namespace OpenBots.Commands.NativeChrome
 {
     [Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command gets table from web element in chrome.")]
+	[Description("This command gets a table from a specified element in Chrome.")]
 	public class NativeChromeGetTableCommand : ScriptCommand
 	{
 		[Required]

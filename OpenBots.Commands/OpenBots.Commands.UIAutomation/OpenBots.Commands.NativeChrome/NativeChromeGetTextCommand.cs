@@ -22,7 +22,7 @@ namespace OpenBots.Commands.NativeChrome
 {
     [Serializable]
 	[Category("Native Chrome Commands")]
-	[Description("This command gets text from web element in chrome.")]
+	[Description("This command gets text from a specified element in Chrome.")]
     public class NativeChromeGetTextCommand : ScriptCommand
     {
 		[Required]
