@@ -618,9 +618,6 @@ namespace OpenBots.UI.CustomControls
             foreach (EditorAttribute attrib in propertyUIHelpers)
             {
                 CommandItemControl helperControl = new CommandItemControl();
-                helperControl.Padding = new Padding(10, 0, 0, 0);
-                helperControl.ForeColor = Color.AliceBlue;
-                helperControl.Font = new Font("Segoe UI Semilight", 10);
                 helperControl.Name = parameterName + "_helper";
                 helperControl.Tag = targetControls.FirstOrDefault();
                 helperControl.HelperType = (UIAdditionalHelperType)Enum.Parse(typeof(UIAdditionalHelperType), attrib.EditorTypeName, true);

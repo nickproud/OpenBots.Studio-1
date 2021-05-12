@@ -1,7 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Newtonsoft.Json;
+using OpenBots.Commands.UIAutomation.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
-using OpenBots.Core.ChromeNativeClient;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -20,8 +20,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Security;
@@ -29,11 +27,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
-using OpenBots.Commands.UIAutomation.Library;
 
 namespace OpenBots.Commands.WebBrowser
 {
-	[Serializable]
+    [Serializable]
 	[Category("Web Browser Commands")]
 	[Description("This command performs an element action in a Selenium web browser session.")]
 	public class SeleniumElementActionCommand : ScriptCommand, ISeleniumElementActionCommand
@@ -495,12 +492,7 @@ namespace OpenBots.Commands.WebBrowser
 				v_SeleniumSearchParameters.Rows.Add(false, "\"CSS Selector\"", "");
 			}
 
-			CommandItemControl helperControl = new CommandItemControl();
-			helperControl.Padding = new Padding(10, 0, 0, 0);
-			helperControl.ForeColor = Color.AliceBlue;
-			helperControl.Font = new Font("Segoe UI Semilight", 10);
-			helperControl.CommandImage = Resources.command_camera;
-			helperControl.CommandDisplay = "OB Web Element Recorder";
+			CommandItemControl helperControl = new CommandItemControl("OBWebRecorder", Resources.command_camera, "OB Web Element Recorder");
 			helperControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
 
 			RenderedControls.AddRange(commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_SeleniumSearchParameters", this, editor, new Control[] { helperControl, NativeHelper.NativeChromeRecorderControl(v_SeleniumSearchParameters, editor) }));

@@ -229,7 +229,7 @@ namespace OpenBots.Commands.Task
 			_passParameters.Font = new Font("Segoe UI Light", 12);
 			_passParameters.ForeColor = Color.White;
 			_passParameters.DataBindings.Add("Checked", this, "v_AssignArguments", false, DataSourceUpdateMode.OnPropertyChanged);
-			_passParameters.CheckedChanged += (sender, e) => PassParametersCheckbox_CheckedChanged(sender, e, editor);
+			_passParameters.CheckedChanged += async (sender, e) => await PassParametersCheckbox_CheckedChanged(sender, e, editor);
 			commandControls.CreateDefaultToolTipFor("v_AssignArguments", this, _passParameters);
 			RenderedControls.Add(_passParameters);
 
@@ -238,7 +238,7 @@ namespace OpenBots.Commands.Task
 			_assignmentsGridViewHelper.AllowUserToAddRows = false;
 			_assignmentsGridViewHelper.AllowUserToDeleteRows = false;
 			//refresh gridview
-            _assignmentsGridViewHelper.MouseEnter += (sender, e) => PassParametersCheckbox_CheckedChanged(_passParameters, null, editor, true);
+            _assignmentsGridViewHelper.MouseEnter += async (sender, e) => await PassParametersCheckbox_CheckedChanged(_passParameters, null, editor, true);
 
 			if (!_passParameters.Checked)
 				_assignmentsGridViewHelper.Hide();
@@ -260,7 +260,7 @@ namespace OpenBots.Commands.Task
 			_passParameters.Checked = false;
 		}
 
-		private async void PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, bool isMouseEnter = false)
+		private async Tasks.Task PassParametersCheckbox_CheckedChanged(object sender, EventArgs e, IfrmCommandEditor editor, bool isMouseEnter = false)
 		{			
 			var assignArgCheckBox = (CheckBox)sender;
 			_assignmentsGridViewHelper.Visible = assignArgCheckBox.Checked;
@@ -268,16 +268,8 @@ namespace OpenBots.Commands.Task
 			//load arguments if selected and file exists
 			if (assignArgCheckBox.Checked)
 			{
-				var engineContext = new EngineContext();
+				var engineContext = new EngineContext(editor.ScriptContext, editor.ProjectPath);
 
-				engineContext.Variables = new List<OBScriptVariable>((List<OBScriptVariable>)CommonMethods.Clone(editor.ScriptContext.Variables));
-				engineContext.Arguments = new List<ScriptArgument>(editor.ScriptContext.Arguments);
-				engineContext.AssembliesList = new List<Assembly>(editor.ScriptContext.AssembliesList);
-				engineContext.NamespacesList = new List<string>(editor.ScriptContext.NamespacesList);
-				engineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(engineContext.AssembliesList)
-																						  .WithImports(engineContext.NamespacesList));
-
-				engineContext.Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + editor.ProjectPath + '"';
 				foreach (var var in engineContext.Variables)
 					await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, engineContext);
 

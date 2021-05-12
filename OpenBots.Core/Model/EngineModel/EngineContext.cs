@@ -8,6 +8,9 @@ using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 using RSScript = Microsoft.CodeAnalysis.Scripting.Script;
 using System;
 using System.Reflection;
+using OpenBots.Core.Utilities.CommonUtilities;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using System.Linq;
 
 namespace OpenBots.Core.Model.EngineModel
 {
@@ -55,6 +58,17 @@ namespace OpenBots.Core.Model.EngineModel
             StartFromLineNumber = startFromLineNumber;
             IsDebugMode = isDebugMode;
             IsChildEngine = isChildEngine;
+            GuidPlaceholder = $"v{Guid.NewGuid()}".Replace("-", "");
+        }
+
+        public EngineContext(ScriptContext scriptContext, string projectPath)
+        {
+            Variables = new List<OBScriptVariable>((List<OBScriptVariable>)CommonMethods.Clone(scriptContext.Variables));
+            Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + projectPath + '"';
+            Arguments = new List<ScriptArgument>(scriptContext.Arguments);
+            AssembliesList = new List<Assembly>(scriptContext.AssembliesList);
+            NamespacesList = new List<string>(scriptContext.NamespacesList);
+            EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(AssembliesList).WithImports(NamespacesList));
             GuidPlaceholder = $"v{Guid.NewGuid()}".Replace("-", "");
         }
     }

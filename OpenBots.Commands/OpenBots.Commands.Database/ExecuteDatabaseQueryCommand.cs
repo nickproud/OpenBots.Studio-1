@@ -13,14 +13,13 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.OleDb;
-using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Database
 {
-	[Serializable]
+    [Serializable]
 	[Category("Database Commands")]
 	[Description("This command performs a OleDb database query.")]
 	public class ExecuteDatabaseQueryCommand : ScriptCommand
@@ -248,13 +247,7 @@ namespace OpenBots.Commands.Database
 			_queryParametersControls.Add(commandControls.CreateDefaultLabelFor("v_QueryParameters", this));
 			_queryParametersControls.AddRange(commandControls.CreateUIHelpersFor("v_QueryParameters", this, new Control[] { _queryParametersGridView }, editor));
 
-			CommandItemControl helperControl = new CommandItemControl();
-			helperControl.Padding = new Padding(10, 0, 0, 0);
-			helperControl.ForeColor = Color.AliceBlue;
-			helperControl.Font = new Font("Segoe UI Semilight", 10);
-			helperControl.Name = "add_param_helper";
-			helperControl.CommandImage = Resources.command_database;
-			helperControl.CommandDisplay = "Add Parameter";
+			CommandItemControl helperControl = new CommandItemControl("add_param_helper", Resources.command_database, "Add Parameter");
 			helperControl.Click += (sender, e) => AddParameter(sender, e);
 
 			_queryParametersControls.Add(helperControl);

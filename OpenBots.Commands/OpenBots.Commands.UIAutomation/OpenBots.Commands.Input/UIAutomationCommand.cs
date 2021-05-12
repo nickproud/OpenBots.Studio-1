@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Security;
@@ -24,7 +23,7 @@ using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
 {
-	[Serializable]
+    [Serializable]
 	[Category("Input Commands")]
 	[Description("This Command automates an element in a targeted window.")]
 	public class UIAutomationCommand : ScriptCommand, IUIAutomationCommand
@@ -449,12 +448,7 @@ namespace OpenBots.Commands.Input
 			_actionParametersGridViewHelper.Columns.Add(propertyValue);
 
 			//create helper control
-			CommandItemControl helperControl = new CommandItemControl();
-			helperControl.Padding = new Padding(10, 0, 0, 0);
-			helperControl.ForeColor = Color.AliceBlue;
-			helperControl.Font = new Font("Segoe UI Semilight", 10);         
-			helperControl.CommandImage = Resources.command_camera;
-			helperControl.CommandDisplay = "UI Element Recorder";
+			CommandItemControl helperControl = new CommandItemControl("UIRecorder", Resources.command_camera, "UI Element Recorder");
 			helperControl.Click += (sender, e) => ShowRecorder(sender, e, commandControls);
 
 			//window name

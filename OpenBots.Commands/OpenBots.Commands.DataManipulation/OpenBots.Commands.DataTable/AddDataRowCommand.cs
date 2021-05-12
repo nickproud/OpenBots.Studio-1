@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,7 +19,7 @@ using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.DataTable
 {
-	[Serializable]
+    [Serializable]
 	[Category("DataTable Commands")]
 	[Description("This command adds a DataRow to a DataTable.")]
 	public class AddDataRowCommand : ScriptCommand
@@ -97,11 +96,7 @@ namespace OpenBots.Commands.DataTable
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataTable", this, editor));
 
-			CommandItemControl loadSchemaControl = new CommandItemControl();
-			loadSchemaControl.ForeColor = Color.White;
-			loadSchemaControl.Font = new Font("Segoe UI Semilight", 10);
-			loadSchemaControl.CommandDisplay = "Load Column Names From Existing DataTable";
-			loadSchemaControl.CommandImage = Resources.command_spreadsheet;
+			CommandItemControl loadSchemaControl = new CommandItemControl("columnNameLoader", Resources.command_spreadsheet, "Load Column Names From Existing DataTable");
 			loadSchemaControl.Click += LoadSchemaControl_Click;
 
 			var dataRowDataControls = new List<Control>();

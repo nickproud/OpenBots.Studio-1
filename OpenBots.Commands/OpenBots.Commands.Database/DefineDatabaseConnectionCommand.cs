@@ -1,13 +1,11 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -15,16 +13,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.OleDb;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
-using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.Database
 {
@@ -119,16 +110,8 @@ namespace OpenBots.Commands.Database
 
 		private async Task<OleDbConnection> CreateTestConnection(IfrmCommandEditor editor)
 		{
-			var engineContext = new EngineContext();
+			var engineContext = new EngineContext(editor.ScriptContext, editor.ProjectPath);
 
-			engineContext.Variables = new List<OBScriptVariable>((List<OBScriptVariable>)CommonMethods.Clone(editor.ScriptContext.Variables));
-			engineContext.Arguments = new List<ScriptArgument>(editor.ScriptContext.Arguments);
-			engineContext.AssembliesList = new List<Assembly>(editor.ScriptContext.AssembliesList);
-			engineContext.NamespacesList = new List<string>(editor.ScriptContext.NamespacesList);
-			engineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(engineContext.AssembliesList)
-																				      .WithImports(engineContext.NamespacesList));
-
-			engineContext.Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + editor.ProjectPath + '"';
 			foreach (var var in engineContext.Variables)
 				await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, engineContext);
 
@@ -149,32 +132,17 @@ namespace OpenBots.Commands.Database
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
-			CommandItemControl helperControl = new CommandItemControl();
-			helperControl.Padding = new Padding(10, 0, 0, 0);
-			helperControl.ForeColor = Color.AliceBlue;
-			helperControl.Font = new Font("Segoe UI Semilight", 10);
-			helperControl.Name = "connection_helper";
-			helperControl.CommandImage = Resources.command_database;
-			helperControl.CommandDisplay = "Build Connection String";
-			helperControl.Click += (sender, e) => Button_Click(sender, e);
+			CommandItemControl buildConnectionStringControl = new CommandItemControl("connectionString", Resources.command_database, "Build Connection String");
+			buildConnectionStringControl.Click += (sender, e) => BuildConnectionString(sender, e);
+
+			CommandItemControl testConnectionControl = new CommandItemControl("connectionTest", Resources.command_database, "Test Connection");
+			testConnectionControl.Click += async (sender, e) => await TestConnection(sender, e, editor);
 
 			_connectionString = commandControls.CreateDefaultInputFor("v_ConnectionString", this);
-
-			var connectionLabel = commandControls.CreateDefaultLabelFor("v_ConnectionString", this);
-			var connectionHelpers = commandControls.CreateUIHelpersFor("v_ConnectionString", this, new[] { _connectionString }, editor);
-			CommandItemControl testConnectionControl = new CommandItemControl();
-			testConnectionControl.Padding = new Padding(10, 0, 0, 0);
-			testConnectionControl.ForeColor = Color.AliceBlue;
-			testConnectionControl.Font = new Font("Segoe UI Semilight", 10);
-			testConnectionControl.Name = "connection_helper";
-			testConnectionControl.CommandImage = Resources.command_database;
-			testConnectionControl.CommandDisplay = "Test Connection";
-			testConnectionControl.Click += (sender, e) => TestConnection(sender, e, editor, commandControls);
-
-			RenderedControls.Add(connectionLabel);
-			RenderedControls.AddRange(connectionHelpers);
-			RenderedControls.Add(helperControl);
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_ConnectionString", this));
+			RenderedControls.Add(buildConnectionStringControl);
 			RenderedControls.Add(testConnectionControl);
+			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_ConnectionString", this, new[] { _connectionString }, editor));	
 			RenderedControls.Add(_connectionString);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ConnectionStringPassword", this, editor));
@@ -188,9 +156,8 @@ namespace OpenBots.Commands.Database
 			return base.GetDisplayValue() + $" [Instance Name '{v_InstanceName}']";
 		}
 
-		private async Task TestConnection(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
+		private async Task TestConnection(object sender, EventArgs e, IfrmCommandEditor editor)
 		{
-			
 			try
 			{
 				OleDbConnection oleDBConnection = await CreateTestConnection(editor);
@@ -198,13 +165,13 @@ namespace OpenBots.Commands.Database
 				oleDBConnection.Close();
 				MessageBox.Show("Connection Successful", "Test Connection", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				MessageBox.Show($"Connection Failed: Could not establish connection", "Test Connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
-		private void Button_Click(object sender, EventArgs e)
+		private void BuildConnectionString(object sender, EventArgs e)
 		{
 			ShowConnectionBuilder();
 		}

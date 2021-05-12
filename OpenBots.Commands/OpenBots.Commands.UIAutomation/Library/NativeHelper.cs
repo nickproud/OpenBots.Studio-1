@@ -9,7 +9,6 @@ using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -119,14 +118,8 @@ namespace OpenBots.Commands.UIAutomation.Library
 
 		public static CommandItemControl NativeChromeRecorderControl(DataTable NativeSearchParameters, IfrmCommandEditor editor)
         {
-			CommandItemControl helperControl = new CommandItemControl();
-			helperControl.Padding = new Padding(10, 0, 0, 0);
-			helperControl.ForeColor = Color.AliceBlue;
-			helperControl.Font = new Font("Segoe UI Semilight", 10);
-			helperControl.CommandImage = Resources.command_camera;
-			helperControl.CommandDisplay = "Chrome Element Recorder";
+			CommandItemControl helperControl = new CommandItemControl("ChromeRecorder", Resources.command_camera, "Chrome Element Recorder");
 			helperControl.Click += new EventHandler((s, e) => GetUIElement(s, e, NativeSearchParameters, editor));
-
 			return helperControl;
 		}
 	}

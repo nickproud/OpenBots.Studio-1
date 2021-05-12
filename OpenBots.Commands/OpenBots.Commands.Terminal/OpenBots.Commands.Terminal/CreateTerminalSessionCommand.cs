@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -129,13 +128,7 @@ namespace OpenBots.Commands.Terminal
 		{
 			base.Render(editor, commandControls);
 
-			CommandItemControl helperControl = new CommandItemControl();
-
-			helperControl.Padding = new Padding(10, 0, 0, 0);
-			helperControl.ForeColor = Color.AliceBlue;
-			helperControl.Font = new Font("Segoe UI Semilight", 10);
-			helperControl.CommandImage = Resources.command_system;
-			helperControl.CommandDisplay = "Launch Terminal Emulator";
+			CommandItemControl helperControl = new CommandItemControl("LaunchTerminal", Resources.command_system, "Launch Terminal Emulator");
 			helperControl.Click += new EventHandler((s, e) => LaunchTerminalSession(s, e));
 
 			RenderedControls.Add(helperControl);
