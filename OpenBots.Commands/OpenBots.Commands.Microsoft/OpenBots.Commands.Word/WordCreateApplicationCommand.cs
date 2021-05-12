@@ -140,7 +140,7 @@ namespace OpenBots.Commands.Word
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_NewOpenDocument", this, editor));
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += OpenFileComboBox_SelectedIndexChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += OpenFileComboBox_SelectedIndexChanged;
 
 			_openFileControls = new List<Control>();
 			_openFileControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
@@ -167,7 +167,7 @@ namespace OpenBots.Commands.Word
 
 		private void OpenFileComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Open Document" && _hasRendered)
+			if (((ComboBox)RenderedControls[4]).Text == "Open Document" && _hasRendered)
 			{
 				foreach (var ctrl in _openFileControls)
 					ctrl.Visible = true;
