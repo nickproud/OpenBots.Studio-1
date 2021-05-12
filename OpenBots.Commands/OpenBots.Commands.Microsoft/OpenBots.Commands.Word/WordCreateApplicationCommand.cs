@@ -6,7 +6,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -162,7 +161,7 @@ namespace OpenBots.Commands.Word
 		{
 			base.Shown();
 			_hasRendered = true;
-			OpenFileComboBox_SelectedIndexChanged(this, null);
+			OpenFileComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void OpenFileComboBox_SelectedIndexChanged(object sender, EventArgs e)

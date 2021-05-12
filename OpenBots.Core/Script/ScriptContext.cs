@@ -90,15 +90,19 @@ namespace OpenBots.Core.Script
             Arguments.ForEach(a => script += $"{a.ArgumentType.GetRealTypeFullName()}? {a.ArgumentName} = " +
                 $"{(a.ArgumentValue == null || (a.ArgumentValue is string && string.IsNullOrEmpty(a.ArgumentValue.ToString())) ? "null" : a.ArgumentValue)};");
 
-            string type;
-            var test = varType.GetGenericArguments();
-            if (varType.IsGenericType && varType.GetGenericArguments()[0].Name == "T")
-                type = "object";
-            else
-                type = varType.GetRealTypeFullName();
-
             GenerateGuidPlaceHolder();
-            script += $"{type}? {GuidPlaceholder} = {code};";
+
+            string line;
+            if (varType.IsGenericType && varType.GetRealTypeFullName() == "System.Collections.Generic.List<>")
+                line = $"List<object> {GuidPlaceholder} = {code}.Cast<object>().ToList();";
+            else if (varType.IsGenericType && varType.GetRealTypeFullName() == "System.Collections.Generic.Dictionary<,>")
+                line = $"Dictionary<object, object> {GuidPlaceholder} = {code}.ToDictionary(k => (object)k.Key, v => (object)v.Value);";
+            else if (varType.IsGenericType && varType.GetRealTypeFullName() == "System.Collections.Generic.KeyValuePair<,>")
+                line = $"KeyValuePair<object, object> {GuidPlaceholder} = new KeyValuePair<object, object>({code}.Value.Key, {code}.Value.Value);";
+            else
+                line = $"{varType.GetRealTypeFullName()}? {GuidPlaceholder} = {code};";
+
+            script += line;
 
             var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(SourceText.From(script, Encoding.UTF8), new CSharpParseOptions(languageVersion: LanguageVersion.CSharp8, kind: SourceCodeKind.Script), "");
             var compilation = CSharpCompilation.Create("CSharp", new SyntaxTree[] { parsedSyntaxTree }, DefaultReferences, DefaultCompilationOptions);

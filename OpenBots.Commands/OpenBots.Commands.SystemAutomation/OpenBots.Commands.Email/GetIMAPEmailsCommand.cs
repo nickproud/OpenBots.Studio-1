@@ -291,7 +291,7 @@ namespace OpenBots.Commands.Email
 		{
 			base.Shown();
 			_hasRendered = true;
-			SaveMailItemsComboBox_SelectedIndexChanged(this, null);
+			SaveMailItemsComboBox_SelectedIndexChanged(null, null);
 		}
 
 		public static IMailFolder FindFolder(IMailFolder toplevel, string name)

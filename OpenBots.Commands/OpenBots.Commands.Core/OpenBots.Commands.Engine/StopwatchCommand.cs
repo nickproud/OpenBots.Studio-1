@@ -6,7 +6,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -131,7 +130,7 @@ namespace OpenBots.Commands.Engine
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_StopwatchAction", this, editor));
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += StopWatchComboBox_SelectedIndexChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += StopWatchComboBox_SelectedIndexChanged;
 
 			_measureControls = new List<Control>();
 			_measureControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ToStringFormat", this, editor));
@@ -154,12 +153,12 @@ namespace OpenBots.Commands.Engine
 		{
 			base.Shown();
 			_hasRendered = true;
-			StopWatchComboBox_SelectedIndexChanged(this, null);
+			StopWatchComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void StopWatchComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Measure Stopwatch" && _hasRendered)
+			if (((ComboBox)RenderedControls[4]).Text == "Measure Stopwatch" && _hasRendered)
 			{
 				foreach (var ctrl in _measureControls)
 					ctrl.Visible = true;

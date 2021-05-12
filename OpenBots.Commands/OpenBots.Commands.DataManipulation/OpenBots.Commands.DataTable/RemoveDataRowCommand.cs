@@ -206,7 +206,7 @@ namespace OpenBots.Commands.DataTable
 				v_RemoveOption = "Index";
 				((ComboBox)RenderedControls[4]).Text = v_RemoveOption;
 			}
-			OptionComboBox_SelectedIndexChanged(this, null);
+			OptionComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void OptionComboBox_SelectedIndexChanged(object sender, EventArgs e)

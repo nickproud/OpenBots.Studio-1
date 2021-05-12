@@ -239,7 +239,7 @@ namespace OpenBots.Commands.Data
 		{
 			base.Shown();
 			_hasRendered = true;
-			calculationMethodComboBox_SelectedIndexChanged(this, null);
+			calculationMethodComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void calculationMethodComboBox_SelectedIndexChanged(object sender, EventArgs e)

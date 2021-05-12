@@ -6,7 +6,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +18,7 @@ using Application = Microsoft.Office.Interop.Excel.Application;
 
 namespace OpenBots.Commands.Excel
 {
-	[Serializable]
+    [Serializable]
 	[Category("Excel Commands")]
 	[Description("This command creates an Excel Instance.")]
 	public class ExcelCreateApplicationCommand : ScriptCommand
@@ -136,7 +135,7 @@ namespace OpenBots.Commands.Excel
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_NewOpenWorkbook", this, editor));
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += OpenFileComboBox_SelectedIndexChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += OpenFileComboBox_SelectedIndexChanged;
 
 			_openFileControls = new List<Control>();
 			_openFileControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
@@ -158,12 +157,12 @@ namespace OpenBots.Commands.Excel
 		{
 			base.Shown();
 			_hasRendered = true;
-			OpenFileComboBox_SelectedIndexChanged(this, null);
+			OpenFileComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void OpenFileComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Open Workbook" && _hasRendered)
+			if (((ComboBox)RenderedControls[4]).Text == "Open Workbook" && _hasRendered)
 			{
 				foreach (var ctrl in _openFileControls)
 					ctrl.Visible = true;

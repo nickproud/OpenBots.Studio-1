@@ -175,7 +175,7 @@ namespace OpenBots.Commands.DataTable
 				v_FilterOption = "RowFilter";
 				((ComboBox)RenderedControls[4]).Text = v_FilterOption;
 			}
-			OptionComboBox_SelectedIndexChanged(this, null);
+			OptionComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void OptionComboBox_SelectedIndexChanged(object sender, EventArgs e)

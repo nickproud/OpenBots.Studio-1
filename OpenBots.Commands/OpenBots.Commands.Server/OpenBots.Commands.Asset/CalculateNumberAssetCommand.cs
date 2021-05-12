@@ -130,7 +130,7 @@ namespace OpenBots.Commands.Asset
         {
             base.Shown();
             _hasRendered = true;
-            AssetActionTypeComboBox_SelectedIndexChanged(this, null);
+            AssetActionTypeComboBox_SelectedIndexChanged(null, null);
         }
 
         private void AssetActionTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)

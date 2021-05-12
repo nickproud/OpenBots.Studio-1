@@ -226,7 +226,7 @@ namespace OpenBots.Commands.Outlook
 		{
 			base.Shown();
 			_hasRendered = true;
-			SaveMailItemsComboBox_SelectedIndexChanged(this, null);
+			SaveMailItemsComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void ProcessEmail(MailItem mail, string msgDirectory, string attDirectory)

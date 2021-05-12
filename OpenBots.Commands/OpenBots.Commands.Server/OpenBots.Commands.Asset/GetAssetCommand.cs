@@ -161,7 +161,7 @@ namespace OpenBots.Commands.Asset
 				v_AssetType = "Text";
 				((ComboBox)RenderedControls[4]).Text = v_AssetType;
 			}
-			AssetTypeComboBox_SelectedIndexChanged(this, null);
+			AssetTypeComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void AssetTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)

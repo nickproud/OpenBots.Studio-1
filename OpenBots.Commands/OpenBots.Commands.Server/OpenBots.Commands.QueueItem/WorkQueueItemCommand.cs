@@ -176,7 +176,7 @@ namespace OpenBots.Commands.QueueItem
 		{
 			base.Shown();
 			_hasRendered = true;
-			SaveQueueItemFilesComboBox_SelectedIndexChanged(this, null);
+			SaveQueueItemFilesComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void SaveQueueItemFilesComboBox_SelectedIndexChanged(object sender, EventArgs e)

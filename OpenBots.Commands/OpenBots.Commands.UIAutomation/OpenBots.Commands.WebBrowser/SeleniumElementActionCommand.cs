@@ -470,11 +470,14 @@ namespace OpenBots.Commands.WebBrowser
 			NativeHelper.AddDefaultSearchRows(v_SeleniumSearchParameters);
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
-			CommandItemControl helperControl = new CommandItemControl("OBWebRecorder", Resources.command_camera, "OB Web Element Recorder");
-			helperControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
+			CommandItemControl obWebRecorderControl = new CommandItemControl("OBWebRecorder", Resources.command_camera, "OB Web Element Recorder");
+			obWebRecorderControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
 
-			RenderedControls.AddRange(commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_SeleniumSearchParameters", this, editor, 
-				new Control[] { helperControl, NativeHelper.NativeChromeRecorderControl(v_SeleniumSearchParameters, editor) }));
+			var searchParameterControls = commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_SeleniumSearchParameters", this, editor,
+				new Control[] { obWebRecorderControl, NativeHelper.NativeChromeRecorderControl(v_SeleniumSearchParameters, editor) });
+			searchParameterControls.Last().MouseEnter += ActionParametersGridViewHelper_MouseEnter;
+			RenderedControls.AddRange(searchParameterControls);
+
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SeleniumSearchOption", this, editor));
 
 			_elementActionDropdown = commandControls.CreateDropdownFor("v_SeleniumElementAction", this);

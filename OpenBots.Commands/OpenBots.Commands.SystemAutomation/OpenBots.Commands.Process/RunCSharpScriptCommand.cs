@@ -214,8 +214,8 @@ namespace OpenBots.Commands.Process
 				v_ArgumentType = "In-Studio Variables";
 				((ComboBox)RenderedControls[5]).Text = v_ArgumentType;
 			}
-			ArgumentTypeComboBox_SelectedIndexChanged(this, null);
-			HasOutputComboBox_SelectedIndexChanged(this, null);
+			ArgumentTypeComboBox_SelectedIndexChanged(null, null);
+			HasOutputComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void ArgumentTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)

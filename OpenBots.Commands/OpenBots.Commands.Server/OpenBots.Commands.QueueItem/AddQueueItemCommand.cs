@@ -201,7 +201,7 @@ namespace OpenBots.Commands.QueueItem
 		{
 			base.Shown();
 			_hasRendered = true;
-			QueueItemTypeComboBox_SelectedIndexChanged(this, null);
+			QueueItemTypeComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void QueueItemTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
