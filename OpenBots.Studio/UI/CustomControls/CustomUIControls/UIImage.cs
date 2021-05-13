@@ -1,6 +1,8 @@
-﻿using OpenBots.Core.Properties;
-using OpenBots.Core.UI.Controls;
-using System.Collections.Generic;
+﻿using Autofac;
+using OpenBots.Core.Command;
+using OpenBots.Core.Properties;
+using OpenBots.Studio.Utilities;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -10,32 +12,22 @@ namespace OpenBots.UI.CustomControls.Controls
 {
     public static class UIImage
     {
-        public static ImageList UIImageList(List<AutomationCommand> automationCommands)
+        public static ImageList UIImageList(IContainer container)
         {
-            Dictionary<string, Image> commandIcons = new Dictionary<string, Image>();
-
-            foreach(var command in automationCommands)
-                commandIcons[command.Command.CommandName] = command.CommandIcon;
+            var commandTypes = TypeMethods.GenerateCommandTypes(container);
 
             ImageList uiImages = new ImageList();
             uiImages.ImageSize = new Size(18, 18);
             uiImages.Images.Add("BrokenCodeCommentCommand", Resources.command_broken);
 
-            foreach (var icon in commandIcons)
+            foreach (var command in commandTypes)
             {
-                //var someImage = icon.Value;
-
-                //using (Image src = icon.Value)
-                //using (Bitmap dst = new Bitmap(20, 20))
-                //using (Graphics g = Graphics.FromImage(dst))
-                //{
-                //    g.SmoothingMode = SmoothingMode.AntiAlias;
-                //    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                //    g.DrawImage(src, 0, 0, dst.Width, dst.Height);
-                //    uiImages.Images.Add(icon.Key, dst);
-                //}
-                uiImages.Images.Add(icon.Key, icon.Value);
+                ScriptCommand newCommand = (ScriptCommand)Activator.CreateInstance(command);
+                uiImages.Images.Add(newCommand.CommandName, newCommand.CommandIcon);
+                newCommand.CommandIcon = null;
             }
+
+            GC.Collect();
             return uiImages;
         }
 

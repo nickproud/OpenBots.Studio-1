@@ -463,8 +463,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             newCommand.ForeColor = Color.SteelBlue;
             newCommand.BackColor = Color.DimGray;
 
-            if (_uiImages != null)
-                newCommand.ImageIndex = _uiImages.Images.IndexOfKey(cmdDetails.GetType().Name);
+            if (UiImages != null)
+                newCommand.ImageIndex = UiImages.Images.IndexOfKey(cmdDetails.GetType().Name);
 
             return newCommand;
         }
@@ -580,7 +580,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                         else
                         {
                             //draw command icon
-                            var img = _uiImages.Images[command.GetType().Name];
+                            var img = UiImages.Images[command.GetType().Name];
                             if (img != null)
                                 e.Graphics.DrawImage(img, modifiedBounds.Left, modifiedBounds.Top + 3);
                         }

@@ -168,7 +168,7 @@ namespace OpenBots.UI.Forms
 
             //create new command for binding
             SelectedCommand = (ScriptCommand)Activator.CreateInstance(userSelectedCommand.CommandClass);
-
+            SelectedCommand.CommandIcon = null;
             //Todo: MAKE OPTION TO RENDER ON THE FLY
 
             //if (true)

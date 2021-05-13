@@ -38,7 +38,10 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             //Instantiate Class
             ScriptCommand newCommand = (ScriptCommand)Activator.CreateInstance(commandClass);
 
-            AutomationCommand newAutomationCommand = null;
+			newCommand.CommandIcon = null;
+			GC.Collect();
+
+			AutomationCommand newAutomationCommand = null;
             //If command is enabled, pull for display and configuration
             if (newCommand.CommandEnabled)
             {
@@ -49,7 +52,6 @@ namespace OpenBots.Core.Utilities.CommandUtilities
                 newAutomationCommand.FullName = string.Join(" - ", groupAttribute, newCommand.SelectionName);
                 newAutomationCommand.ShortName = newCommand.SelectionName;
                 newAutomationCommand.Description = GetDescription(commandClass);
-				newAutomationCommand.CommandIcon = newCommand.CommandIcon;
 
                 //if (userPrefs.ClientSettings.PreloadBuilderCommands)
                 //{

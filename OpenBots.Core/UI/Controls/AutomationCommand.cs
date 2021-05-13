@@ -18,7 +18,6 @@ namespace OpenBots.Core.UI.Controls
         public string DisplayGroup { get; set; }
         public ScriptCommand Command { get; set; }
         public List<Control> UIControls { get; set; }
-        public Image CommandIcon { get; set; }
 
         private void RenderUIComponents(IfrmCommandEditor editorForm, ICommandControls commandControls)
         {

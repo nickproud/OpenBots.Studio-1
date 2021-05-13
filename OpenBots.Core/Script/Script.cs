@@ -203,6 +203,9 @@ namespace OpenBots.Core.Script
             Script deserializedData = JsonConvert.DeserializeObject<Script>(File.ReadAllText(engineContext.FilePath), serializerSettings);
             Version deserializedScriptVersion;
 
+            deserializedData.Commands.ForEach(x => x.ScriptCommand.CommandIcon = null);
+            GC.Collect();
+
             if (deserializedData != null)
             {
                 if (deserializedData.Version == null)

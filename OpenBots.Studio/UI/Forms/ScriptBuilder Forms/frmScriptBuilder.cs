@@ -368,7 +368,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             scriptBuilder._automationCommands = TypeMethods.GenerateAutomationCommands(AContainer);
 
             //instantiate and populate display icons for commands
-            scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
+            scriptBuilder._uiImages = UIImage.UIImageList(AContainer);
 
             var groupedCommands = scriptBuilder._automationCommands.Where(x => x.Command.CommandName != "BrokenCodeCommentCommand")
                                                                    .GroupBy(f => f.DisplayGroup);

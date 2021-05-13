@@ -361,6 +361,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newSequence.ScriptProjectPath = ScriptProjectPath;
             newSequence.AContainer = AContainer;
             newSequence.TypeContext = _typeContext;
+            newSequence.UiImages = _uiImages;
 
             newSequence.LoadCommands();
 

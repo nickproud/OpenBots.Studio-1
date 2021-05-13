@@ -54,7 +54,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
         private List<AutomationCommand> _automationCommands;
-        private ImageList _uiImages;
+        public ImageList UiImages { get; set; }
         private ApplicationSettings _appSettings;
         private DateTime _lastAntiIdleEvent;
         public UIListView SelectedTabScriptActions { get; set; }
@@ -119,9 +119,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             //load all commands           
             _automationCommands = TypeMethods.GenerateAutomationCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
-
-            //instantiate and populate display icons for commands
-            _uiImages = UIImage.UIImageList(_automationCommands);
 
             var groupedCommands = _automationCommands.GroupBy(f => f.DisplayGroup);
 
