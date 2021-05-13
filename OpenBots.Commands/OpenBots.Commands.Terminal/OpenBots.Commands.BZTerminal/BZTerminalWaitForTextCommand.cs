@@ -67,7 +67,10 @@ namespace OpenBots.Commands.BZTerminal
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
-			terminalContext.BZTerminalObj.WaitForText(textToWaitFor, 0, 0, timeout);
+			int result = terminalContext.BZTerminalObj.WaitForText(textToWaitFor, 0, 0, timeout);
+
+			if (result != 0)
+				throw new TimeoutException($"Unable to find '{textToWaitFor}' within the allotted time of {timeout} seconds.");
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -95,7 +95,11 @@ namespace OpenBots.Commands.Terminal
 				terminalObject.TN3270.SetCursor(mouseX, mouseY);
 
 			terminalObject.TN3270.SetText(textToSend);
-			terminalObject.TN3270.WaitForTextOnScreen(timeout, textToSend);
+			int result = terminalObject.TN3270.WaitForTextOnScreen(timeout, textToSend);
+
+			if (result == -1)
+				throw new TimeoutException($"Unable to find '{textToSend}' within the allotted time of {timeout / 1000} seconds.");
+
 			terminalObject.Redraw();
 		}
 

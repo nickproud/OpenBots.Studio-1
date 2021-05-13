@@ -84,8 +84,12 @@ namespace OpenBots.Commands.BZTerminal
 			if (!string.IsNullOrEmpty(v_XMousePosition) && !string.IsNullOrEmpty(v_YMousePosition))
 				terminalContext.BZTerminalObj.SetCursor(mouseY, mouseX);
 
-			terminalContext.BZTerminalObj.SendKey(terminalContext.Password.ConvertSecureStringToString());
-			terminalContext.BZTerminalObj.WaitForText(terminalContext.Password.ConvertSecureStringToString(), 1, 1, timeout);
+			string password = terminalContext.Password.ConvertSecureStringToString();
+			terminalContext.BZTerminalObj.SendKey(password);
+			int result = terminalContext.BZTerminalObj.WaitForText(password, 1, 1, timeout);
+
+			if (result != 0)
+				throw new TimeoutException($"Unable to find the passwor within the allotted time of {timeout} seconds.");
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

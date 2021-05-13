@@ -266,7 +266,11 @@ namespace OpenBots.Commands.Terminal.Forms
             if (inputBox.ShowDialog() == DialogResult.OK)
             {
                 TN3270.SetText(inputBox.txtInput.Text);
-                TN3270.WaitForTextOnScreen(500, inputBox.txtInput.Text);
+                int result = TN3270.WaitForTextOnScreen(5000, inputBox.txtInput.Text);
+
+                if (result == -1)
+                    throw new TimeoutException($"Unable to find '{inputBox.txtInput.Text}' within the allotted time of 5 seconds.");
+
                 Redraw();
             }
         }
@@ -277,7 +281,11 @@ namespace OpenBots.Commands.Terminal.Forms
             if (inputBox.ShowDialog() == DialogResult.OK)
             {
                 TN3270.SetText(inputBox.txtInput.Text);
-                TN3270.WaitForTextOnScreen(500, inputBox.txtInput.Text);
+                int result = TN3270.WaitForTextOnScreen(5000, inputBox.txtInput.Text);
+
+                if (result == -1)
+                    throw new TimeoutException($"Unable to find '{inputBox.txtInput.Text}' within the allotted time of 5 seconds.");
+
                 Redraw();
             }
         }

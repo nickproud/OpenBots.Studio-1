@@ -86,7 +86,11 @@ namespace OpenBots.Commands.Terminal
 				terminalObject.TN3270.SetCursor(mouseY, mouseX);
 
 			terminalObject.TN3270.SetText(terminalObject.Username);
-			terminalObject.TN3270.WaitForTextOnScreen(timeout, terminalObject.Username);
+			int result = terminalObject.TN3270.WaitForTextOnScreen(timeout, terminalObject.Username);
+
+			if (result == -1)
+				throw new TimeoutException($"Unable to find '{terminalObject.Username}' within the allotted time of {timeout / 1000} seconds.");
+
 			terminalObject.Redraw();
 		}
 
