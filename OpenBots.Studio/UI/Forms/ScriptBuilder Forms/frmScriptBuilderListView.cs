@@ -725,11 +725,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         else
                         {
                             //draw command icon
-                            var img = _uiImages.Images[command.GetType().Name];
-                            if (img != null)
-                                e.Graphics.DrawImage(img, modifiedBounds.Left, modifiedBounds.Top + 3);
+                            if (_uiImages != null && _uiImages.Images[command.GetType().Name] != null)
+                                e.Graphics.DrawImage(_uiImages.Images[command.GetType().Name], modifiedBounds.Left, modifiedBounds.Top + 3);
                         }
-                        
                     }
                     catch (Exception ex)
                     {
