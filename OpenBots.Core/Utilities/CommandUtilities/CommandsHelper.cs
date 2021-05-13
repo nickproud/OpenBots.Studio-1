@@ -177,7 +177,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 			var browserObject = ((OBAppInstance)await instanceName.EvaluateCode(engine)).Value;
 
             //get selenium instance driver
-            var seleniumInstance = (ChromeDriver)browserObject;
+            var seleniumInstance = (IWebDriver)browserObject;
 
             try
             {
@@ -578,7 +578,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				if (Directory.Exists(userFolderSelected) == existCheck)
 					ifResult = true;
 			}
-			else if (ifActionType == "Web Element Exists")
+			else if (ifActionType == "Selenium Web Element Exists")
 			{
 				string instanceName = ((from rw in IfActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "Selenium Instance Name"

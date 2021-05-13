@@ -36,7 +36,7 @@ namespace OpenBots.Commands.If
 		[PropertyUISelectionOption("Active Window Name Is")]
 		[PropertyUISelectionOption("File Exists")]
 		[PropertyUISelectionOption("Folder Exists")]
-		[PropertyUISelectionOption("Web Element Exists")]
+		[PropertyUISelectionOption("Selenium Web Element Exists")]
 		[PropertyUISelectionOption("GUI Element Exists")]
 		[PropertyUISelectionOption("Image Element Exists")]
 		[PropertyUISelectionOption("App Instance Exists")]
@@ -267,7 +267,7 @@ namespace OpenBots.Commands.If
 					else
 						return $"If Folder Exists [Folder '{folderPath}']";
 
-				case "Web Element Exists":
+				case "Selenium Web Element Exists":
 
 
 					string parameterName = ((from rw in v_ActionParameterTable.AsEnumerable()
@@ -285,7 +285,7 @@ namespace OpenBots.Commands.If
 					if (webElementCompareType == "It Does Not Exist")
 						return $"If Web Element Does Not Exist [{searchMethod} '{parameterName}']";
 					else
-						return $"If Web Element Exists [{searchMethod} '{parameterName}']";
+						return $"If Selenium Web Element Exists [{searchMethod} '{parameterName}']";
 
 				case "GUI Element Exists":
 
@@ -526,7 +526,7 @@ namespace OpenBots.Commands.If
 					//assign cell as a combobox
 					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
 					break;
-				case "Web Element Exists":
+				case "Selenium Web Element Exists":
 
 					ifActionParameterBox.Visible = true;
 
