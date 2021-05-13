@@ -70,7 +70,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumSwitchBrowserWindowCommand()
 		{
 			CommandName = "SeleniumSwitchBrowserWindowCommand";
-			SelectionName = "Switch Browser Window";  
+			SelectionName = "Selenium Switch Browser Window";  
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

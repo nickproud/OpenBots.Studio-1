@@ -56,7 +56,7 @@ namespace OpenBots.Commands.NativeChrome
 		public NativeChromeElementExistsCommand()
 		{
 			CommandName = "NativeChromeElementExistsCommand";
-			SelectionName = "Element Exists";
+			SelectionName = "Native Chrome Element Exists";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

@@ -123,7 +123,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumElementActionCommand()
 		{
 			CommandName = "SeleniumElementActionCommand";
-			SelectionName = "Element Action";
+			SelectionName = "Selenium Element Action";
 			v_InstanceName = "DefaultBrowser";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;

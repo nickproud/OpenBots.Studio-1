@@ -57,7 +57,7 @@ namespace OpenBots.Commands.NativeChrome
 		public NativeChromeClickCommand()
 		{
 			CommandName = "NativeChromeClickCommand";
-			SelectionName = "Click";
+			SelectionName = "Native Chrome Click";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 			v_ClickButton = "Left";

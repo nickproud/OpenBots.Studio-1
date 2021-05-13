@@ -76,7 +76,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumCreateBrowserCommand()
 		{
 			CommandName = "SeleniumCreateBrowserCommand";
-			SelectionName = "Create Browser";
+			SelectionName = "Selenium Create Browser";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

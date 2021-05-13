@@ -56,7 +56,7 @@ namespace OpenBots.Commands.NativeChrome
 		public NativeChromeGetTextCommand()
 		{
 			CommandName = "NativeChromeGetTextCommand";
-			SelectionName = "Get Text";
+			SelectionName = "Native Chrome Get Text";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

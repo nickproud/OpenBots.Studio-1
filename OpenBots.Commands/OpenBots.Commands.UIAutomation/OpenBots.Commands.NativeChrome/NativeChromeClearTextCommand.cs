@@ -47,7 +47,7 @@ namespace OpenBots.Commands.NativeChrome
 		public NativeChromeClearTextCommand()
 		{
 			CommandName = "NativeChromeClearTextCommand";
-			SelectionName = "Clear Text";
+			SelectionName = "Native Chrome Clear Text";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

@@ -60,7 +60,7 @@ namespace OpenBots.Commands.NativeChrome
 		public NativeChromeGetTableCommand()
 		{
 			CommandName = "NativeChromeGetTableCommand";
-			SelectionName = "Get Table";
+			SelectionName = "Native Chrome Get Table";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

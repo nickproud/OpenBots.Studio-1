@@ -44,7 +44,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumNavigateToURLCommand()
 		{
 			CommandName = "SeleniumNavigateToURLCommand";
-			SelectionName = "Navigate to URL";
+			SelectionName = "Selenium Navigate to URL";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

@@ -57,7 +57,7 @@ namespace OpenBots.Commands.NativeChrome
 		public NativeChromeGetOptionsCommand()
 		{
 			CommandName = "NativeChromeGetOptionsCommand";
-			SelectionName = "Get Options";
+			SelectionName = "Native Chrome Get Options";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
