@@ -61,13 +61,16 @@ namespace OpenBots.Commands.Terminal
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			string textToWaitFor = (string)await v_TextToWaitFor.EvaluateCode(engine);
-			var vTimeout = ((int)await v_Timeout.EvaluateCode(engine)) * 1000;
+			var timeout = ((int)await v_Timeout.EvaluateCode(engine)) * 1000;
 			var terminalObject = (OpenEmulator)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
-			terminalObject.TN3270.WaitForTextOnScreen(vTimeout, textToWaitFor);
+			int result = terminalObject.TN3270.WaitForTextOnScreen(timeout, textToWaitFor);
+
+			if (result == -1)
+				throw new TimeoutException($"Unable to find '{textToWaitFor}' within the allotted time of {timeout} seconds.");
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

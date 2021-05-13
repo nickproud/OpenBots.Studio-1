@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Word
 			CommandName = "WordReadDocumentCommand";
 			SelectionName = "Read Document";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_word;
 
 			v_InstanceName = "DefaultWord";
 		}

@@ -47,7 +47,7 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelAppendRowCommand";
 			SelectionName = "Append Row";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 		}

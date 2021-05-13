@@ -38,7 +38,7 @@ namespace OpenBots.Commands.Loop
 		[PropertyUISelectionOption("Active Window Name Is")]
 		[PropertyUISelectionOption("File Exists")]
 		[PropertyUISelectionOption("Folder Exists")]
-		[PropertyUISelectionOption("Web Element Exists")]
+		[PropertyUISelectionOption("Selenium Web Element Exists")]
 		[PropertyUISelectionOption("GUI Element Exists")]
 		[PropertyUISelectionOption("Image Element Exists")]
 		[PropertyUISelectionOption("App Instance Exists")]
@@ -261,7 +261,7 @@ namespace OpenBots.Commands.Loop
 					else
 						return $"Loop While Folder Exists [Folder '{folderPath}']";
 
-				case "Web Element Exists":
+				case "Selenium Web Element Exists":
 					string parameterName = ((from rw in v_ActionParameterTable.AsEnumerable()
 											 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
 											 select rw.Field<string>("Parameter Value")).FirstOrDefault());
@@ -277,7 +277,7 @@ namespace OpenBots.Commands.Loop
 					if (webElementCompareType == "It Does Not Exist")
 						return $"Loop While Web Element Does Not Exist [{searchMethod} '{parameterName}']";
 					else
-						return $"Loop While Web Element Exists [{searchMethod} '{parameterName}']";
+						return $"Loop While Selenium Web Element Exists [{searchMethod} '{parameterName}']";
 
 				case "GUI Element Exists":
 					string guiWindowName = ((from rw in v_ActionParameterTable.AsEnumerable()
@@ -519,7 +519,7 @@ namespace OpenBots.Commands.Loop
 					//assign cell as a combobox
 					loopActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
 					break;
-				case "Web Element Exists":
+				case "Selenium Web Element Exists":
 
 					loopActionParameterBox.Visible = true;
 

@@ -63,7 +63,7 @@ namespace OpenBots.Commands.Outlook
             CommandName = "GetOutlookEmailAttachmentsCommand";
             SelectionName = "Get Outlook Email Attachments";
             CommandEnabled = true;
-            CommandIcon = Resources.command_smtp;
+            CommandIcon = Resources.command_outlook;
         }
 
         public async override Task RunCommand(object sender)

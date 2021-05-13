@@ -43,9 +43,9 @@ namespace OpenBots.Commands.NativeChrome
 		public NativeChromeCreateBrowserCommand()
         {
             CommandName = "NativeChromeCreateBrowserCommand";
-            SelectionName = "Create Browser";
+            SelectionName = "Native Chrome Create Browser";
             CommandEnabled = true;
-            CommandIcon = Resources.command_web;
+            CommandIcon = Resources.command_nativechrome;
 
 			v_InstanceName = "DefaultChromeBrowser";
 			v_URL = "\"https://\"";

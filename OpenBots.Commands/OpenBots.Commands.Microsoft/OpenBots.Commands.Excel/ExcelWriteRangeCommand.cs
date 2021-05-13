@@ -68,7 +68,7 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelWriteRangeCommand";
 			SelectionName = "Write Range";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 			v_AddHeaders = "Yes";

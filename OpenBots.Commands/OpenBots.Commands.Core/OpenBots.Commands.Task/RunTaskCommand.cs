@@ -264,28 +264,31 @@ namespace OpenBots.Commands.Task
 		{			
 			var assignArgCheckBox = (CheckBox)sender;
 			_assignmentsGridViewHelper.Visible = assignArgCheckBox.Checked;
-
+			
 			//load arguments if selected and file exists
 			if (assignArgCheckBox.Checked)
 			{
-				var engineContext = new EngineContext(editor.ScriptContext, editor.ProjectPath);
-
-				foreach (var var in engineContext.Variables)
-					await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, engineContext);
-
-				foreach (var arg in engineContext.Arguments)
-					await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, engineContext);
-
 				string startFile = "";
 
-				try
+				if (!isMouseEnter)
                 {
-					startFile = (string)await VariableMethods.EvaluateCode(v_TaskPath, engineContext);
-				}
-                catch (Exception)
-                {
-					return;
-                }
+					var engineContext = new EngineContext(editor.ScriptContext, editor.ProjectPath);
+
+					foreach (var var in engineContext.Variables)
+						await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, engineContext);
+
+					foreach (var arg in engineContext.Arguments)
+						await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, engineContext);
+
+					try
+					{
+						startFile = (string)await VariableMethods.EvaluateCode(v_TaskPath, engineContext);
+					}
+					catch (Exception)
+					{
+						return;
+					}
+				}			
 
 				if (!isMouseEnter && File.Exists(startFile))
                 {

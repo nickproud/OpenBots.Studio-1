@@ -72,7 +72,7 @@ namespace OpenBots.Commands.Outlook
 			CommandName = "SendOutlookEmailCommand";
 			SelectionName = "Send Outlook Email";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_smtp;
+			CommandIcon = Resources.command_outlook;
 
 			v_BodyType = "Plain";
 		}

@@ -85,8 +85,13 @@ namespace OpenBots.Commands.Terminal
 			if (!string.IsNullOrEmpty(v_XMousePosition) && !string.IsNullOrEmpty(v_YMousePosition))
 				terminalObject.TN3270.SetCursor(mouseY, mouseX);
 
-			terminalObject.TN3270.SetText(terminalObject.Password.ConvertSecureStringToString());
-			terminalObject.TN3270.WaitForTextOnScreen(timeout, terminalObject.Password.ConvertSecureStringToString());
+			string password = terminalObject.Password.ConvertSecureStringToString();
+			terminalObject.TN3270.SetText(password);
+			int result = terminalObject.TN3270.WaitForTextOnScreen(timeout, password);
+
+			if (result == -1)
+				throw new TimeoutException($"Unable to find the password text within the allotted time of {timeout/1000} seconds.");
+
 			terminalObject.Redraw();
 		}
 

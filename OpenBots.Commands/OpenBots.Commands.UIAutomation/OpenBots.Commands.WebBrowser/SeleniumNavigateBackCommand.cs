@@ -33,7 +33,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumNavigateBackCommand()
 		{
 			CommandName = "SeleniumNavigateBackCommand";
-			SelectionName = "Navigate Back";
+			SelectionName = "Selenium Navigate Back";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

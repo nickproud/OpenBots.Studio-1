@@ -33,7 +33,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumNavigateForwardCommand()
 		{
 			CommandName = "SeleniumNavigateForwardCommand";
-			SelectionName = "Navigate Forward";
+			SelectionName = "Selenium Navigate Forward";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

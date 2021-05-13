@@ -33,10 +33,10 @@ namespace OpenBots.Commands.NativeChrome
 		public NativeChromeCloseBrowserCommand()
 		{
 			CommandName = "NativeChromeCloseBrowserCommand";
-			SelectionName = "Close Browser";
+			SelectionName = "Native Chrome Close Browser";
 			v_InstanceName = "DefaultChromeBrowser";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_web;
+			CommandIcon = Resources.command_nativechrome;
 		}
 
 		public async override Task RunCommand(object sender)

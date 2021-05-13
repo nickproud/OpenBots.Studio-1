@@ -115,7 +115,7 @@ namespace OpenBots.Commands.Outlook
             CommandName = "GetOutlookEmailPropertyCommand";
             SelectionName = "Get Outlook Email Property";
             CommandEnabled = true;
-            CommandIcon = Resources.command_smtp;
+            CommandIcon = Resources.command_outlook;
 
             v_Property = "";
         }

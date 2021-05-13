@@ -34,7 +34,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumCloseBrowserCommand()
 		{
 			CommandName = "SeleniumCloseBrowserCommand";
-			SelectionName = "Close Browser";
+			SelectionName = "Selenium Close Browser";
 			v_InstanceName = "DefaultBrowser";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;

@@ -144,7 +144,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                         dynamic seleniumCreateBrowserCommand = TypeMethods.CreateTypeInstance(_container, "SeleniumCreateBrowserCommand");
                         seleniumCreateBrowserCommand.v_InstanceName = _browserInstanceName;
                         seleniumCreateBrowserCommand.v_EngineType = _browserEngineType;
-                        seleniumCreateBrowserCommand.v_URL = wbElementRecorder.Url.ToString();
+                        seleniumCreateBrowserCommand.v_URL = $"\"{wbElementRecorder.Url}\"";
                         _createBrowserCommand = seleniumCreateBrowserCommand;
                     }
                 }

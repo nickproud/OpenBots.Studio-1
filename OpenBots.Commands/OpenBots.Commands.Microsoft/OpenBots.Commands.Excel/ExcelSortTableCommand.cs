@@ -80,7 +80,7 @@ namespace OpenBots.Commands.Microsoft
             CommandName = "ExcelSortTableCommand";
             SelectionName = "Sort Excel Table";
             CommandEnabled = true;
-            CommandIcon = Resources.command_spreadsheet;
+            CommandIcon = Resources.command_excel;
 
             v_InstanceName = "DefaultExcel";
             v_Option = "Column Index";

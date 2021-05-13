@@ -76,7 +76,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumCreateBrowserCommand()
 		{
 			CommandName = "SeleniumCreateBrowserCommand";
-			SelectionName = "Create Browser";
+			SelectionName = "Selenium Create Browser";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
@@ -183,7 +183,7 @@ namespace OpenBots.Commands.WebBrowser
 
 		public override string GetDisplayValue()
 		{
-			return $"Create {v_EngineType} Browser [Navigate To URL '{v_URL}' - New Instance Name '{v_InstanceName}']";
+			return $"Selenium Create {v_EngineType} Browser [Navigate To URL '{v_URL}' - New Instance Name '{v_InstanceName}']";
 		}
 	}
 }

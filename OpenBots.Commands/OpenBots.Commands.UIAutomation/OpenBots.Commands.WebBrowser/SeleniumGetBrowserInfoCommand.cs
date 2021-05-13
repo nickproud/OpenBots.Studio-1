@@ -56,7 +56,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumGetBrowserInfoCommand()
 		{
 			CommandName = "SeleniumGetBrowserInfoCommand";
-			SelectionName = "Get Browser Info";
+			SelectionName = "Selenium Get Browser Info";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

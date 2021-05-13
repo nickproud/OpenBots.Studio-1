@@ -152,7 +152,7 @@ namespace OpenBots.Commands.UIAutomation.Library
 
 		public static CommandItemControl NativeChromeRecorderControl(DataTable NativeSearchParameters, IfrmCommandEditor editor)
         {
-			CommandItemControl helperControl = new CommandItemControl("ChromeRecorder", Resources.command_camera, "Chrome Element Recorder");
+			CommandItemControl helperControl = new CommandItemControl("ChromeRecorder", Resources.command_nativechrome, "Chrome Element Recorder");
 			helperControl.Click += new EventHandler((s, e) => GetUIElement(s, e, NativeSearchParameters, editor));
 			return helperControl;
 		}

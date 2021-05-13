@@ -62,7 +62,7 @@ namespace OpenBots.Commands.Microsoft
             CommandName = "ExcelGetTableRangeCommand";
             SelectionName = "Get Table Range";
             CommandEnabled = true;
-            CommandIcon = Resources.command_spreadsheet;
+            CommandIcon = Resources.command_excel;
 
             v_InstanceName = "DefaultExcel";
         }

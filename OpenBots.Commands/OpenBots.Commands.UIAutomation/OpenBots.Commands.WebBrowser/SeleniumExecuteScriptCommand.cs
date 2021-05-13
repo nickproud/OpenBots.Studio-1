@@ -59,7 +59,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumExecuteScriptCommand()
 		{
 			CommandName = "SeleniumExecuteScriptCommand";
-			SelectionName = "Execute Script";
+			SelectionName = "Selenium Execute Script";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

@@ -80,7 +80,7 @@ namespace OpenBots.Commands.Excel
             CommandName = "ExcelCreatePivotTableCommand";
             SelectionName = "Create Pivot Table";
             CommandEnabled = true;
-            CommandIcon = Resources.command_spreadsheet;
+            CommandIcon = Resources.command_excel;
 
             v_InstanceName = "DefaultExcel";
         }

@@ -33,7 +33,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumRefreshCommand()
 		{
 			CommandName = "SeleniumRefreshCommand";
-			SelectionName = "Refresh";
+			SelectionName = "Selenium Refresh";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

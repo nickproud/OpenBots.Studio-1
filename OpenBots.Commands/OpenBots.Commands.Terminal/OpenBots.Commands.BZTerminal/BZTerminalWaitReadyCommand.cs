@@ -68,7 +68,10 @@ namespace OpenBots.Commands.BZTerminal
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
-			terminalContext.BZTerminalObj.WaitReady(timeout, extrawait);
+			int result = terminalContext.BZTerminalObj.WaitReady(timeout, extrawait);
+
+			if (result != 0)
+				throw new TimeoutException($"Terminal screen is still not ready after {timeout} seconds.");
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

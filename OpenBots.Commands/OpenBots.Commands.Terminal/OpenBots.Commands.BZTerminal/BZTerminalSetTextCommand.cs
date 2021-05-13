@@ -95,7 +95,10 @@ namespace OpenBots.Commands.BZTerminal
 				terminalContext.BZTerminalObj.SetCursor(mouseY, mouseX);
 
 			terminalContext.BZTerminalObj.SendKey(textToSend);
-			terminalContext.BZTerminalObj.WaitForText(textToSend, 1, 1, timeout);
+			int result = terminalContext.BZTerminalObj.WaitForText(textToSend, 1, 1, timeout);
+
+			if (result != 0)
+				throw new TimeoutException($"Unable to find '{textToSend}' within the allotted time of {timeout} seconds.");
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

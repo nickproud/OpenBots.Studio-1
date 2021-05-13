@@ -54,7 +54,7 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumSwitchBrowserFrameCommand()
 		{
 			CommandName = "SeleniumSwitchBrowserFrameCommand";
-			SelectionName = "Switch Browser Frame";
+			SelectionName = "Selenium Switch Browser Frame";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

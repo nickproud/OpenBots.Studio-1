@@ -286,10 +286,12 @@ namespace OpenBots.UI.CustomControls
             inputBox.Height = height;
             inputBox.Width = width;
             inputBox.IsDoubleBuffered = true;
+            inputBox.AcceptsReturn = true;
+            inputBox.AcceptsTab = true;
             inputBox.Tag = new CommandControlValidationContext(parameterName, parent);
             inputBox.IsEvaluateSnippet = isEvaluateSnippet;
 
-            if (height > 30)
+            if (height > 40)
             {
                 inputBox.Multiline = true;
             }
@@ -311,10 +313,12 @@ namespace OpenBots.UI.CustomControls
             inputBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             inputBox.Height = height;
             inputBox.Width = width;
+            inputBox.AcceptsReturn = true;
+            inputBox.AcceptsTab = true;
 
             inputBox.Tag = new CommandControlValidationContext(parameterName, parent);
 
-            if (height > 30)
+            if (height > 40)
             {
                 inputBox.Multiline = true;
             }
@@ -363,7 +367,7 @@ namespace OpenBots.UI.CustomControls
             }
             else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
                 return;
-            else if (e.KeyCode == Keys.Enter)
+            else if (e.KeyCode == Keys.Enter && !inputBox.Multiline)
                 _currentEditor.uiBtnAdd_Click(null, null);
         }
 
