@@ -89,7 +89,7 @@ namespace OpenBots.Commands.BZTerminal
 			int result = terminalContext.BZTerminalObj.WaitForText(password, 1, 1, timeout);
 
 			if (result != 0)
-				throw new TimeoutException($"Unable to find the passwor within the allotted time of {timeout} seconds.");
+				throw new TimeoutException($"Unable to find the password within the allotted time of {timeout} seconds.");
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
