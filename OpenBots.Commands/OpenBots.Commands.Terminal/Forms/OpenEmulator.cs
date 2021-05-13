@@ -284,7 +284,7 @@ namespace OpenBots.Commands.Terminal.Forms
                 int result = TN3270.WaitForTextOnScreen(5000, inputBox.txtInput.Text);
 
                 if (result == -1)
-                    throw new TimeoutException($"Unable to find '{inputBox.txtInput.Text}' within the allotted time of 5 seconds.");
+                    throw new TimeoutException($"Unable to find the password text within the allotted time of 5 seconds.");
 
                 Redraw();
             }
