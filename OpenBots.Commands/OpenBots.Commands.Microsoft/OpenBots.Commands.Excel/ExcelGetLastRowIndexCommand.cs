@@ -55,7 +55,7 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelGetLastRowIndexCommand";
 			SelectionName = "Get Last Row Index";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 			v_ColumnLetter = "\"A\"";

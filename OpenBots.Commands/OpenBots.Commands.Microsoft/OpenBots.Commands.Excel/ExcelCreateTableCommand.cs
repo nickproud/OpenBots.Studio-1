@@ -63,7 +63,7 @@ namespace OpenBots.Commands.Excel
             CommandName = "ExcelCreateTableCommand";
             SelectionName = "Create Excel Table";
             CommandEnabled = true;
-            CommandIcon = Resources.command_spreadsheet;
+            CommandIcon = Resources.command_excel;
 
             v_InstanceName = "DefaultExcel";
         }

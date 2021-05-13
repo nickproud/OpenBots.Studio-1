@@ -35,7 +35,7 @@ namespace OpenBots.Commands.Word
 			CommandName = "WordSaveDocumentCommand";
 			SelectionName = "Save Document";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_word;
 
 			v_InstanceName = "DefaultWord";
 		}

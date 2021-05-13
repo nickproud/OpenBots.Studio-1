@@ -86,7 +86,7 @@ namespace OpenBots.Commands.Word
 			CommandName = "WordCreateApplicationCommand";
 			SelectionName = "Create Word Application";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_word;
 
 			v_InstanceName = "DefaultWord";
 			v_NewOpenDocument = "New Document";

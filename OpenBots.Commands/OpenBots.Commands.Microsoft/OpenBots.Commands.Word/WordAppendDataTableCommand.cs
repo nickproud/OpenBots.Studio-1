@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Word
 			CommandName = "WordAppendDataTableCommand";
 			SelectionName = "Append DataTable";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_word;
 
 			v_InstanceName = "DefaultWord";
 		}

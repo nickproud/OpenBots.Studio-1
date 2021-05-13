@@ -71,7 +71,7 @@ namespace OpenBots.Commands.Outlook
 			CommandName = "ReplyToOutlookEmailCommand";
 			SelectionName = "Reply To Outlook Email";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_smtp;
+			CommandIcon = Resources.command_outlook;
 
 			v_OperationType = "Reply";
 			v_BodyType = "Plain";

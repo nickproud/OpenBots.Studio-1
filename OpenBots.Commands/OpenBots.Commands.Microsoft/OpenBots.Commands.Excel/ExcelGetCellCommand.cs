@@ -63,7 +63,7 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelGetCellCommand";
 			SelectionName = "Get Cell";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 			v_Formulas = "No";

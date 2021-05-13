@@ -517,14 +517,17 @@
     <Content Include="Resources\Icons\Commands\command-end-try.png" />
     <Content Include="Resources\Icons\Commands\command-endloop.png" />
     <Content Include="Resources\Icons\Commands\command-error.png" />
+    <None Include="Resources\Icons\Commands\command-excel.png" />
     <Content Include="Resources\Icons\Commands\command-exception.png" />
     <Content Include="Resources\Icons\Commands\command-exitloop.png" />
     <Content Include="Resources\Icons\Commands\command-files.png" />
     <Content Include="Resources\Icons\Commands\command-function.png" />
     <Content Include="Resources\Icons\Commands\command-input.png" />
     <Content Include="Resources\Icons\Commands\command-message.png" />
+    <None Include="Resources\Icons\Commands\command-nativechrome.png" />
     <Content Include="Resources\Icons\Commands\command-nextloop.png" />
     <Content Include="Resources\Icons\Commands\command-nlg.png" />
+    <None Include="Resources\Icons\Commands\command-outlook.png" />
     <Content Include="Resources\Icons\Commands\command-parse.png" />
     <Content Include="Resources\Icons\Commands\command-password.png" />
     <Content Include="Resources\Icons\Commands\command-pause.png" />
@@ -550,6 +553,7 @@
     <Content Include="Resources\Icons\Commands\command-window.png" />
     <None Include="Resources\Icons\Logo\openbots-ico.ico" />
     <None Include="Resources\Icons\Logo\openbots-icon.png" />
+    <None Include="Resources\Icons\Commands\command-word.png" />
     <Content Include="Resources\Samples\HTMLInputSample.html" />
   </ItemGroup>
   <ItemGroup>

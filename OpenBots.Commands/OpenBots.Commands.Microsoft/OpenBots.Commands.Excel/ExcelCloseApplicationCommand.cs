@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelCloseApplicationCommand";
 			SelectionName = "Close Excel Application";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 			v_ExcelSaveOnExit = "Yes";

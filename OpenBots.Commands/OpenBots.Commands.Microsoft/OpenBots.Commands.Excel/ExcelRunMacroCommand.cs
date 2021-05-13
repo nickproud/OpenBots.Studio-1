@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelRunMacroCommand";
 			SelectionName = "Run Macro";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 		}

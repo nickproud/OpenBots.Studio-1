@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Word
 			CommandName = "WordReplaceTextCommand";
 			SelectionName = "Replace Text";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_word;
 
 			v_InstanceName = "DefaultWord";
 		}

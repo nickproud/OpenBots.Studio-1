@@ -54,7 +54,7 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelRenameSheetCommand";
 			SelectionName = "Rename Sheet";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 		}

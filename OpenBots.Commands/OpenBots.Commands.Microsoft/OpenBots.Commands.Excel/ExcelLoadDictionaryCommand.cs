@@ -68,7 +68,7 @@ namespace OpenBots.Commands.Excel
 			CommandName = "LoadDictionaryCommand";
 			SelectionName = "Load Dictionary";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 			v_KeyColumn = "\"Name\"";

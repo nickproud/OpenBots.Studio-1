@@ -71,7 +71,7 @@ namespace OpenBots.Commands.Microsoft
             CommandName = "ExcelDeleteTableColumnCommand";
             SelectionName = "Delete Table Column";
             CommandEnabled = true;
-            CommandIcon = Resources.command_spreadsheet;
+            CommandIcon = Resources.command_excel;
 
             v_InstanceName = "DefaultExcel";
             v_Option = "Column Index";

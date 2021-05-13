@@ -121,7 +121,7 @@ namespace OpenBots.Commands.Outlook
 			CommandName = "GetOutlookEmailsCommand";
 			SelectionName = "Get Outlook Emails";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_smtp;
+			CommandIcon = Resources.command_outlook;
 
 			v_SourceFolder = "\"Inbox\"";
 			v_GetUnreadOnly = "No";

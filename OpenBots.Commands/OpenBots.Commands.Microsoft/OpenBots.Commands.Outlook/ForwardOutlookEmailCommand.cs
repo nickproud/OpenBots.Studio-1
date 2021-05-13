@@ -45,7 +45,7 @@ namespace OpenBots.Commands.Outlook
 			CommandName = "ForwardOutlookEmailCommand";
 			SelectionName = "Forward Outlook Email";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_smtp;
+			CommandIcon = Resources.command_outlook;
 
 		}
 

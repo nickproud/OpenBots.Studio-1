@@ -70,7 +70,7 @@ namespace OpenBots.Commands.Microsoft
             CommandName = "ExcelAddTableColumnCommand";
             SelectionName = "Add Table Column";
             CommandEnabled = true;
-            CommandIcon = Resources.command_spreadsheet;
+            CommandIcon = Resources.command_excel;
 
             v_InstanceName = "DefaultExcel";
         }
