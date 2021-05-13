@@ -121,11 +121,11 @@ namespace OpenBots.Commands.Word
 			var newLineRegex = new Regex(@"\n", RegexOptions.Singleline);
 			var lines = newLineRegex.Split(vText);
 
-			foreach (string textToAdd in lines) {
+			for (int i = 0;i < lines.Length; i++) {
 				Paragraph paragraph = wordDocument.Content.Paragraphs.Add();
 				paragraph.Range.Font.Name = v_FontName;
 				paragraph.Range.Font.Size = float.Parse(v_FontSize);
-				paragraph.Range.Text = textToAdd;
+				paragraph.Range.Text = lines[i];
 
 				if (v_FontBold == "Yes")
 					paragraph.Range.Font.Bold = 1;
@@ -141,6 +141,8 @@ namespace OpenBots.Commands.Word
 					paragraph.Range.Font.Underline = WdUnderline.wdUnderlineSingle;
 				else
 					paragraph.Range.Font.Underline = WdUnderline.wdUnderlineNone;
+				if (i < lines.Length - 1)
+					paragraph.Range.InsertParagraphAfter();
 			}
 		}
 
