@@ -4,6 +4,6 @@
   "path": "%ChromeNativeMessagingServerPath%\\OpenBots.NativeServer.exe",
   "type": "stdio",
   "allowed_origins": [
-    "chrome-extension://loogmojebgbncnlekokmekjapmkfdahh/"
+    "chrome-extension://kkepankimcahnjamnimeijpplgjpmdpp/"
   ]
 }

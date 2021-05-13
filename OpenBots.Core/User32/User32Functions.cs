@@ -504,7 +504,8 @@ namespace OpenBots.Core.User32
         public static void BringChromeWindowToTop()
         {
             Process[] procsChrome = Process.GetProcessesByName("chrome");
-
+            if (procsChrome.Length == 0)
+                throw(new Exception("Please open chrome to record element!"));
             foreach (Process chrome in procsChrome)
             {
                 // the chrome process must have a window

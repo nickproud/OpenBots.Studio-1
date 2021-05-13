@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using OpenBots.Core.ChromeNative.Extension;
 using OpenBots.Core.ChromeNativeClient;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -87,41 +88,65 @@ namespace OpenBots.Commands.UIAutomation.Library
 			searchParameters.TableName = DateTime.Now.ToString("UIASearchParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));
 			return searchParameters;
 		}
-		public static void GetUIElement(object sender, EventArgs e, DataTable NativeSearchParameters, IfrmCommandEditor editor)
+		public static void GetUIElement(object sender, EventArgs e, DataTable nativeSearchParameters, IfrmCommandEditor editor)
 		{
-			try
+			ChromeExtensionRegistryManager registryManager = new ChromeExtensionRegistryManager();
+			bool isChromeNativeMessagingInstalled = registryManager.IsExtensionInstalled();
+			if (isChromeNativeMessagingInstalled) 
 			{
-				User32Functions.BringChromeWindowToTop();
-
-				string webElementStr;
-				NativeRequest.ProcessRequest("getelement", "", out webElementStr);
-				if (!string.IsNullOrEmpty(webElementStr))
+				try
 				{
-					WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
-					DataTable SearchParameters = WebElementToDataTable(webElement);
+					User32Functions.BringChromeWindowToTop();
 
-					if (SearchParameters != null)
+					string webElementStr;
+					NativeRequest.ProcessRequest("getelement", "", out webElementStr);
+					if (!string.IsNullOrEmpty(webElementStr))
 					{
-						NativeSearchParameters.Rows.Clear();
+						WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
+						DataTable SearchParameters = WebElementToDataTable(webElement);
 
-						foreach (DataRow rw in SearchParameters.Rows)
-							NativeSearchParameters.ImportRow(rw);
+						if (SearchParameters != null)
+						{
+							nativeSearchParameters.Rows.Clear();
+
+							foreach (DataRow rw in SearchParameters.Rows)
+								nativeSearchParameters.ImportRow(rw);
+						}
 					}
 				}
+				catch (Exception ex)
+				{
+					// Throw Error in Message Box
+					if(ex.Message.Contains("Pipe hasn't been connected yet."))
+                    {
+						var result = ((Form)editor).Invoke(new Action(() =>
+						{
+							editor.ShowMessage("Chrome Native Extension is not installed! \n Please visit: https://chrome.google.com/webstore/detail/openbots-web-automation/kkepankimcahnjamnimeijpplgjpmdpp/related", "MessageBox", DialogType.OkOnly, 10);
+						}
+						));
+					}
+                    else
+                    {
+						var result = ((Form)editor).Invoke(new Action(() =>
+						{
+							editor.ShowMessage(ex.Message, "MessageBox", DialogType.OkOnly, 10);
+						}
+						));
+					}
+				}
+				finally
+				{
+					Process process = Process.GetCurrentProcess();
+					User32Functions.ActivateWindow(process.MainWindowTitle);
+				}
 			}
-			catch (Exception ex)
-			{
-				// Throw Error in Message Box
+            else
+            {
 				var result = ((Form)editor).Invoke(new Action(() =>
 				{
-					editor.ShowMessage(ex.Message, "MessageBox", DialogType.OkOnly, 10);
+					editor.ShowMessage("Chrome Native Extension is not installed! \n Please use Extension Manager to install Chrome Native Extension", "MessageBox", DialogType.OkOnly, 10);
 				}
 				));
-			}
-			finally
-			{
-				Process process = Process.GetCurrentProcess();
-				User32Functions.ActivateWindow(process.MainWindowTitle);
 			}
 		}
 

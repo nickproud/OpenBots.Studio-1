@@ -1,4 +1,4 @@
-﻿//using OpenBots.Core.ChromeNativeMessaging.Extension;
+﻿using OpenBots.Core.ChromeNative.Extension;
 using OpenBots.Core.UI.Forms;
 using System;
 using System.IO;
@@ -18,34 +18,36 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void frmExtentionsManager_Load(object sender, EventArgs e)
         {
             //Determine if CNM is installed or not here, and set the flag accordingly here
-            //ChromeExtensionRegistryManager registryManager = new ChromeExtensionRegistryManager();
-            //_isChromeNativeMessagingInstalled = registryManager.IsExtensionInstalled();
-            if (_isChromeNativeMessagingInstalled)
-                btnInstallChromeNativeMessaging.Text = "Uninstall";
-            else if (!_isChromeNativeMessagingInstalled)
+            ChromeExtensionRegistryManager registryManager = new ChromeExtensionRegistryManager();
+            _isChromeNativeMessagingInstalled = registryManager.IsExtensionInstalled();
+            if (_isChromeNativeMessagingInstalled) 
+            {
+                btnInstallChromeNativeMessaging.Text = "Installed";
+                btnInstallChromeNativeMessaging.Enabled = false;
+            }
+            else
+            {
+                btnInstallChromeNativeMessaging.Enabled = true;
                 btnInstallChromeNativeMessaging.Text = "Install";
+            }
         }
 
         private void btnInstallChromeNativeMessaging_Click(object sender, EventArgs e)
         {
-            if (btnInstallChromeNativeMessaging.Text == "Install")
-            {
-                //Install here
-                //var converted = BrowserExtensions.CreateForChrome(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\Extension\OBExtension"), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\Extension\OBExtension.crx"));
-                //ChromeExtensionRegistryManager registryManager = new ChromeExtensionRegistryManager();
-                //registryManager.PathValue = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,@"Resources\Extension\OBExtension.crx");
-                //registryManager.VersionValue = "1.0";
-            }
-            else
-            {
-                //Uninstall here
-                //ChromeExtensionRegistryManager registryManager = new ChromeExtensionRegistryManager();
-                //registryManager.DeleteSubKey();
-            }
+            //Install here
+            string serverMenifestPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"NativeServer\com.openbots.chromeserver.message-manifest.json");
+            ChromeExtensionRegistryManager registryManager = new ChromeExtensionRegistryManager();
+            registryManager.PathValue = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\Extension\kkepankimcahnjamnimeijpplgjpmdpp_main.crx");
+            registryManager.VersionValue = "1.0";
+            registryManager.NativeServerKey = serverMenifestPath;
 
-            //if installation/uninstallation succeeds, return a DialogResult.Ok
-            //else set the ErrorMessage property, set DialogResult to DialogResult.Cancel and report back to the studio reference
-            //Setting the DialogResult property will close the form. 
+            //Update Server Manifest
+            string json = File.ReadAllText(serverMenifestPath);
+            dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+            jsonObj["path"] = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"NativeServer\OpenBots.NativeServer.exe"); 
+            string output = Newtonsoft.Json.JsonConvert.SerializeObject(jsonObj, Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(serverMenifestPath, output);
+
 
             DialogResult = DialogResult.OK;
         }

@@ -934,6 +934,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Resources\Extension\kkepankimcahnjamnimeijpplgjpmdpp_main.crx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Extension\OB Extension\manifest.json" />
     <None Include="Resources\Extension\OB Extension\README.md" />
     <None Include="Supplementary Files\Script Conversion Files\0.0.0.0.json">
