@@ -62,7 +62,7 @@ namespace OpenBots.Commands.NativeChrome
 			CommandName = "NativeChromeGetTableCommand";
 			SelectionName = "Native Chrome Get Table";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_web;
+			CommandIcon = Resources.command_nativechrome;
 
 			v_InstanceName = "DefaultChromeBrowser";
 			v_NativeSearchParameters = NativeHelper.CreateSearchParametersDT();

@@ -58,7 +58,7 @@ namespace OpenBots.Commands.NativeChrome
 			CommandName = "NativeChromeGetTextCommand";
 			SelectionName = "Native Chrome Get Text";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_web;
+			CommandIcon = Resources.command_nativechrome;
 
 			v_InstanceName = "DefaultChromeBrowser";
 			v_NativeSearchParameters = NativeHelper.CreateSearchParametersDT();
