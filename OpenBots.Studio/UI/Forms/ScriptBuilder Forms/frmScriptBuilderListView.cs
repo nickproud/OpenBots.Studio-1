@@ -362,6 +362,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newSequence.AContainer = AContainer;
             newSequence.TypeContext = _typeContext;
             newSequence.UiImages = _uiImages;
+            newSequence.AutomationCommands = _automationCommands;
 
             newSequence.LoadCommands();
 
@@ -984,6 +985,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void runFromThisCommandToolStripMenuItem_Click(object sender, EventArgs e)
         {
             RunFromThisCommand();
+        }
+
+        private void debugFromThisCommandToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DebugFromThisCommand();
         }
 
         private void viewCodeToolStripMenuItem_Click(object sender, EventArgs e)

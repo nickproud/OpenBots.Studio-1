@@ -66,7 +66,7 @@ namespace OpenBots.Core.UI.Controls
             if (!commentControlExists)
             {
                 UIControls.Add(commandControls.CreateDefaultLabelFor("v_Comment", Command));
-                UIControls.Add(commandControls.CreateDefaultInputFor("v_Comment", Command, 100, 300));
+                UIControls.Add(commandControls.CreateDefaultNoValidationInputFor("v_Comment", Command, 100, 300));
             }
         }
 

@@ -10,7 +10,6 @@ using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine.Enums;
 using RestSharp;
 using Serilog;
 using Serilog.Core;
@@ -49,7 +48,6 @@ namespace OpenBots.Engine
         private bool _isScriptSteppedIntoBeforeException { get; set; }
         [JsonIgnore]
         private Stopwatch _stopWatch { get; set; }
-        private EngineStatus _currentStatus { get; set; }
         public EngineSettings EngineSettings { get; set; }
         public string PrivateCommandLog { get; set; }
         public List<DataTable> DataTables { get; set; }
@@ -82,7 +80,7 @@ namespace OpenBots.Engine
             ErrorsOccured = new List<ScriptError>();
 
             //set to initialized
-            _currentStatus = EngineStatus.Loaded;
+            AutomationEngineContext.CurrentEngineStatus = EngineStatus.Loaded;
 
             //get engine settings
             var settings = new ApplicationSettings().GetOrCreateApplicationSettings();
@@ -172,7 +170,7 @@ namespace OpenBots.Engine
         {
             try
             {
-                _currentStatus = EngineStatus.Running;
+                AutomationEngineContext.CurrentEngineStatus = EngineStatus.Running;
 
                 //create stopwatch for metrics tracking
                 _stopWatch = new Stopwatch();
@@ -369,7 +367,7 @@ namespace OpenBots.Engine
                 //only show pause first loop
                 if (isFirstWait)
                 {
-                    _currentStatus = EngineStatus.Paused;
+                    AutomationEngineContext.CurrentEngineStatus = EngineStatus.Paused;
                     ReportProgress("Paused on Line " + parentCommand.LineNumber + ": "
                         + (parentCommand.v_IsPrivate ? PrivateCommandLog : parentCommand.GetDisplayValue()));
                     ReportProgress("[Please select 'Resume' when ready]");
@@ -402,7 +400,7 @@ namespace OpenBots.Engine
                 Thread.Sleep(1000);
             }
 
-            _currentStatus = EngineStatus.Running;
+            AutomationEngineContext.CurrentEngineStatus = EngineStatus.Running;
 
             //handle if cancellation was requested
             if (IsCancellationPending)
@@ -684,7 +682,7 @@ namespace OpenBots.Engine
             if (IsServerExecution && !IsServerChildExecution)
                 Log.CloseAndFlush();
 
-            _currentStatus = EngineStatus.Finished;
+            AutomationEngineContext.CurrentEngineStatus = EngineStatus.Finished;
             ScriptFinishedEventArgs args = new ScriptFinishedEventArgs
             {
                 LoggedOn = DateTime.Now,

@@ -5,8 +5,6 @@ using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Studio.Utilities;
-using OpenBots.UI.CustomControls.Controls;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using System;
 using System.Collections.Generic;
@@ -28,7 +26,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         public ScriptContext ScriptContext { get; set; }
         public Dictionary<string, List<AssemblyReference>> AllNamespaces { get; set; }
         public Project ScriptProject { get; set; }
-        public string ScriptProjectPath { get; set; }       
+        public string ScriptProjectPath { get; set; }
 
         //notification variables
         private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
@@ -39,7 +37,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         //command search variables
         private TreeView _tvCommandsCopy;
-        private string _txtCommandWatermark = "Type Here to Search";       
+        private string _txtCommandWatermark = "Type Here to Search";
 
         //package manager variables
         public AContainer AContainer { get; set; }
@@ -53,7 +51,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
-        private List<AutomationCommand> _automationCommands;
+        public List<AutomationCommand> AutomationCommands { get; set; }
         public ImageList UiImages { get; set; }
         private ApplicationSettings _appSettings;
         private DateTime _lastAntiIdleEvent;
@@ -118,9 +116,11 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         public void LoadCommands()
         {
             //load all commands           
-            _automationCommands = TypeMethods.GenerateAutomationCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
+            //AutomationCommands = TypeMethods.GenerateAutomationCommands(AContainer);
 
-            var groupedCommands = _automationCommands.GroupBy(f => f.DisplayGroup);
+            var groupedCommands = AutomationCommands.Where(x => x.Command.CommandName != "BrokenCodeCommentCommand" && 
+                                                                 x.Command.CommandName != "SequenceCommand")
+                                                     .GroupBy(f => f.DisplayGroup);
 
             tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)
@@ -308,7 +308,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void AddNewCommand(string specificCommand = "")
         {
             //bring up new command configuration form
-            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), TypeContext)
+            frmCommandEditor newCommandForm = new frmCommandEditor(AutomationCommands, GetConfiguredCommands(), TypeContext)
             {
                 CreationModeInstance = CreationMode.Add
             };

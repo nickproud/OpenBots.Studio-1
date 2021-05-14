@@ -2,53 +2,69 @@
 using NuGet;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
+using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
-using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 using AContainer = Autofac.IContainer;
 
 namespace OpenBots.Studio.Utilities
 {
     public static class TypeMethods
     {       
-        public static List<AutomationCommand> GenerateAutomationCommands(AContainer container)
-        {          
-            var commandList = new List<AutomationCommand>();
-            var commandClasses = new List<Type>();
-                               
-            using (var scope = container.BeginLifetimeScope())
-            {
-                    var types = scope.ComponentRegistry.Registrations
-                                .Where(r => typeof(ScriptCommand).IsAssignableFrom(r.Activator.LimitType))
-                                .Select(r => r.Activator.LimitType).ToList();
+        public static List<AutomationCommand> GenerateAutomationCommands(ImageList uiImages, List<Type> commandClasses)
+        {
+            uiImages.ImageSize = new Size(18, 18);
+            uiImages.Images.Add("BrokenCodeCommentCommand", Resources.command_broken);
 
-                    commandClasses.AddRange(types);
-            }
+            List<AutomationCommand> newAutomationCommands = new List<AutomationCommand>();
 
-            var userPrefs = new ApplicationSettings().GetOrCreateApplicationSettings();
-
-            //Loop through each class
             foreach (var commandClass in commandClasses)
             {
-                var newAutomationCommand = CommandsHelper.ConvertToAutomationCommand(commandClass);
+                var groupingAttribute = commandClass.GetCustomAttributes(typeof(CategoryAttribute), true);
+                string groupAttribute = "";
+                if (groupingAttribute.Length > 0)
+                {
+                    var attributeFound = (CategoryAttribute)groupingAttribute[0];
+                    groupAttribute = attributeFound.Category;
+                }
 
+                //Instantiate Class
+                ScriptCommand newCommand = (ScriptCommand)Activator.CreateInstance(commandClass);
+                uiImages.Images.Add(newCommand.CommandName, newCommand.CommandIcon);
+                newCommand.CommandIcon = null;
+                GC.Collect();
+
+                AutomationCommand newAutomationCommand = null;
                 //If command is enabled, pull for display and configuration
+                if (newCommand.CommandEnabled)
+                {
+                    newAutomationCommand = new AutomationCommand();
+                    newAutomationCommand.CommandClass = commandClass;
+                    newAutomationCommand.Command = newCommand;
+                    newAutomationCommand.DisplayGroup = groupAttribute;
+                    newAutomationCommand.FullName = string.Join(" - ", groupAttribute, newCommand.SelectionName);
+                    newAutomationCommand.ShortName = newCommand.SelectionName;
+                    newAutomationCommand.Description = CommandsHelper.GetDescription(commandClass);
+                }
+
                 if (newAutomationCommand != null)
-                    commandList.Add(newAutomationCommand);
+                    newAutomationCommands.Add(newAutomationCommand);
             }
 
-            return commandList.Distinct().ToList();
+            return newAutomationCommands.Distinct().ToList();
         }
 
         public static List<Type> GenerateCommandTypes(AContainer container)
         {
-            var commandList = new List<AutomationCommand>();
             var commandClasses = new List<Type>();
 
             using (var scope = container.BeginLifetimeScope())

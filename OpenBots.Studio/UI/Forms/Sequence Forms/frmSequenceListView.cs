@@ -98,7 +98,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 var commandName = commandNode.Text;
                 var commandGroupName = commandNode.Parent.Text;
 
-                var newCommandName = _automationCommands.Where(x => x.ShortName == commandName && x.DisplayGroup == commandGroupName)
+                var newCommandName = AutomationCommands.Where(x => x.ShortName == commandName && x.DisplayGroup == commandGroupName)
                                                               .Select(x => x.Command).FirstOrDefault().GetType();
 
                 dynamic newCommandInstance = TypeMethods.CreateTypeInstance(AContainer, newCommandName.Name);
@@ -253,7 +253,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
 
                 //create new command editor form
-                frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), TypeContext);
+                frmCommandEditor editCommand = new frmCommandEditor(AutomationCommands, GetConfiguredCommands(), TypeContext);
 
                 editCommand.AContainer = AContainer;
 

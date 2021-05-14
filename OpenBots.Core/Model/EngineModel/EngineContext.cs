@@ -11,6 +11,7 @@ using System.Reflection;
 using OpenBots.Core.Utilities.CommonUtilities;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using System.Linq;
+using OpenBots.Core.Enums;
 
 namespace OpenBots.Core.Model.EngineModel
 {
@@ -28,6 +29,7 @@ namespace OpenBots.Core.Model.EngineModel
         public List<Assembly> AssembliesList { get; set; }
         public List<string> NamespacesList { get; set; }
         public IfrmScriptEngine ScriptEngine { get; set; }
+        public EngineStatus CurrentEngineStatus { get; set; }
         public bool IsTest { get; set; } = false;
         public int StartFromLineNumber { get; set; } = 1;       
         public bool IsDebugMode { get; set; }

@@ -179,7 +179,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             projectNode.ContextMenuStrip = cmsProjectMainFolderActions;          
             tvProject.Nodes.Add(projectNode);
             projectNode.Expand();
-            LoadCommands(this);
+            LoadCommands();
 
             //save to recent projects 
             if (_appSettings.ClientSettings.RecentProjects == null)
@@ -217,7 +217,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             catch (Exception)
             {
                 var brokenHelloWorldCommand = new BrokenCodeCommentCommand();
-                brokenHelloWorldCommand.v_Comment = "\"Hello World\"";
+                brokenHelloWorldCommand.v_Comment = "Hello World";
                 mainScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(brokenHelloWorldCommand));
             }
 
@@ -356,7 +356,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             projectNode.ContextMenuStrip = cmsProjectMainFolderActions;          
             tvProject.Nodes.Add(projectNode);
             projectNode.Expand();
-            LoadCommands(this);
+            LoadCommands();
 
             //save to recent projects 
             if (_appSettings.ClientSettings.RecentProjects == null)
@@ -852,7 +852,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         catch (Exception)
                         {
                             var brokenHelloWorldCommand = new BrokenCodeCommentCommand();
-                            brokenHelloWorldCommand.v_Comment = "\"Hello World\"";
+                            brokenHelloWorldCommand.v_Comment = "Hello World";
                             newScriptActions.Items.Insert(0, CreateScriptCommandListViewItem(brokenHelloWorldCommand));
                         }
 

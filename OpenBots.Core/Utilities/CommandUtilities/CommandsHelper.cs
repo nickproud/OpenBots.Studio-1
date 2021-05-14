@@ -6,7 +6,6 @@ using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Core.Utilities.FormsUtilities;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using System;
@@ -52,16 +51,12 @@ namespace OpenBots.Core.Utilities.CommandUtilities
                 newAutomationCommand.FullName = string.Join(" - ", groupAttribute, newCommand.SelectionName);
                 newAutomationCommand.ShortName = newCommand.SelectionName;
                 newAutomationCommand.Description = GetDescription(commandClass);
-
-                //if (userPrefs.ClientSettings.PreloadBuilderCommands)
-                //{
-                //    //newAutomationCommand.RenderUIComponents();
-                //}
             }
 
             return newAutomationCommand;
         }
-        private static string GetDescription(Type type)
+
+		public static string GetDescription(Type type)
         {
             var descriptions = (DescriptionAttribute[])type.GetCustomAttributes(typeof(DescriptionAttribute), true);
 
@@ -449,9 +444,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										where rw.Field<string>("Parameter Name") == "Variable Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var actualVariable = variableName.EvaluateCode(engine);
+				dynamic actualVariable = variableName.EvaluateCode(engine);
 
-				if (actualVariable != null)
+				if (actualVariable.Result != null)
 					ifResult = true;
 				else
 					ifResult = false;

@@ -195,6 +195,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.cmsProjectMainFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiMainRenameFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.ttScriptBuilder = new System.Windows.Forms.ToolTip(this.components);
+            this.debugFromThisCommandToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsProjectFolderActions.SuspendLayout();
             this.cmsScriptActions.SuspendLayout();
             this.pnlControlContainer.SuspendLayout();
@@ -378,9 +379,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.deleteSelectedCodeToolStripMenuItem,
             this.viewCodeToolStripMenuItem,
             this.openShortcutMenuToolStripMenuItem,
-            this.runFromThisCommandToolStripMenuItem});
+            this.runFromThisCommandToolStripMenuItem,
+            this.debugFromThisCommandToolStripMenuItem});
             this.cmsScriptActions.Name = "cmsScriptActions";
-            this.cmsScriptActions.Size = new System.Drawing.Size(329, 284);
+            this.cmsScriptActions.Size = new System.Drawing.Size(329, 340);
             // 
             // enableSelectedCodeToolStripMenuItem
             // 
@@ -2323,6 +2325,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsmiMainRenameFolder.Text = "Rename Project";
             this.tsmiMainRenameFolder.Click += new System.EventHandler(this.tsmiRenameFolder_Click);
             // 
+            // debugFromThisCommandToolStripMenuItem
+            // 
+            this.debugFromThisCommandToolStripMenuItem.Name = "debugFromThisCommandToolStripMenuItem";
+            this.debugFromThisCommandToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
+            this.debugFromThisCommandToolStripMenuItem.Text = "Debug From This Command";
+            this.debugFromThisCommandToolStripMenuItem.Click += new System.EventHandler(this.debugFromThisCommandToolStripMenuItem_Click);
+            // 
             // frmScriptBuilder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
@@ -2583,6 +2592,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private ListBox lbxImportedNamespaces;
         private ToolStripMenuItem extensionManagerToolStripMenuItem;
         private Core.UI.Controls.UIPictureButton uiBtnExtensionsManager;
+        private ToolStripMenuItem debugFromThisCommandToolStripMenuItem;
     }
 }
 

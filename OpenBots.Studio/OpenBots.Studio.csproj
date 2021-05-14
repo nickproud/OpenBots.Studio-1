@@ -558,7 +558,6 @@
     <Compile Include="UI\CustomControls\CustomUIControls\UIGroupBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\CustomControls\CustomUIControls\UIImage.cs" />
     <Compile Include="UI\CustomControls\CustomUIControls\UIListView.cs">
       <SubType>Component</SubType>
     </Compile>

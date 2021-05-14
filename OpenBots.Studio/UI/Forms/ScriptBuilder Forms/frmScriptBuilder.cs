@@ -21,9 +21,9 @@ using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
+using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
-using OpenBots.UI.CustomControls.Controls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using Serilog.Core;
 using System;
@@ -362,18 +362,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             Refresh();
         }
 
-        private void LoadCommands(frmScriptBuilder scriptBuilder)
+        private void LoadCommands()
         {
-            //load all commands           
-            scriptBuilder._automationCommands = TypeMethods.GenerateAutomationCommands(AContainer);
+            //load all commands
+            var commandClasses = TypeMethods.GenerateCommandTypes(AContainer);
 
-            //instantiate and populate display icons for commands
-            scriptBuilder._uiImages = UIImage.UIImageList(AContainer);
+            _uiImages = new ImageList();
+            _automationCommands = TypeMethods.GenerateAutomationCommands(_uiImages, commandClasses);
 
-            var groupedCommands = scriptBuilder._automationCommands.Where(x => x.Command.CommandName != "BrokenCodeCommentCommand")
+            var groupedCommands = _automationCommands.Where(x => x.Command.CommandName != "BrokenCodeCommentCommand")
                                                                    .GroupBy(f => f.DisplayGroup);
 
-            scriptBuilder.tvCommands.Nodes.Clear();
+            tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)
             {
                 TreeNode newGroup = new TreeNode(cmd.Key);
@@ -385,15 +385,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newGroup.Nodes.Add(subNode);
                 }
 
-                scriptBuilder.tvCommands.Nodes.Add(newGroup);
+                tvCommands.Nodes.Add(newGroup);
             }
 
-            scriptBuilder.tvCommands.Sort();
+            tvCommands.Sort();
 
-            scriptBuilder._tvCommandsCopy = new TreeView();
-            scriptBuilder._tvCommandsCopy.ShowNodeToolTips = true;
-            CopyTreeView(scriptBuilder.tvCommands, scriptBuilder._tvCommandsCopy);
-            scriptBuilder.txtCommandSearch.Text = _txtCommandWatermark;
+            _tvCommandsCopy = new TreeView();
+            _tvCommandsCopy.ShowNodeToolTips = true;
+            CopyTreeView(tvCommands, _tvCommandsCopy);
+            txtCommandSearch.Text = _txtCommandWatermark;
         }
 
         private void frmScriptBuilder_FormClosing(object sender, FormClosingEventArgs e)
@@ -499,6 +499,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             if (CurrentEngine == null)
                 IsScriptRunning = false;
+            else if (CurrentEngine != null && !CurrentEngine.IsChildEngine && CurrentEngine.ScriptEngineContext.CurrentEngineStatus == EngineStatus.Finished && !_isDebugMode)
+            {               
+                IsScriptRunning = false;
+                FormsHelper.ShowAllForms(true);
+                _isDebugMode = true;
+            }
 
             if (_appSettings == null)
                 return;
@@ -799,7 +805,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
             _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _scriptContext.ImportedNamespaces);            
             AContainer = _builder.Build();
-            LoadCommands(this);
+            LoadCommands();
             ReloadAllFiles();
         }
 

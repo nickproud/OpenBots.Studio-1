@@ -127,4 +127,12 @@ namespace OpenBots.Core.Enums
         Out,
         InOut
     }
+
+    public enum EngineStatus
+    {
+        Loaded, 
+        Running, 
+        Paused, 
+        Finished
+    }
 }

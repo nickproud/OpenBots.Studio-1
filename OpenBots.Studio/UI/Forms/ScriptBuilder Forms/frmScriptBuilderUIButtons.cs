@@ -1108,7 +1108,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _scriptContext.ImportedNamespaces);
                 AContainer = _builder.Build();
 
-                LoadCommands(this);
+                LoadCommands();
                 ReloadAllFiles();
             }
 
@@ -1156,7 +1156,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _scriptContext.ImportedNamespaces);
                 AContainer = _builder.Build();
 
-                LoadCommands(this);
+                LoadCommands();
                 ReloadAllFiles();
             }
             catch (Exception ex)
@@ -1274,6 +1274,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 SaveToOpenBotsFile(false);
                 var commandLineNumber = ((ScriptCommand)_selectedTabScriptActions.SelectedItems[0].Tag).LineNumber;
+                RunOBScript(commandLineNumber);
+            }
+        }
+
+        private void DebugFromThisCommand()
+        {
+            if (_selectedTabScriptActions is ListView)
+            {
+                SaveToOpenBotsFile(false);
+                var commandLineNumber = ((ScriptCommand)_selectedTabScriptActions.SelectedItems[0].Tag).LineNumber;
+                _isDebugMode = true;
                 RunOBScript(commandLineNumber);
             }
         }
