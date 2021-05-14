@@ -48,7 +48,7 @@ namespace OpenBots.Commands.NativeChrome
 		{
 			CommandName = "NativeChromeScrollToElementCommand";
 			SelectionName = "Native Chrome Scroll To Element";
-			CommandEnabled = true;
+			CommandEnabled = false;
 			CommandIcon = Resources.command_nativechrome;
 
 			v_InstanceName = "DefaultChromeBrowser";

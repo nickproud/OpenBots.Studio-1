@@ -144,7 +144,8 @@ namespace OpenBots.Commands.UIAutomation.Library
             {
 				var result = ((Form)editor).Invoke(new Action(() =>
 				{
-					editor.ShowMessage("Chrome Native Extension is not installed! \n Please use Extension Manager to install Chrome Native Extension", "MessageBox", DialogType.OkOnly, 10);
+					editor.ShowMessage("Chrome Native Extension is not installed! \nPlease open the Extensions Manager to install Chrome Native Extension.", 
+						"MessageBox", DialogType.OkOnly, 10);
 				}
 				));
 			}

@@ -473,8 +473,9 @@ namespace OpenBots.Commands.WebBrowser
 			CommandItemControl obWebRecorderControl = new CommandItemControl("OBWebRecorder", Resources.command_camera, "OB Web Element Recorder");
 			obWebRecorderControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
 
+			//disabled native chrome recorder for 1.5.0
 			var searchParameterControls = commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_SeleniumSearchParameters", this, editor,
-				new Control[] { obWebRecorderControl, NativeHelper.NativeChromeRecorderControl(v_SeleniumSearchParameters, editor) });
+				new Control[] { obWebRecorderControl /*, NativeHelper.NativeChromeRecorderControl(v_SeleniumSearchParameters, editor) */});
 			searchParameterControls.Last().MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 			RenderedControls.AddRange(searchParameterControls);
 

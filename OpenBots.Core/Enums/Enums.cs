@@ -44,6 +44,8 @@ namespace OpenBots.Core.Enums
         PublishedFolder,
         LocalAppDataPackagesFolder,
         ProgramFilesPackagesFolder,
+        ProgramFilesExtensionsFolder,
+        LocalAppDataExtensionsFolder
     }
 
     public enum UIAdditionalHelperType

@@ -57,7 +57,7 @@ namespace OpenBots.Commands.NativeChrome
 		{
 			CommandName = "NativeChromeElementExistsCommand";
 			SelectionName = "Native Chrome Element Exists";
-			CommandEnabled = true;
+			CommandEnabled = false;
 			CommandIcon = Resources.command_nativechrome;
 
 			v_InstanceName = "DefaultChromeBrowser";
@@ -98,7 +98,8 @@ namespace OpenBots.Commands.NativeChrome
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [{NativeHelper.GetSearchNameValue(v_NativeSearchParameters)} - Store Result in '{v_OutputUserVariableName}' - Instance Name '{v_InstanceName}']";
+			return base.GetDisplayValue() + $" [{NativeHelper.GetSearchNameValue(v_NativeSearchParameters)} - Store Result in '{v_OutputUserVariableName}' " +
+				$"- Instance Name '{v_InstanceName}']";
 		}
 	}
 }

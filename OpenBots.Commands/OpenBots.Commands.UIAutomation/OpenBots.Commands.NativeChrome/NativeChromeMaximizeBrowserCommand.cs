@@ -35,7 +35,7 @@ namespace OpenBots.Commands.NativeChrome
 			CommandName = "NativeChromeMaximizeBrowserCommand";
 			SelectionName = "Native Chrome Maximize Browser";
 			v_InstanceName = "DefaultChromeBrowser";
-			CommandEnabled = true;
+			CommandEnabled = false;
 			CommandIcon = Resources.command_nativechrome;
 		}
 

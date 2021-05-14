@@ -29,7 +29,7 @@ namespace OpenBots.Core.IO
                     break;
                 case FolderType.StudioFolder:
                     //return app data OpenBots.Studio folder
-                    folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "OpenBots.Studio");
+                    folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "OpenBots Studio");
                     break;
                 case FolderType.ScriptsFolder:
                     //return scripts folder
@@ -49,11 +49,19 @@ namespace OpenBots.Core.IO
                     break;
                 case FolderType.LocalAppDataPackagesFolder:
                     //return local app data packages folder
-                    folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "packages");
+                    folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "Packages");
                     break;
                 case FolderType.ProgramFilesPackagesFolder:
                     //return program files packages folder
-                    folderPath = Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "packages", Application.ProductVersion);
+                    folderPath = Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "Packages", Application.ProductVersion);
+                    break;
+                case FolderType.ProgramFilesExtensionsFolder:
+                    //return program files packages folder
+                    folderPath = Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "Extensions");
+                    break;
+                case FolderType.LocalAppDataExtensionsFolder:
+                    //return program files packages folder
+                    folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "OpenBots Studio", "Extensions");
                     break;
                 default:
                     //enum is not implemented

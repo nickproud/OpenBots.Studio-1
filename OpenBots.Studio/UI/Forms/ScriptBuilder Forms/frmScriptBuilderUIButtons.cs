@@ -1450,6 +1450,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region Recorder Buttons
         private void extensionManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //disabled for 1.5.0
+            return;
+
             var extensionsForm = new frmExtentionsManager();
             extensionsForm.ShowDialog();
 

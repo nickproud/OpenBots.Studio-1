@@ -66,7 +66,7 @@ namespace OpenBots.Commands.NativeChrome
 		{
 			CommandName = "NativeChromeSetTextCommand";
 			SelectionName = "Native Chrome Set Text";
-			CommandEnabled = true;
+			CommandEnabled = false;
 			CommandIcon = Resources.command_nativechrome;
 
 			v_InstanceName = "DefaultChromeBrowser";
