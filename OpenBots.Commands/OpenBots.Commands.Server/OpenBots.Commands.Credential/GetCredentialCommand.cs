@@ -2,8 +2,6 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Utilities;
-using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
@@ -13,6 +11,7 @@ using System.Security;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
 using System.Threading.Tasks;
+using OpenBots.Commands.Server.HelperMethods;
 
 namespace OpenBots.Commands.Credential
 {
@@ -63,14 +62,14 @@ namespace OpenBots.Commands.Credential
 			var engine = (IAutomationEngineInstance)sender;
 			var vCredentialName = (string)await v_CredentialName.EvaluateCode(engine);
 
-			var client = AuthMethods.GetAuthToken();
-			var credential = CredentialMethods.GetCredential(client, $"name eq '{vCredentialName}'");
+			var userInfo = AuthMethods.GetUserInfo();
+            var credential = CredentialMethods.GetCredential(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vCredentialName);
 
-			if (credential == null)
-				throw new Exception($"No Credential was found for '{vCredentialName}'");
+            if (credential == null)
+                throw new Exception($"No Credential was found for '{vCredentialName}'");
 
-			string username = credential.UserName;
-			SecureString password = credential.PasswordSecret.ConvertStringToSecureString();
+            string username = credential.UserName;
+            SecureString password = credential.PasswordSecret.ConvertStringToSecureString();
 
 			username.SetVariableValue(engine, v_OutputUserVariableName);
 			password.SetVariableValue(engine, v_OutputUserVariableName2);

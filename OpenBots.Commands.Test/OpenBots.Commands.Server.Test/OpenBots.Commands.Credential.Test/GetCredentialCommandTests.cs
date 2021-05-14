@@ -13,12 +13,6 @@ namespace OpenBots.Commands.Credential.Test
     {
         private AutomationEngineInstance _engine;
         private GetCredentialCommand _getCredential;
-        private readonly ITestOutputHelper output;
-
-        public GetCredentialCommandTests(ITestOutputHelper output)
-        {
-            this.output = output;
-        }
 
         /*
          * Download the OpenBotsLocalTestData.zip file in OpenBots/COE_Documentation/Studio for credential data.

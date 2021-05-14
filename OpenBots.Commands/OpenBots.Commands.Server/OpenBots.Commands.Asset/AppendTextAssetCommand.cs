@@ -3,7 +3,6 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Data;
@@ -13,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
 using System.Threading.Tasks;
+using OpenBots.Commands.Server.HelperMethods;
 
 namespace OpenBots.Commands.Asset
 {
@@ -56,13 +56,13 @@ namespace OpenBots.Commands.Asset
 			var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
 			var vAppendText = (string)await v_AppendText.EvaluateCode(engine);
 
-			var client = AuthMethods.GetAuthToken();
-			var asset = AssetMethods.GetAsset(client, vAssetName, "Text");
+			var userInfo = AuthMethods.GetUserInfo();
+			var asset = AssetMethods.GetAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vAssetName, "Text");
 
 			if (asset == null)
 				throw new DataException($"No Asset was found for '{vAssetName}' with type 'Text'");
 
-			AssetMethods.AppendAsset(client, asset.Id, vAppendText);
+			AssetMethods.AppendAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id, vAppendText);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
+using OpenBots.Commands.Server.HelperMethods;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
 
 using System;
@@ -82,26 +82,26 @@ namespace OpenBots.Commands.QueueItem
 			var vQueueItemErrorMessage = (string)await v_QueueItemErrorMessage.EvaluateCode(engine);
 			var vQueueItemErrorCode = (string)await v_QueueItemErrorCode.EvaluateCode(engine);
 
-			var client = AuthMethods.GetAuthToken();
+			var userInfo = AuthMethods.GetUserInfo();
 
 			Guid transactionKey = (Guid)vQueueItem["LockTransactionKey"];
 
 			if (transactionKey == null || transactionKey == Guid.Empty)
 				throw new NullReferenceException($"Transaction key {transactionKey} is invalid or not found");
 
-			switch (v_QueueItemStatusType)
-			{
-				case "Successful":
-					QueueItemMethods.CommitQueueItem(client, transactionKey);
-					break;
-				case "Failed - Should Retry":
-					QueueItemMethods.RollbackQueueItem(client, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, false);
-					break;
-				case "Failed - Fatal":
-					QueueItemMethods.RollbackQueueItem(client, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, true);
-					break;
-			}
-		}
+            switch (v_QueueItemStatusType)
+            {
+                case "Successful":
+                    QueueItemMethods.CommitQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
+                    break;
+                case "Failed - Should Retry":
+                    QueueItemMethods.RollbackQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, false);
+                    break;
+                case "Failed - Fatal":
+                    QueueItemMethods.RollbackQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, true);
+                    break;
+            }
+        }
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{

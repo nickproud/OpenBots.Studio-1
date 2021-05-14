@@ -4,7 +4,6 @@ using NuGet.Versioning;
 using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
 using OpenBots.Core.Project;
-using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.UI.Forms;
 using System;
@@ -15,6 +14,7 @@ using OBNuget = OpenBots.Nuget;
 using File = System.IO.File;
 using OpenBots.Core.Script;
 using System.Linq;
+using OpenBots.Commands.Server.HelperMethods;
 
 namespace OpenBots.UI.Supplement_Forms
 {
@@ -133,18 +133,21 @@ namespace OpenBots.UI.Supplement_Forms
                 try {
                     lblError.Text = $"Publishing {_projectName} to the server...";
 
-                    var client = AuthMethods.GetAuthToken();
-                    var automation = AutomationMethods.UploadAutomation(client, _projectName, nugetFilePath, _automationEngine);
+                    var userInfo = AuthMethods.GetUserInfo();
+                    var automation = AutomationMethods.UploadAutomation(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, _projectName, nugetFilePath, _automationEngine);
 
-                    IEnumerable<AutomationParameter> automationParameters = _projectArguments.Select(arg => new AutomationParameter()
+                    if (_projectArguments.Count > 0)
                     {
-                        Name = arg.ArgumentName,
-                        DataType = GetServerType(arg.ArgumentType),
-                        Value = arg.ArgumentValue?.ToString(),
-                        AutomationId = automation.Id
-                    });
+                        IEnumerable<AutomationParameter> automationParameters = _projectArguments.Select(arg => new AutomationParameter()
+                        {
+                            Name = arg.ArgumentName,
+                            DataType = GetServerType(arg.ArgumentType),
+                            Value = arg.ArgumentValue?.ToString(),
+                            AutomationId = automation.Id
+                        });
 
-                    AutomationMethods.UpdateParameters(client, automation.Id, automationParameters);
+                        AutomationMethods.UpdateParameters(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, automation.Id, automationParameters);
+                    }
                 }
                 catch (Exception)
                 {

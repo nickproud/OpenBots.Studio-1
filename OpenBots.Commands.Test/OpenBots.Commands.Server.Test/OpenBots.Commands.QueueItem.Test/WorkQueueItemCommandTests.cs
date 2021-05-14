@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using OpenBots.Core.Server.API_Methods;
+using OpenBots.Commands.Server.HelperMethods;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
@@ -42,8 +42,8 @@ namespace OpenBots.Commands.QueueItem.Test
             _workQueueItem.RunCommand(_engine);
 
             var queueItemObject = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine);
-            var client = AuthMethods.GetAuthToken();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, queueItemObject["LockTransactionKey"].ToString());
+            var userInfo = AuthMethods.GetUserInfo();
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItemObject["LockTransactionKey"].ToString());
 
             Assert.Equal("InProgress", queueItem.State);
         }
@@ -82,8 +82,8 @@ namespace OpenBots.Commands.QueueItem.Test
             string queueItemString = JsonConvert.SerializeObject(queueItemObject);
             var vQueueItem = JsonConvert.DeserializeObject<QueueItemModel>(queueItemString);
 
-            var client = AuthMethods.GetAuthToken();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());
+            var userInfo = AuthMethods.GetUserInfo();
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vQueueItem.LockTransactionKey.ToString());
 
             Assert.Equal("InProgress", queueItem.State);
             Assert.True(File.Exists(attachment));
@@ -128,8 +128,8 @@ namespace OpenBots.Commands.QueueItem.Test
             string queueItemString = JsonConvert.SerializeObject(queueItemObject);
             var vQueueItem = JsonConvert.DeserializeObject<QueueItemModel>(queueItemString);
 
-            var client = AuthMethods.GetAuthToken();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, vQueueItem.LockTransactionKey.ToString());
+            var userInfo = AuthMethods.GetUserInfo();
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vQueueItem.LockTransactionKey.ToString());
 
             Assert.Equal("InProgress", queueItem.State);
             Assert.True(File.Exists(attachment1));
@@ -145,13 +145,16 @@ namespace OpenBots.Commands.QueueItem.Test
             _engine = new AutomationEngineInstance(null);
             _addQueueItem = new AddQueueItemCommand();
             _workQueueItem = new WorkQueueItemCommand();
+            
+            var textValue = "{ \"text\": \"testText\" }";
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(Dictionary<,>));
+            VariableMethods.CreateTestVariable(textValue, _engine, "textValue", typeof(string));
 
             _addQueueItem.v_QueueName = "UnitTestQueue";
             _addQueueItem.v_QueueItemName = "WorkQueueItemJsonTest";
             _addQueueItem.v_QueueItemType = "Json";
             _addQueueItem.v_JsonType = "Test Type";
-            _addQueueItem.v_QueueItemTextValue = "{'text':'testText'}";
+            _addQueueItem.v_QueueItemTextValue = "{textValue}";
             _addQueueItem.v_Priority = "10";
 
             _addQueueItem.RunCommand(_engine);

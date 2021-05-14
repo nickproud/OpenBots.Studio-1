@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
+using OpenBots.Commands.Server.HelperMethods;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
@@ -73,10 +73,12 @@ namespace OpenBots.Commands.Asset
         {
             var engine = (IAutomationEngineInstance)sender;
             var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
+            if (string.IsNullOrEmpty(v_AssetActionValue))
+                v_AssetActionValue = "0";
             var vAssetActionValue = (int)await v_AssetActionValue.EvaluateCode(engine);
 
-            var client = AuthMethods.GetAuthToken();
-            var asset = AssetMethods.GetAsset(client, vAssetName, "Number");
+            var userInfo = AuthMethods.GetUserInfo();
+            var asset = AssetMethods.GetAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vAssetName, "Number");
 
             if (asset == null)
                 throw new DataException($"No Asset was found for '{vAssetName}' and type 'Number'");
@@ -84,16 +86,16 @@ namespace OpenBots.Commands.Asset
             switch (v_AssetActionType)
             {
                 case "Increment":
-                    AssetMethods.IncrementAsset(client, asset.Id);
+                    AssetMethods.IncrementAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id);
                     break;
                 case "Decrement":
-                    AssetMethods.DecrementAsset(client, asset.Id);
+                    AssetMethods.DecrementAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id);
                     break;
                 case "Add":
-                    AssetMethods.AddAsset(client, asset.Id, vAssetActionValue);
+                    AssetMethods.AddAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id, vAssetActionValue);
                     break;
                 case "Subtract":
-                    AssetMethods.SubtractAsset(client, asset.Id, vAssetActionValue);
+                    AssetMethods.SubtractAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id, vAssetActionValue);
                     break;
             }
         }

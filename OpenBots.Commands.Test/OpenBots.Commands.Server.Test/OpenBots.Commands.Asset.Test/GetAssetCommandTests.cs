@@ -2,7 +2,6 @@
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
-using System.Data;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -59,15 +58,15 @@ namespace OpenBots.Commands.Asset.Test
         }
 
         [Fact]
-        public async void GetsJSONAsset()
+        public async void GetsJsonAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _getAsset = new GetAssetCommand();
 
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
-            _getAsset.v_AssetName = "testJSONAsset";
-            _getAsset.v_AssetType = "JSON";
+            _getAsset.v_AssetName = "testJsonAsset";
+            _getAsset.v_AssetType = "Json";
             _getAsset.v_OutputDirectoryPath = "";
             _getAsset.v_OutputUserVariableName = "{output}";
 
@@ -112,7 +111,7 @@ namespace OpenBots.Commands.Asset.Test
             _getAsset.v_OutputDirectoryPath = "";
             _getAsset.v_OutputUserVariableName = "{output}";
 
-            await Assert.ThrowsAsync<DataException>(() => _getAsset.RunCommand(_engine));
+            Assert.ThrowsAsync<InvalidOperationException>(() => _getAsset.RunCommand(_engine));
         }
     }
 }

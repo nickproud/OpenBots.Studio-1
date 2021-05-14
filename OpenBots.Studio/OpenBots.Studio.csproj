@@ -1089,6 +1089,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenBots.Commands\OpenBots.Commands.Server\OpenBots.Commands.Server.csproj">
+      <Project>{94AE5F8A-ECC2-4D79-A770-A0F7ACC9A9B9}</Project>
+      <Name>OpenBots.Commands.Server</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenBots.Core\OpenBots.Core.csproj">
       <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
       <Name>OpenBots.Core</Name>

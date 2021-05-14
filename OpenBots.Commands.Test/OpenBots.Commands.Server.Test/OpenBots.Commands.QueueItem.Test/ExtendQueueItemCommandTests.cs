@@ -1,4 +1,4 @@
-﻿using OpenBots.Core.Server.API_Methods;
+﻿using OpenBots.Commands.Server.HelperMethods;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
@@ -43,15 +43,15 @@ namespace OpenBots.Commands.QueueItem.Test
 
             var queueItemDict = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine);
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
-            var client = AuthMethods.GetAuthToken();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
+            var userInfo = AuthMethods.GetUserInfo();
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
 
             _extendQueueItem.v_QueueItem = "{vQueueItem}";
             queueItemDict.SetVariableValue(_engine, _extendQueueItem.v_QueueItem);
 
             _extendQueueItem.RunCommand(_engine);
 
-            var extendedQueueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
+            var extendedQueueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
 
             Assert.True(queueItem.LockedUntilUTC < extendedQueueItem.LockedUntilUTC);
         }

@@ -1,6 +1,6 @@
 ﻿using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
-using System.Data;
+using System;
 using Xunit;
 
 namespace OpenBots.Commands.Asset.Test
@@ -152,7 +152,7 @@ namespace OpenBots.Commands.Asset.Test
             _calculateAsset.v_AssetActionType = "Increment";
             _calculateAsset.v_AssetActionValue = "";
 
-            await Assert.ThrowsAsync<DataException>(() => _calculateAsset.RunCommand(_engine));
+            Assert.ThrowsAsync<ArgumentNullException>(() => _calculateAsset.RunCommand(_engine));
         }
 
         private void resetAsset(string assetName, string assetValue, string type)

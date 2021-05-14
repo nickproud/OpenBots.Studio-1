@@ -1,9 +1,9 @@
-﻿using OpenBots.Core.Attributes.PropertyAttributes;
+﻿using OpenBots.Commands.Server.HelperMethods;
+using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.API_Methods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -126,13 +126,13 @@ namespace OpenBots.Commands.ServerEmail
             if (vToRecipients == null)
                 throw new NullReferenceException("To Recipient(s) cannot be empty");
 
-            var client = AuthMethods.GetAuthToken();
+            var userInfo = AuthMethods.GetUserInfo();
 
             List<string> vAttachments = null;
             if (!string.IsNullOrEmpty(v_Attachments))
                 vAttachments = (List<string>)await v_Attachments.EvaluateCode(engine);
 
-            ServerEmailMethods.SendServerEmail(client, emailMessage, vAttachments, vAccountName);
+            ServerEmailMethods.SendServerEmail(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, emailMessage, vAttachments, vAccountName);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
