@@ -3,12 +3,14 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -24,25 +26,26 @@ namespace OpenBots.Commands.Excel
         [Description("Enter the unique instance that was specified in the **Create Application** command.")]
         [SampleUsage("MyExcelInstance")]
         [Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-        [CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
         public string v_InstanceName { get; set; }
 
         [Required]
         [DisplayName("Worksheet Name")]
         [Description("Specify the name of the Worksheet containing the Pivot Table.")]
-        [SampleUsage("Sheet1 || {vSheet}")]
+        [SampleUsage("\"Sheet1\" || vSheet")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetName { get; set; }
 
         [Required]
         [DisplayName("Pivot Table Name")]
         [Description("Enter the name of Pivot Table to be refreshed.")]
-        [SampleUsage("PivotTable || {vPivotTable}")]
+        [SampleUsage("\"PivotTable\" || vPivotTable")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_PivotTable { get; set; }
 
         public ExcelRefreshPivotTableCommand()
@@ -50,17 +53,17 @@ namespace OpenBots.Commands.Excel
             CommandName = "ExcelRefreshPivotTableCommand";
             SelectionName = "Refresh Pivot Table";
             CommandEnabled = true;
-            CommandIcon = Resources.command_spreadsheet;
+            CommandIcon = Resources.command_excel;
 
             v_InstanceName = "DefaultExcel";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheet = v_SheetName.ConvertUserVariableToString(engine);
-            var vPivotTable = v_PivotTable.ConvertUserVariableToString(engine);
-            var excelObject = v_InstanceName.GetAppInstance(engine);
+            string vSheet = (string)await v_SheetName.EvaluateCode(engine);
+            var vPivotTable = (string)await v_PivotTable.EvaluateCode(engine);
+            var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
             var excelInstance = (Application)excelObject;
             var workSheet = excelInstance.Sheets[vSheet] as Worksheet;
 

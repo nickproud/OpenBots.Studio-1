@@ -4,11 +4,10 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.API_Methods;
+using OpenBots.Core.Server.HelperMethods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Server.User;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +16,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.QueueItem
@@ -29,11 +29,11 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("Queue Name")]
 		[Description("Enter the name of the Queue.")]
-		[SampleUsage("Name || {vQueueName}")]
-		[Remarks("QueueItem Text/Json values are store in the 'DataJson' key of a QueueItem Dictionary.\n" +
+		[SampleUsage("\"Name\" || vQueueName")]
+		[Remarks("QueueItem Text/Json values are stored in the 'DataJson' key of a QueueItem Dictionary.\n" +
 				 "If a Queue has no workable items, the output value will be set to null.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueName { get; set; }
 
 		[Required]
@@ -48,20 +48,20 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("Output Attachment Directory")]
 		[Description("Enter or Select the path to the directory to store the attachments in.")]
-		[SampleUsage(@"C:\temp\myfolder\attachments || {vFolderPath} || {ProjectPath}\myFolder\attachments")]
+		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
 		[Remarks("This input is optional and will only be used if *Save Attachments* is set to **Yes**.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_AttachmentDirectory { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output QueueItem Dictionary Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<string, object>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		[JsonIgnore]
@@ -83,14 +83,14 @@ namespace OpenBots.Commands.QueueItem
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueName = v_QueueName.ConvertUserVariableToString(engine);
-			var vAttachmentDirectory = v_AttachmentDirectory.ConvertUserVariableToString(engine);
+			var vQueueName = (string)await v_QueueName.EvaluateCode(engine);
+			var vAttachmentDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
 			Dictionary<string, object> queueItemDict = new Dictionary<string, object>();
 
-			var client = AuthMethods.GetAuthToken();
+			var userInfo = AuthMethods.GetUserInfo();
 
 			var settings = EnvironmentSettings.GetAgentSettings();
 			string agentId = settings["AgentId"];
@@ -98,52 +98,51 @@ namespace OpenBots.Commands.QueueItem
 			if (string.IsNullOrEmpty(agentId))
 				throw new NullReferenceException("Agent is not connected");
 
-			Queue queue = QueueMethods.GetQueue(client, $"name eq '{vQueueName}'");
+            Queue queue = QueueMethods.GetQueue(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, $"name eq '{vQueueName}'");
 
-			if (queue == null)
-				throw new DataException($"Queue with name '{vQueueName}' not found");
+            if (queue == null)
+                throw new DataException($"Queue with name '{vQueueName}' not found");
 
-			var queueItem = QueueItemMethods.DequeueQueueItem(client, Guid.Parse(agentId), queue.Id);
+            var queueItem = QueueItemMethods.DequeueQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, agentId, queue.Id);
 
 			if (queueItem == null)
 			{
 				queueItemDict = null;
-				queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				queueItemDict.SetVariableValue(engine, v_OutputUserVariableName);
 				return;
 			}
 
-			queueItemDict = queueItem.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
-											   .ToDictionary(prop => prop.Name, prop => prop.GetValue(queueItem, null));
+            queueItemDict = queueItem.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                               .ToDictionary(prop => prop.Name, prop => prop.GetValue(queueItem, null));
 
-			queueItemDict = queueItemDict.Where(kvp => kvp.Key == "LockTransactionKey" ||
-													   kvp.Key == "Name" ||
-													   kvp.Key == "Source" ||
-													   kvp.Key == "Event" ||
-													   kvp.Key == "Type" ||
-													   kvp.Key == "JsonType" ||
-													   kvp.Key == "DataJson" ||
-													   kvp.Key == "Priority" ||
-													   kvp.Key == "LockedUntilUTC")
-										 .ToDictionary(i => i.Key, i => i.Value);
+            queueItemDict = queueItemDict.Where(kvp => kvp.Key == "LockTransactionKey" ||
+                                                       kvp.Key == "Name" ||
+                                                       kvp.Key == "Source" ||
+                                                       kvp.Key == "Event" ||
+                                                       kvp.Key == "Type" ||
+                                                       kvp.Key == "JsonType" ||
+                                                       kvp.Key == "DataJson" ||
+                                                       kvp.Key == "Priority" ||
+                                                       kvp.Key == "LockedUntilUTC")
+                                         .ToDictionary(i => i.Key, i => i.Value);
 
-			queueItemDict.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			queueItemDict.SetVariableValue(engine, v_OutputUserVariableName);
 
-			if (v_SaveAttachments == "Yes")
-			{
-				
-				if (Directory.Exists(vAttachmentDirectory))
-				{
-					//get all queue item attachments
-					var attachments = QueueItemMethods.GetAttachments(client, queueItem.Id);
-					//save each attachment in the directory
-					foreach (var attachment in attachments)
-					{
-						//export (save) in appropriate directory
-						QueueItemMethods.DownloadFile(client, attachment, vAttachmentDirectory);
-					}
-				}
-			}
-		}
+            if (v_SaveAttachments == "Yes")
+            {
+                if (Directory.Exists(vAttachmentDirectory))
+                {
+                    //get all queue item attachments
+                    var attachments = QueueItemMethods.GetAttachments(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem.Id);
+                    //save each attachment in the directory
+                    foreach (var attachment in attachments)
+                    {
+                        //export (save) in appropriate directory
+                        QueueItemMethods.DownloadFile(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, attachment, vAttachmentDirectory);
+                    }
+                }
+            }
+        }
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
@@ -175,7 +174,7 @@ namespace OpenBots.Commands.QueueItem
 		{
 			base.Shown();
 			_hasRendered = true;
-			SaveQueueItemFilesComboBox_SelectedIndexChanged(this, null);
+			SaveQueueItemFilesComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void SaveQueueItemFilesComboBox_SelectedIndexChanged(object sender, EventArgs e)

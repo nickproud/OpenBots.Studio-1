@@ -1,8 +1,9 @@
-﻿using OpenBots.Core.Server.API_Methods;
+﻿using OpenBots.Core.Server.HelperMethods;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace OpenBots.Commands.QueueItem.Test
@@ -15,85 +16,85 @@ namespace OpenBots.Commands.QueueItem.Test
         private SetQueueItemStatusCommand _setQueueItem;
 
         [Fact]
-        public void SetSuccessfulStatus()
+        public async void SetSuccessfulStatus()
         {
             _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
             string name = "SuccessfulQueueItem";
             AddQueueItem(name);
-            var queueItemDict = WorkQueueItem();
+            var queueItemDict = await WorkQueueItem();
 
-            var client = AuthMethods.GetAuthToken();
+            var userInfo = AuthMethods.GetUserInfo();
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem);
             _setQueueItem.v_QueueItemStatusType = "Successful";
 
             _setQueueItem.RunCommand(_engine);
 
-            queueItem = QueueItemMethods.GetQueueItemById(client, queueItem.Id);
+            queueItem = QueueItemMethods.GetQueueItemById(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem.Id);
 
             Assert.Equal("Success", queueItem.State);
         }
 
         [Fact]
-        public void SetFailedShouldRetryStatus()
+        public async void SetFailedShouldRetryStatus()
         {
             _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
 
             string name = "NewQueueItem";
             AddQueueItem(name);
-            var queueItemDict = WorkQueueItem();
+            var queueItemDict = await WorkQueueItem();
 
-            var client = AuthMethods.GetAuthToken();
+            var userInfo = AuthMethods.GetUserInfo();
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem);
             _setQueueItem.v_QueueItemStatusType = "Failed - Should Retry";
 
             _setQueueItem.RunCommand(_engine);
 
-            queueItem = QueueItemMethods.GetQueueItemById(client, queueItem.Id);
+            queueItem = QueueItemMethods.GetQueueItemById(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem.Id);
 
             Assert.Equal("New", queueItem.State);
         }
 
         [Fact]
-        public void SetFailedFatallyStatus()
+        public async void SetFailedFatallyStatus()
         {
             _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
-
+            
             string name = "FailedQueueItem";
             AddQueueItem(name);
-            var queueItemDict = WorkQueueItem();
+            var queueItemDict = await WorkQueueItem();
 
-            var client = AuthMethods.GetAuthToken();
+            var userInfo = AuthMethods.GetUserInfo();
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(client, transactionKey);
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
-            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem);
             _setQueueItem.v_QueueItemStatusType = "Failed - Fatal";
 
             _setQueueItem.RunCommand(_engine);
 
-            queueItem = QueueItemMethods.GetQueueItemById(client, queueItem.Id);
+            queueItem = QueueItemMethods.GetQueueItemById(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem.Id);
 
             Assert.Equal("Failed", queueItem.State);
         }
 
         [Fact]
-        public void HandlesNonExistentTransactionKey()
+        public async Task HandlesNonExistentTransactionKey()
         {
             _engine = new AutomationEngineInstance(null);
             _setQueueItem = new SetQueueItemStatusCommand();
@@ -114,9 +115,9 @@ namespace OpenBots.Commands.QueueItem.Test
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
             _setQueueItem.v_QueueItemStatusType = "Successful";
-            queueItemDict.StoreInUserVariable(_engine, _setQueueItem.v_QueueItem, typeof(Dictionary<,>));
+            queueItemDict.SetVariableValue(_engine, _setQueueItem.v_QueueItem);
 
-            Assert.Throws<NullReferenceException>(() => _setQueueItem.RunCommand(_engine));
+            await Assert.ThrowsAsync<NullReferenceException>(() => _setQueueItem.RunCommand(_engine));
         }
 
         internal void AddQueueItem(string name)
@@ -133,7 +134,7 @@ namespace OpenBots.Commands.QueueItem.Test
             _addQueueItem.RunCommand(_engine);
         }
 
-        public Dictionary<string, object> WorkQueueItem()
+        public async Task<Dictionary<string, object>> WorkQueueItem()
         {
             _workQueueItem = new WorkQueueItemCommand();
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(Dictionary<,>));
@@ -145,7 +146,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _workQueueItem.RunCommand(_engine);
 
-            var queueItemDict = (Dictionary<string, object>)"{output}".ConvertUserVariableToObject(_engine, typeof(Dictionary<,>));
+            var queueItemDict = (Dictionary<string, object>)await "{output}".EvaluateCode(_engine);
 
             return queueItemDict;
         }

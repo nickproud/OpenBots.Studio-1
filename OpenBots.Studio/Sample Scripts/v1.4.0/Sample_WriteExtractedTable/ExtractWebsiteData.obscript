@@ -1,0 +1,506 @@
+{
+  "$type": "OpenBots.Core.Script.Script, OpenBots.Core",
+  "Commands": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "02bd091b-0838-4b2f-b505-0c56ebca5fc3",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 1,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "++++++Code Started for extracting the data table from website.++++++"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "3a9c06d7-f26c-4cfd-bf4a-fd545d397842",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 2,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "Navigate to indicated URL. Extract table from website."
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "73776a27-7c78-4da4-8c31-0db77623295e",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 3,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "Set URL variable used in script"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Variable.SetVariableCommand, OpenBots.Commands.Core",
+        "v_Input": "https://money.cnn.com/data/hotstocks/index.html",
+        "v_OutputUserVariableName": "{vWebsiteUrl}",
+        "CommandID": "2464e7fd-183f-4fbc-bdfd-d91923fe9df3",
+        "CommandName": "SetVariableCommand",
+        "SelectionName": "Set Variable",
+        "LineNumber": 4,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.ErrorHandling.BeginTryCommand, OpenBots.Commands.Core",
+        "CommandID": "cfc1a76d-12e8-47e3-a723-083622529fc5",
+        "CommandName": "BeginTryCommand",
+        "SelectionName": "Try",
+        "LineNumber": 5,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": true,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": ""
+      },
+      "AdditionalScriptCommands": [
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "3b614b6f-bc9c-4ce9-8ec2-152d637555f3",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 6,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "++++++Items in this section will be handled if error occurs++++++"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "3b8480b2-1596-4e9c-9491-bf9fe982f2ef",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 7,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "++++++Creating the Browser Instance ++++++"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.WebBrowser.SeleniumCreateBrowserCommand, OpenBots.Commands.UIAutomation",
+            "v_InstanceName": "DefaultBrowser",
+            "v_EngineType": "Chrome",
+            "v_URL": "{vWebsiteUrl}",
+            "v_InstanceTracking": "Forget Instance",
+            "v_BrowserWindowOption": "Maximize",
+            "v_SeleniumOptions": null,
+            "CommandID": "2f46fba6-6f27-4286-9152-9cfe9369e3cd",
+            "CommandName": "SeleniumCreateBrowserCommand",
+            "SelectionName": "Create Browser",
+            "LineNumber": 8,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "7909a593-0501-42f5-8540-45e8d8a15171",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 9,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "++++++Getting the table Values using the Element action Command.++++++"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.WebBrowser.SeleniumElementActionCommand, OpenBots.Commands.UIAutomation",
+            "v_InstanceName": "DefaultBrowser",
+            "v_SeleniumSearchParameters": [
+              {
+                "Enabled": "True",
+                "Parameter Name": "XPath",
+                "Parameter Value": "/html/body/div[2]/div[1]/div[1]/table[1]"
+              },
+              {
+                "Enabled": "False",
+                "Parameter Name": "ID",
+                "Parameter Value": ""
+              },
+              {
+                "Enabled": "False",
+                "Parameter Name": "Name",
+                "Parameter Value": ""
+              },
+              {
+                "Enabled": "False",
+                "Parameter Name": "Tag Name",
+                "Parameter Value": ""
+              },
+              {
+                "Enabled": "False",
+                "Parameter Name": "Class Name",
+                "Parameter Value": ""
+              },
+              {
+                "Enabled": "False",
+                "Parameter Name": "Link Text",
+                "Parameter Value": ""
+              },
+              {
+                "Enabled": "False",
+                "Parameter Name": "CSS Selector",
+                "Parameter Value": ""
+              }
+            ],
+            "v_SeleniumSearchOption": "Find Element",
+            "v_SeleniumElementAction": "Get Table",
+            "v_WebActionParameterTable": [
+              {
+                "Parameter Name": "Variable Name",
+                "Parameter Value": "{vPriceDT}"
+              }
+            ],
+            "v_Timeout": "30",
+            "CommandID": "e2c243bf-d00a-46aa-ac7e-216f1b5c95bc",
+            "CommandName": "SeleniumElementActionCommand",
+            "SelectionName": "Element Action",
+            "LineNumber": 10,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+            "v_LogFile": "Engine Logs",
+            "v_LogText": "{vPriceDT}",
+            "v_LogType": "Information",
+            "CommandID": "b88ca7bd-09a9-431a-acde-6b0d1df85ad8",
+            "CommandName": "LogMessageCommand",
+            "SelectionName": "Log Message",
+            "LineNumber": 11,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.WebBrowser.SeleniumCloseBrowserCommand, OpenBots.Commands.UIAutomation",
+            "v_InstanceName": "DefaultBrowser",
+            "CommandID": "f02dc550-d771-4226-8487-4ad6cedf54b0",
+            "CommandName": "SeleniumCloseBrowserCommand",
+            "SelectionName": "Close Browser",
+            "LineNumber": 12,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.CatchCommand, OpenBots.Commands.Core",
+            "v_ExceptionType": "Exception",
+            "CommandID": "3ddbe0d2-9e17-4cab-b946-ea8d50831d71",
+            "CommandName": "CatchCommand",
+            "SelectionName": "Catch",
+            "LineNumber": 13,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "3d09cc1f-dff4-4c59-b0ce-0aa1c67cda2a",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 14,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "++++++This section executes if error occurs above++++++"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.GetExceptionMessageCommand, OpenBots.Commands.Core",
+            "v_OutputUserVariableName": "{strException}",
+            "CommandID": "ef7d84cd-c3a6-4baa-bf63-1b1b3ef60f0d",
+            "CommandName": "GetExceptionMessageCommand",
+            "SelectionName": "Get Exception Message",
+            "LineNumber": 15,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "77d03f4c-d1b9-44ba-bc9d-a9733a255d3c",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 16,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "++++++Checking if Browser Instance is open++++++"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.If.BeginIfCommand, OpenBots.Commands.Core",
+            "v_IfActionType": "App Instance Exists",
+            "v_ActionParameterTable": [],
+            "CommandID": "420fc90e-41d0-4e05-9be4-88d386b081b3",
+            "CommandName": "BeginIfCommand",
+            "SelectionName": "Begin If",
+            "LineNumber": 17,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": true,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": [
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "964f15be-d4a4-4fe9-ae61-df1545a8e1cd",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 18,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "Items in this section will run if the statement is true"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.WebBrowser.SeleniumCloseBrowserCommand, OpenBots.Commands.UIAutomation",
+                "v_InstanceName": "DefaultBrowser",
+                "CommandID": "84976e96-1acb-4c0a-ad37-43dd260aec76",
+                "CommandName": "SeleniumCloseBrowserCommand",
+                "SelectionName": "Close Browser",
+                "LineNumber": 19,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.If.EndIfCommand, OpenBots.Commands.Core",
+                "CommandID": "0df6f92d-c62a-4d18-8564-5d23776c296a",
+                "CommandName": "EndIfCommand",
+                "SelectionName": "End If",
+                "LineNumber": 20,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            }
+          ]
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.EndTryCommand, OpenBots.Commands.Core",
+            "CommandID": "1e695a9f-81c3-4d94-aba7-160fef49a012",
+            "CommandName": "EndTryCommand",
+            "SelectionName": "End Try",
+            "LineNumber": 21,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        }
+      ]
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+        "v_LogFile": "Engine Logs",
+        "v_LogText": "Extracted the table data from website successfully",
+        "v_LogType": "Information",
+        "CommandID": "aea71b33-74e9-410a-8a20-420c4f506865",
+        "CommandName": "LogMessageCommand",
+        "SelectionName": "Log Message",
+        "LineNumber": 22,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": ""
+      },
+      "AdditionalScriptCommands": null
+    }
+  ],
+  "Variables": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vWebsiteUrl",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "ProjectPath",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": "Value Provided at Runtime"
+    }
+  ],
+  "Arguments": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptArgument, OpenBots.Core",
+      "ArgumentName": "vPriceDT",
+      "Direction": 1,
+      "ArgumentType": "System.Data.DataTable, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "ArgumentValue": null,
+      "AssignedVariable": null,
+      "IsSecureString": false
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptArgument, OpenBots.Core",
+      "ArgumentName": "strException",
+      "Direction": 1,
+      "ArgumentType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "ArgumentValue": null,
+      "AssignedVariable": null,
+      "IsSecureString": false
+    }
+  ],
+  "Elements": [],
+  "Version": "1.4.0.0"
+}

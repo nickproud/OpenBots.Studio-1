@@ -18,7 +18,6 @@ namespace OpenBots.Core.UI.Controls
         public string DisplayGroup { get; set; }
         public ScriptCommand Command { get; set; }
         public List<Control> UIControls { get; set; }
-        public Image CommandIcon { get; set; }
 
         private void RenderUIComponents(IfrmCommandEditor editorForm, ICommandControls commandControls)
         {
@@ -67,7 +66,7 @@ namespace OpenBots.Core.UI.Controls
             if (!commentControlExists)
             {
                 UIControls.Add(commandControls.CreateDefaultLabelFor("v_Comment", Command));
-                UIControls.Add(commandControls.CreateDefaultInputFor("v_Comment", Command, 100, 300));
+                UIControls.Add(commandControls.CreateDefaultNoValidationInputFor("v_Comment", Command, 100, 300));
             }
         }
 
@@ -107,10 +106,10 @@ namespace OpenBots.Core.UI.Controls
                     switch (control.HelperType)
                     {
                         case UIAdditionalHelperType.ShowVariableHelper:
-                            control.DataSource = editor.ScriptEngineContext.Variables;
+                            control.DataSource = editor.ScriptContext.Variables;
                             break;
                         case UIAdditionalHelperType.ShowElementHelper:
-                            control.DataSource = editor.ScriptEngineContext.Elements;
+                            control.DataSource = editor.ScriptContext.Elements;
                             break;
                         default:
                             break;

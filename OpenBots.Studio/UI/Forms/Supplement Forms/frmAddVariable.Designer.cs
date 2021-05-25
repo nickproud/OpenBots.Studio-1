@@ -42,6 +42,7 @@
             this.lblDefineDefaultTypeDescriptor = new System.Windows.Forms.Label();
             this.cbxDefaultType = new System.Windows.Forms.ComboBox();
             this.lblDefineDefaultType = new System.Windows.Forms.Label();
+            this.lblVariableValueError = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnOk)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).BeginInit();
             this.SuspendLayout();
@@ -145,7 +146,7 @@
             this.uiBtnOk.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnOk.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOk.Image")));
             this.uiBtnOk.IsMouseOver = false;
-            this.uiBtnOk.Location = new System.Drawing.Point(10, 514);
+            this.uiBtnOk.Location = new System.Drawing.Point(10, 545);
             this.uiBtnOk.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnOk.Name = "uiBtnOk";
             this.uiBtnOk.Size = new System.Drawing.Size(60, 60);
@@ -164,7 +165,7 @@
             this.uiBtnCancel.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnCancel.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCancel.Image")));
             this.uiBtnCancel.IsMouseOver = false;
-            this.uiBtnCancel.Location = new System.Drawing.Point(70, 514);
+            this.uiBtnCancel.Location = new System.Drawing.Point(70, 545);
             this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnCancel.Name = "uiBtnCancel";
             this.uiBtnCancel.Size = new System.Drawing.Size(60, 60);
@@ -225,11 +226,23 @@
             this.lblDefineDefaultType.TabIndex = 30;
             this.lblDefineDefaultType.Text = "Define Variable Default Type";
             // 
+            // lblVariableValueError
+            // 
+            this.lblVariableValueError.BackColor = System.Drawing.Color.Transparent;
+            this.lblVariableValueError.Font = new System.Drawing.Font("Segoe UI Light", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblVariableValueError.ForeColor = System.Drawing.Color.Red;
+            this.lblVariableValueError.Location = new System.Drawing.Point(16, 495);
+            this.lblVariableValueError.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblVariableValueError.Name = "lblVariableValueError";
+            this.lblVariableValueError.Size = new System.Drawing.Size(571, 36);
+            this.lblVariableValueError.TabIndex = 33;
+            // 
             // frmAddVariable
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(609, 588);
+            this.ClientSize = new System.Drawing.Size(609, 619);
+            this.Controls.Add(this.lblVariableValueError);
             this.Controls.Add(this.lblDefineDefaultTypeDescriptor);
             this.Controls.Add(this.cbxDefaultType);
             this.Controls.Add(this.lblDefineDefaultType);
@@ -272,5 +285,6 @@
         private System.Windows.Forms.Label lblDefineDefaultTypeDescriptor;
         public System.Windows.Forms.ComboBox cbxDefaultType;
         private System.Windows.Forms.Label lblDefineDefaultType;
+        private System.Windows.Forms.Label lblVariableValueError;
     }
 }

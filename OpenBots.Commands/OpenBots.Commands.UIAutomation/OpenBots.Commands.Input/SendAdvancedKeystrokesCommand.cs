@@ -1,23 +1,22 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace OpenBots.Commands.Input
 {
-	[Serializable]
+    [Serializable]
 	[Category("Input Commands")]
 	[Description("This command sends advanced keystrokes to a targeted window.")]
 	public class SendAdvancedKeystrokesCommand : ScriptCommand, ISendAdvancedKeystrokesCommand
@@ -26,11 +25,11 @@ namespace OpenBots.Commands.Input
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to send advanced keystrokes to.")]
-		[SampleUsage("Untitled - Notepad || Current Window || {vWindow}")]
+		[SampleUsage("\"Untitled - Notepad\" || \"Current Window\" || vWindow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
@@ -65,14 +64,14 @@ namespace OpenBots.Commands.Input
 			v_KeyActions.Columns.Add("Action");
 			v_KeyActions.TableName = "SendAdvancedKeyStrokesCommand" + DateTime.Now.ToString("MMddyy.hhmmss");
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_KeyUpDefault = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableWindowName = v_WindowName.ConvertUserVariableToString(engine);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 
 			//activate anything except current window
 			if (variableWindowName != "Current Window")

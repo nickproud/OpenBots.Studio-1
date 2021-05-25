@@ -8,12 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
 {
-	[Serializable]
+    [Serializable]
 	[Category("Input Commands")]
 	[Description("This command provides the user with an HTML form to input and store a collection of data.")]
 	public class HTMLInputCommand : ScriptCommand
@@ -23,9 +23,8 @@ namespace OpenBots.Commands.Input
 		[DisplayName("HTML")]
 		[Description("Define the form to be displayed using the HTML Builder.")]
 		[SampleUsage("")]
-		[Remarks("")]
+		[Remarks("Should not be enclosed in quotation marks since the HTML is not evaluated as C# code.")]
 		[Editor("ShowHTMLBuilder", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
 		public string v_InputHTML { get; set; }
 
 		[Required]
@@ -48,7 +47,7 @@ namespace OpenBots.Commands.Input
 			v_ErrorOnClose = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
@@ -61,7 +60,7 @@ namespace OpenBots.Commands.Input
 			}
 
 			//sample for temp testing
-			var htmlInput = v_InputHTML.ConvertUserVariableToString(engine);
+			var htmlInput = v_InputHTML;
 
 			//invoke ui for data collection
 			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
@@ -74,7 +73,7 @@ namespace OpenBots.Commands.Input
 				{
 					//store each one into context
 					foreach (var variable in variables)
-						variable.VariableValue.StoreInUserVariable(engine, ConvertStringToVariableName(variable.VariableName), variable.VariableType);
+						variable.VariableValue.SetVariableValue(engine, variable.VariableName);
 				}
 				else if (v_ErrorOnClose == "Yes")
 					throw new Exception("Input Form was closed by the user");
@@ -86,7 +85,7 @@ namespace OpenBots.Commands.Input
 		{
 			base.Render(editor, commandControls);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputHTML", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputHTML", this, editor, 200, 300, false));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_ErrorOnClose", this, editor));
 			
 			return RenderedControls;
@@ -95,14 +94,6 @@ namespace OpenBots.Commands.Input
 		public override string GetDisplayValue()
 		{
 			return base.GetDisplayValue();
-		}
-
-		private static string ConvertStringToVariableName(string variableName)
-		{
-			if (!variableName.Contains("{"))
-				return "{" + variableName + "}";
-			else
-				return variableName;
 		}
 	}
 }

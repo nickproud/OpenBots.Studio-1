@@ -4,13 +4,14 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.API_Methods;
+using OpenBots.Core.Server.HelperMethods;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Asset
@@ -23,10 +24,10 @@ namespace OpenBots.Commands.Asset
         [Required]
         [DisplayName("Number Asset Name")]
         [Description("Enter the name of the Asset.")]
-        [SampleUsage("Name || {vCredentialName}")]
+        [SampleUsage("\"Name\" || vCredentialName")]
         [Remarks("This command will throw an exception if an asset of the wrong type is used.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_AssetName { get; set; }
 
         [Required]
@@ -43,10 +44,10 @@ namespace OpenBots.Commands.Asset
         [Required]
         [DisplayName("Asset Action Value")]
         [Description("Enter the new value you would like to add or subtract from the Asset.")]
-        [SampleUsage("5 || {vAssetValue}")]
+        [SampleUsage("5 || vAssetValue")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(int) })]
         public string v_AssetActionValue { get; set; }
 
         [JsonIgnore]
@@ -68,14 +69,16 @@ namespace OpenBots.Commands.Asset
             CommonMethods.InitializeDefaultWebProtocol();
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var vAssetName = v_AssetName.ConvertUserVariableToString(engine);
-            var vAssetActionValue = v_AssetActionValue.ConvertUserVariableToString(engine);
+            var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
+            if (string.IsNullOrEmpty(v_AssetActionValue))
+                v_AssetActionValue = "0";
+            var vAssetActionValue = (int)await v_AssetActionValue.EvaluateCode(engine);
 
-            var client = AuthMethods.GetAuthToken();
-            var asset = AssetMethods.GetAsset(client, vAssetName, "Number");
+            var userInfo = AuthMethods.GetUserInfo();
+            var asset = AssetMethods.GetAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vAssetName, "Number");
 
             if (asset == null)
                 throw new DataException($"No Asset was found for '{vAssetName}' and type 'Number'");
@@ -83,16 +86,16 @@ namespace OpenBots.Commands.Asset
             switch (v_AssetActionType)
             {
                 case "Increment":
-                    AssetMethods.IncrementAsset(client, asset.Id);
+                    AssetMethods.IncrementAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id);
                     break;
                 case "Decrement":
-                    AssetMethods.DecrementAsset(client, asset.Id);
+                    AssetMethods.DecrementAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id);
                     break;
                 case "Add":
-                    AssetMethods.AddAsset(client, asset.Id, vAssetActionValue);
+                    AssetMethods.AddAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id, vAssetActionValue);
                     break;
                 case "Subtract":
-                    AssetMethods.SubtractAsset(client, asset.Id, vAssetActionValue);
+                    AssetMethods.SubtractAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id, vAssetActionValue);
                     break;
             }
         }
@@ -129,7 +132,7 @@ namespace OpenBots.Commands.Asset
         {
             base.Shown();
             _hasRendered = true;
-            AssetActionTypeComboBox_SelectedIndexChanged(this, null);
+            AssetActionTypeComboBox_SelectedIndexChanged(null, null);
         }
 
         private void AssetActionTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)

@@ -8,45 +8,70 @@ namespace OpenBots.Core.IO
 {
     public static class Folders
     {
-        public static string GetFolder(FolderType folderType)
+        public static string GetFolder(FolderType folderType, bool createFolder = true)
         {
+            string folderPath;
             switch (folderType)
             {
                 case FolderType.RootFolder:
                     //return root folder from settings
                     var rootSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
-                    var rootFolder = rootSettings.ClientSettings.RootFolder;
-                    return rootFolder;
+                    folderPath = rootSettings.ClientSettings.RootFolder;
+                    break;
                 case FolderType.AttendedTasksFolder:
                     //return attended tasks folder from settings
                     var attendedSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
-                    var attentedTasksFolder = attendedSettings.ClientSettings.AttendedTasksFolder;
-                    return attentedTasksFolder;
+                    folderPath = attendedSettings.ClientSettings.AttendedTasksFolder;
+                    break;
                 case FolderType.SettingsFolder:
                     //return app data OpenBots folder
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc");
+                    folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc");
+                    break;
+                case FolderType.StudioFolder:
+                    //return app data OpenBots.Studio folder
+                    folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "OpenBots Studio");
+                    break;
                 case FolderType.ScriptsFolder:
                     //return scripts folder
-                    return Path.Combine(GetFolder(FolderType.RootFolder), "My Scripts");
+                    folderPath = Path.Combine(GetFolder(FolderType.RootFolder), "My Scripts");
+                    break;
                 case FolderType.PublishedFolder:
                     //return scripts folder
-                    return Path.Combine(GetFolder(FolderType.RootFolder), "Published");
+                    folderPath = Path.Combine(GetFolder(FolderType.RootFolder), "Published");
+                    break;
                 case FolderType.LogFolder:
                     //return logs folder
-                    return Path.Combine(GetFolder(FolderType.RootFolder), "Logs");
+                    folderPath = Path.Combine(GetFolder(FolderType.RootFolder), "Logs");
+                    break;
                 case FolderType.TempFolder:
                     //return temp folder
-                    return Path.Combine(Path.GetTempPath(), "OpenBotsStudio");
+                    folderPath = Path.Combine(Path.GetTempPath(), "OpenBotsStudio");
+                    break;
                 case FolderType.LocalAppDataPackagesFolder:
                     //return local app data packages folder
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "packages");
+                    folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "Packages");
+                    break;
                 case FolderType.ProgramFilesPackagesFolder:
                     //return program files packages folder
-                    return Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "packages", Application.ProductVersion);
+                    folderPath = Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "Packages", Application.ProductVersion);
+                    break;
+                case FolderType.ProgramFilesExtensionsFolder:
+                    //return program files packages folder
+                    folderPath = Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "Extensions");
+                    break;
+                case FolderType.LocalAppDataExtensionsFolder:
+                    //return program files packages folder
+                    folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc", "OpenBots Studio", "Extensions");
+                    break;
                 default:
                     //enum is not implemented
                     throw new NotImplementedException("FolderType " + folderType.ToString() + " Not Supported");
             }
+
+            if (!Directory.Exists(folderPath) && createFolder)
+                Directory.CreateDirectory(folderPath);
+
+            return folderPath;
         }
     }
 }

@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -24,7 +26,8 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(IWebDriver) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -42,16 +45,16 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("Frame Search Parameter")]
 		[Description("Provide the parameter to match (ex. Index, Name or ID).")]
-		[SampleUsage("1 || name || {vSearchData}")]
+		[SampleUsage("1 || \"name\" || vSearchData")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_FrameParameter { get; set; }
 
 		public SeleniumSwitchBrowserFrameCommand()
 		{
 			CommandName = "SeleniumSwitchBrowserFrameCommand";
-			SelectionName = "Switch Browser Frame";
+			SelectionName = "Selenium Switch Browser Frame";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
@@ -60,21 +63,21 @@ namespace OpenBots.Commands.WebBrowser
 			v_FrameParameter = "0";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var browserObject = v_InstanceName.GetAppInstance(engine);
+			var browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var seleniumInstance = (IWebDriver)browserObject;
-			var frameIndex = v_FrameParameter.ConvertUserVariableToString(engine);
+			dynamic frameIndex = await v_FrameParameter.EvaluateCode(engine);
 
 			switch (v_SelectionType)
 			{
 				case "Index":
-					var intFrameIndex = int.Parse(frameIndex);
+					var intFrameIndex = (int)frameIndex;
 					seleniumInstance.SwitchTo().Frame(intFrameIndex);
 					break;
 				case "Name or ID":
-					seleniumInstance.SwitchTo().Frame(frameIndex);
+					seleniumInstance.SwitchTo().Frame((string)frameIndex);
 					break;
 				case "Parent Frame":
 					seleniumInstance.SwitchTo().ParentFrame();

@@ -45,9 +45,13 @@ namespace OpenBots.Core.Script
         /// </summary>
         public List<ScriptElement> Elements { get; set; }
         /// <summary>
+        /// Contains user-selected assemblies
+        /// </summary>
+        public Dictionary<string, List<AssemblyReference>> ImportedNamespaces { get; set; }
+        /// <summary>
         /// Contains user-selected commands
         /// </summary>
-        public List<ScriptAction> Commands;
+        public List<ScriptAction> Commands;        
         public string Version { get; set; }
 
         public Script()
@@ -56,6 +60,7 @@ namespace OpenBots.Core.Script
             Arguments = new List<ScriptArgument>();
             Elements = new List<ScriptElement>();
             Commands = new List<ScriptAction>();
+            ImportedNamespaces = new Dictionary<string, List<AssemblyReference>>(ScriptDefaultNamespaces.DefaultNamespaces);
         }
 
         /// <summary>
@@ -83,6 +88,8 @@ namespace OpenBots.Core.Script
 
             //save elements to file
             script.Elements = engineContext.Elements;
+
+            script.ImportedNamespaces = engineContext.ImportedNamespaces;
 
             //set version to current application version
             script.Version = Application.ProductVersion;
@@ -196,6 +203,9 @@ namespace OpenBots.Core.Script
             Script deserializedData = JsonConvert.DeserializeObject<Script>(File.ReadAllText(engineContext.FilePath), serializerSettings);
             Version deserializedScriptVersion;
 
+            deserializedData.Commands.ForEach(x => { if (x.ScriptCommand != null) { x.ScriptCommand.CommandIcon = null; }});
+            GC.Collect();
+
             if (deserializedData != null)
             {
                 if (deserializedData.Version == null)
@@ -232,7 +242,7 @@ namespace OpenBots.Core.Script
             {
                 VariableName = "ProjectPath",
                 VariableType = typeof(string),
-                VariableValue = "Value Provided at Runtime"
+                VariableValue = "\"Value Provided at Runtime\""
             };
             deserializedData.Variables.Add(projectPathVariable);
 

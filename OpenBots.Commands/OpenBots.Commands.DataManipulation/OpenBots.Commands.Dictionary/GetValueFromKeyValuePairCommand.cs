@@ -1,19 +1,16 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Dictionary
 {
@@ -25,7 +22,7 @@ namespace OpenBots.Commands.Dictionary
 		[Required]
 		[DisplayName("KeyValuePair")]
 		[Description("Specify the KeyValuePair variable to get a value from.")]
-		[SampleUsage("{vKeyValuePair}")]
+		[SampleUsage("vKeyValuePair")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(KeyValuePair<,>) })]
@@ -35,9 +32,9 @@ namespace OpenBots.Commands.Dictionary
 		[Editable(false)]
 		[DisplayName("Output Value Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(OBDataTable), typeof(MailItem), typeof(MimeMessage), typeof(IWebElement), typeof(object) })]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetValueFromKeyValuePairCommand()
@@ -48,28 +45,13 @@ namespace OpenBots.Commands.Dictionary
 			CommandIcon = Resources.command_dictionary;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
-			//Get Value from KeyValuePair
 			var engine = (IAutomationEngineInstance)sender;
+			dynamic dynamicKVPair = await v_InputKeyValuePair.EvaluateCode(engine);
+			dynamic dynamicValue = dynamicKVPair.Value;
 
-			dynamic keyValuePair;
-			if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, string>)
-				keyValuePair = (KeyValuePair<string, string>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
-			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, OBDataTable>)
-				keyValuePair = (KeyValuePair<string, OBDataTable>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
-			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, MailItem>)
-				keyValuePair = (KeyValuePair<string, MailItem>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
-			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, MimeMessage>)
-				keyValuePair = (KeyValuePair<string, MimeMessage>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
-			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, IWebElement>)
-				keyValuePair = (KeyValuePair<string, IWebElement>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
-			else if (v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this) is KeyValuePair<string, object>)
-				keyValuePair = (KeyValuePair<string, object>)v_InputKeyValuePair.ConvertUserVariableToObject(engine, nameof(v_InputKeyValuePair), this);
-			else
-				throw new DataException("Invalid dictionary value type, please provide valid dictionary value type.");
-
-			((object)keyValuePair.Value).StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)dynamicValue).SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

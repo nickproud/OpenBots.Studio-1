@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -26,34 +28,35 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(IWebDriver) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("URL")]
 		[Description("Enter the URL that you want the selenium instance to navigate to.")]
-		[SampleUsage("https://mycompany.com/orders || {vURL}")]
+		[SampleUsage("\"https://mycompany.com/orders\" || vURL")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_URL { get; set; }
 
 		public SeleniumNavigateToURLCommand()
 		{
 			CommandName = "SeleniumNavigateToURLCommand";
-			SelectionName = "Navigate to URL";
+			SelectionName = "Selenium Navigate to URL";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
 			v_InstanceName = "DefaultBrowser";
-			v_URL = "https://";
+			v_URL = "\"https://\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var browserObject = v_InstanceName.GetAppInstance(engine);
-			var vURL = v_URL.ConvertUserVariableToString(engine);
+			var browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
+			var vURL = (string)await v_URL.EvaluateCode(engine);
 			var seleniumInstance = (IWebDriver)browserObject;
 
 			try

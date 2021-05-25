@@ -15,6 +15,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.If
 {
@@ -38,7 +39,7 @@ namespace OpenBots.Commands.If
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("ShowIfBuilder", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string) }, true)]
+		[CompatibleTypes(new Type[] { typeof(Bitmap), typeof(DateTime), typeof(string), typeof(double), typeof(int), typeof(bool) })]
 		public DataTable v_IfConditionsTable { get; set; }
 
 		[JsonIgnore]
@@ -60,7 +61,7 @@ namespace OpenBots.Commands.If
 			v_IfConditionsTable.Columns.Add("CommandData");
 		}
 	   
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
@@ -69,7 +70,7 @@ namespace OpenBots.Commands.If
 			{
 				var commandData = rw["CommandData"].ToString();
 				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
-				var statementResult = CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
+				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
 
 				if (!statementResult && v_LogicType == "And")
 				{
@@ -129,7 +130,7 @@ namespace OpenBots.Commands.If
 				if ((engine.IsCancellationPending) || (engine.CurrentLoopCancelled))
 					return;
 
-				engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[i]);
+				await engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[i]);
 			}
 		}
 
@@ -207,14 +208,11 @@ namespace OpenBots.Commands.If
 					editor.EditingCommand = ifCommand;
 					editor.OriginalCommand = ifCommand;
 					editor.CreationModeInstance = CreationMode.Edit;
-					editor.ScriptEngineContext = parentEditor.ScriptEngineContext;
+					editor.ScriptContext = parentEditor.ScriptContext;
 					editor.TypeContext = parentEditor.TypeContext;
 
 					if (((Form)editor).ShowDialog() == DialogResult.OK)
 					{
-						parentEditor.ScriptEngineContext = editor.ScriptEngineContext;
-						parentEditor.TypeContext = editor.TypeContext;
-
 						var editedCommand = editor.SelectedCommand as BeginIfCommand;
 						var displayText = editedCommand.GetDisplayValue();
 						var serializedData = JsonConvert.SerializeObject(editedCommand);
@@ -240,7 +238,7 @@ namespace OpenBots.Commands.If
 			var automationCommands = new List<AutomationCommand>() { CommandsHelper.ConvertToAutomationCommand(typeof(BeginIfCommand)) };
 			IfrmCommandEditor editor = commandControls.CreateCommandEditorForm(automationCommands, null);
             editor.SelectedCommand = new BeginIfCommand();
-			editor.ScriptEngineContext = parentEditor.ScriptEngineContext;
+			editor.ScriptContext = parentEditor.ScriptContext;
 			editor.TypeContext = parentEditor.TypeContext;
 
 			if (((Form)editor).ShowDialog() == DialogResult.OK)
@@ -249,7 +247,7 @@ namespace OpenBots.Commands.If
 				var configuredCommand = editor.SelectedCommand as BeginIfCommand;
 				var displayText = configuredCommand.GetDisplayValue();
 				var serializedData = JsonConvert.SerializeObject(configuredCommand);
-				parentEditor.ScriptEngineContext = editor.ScriptEngineContext;
+				parentEditor.ScriptContext = editor.ScriptContext;
 				parentEditor.TypeContext = editor.TypeContext;
 
 				//add to list

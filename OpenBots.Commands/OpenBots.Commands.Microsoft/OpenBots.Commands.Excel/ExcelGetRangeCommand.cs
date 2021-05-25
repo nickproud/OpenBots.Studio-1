@@ -15,6 +15,8 @@ using System.Data;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using DataTable = System.Data.DataTable;
+using System.Threading.Tasks;
+using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.Excel
 {
@@ -29,16 +31,17 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Range")]
 		[Description("Enter the location of the range to extract.")]
-		[SampleUsage("A1:B10 || A1: || {vRange} || {vStart}:{vEnd} || {vStart}:")]
+		[SampleUsage("\"A1:B10\" || \"A1:\" || vRange || vStart + \":\" + vEnd || vStart + \":\"")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Range { get; set; }   
 
 		[Required]
@@ -63,7 +66,7 @@ namespace OpenBots.Commands.Excel
 		[Editable(false)]
 		[DisplayName("Output DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(DataTable) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -73,19 +76,19 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelGetRangeCommand";
 			SelectionName = "Get Range";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 			v_AddHeaders = "Yes";
 			v_Formulas = "No";
-			v_Range = "A1:";
+			v_Range = "\"A1:\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{         
 			var engine = (IAutomationEngineInstance)sender;
-			var excelObject = v_InstanceName.GetAppInstance(engine);
-			var vRange = v_Range.ConvertUserVariableToString(engine);
+			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
+			var vRange = (string)await v_Range.EvaluateCode(engine);
 			var excelInstance = (Application)excelObject;
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;
@@ -177,7 +180,7 @@ namespace OpenBots.Commands.Excel
 					}
 				}
 
-				DT.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+				DT.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 		}
 

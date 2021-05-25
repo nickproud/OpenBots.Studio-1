@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.SecureData
 {
@@ -22,17 +23,17 @@ namespace OpenBots.Commands.SecureData
 		[Required]
 		[DisplayName("Input Text")]
 		[Description("Enter the text for the variable.")]
-		[SampleUsage("Some Text || {vText}")]
+		[SampleUsage("\"Some Text\" || vText")]
 		[Remarks("You can use variables in input if you encase them within braces {vText}. You can also perform basic math operations.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Input { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output SecureString Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(SecureString) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -46,12 +47,12 @@ namespace OpenBots.Commands.SecureData
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			SecureString secureStringValue = v_Input.ConvertUserVariableToString(engine).ConvertStringToSecureString();
+			SecureString secureStringValue = ((string)await v_Input.EvaluateCode(engine)).ConvertStringToSecureString();
 
-			secureStringValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
+			secureStringValue.SetVariableValue(engine, v_OutputUserVariableName);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

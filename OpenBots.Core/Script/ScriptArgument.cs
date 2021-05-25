@@ -12,12 +12,6 @@ namespace OpenBots.Core.Script
         public string ArgumentName { get; set; }
 
         /// <summary>
-        /// direction of the argument or current index
-        /// </summary>
-        public ScriptArgumentDirection Direction { get; set; }
-
-
-        /// <summary>
         /// type of the argument or current index
         /// </summary>
         public Type ArgumentType { get; set; }
@@ -28,13 +22,13 @@ namespace OpenBots.Core.Script
         public object ArgumentValue { get; set; }
 
         /// <summary>
+        /// direction of the argument or current index
+        /// </summary>
+        public ScriptArgumentDirection Direction { get; set; }
+
+        /// <summary>
         /// name of the variable assigned to an Out Argument
         /// </summary>
         public string AssignedVariable { get; set; }
-
-        /// <summary>
-        /// To check if the value is a secure string
-        /// </summary>
-        public bool IsSecureString { get; set; }
     }
 }

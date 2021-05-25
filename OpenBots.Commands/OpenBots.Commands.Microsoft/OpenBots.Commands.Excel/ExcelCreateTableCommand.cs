@@ -4,12 +4,14 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -25,34 +27,35 @@ namespace OpenBots.Commands.Excel
         [Description("Enter the unique instance that was specified in the **Create Application** command.")]
         [SampleUsage("MyExcelInstance")]
         [Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-        [CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
         public string v_InstanceName { get; set; }
 
         [Required]
         [DisplayName("Range")]
         [Description("Enter the Range to extract data from for the creation of an Excel Table.")]
-        [SampleUsage("A1:B10 || A1: || {vRange} || {vStart}:{vEnd} || {vStart}:")]
+        [SampleUsage("\"A1:B10\" || \"A1:\" || vRange || vStart + \":\" + vEnd || vStart + \":\"")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_Range { get; set; }
 
         [Required]
         [DisplayName("Excel Table Name")]
         [Description("Enter the name of the Excel Table to be created.")]
-        [SampleUsage("TableName || {vTableName}")]
+        [SampleUsage("\"TableName\" || vTableName")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_TableName { get; set; }
 
         [Required]
         [DisplayName("Range Worksheet Name")]
         [Description("Enter the name of the Worksheet containing the Range being used to create the Excel Table.")]
-        [SampleUsage("Sheet1 || {vSheet}")]
+        [SampleUsage("\"Sheet1\" || vSheet")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNameExcelTable { get; set; }
 
         public ExcelCreateTableCommand()
@@ -60,18 +63,18 @@ namespace OpenBots.Commands.Excel
             CommandName = "ExcelCreateTableCommand";
             SelectionName = "Create Excel Table";
             CommandEnabled = true;
-            CommandIcon = Resources.command_spreadsheet;
+            CommandIcon = Resources.command_excel;
 
             v_InstanceName = "DefaultExcel";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = v_SheetNameExcelTable.ConvertUserVariableToString(engine);
-            var vRange = v_Range.ConvertUserVariableToString(engine);
-            var vTableName = v_TableName.ConvertUserVariableToString(engine);
-            var excelObject = v_InstanceName.GetAppInstance(engine);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
+            var vRange = (string)await v_Range.EvaluateCode(engine);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine);
+            var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
 

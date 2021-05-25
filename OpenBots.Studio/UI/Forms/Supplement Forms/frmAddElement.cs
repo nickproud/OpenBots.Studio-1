@@ -10,10 +10,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 {
     public partial class frmAddElement : UIForm
     {
-        public List<ScriptElement> ScriptElements { get; set; }
+        public ScriptContext ScriptContext { get; set; }
         public DataTable ElementValueDT { get; set; }
         private bool _isEditMode;
         private string _editingVariableName;
+        public List<ScriptElement> ElementsCopy { get; set; }
 
         public frmAddElement()
         {
@@ -24,13 +25,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             ElementValueDT.Columns.Add("Parameter Value");
             ElementValueDT.TableName = DateTime.Now.ToString("ElementValueDT" + DateTime.Now.ToString("MMddyy.hhmmss"));
 
-            ElementValueDT.Rows.Add(true, "XPath", "");
-            ElementValueDT.Rows.Add(false, "ID", "");
-            ElementValueDT.Rows.Add(false, "Name", "");
-            ElementValueDT.Rows.Add(false, "Tag Name", "");
-            ElementValueDT.Rows.Add(false, "Class Name", "");
-            ElementValueDT.Rows.Add(false, "Link Text", "");
-            ElementValueDT.Rows.Add(false, "CSS Selector", "");
+            ElementValueDT.Rows.Add(true, "\"XPath\"", "");
+            ElementValueDT.Rows.Add(true, "\"Relative XPath\"", "");
+            ElementValueDT.Rows.Add(false, "\"ID\"", "");
+            ElementValueDT.Rows.Add(false, "\"Name\"", "");
+            ElementValueDT.Rows.Add(false, "\"Tag Name\"", "");
+            ElementValueDT.Rows.Add(false, "\"Class Name\"", "");
+            ElementValueDT.Rows.Add(false, "\"Link Text\"", "");
+            ElementValueDT.Rows.Add(false, "\"CSS Selector\"", "");
         }
 
         public frmAddElement(string elementName, DataTable elementValueDT)
@@ -60,7 +62,13 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             }
 
             string newElementName = txtElementName.Text;
-            var existingElement = ScriptElements.Where(var => var.ElementName == newElementName).FirstOrDefault();
+
+            ScriptElement existingElement;
+            if (ElementsCopy != null)
+                existingElement = ElementsCopy.Where(var => var.ElementName == newElementName).FirstOrDefault();
+            else
+                existingElement = ScriptContext.Elements.Where(var => var.ElementName == newElementName).FirstOrDefault();
+
             if (existingElement != null)                
             {
                 if (!_isEditMode || existingElement.ElementName != _editingVariableName)

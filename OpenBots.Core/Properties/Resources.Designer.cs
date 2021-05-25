@@ -273,6 +273,16 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap command_excel {
+            get {
+                object obj = ResourceManager.GetObject("command_excel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap command_exception {
             get {
                 object obj = ResourceManager.GetObject("command_exception", resourceCulture);
@@ -353,6 +363,16 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap command_nativechrome {
+            get {
+                object obj = ResourceManager.GetObject("command_nativechrome", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap command_nextloop {
             get {
                 object obj = ResourceManager.GetObject("command_nextloop", resourceCulture);
@@ -366,6 +386,16 @@ namespace OpenBots.Core.Properties {
         public static System.Drawing.Bitmap command_nlg {
             get {
                 object obj = ResourceManager.GetObject("command_nlg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap command_outlook {
+            get {
+                object obj = ResourceManager.GetObject("command_outlook", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -601,6 +631,16 @@ namespace OpenBots.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap command_word {
+            get {
+                object obj = ResourceManager.GetObject("command_word", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
         ///&lt;html lang=&quot;en&quot;&gt;
         ///&lt;head&gt;
@@ -639,6 +679,7 @@ namespace OpenBots.Core.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
         /// <summary>
         ///   Looks up a localized string similar to {test credential password}.
         /// </summary>

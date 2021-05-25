@@ -1,0 +1,10 @@
+﻿using System;
+
+namespace OpenBots.NativeServer.Library
+{
+    [Serializable]
+    public class NotRegisteredWithChromeException : Exception
+    {
+        public NotRegisteredWithChromeException(string message) : base(message) { }
+    }
+}

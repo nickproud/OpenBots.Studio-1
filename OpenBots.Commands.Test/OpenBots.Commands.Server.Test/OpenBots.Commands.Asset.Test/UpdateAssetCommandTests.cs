@@ -2,7 +2,6 @@
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using System;
-using System.Data;
 using System.IO;
 using Xunit;
 
@@ -15,7 +14,7 @@ namespace OpenBots.Commands.Asset.Test
         private GetAssetCommand _getAsset;
 
         [Fact]
-        public void UpdatesTextAsset()
+        public async void UpdatesTextAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
@@ -40,14 +39,14 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = "{output}".ConvertUserVariableToString(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
             Assert.Equal("newText", outputAsset);
 
             resetAsset(assetName, "testText", "Text");
         }
 
         [Fact]
-        public void UpdatesNumberAsset()
+        public async void UpdatesNumberAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
@@ -72,42 +71,42 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = "{output}".ConvertUserVariableToString(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
             Assert.Equal("70", outputAsset);
 
             resetAsset(assetName, "42", "Number");
         }
 
         [Fact]
-        public void UpdatesJSONAsset()
+        public async void UpdatesJsonAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
             _getAsset = new GetAssetCommand();
 
-            string assetName = "testJSONAsset";
+            string assetName = "testJsonAsset";
             string newAsset = "{ \"text\": \"newText\" }";
             VariableMethods.CreateTestVariable(assetName, _engine, "assetName", typeof(string));
             VariableMethods.CreateTestVariable(newAsset, _engine, "newAsset", typeof(string));
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
 
             _updateAsset.v_AssetName = "{assetName}";
-            _updateAsset.v_AssetType = "JSON";
+            _updateAsset.v_AssetType = "Json";
             _updateAsset.v_AssetFilePath = "";
             _updateAsset.v_AssetValue = "{newAsset}";
 
             _updateAsset.RunCommand(_engine);
 
             _getAsset.v_AssetName = "{assetName}";
-            _getAsset.v_AssetType = "JSON";
+            _getAsset.v_AssetType = "Json";
             _getAsset.v_OutputUserVariableName = "{output}";
 
             _getAsset.RunCommand(_engine);
 
-            JObject outputAsset = JObject.Parse("{output}".ConvertUserVariableToString(_engine));
+            JObject outputAsset = (JObject)await "{output}".EvaluateCode(_engine);
             Assert.Equal("newText", outputAsset["text"]);
 
-            resetAsset(assetName, "{ \"text\": \"testText\" }", "JSON");
+            resetAsset(assetName, "{ \"text\": \"testText\" }", "Json");
         }
 
         [Fact]
@@ -146,7 +145,7 @@ namespace OpenBots.Commands.Asset.Test
         }
 
         [Fact]
-        public void HandlesNonexistentAsset()
+        public async System.Threading.Tasks.Task HandlesNonexistentAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
@@ -162,7 +161,7 @@ namespace OpenBots.Commands.Asset.Test
             _updateAsset.v_AssetFilePath = "";
             _updateAsset.v_AssetValue = "{newAsset}";
 
-            Assert.Throws<DataException>(() => _updateAsset.RunCommand(_engine));
+            Assert.ThrowsAsync<ArgumentNullException>(() => _updateAsset.RunCommand(_engine));
         }
 
         private void resetAsset(string assetName, string assetVal, string type)
@@ -170,9 +169,13 @@ namespace OpenBots.Commands.Asset.Test
             _engine = new AutomationEngineInstance(null);
             _updateAsset = new UpdateAssetCommand();
 
-            _updateAsset.v_AssetName = assetName;
+            VariableMethods.CreateTestVariable(assetName, _engine, "assetName", typeof(string));
+            VariableMethods.CreateTestVariable(assetVal, _engine, "assetVal", typeof(string));
+            VariableMethods.CreateTestVariable(null, _engine, "output", typeof(string));
+
+            _updateAsset.v_AssetName = "{assetName}";
             _updateAsset.v_AssetType = type;
-            _updateAsset.v_AssetValue = assetVal;
+            _updateAsset.v_AssetValue = "{assetVal}";
 
             if (type == "File")
             {

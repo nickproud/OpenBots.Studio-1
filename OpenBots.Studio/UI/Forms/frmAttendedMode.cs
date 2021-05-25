@@ -36,8 +36,6 @@ namespace OpenBots.UI.Forms
 
             //setup file system watcher
             _publishedProjectsPath = Folders.GetFolder(FolderType.PublishedFolder);
-            if (!Directory.Exists(_publishedProjectsPath))
-                Directory.CreateDirectory(_publishedProjectsPath);
 
             attendedScriptWatcher.Path = _publishedProjectsPath;
             attendedScriptWatcher.Filter = "*.*";
@@ -106,13 +104,13 @@ namespace OpenBots.UI.Forms
 
             string configPath;
             string projectPath;
-            ProjectType projectType;
+            Project project;
 
             try
             {                
                 configPath = Project.ExtractGalleryProject(newProjectPath);
                 projectPath = Directory.GetParent(configPath).ToString();
-                projectType = Project.OpenProject(configPath).ProjectType;
+                project = Project.OpenProject(configPath);
             }
             catch (Exception ex)
             {
@@ -121,7 +119,7 @@ namespace OpenBots.UI.Forms
                 return;
             }
 
-            switch (projectType)
+            switch (project.ProjectType)
             {
                 case ProjectType.OpenBots:
                     var projectName = new DirectoryInfo(projectPath).Name;
@@ -148,7 +146,7 @@ namespace OpenBots.UI.Forms
                 case ProjectType.Python:
                 case ProjectType.TagUI:
                 case ProjectType.CSScript:
-                    ExecutionManager.RunTextEditorProject(configPath);
+                    ExecutionManager.RunTextEditorProject(configPath, project.ProjectArguments);
                     break;
             }
             

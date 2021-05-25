@@ -3,14 +3,14 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.API_Methods;
+using OpenBots.Core.Server.HelperMethods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.ServerEmail
@@ -22,62 +22,62 @@ namespace OpenBots.Commands.ServerEmail
     {
         [DisplayName("Account Name (Optional)")]
         [Description("Define the account name to use when contacting the Server email service.")]
-        [SampleUsage("myRobot || {vAccountName}")]
+        [SampleUsage("\"myRobot\" || vAccountName")]
         [Remarks("If no account name is specified, the default account will be used.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_AccountName { get; set; }
 
         [Required]
         [DisplayName("To Recipient(s)")]
         [Description("Enter the email address(es) of the 'To' recipient(s).")]
-        [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
-        [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"test@test.com\", \"test2@test.com\" } || vEmailsList")]
+        [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(List<string>) })]
         public string v_ToRecipients { get; set; }
 
         [DisplayName("CC Recipient(s) (Optional)")]
         [Description("Enter the email address(es) of the 'CC' recipient(s).")]
-        [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
-        [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"test@test.com\", \"test2@test.com\" } || vEmailsList")]
+        [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(List<string>) })]
         public string v_CCRecipients { get; set; }
 
         [DisplayName("BCC Recipient(s) (Optional)")]
         [Description("Enter the email address(es) of the BCC recipient(s).")]
-        [SampleUsage("test@test.com || test@test.com;test2@test.com || {vEmail} || {vEmail1};{vEmail2} || {vEmails}")]
-        [Remarks("Multiple recipient email addresses should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"test@test.com\", \"test2@test.com\" } || vEmailsList")]
+        [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(List<string>) })]
         public string v_BCCRecipients { get; set; }
 
         [Required]
         [DisplayName("Email Subject")]
         [Description("Enter the subject of the email.")]
-        [SampleUsage("Hello || {vSubject}")]
+        [SampleUsage("\"Hello\" || vSubject")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_Subject { get; set; }
 
         [Required]
         [DisplayName("Email Body")]
         [Description("Enter text to be used as the email body.")]
-        [SampleUsage("Dear John, ... || {vBody}")]
+        [SampleUsage("\"Dear John, ...\" || vBody")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_Body { get; set; }
 
         [DisplayName("Attachment File Path(s) (Optional)")]
         [Description("Enter the file path(s) of the file(s) to attach.")]
-        [SampleUsage(@"C:\temp\myFile.xlsx || {vFile} || C:\temp\myFile1.xlsx;C:\temp\myFile2.xlsx || {vFile1};{vFile2} || {vFiles}")]
-        [Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"C:\\temp\\myFile1.xlsx\", \"C:\\temp\\myFile2.xlsx\" } || vFileList")]
+        [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
         [Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(List<string>) })]
         public string v_Attachments { get; set; }
 
         public SendServerEmailCommand()
@@ -92,20 +92,27 @@ namespace OpenBots.Commands.ServerEmail
             CommonMethods.InitializeDefaultWebProtocol();
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            var vAccountName = v_AccountName.ConvertUserVariableToString(engine);
-            var vToRecipients = v_ToRecipients.ConvertUserVariableToString(engine);
-            var vCCRecipients = v_CCRecipients.ConvertUserVariableToString(engine);
-            var vBCCRecipients = v_BCCRecipients.ConvertUserVariableToString(engine);
-            var vSubject = v_Subject.ConvertUserVariableToString(engine);
-            var vBody = v_Body.ConvertUserVariableToString(engine);
-            var vAttachments = v_Attachments.ConvertUserVariableToString(engine);
+            var vAccountName = (string)await v_AccountName.EvaluateCode(engine);
+            var vToRecipients = (List<string>)await v_ToRecipients.EvaluateCode(engine);
+            var vSubject = (string)await v_Subject.EvaluateCode(engine);
+            var vBody = (string)await v_Body.EvaluateCode(engine);
+            
+            var toEmailList = GetEmailList(vToRecipients);
 
-            var toEmailList = ServerEmailMethods.GetEmailList(vToRecipients);
-            var ccEmailList = ServerEmailMethods.GetEmailList(vCCRecipients);
-            var bccEmailList = ServerEmailMethods.GetEmailList(vBCCRecipients);
+            List<string> vCCRecipients = null;
+            if (!string.IsNullOrEmpty(v_CCRecipients))
+                vCCRecipients = (List<string>)await v_CCRecipients.EvaluateCode(engine);
+
+            var ccEmailList = GetEmailList(vCCRecipients);
+
+            List<string> vBCCRecipients = null;
+            if (!string.IsNullOrEmpty(v_BCCRecipients))
+                vBCCRecipients = (List<string>)await v_BCCRecipients.EvaluateCode(engine);
+
+            var bccEmailList = GetEmailList(vBCCRecipients);
 
             var emailMessage = new EmailMessage()
             {
@@ -116,11 +123,16 @@ namespace OpenBots.Commands.ServerEmail
                 Body = vBody
             };
 
-            if (string.IsNullOrEmpty(vToRecipients))
+            if (vToRecipients == null)
                 throw new NullReferenceException("To Recipient(s) cannot be empty");
 
-            var client = AuthMethods.GetAuthToken();
-            ServerEmailMethods.SendServerEmail(client, emailMessage, vAttachments, vAccountName);
+            var userInfo = AuthMethods.GetUserInfo();
+
+            List<string> vAttachments = null;
+            if (!string.IsNullOrEmpty(v_Attachments))
+                vAttachments = (List<string>)await v_Attachments.EvaluateCode(engine);
+
+            ServerEmailMethods.SendServerEmail(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, emailMessage, vAttachments, vAccountName);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -141,6 +153,26 @@ namespace OpenBots.Commands.ServerEmail
         public override string GetDisplayValue()
         {
             return base.GetDisplayValue() + $" [To '{v_ToRecipients}' - Subject '{v_Subject}']";
+        }
+
+        private List<EmailAddress> GetEmailList(List<string> recipients)
+        {
+            var emailList = new List<EmailAddress>();
+
+            if (recipients != null)
+            {
+                foreach (var recipient in recipients)
+                {
+                    var email = new EmailAddress()
+                    {
+                        Name = recipient,
+                        Address = recipient
+                    };
+                    emailList.Add(email);
+                }
+            }
+
+            return emailList;
         }
     }
 }

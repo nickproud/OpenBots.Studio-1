@@ -1,12 +1,8 @@
-﻿using OpenQA.Selenium;
-using SHDocVw;
+﻿using OpenBots.Core.Model.ApplicationModel;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OleDb;
-using System.Diagnostics;
-using ExcelApplication = Microsoft.Office.Interop.Excel.Application;
-using WordApplication = Microsoft.Office.Interop.Word.Application;
 
 namespace OpenBots.Core.Script
 {
@@ -15,24 +11,16 @@ namespace OpenBots.Core.Script
         public static Dictionary<string, Type> DefaultVarArgTypes = new Dictionary<string, Type>()
         {
             { "More Options...", typeof(MoreOptions) },
-            { typeof(string).ToString(), typeof(string) },
-            { typeof(int).ToString(), typeof(int) },
-            { typeof(bool).ToString(), typeof(bool) },
-            { typeof(List<>).ToString(), typeof(List<>) },
-            { typeof(Dictionary<,>).ToString(), typeof(Dictionary<,>) },
-            { typeof(DataTable).ToString(), typeof(DataTable) },
-            { typeof(DataRow).ToString(), typeof(DataRow) }         
-        };
-
-        public static Dictionary<string, Type> DefaultInstanceTypes = new Dictionary<string, Type>()
-        {
-            { "More Options...", typeof(MoreOptions) },
-            { typeof(IWebDriver).ToString(), typeof(IWebDriver) },
-            { typeof(ExcelApplication).ToString(), typeof(ExcelApplication) },
-            { typeof(WordApplication).ToString(), typeof(WordApplication) },
-            { typeof(InternetExplorer).ToString(), typeof(InternetExplorer) },
-            { typeof(OleDbConnection).ToString(), typeof(OleDbConnection) },
-            { typeof(Stopwatch).ToString(), typeof(Stopwatch) }
+            { typeof(string).GetRealTypeName(), typeof(string) },
+            { typeof(int).GetRealTypeName(), typeof(int) },
+            { typeof(double).GetRealTypeName(), typeof(double) },
+            { typeof(bool).GetRealTypeName(), typeof(bool) },
+            { typeof(object).GetRealTypeName(), typeof(object) },
+            { typeof(List<string>).GetRealTypeName(), typeof(List<string>) },
+            { typeof(Dictionary<string, object>).GetRealTypeName(), typeof(Dictionary<string, object>) },
+            { typeof(DataTable).GetRealTypeName(), typeof(DataTable) },
+            { typeof(DataRow).GetRealTypeName(), typeof(DataRow) },         
+            { typeof(OBAppInstance).GetRealTypeName(), typeof(OBAppInstance) }         
         };
     }
 

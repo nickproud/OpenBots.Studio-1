@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.ErrorHandling
 {
@@ -44,10 +45,10 @@ namespace OpenBots.Commands.ErrorHandling
 		[Required]
 		[DisplayName("Exception Message")]
 		[Description("Enter a custom exception message.")]
-		[SampleUsage("A Custom Message || {vExceptionMessage}")]
+		[SampleUsage("\"A Custom Message\" || vExceptionMessage")]
 		[Remarks("The selected exception with this custom message will be thrown.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ExceptionMessage { get; set; }
 
 		public ThrowCommand()
@@ -60,10 +61,10 @@ namespace OpenBots.Commands.ErrorHandling
 			v_ExceptionType = "Exception";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var exceptionMessage = v_ExceptionMessage.ConvertUserVariableToString(engine);
+			var exceptionMessage = (string)await v_ExceptionMessage.EvaluateCode(engine);
 
 			Exception ex;
 			switch(v_ExceptionType)

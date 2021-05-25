@@ -13,7 +13,7 @@ namespace OpenBots.Commands.Folder.Test
         private GetFoldersCommand _getFolders;
 
         [Fact]
-        public void GetsFolders()
+        public async void GetsFolders()
         {
             _engine = new AutomationEngineInstance(null);
             _getFolders = new GetFoldersCommand();
@@ -30,13 +30,13 @@ namespace OpenBots.Commands.Folder.Test
 
             _getFolders.RunCommand(_engine);
 
-            List<string> folderList = (List<string>)"{output}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> folderList = (List<string>)await "{output}".EvaluateCode(_engine);
 
             Assert.Contains(Path.Combine(inputPath, @"toGet"), folderList);
         }
 
         [Fact]
-        public void HandlesInvalidDirectoryPath()
+        public async global::System.Threading.Tasks.Task HandlesInvalidDirectoryPath()
         {
             _engine = new AutomationEngineInstance(null);
             _getFolders = new GetFoldersCommand();
@@ -49,7 +49,7 @@ namespace OpenBots.Commands.Folder.Test
             _getFolders.v_SourceFolderPath = "{inputPath}";
             _getFolders.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<DirectoryNotFoundException>(() => _getFolders.RunCommand(_engine));
+            await Assert.ThrowsAsync<DirectoryNotFoundException>(() => _getFolders.RunCommand(_engine));
         }
     }
 }

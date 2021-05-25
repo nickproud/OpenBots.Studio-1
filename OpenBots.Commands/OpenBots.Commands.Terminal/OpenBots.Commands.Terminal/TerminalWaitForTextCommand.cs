@@ -3,12 +3,14 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Terminal
@@ -23,25 +25,26 @@ namespace OpenBots.Commands.Terminal
 		[Description("Enter the unique instance that was specified in the **Create Terminal Session** command.")]
 		[SampleUsage("MyTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Terminal Session** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(OpenEmulator) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Text to Wait for")]
 		[Description("Enter the text to wait for on the terminal.")]
-		[SampleUsage("Hello, World! || {vText}")]
+		[SampleUsage("\"Hello, World!\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToWaitFor { get; set; }
 
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public TerminalWaitForTextCommand()
@@ -54,17 +57,20 @@ namespace OpenBots.Commands.Terminal
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string textToWaitFor = v_TextToWaitFor.ConvertUserVariableToString(engine);
-			var vTimeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine)) * 1000;
-			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
+			string textToWaitFor = (string)await v_TextToWaitFor.EvaluateCode(engine);
+			var timeout = ((int)await v_Timeout.EvaluateCode(engine)) * 1000;
+			var terminalObject = (OpenEmulator)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
 
-			terminalObject.TN3270.WaitForTextOnScreen(vTimeout, textToWaitFor);
+			int result = terminalObject.TN3270.WaitForTextOnScreen(timeout, textToWaitFor);
+
+			if (result == -1)
+				throw new TimeoutException($"Unable to find '{textToWaitFor}' within the allotted time of {timeout} seconds.");
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

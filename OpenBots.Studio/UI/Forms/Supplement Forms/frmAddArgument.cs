@@ -1,8 +1,12 @@
-﻿using OpenBots.Core.Enums;
+﻿using Microsoft.CodeAnalysis;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -10,12 +14,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 {
     public partial class frmAddArgument : UIForm
     {
-        public List<ScriptVariable> ScriptVariables { get; set; }
-        public List<ScriptArgument> ScriptArguments { get; set; }
+        public ScriptContext ScriptContext { get; set; }
         private bool _isEditMode;
         private string _editingArgumentName;
         private TypeContext _typeContext;
         private Type _preEditType;
+        private ToolTip _typeToolTip;
+        public List<ScriptArgument> ArgumentsCopy { get; set; }
+        private CodeDomProvider _provider;
 
         public frmAddArgument(TypeContext typeContext)
         {
@@ -29,6 +35,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
             cbxDefaultType.SelectedValue = typeof(string);
             cbxDefaultType.Tag = typeof(string);
+
+            _preEditType = typeof(string);
         }
 
         public frmAddArgument(string argumentName, ScriptArgumentDirection argumentDirection, string argumentValue, Type argumentType,
@@ -48,32 +56,56 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             cbxDefaultType.SelectedValue = argumentType;
             cbxDefaultType.Tag = argumentType;
 
+            _preEditType = argumentType;
+
             _isEditMode = true;
             _editingArgumentName = argumentName;
         }
 
         private void frmAddArgument_Load(object sender, EventArgs e)
         {
-
+            _typeToolTip = AddTypeToolTip();
+            _typeToolTip.SetToolTip(cbxDefaultType, _preEditType.GetRealTypeName());
+            _provider = CodeDomProvider.CreateProvider("C#");
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
         {
+            txtArgumentName.ForeColor = Color.SteelBlue;
+            txtDefaultValue.ForeColor = Color.SteelBlue;
+            lblArgumentNameError.Text = "";
+            lblArgumentValueError.Text = "";
+
             txtArgumentName.Text = txtArgumentName.Text.Trim();
             if (txtArgumentName.Text == string.Empty)
             {
                 lblArgumentNameError.Text = "Argument Name not provided";
+                txtArgumentName.ForeColor = Color.Red;
+                return;
+            }
+
+            if (!_provider.IsValidIdentifier(txtArgumentName.Text))
+            {
+                lblArgumentNameError.Text = "Argument Name is invalid";
+                txtArgumentName.ForeColor = Color.Red;
+                return;
+            }
+
+            if (!_provider.IsValidIdentifier(txtArgumentName.Text))
+            {
+                lblArgumentNameError.Text = "Argument Name is invalid";
                 return;
             }
 
             string newArgumentName = txtArgumentName.Text;
-            var existingVariable = ScriptVariables.Where(var => var.VariableName == newArgumentName).FirstOrDefault();
-            var existingArgument = ScriptArguments.Where(var => var.ArgumentName == newArgumentName).FirstOrDefault();
+            var existingVariable = ScriptContext.Variables.Where(var => var.VariableName == newArgumentName).FirstOrDefault();
+            var existingArgument = ArgumentsCopy.Where(var => var.ArgumentName == newArgumentName).FirstOrDefault();
             if (existingArgument != null || existingVariable != null)
             {
                 if (!_isEditMode || existingArgument.ArgumentName != _editingArgumentName)
                 {
                     lblArgumentNameError.Text = "An Argument or Variable with this name already exists";
+                    txtArgumentName.ForeColor = Color.Red;
                     return;
                 }
             }
@@ -81,6 +113,15 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             if (txtArgumentName.Text.StartsWith("{") || txtArgumentName.Text.EndsWith("}"))
             {
                 lblArgumentNameError.Text = "Argument markers '{' and '}' should not be included";
+                txtArgumentName.ForeColor = Color.Red;
+                return;
+            }
+
+            var result = ScriptContext.EvaluateVariable(newArgumentName, (Type)cbxDefaultType.Tag, txtDefaultValue.Text);
+            if (!result.Success)
+            {
+                lblArgumentValueError.Text = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
+                txtDefaultValue.ForeColor = Color.Red;
                 return;
             }
 
@@ -113,14 +154,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             if (((Type)cbxDefaultType.SelectedValue).Name == "MoreOptions")
             {
-                frmTypes typeForm = new frmTypes(_typeContext.GroupedTypes);
+                frmTypes typeForm = new frmTypes(_typeContext);
                 typeForm.ShowDialog();
 
                 if (typeForm.DialogResult == DialogResult.OK)
                 {
-                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.FullName))
+                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.GetRealTypeName()))
                     {
-                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.FullName, typeForm.SelectedType);
+                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.GetRealTypeName(), typeForm.SelectedType);
                         cbxDefaultType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
                     }
 
@@ -132,19 +173,23 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     cbxDefaultType.SelectedValue = _preEditType;
                     cbxDefaultType.Tag = _preEditType;
                 }
+
+                typeForm.Dispose();
             }
             else
                 cbxDefaultType.Tag = cbxDefaultType.SelectedValue;
 
             _preEditType = (Type)cbxDefaultType.SelectedValue;
+            _typeToolTip.SetToolTip(cbxDefaultType, _preEditType.GetRealTypeName());
+        }
 
-            if (_preEditType == typeof(string) || _preEditType.IsPrimitive)
-                txtDefaultValue.ReadOnly = false;
-            else
-            {
-                txtDefaultValue.ReadOnly = true;
-                txtDefaultValue.Text = "";
-            }
+        public ToolTip AddTypeToolTip()
+        {
+            ToolTip typeToolTip = new ToolTip();
+            typeToolTip.IsBalloon = false;
+            typeToolTip.ShowAlways = true;
+            typeToolTip.AutoPopDelay = 5000;
+            return typeToolTip;
         }
     }
 }

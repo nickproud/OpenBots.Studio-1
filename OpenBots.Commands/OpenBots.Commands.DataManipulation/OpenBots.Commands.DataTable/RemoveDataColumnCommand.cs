@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -21,20 +22,38 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter an existing DataTable.")]
-		[SampleUsage("{vDataTable}")]
+		[SampleUsage("vDataTable")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_DataTable { get; set; }
 
 		[Required]
-		[DisplayName("Column Name")]
-		[Description("Enter the name of the DataColumn to be removed.")]
-		[SampleUsage("Column1 || {vColumnName}")]
+		[DisplayName("Search Option")]
+		[PropertyUISelectionOption("Column Name")]
+		[PropertyUISelectionOption("Column Index")]
+		[Description("Select whether the DataRow value should be found by column index or column name.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_Option { get; set; }
+
+		[Required]
+		[DisplayName("Search Value")]
+		[Description("Enter a valid Column index or column name.")]
+		[SampleUsage("0 || vIndex || \"Column1\" || vColumnName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_ColumnName { get; set; }
+
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output DataTable Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("vUserVariable")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
+		public string v_OutputUserVariableName { get; set; }
 
 		public RemoveDataColumnCommand()
 		{
@@ -44,16 +63,19 @@ namespace OpenBots.Commands.DataTable
 			CommandIcon = Resources.command_spreadsheet;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var dataTableVariable = v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
-			OBDataTable dataTable = (OBDataTable)dataTableVariable;
-			var ColumnName = v_ColumnName.ConvertUserVariableToString(engine);
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
+			dynamic column = await v_ColumnName.EvaluateCode(engine);
 
-			dataTable.Columns.Remove(ColumnName);
-			dataTable.StoreInUserVariable(engine, v_DataTable, nameof(v_DataTable), this);
+			if (v_Option == "Column Index")
+				dataTable.Columns.RemoveAt((int)column);
+			else
+				dataTable.Columns.Remove((string)column);
+
+			dataTable.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -61,14 +83,16 @@ namespace OpenBots.Commands.DataTable
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DataTable", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_ColumnName", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Remove Column {v_ColumnName} From '{v_DataTable}']";
+			return base.GetDisplayValue() + $" [Remove Column '{v_ColumnName}' From '{v_DataTable}' - Store DataTable in '{v_OutputUserVariableName}']";
 		}
 	}
 }

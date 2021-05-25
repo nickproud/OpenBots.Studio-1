@@ -1,9 +1,11 @@
 ﻿using HtmlAgilityPack;
 using Newtonsoft.Json;
+using OpenBots.Commands.UIAutomation.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
@@ -18,17 +20,17 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace OpenBots.Commands.WebBrowser
 {
-	[Serializable]
+    [Serializable]
 	[Category("Web Browser Commands")]
 	[Description("This command performs an element action in a Selenium web browser session.")]
 	public class SeleniumElementActionCommand : ScriptCommand, ISeleniumElementActionCommand
@@ -38,23 +40,18 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(IWebDriver) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Element Search Parameter")]
 		[Description("Use the Element Recorder to generate a listing of potential search parameters." + 
 			"Select the specific search type(s) that you want to use to isolate the element on the web page.")]
-		[SampleUsage("XPath : //*[@id=\"features\"]/div[2]/div/h2/div[{var1}]/div" +
-				 "\n\tID: 1" +
-				 "\n\tName: my{var2}Name" +
-				 "\n\tTag Name: h1" +
-				 "\n\tClass Name: myClass" +
-				 "\n\tCSS Selector: [attribute=value]" +
-				 "\n\tLink Text: https://www.mylink.com/")]
+		[SampleUsage(NativeHelper.SearchParameterSample)]
 		[Remarks("If multiple parameters are enabled, an attempt will be made to find the element(s) that match(es) all the selected parameters.")]
 		[Editor("ShowElementHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public DataTable v_SeleniumSearchParameters { get; set; }
 
 		[Required]
@@ -94,20 +91,21 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("Action Parameters")]
 		[Description("Action Parameters will be determined based on the action settings selected.")]
-		[SampleUsage("data || {vData} || *Variable Name*: {vNewVariable}")]
+		[SampleUsage("\"data\" || vData || vOutputVariable")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.\n"+
 				 "Advanced keystrokes may be set the following way: Hello[tab]World[enter]")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(IWebElement), typeof(List<>), typeof(DataTable), typeof(string), typeof(bool) }, true)]
+		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(IWebElement), typeof(List<IWebElement>), typeof(List<string>), 
+			typeof(DataTable), typeof(string), typeof(bool) })]
 		public DataTable v_WebActionParameterTable { get; set; }
 
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		[JsonIgnore]
@@ -122,14 +120,10 @@ namespace OpenBots.Commands.WebBrowser
 		[Browsable(false)]
 		private List<Control> _actionParametersControls;
 
-		[JsonIgnore]
-		[Browsable(false)]
-		private DataGridView _searchParametersGridViewHelper;
-
 		public SeleniumElementActionCommand()
 		{
 			CommandName = "SeleniumElementActionCommand";
-			SelectionName = "Element Action";
+			SelectionName = "Selenium Element Action";
 			v_InstanceName = "DefaultBrowser";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
@@ -144,27 +138,22 @@ namespace OpenBots.Commands.WebBrowser
 			v_WebActionParameterTable.Columns.Add("Parameter Name");
 			v_WebActionParameterTable.Columns.Add("Parameter Value");
 
-			//set up search parameter table
-			v_SeleniumSearchParameters = new DataTable();
-			v_SeleniumSearchParameters.Columns.Add("Enabled");
-			v_SeleniumSearchParameters.Columns.Add("Parameter Name");
-			v_SeleniumSearchParameters.Columns.Add("Parameter Value");
-			v_SeleniumSearchParameters.TableName = DateTime.Now.ToString("v_SeleniumSearchParameters" + DateTime.Now.ToString("MMddyy.hhmmss"));		
+			v_SeleniumSearchParameters = NativeHelper.CreateSearchParametersDT();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var vTimeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			var vTimeout = (int)await v_Timeout.EvaluateCode(engine);
 			var seleniumSearchParamRows = (from rw in v_SeleniumSearchParameters.AsEnumerable()
 									   where rw.Field<string>("Enabled") == "True" &&
 									   rw.Field<string>("Parameter Value").ToString() != ""
 									   select rw.ItemArray.Cast<string>().ToArray()).ToList();
 
-			var browserObject = v_InstanceName.GetAppInstance(engine);
+			var browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var seleniumInstance = (IWebDriver)browserObject;
-			dynamic element = CommandsHelper.FindElement(engine, seleniumInstance, seleniumSearchParamRows, v_SeleniumSearchOption, vTimeout);
+			dynamic element = await CommandsHelper.FindElement(engine, seleniumInstance, seleniumSearchParamRows, v_SeleniumSearchOption, vTimeout);
 
 			if (element == null && v_SeleniumElementAction != "Element Exists")
 				throw new ElementNotVisibleException("Unable to find element within the provided time limit");
@@ -195,20 +184,20 @@ namespace OpenBots.Commands.WebBrowser
 					actions.ContextClick((IWebElement)element).Perform();
 					break;
 				case "Middle Click":
-					int userXAdjust = Convert.ToInt32((from rw in v_WebActionParameterTable.AsEnumerable()
+					string userXAdjustString = (from rw in v_WebActionParameterTable.AsEnumerable()
 													   where rw.Field<string>("Parameter Name") == "X Adjustment"
-													   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+													   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+					int userXAdjust = (int)await userXAdjustString.EvaluateCode(engine);
 
-					int userYAdjust = Convert.ToInt32((from rw in v_WebActionParameterTable.AsEnumerable()
+					string userYAdjustString = (from rw in v_WebActionParameterTable.AsEnumerable()
 													   where rw.Field<string>("Parameter Name") == "Y Adjustment"
-													   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+													   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+					int userYAdjust = (int)await userYAdjustString.EvaluateCode(engine);
 
 					var elementLocation = ((IWebElement)element).Location;
 					var seleniumWindowPosition = seleniumInstance.Manage().Window.Position;
-					User32Functions.SendMouseMove(
-						(seleniumWindowPosition.X + elementLocation.X +  userXAdjust).ToString(),
-						(seleniumWindowPosition.Y + elementLocation.Y + userYAdjust).ToString(),
-						v_SeleniumElementAction);
+					User32Functions.SendMouseMove(seleniumWindowPosition.X + elementLocation.X + userXAdjust, seleniumWindowPosition.Y + elementLocation.Y + userYAdjust, 
+												  v_SeleniumElementAction);
 					
 					break;
 				case "Double Left Click":
@@ -216,27 +205,20 @@ namespace OpenBots.Commands.WebBrowser
 					break;
 
 				case "Set Text":
-					string textToSet = (from rw in v_WebActionParameterTable.AsEnumerable()
+					string textToSetString = (from rw in v_WebActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "Text To Set"
-										select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine);
-
+										select rw.Field<string>("Parameter Value")).FirstOrDefault();
+					string textToSet = (string)await textToSetString.EvaluateCode(engine);
 
 					string clearElement = (from rw in v_WebActionParameterTable.AsEnumerable()
 										   where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-					string encryptedData = (from rw in v_WebActionParameterTable.AsEnumerable()
-										   where rw.Field<string>("Parameter Name") == "Encrypted Text"
-											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 					if (clearElement == null)
 						clearElement = "No";
 
 					if (clearElement.ToLower() == "yes")
 						((IWebElement)element).Clear();
-
-					if (encryptedData == "Encrypted")
-						textToSet = EncryptionServices.DecryptString(textToSet, "OPENBOTS");
 
 					string[] potentialKeyPresses = textToSet.Split('[', ']');
 
@@ -256,10 +238,7 @@ namespace OpenBots.Commands.WebBrowser
 							finalTextToSet += keyPress;
 						}
 						else
-						{
-							var convertedChunk = chunkedString.ConvertUserVariableToString(engine);
-							finalTextToSet += convertedChunk;
-						}
+							finalTextToSet += chunkedString;
 					}
 					((IWebElement)element).SendKeys(finalTextToSet);
 					break;
@@ -273,12 +252,8 @@ namespace OpenBots.Commands.WebBrowser
 											where rw.Field<string>("Parameter Name") == "Clear Element Before Setting Text"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					var secureStrVariable = secureString.ConvertUserVariableToObject(engine, typeof(SecureString));
-
-					if (secureStrVariable is SecureString)
-						secureString = ((SecureString)secureStrVariable).ConvertSecureStringToString();
-					else
-						throw new ArgumentException("Provided Argument is not a 'Secure String'");
+					var secureStrVariable = (SecureString)await secureString.EvaluateCode(engine);
+					secureString = secureStrVariable.ConvertSecureStringToString();
 
 					if (_clearElement == null)
 						_clearElement = "No";
@@ -304,10 +279,7 @@ namespace OpenBots.Commands.WebBrowser
 							_finalTextToSet += keyPress;
 						}
 						else
-						{
-							var convertedChunk = chunkedString.ConvertUserVariableToString(engine);
-							_finalTextToSet += convertedChunk;
-						}
+							_finalTextToSet += chunkedString;
 					}
 					((IWebElement)element).SendKeys(_finalTextToSet);
 					break;
@@ -318,9 +290,10 @@ namespace OpenBots.Commands.WebBrowser
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 
-					string attribName = (from rw in v_WebActionParameterTable.AsEnumerable()
+					string attribNameString = (from rw in v_WebActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Attribute Name"
-											select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine);
+											select rw.Field<string>("Parameter Value")).FirstOrDefault();
+					string attribName = (string)await attribNameString.EvaluateCode(engine);
 
 					var optionsItems = new List<string>();
 					var ele = (IWebElement)element;
@@ -333,7 +306,7 @@ namespace OpenBots.Commands.WebBrowser
 						optionsItems.Add(optionValue);
 					}
 
-					optionsItems.StoreInUserVariable(engine, applyToVarName, typeof(List<string>));
+					optionsItems.SetVariableValue(engine, applyToVarName);
 				   
 					break;
 
@@ -342,9 +315,10 @@ namespace OpenBots.Commands.WebBrowser
 											where rw.Field<string>("Parameter Name") == "Selection Type"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					string selectionParam = (from rw in v_WebActionParameterTable.AsEnumerable()
+					string selectionParamString = (from rw in v_WebActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Selection Parameter"
-											select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine);
+											select rw.Field<string>("Parameter Value")).FirstOrDefault();
+					string selectionParam = (string)await selectionParamString.EvaluateCode(engine);
 
 					seleniumInstance.SwitchTo().ActiveElement();
 
@@ -386,9 +360,10 @@ namespace OpenBots.Commands.WebBrowser
 										   where rw.Field<string>("Parameter Name") == "Variable Name"
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-					string attributeName = (from rw in v_WebActionParameterTable.AsEnumerable()
+					string attributeNameString = (from rw in v_WebActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Attribute Name"
-											select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine);
+											select rw.Field<string>("Parameter Value")).FirstOrDefault();
+					string attributeName = (string)await attributeNameString.EvaluateCode(engine);
 
 					string elementValue;
 					if (v_SeleniumElementAction == "Get Text")
@@ -402,7 +377,7 @@ namespace OpenBots.Commands.WebBrowser
 					else
 						elementValue = ((IWebElement)element).GetAttribute(attributeName);
 
-					elementValue.StoreInUserVariable(engine, VariableName, typeof(string));
+					elementValue.SetVariableValue(engine, VariableName);
 					break;
 
 				case "Get Matching Element(s)":
@@ -418,10 +393,10 @@ namespace OpenBots.Commands.WebBrowser
 						{
 							elementList.Add(item);
 						}
-						elementList.StoreInUserVariable(engine, variableName, typeof(List<IWebElement>));
+						elementList.SetVariableValue(engine, variableName);
 					}
 					else
-						((IWebElement)element).StoreInUserVariable(engine, variableName, typeof(IWebElement));                    
+						((IWebElement)element).SetVariableValue(engine, variableName);                    
 					break;
 
 				case "Get Table":
@@ -457,7 +432,7 @@ namespace OpenBots.Commands.WebBrowser
 					foreach (var row in doc.DocumentNode.SelectNodes("//tr[td]"))
 						DT.Rows.Add(row.SelectNodes("td").Select(td => Regex.Replace(td.InnerText, @"\t|\n|\r", "").Trim()).ToArray());
 
-					DT.StoreInUserVariable(engine, DTVariableName, typeof(DataTable));
+					DT.SetVariableValue(engine, DTVariableName);
 					break;
 
 				case "Clear Element":
@@ -478,9 +453,9 @@ namespace OpenBots.Commands.WebBrowser
 													select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 					if (element == null)
-						false.StoreInUserVariable(engine, existsBoolVariableName, typeof(bool));
+						false.SetVariableValue(engine, existsBoolVariableName);
 					else
-						true.StoreInUserVariable(engine, existsBoolVariableName, typeof(bool));
+						true.SetVariableValue(engine, existsBoolVariableName);
 
 					break;
 				default:
@@ -492,54 +467,17 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			base.Render(editor, commandControls);
 
-			//create helper control
-			CommandItemControl helperControl = new CommandItemControl();
-			helperControl.Padding = new Padding(10, 0, 0, 0);
-			helperControl.ForeColor = Color.AliceBlue;
-			helperControl.Font = new Font("Segoe UI Semilight", 10);
-			helperControl.CommandImage = Resources.command_camera;
-			helperControl.CommandDisplay = "Element Recorder";
-			helperControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
-
+			NativeHelper.AddDefaultSearchRows(v_SeleniumSearchParameters);
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 
-			if (v_SeleniumSearchParameters.Rows.Count == 0)
-			{
-				v_SeleniumSearchParameters.Rows.Add(true, "XPath", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "ID", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Tag Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Class Name", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "Link Text", "");
-				v_SeleniumSearchParameters.Rows.Add(false, "CSS Selector", "");
-			}
-			//create search parameters   
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_SeleniumSearchParameters", this));
-			RenderedControls.Add(helperControl);
+			CommandItemControl obWebRecorderControl = new CommandItemControl("OBWebRecorder", Resources.command_camera, "OB Web Element Recorder");
+			obWebRecorderControl.Click += new EventHandler((s, e) => ShowRecorder(s, e, editor, commandControls));
 
-			//create search param grid
-			_searchParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_SeleniumSearchParameters", this);
-			_searchParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
-
-			DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
-			enabled.HeaderText = "Enabled";
-			enabled.DataPropertyName = "Enabled";
-			enabled.FillWeight = 30;
-			_searchParametersGridViewHelper.Columns.Add(enabled);
-
-			DataGridViewTextBoxColumn propertyName = new DataGridViewTextBoxColumn();
-			propertyName.HeaderText = "Parameter Name";
-			propertyName.DataPropertyName = "Parameter Name";
-			propertyName.FillWeight = 40;
-			_searchParametersGridViewHelper.Columns.Add(propertyName);
-
-			DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
-			propertyValue.HeaderText = "Parameter Value";
-			propertyValue.DataPropertyName = "Parameter Value";
-			_searchParametersGridViewHelper.Columns.Add(propertyValue);
-
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_SeleniumSearchParameters", this, new Control[] { _searchParametersGridViewHelper }, editor));
-			RenderedControls.Add(_searchParametersGridViewHelper);
+			//disabled native chrome recorder for 1.5.0
+			var searchParameterControls = commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_SeleniumSearchParameters", this, editor,
+				new Control[] { obWebRecorderControl /*, NativeHelper.NativeChromeRecorderControl(v_SeleniumSearchParameters, editor) */});
+			searchParameterControls.Last().MouseEnter += ActionParametersGridViewHelper_MouseEnter;
+			RenderedControls.AddRange(searchParameterControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_SeleniumSearchOption", this, editor));
 
@@ -557,7 +495,8 @@ namespace OpenBots.Commands.WebBrowser
 			_actionParametersGridViewHelper.AllowUserToDeleteRows = false;
 			_actionParametersGridViewHelper.MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 
-			_actionParametersControls.AddRange(commandControls.CreateUIHelpersFor("v_WebActionParameterTable", this, new Control[] { _actionParametersGridViewHelper }, editor));
+			_actionParametersControls.AddRange(commandControls.CreateUIHelpersFor("v_WebActionParameterTable", this, 
+				new Control[] { _actionParametersGridViewHelper }, editor));
 			_actionParametersControls.Add(_actionParametersGridViewHelper);
 			RenderedControls.AddRange(_actionParametersControls);
 
@@ -568,17 +507,8 @@ namespace OpenBots.Commands.WebBrowser
 
 		public override string GetDisplayValue()
 		{
-			string searchParameterName = (from rw in v_SeleniumSearchParameters.AsEnumerable()
-										  where rw.Field<string>("Enabled") == "True"
-										  select rw.Field<string>("Parameter Name")).FirstOrDefault();
-
-			string searchParameterValue = (from rw in v_SeleniumSearchParameters.AsEnumerable()
-										  where rw.Field<string>("Enabled") == "True"
-										  select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-
-			return base.GetDisplayValue() + $" [{v_SeleniumElementAction} - {v_SeleniumSearchOption} by {searchParameterName}" + 
-											$" '{searchParameterValue}' - Instance Name '{v_InstanceName}']";
+			return base.GetDisplayValue() + $" [{v_SeleniumElementAction} - {v_SeleniumSearchOption} by {NativeHelper.GetSearchNameValue(v_SeleniumSearchParameters)}" +
+				$" - Instance Name '{v_InstanceName}']";
 		}
 
 		private void ActionParametersGridViewHelper_MouseEnter(object sender, EventArgs e)
@@ -590,13 +520,12 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			//create recorder
 			IfrmWebElementRecorder newElementRecorder = commandControls.CreateWebElementRecorderForm(editor.HTMLElementRecorderURL);
-			newElementRecorder.ScriptElements = editor.ScriptEngineContext.Elements;
+			newElementRecorder.ScriptContext = editor.ScriptContext;
 			newElementRecorder.CheckBox_StopOnClick(true);
 			//show form
 			((Form)newElementRecorder).ShowDialog();
 
 			editor.HTMLElementRecorderURL = newElementRecorder.StartURL;
-			editor.ScriptEngineContext.Elements = newElementRecorder.ScriptElements;
 
 			try
 			{
@@ -606,9 +535,6 @@ namespace OpenBots.Commands.WebBrowser
 
 					foreach (DataRow rw in newElementRecorder.SearchParameters.Rows)
 						v_SeleniumSearchParameters.ImportRow(rw);
-
-					_searchParametersGridViewHelper.DataSource = v_SeleniumSearchParameters;
-					_searchParametersGridViewHelper.Refresh();
 				}               
 			}
 			catch (Exception)
@@ -655,19 +581,6 @@ namespace OpenBots.Commands.WebBrowser
 					{
 						actionParameters.Rows.Add("Text To Set");
 						actionParameters.Rows.Add("Clear Element Before Setting Text");
-						actionParameters.Rows.Add("Encrypted Text");
-						actionParameters.Rows.Add("Optional - Click to Encrypt 'Text To Set'");
-
-						DataGridViewComboBoxCell encryptedBox = new DataGridViewComboBoxCell();
-						encryptedBox.Items.Add("Not Encrypted");
-						encryptedBox.Items.Add("Encrypted");
-						_actionParametersGridViewHelper.Rows[2].Cells[1] = encryptedBox;
-						_actionParametersGridViewHelper.Rows[2].Cells[1].Value = "Not Encrypted";
-
-						var buttonCell = new DataGridViewButtonCell();
-						_actionParametersGridViewHelper.Rows[3].Cells[1] = buttonCell;
-						_actionParametersGridViewHelper.Rows[3].Cells[1].Value = "Encrypt Text";
-						_actionParametersGridViewHelper.CellContentClick += ElementsGridViewHelper_CellContentClick;
 					}
 
 					DataGridViewComboBoxCell comparisonComboBox = new DataGridViewComboBoxCell();
@@ -788,29 +701,6 @@ namespace OpenBots.Commands.WebBrowser
 
 			_actionParametersGridViewHelper.Columns[0].ReadOnly = true;
 			_actionParametersGridViewHelper.DataSource = v_WebActionParameterTable;
-		}
-
-		private void ElementsGridViewHelper_CellContentClick(object sender, DataGridViewCellEventArgs e)
-		{
-			var targetCell = _actionParametersGridViewHelper.Rows[e.RowIndex].Cells[e.ColumnIndex];
-
-			if (targetCell is DataGridViewButtonCell && targetCell.Value.ToString() == "Encrypt Text")
-			{
-				var targetElement = _actionParametersGridViewHelper.Rows[0].Cells[1];
-
-				if (string.IsNullOrEmpty(targetElement.Value.ToString()))
-					return;
-
-				var warning = MessageBox.Show($"Warning! Text should only be encrypted one time and is not reversible in the builder. " +
-											   "Would you like to proceed and convert '{targetElement.Value.ToString()}' to an encrypted value?", 
-											   "Encryption Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-				if (warning == DialogResult.Yes)
-				{
-					targetElement.Value = EncryptionServices.EncryptString(targetElement.Value.ToString(), "OPENBOTS");
-					_actionParametersGridViewHelper.Rows[2].Cells[1].Value = "Encrypted";
-				}
-			}
 		}
 	}
 }

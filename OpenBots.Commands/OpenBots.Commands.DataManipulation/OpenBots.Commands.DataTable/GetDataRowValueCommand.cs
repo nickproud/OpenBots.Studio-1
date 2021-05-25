@@ -4,12 +4,12 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.DataTable
@@ -17,14 +17,12 @@ namespace OpenBots.Commands.DataTable
 	[Serializable]
 	[Category("DataTable Commands")]
 	[Description("This command gets a DataRow Value from a DataTable.")]
-
 	public class GetDataRowValueCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("DataRow")]
 		[Description("Enter an existing DataRow to get Values from.")]
-		[SampleUsage("{vDataRow}")]
+		[SampleUsage("vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(DataRow) })]
@@ -42,19 +40,19 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Search Value")]
 		[Description("Enter a valid DataRow index or column name.")]
-		[SampleUsage("0 || {vIndex} || Column1 || {vColumnName}")]
+		[SampleUsage("0 || vIndex || \"Column1\" || vColumnName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_DataValueIndex { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Value Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(string) })]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public GetDataRowValueCommand()
@@ -67,27 +65,25 @@ namespace OpenBots.Commands.DataTable
 			v_Option = "Column Index";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var dataRowVariable = v_DataRow.ConvertUserVariableToObject(engine, nameof(v_DataRow), this);
-			DataRow dataRow = (DataRow)dataRowVariable;
+			DataRow dataRow = (DataRow)await v_DataRow.EvaluateCode(engine);
+			dynamic valueIndex = await v_DataValueIndex.EvaluateCode(engine);
 
-			var valueIndex = v_DataValueIndex.ConvertUserVariableToString(engine);
-			string value = "";
+			dynamic value;
 			if (v_Option == "Column Index")
 			{
-				int index = int.Parse(valueIndex);
-				value = dataRow[index].ToString();
-
+				int index = (int)valueIndex;
+				value = dataRow[index];
 			}
-			else if (v_Option == "Column Name")
+			else
 			{
-				string index = valueIndex;
-				value = dataRow.Field<string>(index);
+				string columnName = (string)valueIndex;
+				value = dataRow.Field<dynamic>(columnName);
 			}
 
-			value.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			((object)value).SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

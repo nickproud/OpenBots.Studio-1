@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -21,36 +22,36 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("Year")]
 		[Description("Select or provide the year.")]
-		[SampleUsage("2020 || {vYear}")]
+		[SampleUsage("2020 || vYear")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Year { get; set; }
 
 		[Required]
 		[DisplayName("Month")]
 		[Description("Select or provide the month.")]
-		[SampleUsage("3 || 03 || january || jan || {vMonth}")]
+		[SampleUsage("3 || 03 || \"january\" || \"jan\" || vMonth")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_Month { get; set; }
 
 		[Required]
 		[DisplayName("Day")]
 		[Description("Select or provide the day.")]
-		[SampleUsage("20 || {vDay}")]
+		[SampleUsage("20 || vDay")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Day { get; set; }
 
 		[DisplayName("Time (Optional)")]
 		[Description("Select or provide the hour.")]
-		[SampleUsage("5:15 || 8:30:10 || {vTime}")]
+		[SampleUsage("\"5:15\" || \"8:30:10\" || vTime")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Time { get; set; }
 
 		[DisplayName("Period (Optional)")]
@@ -65,7 +66,7 @@ namespace OpenBots.Commands.Data
 		[Editable(false)]
 		[DisplayName("Output Date Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(DateTime) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -80,16 +81,23 @@ namespace OpenBots.Commands.Data
 			v_AMorPM = "AM";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vYear = int.Parse(v_Year.ConvertUserVariableToString(engine));
-			var vMonth = v_Month.ConvertUserVariableToString(engine);
-			var vDay = int.Parse(v_Day.ConvertUserVariableToString(engine));
-			var vTime = v_Time.ConvertUserVariableToString(engine);
+			var vYear = (int)await v_Year.EvaluateCode(engine);
+			dynamic vMonth = await v_Month.EvaluateCode(engine);
+			var vDay = (int)await v_Day.EvaluateCode(engine);
+			var vTime = (string)await v_Time.EvaluateCode(engine);
 
+			int vMonthInt = 0;
+			string vMonthString = "";
 
-			if (!int.TryParse(vMonth, out int vMonthInt))
+			if (vMonth.GetType() == typeof(string))
+				vMonthString = (string)vMonth;
+			else
+				vMonthInt = (int)vMonth;
+
+			if (vMonthString != "")
 			{
 				Dictionary<string, int> monthDict = new Dictionary<string, int>()
 				{
@@ -106,7 +114,7 @@ namespace OpenBots.Commands.Data
 					{ "nov", 11 },
 					{ "dec", 12 },
 				};
-				vMonthInt = monthDict[vMonth.ToLower().Substring(0,3)];
+				vMonthInt = monthDict[vMonthString.ToLower().Substring(0,3)];
 			}
 			
 
@@ -131,7 +139,7 @@ namespace OpenBots.Commands.Data
 			else
 				date = new DateTime(vYear, vMonthInt, vDay);
 
-			date.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			date.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

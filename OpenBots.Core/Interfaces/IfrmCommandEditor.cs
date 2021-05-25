@@ -1,4 +1,5 @@
-﻿using OpenBots.Core.Command;
+﻿using Autofac;
+using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
@@ -10,7 +11,9 @@ namespace OpenBots.Core.Infrastructure
     public interface IfrmCommandEditor
     {
         List<AutomationCommand> CommandList { get; set; }
-        EngineContext ScriptEngineContext { get; set; }       
+        ScriptContext ScriptContext { get; set; }
+        string ProjectPath { get; set; }
+        IContainer AContainer { get; set; }
         ScriptCommand SelectedCommand { get; set; }
         ScriptCommand OriginalCommand { get; set; }
         CreationMode CreationModeInstance { get; set; }
@@ -19,5 +22,7 @@ namespace OpenBots.Core.Infrastructure
         List<ScriptCommand> ConfiguredCommands { get; set; }
         string HTMLElementRecorderURL { get; set; }
         TypeContext TypeContext { get; set; }
+
+        void ShowMessage(string message, string title, DialogType dialogType, int closeAfter);
     }
 }

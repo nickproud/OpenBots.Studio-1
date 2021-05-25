@@ -2,14 +2,15 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using SimpleNLG;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.NLG
@@ -25,7 +26,8 @@ namespace OpenBots.Commands.NLG
 		[Description("Enter the unique instance that was specified in the **Create NLG Instance** command.")]
 		[SampleUsage("MyNLGInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create NLG Instance** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(SPhraseSpec) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -46,10 +48,10 @@ namespace OpenBots.Commands.NLG
 		[Required]
 		[DisplayName("Input Value")]
 		[Description("Enter the value that should be associated with the parameter")]
-		[SampleUsage("Hello || {vValue}")]
+		[SampleUsage("\"Hello\" || vValue")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Parameter { get; set; }
 
 		public SetNLGParameterCommand()
@@ -63,12 +65,12 @@ namespace OpenBots.Commands.NLG
 			v_ParameterType = "Set Subject";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var p = (SPhraseSpec)v_InstanceName.GetAppInstance(engine);
+			var p = (SPhraseSpec)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 
-			var userInput = v_Parameter.ConvertUserVariableToString(engine);
+			var userInput = (string)await v_Parameter.EvaluateCode(engine);
 
 			switch (v_ParameterType)
 			{
@@ -100,11 +102,8 @@ namespace OpenBots.Commands.NLG
 					break;
 			}
 
-			//remove existing associations if override app instances is not enabled
-			v_InstanceName.RemoveAppInstance(engine);
-
 			//add to app instance to track
-			p.AddAppInstance(engine, v_InstanceName);
+			new OBAppInstance(v_InstanceName, p).SetVariableValue(engine, v_InstanceName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

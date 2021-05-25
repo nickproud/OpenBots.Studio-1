@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -25,16 +27,17 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Cell Location")]
 		[Description("Enter the location of the cell to extract.")]
-		[SampleUsage("A1 || {vCellLocation}")]
+		[SampleUsage("\"A1\" || vCellLocation")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CellLocation { get; set; }
 
 		[Required]
@@ -50,7 +53,7 @@ namespace OpenBots.Commands.Excel
 		[Editable(false)]
 		[DisplayName("Output Cell Value Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -60,17 +63,17 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelGetCellCommand";
 			SelectionName = "Get Cell";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 			v_Formulas = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var excelObject = v_InstanceName.GetAppInstance(engine);
-			var vTargetAddress = v_CellLocation.ConvertUserVariableToString(engine);
+			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
 			var excelInstance = (Application)excelObject;
 			Worksheet excelSheet = excelInstance.ActiveSheet;
             string cellValue;
@@ -80,7 +83,7 @@ namespace OpenBots.Commands.Excel
 			else
 				cellValue = (string)excelSheet.Range[vTargetAddress].Value.ToString();
 
-			cellValue.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);          
+			cellValue.SetVariableValue(engine, v_OutputUserVariableName);          
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

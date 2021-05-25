@@ -1,0 +1,1 @@
+{"ProjectID":"5a01a4a0-e4cc-49cc-8193-4a27bf946b50","ProjectName":"Sample_IfElseTree","ProjectType":"OpenBots","Main":"Main.obscript","Version":"1.4.0.0","Dependencies":{"OpenBots.Commands.Core":"1.4.0","OpenBots.Commands.DataManipulation":"1.4.0","OpenBots.Commands.Microsoft":"1.4.0","OpenBots.Commands.SystemAutomation":"1.4.0","OpenBots.Commands.UIAutomation":"1.4.0"}}

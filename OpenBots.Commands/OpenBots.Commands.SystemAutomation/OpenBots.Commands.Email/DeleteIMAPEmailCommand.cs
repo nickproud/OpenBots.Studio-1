@@ -15,6 +15,7 @@ using System.Linq;
 using System.Security;
 using System.Security.Authentication;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Email
@@ -22,14 +23,13 @@ namespace OpenBots.Commands.Email
 	[Serializable]
 	[Category("Email Commands")]
 	[Description("This command deletes a selected email using IMAP protocol.")]
-
 	public class DeleteIMAPEmailCommand : ScriptCommand
 	{
 
 		[Required]
 		[DisplayName("MimeMessage")]
 		[Description("Enter the MimeMessage to delete.")]
-		[SampleUsage("{vMimeMessage}")]
+		[SampleUsage("vMimeMessage")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(MimeMessage) })]
@@ -38,34 +38,34 @@ namespace OpenBots.Commands.Email
 		[Required]
 		[DisplayName("Host")]
 		[Description("Define the host/service name that the script should use.")]
-		[SampleUsage("imap.gmail.com || {vHost}")]
+		[SampleUsage("\"imap.gmail.com\" || vHost")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPHost { get; set; }
 
 		[Required]
 		[DisplayName("Port")]
 		[Description("Define the port number that should be used when contacting the IMAP service.")]
-		[SampleUsage("993 || {vPort}")]
+		[SampleUsage("\"993\" || vPort")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPPort { get; set; }
 
 		[Required]
 		[DisplayName("Username")]
 		[Description("Define the username to use when contacting the IMAP service.")]
-		[SampleUsage("myRobot || {vUsername}")]
+		[SampleUsage("\"myRobot\" || vUsername")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_IMAPUserName { get; set; }
 
 		[Required]
 		[DisplayName("Password")]
 		[Description("Define the password to use when contacting the IMAP service.")]
-		[SampleUsage("{vPassword}")]
+		[SampleUsage("vPassword")]
 		[Remarks("Password input must be a SecureString variable.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(SecureString) })]
@@ -90,14 +90,14 @@ namespace OpenBots.Commands.Email
 			v_IMAPDeleteReadOnly = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			MimeMessage vMimeMessage = (MimeMessage)v_IMAPMimeMessage.ConvertUserVariableToObject(engine, nameof(v_IMAPMimeMessage), this);
-			string vIMAPHost = v_IMAPHost.ConvertUserVariableToString(engine);
-			string vIMAPPort = v_IMAPPort.ConvertUserVariableToString(engine);
-			string vIMAPUserName = v_IMAPUserName.ConvertUserVariableToString(engine);
-			string vIMAPPassword = ((SecureString)v_IMAPPassword.ConvertUserVariableToObject(engine, nameof(v_IMAPPassword), this)).ConvertSecureStringToString();
+			MimeMessage vMimeMessage = (MimeMessage)await v_IMAPMimeMessage.EvaluateCode(engine);
+			string vIMAPHost = (string)await v_IMAPHost.EvaluateCode(engine);
+			string vIMAPPort = (string)await v_IMAPPort.EvaluateCode(engine);
+			string vIMAPUserName = (string)await v_IMAPUserName.EvaluateCode(engine);
+			string vIMAPPassword = ((SecureString)await v_IMAPPassword.EvaluateCode(engine)).ConvertSecureStringToString();
 
 			using (var client = new ImapClient())
 			{

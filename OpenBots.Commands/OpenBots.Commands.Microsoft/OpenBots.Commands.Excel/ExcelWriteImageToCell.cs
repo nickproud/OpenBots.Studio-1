@@ -17,6 +17,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Data;
+using System.Threading.Tasks;
+using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.Excel
 {
@@ -30,35 +32,36 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Cell Location")]
 		[Description("Enter the location of the cell to write image.")]
-		[SampleUsage("A1 || {vCellLocation}")]
+		[SampleUsage("\"A1\" || vCellLocation")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CellLocation { get; set; }
 
 		[Required]
 		[DisplayName("Image Path")]
 		[Description("Enter or Select the path to the image file.")]
-		[SampleUsage(@"C:\temp\image.png || {vFilePath} || {ProjectPath}\image.png")]
+		[SampleUsage("@\"C:\\temp\\myfile.png\" || ProjectPath + @\"\\myfile.png\" || vFilePath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ImagePath { get; set; }
 
 		[Required]
 		[DisplayName("Image Scale Percentage")]
 		[Description("Enter the image scale percentage to enlarge or reduce the size of the rendered image.")]
-		[SampleUsage("75 || {vImageScalePercentage}")]
+		[SampleUsage("75 || vImageScalePercentage")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_ImageScalePercentage { get; set; }
 
 		public ExcelWriteImageToCell()
@@ -66,23 +69,23 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelWriteImageToCell";
 			SelectionName = "Write Image To Cell";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
-			v_CellLocation = "A1";
+			v_CellLocation = "\"A1\"";
 			v_ImageScalePercentage = "100";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var excelObject = v_InstanceName.GetAppInstance(engine);
+			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var excelInstance = (Application)excelObject;
-			var vTargetAddress = v_CellLocation.ConvertUserVariableToString(engine);
-			var vImagePath = v_ImagePath.ConvertUserVariableToString(engine);
-			var vImageScalePercentage = v_ImageScalePercentage.ConvertUserVariableToString(engine);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
+			var vImagePath = (string)await v_ImagePath.EvaluateCode(engine);
+			var vImageScalePercentage = (int)await v_ImageScalePercentage.EvaluateCode(engine);
 
-			if(Convert.ToInt32(vImageScalePercentage) < 1)
+			if(vImageScalePercentage < 1)
 				throw new DataException("Invalid Image Scale Percentage value, it should be greater than 0.");
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;
@@ -90,7 +93,7 @@ namespace OpenBots.Commands.Excel
 			float left = (float)((double)oRange.Left);
 			float top = (float)((double)oRange.Top);
 			Image img = Image.FromFile(vImagePath);
-			img = ScaleByPercent(img, Convert.ToInt32(vImageScalePercentage));
+			img = ScaleByPercent(img, vImageScalePercentage);
 			excelSheet.Shapes.AddPicture(vImagePath, MsoTriState.msoFalse, MsoTriState.msoCTrue, left, top, img.Width, img.Height);
 		}
 

@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
 using Xunit;
-using System.Data;
+using System;
 
 namespace OpenBots.Commands.Asset.Test
 {
@@ -13,7 +13,7 @@ namespace OpenBots.Commands.Asset.Test
         private UpdateAssetCommand _updateAsset;
 
         [Fact]
-        public void AppendsTextAsset()
+        public async void AppendsTextAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _appendTextAsset = new AppendTextAssetCommand();
@@ -44,8 +44,8 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string initialText = "{initialText}".ConvertUserVariableToString(_engine);
-            string updatedAsset = "{updatedAsset}".ConvertUserVariableToString(_engine);
+            string initialText = (string)await "{initialText}".EvaluateCode(_engine);
+            string updatedAsset = (string)await "{updatedAsset}".EvaluateCode(_engine);
 
             resetAsset(assetName, initialText, "Text");
 
@@ -53,7 +53,7 @@ namespace OpenBots.Commands.Asset.Test
         }
 
         [Fact]
-        public void HandlesNonexistentAsset()
+        public async System.Threading.Tasks.Task HandlesNonexistentAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _appendTextAsset = new AppendTextAssetCommand();
@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Asset.Test
             VariableMethods.CreateTestVariable(assetName, _engine, "{assetName}", typeof(string));
             VariableMethods.CreateTestVariable(toAppend, _engine, "{toAppend}", typeof(string));
 
-            Assert.Throws<DataException>(() => _appendTextAsset.RunCommand(_engine));
+            Assert.ThrowsAsync<InvalidOperationException>(() => _appendTextAsset.RunCommand(_engine));
         }
 
         private void resetAsset(string assetName, string assetVal, string type)

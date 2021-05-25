@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -12,6 +13,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -28,25 +30,26 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Row")]
-		[Description("Enter the text value that will be set in the selected row (Can be a DataRow).")]
-		[SampleUsage("Hello,World || {vData1},{vData2} || {vDataRow}")]
+		[Description("Enter the row value to set at the selected cell.")]
+		[SampleUsage("new List<string>() { \"Hello\", \"World\" } || vList || vDataRow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(DataRow) }, true)]
+		[CompatibleTypes(new Type[] { typeof(DataRow), typeof(List<string>) })]
 		public string v_RowToSet { get; set; }
 
 		[Required]
 		[DisplayName("Cell Location")]
 		[Description("Enter the location of the cell to write the row to.")]
-		[SampleUsage("A1 || {vCellLocation}")]
+		[SampleUsage("\"A1\" || vCellLocation")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_CellLocation { get; set; }
 
 		public ExcelWriteRowCommand()
@@ -54,22 +57,19 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelWriteRowCommand";
 			SelectionName = "Write Row";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
-			v_CellLocation = "A1";
+			v_CellLocation = "\"A1\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;          
-			var vTargetAddress = v_CellLocation.ConvertUserVariableToString(engine);
-			dynamic vRow = v_RowToSet.ConvertUserVariableToString(engine);
+			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
+			dynamic vRow = await v_RowToSet.EvaluateCode(engine);
 
-			if (vRow == v_RowToSet && v_RowToSet.StartsWith("{") && v_RowToSet.EndsWith("}"))
-				vRow = v_RowToSet.ConvertUserVariableToObject(engine, nameof(v_RowToSet), this);
-
-			var excelObject = v_InstanceName.GetAppInstance(engine);
+			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var excelInstance = (Application)excelObject;
 			var excelSheet = (Worksheet)excelInstance.ActiveSheet;
 			
@@ -106,13 +106,11 @@ namespace OpenBots.Commands.Excel
 			}
 			else
 			{
-				string vRowString = v_RowToSet.ConvertUserVariableToString(engine);
-				var splittext = vRowString.Split(',');
-
+				var vRowList = (List<string>)vRow;
 				string cellValue;
-				for (int j = 0; j < splittext.Length; j++)
+				for (int j = 0; j < vRowList.Count; j++)
 				{
-					cellValue = splittext[j];
+					cellValue = vRowList[j];
 					if (cellValue == "null")
 					{
 						cellValue = string.Empty;

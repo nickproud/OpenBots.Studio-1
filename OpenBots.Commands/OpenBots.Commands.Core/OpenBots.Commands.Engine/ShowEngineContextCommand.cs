@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Engine
 {
@@ -22,10 +23,10 @@ namespace OpenBots.Commands.Engine
 		[DisplayName("Close After X (Seconds)")]
 		[Description("Specify how many seconds to display the message on screen. After the specified time," +
 							"\nthe message box will be automatically closed and script will resume execution.")]
-		[SampleUsage("0 || 5 || {vSeconds})")]
+		[SampleUsage("0 || 5 || vSeconds")]
 		[Remarks("Set value to 0 to remain open indefinitely.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_AutoCloseAfter { get; set; }
 
 		public ShowEngineContextCommand()
@@ -38,10 +39,10 @@ namespace OpenBots.Commands.Engine
 			v_AutoCloseAfter = "0";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			int closeAfter = int.Parse(v_AutoCloseAfter.ConvertUserVariableToString(engine));
+			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{

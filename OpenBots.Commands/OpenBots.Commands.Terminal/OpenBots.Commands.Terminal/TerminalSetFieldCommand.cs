@@ -3,12 +3,14 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Terminal
@@ -23,25 +25,26 @@ namespace OpenBots.Commands.Terminal
 		[Description("Enter the unique instance that was specified in the **Create Terminal Session** command.")]
 		[SampleUsage("MyTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Terminal Session** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(OpenEmulator) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Field Index")]
 		[Description("Enter the index of the field to set text in.")]
-		[SampleUsage("0 || {vFieldIndex}")]
+		[SampleUsage("0 || vFieldIndex")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_FieldIndex { get; set; }
 
 		[Required]
 		[DisplayName("Text to Set")]
 		[Description("Enter the text to be sent to the specified terminal.")]
-		[SampleUsage("Hello, World! || {vText}")]
+		[SampleUsage("\"Hello, World!\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		public TerminalSetFieldCommand()
@@ -54,12 +57,12 @@ namespace OpenBots.Commands.Terminal
 			v_InstanceName = "DefaultTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var fieldIndex = int.Parse(v_FieldIndex.ConvertUserVariableToString(engine));
-			string textToSend = v_TextToSet.ConvertUserVariableToString(engine);
-			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
+			var fieldIndex = (int)await v_FieldIndex.EvaluateCode(engine);
+			string textToSend = (string)await v_TextToSet.EvaluateCode(engine);
+			var terminalObject = (OpenEmulator)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");

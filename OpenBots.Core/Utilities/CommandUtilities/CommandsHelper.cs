@@ -1,11 +1,11 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Core.Utilities.FormsUtilities;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using System;
@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 
 namespace OpenBots.Core.Utilities.CommandUtilities
@@ -36,7 +37,10 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             //Instantiate Class
             ScriptCommand newCommand = (ScriptCommand)Activator.CreateInstance(commandClass);
 
-            AutomationCommand newAutomationCommand = null;
+			newCommand.CommandIcon = null;
+			GC.Collect();
+
+			AutomationCommand newAutomationCommand = null;
             //If command is enabled, pull for display and configuration
             if (newCommand.CommandEnabled)
             {
@@ -47,17 +51,12 @@ namespace OpenBots.Core.Utilities.CommandUtilities
                 newAutomationCommand.FullName = string.Join(" - ", groupAttribute, newCommand.SelectionName);
                 newAutomationCommand.ShortName = newCommand.SelectionName;
                 newAutomationCommand.Description = GetDescription(commandClass);
-				newAutomationCommand.CommandIcon = newCommand.CommandIcon;
-
-                //if (userPrefs.ClientSettings.PreloadBuilderCommands)
-                //{
-                //    //newAutomationCommand.RenderUIComponents();
-                //}
             }
 
             return newAutomationCommand;
         }
-        private static string GetDescription(Type type)
+
+		public static string GetDescription(Type type)
         {
             var descriptions = (DescriptionAttribute[])type.GetCustomAttributes(typeof(DescriptionAttribute), true);
 
@@ -66,7 +65,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             return descriptions[0].Description;
         }
 
-        public static AutomationElement SearchForGUIElement(IAutomationEngineInstance engine, DataTable uiaSearchParams, string variableWindowName)
+        public async static Task<AutomationElement> SearchForGUIElement(IAutomationEngineInstance engine, DataTable uiaSearchParams, string variableWindowName)
         {
             User32Functions.ActivateWindow(variableWindowName);
             //create search params
@@ -79,9 +78,9 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             foreach (var param in searchParams)
             {
                 var parameterName = (string)param["Parameter Name"];
-                var parameterValue = (string)param["Parameter Value"];
+                var parameterValueString = (string)param["Parameter Value"];
 
-                parameterValue = parameterValue.ConvertUserVariableToString(engine);
+                dynamic parameterValue = await parameterValueString.EvaluateCode(engine);
 
                 PropertyCondition propCondition;
                 if (bool.TryParse(parameterValue, out bool bValue))
@@ -159,29 +158,29 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             }
         }
 
-        public static bool ElementExists(IAutomationEngineInstance engine, string instanceName, string searchMethod, string parameterName, 
+        public async static Task<bool> ElementExists(IAutomationEngineInstance engine, OBAppInstance instance, string searchMethod, string parameterName, 
             string searchOption, int timeout)
         {
             //get engine reference
             List<string[]> seleniumSearchParamRows = new List<string[]>();
             seleniumSearchParamRows.Add(new string[]
             {
-                string.Empty, searchMethod, parameterName
+                string.Empty, $"\"{searchMethod}\"", parameterName
             });
 
-            //get stored app object
-            var browserObject = instanceName.GetAppInstance(engine);
-
             //get selenium instance driver
-            var seleniumInstance = (ChromeDriver)browserObject;
+            var seleniumInstance = (IWebDriver)instance.Value;
 
             try
             {
                 //search for element
-                var element = FindElement(engine, seleniumInstance, seleniumSearchParamRows, searchOption, timeout);
+                var element = await FindElement(engine, seleniumInstance, seleniumSearchParamRows, searchOption, timeout);
 
-                //element exists
-                return true;
+				//element exists
+				if (element == null)
+					return false;
+				else
+					return true;
             }
             catch (Exception)
             {
@@ -190,7 +189,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             }
         }
 
-        public static object FindElement(IAutomationEngineInstance engine, IWebDriver seleniumInstance, List<string[]> searchParameterRows, 
+        public async static Task<object> FindElement(IAutomationEngineInstance engine, IWebDriver seleniumInstance, List<string[]> searchParameterRows, 
             string searchOption, int timeout)
         {
             var wait = new WebDriverWait(seleniumInstance, new TimeSpan(0, 0, timeout));
@@ -201,8 +200,10 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
             foreach (var row in searchParameterRows)
             {
-                string parameter = row[2].ToString().ConvertUserVariableToString(engine);
-                switch (row[1].ToString())
+                string parameter = (string)await row[2].ToString().EvaluateCode(engine);
+				string parameterName = (string)await row[1].ToString().EvaluateCode(engine);
+
+				switch (parameterName)
                 {
                     case string a when a.ToLower().Contains("xpath"):
                         by = By.XPath(parameter);
@@ -305,145 +306,112 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             return element;
         }
 
-		public static bool DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable)
+		public async static Task<bool> DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable)
 		{
 			bool ifResult = false;
 
-			if (ifActionType == "Value Compare")
+			if (ifActionType == "Number Compare")
 			{
 				string value1 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value1"
+								  where rw.Field<string>("Parameter Name") == "Number1"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string operand = ((from rw in IfActionParameterTable.AsEnumerable()
 								   where rw.Field<string>("Parameter Name") == "Operand"
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string value2 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value2"
+								  where rw.Field<string>("Parameter Name") == "Number2"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				value1 = value1.ConvertUserVariableToString(engine);
-				value2 = value2.ConvertUserVariableToString(engine);
-
-				decimal cdecValue1, cdecValue2;
+				var cdecValue1 = Convert.ToDecimal(await value1.EvaluateCode(engine));
+				var cdecValue2 = Convert.ToDecimal(await value2.EvaluateCode(engine));
 
 				switch (operand)
 				{
 					case "is equal to":
-						ifResult = (value1 == value2);
+						ifResult = cdecValue1 == cdecValue2;
 						break;
 
 					case "is not equal to":
-						ifResult = (value1 != value2);
+						ifResult = cdecValue1 != cdecValue2;
 						break;
 
 					case "is greater than":
-						cdecValue1 = Convert.ToDecimal(value1);
-						cdecValue2 = Convert.ToDecimal(value2);
-						ifResult = (cdecValue1 > cdecValue2);
+						ifResult = cdecValue1 > cdecValue2;
 						break;
 
 					case "is greater than or equal to":
-						cdecValue1 = Convert.ToDecimal(value1);
-						cdecValue2 = Convert.ToDecimal(value2);
-						ifResult = (cdecValue1 >= cdecValue2);
+						ifResult = cdecValue1 >= cdecValue2;
 						break;
 
 					case "is less than":
-						cdecValue1 = Convert.ToDecimal(value1);
-						cdecValue2 = Convert.ToDecimal(value2);
-						ifResult = (cdecValue1 < cdecValue2);
+						ifResult = cdecValue1 < cdecValue2;
 						break;
 
 					case "is less than or equal to":
-						cdecValue1 = Convert.ToDecimal(value1);
-						cdecValue2 = Convert.ToDecimal(value2);
-						ifResult = (cdecValue1 <= cdecValue2);
+						ifResult = cdecValue1 <= cdecValue2;
 						break;
 				}
 			}
 			else if (ifActionType == "Date Compare")
 			{
 				string value1 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value1"
+								  where rw.Field<string>("Parameter Name") == "Date1"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string operand = ((from rw in IfActionParameterTable.AsEnumerable()
 								   where rw.Field<string>("Parameter Name") == "Operand"
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string value2 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value2"
+								  where rw.Field<string>("Parameter Name") == "Date2"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				DateTime dt1, dt2;
-
-				dynamic input1 = value1.ConvertUserVariableToString(engine);
-
-				if (input1 == value1 && input1.StartsWith("{") && input1.EndsWith("}"))
-					input1 = value1.ConvertUserVariableToObject(engine, typeof(object));
-
-				if (input1 is DateTime)
-					dt1 = (DateTime)input1;
-				else if (input1 is string)
-					dt1 = DateTime.Parse((string)input1);
-				else
-					throw new InvalidDataException("Value1 is not a valid DateTime");
-
-				dynamic input2 = value2.ConvertUserVariableToString(engine);
-
-				if (input2 == value2 && input2.StartsWith("{") && input2.EndsWith("}"))
-					input2 = value2.ConvertUserVariableToObject(engine, typeof(object));
-
-				if (input2 is DateTime)
-					dt2 = (DateTime)input2;
-				else if (input2 is string)
-					dt2 = DateTime.Parse((string)input2);
-				else
-					throw new InvalidDataException("Value2 is not a valid DateTime");
+				var dt1 = (DateTime)await value1.EvaluateCode(engine);
+				var dt2 = (DateTime)await value2.EvaluateCode(engine);
 
 				switch (operand)
 				{
 					case "is equal to":
-						ifResult = (dt1 == dt2);
+						ifResult = dt1 == dt2;
 						break;
 
 					case "is not equal to":
-						ifResult = (dt1 != dt2);
+						ifResult = dt1 != dt2;
 						break;
 
 					case "is greater than":
-						ifResult = (dt1 > dt2);
+						ifResult = dt1 > dt2;
 						break;
 
 					case "is greater than or equal to":
-						ifResult = (dt1 >= dt2);
+						ifResult = dt1 >= dt2;
 						break;
 
 					case "is less than":
-						ifResult = (dt1 < dt2);
+						ifResult = dt1 < dt2;
 						break;
 
 					case "is less than or equal to":
-						ifResult = (dt1 <= dt2);
+						ifResult = dt1 <= dt2;
 						break;
 				}
 			}
-			else if (ifActionType == "Variable Compare")
+			else if (ifActionType == "Text Compare")
 			{
 				string value1 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value1"
+								  where rw.Field<string>("Parameter Name") == "Text1"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string operand = ((from rw in IfActionParameterTable.AsEnumerable()
 								   where rw.Field<string>("Parameter Name") == "Operand"
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				string value2 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Value2"
+								  where rw.Field<string>("Parameter Name") == "Text2"
 								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 				string caseSensitive = ((from rw in IfActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Case Sensitive"
 										 select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				value1 = value1.ConvertUserVariableToString(engine);
-				value2 = value2.ConvertUserVariableToString(engine);
+				value1 = (string)await value1.EvaluateCode(engine);
+				value2 = (string)await value2.EvaluateCode(engine);
 
 				if (caseSensitive == "No")
 				{
@@ -454,49 +422,42 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				switch (operand)
 				{
 					case "contains":
-						ifResult = (value1.Contains(value2));
+						ifResult = value1.Contains(value2);
 						break;
 
 					case "does not contain":
-						ifResult = (!value1.Contains(value2));
+						ifResult = !value1.Contains(value2);
 						break;
 
 					case "is equal to":
-						ifResult = (value1 == value2);
+						ifResult = value1 == value2;
 						break;
 
 					case "is not equal to":
-						ifResult = (value1 != value2);
+						ifResult = value1 != value2;
 						break;
 				}
 			}
-			else if (ifActionType == "Variable Has Value")
+			else if (ifActionType == "Has Value")
 			{
 				string variableName = ((from rw in IfActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "Variable Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var actualVariable = variableName.ConvertUserVariableToObject(engine, typeof(object));
+				dynamic actualVariable = variableName.EvaluateCode(engine);
 
-				if (actualVariable != null)
+				if (actualVariable.Result != null)
 					ifResult = true;
 				else
 					ifResult = false;
 			}
-			else if (ifActionType == "Variable Is Numeric")
+			else if (ifActionType == "Is Numeric")
 			{
 				string variableName = ((from rw in IfActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "Variable Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var actualVariable = variableName.ConvertUserVariableToString(engine).Trim();
-
-				var numericTest = decimal.TryParse(actualVariable, out decimal parsedResult);
-
-				if (numericTest)
-					ifResult = true;
-				else
-					ifResult = false;
+				ifResult = decimal.TryParse((await variableName.EvaluateCode(engine)).ToString(), out decimal decimalResult);
 			}
 			else if (ifActionType == "Error Occured")
 			{
@@ -505,20 +466,17 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										  where rw.Field<string>("Parameter Name") == "Line Number"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				//convert to variable
-				string variableLineNumber = userLineNumber.ConvertUserVariableToString(engine);
-
 				//convert to int
-				int lineNumber = int.Parse(variableLineNumber);
+				int lineNumber = (int)await userLineNumber.EvaluateCode(engine);
 
 				//determine if error happened
 				if (engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).Count() > 0)
 				{
 
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.StoreInUserVariable(engine, "Error.Message", typeof(string));
-					error.LineNumber.ToString().StoreInUserVariable(engine, "Error.Line", typeof(string));
-					error.StackTrace.StoreInUserVariable(engine, "Error.StackTrace", typeof(string));
+					error.ErrorMessage.SetVariableValue(engine, "Error.Message");
+					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line");
+					error.StackTrace.SetVariableValue(engine, "Error.StackTrace");
 
 					ifResult = true;
 				}
@@ -531,24 +489,18 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				string userLineNumber = ((from rw in IfActionParameterTable.AsEnumerable()
 										  where rw.Field<string>("Parameter Name") == "Line Number"
 										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				//convert to variable
-				string variableLineNumber = userLineNumber.ConvertUserVariableToString(engine);
-
 				//convert to int
-				int lineNumber = int.Parse(variableLineNumber);
+				int lineNumber = (int)await userLineNumber.EvaluateCode(engine);
 
 				//determine if error happened
 				if (engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).Count() == 0)
-				{
 					ifResult = true;
-				}
 				else
 				{
 					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.StoreInUserVariable(engine, "Error.Message", typeof(string));
-					error.LineNumber.ToString().StoreInUserVariable(engine, "Error.Line", typeof(string));
-					error.StackTrace.StoreInUserVariable(engine, "Error.StackTrace", typeof(string));
+					error.ErrorMessage.SetVariableValue(engine, "Error.Message");
+					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line");
+					error.StackTrace.SetVariableValue(engine, "Error.StackTrace");
 
 					ifResult = false;
 				}
@@ -560,16 +512,14 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 									  where rw.Field<string>("Parameter Name") == "Window Name"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 				//variable translation
-				string variablizedWindowName = windowName.ConvertUserVariableToString(engine);
+				string variablizedWindowName = (string)await windowName.EvaluateCode(engine);
 
 				//search for window
 				IntPtr windowPtr = User32Functions.FindWindow(variablizedWindowName);
 
 				//conditional
 				if (windowPtr != IntPtr.Zero)
-				{
 					ifResult = true;
-				}
 			}
 			else if (ifActionType == "Active Window Name Is")
 			{
@@ -577,15 +527,12 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 									  where rw.Field<string>("Parameter Name") == "Window Name"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				string variablizedWindowName = windowName.ConvertUserVariableToString(engine);
+				string variablizedWindowName = (string)await windowName.EvaluateCode(engine);
 
 				var currentWindowTitle = User32Functions.GetActiveWindowTitle();
 
 				if (currentWindowTitle == variablizedWindowName)
-				{
 					ifResult = true;
-				}
-
 			}
 			else if (ifActionType == "File Exists")
 			{
@@ -598,18 +545,14 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var userFileSelected = fileName.ConvertUserVariableToString(engine);
+				var userFileSelected = (string)await fileName.EvaluateCode(engine);
 
 				bool existCheck = false;
 				if (trueWhenFileExists == "It Does Exist")
-				{
 					existCheck = true;
-				}
 
 				if (File.Exists(userFileSelected) == existCheck)
-				{
 					ifResult = true;
-				}
 			}
 			else if (ifActionType == "Folder Exists")
 			{
@@ -621,24 +564,22 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				var userFolderSelected = folderName.ConvertUserVariableToString(engine);
+				var userFolderSelected = (string)await folderName.EvaluateCode(engine);
 
 				bool existCheck = false;
 				if (trueWhenFileExists == "It Does Exist")
-				{
 					existCheck = true;
-				}
 
 				if (Directory.Exists(userFolderSelected) == existCheck)
-				{
 					ifResult = true;
-				}
 			}
-			else if (ifActionType == "Web Element Exists")
+			else if (ifActionType == "Selenium Web Element Exists")
 			{
 				string instanceName = ((from rw in IfActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "Selenium Instance Name"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+				OBAppInstance instance = (OBAppInstance)await instanceName.EvaluateCode(engine);
 
 				string parameterName = ((from rw in IfActionParameterTable.AsEnumerable()
 										 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
@@ -648,15 +589,17 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 										where rw.Field<string>("Parameter Name") == "Element Search Method"
 										select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				string timeout = ((from rw in IfActionParameterTable.AsEnumerable()
+				string timeoutStr = ((from rw in IfActionParameterTable.AsEnumerable()
 								   where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
 								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+				int timeout = (int)await timeoutStr.EvaluateCode(engine);
 
 				string trueWhenElementExists = (from rw in IfActionParameterTable.AsEnumerable()
 												where rw.Field<string>("Parameter Name") == "True When"
 												select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				bool elementExists = ElementExists(engine, instanceName, searchMethod, parameterName, "Find Element", int.Parse(timeout));
+				bool elementExists = await ElementExists(engine, instance, searchMethod, parameterName, "Find Element", timeout);
 				ifResult = elementExists;
 
 				if (trueWhenElementExists == "It Does Not Exist")
@@ -664,25 +607,28 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 			}
 			else if (ifActionType == "GUI Element Exists")
 			{
-				string windowName = ((from rw in IfActionParameterTable.AsEnumerable()
+				string windowName = (from rw in IfActionParameterTable.AsEnumerable()
 									  where rw.Field<string>("Parameter Name") == "Window Name"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+									  select rw.Field<string>("Parameter Value")).FirstOrDefault();
+				windowName = (string)await windowName.EvaluateCode(engine);
 
-				string elementSearchParam = ((from rw in IfActionParameterTable.AsEnumerable()
+				string elementSearchParam = (from rw in IfActionParameterTable.AsEnumerable()
 											  where rw.Field<string>("Parameter Name") == "Element Search Parameter"
-											  select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
+				elementSearchParam = (string)await elementSearchParam.EvaluateCode(engine);
 
-				string elementSearchMethod = ((from rw in IfActionParameterTable.AsEnumerable()
+				string elementSearchMethod = (from rw in IfActionParameterTable.AsEnumerable()
 											   where rw.Field<string>("Parameter Name") == "Element Search Method"
-											   select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+											   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+				elementSearchMethod = (string)await elementSearchMethod.EvaluateCode(engine);
 
 				string trueWhenElementExists = (from rw in IfActionParameterTable.AsEnumerable()
 												where rw.Field<string>("Parameter Name") == "True When"
 												select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				string timeout = (from rw in IfActionParameterTable.AsEnumerable()
+				string timeoutString = (from rw in IfActionParameterTable.AsEnumerable()
 								  where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
-								  select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine);
+								  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 				//set up search parameter table
 				var uiASearchParameters = new DataTable();
@@ -691,14 +637,14 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				uiASearchParameters.Columns.Add("Parameter Value");
 				uiASearchParameters.Rows.Add(true, elementSearchMethod, elementSearchParam);
 
-				int vTimeout = int.Parse(timeout);
+				int vTimeout = (int)await timeoutString.EvaluateCode(engine);
 				AutomationElement handle = null;
 				var timeToEnd = DateTime.Now.AddSeconds(vTimeout);
 				while (timeToEnd >= DateTime.Now)
 				{
 					try
 					{
-						handle = SearchForGUIElement(engine, uiASearchParameters, windowName);
+						handle = await SearchForGUIElement(engine, uiASearchParameters, windowName);
 						break;
 					}
 					catch (Exception)
@@ -721,12 +667,14 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 				string imageName = (from rw in IfActionParameterTable.AsEnumerable()
 									where rw.Field<string>("Parameter Name") == "Captured Image Variable"
 									select rw.Field<string>("Parameter Value")).FirstOrDefault();
+				string accuracyString;
 				double accuracy;
 				try
 				{
-					accuracy = double.Parse((from rw in IfActionParameterTable.AsEnumerable()
+					accuracyString = (from rw in IfActionParameterTable.AsEnumerable()
 											 where rw.Field<string>("Parameter Name") == "Accuracy (0-1)"
-											 select rw.Field<string>("Parameter Value")).FirstOrDefault().ConvertUserVariableToString(engine));
+											 select rw.Field<string>("Parameter Value")).FirstOrDefault();
+					accuracy = (double)await accuracyString.EvaluateCode(engine);
 					if (accuracy > 1 || accuracy < 0)
 						throw new ArgumentOutOfRangeException("Accuracy value is out of range (0-1)");
 				}
@@ -739,16 +687,14 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				var imageVariable = imageName.ConvertUserVariableToObject(engine, typeof(Bitmap));
+				var capturedImage = (Bitmap)await imageName.EvaluateCode(engine);
+				string timeoutString = (from rw in IfActionParameterTable.AsEnumerable()
+										 where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
+										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
+				int timeout = (int)await timeoutString.EvaluateCode(engine);
 
-				Bitmap capturedImage;
-				if (imageVariable != null && imageVariable is Bitmap)
-					capturedImage = (Bitmap)imageVariable;
-				else
-					throw new ArgumentException("Provided Argument is not a 'Bitmap' Image");
-
-				var element = FindImageElement(capturedImage, accuracy);
-				FormsHelper.ShowAllForms();
+				var element = FindImageElement(capturedImage, accuracy, engine, DateTime.Now.AddSeconds(timeout));
+				FormsHelper.ShowAllForms(engine.AutomationEngineContext.IsDebugMode);
 
 				if (element != null)
 					ifResult = true;
@@ -769,23 +715,27 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 											  where rw.Field<string>("Parameter Name") == "True When"
 											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
-				ifResult = instanceName.InstanceExists(engine);
+				var appInstanceObj = (OBAppInstance)await instanceName.EvaluateCode(engine);
+
+				if (appInstanceObj == null)
+					ifResult = false;
+				else
+					ifResult = appInstanceObj.Value.InstanceExists();
 
 				if (trueWhenImageExists == "It Does Not Exist")
 					ifResult = !ifResult;
 			}
 			else
-			{
 				throw new Exception("If type not recognized!");
-			}
 
 			return ifResult;
 		}
 
-		public static ImageElement FindImageElement(Bitmap smallBmp, double accuracy)
+		public static ImageElement FindImageElement(Bitmap smallBmp, double accuracy, IAutomationEngineInstance engine, DateTime timeToEnd, bool isCaptureTest = false)
 		{
 			FormsHelper.HideAllForms();
 
+			var lastRecordedTime = DateTime.Now;
 			dynamic element = null;
 			double tolerance = 1.0 - accuracy;
 
@@ -827,6 +777,18 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 
 				for (int y = 0; y < bigHeight; y++)
 				{
+					if (engine != null && engine.IsCancellationPending)
+						break;
+
+					if (engine != null && lastRecordedTime.Second != DateTime.Now.Second)
+                    {
+						engine.ReportProgress("Element Not Yet Found... " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+						lastRecordedTime = DateTime.Now;
+					}
+
+					if (timeToEnd <= DateTime.Now)
+						break;
+
 					for (int x = 0; x < bigWidth; x++)
 					{
 						byte* pBigBackup = pBig;
@@ -876,6 +838,12 @@ namespace OpenBots.Core.Utilities.CommandUtilities
 								MiddleY = y + smallBmp.Height / 2,
 								BottomY = y + smallBmp.Height
 							};
+
+							if (isCaptureTest)
+                            {
+								element.SmallTestImage = smallTestBmp;
+								element.BigTestImage = bigTestBmp;
+							}
 
 							break;
 						}

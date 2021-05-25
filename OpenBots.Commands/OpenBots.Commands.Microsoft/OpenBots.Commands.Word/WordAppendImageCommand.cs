@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -12,6 +13,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Word
 {
@@ -25,17 +27,18 @@ namespace OpenBots.Commands.Word
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyWordInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Image File Path")]    
 		[Description("Enter the file path of the image to append to the Document.")]
-		[SampleUsage(@"C:\temp\myImage.png || {vImageFilePath} || {ProjectPath}\myImage.png")]
+		[SampleUsage("@\"C:\\temp\\myfile.png\" || ProjectPath + @\"\\myfile.png\" || vFilePath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ImagePath { get; set; }
 
 		public WordAppendImageCommand()
@@ -43,16 +46,16 @@ namespace OpenBots.Commands.Word
 			CommandName = "WordAppendImageCommand";
 			SelectionName = "Append Image";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_word;
 
 			v_InstanceName = "DefaultWord";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vImagePath = v_ImagePath.ConvertUserVariableToString(engine);
-			var wordObject = v_InstanceName.GetAppInstance(engine);
+			var vImagePath = (string)await v_ImagePath.EvaluateCode(engine);
+			var wordObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 
 			Application wordInstance = (Application)wordObject;
 			Document wordDocument = wordInstance.ActiveDocument;

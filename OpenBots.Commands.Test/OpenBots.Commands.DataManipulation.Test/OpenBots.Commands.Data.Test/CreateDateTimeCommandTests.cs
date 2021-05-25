@@ -11,7 +11,7 @@ namespace OpenBots.Commands.Data.Test
         private AutomationEngineInstance _engine;
 
         [Fact]
-        public void CreatesDateTime()
+        public async void CreatesDateTime()
         {
             _createDateTime = new CreateDateTimeCommand();
             _engine = new AutomationEngineInstance(null);
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Data.Test
 
             _createDateTime.RunCommand(_engine);
 
-            Object output = _createDateTime.v_OutputUserVariableName.ConvertUserVariableToObject(_engine, typeof(DateTime));
+            Object output = await _createDateTime.v_OutputUserVariableName.EvaluateCode(_engine);
             Assert.IsType<DateTime>(output);
             DateTime dateOutput = (DateTime)output;
             Assert.Equal(Int32.Parse(year), dateOutput.Year);

@@ -1,0 +1,788 @@
+{
+  "$type": "OpenBots.Core.Script.Script, OpenBots.Core",
+  "Commands": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "15947b1d-873c-4bbe-804d-44cd5953f5a1",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 1,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "========JsonExtraction Task========"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "5a2dcfff-62b7-44a4-87df-448ee0a16321",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 2,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "========PreCondition========"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "b9ab1801-f988-46b7-b9b2-82145ef1cd61",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 3,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "========Json file should be present in InputFiles folder========"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+        "v_LogFile": "Engine Logs",
+        "v_LogText": "Json Extraction Task starts",
+        "v_LogType": "Information",
+        "CommandID": "c096aea3-35a1-4f64-9051-2ff22d5d6063",
+        "CommandName": "LogMessageCommand",
+        "SelectionName": "Log Message",
+        "LineNumber": 4,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.ErrorHandling.BeginTryCommand, OpenBots.Commands.Core",
+        "CommandID": "feebb621-e258-4617-9400-1593304e0198",
+        "CommandName": "BeginTryCommand",
+        "SelectionName": "Try",
+        "LineNumber": 5,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": true,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": [
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "e8fddf3a-e5cf-4a40-83b8-e4c96d8fb77e",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 6,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Items in this section will be handled if error occurs"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "b027fa0a-4511-4160-95e7-3e0d7d1447ea",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 7,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Create new output folder to hold results"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Folder.CreateFolderCommand, OpenBots.Commands.SystemAutomation",
+            "v_NewFolderName": "Output",
+            "v_DestinationDirectory": "{ProjectPath}",
+            "v_DeleteExisting": "Yes",
+            "CommandID": "186a68c9-045c-4ec0-b2f7-af73cd1f4781",
+            "CommandName": "CreateFolderCommand",
+            "SelectionName": "Create Folder",
+            "LineNumber": 8,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "0ca60f01-b994-41ea-bbe2-2b9efc824112",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 9,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Read file containing Json Array input"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+            "v_LogFile": "Engine Logs",
+            "v_LogText": "Reading Json file and storing output in {vJsonInput}",
+            "v_LogType": "Information",
+            "CommandID": "57f7ebe8-87ca-4280-b180-eaa91dcda02e",
+            "CommandName": "LogMessageCommand",
+            "SelectionName": "Log Message",
+            "LineNumber": 10,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.TextFile.ReadTextFileCommand, OpenBots.Commands.SystemAutomation",
+            "v_FilePath": "{ProjectPath}\\InputFiles\\Sample.json",
+            "v_OutputUserVariableName": "{vJsonInput}",
+            "CommandID": "d5063734-1f7b-4e7d-b922-9765a71968a8",
+            "CommandName": "ReadTextFileCommand",
+            "SelectionName": "Read Text File",
+            "LineNumber": 11,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "42963a12-72c6-4506-b9e6-b9fe0ed9f82f",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 12,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Getting values from Json Array"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+            "v_LogFile": "Engine Logs",
+            "v_LogText": "Parsing Json Array into {vJsonOutput}",
+            "v_LogType": "Information",
+            "CommandID": "085d8a38-6a31-4f83-ade9-ebb477f7ec5c",
+            "CommandName": "LogMessageCommand",
+            "SelectionName": "Log Message",
+            "LineNumber": 13,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Data.ParseJSONArrayCommand, OpenBots.Commands.DataManipulation",
+            "v_JsonArrayName": "{vJsonInput}",
+            "v_OutputUserVariableName": "{vJsonOutput}",
+            "CommandID": "c7e1f3d5-7219-418e-b706-a607766cee21",
+            "CommandName": "ParseJSONArrayCommand",
+            "SelectionName": "Parse JSON Array",
+            "LineNumber": 14,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+            "v_LogFile": "Engine Logs",
+            "v_LogText": "Looping through Parsed Json output",
+            "v_LogType": "Information",
+            "CommandID": "f04a04eb-ad98-4565-9ff2-cafdb4fdda49",
+            "CommandName": "LogMessageCommand",
+            "SelectionName": "Log Message",
+            "LineNumber": 15,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "0d4d1e9e-886a-4425-888d-3d5dab17f535",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 16,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Loop through Json values extracted from array"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Loop.LoopCollectionCommand, OpenBots.Commands.Core",
+            "v_LoopParameter": "{vJsonOutput}",
+            "v_OutputUserVariableName": "{vJsonItem}",
+            "CommandID": "f93e8ace-6022-4e21-b218-d4673c710a18",
+            "CommandName": "LoopCollectionCommand",
+            "SelectionName": "Loop Collection",
+            "LineNumber": 17,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": true,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": [
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "1c5c90be-e3eb-4431-bca8-53e1ad3947e8",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 18,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "Items in this section will run within the loop"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+                "v_LogFile": "Engine Logs",
+                "v_LogText": "Parsing through Json object and getting the respective values",
+                "v_LogType": "Information",
+                "CommandID": "f23a9f98-a2b4-4812-aaed-4a26c129ed71",
+                "CommandName": "LogMessageCommand",
+                "SelectionName": "Log Message",
+                "LineNumber": 19,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "8f482419-6bc0-4e70-979c-878821c989fb",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 20,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "Get List of json values based on json selector"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Data.ParseJSONModelCommand, OpenBots.Commands.DataManipulation",
+                "v_JsonObject": "{vJsonItem}",
+                "v_ParseObjects": [
+                  {
+                    "Json Selector": "$.name",
+                    "Output Variable": "{vNameList}"
+                  },
+                  {
+                    "Json Selector": "$.age",
+                    "Output Variable": "{vAgeList}"
+                  },
+                  {
+                    "Json Selector": "$.Birthdate",
+                    "Output Variable": "{vBirthdateList}"
+                  }
+                ],
+                "CommandID": "a7f462e8-03e3-43f8-bfa6-730a9f551f2b",
+                "CommandName": "ParseJSONModelCommand",
+                "SelectionName": "Parse JSON Model",
+                "LineNumber": 21,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "f5292c8f-329b-41ae-8c51-f269e42ec4d0",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 22,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "Extract the first item in the Json list"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.List.GetListItemCommand, OpenBots.Commands.DataManipulation",
+                "v_ListName": "{vNameList}",
+                "v_ItemIndex": "0",
+                "v_OutputUserVariableName": "{vName}",
+                "CommandID": "d5ae2729-5d88-4e40-bdf6-a86006027d03",
+                "CommandName": "GetListItemCommand",
+                "SelectionName": "Get List Item",
+                "LineNumber": 23,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.List.GetListItemCommand, OpenBots.Commands.DataManipulation",
+                "v_ListName": "{vAgeList}",
+                "v_ItemIndex": "0",
+                "v_OutputUserVariableName": "{vAge}",
+                "CommandID": "d46ff74b-8957-478c-9c95-c2914f58a116",
+                "CommandName": "GetListItemCommand",
+                "SelectionName": "Get List Item",
+                "LineNumber": 24,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.List.GetListItemCommand, OpenBots.Commands.DataManipulation",
+                "v_ListName": "{vBirthdateList}",
+                "v_ItemIndex": "0",
+                "v_OutputUserVariableName": "{vBirthdate}",
+                "CommandID": "286ea3f6-c8c9-4aaf-9a81-e4bb5a41fd93",
+                "CommandName": "GetListItemCommand",
+                "SelectionName": "Get List Item",
+                "LineNumber": 25,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+                "v_LogFile": "Engine Logs",
+                "v_LogText": "Output values are name : {vName}, age : {vAge} and birthdate : {vBirthdate}",
+                "v_LogType": "Information",
+                "CommandID": "84216d9d-3e06-4a0c-8d4d-985c0c7e3c01",
+                "CommandName": "LogMessageCommand",
+                "SelectionName": "Log Message",
+                "LineNumber": 26,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "d4bc2312-bc3d-481d-832b-19c33602b540",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 27,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "Write extracted name, age and birthdate to txt file"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.TextFile.WriteCreateTextFileCommand, OpenBots.Commands.SystemAutomation",
+                "v_FilePath": "{ProjectPath}\\Output\\ExtractedValues.txt",
+                "v_TextToWrite": "Name: {vName}, age : {vAge} and birthdate : {vBirthdate} [crLF]",
+                "v_Overwrite": "Append",
+                "CommandID": "9d6a456f-78dc-4caf-823e-048754ad829d",
+                "CommandName": "WriteCreateTextFileCommand",
+                "SelectionName": "Write/Create Text File",
+                "LineNumber": 28,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Loop.EndLoopCommand, OpenBots.Commands.Core",
+                "CommandID": "fb83cc2d-c02c-43dd-8338-059c424985d8",
+                "CommandName": "EndLoopCommand",
+                "SelectionName": "End Loop",
+                "LineNumber": 29,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            }
+          ]
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.CatchCommand, OpenBots.Commands.Core",
+            "v_ExceptionType": "Exception",
+            "CommandID": "28976cd4-2e73-43b8-b08a-72f555db2142",
+            "CommandName": "CatchCommand",
+            "SelectionName": "Catch",
+            "LineNumber": 30,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "ba2e014b-7521-4873-aa34-1b6db8ac6faf",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 31,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "This section executes if error occurs above"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.GetExceptionMessageCommand, OpenBots.Commands.Core",
+            "v_OutputUserVariableName": "{vErrorMessage}",
+            "CommandID": "f93d128e-2f35-4e39-9c57-ec6bdb341e5b",
+            "CommandName": "GetExceptionMessageCommand",
+            "SelectionName": "Get Exception Message",
+            "LineNumber": 32,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+            "v_LogFile": "Engine Logs",
+            "v_LogText": "Error extracting json - {vErrorMessage}",
+            "v_LogType": "Error",
+            "CommandID": "8cf23c2b-9879-4831-a5c5-c2ac169ac54f",
+            "CommandName": "LogMessageCommand",
+            "SelectionName": "Log Message",
+            "LineNumber": 33,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.RethrowCommand, OpenBots.Commands.Core",
+            "CommandID": "f66e1076-df69-4098-858d-f06980c18c86",
+            "CommandName": "RethrowCommand",
+            "SelectionName": "Rethrow",
+            "LineNumber": 34,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.EndTryCommand, OpenBots.Commands.Core",
+            "CommandID": "f8266426-3a71-4872-86ad-4ea42e470d57",
+            "CommandName": "EndTryCommand",
+            "SelectionName": "End Try",
+            "LineNumber": 35,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        }
+      ]
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+        "v_LogFile": "Engine Logs",
+        "v_LogText": "Json Extraction Task ends",
+        "v_LogType": "Information",
+        "CommandID": "63de797b-75fe-4b7f-8367-713022fcdb02",
+        "CommandName": "LogMessageCommand",
+        "SelectionName": "Log Message",
+        "LineNumber": 36,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    }
+  ],
+  "Variables": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vErrorMessage",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": ""
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vJsonInput",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": ""
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vJsonItem",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": ""
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vJsonOutput",
+      "VariableType": "System.Collections.Generic.List`1, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vNameList",
+      "VariableType": "System.Collections.Generic.List`1, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vName",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vAge",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vBirthdate",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vAgeList",
+      "VariableType": "System.Collections.Generic.List`1, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "vBirthdateList",
+      "VariableType": "System.Collections.Generic.List`1, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "ProjectPath",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": "Value Provided at Runtime"
+    }
+  ],
+  "Arguments": [],
+  "Elements": [],
+  "Version": "1.4.0.0"
+}

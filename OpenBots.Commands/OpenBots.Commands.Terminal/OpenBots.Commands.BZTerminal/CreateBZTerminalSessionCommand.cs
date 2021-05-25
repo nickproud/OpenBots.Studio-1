@@ -4,12 +4,14 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.BZTerminal
@@ -25,7 +27,8 @@ namespace OpenBots.Commands.BZTerminal
 		[SampleUsage("MyBZTerminalInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(BZTerminalContext) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -42,11 +45,11 @@ namespace OpenBots.Commands.BZTerminal
 		[Required]
 		[DisplayName("Session File Path")]
 		[Description("Enter or Select the path of the BlueZone Session file to upload.")]
-		[SampleUsage(@"C:\temp\myfile.zmd || {vFilePath} || {ProjectPath}\myfile.zmd")]
+		[SampleUsage("@\"C:\\temp\\myfile.zmd\" || ProjectPath + @\"\\myfile.zmd\" || vFilePath")]
 		[Remarks("This input should only be used for BlueZone Session files.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SessionFilePath { get; set; }
 
 		[Required]
@@ -70,10 +73,10 @@ namespace OpenBots.Commands.BZTerminal
 			v_CloseAllInstances = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var sessionFilePath = v_SessionFilePath.ConvertUserVariableToString(engine);
+			var sessionFilePath = (string)await v_SessionFilePath.EvaluateCode(engine);
 			var terminalContext = new BZTerminalContext();
 
 			if (v_CloseAllInstances == "Yes")
@@ -119,7 +122,7 @@ namespace OpenBots.Commands.BZTerminal
 			terminalContext.BZTerminalObj.Connect(session);
 			terminalContext.BZTerminalObj.WaitForReady();
 
-			terminalContext.AddAppInstance(engine, v_InstanceName);
+			new OBAppInstance(v_InstanceName, terminalContext).SetVariableValue(engine, v_InstanceName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

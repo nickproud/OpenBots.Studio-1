@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -26,16 +28,17 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Column Letter")]
 		[Description("Enter the letter of the column to be deleted.")]
-		[SampleUsage("A || {vColumnLetter}")]
+		[SampleUsage("\"A\" || vColumnLetter")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ColumnLetter { get; set; }
 
 		[Required]
@@ -52,19 +55,19 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelDeleteColumnCommand";
 			SelectionName = "Delete Column";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 			v_ShiftLeft = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var excelObject = v_InstanceName.GetAppInstance(engine);
+			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var excelInstance = (Application)excelObject;
 			Worksheet workSheet = excelInstance.ActiveSheet;
-			string vColumnToDelete = v_ColumnLetter.ConvertUserVariableToString(engine);
+			string vColumnToDelete = (string)await v_ColumnLetter.EvaluateCode(engine);
 
 			var cells = workSheet.Range[vColumnToDelete + "1", Type.Missing];
 			var entireColumn = cells.EntireColumn;

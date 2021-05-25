@@ -21,9 +21,9 @@ using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
+using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Nuget;
 using OpenBots.Studio.Utilities;
-using OpenBots.UI.CustomControls.Controls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using Serilog.Core;
 using System;
@@ -34,7 +34,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using IContainer = Autofac.IContainer;
+using AContainer = Autofac.IContainer;
+using CoreResources = OpenBots.Properties.Resources;
 using Point = System.Drawing.Point;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
@@ -45,10 +46,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
     {
         #region Instance Variables
         //engine context variables
+        private ScriptContext _scriptContext;
         private List<ListViewItem> _rowsSelectedForCopy;
-        private List<ScriptVariable> _scriptVariables;
-        private List<ScriptArgument> _scriptArguments;
-        private List<ScriptElement> _scriptElements;
+        private Dictionary<string, List<AssemblyReference>> _allNamespaces;
         private string _scriptFilePath;
         public string ScriptFilePath
         {
@@ -65,16 +65,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         public Project ScriptProject { get; set; }
         public string ScriptProjectPath { get; private set; }
         private string _mainFileName;
+        private string _scriptFileExtension;
+        private bool _isMainScript;
         public Logger EngineLogger { get; set; }
-        public IfrmScriptEngine CurrentEngine { get; set; }      
+        public IfrmScriptEngine CurrentEngine { get; set; }
 
         //notification variables
         private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
         private DateTime _notificationExpires;
-        private bool _isDisplaying;
         private string _notificationText;
         private Color _notificationColor;
-        private string _notificationPaintedText;      
+        private bool _isNotificationListEmpty;
 
         //debug variables
         private int _debugLine;
@@ -153,8 +154,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             ResetVariableArgumentBindings();
 
                             if (_selectedTabScriptActions is ListView)
-                                splitContainerScript.Panel2Collapsed = false; 
-                            
+                                SetVarArgTabControlSettings(ProjectType.OpenBots);
+                            else
+                                SetVarArgTabControlSettings(ProjectType.Python);
+                                                           
                             tpProject.Controls[0].Enabled = true;
                             tpCommands.Controls[0].Enabled = true;
                             tlpControls.Controls[0].Enabled = true;
@@ -185,7 +188,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private string _txtCommandWatermark = "Type Here to Search";       
 
         //package manager variables
-        public IContainer AContainer { get; private set; }
+        public AContainer AContainer { get; private set; }
         private ContainerBuilder _builder;
 
         //variable/argument tab variables
@@ -209,15 +212,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private float _thickBarHeight;
 
         //hello world
-        private const string _helloWorldTextPython = "import ctypes\nctypes.windll.user32.MessageBoxW(0, \"Hello World\", \"Hello World\", 1)";
-        private const string _helloWorldTextTagUI = "https://openbots.ai/\nclick Register\nwait 5";
-        private const string _helloWorldTextCSScript = "using System;\nusing System.Windows.Forms;\n\npublic class Script\n{\n\t" + 
-                                                "public static void Main(object[] args)\n\t{\n\t\tMessageBox.Show(\"Hello World\");\n\t}\n}";
+        private string _helloWorldTextPython = CoreResources.DefaultPythonScript;
+        private string _helloWorldTextTagUI = CoreResources.DefaultTagUIScript;
+        private string _helloWorldTextCSScript = CoreResources.DefaultCSScript;
         #endregion
 
         #region Form Events
-        public frmScriptBuilder()
+        public frmScriptBuilder(string projectPath)
         {
+            ScriptProjectPath = projectPath;
+            _scriptContext = new ScriptContext();
             _selectedTabScriptActions = NewLstScriptActions();
             InitializeComponent();
 
@@ -232,14 +236,23 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             direction.DataSource = Enum.GetValues(typeof(ScriptArgumentDirection));
 
-            if (!Directory.Exists(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder)))
-                Directory.CreateDirectory(Folders.GetFolder(FolderType.LocalAppDataPackagesFolder));
+            Folders.GetFolder(FolderType.LocalAppDataPackagesFolder);
 
             _builder = new ContainerBuilder();
             var groupedTypes = new Dictionary<string, List<Type>>();
 
             var defaultTypes = ScriptDefaultTypes.DefaultVarArgTypes;
-            _typeContext = new TypeContext(groupedTypes, defaultTypes);          
+            _typeContext = new TypeContext(groupedTypes, defaultTypes);
+            _scriptContext.ImportedNamespaces = new Dictionary<string, List<AssemblyReference>>(ScriptDefaultNamespaces.DefaultNamespaces);
+            _allNamespaces = new Dictionary<string, List<AssemblyReference>>() 
+            { 
+                { 
+                    "System", new List<AssemblyReference>()
+                    {
+                        new AssemblyReference(Assembly.GetAssembly(typeof(string)).GetName().Name, Assembly.GetAssembly(typeof(string)).GetName().Version.ToString()) 
+                    }
+                } 
+            };
         }
 
         private void UpdateWindowTitle()
@@ -273,13 +286,21 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             var defaultTypesBinding = new BindingSource(_typeContext.DefaultTypes, null);
 
-            VariableType.DataSource = defaultTypesBinding;
-            VariableType.DisplayMember = "Key";
-            VariableType.ValueMember = "Value";
+            variableType.DataSource = defaultTypesBinding;
+            variableType.DisplayMember = "Key";
+            variableType.ValueMember = "Value";
 
-            ArgumentType.DataSource = defaultTypesBinding;
-            ArgumentType.DisplayMember = "Key";
-            ArgumentType.ValueMember = "Value";
+            argumentType.DataSource = defaultTypesBinding;
+            argumentType.DisplayMember = "Key";
+            argumentType.ValueMember = "Value";
+
+            var importedNameSpacesBinding = new BindingSource(_scriptContext.ImportedNamespaces, null);
+            lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
+            lbxImportedNamespaces.DisplayMember = "Key";
+
+            var allNameSpacesBinding = new BindingSource(_allNamespaces, null);
+            cbxAllNamespaces.DataSource = allNameSpacesBinding;
+            cbxAllNamespaces.DisplayMember = "Key";
 
             //set controls double buffered
             foreach (Control control in Controls)
@@ -299,7 +320,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LoadActionBarPreference();
             
             //get scripts folder
-            var rpaScriptsFolder = Folders.GetFolder(FolderType.ScriptsFolder);
+            var rpaScriptsFolder = Folders.GetFolder(FolderType.ScriptsFolder, false);
 
             if (!Directory.Exists(rpaScriptsFolder))
             {
@@ -318,9 +339,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //get latest files for recent files list on load
             GenerateRecentProjects();
-
-            //no height for status bar
-            HideNotificationRow();
 
             //set listview column size
             frmScriptBuilder_SizeChanged(null, null);
@@ -344,18 +362,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             Refresh();
         }
 
-        private void LoadCommands(frmScriptBuilder scriptBuilder)
+        private void LoadCommands()
         {
-            //load all commands           
-            scriptBuilder._automationCommands = TypeMethods.GenerateAutomationCommands(AContainer);
+            //load all commands
+            var commandClasses = TypeMethods.GenerateCommandTypes(AContainer);
 
-            //instantiate and populate display icons for commands
-            scriptBuilder._uiImages = UIImage.UIImageList(scriptBuilder._automationCommands);
+            _uiImages = new ImageList();
+            _automationCommands = TypeMethods.GenerateAutomationCommands(_uiImages, commandClasses);
 
-            var groupedCommands = scriptBuilder._automationCommands.Where(x => x.Command.CommandName != "BrokenCodeCommentCommand")
+            var groupedCommands = _automationCommands.Where(x => x.Command.CommandName != "BrokenCodeCommentCommand")
                                                                    .GroupBy(f => f.DisplayGroup);
 
-            scriptBuilder.tvCommands.Nodes.Clear();
+            tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)
             {
                 TreeNode newGroup = new TreeNode(cmd.Key);
@@ -367,15 +385,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newGroup.Nodes.Add(subNode);
                 }
 
-                scriptBuilder.tvCommands.Nodes.Add(newGroup);
+                tvCommands.Nodes.Add(newGroup);
             }
 
-            scriptBuilder.tvCommands.Sort();
+            tvCommands.Sort();
 
-            scriptBuilder._tvCommandsCopy = new TreeView();
-            scriptBuilder._tvCommandsCopy.ShowNodeToolTips = true;
-            CopyTreeView(scriptBuilder.tvCommands, scriptBuilder._tvCommandsCopy);
-            scriptBuilder.txtCommandSearch.Text = _txtCommandWatermark;
+            _tvCommandsCopy = new TreeView();
+            _tvCommandsCopy.ShowNodeToolTips = true;
+            CopyTreeView(tvCommands, _tvCommandsCopy);
+            txtCommandSearch.Text = _txtCommandWatermark;
         }
 
         private void frmScriptBuilder_FormClosing(object sender, FormClosingEventArgs e)
@@ -428,11 +446,30 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         }
         private void frmScriptBuilder_Shown(object sender, EventArgs e)
         {
-            Program.SplashForm.Close();
+            DialogResult result;
 
-            var result = AddProject();
+            if (!_appSettings.ClientSettings.IsRestarting)
+            {
+                Program.SplashForm.Close();
+                result = AddProject();
+            }
+            else
+            {
+                _appSettings.ClientSettings.IsRestarting = false;
+                _appSettings.Save(_appSettings);
+
+                frmProjectBuilder restartProjectBuilder = new frmProjectBuilder()
+                {
+                    ExistingProjectPath = ScriptProjectPath,
+                    ExistingConfigPath = Path.Combine(ScriptProjectPath, "project.obconfig"),
+                    Action = ProjectAction.OpenProject,
+                    DialogResult = DialogResult.OK
+                };
+                result = AddProject(restartProjectBuilder);
+            }
+
             if (result != DialogResult.Abort)
-                Notify("Welcome! Press 'Add Command' to get started!", Color.White);
+                Notify("Welcome! Select a Command to get started!", Color.White);
         }
 
         private void frmScriptBuilder_SizeChanged(object sender, EventArgs e)
@@ -461,37 +498,60 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void tmrNotify_Tick(object sender, EventArgs e)
         {
             if (CurrentEngine == null)
-            {
                 IsScriptRunning = false;
+            else if (CurrentEngine != null && !CurrentEngine.IsChildEngine && CurrentEngine.ScriptEngineContext.CurrentEngineStatus == EngineStatus.Finished && !_isDebugMode)
+            {               
+                IsScriptRunning = false;
+                FormsHelper.ShowAllForms(true);
+                _isDebugMode = true;
             }
 
             if (_appSettings == null)
-            {
                 return;
-            }
 
-            if ((_notificationExpires < DateTime.Now) && (_isDisplaying))
-            {
-                HideNotification();
-            }
-
-            if ((_appSettings.ClientSettings.AntiIdleWhileOpen) && (DateTime.Now > _lastAntiIdleEvent.AddMinutes(1)))
-            {
+            if (_appSettings.ClientSettings.AntiIdleWhileOpen && DateTime.Now > _lastAntiIdleEvent.AddMinutes(1))
                 PerformAntiIdle();
-            }
 
             //check if notification is required
-            if ((_notificationList.Count > 0) && (_notificationExpires < DateTime.Now))
+            if (_notificationList.Count > 0 && _notificationExpires < DateTime.Now)
             {
                 var itemToDisplay = _notificationList[0];
                 _notificationList.RemoveAt(0);
-                _notificationExpires = DateTime.Now.AddSeconds(2);
+
+                int displayTime;
+                switch (itemToDisplay.Item2.Name)
+                {
+                    case "Transparent":
+                        displayTime = 0;
+                        break;
+                    case "White":
+                        displayTime = 1;
+                        break;
+                    case "Yellow":
+                        displayTime = 2;
+                        break;
+                    case "Red":
+                        displayTime = 3;
+                        break;
+                    default:
+                        displayTime = 1;
+                        break;
+                }
+                _notificationExpires = DateTime.Now.AddSeconds(displayTime);
                 ShowNotification(itemToDisplay.Item1, itemToDisplay.Item2);
+            }           
+            else if (_notificationList.Count == 0 && !_isNotificationListEmpty)
+            {
+                pnlStatus.Invalidate();
+                _isNotificationListEmpty = true;
             }
+            else if (!_isNotificationListEmpty)
+                pnlStatus.Invalidate();
         }
 
         public void Notify(string notificationText, Color notificationColor)
         {
+            _isNotificationListEmpty = false;
             _notificationList.Add(new Tuple<string, Color>(notificationText, notificationColor));
         }
 
@@ -506,37 +566,38 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         {
             _notificationText = textToDisplay;
             _notificationColor = textColor;
+        }
+    
+        private void pnlStatus_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.DrawString(_notificationText, pnlStatus.Font, new SolidBrush(_notificationColor), 30, 4);
 
-            pnlStatus.SuspendLayout();
-
-            ShowNotificationRow();
-            pnlStatus.ResumeLayout();
-            _isDisplaying = true;
+            if (!string.IsNullOrEmpty(_notificationText))
+                e.Graphics.DrawImage(CoreResources.OpenBots_icon, 5, 3, 20, 20);
         }
 
-        private void HideNotification()
+        private void pnlStatus_DoubleClick(object sender, EventArgs e)
         {
-            pnlStatus.SuspendLayout();
+            if (string.IsNullOrEmpty(_notificationText))
+                return;
 
-            HideNotificationRow();
-            pnlStatus.ResumeLayout();
-            _isDisplaying = false;
-        }
-
-        private void HideNotificationRow()
-        {
-            tlpControls.RowStyles[4].Height = 0;
-        }
-
-        private void ShowNotificationRow()
-        {
-            tlpControls.RowStyles[4].Height = 30;
-        }
-
-        private void PerformAntiIdle()
-        {
-            _lastAntiIdleEvent = DateTime.Now;
-            Notify("Anti-Idle Triggered", Color.White);
+            string caption;
+            switch (_notificationColor.Name)
+            {
+                case "White":
+                    caption = "Information";
+                    break;
+                case "Yellow":
+                    caption = "Warning";
+                    break;
+                case "Red":
+                    caption = "Error";
+                    break;
+                default:
+                    caption = "Information";
+                    break;
+            }
+            MessageBox.Show(_notificationText, caption);
         }
 
         private void notifyTray_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -548,6 +609,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 notifyTray.Visible = false;
             }
         }
+
+        private void PerformAntiIdle()
+        {
+            _lastAntiIdleEvent = DateTime.Now;
+            Notify("Anti-Idle Triggered", Color.White);
+        }
+
         #endregion
 
         #region Create Command Logic
@@ -562,12 +630,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (specificCommand != "")
                 newCommandForm.DefaultStartupCommand = specificCommand;
 
-            newCommandForm.ScriptEngineContext.Variables = new List<ScriptVariable>(_scriptVariables);
-            newCommandForm.ScriptEngineContext.Arguments = new List<ScriptArgument>(_scriptArguments);
-            newCommandForm.ScriptEngineContext.Elements = new List<ScriptElement>(_scriptElements);
-
-            newCommandForm.ScriptEngineContext.Container = AContainer;
-            newCommandForm.ScriptEngineContext.ProjectPath = ScriptProjectPath;
+            newCommandForm.ScriptContext = _scriptContext;
+            newCommandForm.AContainer = AContainer;
+            newCommandForm.ProjectPath = ScriptProjectPath;
             newCommandForm.HTMLElementRecorderURL = HTMLElementRecorderURL;
 
             //if a command was selected
@@ -576,16 +641,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 //add to listview
                 CreateUndoSnapshot();
                 AddCommandToListView(newCommandForm.SelectedCommand);
-
-                _scriptVariables = newCommandForm.ScriptEngineContext.Variables;
-                _scriptArguments = newCommandForm.ScriptEngineContext.Arguments;
-                uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
             }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
             {
                 CreateUndoSnapshot();
-                _scriptElements = newCommandForm.ScriptEngineContext.Elements;
                 HTMLElementRecorderURL = newCommandForm.HTMLElementRecorderURL;
             }
 
@@ -743,9 +803,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             NotifySync("Loading package assemblies...", Color.White);
             string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
             var assemblyList = NugetPackageManager.LoadPackageAssemblies(configPath);
-            _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes);            
+            _builder = AppDomainSetupManager.LoadBuilder(assemblyList, _typeContext.GroupedTypes, _allNamespaces, _scriptContext.ImportedNamespaces);            
             AContainer = _builder.Build();
-            LoadCommands(this);
+            LoadCommands();
             ReloadAllFiles();
         }
 
@@ -789,7 +849,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else
                 Notify($"Could not find 'project.obconfig' for {senderLink.Tag}", Color.Red);
         }
-        #endregion
+        #endregion       
     }
 }
 

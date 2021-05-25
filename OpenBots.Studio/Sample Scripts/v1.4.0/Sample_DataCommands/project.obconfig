@@ -1,0 +1,1 @@
+{"ProjectID":"c2acc662-de44-4750-9cb1-00e4089fd802","ProjectName":"Sample_DataCommands","ProjectType":"OpenBots","Main":"Main.obscript","Version":"1.4.0.0","Dependencies":{"OpenBots.Commands.Core":"1.4.0","OpenBots.Commands.DataManipulation":"1.4.0","OpenBots.Commands.Microsoft":"1.4.0","OpenBots.Commands.SystemAutomation":"1.4.0","OpenBots.Commands.UIAutomation":"1.4.0"}}

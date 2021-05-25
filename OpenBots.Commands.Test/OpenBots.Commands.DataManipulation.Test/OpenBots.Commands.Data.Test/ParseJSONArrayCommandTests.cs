@@ -18,7 +18,7 @@ namespace OpenBots.Commands.Data.Test
         }
 
         [Fact]
-        public void ParsesJSONArray()
+        public async void ParsesJSONArray()
         {
             _parseJSONArray = new ParseJSONArrayCommand();
             _engine = new AutomationEngineInstance(null);
@@ -32,7 +32,7 @@ namespace OpenBots.Commands.Data.Test
             _parseJSONArray.v_OutputUserVariableName = "{output}";
 
             _parseJSONArray.RunCommand(_engine);
-            List<string> outputList = (List<string>)_parseJSONArray.v_OutputUserVariableName.ConvertUserVariableToObject(_engine, typeof(List<>));
+            List<string> outputList = (List<string>)await _parseJSONArray.v_OutputUserVariableName.EvaluateCode(_engine);
             for (int i = 0;i < outputList.Count; i++)
             {
                 Assert.Equal(expectedResult[i], outputList[i]);

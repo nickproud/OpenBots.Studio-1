@@ -36,6 +36,7 @@ namespace OpenBots.Core.Enums
     {
         RootFolder,
         SettingsFolder,
+        StudioFolder,
         ScriptsFolder,
         LogFolder,
         TempFolder,
@@ -43,6 +44,8 @@ namespace OpenBots.Core.Enums
         PublishedFolder,
         LocalAppDataPackagesFolder,
         ProgramFilesPackagesFolder,
+        ProgramFilesExtensionsFolder,
+        LocalAppDataExtensionsFolder
     }
 
     public enum UIAdditionalHelperType
@@ -62,7 +65,6 @@ namespace OpenBots.Core.Enums
         ShowHTMLBuilder,
         ShowIfBuilder,
         ShowLoopBuilder,
-        ShowEncryptionHelper,
         CaptureWindowHelper
     }
 
@@ -112,10 +114,25 @@ namespace OpenBots.Core.Enums
         CSScript
     }
 
+    public enum ProjectAction
+    {
+        None,
+        CreateProject,
+        OpenProject
+    }
+
     public enum ScriptArgumentDirection
     {
         In,
         Out,
         InOut
+    }
+
+    public enum EngineStatus
+    {
+        Loaded, 
+        Running, 
+        Paused, 
+        Finished
     }
 }

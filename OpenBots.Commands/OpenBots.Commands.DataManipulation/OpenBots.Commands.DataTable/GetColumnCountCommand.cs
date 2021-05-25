@@ -4,11 +4,11 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -23,7 +23,7 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("DataTable")]
 		[Description("Enter an existing DataTable.")]
-		[SampleUsage("{vDataTable}")]
+		[SampleUsage("vDataTable")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
@@ -33,7 +33,7 @@ namespace OpenBots.Commands.DataTable
 		[Editable(false)]
 		[DisplayName("Output Count Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -44,16 +44,15 @@ namespace OpenBots.Commands.DataTable
 			SelectionName = "Get Column Count";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_spreadsheet;
-
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			OBDataTable dataTable = (OBDataTable)v_DataTable.ConvertUserVariableToObject(engine, nameof(v_DataTable), this);
-			var count = dataTable.Columns.Count.ToString();
+			OBDataTable dataTable = (OBDataTable)await v_DataTable.EvaluateCode(engine);
+			int count = dataTable.Columns.Count;
 
-			count.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			count.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

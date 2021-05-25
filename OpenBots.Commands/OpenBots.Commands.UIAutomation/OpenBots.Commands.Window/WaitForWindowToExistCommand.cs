@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Window
@@ -22,20 +23,20 @@ namespace OpenBots.Commands.Window
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to wait for.")]
-		[SampleUsage("Untitled - Notepad || Current Window || {vWindow}")]
+		[SampleUsage("\"Untitled - Notepad\" || \"Current Window\" || vWindow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public WaitForWindowToExistCommand()
@@ -46,21 +47,20 @@ namespace OpenBots.Commands.Window
 			CommandIcon = Resources.command_window;
 
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = v_WindowName.ConvertUserVariableToString(engine);
-			var timeout = int.Parse(v_Timeout.ConvertUserVariableToString(engine));
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			var timeout = (int)await v_Timeout.EvaluateCode(engine);
 
-			var endDateTime = DateTime.Now.AddSeconds(timeout);
-
+			var timeToEnd = DateTime.Now.AddSeconds(timeout);
 			IntPtr hWnd = IntPtr.Zero;
 
-			while (DateTime.Now < endDateTime)
+			while (DateTime.Now < timeToEnd)
 			{
 				if (engine.IsCancellationPending)
 					break;
@@ -68,7 +68,7 @@ namespace OpenBots.Commands.Window
 
 				if (hWnd != IntPtr.Zero) //If found
 					break;
-				engine.ReportProgress($"Window '{windowName}' Not Yet Found... " + (endDateTime - DateTime.Now).Minutes + "m, " + (endDateTime - DateTime.Now).Seconds + "s remain");
+				engine.ReportProgress($"Window '{windowName}' Not Yet Found... {(timeToEnd - DateTime.Now).Minutes}m, {(timeToEnd - DateTime.Now).Seconds}s remain");
 				Thread.Sleep(1000);
 			}
 

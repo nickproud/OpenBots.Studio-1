@@ -5,7 +5,6 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.DTOs;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Properties;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Sequence_Forms;
@@ -303,7 +302,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //create new command editor form
                     frmCommandEditor editCommand = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), _typeContext);
 
-                    editCommand.ScriptEngineContext.Container = AContainer;
+                    editCommand.AContainer = AContainer;
 
                     //creation mode edit locks form to current command
                     editCommand.CreationModeInstance = CreationMode.Edit;
@@ -313,11 +312,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //create clone of current command so databinding does not affect if changes are not saved
                     editCommand.OriginalCommand = CommonMethods.Clone(currentCommand);
 
-                    editCommand.ScriptEngineContext.Variables = new List<ScriptVariable>(_scriptVariables);
-                    editCommand.ScriptEngineContext.Arguments = new List<ScriptArgument>(_scriptArguments);
-                    editCommand.ScriptEngineContext.Elements = new List<ScriptElement>(_scriptElements);
+                    editCommand.ScriptContext = _scriptContext;
 
-                    editCommand.ScriptEngineContext.ProjectPath = ScriptProjectPath;
+                    editCommand.ProjectPath = ScriptProjectPath;
 
                     if (currentCommand.CommandName == "SeleniumElementActionCommand")
                         editCommand.HTMLElementRecorderURL = HTMLElementRecorderURL;
@@ -329,16 +326,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         selectedCommandItem.Tag = editCommand.SelectedCommand;
                         selectedCommandItem.Text = editCommand.SelectedCommand.GetDisplayValue();
                         selectedCommandItem.SubItems.Add(editCommand.SelectedCommand.GetDisplayValue());
-
-                        _scriptVariables = editCommand.ScriptEngineContext.Variables;
-                        _scriptArguments = editCommand.ScriptEngineContext.Arguments;
-                        uiScriptTabControl.SelectedTab.Tag = new ScriptObject(_scriptVariables, _scriptArguments, _scriptElements);
                     }
 
                     if (editCommand.SelectedCommand.CommandName == "SeleniumElementActionCommand")
                     {
                         CreateUndoSnapshot();
-                        _scriptElements = editCommand.ScriptEngineContext.Elements;
                         HTMLElementRecorderURL = editCommand.HTMLElementRecorderURL;
                     }
 
@@ -354,11 +346,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void LoadSequenceCommand(ListViewItem selectedCommandItem, ScriptCommand currentCommand)
         {
-            List<ScriptVariable> originalStudioVariables = new List<ScriptVariable>();
-            originalStudioVariables.AddRange(_scriptVariables);
-
-            List<ScriptArgument> originalStudioArguments = new List<ScriptArgument>();
-            originalStudioArguments.AddRange(_scriptArguments);
+            List<ScriptVariable> originalStudioVariables = CommonMethods.Clone(_scriptContext.Variables);
+            List<ScriptElement> originalStudioElements = CommonMethods.Clone(_scriptContext.Elements);
+            List<ScriptArgument> originalStudioArguments = CommonMethods.Clone(_scriptContext.Arguments);
+            Dictionary<string, List<AssemblyReference>> originalStudioNamespaces = CommonMethods.Clone(_scriptContext.ImportedNamespaces);
 
             //get sequence events
             ISequenceCommand sequence = currentCommand as ISequenceCommand;
@@ -366,21 +357,21 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //apply editor style format
             newSequence.Text = sequence.v_Comment;
-
             newSequence.ScriptProject = ScriptProject;
             newSequence.ScriptProjectPath = ScriptProjectPath;
             newSequence.AContainer = AContainer;
             newSequence.TypeContext = _typeContext;
+            newSequence.UiImages = _uiImages;
+            newSequence.AutomationCommands = _automationCommands;
 
             newSequence.LoadCommands();
 
             //add variables/elements/arguments
-            newSequence.ScriptVariables = _scriptVariables;
-            newSequence.ScriptElements = _scriptElements;
-            newSequence.ScriptArguments = _scriptArguments;
+            newSequence.ScriptContext = _scriptContext;
+            newSequence.AllNamespaces = _allNamespaces;
 
-            newSequence.dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptVariables);
-            newSequence.dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptArguments);
+            newSequence.dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptContext.Variables);
+            newSequence.dgvArguments.DataSource = new BindingList<ScriptArgument>(_scriptContext.Arguments);
 
             TabPage newtabPage = new TabPage("Sequence");
             newtabPage.Name = "Sequence";
@@ -392,9 +383,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //append to new builder
             foreach (var cmd in sequence.ScriptActions)
-            {
                 newSequence.SelectedTabScriptActions.Items.Add(CreateScriptCommandListViewItem(cmd));
-            }
 
             try
             {
@@ -404,6 +393,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 //failed to open sequence command. Dispose and force collection
                 newSequence.Dispose();
+                newSequence = null;
                 GC.Collect();
 
                 //try again
@@ -431,16 +421,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 //update label
                 selectedCommandItem.Text = sequence.GetDisplayValue();
-
-                //update variables/elements/arguments
-                _scriptVariables = newSequence.ScriptVariables.Where(x => !string.IsNullOrEmpty(x.VariableName)).ToList();
-                _scriptElements = newSequence.ScriptElements.Where(x => !string.IsNullOrEmpty(x.ElementName)).ToList();
-                _scriptArguments = newSequence.ScriptArguments.Where(x => !string.IsNullOrEmpty(x.ArgumentName)).ToList();
             }
             else
             {
-                _scriptVariables = originalStudioVariables;
-                _scriptArguments = originalStudioArguments;                
+                _scriptContext.Variables = originalStudioVariables;
+                _scriptContext.Elements = originalStudioElements;
+                _scriptContext.Arguments = originalStudioArguments;
+                _scriptContext.ImportedNamespaces = originalStudioNamespaces;
             }
 
             ResetVariableArgumentBindings();
@@ -451,6 +438,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             //dispose and force collection
             newSequence.Dispose();
+            newSequence = null;
             GC.Collect();
         }
 
@@ -616,13 +604,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             newCommand.Text = cmdDetails.GetDisplayValue();
             newCommand.SubItems.Add(cmdDetails.GetDisplayValue());
             newCommand.SubItems.Add(cmdDetails.GetDisplayValue());
-            //cmdDetails.RenderedControls = null;
+            newCommand.ToolTipText = cmdDetails.GetDisplayValue();
             newCommand.Tag = cmdDetails;
             newCommand.ForeColor = Color.SteelBlue;
             newCommand.BackColor = Color.DimGray;
+
             if (_uiImages != null)
                 newCommand.ImageIndex = _uiImages.Images.IndexOfKey(cmdDetails.GetType().Name);
-            newCommand.ToolTipText = cmdDetails.GetDisplayValue();
 
             return newCommand;
         }
@@ -738,11 +726,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         else
                         {
                             //draw command icon
-                            var img = _uiImages.Images[command.GetType().Name];
-                            if (img != null)
-                                e.Graphics.DrawImage(img, modifiedBounds.Left, modifiedBounds.Top + 3);
+                            if (_uiImages != null && _uiImages.Images[command.GetType().Name] != null)
+                                e.Graphics.DrawImage(_uiImages.Images[command.GetType().Name], modifiedBounds.Left, modifiedBounds.Top + 3);
                         }
-                        
                     }
                     catch (Exception ex)
                     {
@@ -841,7 +827,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     modifiedBounds.X += indentPixels;
 
                     //draw string
-                    e.Graphics.DrawString(command.GetDisplayValue(), _selectedTabScriptActions.Font,
+                    e.Graphics.DrawString(command.GetDisplayValue().Replace(Environment.NewLine, ""), _selectedTabScriptActions.Font,
                                           commandNameBrush, modifiedBounds);
                     break;  
             }
@@ -871,6 +857,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _selectedTabScriptActions.Items.Remove(item);
 
             _selectedTabScriptActions.Invalidate();
+
+            GC.Collect();
         }
 
         private void SelectAllScopedCode()
@@ -999,6 +987,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             RunFromThisCommand();
         }
 
+        private void debugFromThisCommandToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DebugFromThisCommand();
+        }
+
         private void viewCodeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var currentCommand = _selectedTabScriptActions.SelectedItems[0].Tag;
@@ -1100,7 +1093,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             else if (selectedCommand.CommandName == "BeginSwitchCommand")
             {
                 dynamic caseCommand = TypeMethods.CreateTypeInstance(AContainer, "CaseCommand");
-                caseCommand.v_CaseValue = "Default";
+                caseCommand.v_CaseValue = "\"Default\"";
                 _selectedTabScriptActions.Items.Insert(insertionIndex + 1, CreateScriptCommandListViewItem(caseCommand));
 
                 dynamic addCodeCommentCommand = TypeMethods.CreateTypeInstance(AContainer, "AddCodeCommentCommand");
@@ -1114,18 +1107,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             CreateUndoSnapshot();
             _selectedTabScriptActions.Invalidate();
             AutoSizeLineNumberColumn();
-        }
-
-        private void pnlStatus_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.DrawString(_notificationText, pnlStatus.Font, new SolidBrush(_notificationColor), 30, 4);
-            e.Graphics.DrawImage(Resources.OpenBots_icon, 5, 3, 20, 20);
-            _notificationPaintedText = _notificationText;
-        }
-
-        private void pnlStatus_DoubleClick(object sender, EventArgs e)
-        {
-            MessageBox.Show(_notificationPaintedText);
         }
         #endregion
 

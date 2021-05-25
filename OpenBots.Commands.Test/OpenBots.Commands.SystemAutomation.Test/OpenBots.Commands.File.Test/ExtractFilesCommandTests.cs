@@ -82,7 +82,7 @@ namespace OpenBots.Commands.File.Test
         }
 
         [Fact]
-        public void HandlesNonDirectoryOutputTarget()
+        public async global::System.Threading.Tasks.Task HandlesNonDirectoryOutputTarget()
         {
             _engine = new AutomationEngineInstance(null);
             _extractFiles = new ExtractFilesCommand();
@@ -99,11 +99,11 @@ namespace OpenBots.Commands.File.Test
             _extractFiles.v_PathDestination = "{outputPath}";
             _extractFiles.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<DirectoryNotFoundException>(() => _extractFiles.RunCommand(_engine));
+            await Assert.ThrowsAsync<DirectoryNotFoundException>(() => _extractFiles.RunCommand(_engine));
         }
 
         [Fact]
-        public void HandlesNonZipInput()
+        public async global::System.Threading.Tasks.Task HandlesNonZipInput()
         {
             _engine = new AutomationEngineInstance(null);
             _extractFiles = new ExtractFilesCommand();
@@ -120,7 +120,7 @@ namespace OpenBots.Commands.File.Test
             _extractFiles.v_PathDestination = "{outputPath}";
             _extractFiles.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<FileNotFoundException>(() => _extractFiles.RunCommand(_engine));
+            await Assert.ThrowsAsync<FileNotFoundException>(() => _extractFiles.RunCommand(_engine));
         }
     }
 }

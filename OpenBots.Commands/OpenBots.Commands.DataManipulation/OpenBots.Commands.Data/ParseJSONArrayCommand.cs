@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -18,23 +19,22 @@ namespace OpenBots.Commands.Data
 	[Description("This command parses a JSON array into a list.")]
 	public class ParseJSONArrayCommand : ScriptCommand
 	{
-
 		[Required]
-		[DisplayName("JSON Array")]
+		[DisplayName("JSON")]
 		[Description("Provide a variable or JSON array value.")]
-		[SampleUsage("[{\"rect\":{\"length\":10, \"width\":5}}] || {vArrayVariable}")]
+		[SampleUsage("@\"['Small','Medium','Large']\" || vArrayVariable")]
 		[Remarks("Providing data of a type other than a 'JSON Array' will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_JsonArrayName { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output List Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(List<>) })]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public ParseJSONArrayCommand()
@@ -46,12 +46,10 @@ namespace OpenBots.Commands.Data
 
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-
-			//get variablized input
-			var variableInput = v_JsonArrayName.ConvertUserVariableToString(engine);
+			var variableInput = (string)await v_JsonArrayName.EvaluateCode(engine);
 
 			//create objects
 			JArray arr;
@@ -69,18 +67,15 @@ namespace OpenBots.Commands.Data
  
 			//add results to result list since list<string> is supported
 			foreach (var result in arr)
-			{
 				resultList.Add(result.ToString());
-			}
 
-			resultList.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);           
+			resultList.SetVariableValue(engine, v_OutputUserVariableName);           
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
 
-			//create standard group controls
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_JsonArrayName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 

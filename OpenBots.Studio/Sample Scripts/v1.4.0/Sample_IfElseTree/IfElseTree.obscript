@@ -1,0 +1,1091 @@
+{
+  "$type": "OpenBots.Core.Script.Script, OpenBots.Core",
+  "Commands": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "4c055cde-2742-4c5f-b6c8-ad9f851f5589",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 1,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "========IfElseTree task starts========"
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+        "CommandID": "606a948b-7a8e-4b9b-870f-9cbae81ccd73",
+        "CommandName": "AddCodeCommentCommand",
+        "SelectionName": "Add Code Comment",
+        "LineNumber": 2,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": "Checks if user's input are numbers. Then, it compares the numbers and indicates which one has the greatest value."
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+        "v_LogFile": "Engine Logs",
+        "v_LogText": "IfElseTree task starts",
+        "v_LogType": "Information",
+        "CommandID": "89aa1196-2ed6-4359-8f92-d5bcc5eab698",
+        "CommandName": "LogMessageCommand",
+        "SelectionName": "Log Message",
+        "LineNumber": 3,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.ErrorHandling.BeginTryCommand, OpenBots.Commands.Core",
+        "CommandID": "5462127c-4102-4b4e-8ce7-4bfdab20d354",
+        "CommandName": "BeginTryCommand",
+        "SelectionName": "Try",
+        "LineNumber": 4,
+        "IsCommented": false,
+        "PauseBeforeExecution": false,
+        "CommandEnabled": true,
+        "ScopeStartCommand": true,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": [
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "d4d836f7-c65d-4985-a568-7abedbd99043",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 5,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "Items in this section will be handled if error occurs"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "597cc836-4e01-4394-8a52-1dac8ab3e59a",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 6,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "========Sequence for checking Input value is numeric========"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.If.BeginIfCommand, OpenBots.Commands.Core",
+            "v_IfActionType": "Variable Is Numeric",
+            "v_ActionParameterTable": [
+              {
+                "Parameter Name": "Variable Name",
+                "Parameter Value": "{vInput1}"
+              }
+            ],
+            "CommandID": "fe76bb26-ac6c-41eb-a89e-36928a7d6536",
+            "CommandName": "BeginIfCommand",
+            "SelectionName": "Begin If",
+            "LineNumber": 7,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": true,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": [
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "9f79a4b9-d55a-4f9a-9ded-52f84aebf647",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 8,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "Items in this section will run if the statement is true"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.If.ElseCommand, OpenBots.Commands.Core",
+                "CommandID": "d04424d8-4367-440f-a6bc-ea06b89144dd",
+                "CommandName": "ElseCommand",
+                "SelectionName": "Else",
+                "LineNumber": 9,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.ErrorHandling.ThrowCommand, OpenBots.Commands.Core",
+                "v_ExceptionType": "Exception",
+                "v_ExceptionMessage": "Value entered for Input1 is not Numeric",
+                "CommandID": "4ea50727-0bd1-4c3a-863b-97e044d8921e",
+                "CommandName": "ThrowCommand",
+                "SelectionName": "Throw",
+                "LineNumber": 10,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.If.EndIfCommand, OpenBots.Commands.Core",
+                "CommandID": "ba2f45e0-9a3e-4f97-a069-efb4716d84bf",
+                "CommandName": "EndIfCommand",
+                "SelectionName": "End If",
+                "LineNumber": 11,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            }
+          ]
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.If.BeginIfCommand, OpenBots.Commands.Core",
+            "v_IfActionType": "Variable Is Numeric",
+            "v_ActionParameterTable": [
+              {
+                "Parameter Name": "Variable Name",
+                "Parameter Value": "{vInput2}"
+              }
+            ],
+            "CommandID": "f6a3e0f8-bfc9-4679-973d-5d5feb5cc3dd",
+            "CommandName": "BeginIfCommand",
+            "SelectionName": "Begin If",
+            "LineNumber": 12,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": true,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": [
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "c2d69c89-2e41-4f09-9817-e3c119271672",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 13,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "Items in this section will run if the statement is true"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.If.ElseCommand, OpenBots.Commands.Core",
+                "CommandID": "5d988e86-0a58-4ed2-84c6-0afdc95f1a42",
+                "CommandName": "ElseCommand",
+                "SelectionName": "Else",
+                "LineNumber": 14,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.ErrorHandling.ThrowCommand, OpenBots.Commands.Core",
+                "v_ExceptionType": "Exception",
+                "v_ExceptionMessage": "Value entered for Input2 is not Numeric",
+                "CommandID": "f0214586-5d4b-4181-bdf1-2bf6c749dfbc",
+                "CommandName": "ThrowCommand",
+                "SelectionName": "Throw",
+                "LineNumber": 15,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.If.EndIfCommand, OpenBots.Commands.Core",
+                "CommandID": "2fc7edfd-12a2-4e23-aa1f-64949ad0d21e",
+                "CommandName": "EndIfCommand",
+                "SelectionName": "End If",
+                "LineNumber": 16,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            }
+          ]
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.If.BeginIfCommand, OpenBots.Commands.Core",
+            "v_IfActionType": "Variable Is Numeric",
+            "v_ActionParameterTable": [
+              {
+                "Parameter Name": "Variable Name",
+                "Parameter Value": "{vInput3}"
+              }
+            ],
+            "CommandID": "f4e6cf0f-dccf-44b2-9f0f-0fb49b8577e5",
+            "CommandName": "BeginIfCommand",
+            "SelectionName": "Begin If",
+            "LineNumber": 17,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": true,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": [
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "eaef39c8-a9d1-47e7-9ef7-d2e659aff7bc",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 18,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "Items in this section will run if the statement is true"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.If.ElseCommand, OpenBots.Commands.Core",
+                "CommandID": "1acd6745-a496-4dbd-ad51-034e661e39cb",
+                "CommandName": "ElseCommand",
+                "SelectionName": "Else",
+                "LineNumber": 19,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.ErrorHandling.ThrowCommand, OpenBots.Commands.Core",
+                "v_ExceptionType": "Exception",
+                "v_ExceptionMessage": "Value entered for Input3 is not Numeric",
+                "CommandID": "9ac5484f-93b9-44dd-a1ac-600190a84267",
+                "CommandName": "ThrowCommand",
+                "SelectionName": "Throw",
+                "LineNumber": 20,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.If.EndIfCommand, OpenBots.Commands.Core",
+                "CommandID": "05fbb194-c803-490f-b630-fd446137c752",
+                "CommandName": "EndIfCommand",
+                "SelectionName": "End If",
+                "LineNumber": 21,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            }
+          ]
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "a7f31138-d46e-408c-9aee-99a0ac3141fb",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 22,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "========Cmparison for Different Number Values========"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.If.BeginMultiIfCommand, OpenBots.Commands.Core",
+            "v_LogicType": "And",
+            "v_IfConditionsTable": [
+              {
+                "Statement": "If ('{vInput1}' is not equal to '{vInput2}')",
+                "CommandData": "{\"v_IfActionType\":\"Value Compare\",\"v_ActionParameterTable\":[{\"Parameter Name\":\"Value1\",\"Parameter Value\":\"{vInput1}\"},{\"Parameter Name\":\"Operand\",\"Parameter Value\":\"is not equal to\"},{\"Parameter Name\":\"Value2\",\"Parameter Value\":\"{vInput2}\"}],\"CommandID\":\"f39e5f2c-79e5-405a-83a1-e39d2b775921\",\"CommandName\":\"BeginIfCommand\",\"SelectionName\":\"Begin If\",\"LineNumber\":0,\"IsCommented\":false,\"PauseBeforeExecution\":false,\"CommandEnabled\":true,\"v_IsPrivate\":false,\"v_Comment\":null}"
+              },
+              {
+                "Statement": "If ('{vInput2}' is not equal to '{vInput3}')",
+                "CommandData": "{\"v_IfActionType\":\"Value Compare\",\"v_ActionParameterTable\":[{\"Parameter Name\":\"Value1\",\"Parameter Value\":\"{vInput2}\"},{\"Parameter Name\":\"Operand\",\"Parameter Value\":\"is not equal to\"},{\"Parameter Name\":\"Value2\",\"Parameter Value\":\"{vInput3}\"}],\"CommandID\":\"90606b79-c6e6-4cbb-bf38-08d86103a7fd\",\"CommandName\":\"BeginIfCommand\",\"SelectionName\":\"Begin If\",\"LineNumber\":0,\"IsCommented\":false,\"PauseBeforeExecution\":false,\"CommandEnabled\":true,\"v_IsPrivate\":false,\"v_Comment\":null}"
+              },
+              {
+                "Statement": "If ('{vInput1}' is not equal to '{vInput3}')",
+                "CommandData": "{\"v_IfActionType\":\"Value Compare\",\"v_ActionParameterTable\":[{\"Parameter Name\":\"Value1\",\"Parameter Value\":\"{vInput1}\"},{\"Parameter Name\":\"Operand\",\"Parameter Value\":\"is not equal to\"},{\"Parameter Name\":\"Value2\",\"Parameter Value\":\"{vInput3}\"}],\"CommandID\":\"a752184e-464d-47b9-a866-06d854cb57c0\",\"CommandName\":\"BeginIfCommand\",\"SelectionName\":\"Begin If\",\"LineNumber\":0,\"IsCommented\":false,\"PauseBeforeExecution\":false,\"CommandEnabled\":true,\"v_IsPrivate\":false,\"v_Comment\":null}"
+              }
+            ],
+            "CommandID": "edd5f8a4-e278-4f2d-866a-0f7d9543b990",
+            "CommandName": "BeginMultiIfCommand",
+            "SelectionName": "Begin Multi If",
+            "LineNumber": 23,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": true,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": [
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "a10b39d1-f664-422b-9bef-13736c8f5fce",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 24,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "Items in this section will run if the statement is true"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                "CommandID": "a839be30-6d61-4e1d-ab97-073988fe19b8",
+                "CommandName": "AddCodeCommentCommand",
+                "SelectionName": "Add Code Comment",
+                "LineNumber": 25,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": "========Value comparison for Inputs========"
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.If.BeginIfCommand, OpenBots.Commands.Core",
+                "v_IfActionType": "Value Compare",
+                "v_ActionParameterTable": [
+                  {
+                    "Parameter Name": "Value1",
+                    "Parameter Value": "{vInput1}"
+                  },
+                  {
+                    "Parameter Name": "Operand",
+                    "Parameter Value": "is greater than"
+                  },
+                  {
+                    "Parameter Name": "Value2",
+                    "Parameter Value": "{vInput2}"
+                  }
+                ],
+                "CommandID": "49a62c01-c645-47f5-b8aa-02ec90824b90",
+                "CommandName": "BeginIfCommand",
+                "SelectionName": "Begin If",
+                "LineNumber": 26,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": true,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": [
+                {
+                  "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                  "ScriptCommand": {
+                    "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                    "CommandID": "04dda5ca-902a-4923-99bd-471163360cde",
+                    "CommandName": "AddCodeCommentCommand",
+                    "SelectionName": "Add Code Comment",
+                    "LineNumber": 27,
+                    "IsCommented": false,
+                    "PauseBeforeExecution": false,
+                    "CommandEnabled": true,
+                    "ScopeStartCommand": false,
+                    "v_IsPrivate": false,
+                    "v_ErrorHandling": "None",
+                    "v_Comment": "Items in this section will run if the statement is true"
+                  },
+                  "AdditionalScriptCommands": null
+                },
+                {
+                  "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                  "ScriptCommand": {
+                    "$type": "OpenBots.Commands.If.BeginIfCommand, OpenBots.Commands.Core",
+                    "v_IfActionType": "Value Compare",
+                    "v_ActionParameterTable": [
+                      {
+                        "Parameter Name": "Value1",
+                        "Parameter Value": "{vInput1}"
+                      },
+                      {
+                        "Parameter Name": "Operand",
+                        "Parameter Value": "is greater than"
+                      },
+                      {
+                        "Parameter Name": "Value2",
+                        "Parameter Value": "{vInput3}"
+                      }
+                    ],
+                    "CommandID": "62ae1659-c99c-47b6-8691-5e353289baf4",
+                    "CommandName": "BeginIfCommand",
+                    "SelectionName": "Begin If",
+                    "LineNumber": 28,
+                    "IsCommented": false,
+                    "PauseBeforeExecution": false,
+                    "CommandEnabled": true,
+                    "ScopeStartCommand": true,
+                    "v_IsPrivate": false,
+                    "v_ErrorHandling": "None",
+                    "v_Comment": null
+                  },
+                  "AdditionalScriptCommands": [
+                    {
+                      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                      "ScriptCommand": {
+                        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                        "CommandID": "eaac4d78-2bb7-49ca-8df9-22fdcf6ad249",
+                        "CommandName": "AddCodeCommentCommand",
+                        "SelectionName": "Add Code Comment",
+                        "LineNumber": 29,
+                        "IsCommented": false,
+                        "PauseBeforeExecution": false,
+                        "CommandEnabled": true,
+                        "ScopeStartCommand": false,
+                        "v_IsPrivate": false,
+                        "v_ErrorHandling": "None",
+                        "v_Comment": "Items in this section will run if the statement is true"
+                      },
+                      "AdditionalScriptCommands": null
+                    },
+                    {
+                      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                      "ScriptCommand": {
+                        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+                        "v_LogFile": "Engine Logs",
+                        "v_LogText": "Input1 has greater value",
+                        "v_LogType": "Information",
+                        "CommandID": "2517f7c6-5dbc-4211-acd4-5a8e27877caf",
+                        "CommandName": "LogMessageCommand",
+                        "SelectionName": "Log Message",
+                        "LineNumber": 30,
+                        "IsCommented": false,
+                        "PauseBeforeExecution": false,
+                        "CommandEnabled": true,
+                        "ScopeStartCommand": false,
+                        "v_IsPrivate": false,
+                        "v_ErrorHandling": "None",
+                        "v_Comment": null
+                      },
+                      "AdditionalScriptCommands": null
+                    },
+                    {
+                      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                      "ScriptCommand": {
+                        "$type": "OpenBots.Commands.If.ElseCommand, OpenBots.Commands.Core",
+                        "CommandID": "21b2fa23-8584-4738-922b-bbb073fbc97d",
+                        "CommandName": "ElseCommand",
+                        "SelectionName": "Else",
+                        "LineNumber": 31,
+                        "IsCommented": false,
+                        "PauseBeforeExecution": false,
+                        "CommandEnabled": true,
+                        "ScopeStartCommand": false,
+                        "v_IsPrivate": false,
+                        "v_ErrorHandling": "None",
+                        "v_Comment": null
+                      },
+                      "AdditionalScriptCommands": null
+                    },
+                    {
+                      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                      "ScriptCommand": {
+                        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+                        "v_LogFile": "Engine Logs",
+                        "v_LogText": "Input3 has greater value",
+                        "v_LogType": "Information",
+                        "CommandID": "29fe355f-17c7-48bd-858c-9380cdcc2f3e",
+                        "CommandName": "LogMessageCommand",
+                        "SelectionName": "Log Message",
+                        "LineNumber": 32,
+                        "IsCommented": false,
+                        "PauseBeforeExecution": false,
+                        "CommandEnabled": true,
+                        "ScopeStartCommand": false,
+                        "v_IsPrivate": false,
+                        "v_ErrorHandling": "None",
+                        "v_Comment": null
+                      },
+                      "AdditionalScriptCommands": null
+                    },
+                    {
+                      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                      "ScriptCommand": {
+                        "$type": "OpenBots.Commands.If.EndIfCommand, OpenBots.Commands.Core",
+                        "CommandID": "6a03f902-908a-40d2-94e4-2be4d282c339",
+                        "CommandName": "EndIfCommand",
+                        "SelectionName": "End If",
+                        "LineNumber": 33,
+                        "IsCommented": false,
+                        "PauseBeforeExecution": false,
+                        "CommandEnabled": true,
+                        "ScopeStartCommand": false,
+                        "v_IsPrivate": false,
+                        "v_ErrorHandling": "None",
+                        "v_Comment": null
+                      },
+                      "AdditionalScriptCommands": null
+                    }
+                  ]
+                },
+                {
+                  "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                  "ScriptCommand": {
+                    "$type": "OpenBots.Commands.If.ElseCommand, OpenBots.Commands.Core",
+                    "CommandID": "b72d836e-60fd-4949-af89-0ecf9598cc98",
+                    "CommandName": "ElseCommand",
+                    "SelectionName": "Else",
+                    "LineNumber": 34,
+                    "IsCommented": false,
+                    "PauseBeforeExecution": false,
+                    "CommandEnabled": true,
+                    "ScopeStartCommand": false,
+                    "v_IsPrivate": false,
+                    "v_ErrorHandling": "None",
+                    "v_Comment": null
+                  },
+                  "AdditionalScriptCommands": null
+                },
+                {
+                  "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                  "ScriptCommand": {
+                    "$type": "OpenBots.Commands.If.BeginIfCommand, OpenBots.Commands.Core",
+                    "v_IfActionType": "Value Compare",
+                    "v_ActionParameterTable": [
+                      {
+                        "Parameter Name": "Value1",
+                        "Parameter Value": "{vInput2}"
+                      },
+                      {
+                        "Parameter Name": "Operand",
+                        "Parameter Value": "is greater than"
+                      },
+                      {
+                        "Parameter Name": "Value2",
+                        "Parameter Value": "{vInput3}"
+                      }
+                    ],
+                    "CommandID": "26dd7160-bbe0-4dfb-aab5-d8cd3b34b3c6",
+                    "CommandName": "BeginIfCommand",
+                    "SelectionName": "Begin If",
+                    "LineNumber": 35,
+                    "IsCommented": false,
+                    "PauseBeforeExecution": false,
+                    "CommandEnabled": true,
+                    "ScopeStartCommand": true,
+                    "v_IsPrivate": false,
+                    "v_ErrorHandling": "None",
+                    "v_Comment": null
+                  },
+                  "AdditionalScriptCommands": [
+                    {
+                      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                      "ScriptCommand": {
+                        "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+                        "CommandID": "1e4753fd-995d-4c6d-8185-cd19dd4f0e0b",
+                        "CommandName": "AddCodeCommentCommand",
+                        "SelectionName": "Add Code Comment",
+                        "LineNumber": 36,
+                        "IsCommented": false,
+                        "PauseBeforeExecution": false,
+                        "CommandEnabled": true,
+                        "ScopeStartCommand": false,
+                        "v_IsPrivate": false,
+                        "v_ErrorHandling": "None",
+                        "v_Comment": "Items in this section will run if the statement is true"
+                      },
+                      "AdditionalScriptCommands": null
+                    },
+                    {
+                      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                      "ScriptCommand": {
+                        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+                        "v_LogFile": "Engine Logs",
+                        "v_LogText": "Input2 has greater value",
+                        "v_LogType": "Information",
+                        "CommandID": "dd580f80-8967-41a9-8bae-e498b15649bf",
+                        "CommandName": "LogMessageCommand",
+                        "SelectionName": "Log Message",
+                        "LineNumber": 37,
+                        "IsCommented": false,
+                        "PauseBeforeExecution": false,
+                        "CommandEnabled": true,
+                        "ScopeStartCommand": false,
+                        "v_IsPrivate": false,
+                        "v_ErrorHandling": "None",
+                        "v_Comment": null
+                      },
+                      "AdditionalScriptCommands": null
+                    },
+                    {
+                      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                      "ScriptCommand": {
+                        "$type": "OpenBots.Commands.If.ElseCommand, OpenBots.Commands.Core",
+                        "CommandID": "5394bbb4-b92c-4294-b2ca-77656bd446a0",
+                        "CommandName": "ElseCommand",
+                        "SelectionName": "Else",
+                        "LineNumber": 38,
+                        "IsCommented": false,
+                        "PauseBeforeExecution": false,
+                        "CommandEnabled": true,
+                        "ScopeStartCommand": false,
+                        "v_IsPrivate": false,
+                        "v_ErrorHandling": "None",
+                        "v_Comment": null
+                      },
+                      "AdditionalScriptCommands": null
+                    },
+                    {
+                      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                      "ScriptCommand": {
+                        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+                        "v_LogFile": "Engine Logs",
+                        "v_LogText": "Input3 has greater value",
+                        "v_LogType": "Information",
+                        "CommandID": "e57fbc0b-3e57-4dcd-ae28-5df3d47360f8",
+                        "CommandName": "LogMessageCommand",
+                        "SelectionName": "Log Message",
+                        "LineNumber": 39,
+                        "IsCommented": false,
+                        "PauseBeforeExecution": false,
+                        "CommandEnabled": true,
+                        "ScopeStartCommand": false,
+                        "v_IsPrivate": false,
+                        "v_ErrorHandling": "None",
+                        "v_Comment": null
+                      },
+                      "AdditionalScriptCommands": null
+                    },
+                    {
+                      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                      "ScriptCommand": {
+                        "$type": "OpenBots.Commands.If.EndIfCommand, OpenBots.Commands.Core",
+                        "CommandID": "f099fd2d-a18b-4b0e-ba1c-2736bcbc2c8a",
+                        "CommandName": "EndIfCommand",
+                        "SelectionName": "End If",
+                        "LineNumber": 40,
+                        "IsCommented": false,
+                        "PauseBeforeExecution": false,
+                        "CommandEnabled": true,
+                        "ScopeStartCommand": false,
+                        "v_IsPrivate": false,
+                        "v_ErrorHandling": "None",
+                        "v_Comment": null
+                      },
+                      "AdditionalScriptCommands": null
+                    }
+                  ]
+                },
+                {
+                  "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+                  "ScriptCommand": {
+                    "$type": "OpenBots.Commands.If.EndIfCommand, OpenBots.Commands.Core",
+                    "CommandID": "20f4be3c-1f0c-4604-8e2d-b7140bc49a68",
+                    "CommandName": "EndIfCommand",
+                    "SelectionName": "End If",
+                    "LineNumber": 41,
+                    "IsCommented": false,
+                    "PauseBeforeExecution": false,
+                    "CommandEnabled": true,
+                    "ScopeStartCommand": false,
+                    "v_IsPrivate": false,
+                    "v_ErrorHandling": "None",
+                    "v_Comment": null
+                  },
+                  "AdditionalScriptCommands": null
+                }
+              ]
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.If.ElseCommand, OpenBots.Commands.Core",
+                "CommandID": "7dd91865-9dcc-4539-bf41-f8848594cc93",
+                "CommandName": "ElseCommand",
+                "SelectionName": "Else",
+                "LineNumber": 42,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.ErrorHandling.ThrowCommand, OpenBots.Commands.Core",
+                "v_ExceptionType": "Exception",
+                "v_ExceptionMessage": "The number values entered are not unique.",
+                "CommandID": "d2dadf4f-b184-4786-84a2-bfd7d53a501e",
+                "CommandName": "ThrowCommand",
+                "SelectionName": "Throw",
+                "LineNumber": 43,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            },
+            {
+              "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+              "ScriptCommand": {
+                "$type": "OpenBots.Commands.If.EndIfCommand, OpenBots.Commands.Core",
+                "CommandID": "0971a4d2-0953-41fb-9181-1695bdc28153",
+                "CommandName": "EndIfCommand",
+                "SelectionName": "End If",
+                "LineNumber": 44,
+                "IsCommented": false,
+                "PauseBeforeExecution": false,
+                "CommandEnabled": true,
+                "ScopeStartCommand": false,
+                "v_IsPrivate": false,
+                "v_ErrorHandling": "None",
+                "v_Comment": null
+              },
+              "AdditionalScriptCommands": null
+            }
+          ]
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.CatchCommand, OpenBots.Commands.Core",
+            "v_ExceptionType": "Exception",
+            "CommandID": "14d0f61d-7b17-48ea-990d-bd4932878ab3",
+            "CommandName": "CatchCommand",
+            "SelectionName": "Catch",
+            "LineNumber": 45,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Misc.AddCodeCommentCommand, OpenBots.Commands.Core",
+            "CommandID": "c4cf9477-0361-482f-b77f-1e5a56972f02",
+            "CommandName": "AddCodeCommentCommand",
+            "SelectionName": "Add Code Comment",
+            "LineNumber": 46,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": "This section executes if error occurs above"
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.GetExceptionMessageCommand, OpenBots.Commands.Core",
+            "v_OutputUserVariableName": "{vErrorMessage}",
+            "CommandID": "7e33f555-7ebc-4afe-aeb7-9c0fdd6f7e33",
+            "CommandName": "GetExceptionMessageCommand",
+            "SelectionName": "Get Exception Message",
+            "LineNumber": 47,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+            "v_LogFile": "Engine Logs",
+            "v_LogText": "{vErrorMessage}",
+            "v_LogType": "Error",
+            "CommandID": "166e93a7-0fd0-44e5-a529-b5a29c4adddd",
+            "CommandName": "LogMessageCommand",
+            "SelectionName": "Log Message",
+            "LineNumber": 48,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.RethrowCommand, OpenBots.Commands.Core",
+            "CommandID": "69fdb793-181e-4d7b-9c65-2628fb2886be",
+            "CommandName": "RethrowCommand",
+            "SelectionName": "Rethrow",
+            "LineNumber": 49,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        },
+        {
+          "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+          "ScriptCommand": {
+            "$type": "OpenBots.Commands.ErrorHandling.EndTryCommand, OpenBots.Commands.Core",
+            "CommandID": "ec2ce769-138b-4c28-a911-a1657c57d108",
+            "CommandName": "EndTryCommand",
+            "SelectionName": "End Try",
+            "LineNumber": 50,
+            "IsCommented": false,
+            "PauseBeforeExecution": false,
+            "CommandEnabled": true,
+            "ScopeStartCommand": false,
+            "v_IsPrivate": false,
+            "v_ErrorHandling": "None",
+            "v_Comment": null
+          },
+          "AdditionalScriptCommands": null
+        }
+      ]
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptAction, OpenBots.Core",
+      "ScriptCommand": {
+        "$type": "OpenBots.Commands.Engine.LogMessageCommand, OpenBots.Commands.Core",
+        "v_LogFile": "Engine Logs",
+        "v_LogText": "IfElseTree task ends",
+        "v_LogType": "Information",
+        "CommandID": "ec757985-8b91-4edb-ba99-a22453102dd4",
+        "CommandName": "LogMessageCommand",
+        "SelectionName": "Log Message",
+        "LineNumber": 51,
+        "IsCommented": false,
+        "PauseBeforeExecution": true,
+        "CommandEnabled": true,
+        "ScopeStartCommand": false,
+        "v_IsPrivate": false,
+        "v_ErrorHandling": "None",
+        "v_Comment": null
+      },
+      "AdditionalScriptCommands": null
+    }
+  ],
+  "Variables": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptVariable, OpenBots.Core",
+      "VariableName": "ProjectPath",
+      "VariableType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "VariableValue": "Value Provided at Runtime"
+    }
+  ],
+  "Arguments": [
+    {
+      "$type": "OpenBots.Core.Script.ScriptArgument, OpenBots.Core",
+      "ArgumentName": "vErrorMessage",
+      "Direction": 1,
+      "ArgumentType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "ArgumentValue": null,
+      "AssignedVariable": null,
+      "IsSecureString": false
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptArgument, OpenBots.Core",
+      "ArgumentName": "vInput1",
+      "Direction": 0,
+      "ArgumentType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "ArgumentValue": null,
+      "AssignedVariable": null,
+      "IsSecureString": false
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptArgument, OpenBots.Core",
+      "ArgumentName": "vInput2",
+      "Direction": 0,
+      "ArgumentType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "ArgumentValue": null,
+      "AssignedVariable": null,
+      "IsSecureString": false
+    },
+    {
+      "$type": "OpenBots.Core.Script.ScriptArgument, OpenBots.Core",
+      "ArgumentName": "vInput3",
+      "Direction": 0,
+      "ArgumentType": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+      "ArgumentValue": null,
+      "AssignedVariable": null,
+      "IsSecureString": false
+    }
+  ],
+  "Elements": [],
+  "Version": "1.4.0.0"
+}

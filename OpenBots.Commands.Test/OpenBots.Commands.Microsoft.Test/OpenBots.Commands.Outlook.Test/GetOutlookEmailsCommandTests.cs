@@ -15,7 +15,7 @@ namespace OpenBots.Commands.Outlook.Test
          * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
         */
         [Fact]
-        public void GetsOutlookEmails()
+        public async void GetsOutlookEmails()
         {
             _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
@@ -33,7 +33,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem email = emails[0];
             Assert.Equal("testBody \r\n", email.Body);
         }

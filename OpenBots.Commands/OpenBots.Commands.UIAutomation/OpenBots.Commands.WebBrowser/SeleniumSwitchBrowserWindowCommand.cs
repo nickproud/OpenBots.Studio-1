@@ -2,6 +2,7 @@
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -24,7 +26,8 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(IWebDriver) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -58,16 +61,16 @@ namespace OpenBots.Commands.WebBrowser
 		[Required]
 		[DisplayName("Browser Search Parameter")]
 		[Description("Provide the parameter to match (ex. Window URL, Window Title, Handle ID).")]
-		[SampleUsage("http://www.url.com || Welcome to Homepage || {vSearchData}")]
+		[SampleUsage("\"http://www.url.com\" || \"Welcome to Homepage\" || vSearchData")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_MatchParameter { get; set; }
 
 		public SeleniumSwitchBrowserWindowCommand()
 		{
 			CommandName = "SeleniumSwitchBrowserWindowCommand";
-			SelectionName = "Switch Browser Window";  
+			SelectionName = "Selenium Switch Browser Window";  
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
@@ -77,12 +80,12 @@ namespace OpenBots.Commands.WebBrowser
 			v_CaseSensitiveMatch = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var browserObject = v_InstanceName.GetAppInstance(engine);
+			var browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var seleniumInstance = (IWebDriver)browserObject;
-			var matchParam = v_MatchParameter.ConvertUserVariableToString(engine);
+			var matchParam = (string)await v_MatchParameter.EvaluateCode(engine);
 
 			var handles = seleniumInstance.WindowHandles;
 			var currentHandle = seleniumInstance.CurrentWindowHandle;

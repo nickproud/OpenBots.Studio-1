@@ -11,6 +11,7 @@ using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Engine;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
@@ -24,7 +25,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -49,19 +49,27 @@ namespace OpenBots.UI.CustomControls
         {
         }
 
-        public CommandControls(frmCommandEditor editor, EngineContext engineContext, TypeContext typeContext)
+        public CommandControls(frmCommandEditor editor, TypeContext typeContext, IContainer container,
+            string projectPath)
         {
             _currentEditor = editor;
-            _container = engineContext.Container;
-            _projectPath = engineContext.ProjectPath;
+            _container = container;
+            _projectPath = projectPath;
             _typeContext = typeContext;
         }
 
-        public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300)
+        public List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300, 
+            bool shouldValidate = true, bool isEvaluateSnippet = false)
         {
             var controlList = new List<Control>();
             var label = CreateDefaultLabelFor(parameterName, parent);
-            var input = CreateDefaultInputFor(parameterName, parent, height, width);
+
+            Control input;
+            if (shouldValidate)
+                input = CreateDefaultInputFor(parameterName, parent, height, width, isEvaluateSnippet);
+            else
+                input = CreateDefaultNoValidationInputFor(parameterName, parent, height, width);
+
             var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { input }, editor);
 
             controlList.Add(label);
@@ -82,7 +90,7 @@ namespace OpenBots.UI.CustomControls
             controlList.AddRange(helpers);
             controlList.Add(passwordInput);
 
-            ((TextBox)passwordInput).PasswordChar = '*';
+            passwordInput.PasswordChar = '*';
 
             return controlList;
         }
@@ -133,6 +141,42 @@ namespace OpenBots.UI.CustomControls
             
             controlList.Add(label);
             controlList.AddRange(helpers);
+            controlList.Add(gridview);
+
+            return controlList;
+        }
+
+        public List<Control> CreateDefaultWebElementDataGridViewGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, Control[] additionalHelpers = null)
+        {
+            var controlList = new List<Control>();
+            var label = CreateDefaultLabelFor(parameterName, parent);
+            var gridview = CreateDefaultDataGridViewFor(parameterName, parent);
+
+            DataGridViewCheckBoxColumn enabled = new DataGridViewCheckBoxColumn();
+            enabled.HeaderText = "Enabled";
+            enabled.DataPropertyName = "Enabled";
+            enabled.FillWeight = 30;
+            gridview.Columns.Add(enabled);
+
+            DataGridViewTextBoxColumn propertyName = new DataGridViewTextBoxColumn();
+            propertyName.HeaderText = "Parameter Name";
+            propertyName.DataPropertyName = "Parameter Name";
+            propertyName.FillWeight = 40;
+            gridview.Columns.Add(propertyName);
+
+            DataGridViewTextBoxColumn propertyValue = new DataGridViewTextBoxColumn();
+            propertyValue.HeaderText = "Parameter Value";
+            propertyValue.DataPropertyName = "Parameter Value";
+            gridview.Columns.Add(propertyValue);
+
+            var helpers = CreateUIHelpersFor(parameterName, parent, new Control[] { gridview }, editor);
+
+            controlList.Add(label);
+
+            if (additionalHelpers != null)
+                controlList.AddRange(additionalHelpers);
+
+            controlList.AddRange(helpers);           
             controlList.Add(gridview);
 
             return controlList;
@@ -203,12 +247,9 @@ namespace OpenBots.UI.CustomControls
                 if (attribute.CompTypes != null)
                 {                   
                     foreach (var type in attribute.CompTypes)
-                        toolTipText += $"{type.Name}, ";
+                        toolTipText += $"{type.GetRealTypeFullName()}, ";
                 }
-                if (attribute.IsStringOrPrimitive)
-                    toolTipText += "any primitive/string";
-                else
-                    toolTipText = toolTipText.Substring(0, (toolTipText.Length - 2));
+                toolTipText = toolTipText.Substring(0, (toolTipText.Length - 2));
             }
             if (sampleUsageAttributesAssigned.Length > 0)
             {
@@ -236,17 +277,48 @@ namespace OpenBots.UI.CustomControls
             inputToolTip.SetToolTip(label, toolTipText);
         }
 
-        public TextBox CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300)
+        public TextBox CreateDefaultInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300, bool isEvaluateSnippet = false)
         {
             var inputBox = new UITextBox();
+
             inputBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
             inputBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
             inputBox.Height = height;
             inputBox.Width = width;
             inputBox.IsDoubleBuffered = true;
+            inputBox.AcceptsReturn = true;
+            inputBox.AcceptsTab = true;
+            inputBox.Tag = new CommandControlValidationContext(parameterName, parent);
+            inputBox.IsEvaluateSnippet = isEvaluateSnippet;
+
+            if (height > 40)
+            {
+                inputBox.Multiline = true;
+            }
+
+            inputBox.Name = parameterName;
+            inputBox.KeyDown += InputBox_KeyDown;
+            inputBox.KeyPress += InputBox_KeyPress;
+
+            if (parameterName == "v_Comment")
+                inputBox.Margin = new Padding(0, 0, 0, 20);
+            return inputBox;
+        }
+
+        public TextBox CreateDefaultNoValidationInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300)
+        {
+            var inputBox = new TextBox();
+
+            inputBox.Font = new Font("Segoe UI", 12, FontStyle.Regular);
+            inputBox.DataBindings.Add("Text", parent, parameterName, false, DataSourceUpdateMode.OnPropertyChanged);
+            inputBox.Height = height;
+            inputBox.Width = width;
+            inputBox.AcceptsReturn = true;
+            inputBox.AcceptsTab = true;
+
             inputBox.Tag = new CommandControlValidationContext(parameterName, parent);
 
-            if (height > 30)
+            if (height > 40)
             {
                 inputBox.Multiline = true;
             }
@@ -265,18 +337,14 @@ namespace OpenBots.UI.CustomControls
             TextBox inputBox = (TextBox)sender;
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
-                {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
-                };
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext);
+
+                scriptVariableEditor.ScriptContext = _currentEditor.ScriptContext;
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptVariableEditor.LastModifiedVariableName + "}");
+                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptVariableEditor.LastModifiedVariableName);
                 }
 
                 scriptVariableEditor.Dispose();
@@ -285,16 +353,13 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
+                    ScriptContext = _currentEditor.ScriptContext
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, "{" + scriptArgumentEditor.LastModifiedArgumentName + "}");
+                        inputBox.Text = inputBox.Text.Insert(inputBox.SelectionStart, scriptArgumentEditor.LastModifiedArgumentName);
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -302,7 +367,7 @@ namespace OpenBots.UI.CustomControls
             }
             else if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Enter)
                 return;
-            else if (e.KeyCode == Keys.Enter)
+            else if (e.KeyCode == Keys.Enter && !inputBox.Multiline)
                 _currentEditor.uiBtnAdd_Click(null, null);
         }
 
@@ -397,18 +462,14 @@ namespace OpenBots.UI.CustomControls
             var comboBox = ((ComboBox)sender);
             if (e.Control && e.KeyCode == Keys.K)
             {
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
-                {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
-                };
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext);
+
+                scriptVariableEditor.ScriptContext = _currentEditor.ScriptContext;
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        comboBox.Text = string.Concat("{", scriptVariableEditor.LastModifiedVariableName, "}");
+                        comboBox.Text = scriptVariableEditor.LastModifiedVariableName;
                 }
 
                 scriptVariableEditor.Dispose();
@@ -417,16 +478,13 @@ namespace OpenBots.UI.CustomControls
             {
                 frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
+                    ScriptContext = _currentEditor.ScriptContext
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        comboBox.Text = string.Concat("{", scriptArgumentEditor.LastModifiedArgumentName, "}");
+                        comboBox.Text = scriptArgumentEditor.LastModifiedArgumentName;
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -484,18 +542,14 @@ namespace OpenBots.UI.CustomControls
                 if (targetDGV.SelectedCells[0].ReadOnly == true || targetDGV.SelectedCells[0] is DataGridViewComboBoxCell)
                     return;
 
-                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext)
-                {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
-                };
+                frmScriptVariables scriptVariableEditor = new frmScriptVariables(_typeContext);
+
+                scriptVariableEditor.ScriptContext = _currentEditor.ScriptContext;
 
                 if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Variables = scriptVariableEditor.ScriptVariables;
-
                     if (!string.IsNullOrEmpty(scriptVariableEditor.LastModifiedVariableName))
-                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + string.Concat("{", scriptVariableEditor.LastModifiedVariableName, "}");
+                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + scriptVariableEditor.LastModifiedVariableName;
                 }
 
                 scriptVariableEditor.Dispose();
@@ -510,16 +564,13 @@ namespace OpenBots.UI.CustomControls
 
                 frmScriptArguments scriptArgumentEditor = new frmScriptArguments(_typeContext)
                 {
-                    ScriptVariables = new List<ScriptVariable>(_currentEditor.ScriptEngineContext.Variables),
-                    ScriptArguments = new List<ScriptArgument>(_currentEditor.ScriptEngineContext.Arguments)
+                    ScriptContext = _currentEditor.ScriptContext
                 };
 
                 if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
                 {
-                    _currentEditor.ScriptEngineContext.Arguments = scriptArgumentEditor.ScriptArguments;
-
                     if (!string.IsNullOrEmpty(scriptArgumentEditor.LastModifiedArgumentName))
-                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + string.Concat("{", scriptArgumentEditor.LastModifiedArgumentName, "}");
+                        targetDGV.SelectedCells[0].Value = targetDGV.SelectedCells[0].Value + scriptArgumentEditor.LastModifiedArgumentName;
                 }
 
                 scriptArgumentEditor.Dispose();
@@ -564,16 +615,11 @@ namespace OpenBots.UI.CustomControls
             var controlList = new List<Control>();
 
             if (propertyUIHelpers.Count() == 0)
-            {
                 return controlList;
-            }
 
             foreach (EditorAttribute attrib in propertyUIHelpers)
             {
                 CommandItemControl helperControl = new CommandItemControl();
-                helperControl.Padding = new Padding(10, 0, 0, 0);
-                helperControl.ForeColor = Color.AliceBlue;
-                helperControl.Font = new Font("Segoe UI Semilight", 10);
                 helperControl.Name = parameterName + "_helper";
                 helperControl.Tag = targetControls.FirstOrDefault();
                 helperControl.HelperType = (UIAdditionalHelperType)Enum.Parse(typeof(UIAdditionalHelperType), attrib.EditorTypeName, true);
@@ -619,7 +665,7 @@ namespace OpenBots.UI.CustomControls
                         //show image recognition test
                         helperControl.CommandImage = Resources.command_camera;
                         helperControl.CommandDisplay = "Run Image Recognition Test";
-                        helperControl.Click += (sender, e) => RunImageCapture(sender, e);
+                        helperControl.Click += (sender, e) => RunImageRecognitionTest(sender, e);
                         break;
 
                     case UIAdditionalHelperType.ShowCodeBuilder:
@@ -675,13 +721,7 @@ namespace OpenBots.UI.CustomControls
                         //show loop builder
                         helperControl.CommandImage = Resources.command_startloop;
                         helperControl.CommandDisplay = "Add New Loop Statement";
-                        break;
-                    case UIAdditionalHelperType.ShowEncryptionHelper:
-                        //show encryption helper
-                        helperControl.CommandImage = Resources.command_password;
-                        helperControl.CommandDisplay = "Encrypt Text";
-                        helperControl.Click += (sender, e) => EncryptText(sender, e, (frmCommandEditor)editor);
-                        break;
+                        break;                   
                     case UIAdditionalHelperType.CaptureWindowHelper:
                         //show window name helper
                         helperControl.CommandImage = Resources.command_window;
@@ -733,12 +773,11 @@ namespace OpenBots.UI.CustomControls
             frmVariableArgumentSelector newVariableSelector = new frmVariableArgumentSelector();
 
             //get copy of user variables and append system variables, then load to listview
-            var variableList = _currentEditor.ScriptEngineContext.Variables.Select(f => f.VariableName).ToList();
-            variableList.AddRange(CommonMethods.GenerateSystemVariables().Select(f => f.VariableName));
+            var variableList = _currentEditor.ScriptContext.Variables.Select(f => f.VariableName).ToList();
             newVariableSelector.lstVariables.Items.AddRange(variableList.ToArray());
 
             //get copy of user arguments, then load to listview
-            var argumentList = _currentEditor.ScriptEngineContext.Arguments.Select(f => f.ArgumentName).ToList();
+            var argumentList = _currentEditor.ScriptContext.Arguments.Select(f => f.ArgumentName).ToList();
             newVariableSelector.lstArguments.Items.AddRange(argumentList.ToArray());
 
             //if user pressed "OK"
@@ -763,15 +802,13 @@ namespace OpenBots.UI.CustomControls
                 {
                     TextBox targetTextbox = (TextBox)inputBox.Tag;
                     //concat variable name with brackets [vVariable] as engine searches for the same
-                    targetTextbox.Text = targetTextbox.Text.Insert(targetTextbox.SelectionStart, string.Concat("{",
-                        newVariableSelector.ReturnVariableArgument, "}"));
+                    targetTextbox.Text = targetTextbox.Text.Insert(targetTextbox.SelectionStart, newVariableSelector.ReturnVariableArgument);
                 }
                 else if (inputBox.Tag is ComboBox)
                 {
                     ComboBox targetCombobox = (ComboBox)inputBox.Tag;
                     //concat variable name with brackets [vVariable] as engine searches for the same
-                    targetCombobox.Text = targetCombobox.Text.Insert(targetCombobox.SelectionStart, string.Concat("{",
-                        newVariableSelector.ReturnVariableArgument, "}"));
+                    targetCombobox.Text = targetCombobox.Text.Insert(targetCombobox.SelectionStart, newVariableSelector.ReturnVariableArgument);
                 }
                 else if (inputBox.Tag is DataGridView)
                 {
@@ -801,7 +838,7 @@ namespace OpenBots.UI.CustomControls
                     }
 
                     targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value = 
-                        targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value + string.Concat("{", newVariableSelector.ReturnVariableArgument, "}");
+                        targetDGV.Rows[selectedCellRowIndex].Cells[selectedCellColumnIndex].Value + newVariableSelector.ReturnVariableArgument;
                     
                     //TODO - Insert variables at cursor position instead of at the end of a cell
                     //targetDGV.CurrentCell = targetDGV.SelectedCells[0];
@@ -821,7 +858,7 @@ namespace OpenBots.UI.CustomControls
             frmElementSelector newElementSelector = new frmElementSelector();
 
             //get copy of user element and append system elements, then load to combobox
-            var elementList = _currentEditor.ScriptEngineContext.Elements.Select(f => f.ElementName).ToList();
+            var elementList = _currentEditor.ScriptContext.Elements.Select(f => f.ElementName).ToList();
 
             newElementSelector.lstElements.Items.AddRange(elementList.ToArray());
 
@@ -843,7 +880,7 @@ namespace OpenBots.UI.CustomControls
                 {
                     DataGridView targetDGV = (DataGridView)inputBox.Tag;
 
-                    targetDGV.DataSource = _currentEditor.ScriptEngineContext.Elements
+                    targetDGV.DataSource = _currentEditor.ScriptContext.Elements
                         .Where(x => x.ElementName == newElementSelector.lstElements.SelectedItem.ToString().Replace("<", "").Replace(">", ""))
                         .FirstOrDefault().ElementValue;
                 }
@@ -865,8 +902,9 @@ namespace OpenBots.UI.CustomControls
 
                 string filePath = ofd.FileName;
 
-                if (filePath.StartsWith(_projectPath))
-                    filePath = filePath.Replace(_projectPath, "{ProjectPath}");
+                filePath = "@\"" + filePath + "\"";
+                if (ofd.FileName.StartsWith(_projectPath))
+                    filePath = filePath.Replace("@\"" + _projectPath, "ProjectPath + @\"");
 
                 targetTextbox.Text = filePath;
             }
@@ -884,8 +922,9 @@ namespace OpenBots.UI.CustomControls
 
                 string folderPath = fbd.SelectedPath;
 
-                if (folderPath.StartsWith(_projectPath))
-                    folderPath = folderPath.Replace(_projectPath, "{ProjectPath}");
+                folderPath = "@\"" + folderPath + "\"";
+                if (fbd.SelectedPath.StartsWith(_projectPath))
+                    folderPath = folderPath.Replace("@\"" + _projectPath, "ProjectPath + @\"");
 
                 targetTextBox.Text = folderPath;
             }
@@ -902,7 +941,7 @@ namespace OpenBots.UI.CustomControls
                 settings.Save(settings);
             }
 
-            HideAllForms();
+            FormsHelper.HideAllForms();
 
             var userAcceptance = MessageBox.Show("The image capture process will now begin and display a screenshot of the" +
                 " current desktop in a custom full-screen window.  You may stop the capture process at any time by pressing" +
@@ -927,7 +966,7 @@ namespace OpenBots.UI.CustomControls
                 imageCaptureForm.Dispose();
             }
 
-            ShowAllForms();
+            FormsHelper.ShowAllForms(true);
 
             if (minimizePreference)
             {
@@ -936,7 +975,7 @@ namespace OpenBots.UI.CustomControls
             }
         }
 
-        private void RunImageCapture(object sender, EventArgs e)
+        private void RunImageRecognitionTest(object sender, EventArgs e)
         {
             //get input control
             CommandItemControl inputBox = (CommandItemControl)sender;
@@ -950,151 +989,42 @@ namespace OpenBots.UI.CustomControls
             }
 
             //hide all
-            HideAllForms();
+            FormsHelper.HideAllForms();
 
             try
             {
-                ImageElement element = FindImageElementTest(new Bitmap(CommonMethods.Base64ToImage(imageSource)), 0.8);
+                ImageElement element = CommandsHelper.FindImageElement(new Bitmap(CommonMethods.Base64ToImage(imageSource)), 0.8, null, DateTime.Now.AddSeconds(15), true);
                 if (element == null)
                     MessageBox.Show("Image not found");
+                else
+                {
+                    //draw on output to demonstrate finding
+                    Graphics bigTestGraphics = Graphics.FromImage(element.BigTestImage);
+                    var Rectangle = new Rectangle(element.LeftX, element.TopY, element.SmallTestImage.Width - 1, element.SmallTestImage.Height - 1);
+                    Pen pen = new Pen(Color.Red);
+                    pen.Width = 5.0F;
+                    bigTestGraphics.DrawRectangle(pen, Rectangle);
+
+                    frmImageCapture captureOutput = new frmImageCapture();
+                    captureOutput.pbTaggedImage.Image = element.SmallTestImage;
+                    captureOutput.pbSearchResult.Image = element.BigTestImage;
+                    captureOutput.TopMost = true;
+
+                    captureOutput.ShowDialog();
+
+                    bigTestGraphics.Dispose();
+                    element.SmallTestImage.Dispose();
+                    element.BigTestImage.Dispose();
+                    captureOutput.Dispose();
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.ToString());
             }
+
             //show all forms
-            ShowAllForms();
-        }
-
-        public ImageElement FindImageElementTest(Bitmap smallBmp, double accuracy)
-        {
-            HideAllForms();
-
-            dynamic element = null;
-            double tolerance = 1.0 - accuracy;
-
-            Bitmap bigBmp = ImageMethods.Screenshot();
-
-            Bitmap smallTestBmp = new Bitmap(smallBmp);
-
-            Bitmap bigTestBmp = new Bitmap(bigBmp);
-            Graphics bigTestGraphics = Graphics.FromImage(bigTestBmp);
-
-            BitmapData smallData =
-              smallBmp.LockBits(new Rectangle(0, 0, smallBmp.Width, smallBmp.Height),
-                       ImageLockMode.ReadOnly,
-                       PixelFormat.Format24bppRgb);
-            BitmapData bigData =
-              bigBmp.LockBits(new Rectangle(0, 0, bigBmp.Width, bigBmp.Height),
-                       ImageLockMode.ReadOnly,
-                       PixelFormat.Format24bppRgb);
-
-            int smallStride = smallData.Stride;
-            int bigStride = bigData.Stride;
-
-            int bigWidth = bigBmp.Width;
-            int bigHeight = bigBmp.Height - smallBmp.Height + 1;
-            int smallWidth = smallBmp.Width * 3;
-            int smallHeight = smallBmp.Height;
-
-            int margin = Convert.ToInt32(255.0 * tolerance);
-
-            unsafe
-            {
-                byte* pSmall = (byte*)(void*)smallData.Scan0;
-                byte* pBig = (byte*)(void*)bigData.Scan0;
-
-                int smallOffset = smallStride - smallBmp.Width * 3;
-                int bigOffset = bigStride - bigBmp.Width * 3;
-
-                bool matchFound = true;
-
-                for (int y = 0; y < bigHeight; y++)
-                {
-                    for (int x = 0; x < bigWidth; x++)
-                    {
-                        byte* pBigBackup = pBig;
-                        byte* pSmallBackup = pSmall;
-
-                        //Look for the small picture.
-                        for (int i = 0; i < smallHeight; i++)
-                        {
-                            int j = 0;
-                            matchFound = true;
-                            for (j = 0; j < smallWidth; j++)
-                            {
-                                //With tolerance: pSmall value should be between margins.
-                                int inf = pBig[0] - margin;
-                                int sup = pBig[0] + margin;
-                                if (sup < pSmall[0] || inf > pSmall[0])
-                                {
-                                    matchFound = false;
-                                    break;
-                                }
-
-                                pBig++;
-                                pSmall++;
-                            }
-
-                            if (!matchFound)
-                                break;
-
-                            //We restore the pointers.
-                            pSmall = pSmallBackup;
-                            pBig = pBigBackup;
-
-                            //Next rows of the small and big pictures.
-                            pSmall += smallStride * (1 + i);
-                            pBig += bigStride * (1 + i);
-                        }
-
-                        //If match found, we return.
-                        if (matchFound)
-                        {
-                            element = new ImageElement
-                            {
-                                LeftX = x,
-                                MiddleX = x + smallBmp.Width / 2,
-                                RightX = x + smallBmp.Width,
-                                TopY = y,
-                                MiddleY = y + smallBmp.Height / 2,
-                                BottomY = y + smallBmp.Height
-                            };
-
-                            //draw on output to demonstrate finding
-                            var Rectangle = new Rectangle(x, y, smallBmp.Width - 1, smallBmp.Height - 1);
-                            Pen pen = new Pen(Color.Red);
-                            pen.Width = 5.0F;
-                            bigTestGraphics.DrawRectangle(pen, Rectangle);
-
-                            frmImageCapture captureOutput = new frmImageCapture();
-                            captureOutput.pbTaggedImage.Image = smallTestBmp;
-                            captureOutput.pbSearchResult.Image = bigTestBmp;
-                            captureOutput.TopMost = true;
-                            captureOutput.Show();
-                            
-                            break;
-                        }
-                        //If no match found, we restore the pointers and continue.
-                        else
-                        {
-                            pBig = pBigBackup;
-                            pSmall = pSmallBackup;
-                            pBig += 3;
-                        }
-                    }
-
-                    if (matchFound)
-                        break;
-
-                    pBig += bigOffset;
-                }
-            }
-
-            bigBmp.UnlockBits(bigData);
-            smallBmp.UnlockBits(smallData);
-            bigTestGraphics.Dispose();
-            return element;
+            FormsHelper.ShowAllForms(true);
         }
 
         public Tuple<string, string> ShowConditionElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor)
@@ -1292,21 +1222,6 @@ namespace OpenBots.UI.CustomControls
             htmlForm.Dispose();
         }
 
-        private void EncryptText(object sender, EventArgs e, IfrmCommandEditor editor)
-        {
-            CommandItemControl inputBox = (CommandItemControl)sender;
-            TextBox targetTextbox = (TextBox)inputBox.Tag;
-
-            if (string.IsNullOrEmpty(targetTextbox.Text))
-                return;
-
-            var encrypted = EncryptionServices.EncryptString(targetTextbox.Text, "OPENBOTS");
-            targetTextbox.Text = encrypted;
-
-            ComboBox comboBoxControl = (ComboBox)((frmCommandEditor)editor).flw_InputVariables.Controls["v_EncryptionOption"];
-            comboBoxControl.Text = "Encrypted";
-        }
-
         private void GetWindowName(object sender, EventArgs e)
         {
             GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
@@ -1350,7 +1265,7 @@ namespace OpenBots.UI.CustomControls
                     if (_inputBox.Tag is ComboBox)
                     {
                         ComboBox targetComboBox = (ComboBox)_inputBox.Tag;
-                        targetComboBox.Text = windowName;
+                        targetComboBox.Text = $"@\"{windowName}\"";
                     }
                   
                     if (_minimizePreference)
@@ -1399,54 +1314,14 @@ namespace OpenBots.UI.CustomControls
             }              
         }
 
-        public void ShowAllForms()
-        {
-            foreach (Form form in Application.OpenForms)
-                ShowForm(form);
-
-            Thread.Sleep(1000);
-        }
-
-        public delegate void ShowFormDelegate(Form form);
-        public void ShowForm(Form form)
-        {
-            if (form.InvokeRequired)
-            {
-                var d = new ShowFormDelegate(ShowForm);
-                form.Invoke(d, new object[] { form });
-            }
-            else
-                form.WindowState = FormWindowState.Normal;
-        }
-
-        public void HideAllForms()
-        {
-            foreach (Form form in Application.OpenForms)
-                HideForm(form);
-
-            Thread.Sleep(1000);
-        }
-
-        public delegate void HideFormDelegate(Form form);
-        public void HideForm(Form form)
-        {
-            if (form.InvokeRequired)
-            {
-                var d = new HideFormDelegate(HideForm);
-                form.Invoke(d, new object[] { form });
-            }
-            else
-                form.WindowState = FormWindowState.Minimized;
-        }
-
         public ComboBox AddWindowNames(ComboBox cbo)
         {
             if (cbo == null)
                 return null;
 
             cbo.Items.Clear();
-            cbo.Items.Add("Current Window");
-
+            cbo.Items.Add("\"Current Window\"");
+            
             Process[] processlist = Process.GetProcesses();
 
             //pull the main window title for each
@@ -1455,9 +1330,11 @@ namespace OpenBots.UI.CustomControls
                 if (!string.IsNullOrEmpty(process.MainWindowTitle))
                 {
                     //add to the control list of available windows
-                    cbo.Items.Add(process.MainWindowTitle);
+                    cbo.Items.Add($"@\"{process.MainWindowTitle}\"");
                 }
             }
+
+            cbo.Items.Add("\"None\"");
 
             return cbo;
         }
@@ -1473,14 +1350,14 @@ namespace OpenBots.UI.CustomControls
 
                 List<string> varArgNames = new List<string>();
 
-                foreach (var variable in ((frmCommandEditor)editor).ScriptEngineContext.Variables)
+                foreach (var variable in ((frmCommandEditor)editor).ScriptContext.Variables)
                 {
                     if (variable.VariableName != "ProjectPath")
-                        varArgNames.Add("{" + variable.VariableName + "}");
+                        varArgNames.Add(variable.VariableName);
                 }
 
-                foreach (var argument in ((frmCommandEditor)editor).ScriptEngineContext.Arguments)
-                    varArgNames.Add("{" + argument.ArgumentName + "}");
+                foreach (var argument in ((frmCommandEditor)editor).ScriptContext.Arguments)
+                    varArgNames.Add(argument.ArgumentName);
 
                 cbo.Items.AddRange(varArgNames.OrderBy(x => x).ToArray());               
             }
@@ -1496,7 +1373,7 @@ namespace OpenBots.UI.CustomControls
             {
                 cbo.Items.Clear();
 
-                foreach (var element in editor.ScriptEngineContext.Elements)
+                foreach (var element in editor.ScriptContext.Elements)
                     cbo.Items.Add("<" + element.ElementName + ">");
             }
             return cbo;
@@ -1525,7 +1402,6 @@ namespace OpenBots.UI.CustomControls
         public IfrmCommandEditor CreateCommandEditorForm(List<AutomationCommand> commands, List<ScriptCommand> existingCommands)
         {
             frmCommandEditor editor = new frmCommandEditor(commands, existingCommands, null);
-            editor.ScriptEngineContext.Container = _container;
 
             return editor;
         }

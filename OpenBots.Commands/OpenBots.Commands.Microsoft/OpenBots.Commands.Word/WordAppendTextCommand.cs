@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -10,8 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Word
 {
@@ -25,16 +28,17 @@ namespace OpenBots.Commands.Word
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyWordInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Text")]
 		[Description("Enter the text to append to the Document.")]
-		[SampleUsage("Hello World || {vText}")]
+		[SampleUsage("\"Hello World\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSet { get; set; }
 
 		[Required]
@@ -95,7 +99,7 @@ namespace OpenBots.Commands.Word
 			CommandName = "WordAppendTextCommand";
 			SelectionName = "Append Text";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_word;
 
 			v_InstanceName = "DefaultWord";
 			v_FontName = "Calibri";
@@ -105,36 +109,41 @@ namespace OpenBots.Commands.Word
 			v_FontUnderline = "No";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vText = v_TextToSet.ConvertUserVariableToString(engine);
-			var wordObject = v_InstanceName.GetAppInstance(engine);
+			var vText = (string)await v_TextToSet.EvaluateCode(engine);
+			var wordObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 
 			Application wordInstance = (Application)wordObject;
 			Document wordDocument = wordInstance.ActiveDocument;
 
-			Paragraph paragraph = wordDocument.Content.Paragraphs.Add();
-			paragraph.Range.Text = vText;
-			paragraph.Range.Font.Name = v_FontName;
-			paragraph.Range.Font.Size = float.Parse(v_FontSize);
+			var newLineRegex = new Regex(@"\n", RegexOptions.Singleline);
+			var lines = newLineRegex.Split(vText);
 
-			if (v_FontBold == "Yes")
-				paragraph.Range.Font.Bold = 1;
-			else 
-				paragraph.Range.Font.Bold = 0;
+			for (int i = 0;i < lines.Length; i++) {
+				Paragraph paragraph = wordDocument.Content.Paragraphs.Add();
+				paragraph.Range.Font.Name = v_FontName;
+				paragraph.Range.Font.Size = float.Parse(v_FontSize);
+				paragraph.Range.Text = lines[i];
 
-			if (v_FontItalic == "Yes")
-				paragraph.Range.Font.Italic = 1;
-			else 
-				paragraph.Range.Font.Italic = 0;
+				if (v_FontBold == "Yes")
+					paragraph.Range.Font.Bold = 1;
+				else
+					paragraph.Range.Font.Bold = 0;
 
-			if (v_FontUnderline == "Yes")
-				paragraph.Range.Font.Underline = WdUnderline.wdUnderlineSingle;
-			else 
-				paragraph.Range.Font.Underline = WdUnderline.wdUnderlineNone;
+				if (v_FontItalic == "Yes")
+					paragraph.Range.Font.Italic = 1;
+				else
+					paragraph.Range.Font.Italic = 0;
 
-			paragraph.Range.InsertParagraphAfter();
+				if (v_FontUnderline == "Yes")
+					paragraph.Range.Font.Underline = WdUnderline.wdUnderlineSingle;
+				else
+					paragraph.Range.Font.Underline = WdUnderline.wdUnderlineNone;
+				if (i < lines.Length - 1)
+					paragraph.Range.InsertParagraphAfter();
+			}
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -142,7 +151,7 @@ namespace OpenBots.Commands.Word
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToSet", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToSet", this, editor, 100, 300));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_FontName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_FontSize", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_FontBold", this, editor));

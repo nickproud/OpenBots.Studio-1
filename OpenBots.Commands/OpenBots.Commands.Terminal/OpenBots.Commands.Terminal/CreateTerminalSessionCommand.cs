@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -10,8 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Terminal
@@ -27,34 +28,35 @@ namespace OpenBots.Commands.Terminal
 		[SampleUsage("MyTerminalInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(OpenEmulator) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Host")]
 		[Description("Define the host.")]
-		[SampleUsage("12.345.678.910 || {vHost}")]
+		[SampleUsage("\"12.345.678.910\" || vHost")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Host { get; set; }
 
 		[Required]
 		[DisplayName("Port")]
 		[Description("Define the port number.")]
-		[SampleUsage("3270 || {vPort}")]
+		[SampleUsage("\"3270\" || vPort")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Port { get; set; }
 
 		[Required]
 		[DisplayName("Terminal Type")]
 		[Description("Define the terminal type.")]
-		[SampleUsage("IBM-3278-2-E || {vTerminalType}")]
+		[SampleUsage("\"IBM-3278-2-E\" || vTerminalType")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TerminalType { get; set; }
 
 		[Required]
@@ -89,13 +91,13 @@ namespace OpenBots.Commands.Terminal
 			v_CloseAllInstances = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			var host = v_Host.ConvertUserVariableToString(engine);
-			var port = v_Port.ConvertUserVariableToString(engine);
-			var terminalType = v_TerminalType.ConvertUserVariableToString(engine);
+			var host = (string)await v_Host.EvaluateCode(engine);
+			var port = (string)await v_Port.EvaluateCode(engine);
+			var terminalType = (string)await v_TerminalType.EvaluateCode(engine);
 			bool useSsl;
 
 			if (v_UseSsl == "Yes")
@@ -107,9 +109,6 @@ namespace OpenBots.Commands.Terminal
 			{
 				var terminalForms = Application.OpenForms.Cast<Form>().Where(f => f is frmTerminal).Select(f => (frmTerminal)f).ToList();
 				terminalForms.ForEach(f => f.CloseForm());
-
-				var terminalInstances = engine.AutomationEngineContext.AppInstances.Where(t => t.Value is OpenEmulator).Select(t => t.Key).ToList();
-				terminalInstances.ForEach(i => i.RemoveAppInstance(engine));
 			}
 
 			if (engine.AutomationEngineContext.ScriptEngine != null)
@@ -122,20 +121,14 @@ namespace OpenBots.Commands.Terminal
 			else
 				LaunchTerminalSession(host, port, terminalType, useSsl);
 
-			_emulator.AddAppInstance(engine, v_InstanceName);
+			new OBAppInstance(v_InstanceName, _emulator).SetVariableValue(engine, v_InstanceName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
 
-			CommandItemControl helperControl = new CommandItemControl();
-
-			helperControl.Padding = new Padding(10, 0, 0, 0);
-			helperControl.ForeColor = Color.AliceBlue;
-			helperControl.Font = new Font("Segoe UI Semilight", 10);
-			helperControl.CommandImage = Resources.command_system;
-			helperControl.CommandDisplay = "Launch Terminal Emulator";
+			CommandItemControl helperControl = new CommandItemControl("LaunchTerminal", Resources.command_system, "Launch Terminal Emulator");
 			helperControl.Click += new EventHandler((s, e) => LaunchTerminalSession(s, e));
 
 			RenderedControls.Add(helperControl);

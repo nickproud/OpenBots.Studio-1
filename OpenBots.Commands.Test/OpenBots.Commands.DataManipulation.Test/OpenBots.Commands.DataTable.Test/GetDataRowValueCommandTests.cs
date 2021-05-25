@@ -14,7 +14,7 @@ namespace OpenBots.Commands.DataTable.Test
         [Theory]
         [InlineData("Column Name")]
         [InlineData("Column Index")]
-        public void getsDataRowValue(string option)
+        public async void getsDataRowValue(string option)
         {
             _getDataRowValue = new GetDataRowValueCommand();
             _engine = new AutomationEngineInstance(null);
@@ -41,7 +41,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _getDataRowValue.RunCommand(_engine);
 
-            string outputValue = _getDataRowValue.v_OutputUserVariableName.ConvertUserVariableToString(_engine);
+            string outputValue = (string)await _getDataRowValue.v_OutputUserVariableName.EvaluateCode(_engine);
             Assert.Equal(inputTable.Rows[0]["col1"], outputValue);
         }
     }

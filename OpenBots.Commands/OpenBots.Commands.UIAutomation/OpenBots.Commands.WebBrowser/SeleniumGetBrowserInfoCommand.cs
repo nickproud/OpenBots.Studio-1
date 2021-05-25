@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -25,7 +27,8 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Enter the unique instance that was specified in the **Create Browser** command.")]
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("Failure to enter the correct instance name or failure to first call the **Create Browser** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(IWebDriver) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -45,7 +48,7 @@ namespace OpenBots.Commands.WebBrowser
 		[Editable(false)]
 		[DisplayName("Output Info Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -53,22 +56,21 @@ namespace OpenBots.Commands.WebBrowser
 		public SeleniumGetBrowserInfoCommand()
 		{
 			CommandName = "SeleniumGetBrowserInfoCommand";
-			SelectionName = "Get Browser Info";
+			SelectionName = "Selenium Get Browser Info";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
 			v_InstanceName = "DefaultBrowser";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var browserObject = v_InstanceName.GetAppInstance(engine);
+			var browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var seleniumInstance = (IWebDriver)browserObject;
-			var requestedInfo = v_InfoType.ConvertUserVariableToString(engine);
 			string info;
 
-			switch (requestedInfo)
+			switch (v_InfoType)
 			{
 				case "Window Title":
 					info = seleniumInstance.Title;
@@ -86,10 +88,10 @@ namespace OpenBots.Commands.WebBrowser
 					info = JsonConvert.SerializeObject(seleniumInstance.WindowHandles);
 					break;
 				default:
-					throw new NotImplementedException($"{requestedInfo} is not implemented for lookup.");
+					throw new NotImplementedException($"{v_InfoType} is not implemented for lookup.");
 			}
 			//store data
-			info.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			info.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

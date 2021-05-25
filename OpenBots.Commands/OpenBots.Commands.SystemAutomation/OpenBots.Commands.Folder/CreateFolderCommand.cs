@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Folder
@@ -22,20 +23,20 @@ namespace OpenBots.Commands.Folder
 		[Required]
 		[DisplayName("New Folder Name")]
 		[Description("Enter the name of the new folder.")]
-		[SampleUsage("myFolderName || {vFolderName}")]
+		[SampleUsage("\"myFolderName\" || vFolderName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_NewFolderName { get; set; }
 
 		[Required]
 		[DisplayName("Directory Path")]
 		[Description("Enter or Select the path to the directory to create the folder in.")]
-		[SampleUsage(@"C:\temp\myfolder || {ProjectPath}\myfolder || {vTextFolderPath}")]
-		[Remarks("{ProjectPath} is the directory path of the current project.")]
+		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_DestinationDirectory { get; set; }
 
 		[Required]
@@ -53,15 +54,14 @@ namespace OpenBots.Commands.Folder
 			SelectionName = "Create Folder";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_folders;
-
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			//apply variable logic
-			var destinationDirectory = v_DestinationDirectory.ConvertUserVariableToString(engine);
-			var newFolder = v_NewFolderName.ConvertUserVariableToString(engine);
+			var destinationDirectory = (string)await v_DestinationDirectory.EvaluateCode(engine);
+			var newFolder = (string)await v_NewFolderName.EvaluateCode(engine);
 
             if (!Directory.Exists(destinationDirectory))
             {

@@ -11,7 +11,7 @@ namespace OpenBots.Commands.Data.Test
         private AutomationEngineInstance _engine;
 
         [Fact]
-        public void GetsTextLength()
+        public async void GetsTextLength()
         {
             _getTextLength = new GetTextLengthCommand();
             _engine = new AutomationEngineInstance(null);
@@ -25,7 +25,7 @@ namespace OpenBots.Commands.Data.Test
 
             _getTextLength.RunCommand(_engine);
 
-            Assert.Equal(textToMeasure.Length, Int32.Parse(_getTextLength.v_OutputUserVariableName.ConvertUserVariableToString(_engine)));
+            Assert.Equal(textToMeasure.Length, (Int32)await _getTextLength.v_OutputUserVariableName.EvaluateCode(_engine));
         }
     }
 }

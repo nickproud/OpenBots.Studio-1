@@ -1,0 +1,1 @@
+{"ProjectID":"bae9a343-2e7c-468a-990d-eb2f4f4f4e38","ProjectName":"Sample_ReadConfig","ProjectType":"OpenBots","Main":"Main.obscript","Version":"1.4.0.0","Dependencies":{"OpenBots.Commands.Core":"1.4.0","OpenBots.Commands.DataManipulation":"1.4.0","OpenBots.Commands.Microsoft":"1.4.0","OpenBots.Commands.SystemAutomation":"1.4.0","OpenBots.Commands.UIAutomation":"1.4.0"}}

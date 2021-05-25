@@ -3,15 +3,16 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Word.Application;
 
@@ -31,7 +32,8 @@ namespace OpenBots.Commands.Word
 		[SampleUsage("MyWordInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -46,11 +48,11 @@ namespace OpenBots.Commands.Word
 		[Required]
 		[DisplayName("Document File Path")]
 		[Description("Enter or Select the path to the Document file.")]
-		[SampleUsage(@"C:\temp\myfile.docx || {vFilePath} || {ProjectPath}\myfile.docx")]
+		[SampleUsage("@\"C:\\temp\\myfile.docx\" || ProjectPath + @\"\\myfile.docx\" || vFilePath")]
 		[Remarks("This input should only be used for opening existing Documents.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -84,7 +86,7 @@ namespace OpenBots.Commands.Word
 			CommandName = "WordCreateApplicationCommand";
 			SelectionName = "Create Word Application";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_files;
+			CommandIcon = Resources.command_word;
 
 			v_InstanceName = "DefaultWord";
 			v_NewOpenDocument = "New Document";
@@ -92,10 +94,10 @@ namespace OpenBots.Commands.Word
 			v_CloseAllInstances = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFilePath = v_FilePath.ConvertUserVariableToString(engine);
+			var vFilePath = (string)await v_FilePath.EvaluateCode(engine);
 
 			if (v_CloseAllInstances == "Yes")
 			{
@@ -113,7 +115,7 @@ namespace OpenBots.Commands.Word
 			else
 				newWordSession.Visible = false;
 
-			newWordSession.AddAppInstance(engine, v_InstanceName);
+			new OBAppInstance(v_InstanceName, newWordSession).SetVariableValue(engine, v_InstanceName);
 
 			if (v_NewOpenDocument == "New Document")
 			{
@@ -137,7 +139,7 @@ namespace OpenBots.Commands.Word
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_NewOpenDocument", this, editor));
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += OpenFileComboBox_SelectedIndexChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += OpenFileComboBox_SelectedIndexChanged;
 
 			_openFileControls = new List<Control>();
 			_openFileControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
@@ -159,12 +161,12 @@ namespace OpenBots.Commands.Word
 		{
 			base.Shown();
 			_hasRendered = true;
-			OpenFileComboBox_SelectedIndexChanged(this, null);
+			OpenFileComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void OpenFileComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Open Document" && _hasRendered)
+			if (((ComboBox)RenderedControls[4]).Text == "Open Document" && _hasRendered)
 			{
 				foreach (var ctrl in _openFileControls)
 					ctrl.Visible = true;

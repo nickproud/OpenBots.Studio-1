@@ -313,7 +313,7 @@ namespace OpenBots.Utilities
                 //append chars to previously created command
                 //this makes editing easier for the user because only 1 command is issued rather than multiples
                 var previouslyInputChars = lastCreatedSendKeysCommand.v_TextToSend;
-                lastCreatedSendKeysCommand.v_TextToSend = previouslyInputChars + selectedKey;                
+                lastCreatedSendKeysCommand.v_TextToSend = previouslyInputChars.Insert(previouslyInputChars.Length - 1, selectedKey);
             }
             else
             {
@@ -322,8 +322,8 @@ namespace OpenBots.Utilities
 
                 //build keyboard command
                 dynamic keyboardCommand = TypeMethods.CreateTypeInstance(_container, "SendKeystrokesCommand");
-                keyboardCommand.v_TextToSend = selectedKey;
-                keyboardCommand.v_WindowName = "Current Window";
+                keyboardCommand.v_TextToSend = $"\"{selectedKey}\"";
+                keyboardCommand.v_WindowName = "\"Current Window\"";
                 GeneratedCommands.Add(keyboardCommand);
             }
         }
@@ -357,7 +357,7 @@ namespace OpenBots.Utilities
             else if (key.ToString().Length > 1)
             {
                 dynamic sendAdvancedKeystrokesCommand = TypeMethods.CreateTypeInstance(_container, "SendAdvancedKeystrokesCommand");
-                sendAdvancedKeystrokesCommand.v_WindowName = windowName;
+                sendAdvancedKeystrokesCommand.v_WindowName = $"\"{windowName}\"";
                 sendAdvancedKeystrokesCommand.v_KeyUpDefault = "Yes";
                 sendAdvancedKeystrokesCommand.v_Comment = "Typed in Window: " + windowName;
 
@@ -510,7 +510,7 @@ namespace OpenBots.Utilities
                 windowName = _buffer.ToString();
 
                 dynamic activateWindowCommand = TypeMethods.CreateTypeInstance(_container, "ActivateWindowCommand");
-                activateWindowCommand.v_WindowName = windowName;
+                activateWindowCommand.v_WindowName = $"\"{windowName}\"";
                 GeneratedCommands.Add(activateWindowCommand);
 
                 //detect if tracking window open location or activate windows to top left
@@ -519,7 +519,7 @@ namespace OpenBots.Utilities
                     User32Functions.GetWindowRect(hwnd, out Rect windowRect);
 
                     dynamic moveWindowCommand = TypeMethods.CreateTypeInstance(_container, "MoveWindowCommand");
-                    moveWindowCommand.v_WindowName = windowName;
+                    moveWindowCommand.v_WindowName = $"\"{windowName}\"";
                     moveWindowCommand.v_XMousePosition = windowRect.left.ToString();
                     moveWindowCommand.v_YMousePosition = windowRect.top.ToString();
                     GeneratedCommands.Add(moveWindowCommand);
@@ -527,7 +527,7 @@ namespace OpenBots.Utilities
                 else if (_activateWindowTopLeft)
                 {
                     dynamic moveWindowCommand = TypeMethods.CreateTypeInstance(_container, "MoveWindowCommand");
-                    moveWindowCommand.v_WindowName = windowName;
+                    moveWindowCommand.v_WindowName = $"\"{windowName}\"";
                     moveWindowCommand.v_XMousePosition = "0";
                     moveWindowCommand.v_YMousePosition = "0";
                     User32Functions.SetWindowPosition(hwnd, 0, 0);
@@ -546,7 +546,7 @@ namespace OpenBots.Utilities
 
                     //generate command to set window position
                     dynamic resizeWindowCommand = TypeMethods.CreateTypeInstance(_container, "ResizeWindowCommand");
-                    resizeWindowCommand.v_WindowName = windowName;
+                    resizeWindowCommand.v_WindowName = $"\"{windowName}\"";
                     resizeWindowCommand.v_XWindowSize = width.ToString();
                     resizeWindowCommand.v_YWindowSize = height.ToString();
 

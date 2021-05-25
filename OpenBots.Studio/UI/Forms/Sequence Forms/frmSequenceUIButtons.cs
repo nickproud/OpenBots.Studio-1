@@ -37,14 +37,13 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             frmScriptVariables scriptVariableEditor = new frmScriptVariables(TypeContext)
             {
-                ScriptName = uiScriptTabControl.SelectedTab.Name,
-                ScriptVariables = new List<ScriptVariable>(ScriptVariables),
-                ScriptArguments = new List<ScriptArgument>(ScriptArguments)
+                ScriptName = uiScriptTabControl.SelectedTab.Name
             };
+
+            scriptVariableEditor.ScriptContext = ScriptContext;
 
             if (scriptVariableEditor.ShowDialog() == DialogResult.OK)
             {
-                ScriptVariables = scriptVariableEditor.ScriptVariables;
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
             }
@@ -63,13 +62,11 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             frmScriptArguments scriptArgumentEditor = new frmScriptArguments(TypeContext)
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
-                ScriptVariables = new List<ScriptVariable>(ScriptVariables),
-                ScriptArguments = new List<ScriptArgument>(ScriptArguments)
+                ScriptContext = ScriptContext
             };
 
             if (scriptArgumentEditor.ShowDialog() == DialogResult.OK)
             {
-                ScriptArguments = scriptArgumentEditor.ScriptArguments;
                 if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
             }
@@ -88,13 +85,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             frmScriptElements scriptElementEditor = new frmScriptElements
             {
                 ScriptName = uiScriptTabControl.SelectedTab.Name,
-                ScriptElements = new List<ScriptElement>(ScriptElements)
+                ScriptContext = ScriptContext
             };
 
             if (scriptElementEditor.ShowDialog() == DialogResult.OK)
             {
                 CreateUndoSnapshot();
-                ScriptElements = scriptElementEditor.ScriptElements;
             }
 
             scriptElementEditor.Dispose();

@@ -4,13 +4,13 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.API_Methods;
+using OpenBots.Core.Server.HelperMethods;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.QueueItem
@@ -23,10 +23,10 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("QueueItem")]
 		[Description("Enter a QueueItem Dictionary variable.")]
-		[SampleUsage("{vQueueItem}")]
+		[SampleUsage("vQueueItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<string,object>) })]
 		public string v_QueueItem { get; set; }
 
 		[Required]
@@ -41,18 +41,18 @@ namespace OpenBots.Commands.QueueItem
 
 		[DisplayName("QueueItem Error Code (Optional)")]
 		[Description("Enter the QueueItem code.")]
-		[SampleUsage("400 || {vStatusCode}")]
+		[SampleUsage("\"400\" || vStatusCode")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueItemErrorCode { get; set; }
 
 		[DisplayName("QueueItem Error Message (Optional)")]
 		[Description("Enter the QueueItem error message.")]
-		[SampleUsage("File not found || {vStatusMessage}")]
+		[SampleUsage("\"File not found\" || vStatusMessage")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueItemErrorMessage { get; set; }
 
 		[JsonIgnore]
@@ -74,33 +74,33 @@ namespace OpenBots.Commands.QueueItem
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueItem = (Dictionary<string, object>)v_QueueItem.ConvertUserVariableToObject(engine, nameof(v_QueueItem), this);
-			var vQueueItemErrorMessage = v_QueueItemErrorMessage.ConvertUserVariableToString(engine);
-			var vQueueItemErrorCode = v_QueueItemErrorCode.ConvertUserVariableToString(engine);
+			var vQueueItem = (Dictionary<string, object>)await v_QueueItem.EvaluateCode(engine);
+			var vQueueItemErrorMessage = (string)await v_QueueItemErrorMessage.EvaluateCode(engine);
+			var vQueueItemErrorCode = (string)await v_QueueItemErrorCode.EvaluateCode(engine);
 
-			var client = AuthMethods.GetAuthToken();
+			var userInfo = AuthMethods.GetUserInfo();
 
 			Guid transactionKey = (Guid)vQueueItem["LockTransactionKey"];
 
 			if (transactionKey == null || transactionKey == Guid.Empty)
 				throw new NullReferenceException($"Transaction key {transactionKey} is invalid or not found");
 
-			switch (v_QueueItemStatusType)
-			{
-				case "Successful":
-					QueueItemMethods.CommitQueueItem(client, transactionKey);
-					break;
-				case "Failed - Should Retry":
-					QueueItemMethods.RollbackQueueItem(client, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, false);
-					break;
-				case "Failed - Fatal":
-					QueueItemMethods.RollbackQueueItem(client, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, true);
-					break;
-			}
-		}
+            switch (v_QueueItemStatusType)
+            {
+                case "Successful":
+                    QueueItemMethods.CommitQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
+                    break;
+                case "Failed - Should Retry":
+                    QueueItemMethods.RollbackQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, false);
+                    break;
+                case "Failed - Fatal":
+                    QueueItemMethods.RollbackQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, true);
+                    break;
+            }
+        }
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
@@ -131,7 +131,7 @@ namespace OpenBots.Commands.QueueItem
 		{
 			base.Shown();
 			_hasRendered = true;
-			QueueItemStatusTypeComboBox_SelectedIndexChanged(this, null);
+			QueueItemStatusTypeComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void QueueItemStatusTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)

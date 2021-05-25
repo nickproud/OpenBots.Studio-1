@@ -29,14 +29,14 @@ namespace OpenBots.Commands.List.Test
         [InlineData("MailItem (Outlook)")]
         [InlineData("MimeMessage (IMAP/SMTP)")]
         [InlineData("IWebElement")]
-        public void CreatesList(string listType)
+        public async void CreatesList(string listType)
         {
             _engine = new AutomationEngineInstance(null);
             _createList = new CreateListCommand();
 
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
-            _createList.v_ListType = listType;
+           // _createList.v_ListType = listType;
             _createList.v_OutputUserVariableName = "{output}";
 
             _createList.RunCommand(_engine);
@@ -62,14 +62,14 @@ namespace OpenBots.Commands.List.Test
                 default:
                     break;
             }
-            output.WriteLine("{output}".ConvertUserVariableToObject(_engine, typeof(List<>)).GetType().ToString());
+            output.WriteLine((await "{output}".EvaluateCode(_engine)).GetType().ToString());
             output.WriteLine(expectedList.GetType().ToString());
 
-            Assert.True(Object.ReferenceEquals("{output}".ConvertUserVariableToObject(_engine, typeof(List<>)).GetType(), expectedList.GetType()));
+            Assert.True(Object.ReferenceEquals((await "{output}".EvaluateCode(_engine)).GetType(), expectedList.GetType()));
         }
 
         [Fact]
-        public void RejectsIncorrectValue()
+        public async System.Threading.Tasks.Task RejectsIncorrectValue()
         {
             _engine = new AutomationEngineInstance(null);
             _createList = new CreateListCommand();
@@ -80,11 +80,11 @@ namespace OpenBots.Commands.List.Test
             VariableMethods.CreateTestVariable(item2, _engine, "item2", typeof(bool));
             VariableMethods.CreateTestVariable(null, _engine, "output", typeof(List<>));
 
-            _createList.v_ListType = "DataTable";
-            _createList.v_ListItems = "{item1},{item2}";
+            //_createList.v_ListType = "DataTable";
+            //_createList.v_ListItems = "{item1},{item2}";
             _createList.v_OutputUserVariableName = "{output}";
 
-            Assert.Throws<System.ArgumentException>(() => _createList.RunCommand(_engine));
+            await Assert.ThrowsAsync<System.ArgumentException>(() => _createList.RunCommand(_engine));
         }
     }
 }

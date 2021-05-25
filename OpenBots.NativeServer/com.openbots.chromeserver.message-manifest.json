@@ -1,0 +1,9 @@
+{
+  "name": "com.openbots.chromeserver.message",
+  "description": "OpenBots Native Messaging Host for Chrome",
+  "path": "%ChromeNativeMessagingServerPath%\\OpenBots.NativeServer.exe",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://kkepankimcahnjamnimeijpplgjpmdpp/"
+  ]
+}

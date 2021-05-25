@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -20,21 +21,20 @@ namespace OpenBots.Commands.DataTable
 
 	public class CreateDataTableCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("Column Names")]
 		[Description("Enter the Column Names required for each column of data.")]
-		[SampleUsage("MyColumn || {vColumn}")]
+		[SampleUsage("\"MyColumn\" || vColumn")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public OBDataTable v_ColumnNameDataTable { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.DataTable
 			v_ColumnNameDataTable.Columns.Add("Column Name");
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
@@ -63,10 +63,11 @@ namespace OpenBots.Commands.DataTable
 
 			foreach(DataRow rwColumnName in v_ColumnNameDataTable.Rows)
 			{
-				Dt.Columns.Add(rwColumnName.Field<string>("Column Name").ConvertUserVariableToString(engine));
+				string columnName = (string)await rwColumnName.Field<string>("Column Name").EvaluateCode(engine);
+				Dt.Columns.Add(columnName);
 			}
 
-			Dt.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			Dt.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -3,13 +3,13 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.API_Methods;
+using OpenBots.Core.Server.HelperMethods;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.QueueItem
@@ -22,10 +22,10 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("QueueItem")]
 		[Description("Enter a QueueItem Dictionary variable.")]
-		[SampleUsage("{vQueueItem}")]
+		[SampleUsage("vQueueItem")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<string,object>) })]
 		public string v_QueueItem { get; set; }
 
 		public ExtendQueueItemCommand()
@@ -38,19 +38,19 @@ namespace OpenBots.Commands.QueueItem
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueItem = (Dictionary<string, object>)v_QueueItem.ConvertUserVariableToObject(engine, nameof(v_QueueItem), this);
+			var vQueueItem = (Dictionary<string, object>)await v_QueueItem.EvaluateCode(engine);
 
-			var client = AuthMethods.GetAuthToken();
+			var userInfo = AuthMethods.GetUserInfo();
 
 			Guid transactionKey = (Guid)vQueueItem["LockTransactionKey"];
 
 			if (transactionKey == null || transactionKey == Guid.Empty)
 				throw new NullReferenceException($"Transaction key {transactionKey} is invalid or not found");
 
-			QueueItemMethods.ExtendQueueItem(client, transactionKey);
+			QueueItemMethods.ExtendQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

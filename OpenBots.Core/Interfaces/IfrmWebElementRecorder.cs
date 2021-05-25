@@ -6,7 +6,7 @@ namespace OpenBots.Core.Infrastructure
 {
     public interface IfrmWebElementRecorder
     {
-        List<ScriptElement> ScriptElements { get; set; }
+        ScriptContext ScriptContext { get; set; }
         DataTable SearchParameters { get; set; }
         string LastItemClicked { get; set; }
         string StartURL { get; set; }

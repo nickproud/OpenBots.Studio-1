@@ -1,19 +1,16 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using MimeKit;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using OBDataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Dictionary
 {
@@ -25,7 +22,7 @@ namespace OpenBots.Commands.Dictionary
 		[Required]
 		[DisplayName("Dictionary")]
 		[Description("Provide a Dictionary variable.")]
-		[SampleUsage("{vDictionary}")]
+		[SampleUsage("vDictionary || new Dictionary<string, int>() {{ \"Hello\", 1 }}")]
 		[Remarks("Any type of variable other than Dictionary will cause error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(Dictionary<,>)})]
@@ -35,7 +32,7 @@ namespace OpenBots.Commands.Dictionary
 		[Editable(false)]
 		[DisplayName("Output Count Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -48,37 +45,14 @@ namespace OpenBots.Commands.Dictionary
 			CommandIcon = Resources.command_dictionary;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			//get variable by regular name
-			var DictionaryVariable = v_DictionaryName.ConvertUserVariableToObject(engine, nameof(v_DictionaryName), this);
+			dynamic dynamicDict = await v_DictionaryName.EvaluateCode(engine);
 
-			//if still null then throw exception
-			if (DictionaryVariable == null)
-			{
-				throw new NullReferenceException("Complex Variable '" + v_DictionaryName +
-					"' not found. Ensure the variable exists before using it.");
-			}
+			int count = dynamicDict.Count;
 
-			dynamic DictionaryToCount;
-			if (DictionaryVariable is Dictionary<string, string>)
-				DictionaryToCount = (Dictionary<string, string>)DictionaryVariable;
-			else if (DictionaryVariable is Dictionary<string, OBDataTable>)
-				DictionaryToCount = (Dictionary<string, OBDataTable>)DictionaryVariable;
-			else if (DictionaryVariable is Dictionary<string, MailItem>)
-				DictionaryToCount = (Dictionary<string, MailItem>)DictionaryVariable;
-			else if (DictionaryVariable is Dictionary<string, MimeMessage>)
-				DictionaryToCount = (Dictionary<string, MimeMessage>)DictionaryVariable;
-			else if (DictionaryVariable is Dictionary<string, IWebElement>)
-				DictionaryToCount = (Dictionary<string, IWebElement>)DictionaryVariable;
-			else if (DictionaryVariable is Dictionary<string, object>)
-				DictionaryToCount = (Dictionary<string, object>)DictionaryVariable;
-			else
-				throw new DataException("Invalid dictionary type, please provide valid dictionary type.");
-
-			int count = DictionaryToCount.Count;
-			count.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			count.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OBDataTable = System.Data.DataTable;
 
@@ -24,7 +25,7 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Source DataTable")]
 		[Description("Enter an existing DataTable to merge into another one.")]
-		[SampleUsage("{vSrcDataTable}")]
+		[SampleUsage("vSrcDataTable")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
@@ -33,7 +34,7 @@ namespace OpenBots.Commands.DataTable
 		[Required]
 		[DisplayName("Destination DataTable")]
 		[Description("Enter an existing DataTable to apply the merge operation to.")]
-		[SampleUsage("{vDestDataTable}")]
+		[SampleUsage("vDestDataTable")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
@@ -50,6 +51,15 @@ namespace OpenBots.Commands.DataTable
 		[Remarks("Specifies the action to take when adding data to the DataSet and the required DataTable or DataColumn is missing.")]
 		public string v_MissingSchemaAction { get; set; }
 
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output DataTable Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("vUserVariable")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(OBDataTable) })]
+		public string v_OutputUserVariableName { get; set; }
+
 		public MergeDataTableCommand()
 		{
 			CommandName = "MergeDataTableCommand";
@@ -60,40 +70,19 @@ namespace OpenBots.Commands.DataTable
 			v_MissingSchemaAction = "Add";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
-			/* ------------Before Merge Operation, following conditions must be checked---------------
-
-			1. None of the (Source, Destination) DataTable Variables is null            -->     (Null Check)
-			2. Data Type of both (Source, Destination) Variables must be DataTable      -->     (Data Type Check)
-			3. Source and Destination DataTable Varibales must not be the same          -->     (Same Variable Check)
-
-			 */
 			var engine = (IAutomationEngineInstance)sender;
 
 			// Get Variable Objects
-			var v_SourceDTVariable = v_SourceDataTable.ConvertUserVariableToObject(engine, nameof(v_SourceDataTable), this);
-			var v_DestinationDTVariable = v_DestinationDataTable.ConvertUserVariableToObject(engine, nameof(v_DestinationDataTable), this);
-
-			// (Null Check)
-			if (v_SourceDTVariable is null)
-				throw new ArgumentNullException("Source DataTable Variable '" + v_SourceDataTable + "' is not initialized.");
-
-			if (v_DestinationDTVariable is null)
-				throw new ArgumentNullException("Destination DataTable Variable '" + v_DestinationDataTable + "' is not initialized.");
-
-			// (Data Type Check)
-			if (!(v_SourceDTVariable is OBDataTable))
-				throw new ArgumentException("Type of Source DataTable Variable '" + v_SourceDataTable + "' is not DataTable.");
-
-			if (!(v_DestinationDTVariable is OBDataTable))
-				throw new ArgumentException("Type of Destination DataTable Variable '" + v_DestinationDataTable + "' is not DataTable.");
+			var SourceDTVariable = (OBDataTable)await v_SourceDataTable.EvaluateCode(engine);
+			var DestinationDTVariable = (OBDataTable)await v_DestinationDataTable.EvaluateCode(engine);
 
 			// Same Variable Check
 			if (v_SourceDataTable != v_DestinationDataTable)
 			{
-				var sourceDT = (OBDataTable)v_SourceDTVariable;
-				var destinationDT = (OBDataTable)v_DestinationDTVariable;
+				var sourceDT = SourceDTVariable;
+				var destinationDT = DestinationDTVariable;
 
 				switch (v_MissingSchemaAction)
 				{
@@ -114,9 +103,8 @@ namespace OpenBots.Commands.DataTable
 				}
 
 				// Update Destination Variable Value
-				destinationDT.StoreInUserVariable(engine, v_DestinationDataTable, nameof(v_DestinationDataTable), this);               
+				destinationDT.SetVariableValue(engine, v_OutputUserVariableName);               
 			}
-
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -126,13 +114,14 @@ namespace OpenBots.Commands.DataTable
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SourceDataTable", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_DestinationDataTable", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_MissingSchemaAction", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			return base.GetDisplayValue() + $" [Merge Source '{v_SourceDataTable}' Into Destination '{v_DestinationDataTable}']";
+			return base.GetDisplayValue() + $" [Merge Source '{v_SourceDataTable}' Into Destination '{v_DestinationDataTable}' - Store DataTable in '{v_OutputUserVariableName}']";
 		}       
 	}
 }

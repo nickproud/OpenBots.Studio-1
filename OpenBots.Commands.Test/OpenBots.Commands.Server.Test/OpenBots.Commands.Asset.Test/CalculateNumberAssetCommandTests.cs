@@ -1,6 +1,6 @@
 ﻿using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
-using System.Data;
+using System;
 using Xunit;
 
 namespace OpenBots.Commands.Asset.Test
@@ -13,7 +13,7 @@ namespace OpenBots.Commands.Asset.Test
         private UpdateAssetCommand _updateAsset;
 
         [Fact]
-        public void IncrementsNumberAsset()
+        public async void IncrementsNumberAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _calculateAsset = new CalculateNumberAssetCommand();
@@ -37,14 +37,14 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = "{output}".ConvertUserVariableToString(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
             Assert.Equal(newAsset, outputAsset);
 
             resetAsset(assetName, "49", "Number");
         }
 
         [Fact]
-        public void DecrementsNumberAsset()
+        public async void DecrementsNumberAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _calculateAsset = new CalculateNumberAssetCommand();
@@ -68,14 +68,14 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = "{output}".ConvertUserVariableToString(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
             Assert.Equal(newAsset, outputAsset);
 
             resetAsset(assetName, "49", "Number");
         }
 
         [Fact]
-        public void AddsNumberAsset()
+        public async void AddsNumberAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _calculateAsset = new CalculateNumberAssetCommand();
@@ -99,14 +99,14 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = "{output}".ConvertUserVariableToString(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
             Assert.Equal(newAsset, outputAsset);
 
             resetAsset(assetName, "49", "Number");
         }
 
         [Fact]
-        public void SubtractsNumberAsset()
+        public async void SubtractsNumberAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _calculateAsset = new CalculateNumberAssetCommand();
@@ -130,14 +130,14 @@ namespace OpenBots.Commands.Asset.Test
 
             _getAsset.RunCommand(_engine);
 
-            string outputAsset = "{output}".ConvertUserVariableToString(_engine);
+            string outputAsset = (string)await "{output}".EvaluateCode(_engine);
             Assert.Equal(newAsset, outputAsset);
 
             resetAsset(assetName, "49", "Number");
         }
 
         [Fact]
-        public void HandlesNonexistentAsset()
+        public async System.Threading.Tasks.Task HandlesNonexistentAsset()
         {
             _engine = new AutomationEngineInstance(null);
             _calculateAsset = new CalculateNumberAssetCommand();
@@ -152,7 +152,7 @@ namespace OpenBots.Commands.Asset.Test
             _calculateAsset.v_AssetActionType = "Increment";
             _calculateAsset.v_AssetActionValue = "";
 
-            Assert.Throws<DataException>(() => _calculateAsset.RunCommand(_engine));
+            Assert.ThrowsAsync<ArgumentNullException>(() => _calculateAsset.RunCommand(_engine));
         }
 
         private void resetAsset(string assetName, string assetValue, string type)

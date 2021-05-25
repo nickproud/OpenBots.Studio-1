@@ -6,12 +6,13 @@ using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
@@ -25,31 +26,21 @@ namespace OpenBots.Commands.Input
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to send keystrokes to.")]
-		[SampleUsage("Untitled - Notepad || Current Window || {vWindow}")]
+		[SampleUsage("\"Untitled - Notepad\" || \"Current Window\" || vWindow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
 		[DisplayName("Text to Send")]
 		[Description("Enter the text to be sent to the specified window.")]
-		[SampleUsage("Hello, World! || {vText}")]
+		[SampleUsage("\"Hello, World!\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[Editor("ShowEncryptionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_TextToSend { get; set; }
-
-		[Required]
-		[DisplayName("Text Encrypted")]
-		[PropertyUISelectionOption("Not Encrypted")]
-		[PropertyUISelectionOption("Encrypted")]
-		[Description("Indicate whether the text in *Text to Send* is encrypted.")]
-		[SampleUsage("")]
-		[Remarks("")]
-		public string v_EncryptionOption { get; set; }
 
 		public SendKeystrokesCommand()
 		{
@@ -58,48 +49,20 @@ namespace OpenBots.Commands.Input
 			CommandEnabled = true;
 			CommandIcon = Resources.command_input;
 
-			v_WindowName = "Current Window";
-			v_EncryptionOption = "Not Encrypted";
+			v_WindowName = "\"Current Window\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var variableWindowName = v_WindowName.ConvertUserVariableToString(engine);
+			var variableWindowName = (string)await v_WindowName.EvaluateCode(engine);
 
 			if (variableWindowName != "Current Window")
 				User32Functions.ActivateWindow(variableWindowName);
 
-			string textToSend = v_TextToSend.ConvertUserVariableToString(engine);
+			string textToSend = (string)await v_TextToSend.EvaluateCode(engine);
 
-			if (v_EncryptionOption == "Encrypted")
-				textToSend = EncryptionServices.DecryptString(textToSend, "OPENBOTS");
-
-			if (textToSend == "{WIN_KEY}")
-			{
-				User32Functions.KeyDown(Keys.LWin);
-				User32Functions.KeyUp(Keys.LWin);
-			}
-			else if (textToSend.Contains("{WIN_KEY+"))
-			{
-				User32Functions.KeyDown(Keys.LWin);
-				var remainingText = textToSend.Replace("{WIN_KEY+", "").Replace("}","");
-
-				foreach (var c in remainingText)
-				{
-					Keys key = (Keys)Enum.Parse(typeof(Keys), c.ToString());
-					User32Functions.KeyDown(key);
-				}
-				User32Functions.KeyUp(Keys.LWin);
-
-				foreach (var c in remainingText)
-				{
-					Keys key = (Keys)Enum.Parse(typeof(Keys), c.ToString());
-					User32Functions.KeyUp(key);
-				}
-			}
-			else
-				SendKeys.SendWait(textToSend);
+			SendKeys.SendWait(Regex.Replace(textToSend, "[+^%~(){}]", "{$0}"));
 
 			Thread.Sleep(500);
 		}
@@ -110,7 +73,6 @@ namespace OpenBots.Commands.Input
 
 			RenderedControls.AddRange(commandControls.CreateDefaultWindowControlGroupFor("v_WindowName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_TextToSend", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_EncryptionOption", this, editor));
 
 			return RenderedControls;
 		}

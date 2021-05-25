@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Input
@@ -26,29 +27,29 @@ namespace OpenBots.Commands.Input
 		[Required]
 		[DisplayName("Header Name")]
 		[Description("Define the header to be displayed on the input form.")]
-		[SampleUsage("Please Provide Input || {vHeader}")]
+		[SampleUsage("\"Please Provide Input\" || vHeader")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputHeader { get; set; }
 
 		[Required]
 		[DisplayName("Input Directions")]
 		[Description("Define the directions to give to the user.")]
-		[SampleUsage("Directions: Please fill in the following fields || {vDirections}")]
+		[SampleUsage("\"Directions: Please fill in the following fields\" || vDirections")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_InputDirections { get; set; }
 
 		[DisplayName("Input Parameters (Optional)")]
 		[Description("Define the required input parameters.")]
-		[SampleUsage("[TextBox | Name | 500,100 | John | {vName}]\n" +
-					 "[CheckBox | Developer | 500,30 | True | {vDeveloper}]\n" +
-					 "[ComboBox | Gender | 500,30 | Male,Female,Other | {vGender}]")]
+		[SampleUsage("[TextBox | \"Name\" | \"500,100\" | \"John\" | vName]\n" +
+					 "[CheckBox | \"Developer\" | \"500,30\" | \"True\" | vDeveloper]\n" +
+					 "[ComboBox | \"Gender\" | \"500,30\" | \"Male,Female,Other\" | vGender]")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(string), typeof(bool) }, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(bool) })]
 		public DataTable v_UserInputConfig { get; set; }
 
 		[JsonIgnore]
@@ -86,20 +87,22 @@ namespace OpenBots.Commands.Input
 			v_UserInputConfig.Columns.Add("DefaultValue");
 			v_UserInputConfig.Columns.Add("StoreInVariable");
 
-			v_InputHeader = "Please Provide Input";
-			v_InputDirections = "Directions: Please fill in the following fields";
+			v_InputHeader = "\"Please Provide Input\"";
+			v_InputDirections = "\"Directions: Please fill in the following fields\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var header = v_InputHeader.ConvertUserVariableToString(engine);
-			var directions = v_InputDirections.ConvertUserVariableToString(engine);
+			var header = (string)await v_InputHeader.EvaluateCode(engine);
+			var directions = (string)await v_InputDirections.EvaluateCode(engine);
 			
 			//translate variables for each label
 			foreach (DataRow rw in v_UserInputConfig.Rows)
 			{
-				rw["DefaultValue"] = rw["DefaultValue"].ToString().ConvertUserVariableToString(engine);
+				rw["Label"] = (string)await rw["Label"].ToString().EvaluateCode(engine);
+				rw["Size"] = (string)await rw["Size"].ToString().EvaluateCode(engine);
+				rw["DefaultValue"] = (await rw["DefaultValue"].ToString().EvaluateCode(engine)).ToString();
 				string targetVariable = rw["StoreInVariable"].ToString();
 
 				if (string.IsNullOrEmpty(targetVariable))
@@ -150,7 +153,7 @@ namespace OpenBots.Commands.Input
 
 						//store user data in variable
 						if (!string.IsNullOrEmpty(targetVariable))
-							userInputs[i].StoreInUserVariable(engine, targetVariable, nameof(v_UserInputConfig), this);
+							userInputs[i].SetVariableValue(engine, targetVariable);
 					}
 				}
 		}
@@ -198,12 +201,7 @@ namespace OpenBots.Commands.Input
 			_userInputGridViewHelper.DragOver += UserInputGridViewHelper_DragOver;
 			_userInputGridViewHelper.DragDrop += UserInputGridViewHelper_DragDrop;
 
-			_addRowControl = new CommandItemControl();
-			_addRowControl.Padding = new Padding(10, 0, 0, 0);
-			_addRowControl.ForeColor = Color.AliceBlue;
-			_addRowControl.Font = new Font("Segoe UI Semilight", 10);
-			_addRowControl.CommandImage = Resources.command_input;
-			_addRowControl.CommandDisplay = "Add Input Parameter";
+			_addRowControl = new CommandItemControl("AddInput", Resources.command_input, "Add Input Parameter");
 			_addRowControl.Click += (sender, e) => AddInputParameter(sender, e, editor);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InputHeader", this, editor));
@@ -225,7 +223,7 @@ namespace OpenBots.Commands.Input
 		private void AddInputParameter(object sender, EventArgs e, IfrmCommandEditor editor)
 		{
 			var newRow = v_UserInputConfig.NewRow();
-			newRow["Size"] = "500,30";
+			newRow["Size"] = "\"500,30\"";
 			v_UserInputConfig.Rows.Add(newRow);
 		}
 

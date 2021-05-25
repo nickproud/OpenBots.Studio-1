@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Switch
 {
@@ -20,9 +21,9 @@ namespace OpenBots.Commands.Switch
 		[Required]
 		[DisplayName("Case")]
 		[Description("This block will be executed if the specified case value matches the value in the Switch Command.")]
-		[SampleUsage("1 || hello")]
+		[SampleUsage("1 || \"hello\"")]
 		[Remarks("")]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string), typeof(int) })]
 		public string v_CaseValue { get; set; }
 
 		public CaseCommand()
@@ -34,7 +35,7 @@ namespace OpenBots.Commands.Switch
 			ScopeStartCommand = true;
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			//no execution required, used as a marker by the Automation Engine
 		}
@@ -50,7 +51,7 @@ namespace OpenBots.Commands.Switch
 
 		public override string GetDisplayValue()
 		{
-			if (v_CaseValue == "Default")
+			if (v_CaseValue == "\"Default\"")
 				return "Default:";
 			else
 				return base.GetDisplayValue() + $" {v_CaseValue}:";

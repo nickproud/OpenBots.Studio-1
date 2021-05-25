@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Misc
 {
@@ -22,20 +23,20 @@ namespace OpenBots.Commands.Misc
 		[Required]
 		[DisplayName("Message")]      
 		[Description("Specify any text or variable value that should be displayed on screen.")]
-		[SampleUsage("Hello World || {vMyText} || Hello {vName}")]
+		[SampleUsage("\"Hello World\" || vMyVar || \"Hello \" + vName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object) }, true)]
+		[CompatibleTypes(new Type[] { typeof(object) })]
 		public string v_Message { get; set; }
 
 		[Required]
 		[DisplayName("Close After X (Seconds)")]
 		[Description("Specify how many seconds to display the message on screen. After the specified time," + 
-							"\nthe message box will be automatically closed and script will resume execution.")]
-		[SampleUsage("0 || 5 || {vSeconds})")]
+					 "\nthe message box will be automatically closed and script will resume execution.")]
+		[SampleUsage("0 || 5 || vSeconds")]
 		[Remarks("Set value to 0 to remain open indefinitely.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_AutoCloseAfter { get; set; }
 
 		public ShowMessageCommand()
@@ -48,34 +49,19 @@ namespace OpenBots.Commands.Misc
 			v_AutoCloseAfter = "0";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			int closeAfter = int.Parse(v_AutoCloseAfter.ConvertUserVariableToString(engine));
-
-			dynamic variableMessage = v_Message.ConvertUserVariableToString(engine);
-
-			if (variableMessage == v_Message && variableMessage.StartsWith("{") && variableMessage.EndsWith("}"))
-				variableMessage = v_Message.ConvertUserVariableToObject(engine, nameof(v_Message), this);
-
-			string type = "";
-			if(variableMessage?.GetType().Name == typeof(KeyValuePair<,>).Name)
-            {
-				type = variableMessage.GetType().FullName;
-			}
-			else if (variableMessage != null)
-				type = variableMessage.GetType().FullName;
-
-			if (variableMessage is string)
-				variableMessage = variableMessage.Replace("\\n", Environment.NewLine);
-			else
-				variableMessage = variableMessage.GetType().ToString() + Environment.NewLine + StringMethods.ConvertObjectToString(variableMessage, variableMessage.GetType());
+			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
+			
+			var variableMessage = await v_Message.EvaluateCode(engine);
+			var message = StringMethods.ConvertObjectToString(variableMessage, variableMessage.GetType());
 
 			if (engine.AutomationEngineContext.ScriptEngine == null)
 			{
 				engine.ReportProgress("Complex Messagebox Supported With UI Only");
-				MessageBox.Show(variableMessage, "Message Box Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(message, "Message Box Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
 
@@ -85,7 +71,7 @@ namespace OpenBots.Commands.Misc
 
 			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
 				{
-					engine.AutomationEngineContext.ScriptEngine.ShowMessage(variableMessage, "MessageBox", DialogType.OkOnly, closeAfter);
+					engine.AutomationEngineContext.ScriptEngine.ShowMessage(message, "MessageBox", DialogType.OkOnly, closeAfter);
 				}
 			));
 

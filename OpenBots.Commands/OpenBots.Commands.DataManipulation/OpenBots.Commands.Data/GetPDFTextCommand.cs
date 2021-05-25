@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.Data
@@ -34,18 +35,18 @@ namespace OpenBots.Commands.Data
 		[Required]
 		[DisplayName("File Path / URL")]
 		[Description("Specify the local path or URL to the applicable PDF file.")]
-		[SampleUsage(@"C:\temp\myfile.pdf || https://temp.com/myfile.pdf || {vFilePath}")]
+		[SampleUsage("@\"C:\\temp\\myfile.pdf\" || ProjectPath + @\"\\myfile.pdf\" || vFilePath || https://temp.com/myfile.pdf")]
 		[Remarks("Providing an invalid File Path/URL will result in an error.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FilePath { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Text Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -62,12 +63,12 @@ namespace OpenBots.Commands.Data
 			
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
 			//get variable path or URL to source file
-			var vSourceFilePath = v_FilePath.ConvertUserVariableToString(engine);
+			var vSourceFilePath = (string)await v_FilePath.EvaluateCode(engine);
 
 			if (v_FileSourceType == "File URL")
 			{
@@ -105,7 +106,7 @@ namespace OpenBots.Commands.Data
 			}
 			pdfDoc.Close();
 
-			result.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			result.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

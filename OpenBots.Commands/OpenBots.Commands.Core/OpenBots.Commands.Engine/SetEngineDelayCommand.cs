@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Engine
 {
@@ -21,10 +22,10 @@ namespace OpenBots.Commands.Engine
 		[Required]
 		[DisplayName("Command Delay Time (Milliseconds)")]
 		[Description("Select or provide a specific amount of time in milliseconds.")]
-		[SampleUsage("1000 || {vTime}")]
+		[SampleUsage("1000 || vTime")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_EngineDelay { get; set; }
 
 		public SetEngineDelayCommand()
@@ -37,11 +38,10 @@ namespace OpenBots.Commands.Engine
 			v_EngineDelay = "250";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Tasks.Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var engineDelay = v_EngineDelay.ConvertUserVariableToString(engine);
-			var delay = int.Parse(engineDelay);
+			var delay = (int)await v_EngineDelay.EvaluateCode(engine);
 
 			//update delay setting
 			engine.EngineSettings.DelayBetweenCommands = delay;

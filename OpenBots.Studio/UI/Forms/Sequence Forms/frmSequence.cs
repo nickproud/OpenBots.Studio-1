@@ -5,8 +5,6 @@ using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
-using OpenBots.Studio.Utilities;
-using OpenBots.UI.CustomControls.Controls;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using System;
 using System.Collections.Generic;
@@ -15,7 +13,8 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using IContainer = Autofac.IContainer;
+using AContainer = Autofac.IContainer;
+using CoreResources = OpenBots.Properties.Resources;
 
 namespace OpenBots.UI.Forms.Sequence_Forms
 {
@@ -24,26 +23,24 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         #region Instance Variables
         //engine context variables
         private List<ListViewItem> _rowsSelectedForCopy;
-        public List<ScriptVariable> ScriptVariables { get; set; }
-        public List<ScriptArgument> ScriptArguments { get; set; }
-        public List<ScriptElement> ScriptElements { get; set; }
+        public ScriptContext ScriptContext { get; set; }
+        public Dictionary<string, List<AssemblyReference>> AllNamespaces { get; set; }
         public Project ScriptProject { get; set; }
-        public string ScriptProjectPath { get; set; }       
+        public string ScriptProjectPath { get; set; }
 
         //notification variables
         private List<Tuple<string, Color>> _notificationList = new List<Tuple<string, Color>>();
         private DateTime _notificationExpires;
-        private bool _isDisplaying;
         private string _notificationText;
         private Color _notificationColor;
-        private string _notificationPaintedText;             
+        private bool _isNotificationListEmpty;
 
         //command search variables
         private TreeView _tvCommandsCopy;
-        private string _txtCommandWatermark = "Type Here to Search";       
+        private string _txtCommandWatermark = "Type Here to Search";
 
         //package manager variables
-        public IContainer AContainer { get; set; }
+        public AContainer AContainer { get; set; }
         private Dictionary<string, List<Type>> _groupedTypes { get; set; }
 
         //variable/argument tab variables
@@ -54,8 +51,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
         //other scriptbuilder form variables 
         public string HTMLElementRecorderURL { get; set; }
-        private List<AutomationCommand> _automationCommands;
-        private ImageList _uiImages;
+        public List<AutomationCommand> AutomationCommands { get; set; }
+        public ImageList UiImages { get; set; }
         private ApplicationSettings _appSettings;
         private DateTime _lastAntiIdleEvent;
         public UIListView SelectedTabScriptActions { get; set; }
@@ -84,13 +81,21 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             var defaultTypesBinding = new BindingSource(TypeContext.DefaultTypes, null);
 
-            VariableType.DataSource = defaultTypesBinding;
-            VariableType.DisplayMember = "Key";
-            VariableType.ValueMember = "Value";
+            variableType.DataSource = defaultTypesBinding;
+            variableType.DisplayMember = "Key";
+            variableType.ValueMember = "Value";
 
-            ArgumentType.DataSource = defaultTypesBinding;
-            ArgumentType.DisplayMember = "Key";
-            ArgumentType.ValueMember = "Value";
+            argumentType.DataSource = defaultTypesBinding;
+            argumentType.DisplayMember = "Key";
+            argumentType.ValueMember = "Value";
+
+            var importedNameSpacesBinding = new BindingSource(ScriptContext.ImportedNamespaces, null);
+            lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
+            lbxImportedNamespaces.DisplayMember = "Key";
+
+            var allNameSpacesBinding = new BindingSource(AllNamespaces, null);
+            cbxAllNamespaces.DataSource = allNameSpacesBinding;
+            cbxAllNamespaces.DisplayMember = "Key";
 
             //set controls double buffered
             foreach (Control control in Controls)
@@ -104,9 +109,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             _appSettings = new ApplicationSettings();
             _appSettings = _appSettings.GetOrCreateApplicationSettings();           
 
-            //no height for status bar
-            HideNotificationRow();
-
             //set listview column size
             frmSequence_SizeChanged(null, null);
         }
@@ -114,12 +116,11 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         public void LoadCommands()
         {
             //load all commands           
-            _automationCommands = TypeMethods.GenerateAutomationCommands(AContainer).Where(x => x.Command.CommandName != "SequenceCommand").ToList();
+            //AutomationCommands = TypeMethods.GenerateAutomationCommands(AContainer);
 
-            //instantiate and populate display icons for commands
-            _uiImages = UIImage.UIImageList(_automationCommands);
-
-            var groupedCommands = _automationCommands.GroupBy(f => f.DisplayGroup);
+            var groupedCommands = AutomationCommands.Where(x => x.Command.CommandName != "BrokenCodeCommentCommand" && 
+                                                                 x.Command.CommandName != "SequenceCommand")
+                                                     .GroupBy(f => f.DisplayGroup);
 
             tvCommands.Nodes.Clear();
             foreach (var cmd in groupedCommands)
@@ -192,70 +193,97 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         private void tmrNotify_Tick(object sender, EventArgs e)
         {
             if (_appSettings == null)
-            {
                 return;
-            }
 
-            if ((_notificationExpires < DateTime.Now) && (_isDisplaying))
-            {
-                HideNotification();
-            }
-
-            if ((_appSettings.ClientSettings.AntiIdleWhileOpen) && (DateTime.Now > _lastAntiIdleEvent.AddMinutes(1)))
-            {
+            if (_appSettings.ClientSettings.AntiIdleWhileOpen && DateTime.Now > _lastAntiIdleEvent.AddMinutes(1))
                 PerformAntiIdle();
-            }
 
             //check if notification is required
-            if ((_notificationList.Count > 0) && (_notificationExpires < DateTime.Now))
+            if (_notificationList.Count > 0 && _notificationExpires < DateTime.Now)
             {
                 var itemToDisplay = _notificationList[0];
                 _notificationList.RemoveAt(0);
-                _notificationExpires = DateTime.Now.AddSeconds(2);
+
+                int displayTime;
+                switch (itemToDisplay.Item2.Name)
+                {
+                    case "Transparent":
+                        displayTime = 0;
+                        break;
+                    case "White":
+                        displayTime = 1;
+                        break;
+                    case "Yellow":
+                        displayTime = 2;
+                        break;
+                    case "Red":
+                        displayTime = 3;
+                        break;
+                    default:
+                        displayTime = 1;
+                        break;
+                }
+                _notificationExpires = DateTime.Now.AddSeconds(displayTime);
                 ShowNotification(itemToDisplay.Item1, itemToDisplay.Item2);
             }
+            else if (_notificationList.Count == 0 && !_isNotificationListEmpty)
+            {
+                pnlStatus.Invalidate();
+                _isNotificationListEmpty = true;
+            }
+            else if (!_isNotificationListEmpty)
+                pnlStatus.Invalidate();
         }
 
         public void Notify(string notificationText, Color notificationColor)
         {
+            _isNotificationListEmpty = false;
             _notificationList.Add(new Tuple<string, Color>(notificationText, notificationColor));
+        }
+
+        public void NotifySync(string notificationText, Color notificationColor)
+        {
+            Notify(notificationText, notificationColor);
+            tmrNotify_Tick(null, null);
+            tlpControls.Refresh();
         }
 
         private void ShowNotification(string textToDisplay, Color textColor)
         {
             _notificationText = textToDisplay;
             _notificationColor = textColor;
-
-            pnlStatus.SuspendLayout();
-
-            ShowNotificationRow();
-            pnlStatus.ResumeLayout();
-            _isDisplaying = true;
         }
 
-        private void HideNotification()
+        private void pnlStatus_Paint(object sender, PaintEventArgs e)
         {
-            pnlStatus.SuspendLayout();
+            e.Graphics.DrawString(_notificationText, pnlStatus.Font, new SolidBrush(_notificationColor), 30, 4);
 
-            HideNotificationRow();
-            pnlStatus.ResumeLayout();
-            _isDisplaying = false;
+            if (!string.IsNullOrEmpty(_notificationText))
+                e.Graphics.DrawImage(CoreResources.OpenBots_icon, 5, 3, 20, 20);
         }
 
-        private void HideNotificationRow()
+        private void pnlStatus_DoubleClick(object sender, EventArgs e)
         {
-            tlpControls.RowStyles[3].Height = 0;
-        }
+            if (string.IsNullOrEmpty(_notificationText))
+                return;
 
-        private void ShowNotificationRow()
-        {
-            tlpControls.RowStyles[3].Height = 30;
-        }
-
-        private void PerformAntiIdle()
-        {
-            _lastAntiIdleEvent = DateTime.Now;
-            Notify("Anti-Idle Triggered", Color.White);
+            string caption;
+            switch (_notificationColor.Name)
+            {
+                case "White":
+                    caption = "Information";
+                    break;
+                case "Yellow":
+                    caption = "Warning";
+                    break;
+                case "Red":
+                    caption = "Error";
+                    break;
+                default:
+                    caption = "Information";
+                    break;
+            }
+            MessageBox.Show(_notificationText, caption);
         }
 
         private void notifyTray_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -267,13 +295,20 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 notifyTray.Visible = false;
             }
         }
+
+        private void PerformAntiIdle()
+        {
+            _lastAntiIdleEvent = DateTime.Now;
+            Notify("Anti-Idle Triggered", Color.White);
+        }
+
         #endregion
 
         #region Create Command Logic
         private void AddNewCommand(string specificCommand = "")
         {
             //bring up new command configuration form
-            frmCommandEditor newCommandForm = new frmCommandEditor(_automationCommands, GetConfiguredCommands(), TypeContext)
+            frmCommandEditor newCommandForm = new frmCommandEditor(AutomationCommands, GetConfiguredCommands(), TypeContext)
             {
                 CreationModeInstance = CreationMode.Add
             };
@@ -281,12 +316,9 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             if (specificCommand != "")
                 newCommandForm.DefaultStartupCommand = specificCommand;
 
-            newCommandForm.ScriptEngineContext.Variables = new List<ScriptVariable>(ScriptVariables);
-            newCommandForm.ScriptEngineContext.Arguments = new List<ScriptArgument>(ScriptArguments);
-            newCommandForm.ScriptEngineContext.Elements = new List<ScriptElement>(ScriptElements);
-
-            newCommandForm.ScriptEngineContext.Container = AContainer;
-            newCommandForm.ScriptEngineContext.ProjectPath = ScriptProjectPath;
+            newCommandForm.ScriptContext = ScriptContext;
+            newCommandForm.AContainer = AContainer;
+            newCommandForm.ProjectPath = ScriptProjectPath;
             newCommandForm.HTMLElementRecorderURL = HTMLElementRecorderURL;
 
             //if a command was selected
@@ -294,16 +326,12 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             {
                 //add to listview
                 CreateUndoSnapshot();
-                AddCommandToListView(newCommandForm.SelectedCommand);
-
-                ScriptVariables = newCommandForm.ScriptEngineContext.Variables;
-                ScriptArguments = newCommandForm.ScriptEngineContext.Arguments;                
+                AddCommandToListView(newCommandForm.SelectedCommand);              
             }
 
             if (newCommandForm.SelectedCommand.CommandName == "SeleniumElementActionCommand")
             {
                 CreateUndoSnapshot();
-                ScriptElements = newCommandForm.ScriptEngineContext.Elements;
                 HTMLElementRecorderURL = newCommandForm.HTMLElementRecorderURL;
             }
 
@@ -452,7 +480,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             txtCommandSearch.Clear();
         }
-        #endregion
+        #endregion        
     }
 }
 

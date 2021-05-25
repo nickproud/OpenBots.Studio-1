@@ -4,6 +4,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -13,6 +14,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using DataTable = System.Data.DataTable;
@@ -30,34 +32,35 @@ namespace OpenBots.Commands.Excel
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
 		[DisplayName("Key Column Name")]
 		[Description("Enter the name of the column to be loaded as Dictionary Keys.")]
-		[SampleUsage("Name || {vKeyColumn}")]
+		[SampleUsage("\"Name\" || vKeyColumn")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_KeyColumn { get; set; }
 
 		[Required]
 		[DisplayName("Value Column Name")]
 		[Description("Enter the name of the column to be loaded as Dictionary Values.")]
-		[SampleUsage("Value || {vValueColumn}")]
+		[SampleUsage("\"Value\" || vValueColumn")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ValueColumn { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Dictionary Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
-		[CompatibleTypes(new Type[] { typeof(Dictionary<,>) })]
+		[CompatibleTypes(new Type[] { typeof(Dictionary<string,string>) })]
 		public string v_OutputUserVariableName { get; set; }
 
 		public LoadDictionaryCommand()
@@ -65,20 +68,20 @@ namespace OpenBots.Commands.Excel
 			CommandName = "LoadDictionaryCommand";
 			SelectionName = "Load Dictionary";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
-			v_KeyColumn = "Name";
-			v_ValueColumn = "Value";
+			v_KeyColumn = "\"Name\"";
+			v_ValueColumn = "\"Value\"";
 		}
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			
-			var vKeyColumn = v_KeyColumn.ConvertUserVariableToString(engine);
-			var vValueColumn = v_ValueColumn.ConvertUserVariableToString(engine);
+			var vKeyColumn = (string)await v_KeyColumn.EvaluateCode(engine);
+			var vValueColumn = (string)await v_ValueColumn.EvaluateCode(engine);
 
-			var excelObject = v_InstanceName.GetAppInstance(engine);
+			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var excelInstance = (Application)excelObject;
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;
@@ -128,7 +131,7 @@ namespace OpenBots.Commands.Excel
 				outputDictionary.Add(dict.keys, dict.values);
 			}
 
-			outputDictionary.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			outputDictionary.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

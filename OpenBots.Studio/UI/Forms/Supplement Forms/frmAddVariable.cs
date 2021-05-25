@@ -1,7 +1,11 @@
-﻿using OpenBots.Core.Script;
+﻿using Microsoft.CodeAnalysis;
+using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -9,12 +13,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 {
     public partial class frmAddVariable : UIForm
     {
-        public List<ScriptVariable> ScriptVariables { get; set; }
-        public List<ScriptArgument> ScriptArguments { get; set; }
+        public ScriptContext ScriptContext { get; set; }
         private bool _isEditMode;
         private string _editingVariableName;
         private TypeContext _typeContext;
         private Type _preEditType;
+        private ToolTip _typeToolTip;
+        public List<ScriptVariable> VariablesCopy { get; set; }
+        private CodeDomProvider _provider;
 
         public frmAddVariable(TypeContext typeContext)
         {
@@ -27,6 +33,8 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
             cbxDefaultType.SelectedValue = typeof(string);
             cbxDefaultType.Tag = typeof(string);
+
+            _preEditType = typeof(string);
         }
 
         public frmAddVariable(string variableName, string variableValue, Type variableType, TypeContext typeContext)
@@ -52,26 +60,48 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private void frmAddVariable_Load(object sender, EventArgs e)
         {
-            
+            _typeToolTip = AddTypeToolTip();
+            _typeToolTip.SetToolTip(cbxDefaultType, _preEditType.GetRealTypeName());
+            _provider = CodeDomProvider.CreateProvider("C#");
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
         {
+            txtVariableName.ForeColor = Color.SteelBlue;
+            txtDefaultValue.ForeColor = Color.SteelBlue;
+            lblVariableNameError.Text = "";
+            lblVariableValueError.Text = "";
+
             txtVariableName.Text = txtVariableName.Text.Trim();
             if (txtVariableName.Text == string.Empty)
             {
                 lblVariableNameError.Text = "Variable Name not provided";
+                txtVariableName.ForeColor = Color.Red;
+                return;
+            }
+
+            if (!_provider.IsValidIdentifier(txtVariableName.Text))
+            {
+                lblVariableNameError.Text = "Variable Name is invalid";
+                txtVariableName.ForeColor = Color.Red;
+                return;
+            }
+
+            if (!_provider.IsValidIdentifier(txtVariableName.Text))
+            {
+                lblVariableNameError.Text = "Variable Name is invalid";
                 return;
             }
 
             string newVariableName = txtVariableName.Text;
-            var existingVariable = ScriptVariables.Where(var => var.VariableName == newVariableName).FirstOrDefault();
-            var existingArgument = ScriptArguments.Where(arg => arg.ArgumentName == newVariableName).FirstOrDefault();
+            var existingVariable = VariablesCopy.Where(var => var.VariableName == newVariableName).FirstOrDefault();
+            var existingArgument = ScriptContext.Arguments.Where(arg => arg.ArgumentName == newVariableName).FirstOrDefault();
             if (existingVariable != null || existingArgument != null)
             {
                 if (!_isEditMode || existingVariable.VariableName != _editingVariableName)
                 {
                     lblVariableNameError.Text = "A Variable or Argument with this name already exists";
+                    txtVariableName.ForeColor = Color.Red;
                     return;
                 }
             }
@@ -79,6 +109,15 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             if (txtVariableName.Text.StartsWith("{") || txtVariableName.Text.EndsWith("}"))
             {
                 lblVariableNameError.Text = "Variable markers '{' and '}' should not be included";
+                txtVariableName.ForeColor = Color.Red;
+                return;
+            }
+
+            var result = ScriptContext.EvaluateVariable(newVariableName, (Type)cbxDefaultType.Tag, txtDefaultValue.Text);
+            if (!result.Success)
+            {
+                lblVariableValueError.Text = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
+                txtDefaultValue.ForeColor = Color.Red;
                 return;
             }
 
@@ -94,14 +133,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             if (((Type)cbxDefaultType.SelectedValue).Name == "MoreOptions")
             {
-                frmTypes typeForm = new frmTypes(_typeContext.GroupedTypes);
+                frmTypes typeForm = new frmTypes(_typeContext);
                 typeForm.ShowDialog();
 
                 if (typeForm.DialogResult == DialogResult.OK)
                 {
-                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.FullName))
+                    if (!_typeContext.DefaultTypes.ContainsKey(typeForm.SelectedType.GetRealTypeName()))
                     {
-                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.FullName, typeForm.SelectedType);
+                        _typeContext.DefaultTypes.Add(typeForm.SelectedType.GetRealTypeName(), typeForm.SelectedType);
                         cbxDefaultType.DataSource = new BindingSource(_typeContext.DefaultTypes, null);
                     }
 
@@ -113,19 +152,23 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     cbxDefaultType.SelectedValue = _preEditType;
                     cbxDefaultType.Tag = _preEditType;
                 }
+
+                typeForm.Dispose();
             }
             else
                 cbxDefaultType.Tag = cbxDefaultType.SelectedValue;
 
             _preEditType = (Type)cbxDefaultType.SelectedValue;
+            _typeToolTip.SetToolTip(cbxDefaultType, _preEditType.GetRealTypeName());
+        }
 
-            if (_preEditType == typeof(string) || _preEditType.IsPrimitive)
-                txtDefaultValue.ReadOnly = false;
-            else
-            {
-                txtDefaultValue.ReadOnly = true;
-                txtDefaultValue.Text = "";
-            }
+        public ToolTip AddTypeToolTip()
+        {
+            ToolTip typeToolTip = new ToolTip();
+            typeToolTip.IsBalloon = false;
+            typeToolTip.ShowAlways = true;
+            typeToolTip.AutoPopDelay = 5000;
+            return typeToolTip;
         }
     }
 }

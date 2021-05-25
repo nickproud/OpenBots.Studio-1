@@ -3,6 +3,15 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Script;
 using Serilog.Core;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis.Scripting;
+using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
+using RSScript = Microsoft.CodeAnalysis.Scripting.Script;
+using System;
+using System.Reflection;
+using OpenBots.Core.Utilities.CommonUtilities;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using System.Linq;
+using OpenBots.Core.Enums;
 
 namespace OpenBots.Core.Model.EngineModel
 {
@@ -13,22 +22,30 @@ namespace OpenBots.Core.Model.EngineModel
         public IContainer Container { get; set; }
         public IfrmScriptBuilder ScriptBuilder { get; set; }
         public Logger EngineLogger { get; set; }
-        public List<ScriptVariable> Variables { get; set; }
+        public List<OBScriptVariable> Variables { get; set; }
         public List<ScriptArgument> Arguments { get; set; }
         public List<ScriptElement> Elements { get; set; }
-        public Dictionary<string, object> AppInstances { get; set; }
+        public Dictionary<string, List<AssemblyReference>> ImportedNamespaces { get; set; }
+        public List<Assembly> AssembliesList { get; set; }
+        public List<string> NamespacesList { get; set; }
         public IfrmScriptEngine ScriptEngine { get; set; }
+        public EngineStatus CurrentEngineStatus { get; set; }
         public bool IsTest { get; set; } = false;
-        public int StartFromLineNumber { get; set; } = 1;
+        public int StartFromLineNumber { get; set; } = 1;       
+        public bool IsDebugMode { get; set; }
+        public bool IsChildEngine { get; set; }
+        public string GuidPlaceholder { get; set; }
+        public RSScript EngineScript { get; set; }
+        public ScriptState EngineScriptState { get; set; }
 
         public EngineContext()
         {
-
+            GuidPlaceholder = $"v{Guid.NewGuid()}".Replace("-", "");
         }
 
         public EngineContext(string filePath, string projectPath, IContainer container, IfrmScriptBuilder scriptBuilder, Logger engineLogger,
-            List<ScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, object> appInstances, 
-            IfrmScriptEngine scriptEngine, int startFromLineNumber)
+            List<OBScriptVariable> variables, List<ScriptArgument> arguments, List<ScriptElement> elements, Dictionary<string, List<AssemblyReference>> importedNamespaces, 
+            IfrmScriptEngine scriptEngine, int startFromLineNumber, bool isDebugMode, bool isChildEngine)
         {
             FilePath = filePath;
             ProjectPath = projectPath;
@@ -38,9 +55,23 @@ namespace OpenBots.Core.Model.EngineModel
             Variables = variables;
             Arguments = arguments;
             Elements = elements;
-            AppInstances = appInstances;
+            ImportedNamespaces = importedNamespaces;
             ScriptEngine = scriptEngine;
             StartFromLineNumber = startFromLineNumber;
+            IsDebugMode = isDebugMode;
+            IsChildEngine = isChildEngine;
+            GuidPlaceholder = $"v{Guid.NewGuid()}".Replace("-", "");
+        }
+
+        public EngineContext(ScriptContext scriptContext, string projectPath)
+        {
+            Variables = new List<OBScriptVariable>((List<OBScriptVariable>)CommonMethods.Clone(scriptContext.Variables));
+            Variables.Where(x => x.VariableName == "ProjectPath").FirstOrDefault().VariableValue = "@\"" + projectPath + '"';
+            Arguments = new List<ScriptArgument>(scriptContext.Arguments);
+            AssembliesList = new List<Assembly>(scriptContext.AssembliesList);
+            NamespacesList = new List<string>(scriptContext.NamespacesList);
+            EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(AssembliesList).WithImports(NamespacesList));
+            GuidPlaceholder = $"v{Guid.NewGuid()}".Replace("-", "");
         }
     }
 }

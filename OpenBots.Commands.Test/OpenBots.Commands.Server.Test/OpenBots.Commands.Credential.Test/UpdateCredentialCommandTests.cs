@@ -12,7 +12,7 @@ namespace OpenBots.Commands.Credential.Test
         private GetCredentialCommand _getCredential;
 
         [Fact]
-        public void UpdatesCredential()
+        public async void UpdatesCredential()
         {
             _engine = new AutomationEngineInstance(null);
             _updateCredential = new UpdateCredentialCommand();
@@ -43,8 +43,8 @@ namespace OpenBots.Commands.Credential.Test
             _getCredential.RunCommand(_engine);
 
 
-            Assert.Equal(newUsername, "{storedUsername}".ConvertUserVariableToString(_engine));
-            Assert.Equal(newPassword.ConvertStringToSecureString().ToString(), "{storedPassword}".ConvertUserVariableToObject(_engine, typeof(SecureString)).ToString());
+            Assert.Equal(newUsername, (string)await "{storedUsername}".EvaluateCode(_engine));
+            Assert.Equal(newPassword.ConvertStringToSecureString().ToString(), (await "{storedPassword}".EvaluateCode(_engine)).ToString());
         }
 
         public string[] resetCredential()

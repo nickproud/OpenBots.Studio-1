@@ -19,36 +19,32 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (uiScriptTabControl.TabCount > 0)
             {
                 ScriptFilePath = uiScriptTabControl.SelectedTab.ToolTipText.ToString();
-                string fileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
 
-                switch (fileExtension)
+                switch (_scriptFileExtension)
                 {
                     case ".obscript":
-                        if (!_isScriptRunning)
-                            splitContainerScript.Panel2Collapsed = false;
-
-                        _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];
-                        ScriptObject scriptObject = (ScriptObject)uiScriptTabControl.SelectedTab.Tag;
-                        if (scriptObject != null)
-                        {
-                            _scriptVariables = scriptObject.ScriptVariables;
-                            _scriptArguments = scriptObject.ScriptArguments;
-                            _scriptElements = scriptObject.ScriptElements;
-
-                            if (!_isRunTaskCommand)
-                            {
-                                ResetVariableArgumentBindings();
-                            }
-                        }
+                        if (!IsScriptRunning)
+                            SetVarArgTabControlSettings(ProjectType.OpenBots);
+                            
+                        _selectedTabScriptActions = (UIListView)uiScriptTabControl.SelectedTab.Controls[0];     
                         break;
                     case ".py":
                     case ".tag":
                     case ".cs":
-                        _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
-                        splitContainerScript.Panel2Collapsed = true;
+                        if (!IsScriptRunning)
+                            SetVarArgTabControlSettings(ProjectType.Python);
+
+                        _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];                       
                         break;
                 }
-                          
+
+                if (uiScriptTabControl.SelectedTab.Tag != null)
+                    _scriptContext = (ScriptContext)uiScriptTabControl.SelectedTab.Tag;
+
+                if (!_isRunTaskCommand)
+                    ResetVariableArgumentBindings();
             }
         }
 
@@ -72,7 +68,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
             catch (Exception ex)
             {
-                Notify("An Error Occured: " + ex.Message, Color.Red);
+                Notify("An Error Occurred: " + ex.Message, Color.Red);
             }
         }
 
@@ -119,7 +115,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     DialogResult result = CheckForUnsavedScript(tab);
                     if (result == DialogResult.Cancel)
                         return;
-                    uiScriptTabControl.TabPages.RemoveAt(i);
+
+                    tab.Controls[0].Dispose();
+                    tab.Dispose();
+
+                    GC.Collect();
                 }
             }
         }
@@ -138,7 +138,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     DialogResult result = CheckForUnsavedScript(tab);
                     if (result == DialogResult.Cancel)
                         return;
-                    uiScriptTabControl.TabPages.RemoveAt(i);
+
+                    tab.Controls[0].Dispose();
+                    tab.Dispose();
+
+                    GC.Collect();
                 }
             }
 
@@ -164,8 +168,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return;
 
                 tabFilePaths.Add(openTab.ToolTipText);
-                uiScriptTabControl.TabPages.Remove(openTab);
+
+                openTab.Controls[0].Dispose();
+                openTab.Dispose();
             }
+
+            GC.Collect();
 
             foreach (string path in tabFilePaths)
             {
@@ -201,9 +209,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (result == DialogResult.Cancel)
                     return allTabsClosed;
 
-                uiScriptTabControl.TabPages.Remove(openTab);
+                openTab.Controls[0].Dispose();
+                openTab.Dispose();
             }
 
+            GC.Collect();
             allTabsClosed = true;
             return allTabsClosed;
         }
@@ -230,8 +240,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             foreach (TabPage tab in uiScriptTabControl.TabPages)
             {
                 if (tab.ToolTipText != keepTab.ToolTipText)
-                    uiScriptTabControl.TabPages.Remove(tab);
+                {
+                    tab.Controls[0].Dispose();
+                    tab.Dispose();
+                }
             }
+
+            GC.Collect();
         }
 
         private void UpdateTabPage(TabPage tab, string filePath)

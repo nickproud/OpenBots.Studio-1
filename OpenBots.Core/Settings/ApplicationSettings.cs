@@ -29,11 +29,6 @@ namespace OpenBots.Core.Settings
             if (string.IsNullOrEmpty(settingsDir))
                 settingsDir = Folders.GetFolder(FolderType.SettingsFolder);
 
-            if (!Directory.Exists(settingsDir))
-            {
-                Directory.CreateDirectory(settingsDir);
-            }
-
             //create file path
             var filePath = Path.Combine(settingsDir, "AppSettings.json");
 

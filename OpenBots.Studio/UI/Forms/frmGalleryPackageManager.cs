@@ -23,6 +23,7 @@ namespace OpenBots.UI.Forms
 {
     public partial class frmGalleryPackageManager : UIForm
     {
+        public bool ShowRestartWarning { get; set; }
         private List<IPackageSearchMetadata> _allResults;
         private List<IPackageSearchMetadata> _projectDependencies;
         private Dictionary<string, string> _projectDependenciesDict;
@@ -35,7 +36,6 @@ namespace OpenBots.UI.Forms
         private DataTable _packageSourceDT;
         private string _packagesPath;
         private string _currentCommandsVersion;
-
         private ApplicationSettings _settings;
 
         public frmGalleryPackageManager(Dictionary<string, string> projectDependenciesDict)
@@ -541,6 +541,7 @@ namespace OpenBots.UI.Forms
             {
                 _projectDependenciesDict.Remove(_catalog.Identity.Id);
                 await DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
+                ShowRestartWarning = true;
                 DialogResult = DialogResult.OK;
             }
         }
@@ -549,6 +550,7 @@ namespace OpenBots.UI.Forms
         {
             lblError.Text = "";
             _projectDependenciesDict.Remove(_catalog.Identity.Id);
+            ShowRestartWarning = true;
             DialogResult = DialogResult.OK;
         }
 

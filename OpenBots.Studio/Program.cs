@@ -86,9 +86,14 @@ namespace OpenBots
                     case ProjectType.Python:
                     case ProjectType.TagUI:
                     case ProjectType.CSScript:
-                        ExecutionManager.RunTextEditorProject(configPath);
+                        ExecutionManager.RunTextEditorProject(configPath, Project.OpenProject(configPath).ProjectArguments);
                         break;
                 }                
+            }
+            else if (appSettings.ClientSettings.StartupMode == "Builder Mode" && appSettings.ClientSettings.IsRestarting)
+            {
+                Application.DoEvents();
+                Application.Run(new frmScriptBuilder(appSettings.ClientSettings.RecentProjects[0]));
             }
             else if (appSettings.ClientSettings.StartupMode == "Builder Mode")
             {
@@ -96,8 +101,8 @@ namespace OpenBots
                 SplashForm.Show();
 
                 Application.DoEvents();
-                Application.Run(new frmScriptBuilder());
-            }
+                Application.Run(new frmScriptBuilder(null));
+            }           
             else
             {
                 SplashForm = new frmSplash();

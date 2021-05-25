@@ -13,24 +13,24 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 using Autofac;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Emit;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine;
 using OpenBots.UI.CustomControls;
 using OpenBots.UI.CustomControls.CustomUIControls;
+using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms
@@ -40,7 +40,9 @@ namespace OpenBots.UI.Forms
         //list of available commands
         public List<AutomationCommand> CommandList { get; set; } = new List<AutomationCommand>();
         //engine context assigned from frmScriptBuilder
-        public EngineContext ScriptEngineContext { get; set; } = new EngineContext();
+        public ScriptContext ScriptContext { get; set; }
+        public string ProjectPath { get; set; }
+        public IContainer AContainer { get; set; }
         //reference to currently selected command
         public ScriptCommand SelectedCommand { get; set; }
         //reference to original command
@@ -55,7 +57,6 @@ namespace OpenBots.UI.Forms
         public List<ScriptCommand> ConfiguredCommands { get; set; }
         public string HTMLElementRecorderURL { get; set; }
         public TypeContext TypeContext { get; set; }
-
         private ICommandControls _commandControls;
         private ToolTip _errorToolTip;
 
@@ -73,7 +74,7 @@ namespace OpenBots.UI.Forms
         private void frmNewCommand_Load(object sender, EventArgs e)
         {
             // Initialize CommandControls with Current Editor
-            _commandControls = new CommandControls(this, ScriptEngineContext, TypeContext);
+            _commandControls = new CommandControls(this, TypeContext, AContainer, ProjectPath);
             _errorToolTip = AddValidationErrorToolTip();
 
             //order list
@@ -86,9 +87,7 @@ namespace OpenBots.UI.Forms
             cboSelectedCommand.DisplayMember = "FullName";
 
             if ((CreationModeInstance == CreationMode.Add) && (DefaultStartupCommand != null) && (CommandList.Where(x => x.FullName == DefaultStartupCommand).Count() > 0))
-            {
                 cboSelectedCommand.SelectedIndex = cboSelectedCommand.FindStringExact(DefaultStartupCommand);
-            }
             else if (CreationModeInstance == CreationMode.Edit)
             {
                 // var requiredCommand = commandList.Where(x => x.FullName.Contains(defaultStartupCommand)).FirstOrDefault(); //&& x.CommandClass.Name == originalCommand.CommandName).FirstOrDefault();
@@ -96,18 +95,12 @@ namespace OpenBots.UI.Forms
                 var requiredCommand = CommandList.Where(x => x.Command.ToString() == EditingCommand.ToString()).FirstOrDefault();
 
                 if (requiredCommand == null)
-                {
                     MessageBox.Show("Command was not found! " + DefaultStartupCommand);
-                }
                 else
-                {
                     cboSelectedCommand.SelectedIndex = cboSelectedCommand.FindStringExact(requiredCommand.FullName);
-                }
             }
             else
-            {
                 cboSelectedCommand.SelectedIndex = 0;
-            }
 
             //force commit event to populate the flow layout
             cboSelectedCommand_SelectionChangeCommitted(null, null);
@@ -115,14 +108,11 @@ namespace OpenBots.UI.Forms
             //apply original variables if command is being updated
             if (OriginalCommand != null)
             {
-
                 //update bindings
                 foreach (Control c in flw_InputVariables.Controls)
                 {
                     foreach (Binding b in c.DataBindings)
-                    {
                         b.ReadValue();
-                    }
 
                     //helper for box
                     if (c is UIPictureBox)
@@ -133,12 +123,14 @@ namespace OpenBots.UI.Forms
                         if (SelectedCommand.CommandName == "SurfaceAutomationCommand")
                         {
                             cmd = (IImageCommands)SelectedCommand;
+
                             if (!string.IsNullOrEmpty(cmd.v_ImageCapture))
                                 typedControl.Image = CommonMethods.Base64ToImage(cmd.v_ImageCapture);
                         }
                         else if (SelectedCommand.CommandName == "CaptureImageCommand")
                         {
                             cmd = (IImageCommands)SelectedCommand;
+
                             if (!string.IsNullOrEmpty(cmd.v_ImageCapture))
                                 typedControl.Image = CommonMethods.Base64ToImage(cmd.v_ImageCapture);
                         }
@@ -160,9 +152,7 @@ namespace OpenBots.UI.Forms
         private void frmCommandEditor_Resize(object sender, EventArgs e)
         {
             foreach (Control item in flw_InputVariables.Controls)
-            {
                 item.Width = Width - 70;
-            }
         }
 
         private void cboSelectedCommand_SelectionChangeCommitted(object sender, EventArgs e)
@@ -178,7 +168,7 @@ namespace OpenBots.UI.Forms
 
             //create new command for binding
             SelectedCommand = (ScriptCommand)Activator.CreateInstance(userSelectedCommand.CommandClass);
-
+            SelectedCommand.CommandIcon = null;
             //Todo: MAKE OPTION TO RENDER ON THE FLY
 
             //if (true)
@@ -191,14 +181,20 @@ namespace OpenBots.UI.Forms
             //update data source
             userSelectedCommand.Command = SelectedCommand;
 
-            if(OriginalCommand != null)
-            {
-                //copy original properties
+            //copy original properties
+            if (OriginalCommand != null)
                 CopyPropertiesTo(OriginalCommand, SelectedCommand);
-            }
 
-            //bind controls to new data source
-            userSelectedCommand.Bind(this, _commandControls);
+            try
+            {
+                //bind controls to new data source
+                userSelectedCommand.Bind(this, _commandControls);
+            }
+            catch (Exception ex)
+            {
+                frmDialog errorForm = new frmDialog(ex.Message, ex.GetType()?.ToString(), DialogType.CancelOnly, 0); ;
+                errorForm.ShowDialog();
+            }
 
             Label descriptionLabel = new Label();
             descriptionLabel.AutoSize = true;
@@ -235,8 +231,10 @@ namespace OpenBots.UI.Forms
                 try
                 {
                     PropertyInfo propFrom = fromObject.GetType().GetProperty(propTo.Name);
+
                     if (propTo.Name == "SelectionName")
                         continue;
+
                     if (propFrom != null && propFrom.CanWrite)
                         propTo.SetValue(toObject, propFrom.GetValue(fromObject, null), null);
                 }
@@ -273,6 +271,7 @@ namespace OpenBots.UI.Forms
                 {
                     var typedControl = (UIPictureBox)ctrl;
                     dynamic cmd;
+
                     if (SelectedCommand.CommandName == "SurfaceAutomationCommand")
                     {
                         cmd = (IImageCommands)SelectedCommand;
@@ -286,14 +285,14 @@ namespace OpenBots.UI.Forms
                 }
             }
 
-            if (ValidateInputs())
+            bool success = ValidateInputs();
+            if (success)
                 DialogResult = DialogResult.OK;
         }
 
         private bool ValidateInputs()
         {
             bool isAllValid = true;
-            AutomationEngineInstance testEngine = new AutomationEngineInstance(ScriptEngineContext);
             dynamic currentControl;
             _errorToolTip.RemoveAll();
 
@@ -326,12 +325,15 @@ namespace OpenBots.UI.Forms
                                     {
                                         foreach (DataGridViewCell cell in row.Cells)
                                         {
-                                            bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl, testEngine);
-                                            if (!isCellValid)
+                                            if (cell is DataGridViewTextBoxCell && !cell.OwningColumn.ReadOnly)
                                             {
-                                                isAllValid = false;
-                                                break;
-                                            }                                               
+                                                bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl);
+                                                if (!isCellValid)
+                                                {
+                                                    isAllValid = false;
+                                                    break;
+                                                }
+                                            }
                                         }
                                     }                                   
                                 }
@@ -339,11 +341,15 @@ namespace OpenBots.UI.Forms
                                 {
                                     foreach (DataGridViewCell cell in row.Cells)
                                     {
-                                        bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl, testEngine);
-                                        if (!isCellValid)
+                                        if (cell is DataGridViewTextBoxCell && !cell.OwningColumn.ReadOnly)
                                         {
-                                            isAllValid = false;
-                                            break;
+                                            bool isCellValid = ValidateInput(true, cell.Value?.ToString(), currentControl);
+
+                                            if (!isCellValid)
+                                            {
+                                                isAllValid = false;
+                                                break;
+                                            }
                                         }
                                     }
                                 }                             
@@ -354,19 +360,19 @@ namespace OpenBots.UI.Forms
                     {
                         currentControl = (UITextBox)ctrl;
                         currentControl.BorderColor = Color.Transparent;
-                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl);
                     }
                     else if (ctrl is UIComboBox)
                     {
                         currentControl = (UIComboBox)ctrl;
                         currentControl.BorderColor = Color.Transparent;
-                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl, testEngine);
+                        isAllValid = ValidateInput(isAllValid, currentControl.Text, currentControl);
                     }
                     else if(ctrl is UIPictureBox)
                     {
                         currentControl = (UIPictureBox)ctrl;
                         currentControl.BorderColor = Color.Transparent;
-                        isAllValid = ValidateInput(isAllValid, currentControl.EncodedImage, currentControl, testEngine);
+                        isAllValid = ValidateInput(isAllValid, currentControl.EncodedImage, currentControl);
                     }
                     else
                         continue;
@@ -375,9 +381,10 @@ namespace OpenBots.UI.Forms
             return isAllValid;
         }
 
-        private bool ValidateInput(bool isAllValid, string validatingText, dynamic currentControl, AutomationEngineInstance testEngine)
+        private bool ValidateInput(bool isAllValid, string validatingText, dynamic currentControl)
         {
             var validationContext = (CommandControlValidationContext)currentControl.Tag;
+            string errorMessage = "";
 
             //check whether input is required
             if (string.IsNullOrEmpty(validatingText) && validationContext.IsRequired == true)
@@ -390,46 +397,32 @@ namespace OpenBots.UI.Forms
             else if (string.IsNullOrEmpty(validatingText) && validationContext.IsRequired == false)
                 return isAllValid;
 
-            //TODO: Create an Instance tab with assigned Instance Types. For now, only requirement is some set some value
-            if (validationContext.IsInstance)
-                return isAllValid;
-
             if (validationContext.IsImageCapture)
                 return isAllValid;
 
-            var varArgMatches = Regex.Matches(validatingText, @"\{.+\}");
-
-            if (varArgMatches.Count == 0 && validationContext.IsStringOrPrimitive)
+            if (validationContext.IsDropDown)
                 return isAllValid;
-            else if (varArgMatches.Count == 0 && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
-            {
-                currentControl.BorderColor = Color.Red;
-                _errorToolTip.SetToolTip(currentControl, "Input only accepts variables or arguments.");
-                isAllValid = false;
-                return isAllValid;
-            }
 
-            foreach (var match in varArgMatches)
+            foreach(var compType in validationContext.CompatibleTypes) 
             {
-                Type varArgType = match.ToString().GetVarArgType(testEngine);
-                if (varArgType != null && !(validationContext.IsStringOrPrimitive && (varArgType == typeof(string) || varArgType.IsPrimitive)))
-                {
-                    if (!(validationContext.CompatibleTypes != null && validationContext.CompatibleTypes.Any(x => x.IsAssignableFrom(varArgType) || x == varArgType)))
-                    {
-                        currentControl.BorderColor = Color.Red;
-                        _errorToolTip.SetToolTip(currentControl, "Input value is not of a compatible Type.");
-                        isAllValid = false;
-                        return isAllValid;
-                    }
-                }
-                else if (varArgType == null && !validationContext.IsStringOrPrimitive && !validationContext.IsDropDown)
-                {
-                    currentControl.BorderColor = Color.Red;
-                    _errorToolTip.SetToolTip(currentControl, "Input provided is not an existing variable or argument.");
-                    isAllValid = false;
+                EmitResult result;
+                if(currentControl is UITextBox && currentControl.IsEvaluateSnippet)
+                    result = ScriptContext.EvaluateSnippet(validatingText);
+                else
+                    result = ScriptContext.EvaluateInput(compType, validatingText);
+
+                if (result.Success)
                     return isAllValid;
+                else
+                {
+                    var errorMessages = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).Select(x => x.ToString()).ToArray();
+                    errorMessage = string.Join(Environment.NewLine, errorMessages);
                 }
             }
+ 
+            isAllValid = false;
+            currentControl.BorderColor = Color.Red;
+            _errorToolTip.SetToolTip(currentControl, errorMessage);
             return isAllValid;
         }
 
@@ -449,5 +442,28 @@ namespace OpenBots.UI.Forms
             DialogResult = DialogResult.Cancel;
         }
         #endregion Save/Close Buttons
+
+        /// <summary>
+        /// Delegate for showing message box
+        /// </summary>
+        /// <param name="message"></param>
+        public delegate void ShowMessageDelegate(string message, string title, DialogType dialogType, int closeAfter);
+        /// <summary>
+        /// Used by the automation engine to show a message to the user on-screen. If UI is not available, a standard messagebox will be invoked instead.
+        /// </summary>
+        public void ShowMessage(string message, string title, DialogType dialogType, int closeAfter)
+        {
+            if (InvokeRequired)
+            {
+                var d = new ShowMessageDelegate(ShowMessage);
+                Invoke(d, new object[] { message, title, dialogType, closeAfter });
+            }
+            else
+            {
+                var confirmationForm = new frmDialog(message, title, dialogType, closeAfter);
+                confirmationForm.ShowDialog();
+                confirmationForm.Dispose();
+            }
+        }
     }
 }

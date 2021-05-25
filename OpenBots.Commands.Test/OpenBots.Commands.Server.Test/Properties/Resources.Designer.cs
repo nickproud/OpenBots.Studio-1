@@ -88,6 +88,15 @@ namespace OpenBots.Commands.Server.Test.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Text.
+        /// </summary>
+        internal static string test {
+            get {
+                return ResourceManager.GetString("test", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Test Data.
         /// </summary>
         internal static string testFile {

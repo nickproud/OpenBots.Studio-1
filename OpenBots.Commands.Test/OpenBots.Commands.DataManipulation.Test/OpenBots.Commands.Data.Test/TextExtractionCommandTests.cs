@@ -12,7 +12,7 @@ namespace OpenBots.Commands.Data.Test
         private TextExtractionCommand _textExtraction;
 
         [Fact]
-        public void ExtractsAllAfterText()
+        public async void ExtractsAllAfterText()
         {
             _engine = new AutomationEngineInstance(null);
             _textExtraction = new TextExtractionCommand();
@@ -41,11 +41,11 @@ namespace OpenBots.Commands.Data.Test
 
             _textExtraction.RunCommand(_engine);
 
-            Assert.Equal("example sentence", "{output}".ConvertUserVariableToString(_engine));
+            Assert.Equal("example sentence", (string)await "{output}".EvaluateCode(_engine));
         }
 
         [Fact]
-        public void ExtractsAllBeforeText()
+        public async void ExtractsAllBeforeText()
         {
             _engine = new AutomationEngineInstance(null);
             _textExtraction = new TextExtractionCommand();
@@ -74,11 +74,11 @@ namespace OpenBots.Commands.Data.Test
 
             _textExtraction.RunCommand(_engine);
 
-            Assert.Equal("This is", "{output}".ConvertUserVariableToString(_engine));
+            Assert.Equal("This is", (string)await "{output}".EvaluateCode(_engine));
         }
 
         [Fact]
-        public void ExtractsAllBetweenText()
+        public async void ExtractsAllBetweenText()
         {
             _engine = new AutomationEngineInstance(null);
             _textExtraction = new TextExtractionCommand();
@@ -112,7 +112,7 @@ namespace OpenBots.Commands.Data.Test
 
             _textExtraction.RunCommand(_engine);
 
-            Assert.Equal("example", "{output}".ConvertUserVariableToString(_engine));
+            Assert.Equal("example", (string)await "{output}".EvaluateCode(_engine));
         }
     }
 }

@@ -3,12 +3,14 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
@@ -24,52 +26,53 @@ namespace OpenBots.Commands.Excel
         [Description("Enter the unique instance that was specified in the **Create Application** command.")]
         [SampleUsage("MyExcelInstance")]
         [Remarks("Failure to enter the correct instance or failure to first call the **Create Application** command will cause an error.")]
-        [CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+        [CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
         public string v_InstanceName { get; set; }
 
         [Required]
         [DisplayName("Excel Table Worksheet")]
         [Description("Enter the name of the Worksheet containing the Excel Table being used to create the Pivot Table.")]
-        [SampleUsage("Sheet1 || {vSheet}")]
+        [SampleUsage("\"Sheet1\" || vSheet")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNameExcelTable { get; set; }
 
         [Required]
         [DisplayName("Excel Table Name")]
         [Description("Enter the name of the Excel Table to extract data from for the Pivot Table.")]
-        [SampleUsage("Table || {vTable}")]
+        [SampleUsage("\"Table\" || vTable")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_TableName { get; set; }
 
         [Required]
         [DisplayName("Pivot Table Worksheet")]
         [Description("Enter the name of the Worksheet where the Pivot Table will be set.")]
-        [SampleUsage("Sheet1 || {vSheet}")]
+        [SampleUsage("\"Sheet1\" || vSheet")]
         [Remarks("An error will be thrown in the case of an invalid Worksheet Name.")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_SheetNamePivotTable { get; set; }
 
         [Required]
         [DisplayName("Pivot Table Name")]
         [Description("Enter the name of Pivot Table to be created.")]
-        [SampleUsage("PivotTable || {vPivotTable}")]
+        [SampleUsage("\"PivotTable\" || vPivotTable")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_PivotTable { get; set; }
 
         [Required]
         [DisplayName("Cell Location")]
         [Description("Enter the location where the Pivot Table will be set.")]
-        [SampleUsage("A1 || {vCellLocation}")]
+        [SampleUsage("\"A1\" || vCellLocation")]
         [Remarks("")]
         [Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-        [CompatibleTypes(null, true)]
+        [CompatibleTypes(new Type[] { typeof(string) })]
         public string v_CellLocation { get; set; }
 
         public ExcelCreatePivotTableCommand()
@@ -77,20 +80,20 @@ namespace OpenBots.Commands.Excel
             CommandName = "ExcelCreatePivotTableCommand";
             SelectionName = "Create Pivot Table";
             CommandEnabled = true;
-            CommandIcon = Resources.command_spreadsheet;
+            CommandIcon = Resources.command_excel;
 
             v_InstanceName = "DefaultExcel";
         }
 
-        public override void RunCommand(object sender)
+        public async override Task RunCommand(object sender)
         {
             var engine = (IAutomationEngineInstance)sender;
-            string vSheetExcelTable = v_SheetNameExcelTable.ConvertUserVariableToString(engine);
-            string vSheetPivotTable = v_SheetNamePivotTable.ConvertUserVariableToString(engine);
-            var vTableName = v_TableName.ConvertUserVariableToString(engine);
-            var vCellLocation = v_CellLocation.ConvertUserVariableToString(engine);
-            var vPivotTable = v_PivotTable.ConvertUserVariableToString(engine);
-            var excelObject = v_InstanceName.GetAppInstance(engine);
+            string vSheetExcelTable = (string)await v_SheetNameExcelTable.EvaluateCode(engine);
+            string vSheetPivotTable = (string)await v_SheetNamePivotTable.EvaluateCode(engine);
+            var vTableName = (string)await v_TableName.EvaluateCode(engine);
+            var vCellLocation = (string)await v_CellLocation.EvaluateCode(engine);
+            var vPivotTable = (string)await v_PivotTable.EvaluateCode(engine);
+            var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
             var excelInstance = (Application)excelObject;
             var workBook = excelInstance.ActiveWorkbook;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;

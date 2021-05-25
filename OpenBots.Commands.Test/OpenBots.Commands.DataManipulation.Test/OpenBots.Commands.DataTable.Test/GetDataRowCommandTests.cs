@@ -13,7 +13,7 @@ namespace OpenBots.Commands.DataTable.Test
         private AutomationEngineInstance _engine;
 
         [Fact]
-        public void getsDataRow()
+        public async void getsDataRow()
         {
             _getDataRow = new GetDataRowCommand();
             _engine = new AutomationEngineInstance(null);
@@ -39,7 +39,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _getDataRow.RunCommand(_engine);
 
-            Assert.Equal(inputTable.Rows[0], (DataRow)_getDataRow.v_OutputUserVariableName.ConvertUserVariableToObject(_engine, typeof(OBData.DataRow)));
+            Assert.Equal(inputTable.Rows[0], (DataRow)await _getDataRow.v_OutputUserVariableName.EvaluateCode(_engine));
         }
     }
 }

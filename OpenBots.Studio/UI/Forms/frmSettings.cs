@@ -56,7 +56,6 @@ namespace OpenBots.UI.Forms
             chkAdvancedDebug.DataBindings.Add("Checked", engineSettings, "ShowAdvancedDebugOutput", false, DataSourceUpdateMode.OnPropertyChanged);
             chkTrackMetrics.DataBindings.Add("Checked", engineSettings, "TrackExecutionMetrics", false, DataSourceUpdateMode.OnPropertyChanged);
             txtCommandDelay.DataBindings.Add("Text", engineSettings, "DelayBetweenCommands", false, DataSourceUpdateMode.OnPropertyChanged);
-            chkOverrideInstances.DataBindings.Add("Checked", engineSettings, "OverrideExistingAppInstances", false, DataSourceUpdateMode.OnPropertyChanged);
             chkAutoCalcVariables.DataBindings.Add("Checked", engineSettings, "AutoCalcVariables", false, DataSourceUpdateMode.OnPropertyChanged);
 
             cbxCancellationKey.DataSource = Enum.GetValues(typeof(Keys));
@@ -188,7 +187,7 @@ namespace OpenBots.UI.Forms
                         catch (Exception ex)
                         {
                             //handle any unexpected errors
-                            MessageBox.Show("An Error Occured during Data Migration Copy: " + ex.ToString());
+                            MessageBox.Show("An Error Occurred during Data Migration Copy: " + ex.ToString());
                         }
                     }
                     //update textbox which will be updated once user selects "Ok"

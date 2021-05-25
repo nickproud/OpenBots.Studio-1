@@ -20,7 +20,7 @@ namespace OpenBots.Commands.DataTable.Test
         }
 
         [Fact]
-        public void AddsDataRow()
+        public async void AddsDataRow()
         {
             _addDataRow = new AddDataRowCommand();
             _engine = new AutomationEngineInstance(null);
@@ -45,7 +45,7 @@ namespace OpenBots.Commands.DataTable.Test
 
             _addDataRow.RunCommand(_engine);
 
-            OBData.DataTable outputTable = (OBData.DataTable)_addDataRow.v_DataTable.ConvertUserVariableToObject(_engine, typeof(OBData.DataTable));
+            OBData.DataTable outputTable = (OBData.DataTable)await _addDataRow.v_DataTable.EvaluateCode(_engine);
             Assert.Equal(inputTable.Rows[0]["firstname"], outputTable.Rows[0]["firstname"]);
             Assert.Equal(inputTable.Rows[0]["lastname"], outputTable.Rows[0]["lastname"]);
         }

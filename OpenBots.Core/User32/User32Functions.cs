@@ -53,6 +53,9 @@ namespace OpenBots.Core.User32
         [DllImport("User32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+        [DllImport("user32.dll")]
+        public static extern bool IsWindow(IntPtr hWnd);
+
         [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
         private static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter,
             int x, int Y,
@@ -287,7 +290,7 @@ namespace OpenBots.Core.User32
 
         public static void CloseWindow(IntPtr hWnd)
         {
-            const UInt32 WmClose = 0x0010;
+            const uint WmClose = 0x0010;
             SendMessage(hWnd, WmClose, IntPtr.Zero, IntPtr.Zero);
         }
 
@@ -303,9 +306,8 @@ namespace OpenBots.Core.User32
             IntPtr handle = GetForegroundWindow();
 
             if (GetWindowText(handle, Buff, nChars) > 0)
-            {
                 return Buff.ToString();
-            }
+
             return "";
         }
 
@@ -448,16 +450,10 @@ namespace OpenBots.Core.User32
             return screenshot;
         }
 
-        public static void SendMouseMove(string xPosition, string yPosition, string clickType)
+        public static void SendMouseMove(int xPosition, int yPosition, string clickType)
         {
-            if (!int.TryParse(xPosition, out int xPos))
-                throw new Exception("X Position Invalid - " + xPosition);
-
-            if (!int.TryParse(yPosition, out int yPos))
-                throw new Exception("Y Position Invalid - " + yPosition);
-
-            SetCursorPosition(xPos, yPos);
-            SendMouseClick(clickType, xPos, yPos);
+            SetCursorPosition(xPosition, yPosition);
+            SendMouseClick(clickType, xPosition, yPosition);
         }
 
         public static void ActivateWindow(string windowName)
@@ -502,6 +498,21 @@ namespace OpenBots.Core.User32
                     throw new Exception("Y Position Invalid - " + yPosition);
 
                 SetWindowPosition(targetedWindow, xPos, yPos);
+            }
+        }
+
+        public static void BringChromeWindowToTop()
+        {
+            Process[] procsChrome = Process.GetProcessesByName("chrome");
+            if (procsChrome.Length == 0)
+                throw(new Exception("Please open chrome to record element!"));
+            foreach (Process chrome in procsChrome)
+            {
+                // the chrome process must have a window
+                if (chrome.MainWindowHandle == IntPtr.Zero)
+                    continue;
+                User32Functions.ActivateWindow(chrome.MainWindowTitle);
+                break;
             }
         }
     }

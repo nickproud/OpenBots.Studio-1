@@ -4,13 +4,17 @@ using NuGet.Versioning;
 using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
 using OpenBots.Core.Project;
-using OpenBots.Core.Server.API_Methods;
+using OpenBots.Core.Server.Models;
 using OpenBots.Core.UI.Forms;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using OBNuget = OpenBots.Nuget;
+using File = System.IO.File;
+using OpenBots.Core.Script;
+using System.Linq;
+using OpenBots.Core.Server.HelperMethods;
 
 namespace OpenBots.UI.Supplement_Forms
 {
@@ -20,6 +24,7 @@ namespace OpenBots.UI.Supplement_Forms
         private string _projectPath;
         private string _projectName;
         private string _automationEngine;
+        private List<ProjectArgument> _projectArguments;
         private Dictionary<string, string> _projectDependencies { get; set; }
         
         public frmPublishProject(string projectPath, Project project)
@@ -28,6 +33,8 @@ namespace OpenBots.UI.Supplement_Forms
             _projectName = project.ProjectName;
             _projectDependencies = project.Dependencies;
             _automationEngine = project.ProjectType.ToString();
+            _projectArguments = project.ProjectArguments;
+
             InitializeComponent();           
         }
 
@@ -125,12 +132,26 @@ namespace OpenBots.UI.Supplement_Forms
 
                 try {
                     lblError.Text = $"Publishing {_projectName} to the server...";
-                    var client = AuthMethods.GetAuthToken();
-                    AutomationMethods.UploadAutomation(client, _projectName, nugetFilePath, _automationEngine);
+
+                    var automation = AutomationMethods.UploadAutomation( _projectName, nugetFilePath, _automationEngine);
+
+                    if (_projectArguments.Count > 0)
+                    {
+                        IEnumerable<AutomationParameter> automationParameters = _projectArguments.Select(arg => new AutomationParameter()
+                        {
+                            Name = arg.ArgumentName,
+                            DataType = GetServerType(arg.ArgumentType),
+                            Value = arg.ArgumentValue?.ToString(),
+                            AutomationId = automation.Id
+                        });
+
+                        AutomationMethods.UpdateParameters(automation.Id, automationParameters);
+                    }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    NotificationMessage = $"'{_projectName}' was published locally. To publish to an OpenBots Server please install and connect the OpenBots Agent.";
+                    NotificationMessage = $"'{_projectName}' was published locally. To publish to an OpenBots Server please install and connect the OpenBots Agent." +
+                        $" Error: {ex.Message}";
                 }
 
                 return true;             
@@ -140,6 +161,19 @@ namespace OpenBots.UI.Supplement_Forms
                 lblError.Text = ex.Message;
                 return false;
             }           
+        }
+
+        private string GetServerType(Type studioType)
+        {
+            switch (studioType.ToString())
+            {
+                case "System.String":
+                    return "Text";
+                case "System.Int32":
+                    return "Number";
+                default:
+                    return null;
+            }
         }
 
         private void btnFolderManager_Click(object sender, EventArgs e)

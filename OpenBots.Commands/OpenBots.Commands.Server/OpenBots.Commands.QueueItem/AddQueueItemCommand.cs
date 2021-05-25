@@ -4,15 +4,15 @@ using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.API_Methods;
+using OpenBots.Core.Server.HelperMethods;
 using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using QueueItemModel = OpenBots.Core.Server.Models.QueueItem;
 
@@ -26,37 +26,37 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("Queue Name")]
 		[Description("Enter the name of the existing Queue.")]
-		[SampleUsage("Name || {vQueueName}")]
+		[SampleUsage("\"Name\" || vQueueName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueName { get; set; }
 
 		[Required]
 		[DisplayName("QueueItem Name")]
 		[Description("Enter the name of the new QueueItem.")]
-		[SampleUsage("Name || {vQueueItemName}")]
+		[SampleUsage("\"Name\" || vQueueItemName")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueItemName { get; set; }
 
 		[DisplayName("Source (Optional)")]
 		[Description("If the item being enqueued is a business event, define the source of the event.\n" +
 					 "This is typically the system name that caused the business event.")]
-		[SampleUsage("Loan Origination System || Lead Generation System ||{vSource}")]
+		[SampleUsage("\"Loan Origination System\" || \"Lead Generation System\" || vSource")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Source { get; set; }
 
 		[DisplayName("Event (Optional)")]
 		[Description("If the item being enqueued is a business event, define the name of the event.\n" +
 					 "This is typically what has occured.")]
-		[SampleUsage("Payment Rejected || New Employee Onboarded || {vEvent}")]
+		[SampleUsage("\"Payment Rejected\" || \"New Employee Onboarded\" || vEvent")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Event { get; set; }
 
 		[Required]
@@ -71,37 +71,37 @@ namespace OpenBots.Commands.QueueItem
 		[Required]
 		[DisplayName("Json Type")]
 		[Description("Specify the type of the Json.")]
-		[SampleUsage("Company || {vJsonType}")]
+		[SampleUsage("\"Company\" || vJsonType")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_JsonType { get; set; }
 
 		[Required]
 		[DisplayName("QueueItem Value")]
 		[Description("Enter the value of the new QueueItem.")]
-		[SampleUsage("Value || {vQueueItemValue}")]
+		[SampleUsage("\"Value\" || vQueueItemValue")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_QueueItemTextValue { get; set; }
 
 		[DisplayName("Priority (Optional)")]
 		[Description("Enter a priority value between 0-100.")]
-		[SampleUsage("100 || {vPriority}")]
+		[SampleUsage("100 || vPriority")]
 		[Remarks("Priority determines the order in which QueueItems will be worked.\n" +
 				 "If no priority is set, QueueItems will be ordered by time of creation.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Priority { get; set; }
 
 		[DisplayName("Attachment File Path(s) (Optional)")]
 		[Description("Enter the file path(s) of the file(s) to attach.")]
-		[SampleUsage(@"C:\temp\myFile.xlsx || {vFile} || C:\temp\myFile1.xlsx;C:\temp\myFile2.xlsx || {vFile1};{vFile2} || {vFiles}")]
-		[Remarks("This input is optional. Multiple attachments should be delimited by a semicolon (;).")]
+		[SampleUsage("new List<string>() { \"C:\\temp\\myFile1.xlsx\", \"C:\\temp\\myFile2.xlsx\" } || vFileList")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(List<string>) })]
 		public string v_Attachments { get; set; }
 
 		[JsonIgnore]
@@ -124,46 +124,44 @@ namespace OpenBots.Commands.QueueItem
 			CommonMethods.InitializeDefaultWebProtocol();
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vQueueName = v_QueueName.ConvertUserVariableToString(engine);
-			var vQueueItemName = v_QueueItemName.ConvertUserVariableToString(engine);
-			var vSource = v_Source.ConvertUserVariableToString(engine);
-			var vEvent = v_Event.ConvertUserVariableToString(engine);
-			var vJsonType = v_JsonType.ConvertUserVariableToString(engine);            
-			var vPriority = v_Priority.ConvertUserVariableToString(engine);
-			var vQueueItemTextValue = v_QueueItemTextValue.ConvertUserVariableToString(engine);
-			var vAttachments = v_Attachments.ConvertUserVariableToString(engine);
+			var vQueueName = (string)await v_QueueName.EvaluateCode(engine);
+			var vQueueItemName = (string)await v_QueueItemName.EvaluateCode(engine);
+			var vSource = (string)await v_Source.EvaluateCode(engine);
+			var vEvent = (string)await v_Event.EvaluateCode(engine);
+			var vJsonType = (string)await v_JsonType.EvaluateCode(engine);            
+			int priority = (int)await v_Priority.EvaluateCode(engine);
+			var vQueueItemTextValue = (string)await v_QueueItemTextValue.EvaluateCode(engine);
 
-			var client = AuthMethods.GetAuthToken();
-			Queue queue = QueueMethods.GetQueue(client, $"name eq '{vQueueName}'");
+			var userInfo = AuthMethods.GetUserInfo();
+            Queue queue = QueueMethods.GetQueue(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, $"Name eq '{vQueueName}'");
 
-			if (queue == null)
-				throw new DataException($"Queue with name '{vQueueName}' not found");
-
-			int priority = 0;
-			if (!string.IsNullOrEmpty(v_Priority))
-				priority = int.Parse(vPriority);
+            if (queue == null)
+                throw new DataException($"Queue with name '{vQueueName}' not found");
 
             QueueItemModel queueItem = new QueueItemModel()
-			{
-				IsLocked = false,
-				QueueId = queue.Id,
-				Type = v_QueueItemType,
-				JsonType = vJsonType,
-				DataJson = vQueueItemTextValue,
-				Name = vQueueItemName,
-				IsDeleted = false,
-				Priority = priority,
-				Source = vSource,
-				Event = vEvent
-			};
+            {
+                IsLocked = false,
+                QueueId = queue.Id,
+                Type = v_QueueItemType,
+                JsonType = vJsonType,
+                DataJson = vQueueItemTextValue,
+                Name = vQueueItemName,
+                IsDeleted = false,
+                Priority = priority,
+                Source = vSource,
+                Event = vEvent
+            };
 
-			QueueItemMethods.EnqueueQueueItem(client, queueItem);
+            QueueItemMethods.EnqueueQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem);
 
-			if (!string.IsNullOrEmpty(vAttachments))
-				QueueItemMethods.AttachFiles(client, queueItem.Id, vAttachments);
+			if (!string.IsNullOrEmpty(v_Attachments))
+            {
+				var vAttachments = (List<string>)await v_Attachments.EvaluateCode(engine);
+				QueueItemMethods.AttachFiles(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem.Id, vAttachments);
+			}
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -202,7 +200,7 @@ namespace OpenBots.Commands.QueueItem
 		{
 			base.Shown();
 			_hasRendered = true;
-			QueueItemTypeComboBox_SelectedIndexChanged(this, null);
+			QueueItemTypeComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void QueueItemTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Diagnostics = System.Diagnostics;
 using OBFile = System.IO.File;
@@ -23,11 +24,11 @@ namespace OpenBots.Commands.Process
 		[Required]
 		[DisplayName("Program Name or Path")]
 		[Description("Provide a valid program name or enter a full path to the script/executable including the extension.")]
-		[SampleUsage(@"notepad || excel || {vApp} || C:\temp\myapp.exe || {ProjectPath}\myapp.exe")]
+		[SampleUsage("\"notepad\" || \"excel\" || vAppName || @\"C:\\temp\\myapp.exe || ProjectPath + @\"\\myapp.exe\" || vAppPath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_ProgramName { get; set; }
 
 		[Required]
@@ -49,10 +50,10 @@ namespace OpenBots.Commands.Process
 			v_StopOption = "Kill";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string vProgramName = v_ProgramName.ConvertUserVariableToString(engine);
+			string vProgramName = (string)await v_ProgramName.EvaluateCode(engine);
 
 			if (OBFile.Exists(vProgramName))
 				vProgramName = Path.GetFileNameWithoutExtension(vProgramName);
@@ -66,7 +67,6 @@ namespace OpenBots.Commands.Process
 				else if (v_StopOption == "Kill")
 					prc.Kill();
 			}
-					
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

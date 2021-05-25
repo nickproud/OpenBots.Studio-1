@@ -5,17 +5,17 @@ using OpenBots.Core.Infrastructure;
 using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Forms;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace OpenBots.Commands.Window
 {
-	[Serializable]
+    [Serializable]
 	[Category("Window Commands")]
 	[Description("This command closes an open window.")]
 	public class CloseWindowCommand : ScriptCommand
@@ -23,20 +23,20 @@ namespace OpenBots.Commands.Window
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to close.")]
-		[SampleUsage("Untitled - Notepad || Current Window || {vWindow}")]
+		[SampleUsage("\"Untitled - Notepad\" || \"Current Window\" || vWindow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_WindowName { get; set; }
 
 		[Required]
 		[DisplayName("Timeout (Seconds)")]
 		[Description("Specify how many seconds to wait before throwing an exception.")]
-		[SampleUsage("30 || {vSeconds}")]
+		[SampleUsage("30 || vSeconds")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_Timeout { get; set; }
 
 		public CloseWindowCommand()
@@ -46,17 +46,18 @@ namespace OpenBots.Commands.Window
 			CommandEnabled = true;
 			CommandIcon = Resources.command_window;
 
-			v_WindowName = "Current Window";
+			v_WindowName = "\"Current Window\"";
 			v_Timeout = "30";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			string windowName = v_WindowName.ConvertUserVariableToString(engine);
-			int timeout = Int32.Parse(v_Timeout);
+			string windowName = (string)await v_WindowName.EvaluateCode(engine);
+			int timeout = (int)await v_Timeout.EvaluateCode(engine);
 			DateTime timeToEnd = DateTime.Now.AddSeconds(timeout);
-			List<IntPtr> targetWindows = new List<IntPtr>();
+			List<IntPtr> targetWindows;
+
 			while (timeToEnd >= DateTime.Now)
 			{
 				try 
@@ -72,11 +73,13 @@ namespace OpenBots.Commands.Window
 				}
 				catch (Exception)
                 {
-					engine.ReportProgress($"Window '{windowName}' Not Yet Found... " + (timeToEnd - DateTime.Now).Minutes + "m, " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+					engine.ReportProgress($"Window '{windowName}' Not Yet Found... {(timeToEnd - DateTime.Now).Minutes}m, {(timeToEnd - DateTime.Now).Seconds}s remain");
 					Thread.Sleep(500);
 				}
 			}
+
 			targetWindows = User32Functions.FindTargetWindows(windowName);
+
 			//loop each window
 			foreach (var targetedWindow in targetWindows)
 				User32Functions.CloseWindow(targetedWindow);
@@ -87,7 +90,7 @@ namespace OpenBots.Commands.Window
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultWindowControlGroupFor("v_WindowName", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultWindowControlGroupFor("v_Timeout", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Timeout", this, editor));
 
 			return RenderedControls;
 		}

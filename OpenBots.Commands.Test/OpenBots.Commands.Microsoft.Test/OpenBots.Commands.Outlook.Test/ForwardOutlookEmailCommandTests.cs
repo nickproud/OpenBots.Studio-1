@@ -17,7 +17,7 @@ namespace OpenBots.Commands.Outlook.Test
          * Prerequisite: User is signed into openbots.test@outlook.com on local Microsoft Outlook.
         */
         [Fact]
-        public void ForwardsOutlookEmail()
+        public async void ForwardsOutlookEmail()
         {
             _engine = new AutomationEngineInstance(null);
             _getOutlookEmails = new GetOutlookEmailsCommand();
@@ -37,7 +37,7 @@ namespace OpenBots.Commands.Outlook.Test
 
             _getOutlookEmails.RunCommand(_engine);
 
-            var emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+            var emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
             MailItem email = emails[0];
             VariableMethods.CreateTestVariable(email, _engine, "email", typeof(MailItem));
             string forwardAddress = "openbots.test@outlook.com";
@@ -64,7 +64,7 @@ namespace OpenBots.Commands.Outlook.Test
 
                 _getOutlookEmails.RunCommand(_engine);
 
-                emails = (List<MailItem>)"{emails}".ConvertUserVariableToObject(_engine, typeof(List<>));
+                emails = (List<MailItem>)await "{emails}".EvaluateCode(_engine);
                 attempts++;
             } while (emails.Count < 1 & attempts < 5);
             email = emails[0];

@@ -13,6 +13,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.Terminal
 {
@@ -26,7 +28,8 @@ namespace OpenBots.Commands.Terminal
 		[Description("Enter the unique instance that was specified in the **Create Terminal Session** command.")]
 		[SampleUsage("MyTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create Terminal Session** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(OpenEmulator) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -41,35 +44,35 @@ namespace OpenBots.Commands.Terminal
 		[Required]
 		[DisplayName("Row Position")]
 		[Description("Input the new vertical position of the terminal. Starts from 0 at the top and increases going down.")]
-		[SampleUsage("0 || {vRowPosition}")]
+		[SampleUsage("0 || vRowPosition")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_YMousePosition { get; set; }
 
 		[Required]
 		[DisplayName("Column Position")]
 		[Description("Input the new horizontal position of the terminal. Starts from 0 on the left and increases going right.")]
-		[SampleUsage("0 || {vColPosition}")]
+		[SampleUsage("0 || vColPosition")]
 		[Remarks("This number is the pixel location on screen. Maximum value should be the maximum value allowed by the terminal.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_XMousePosition { get; set; }
 
 		[Required]
 		[DisplayName("Text to Search for")]
 		[Description("Enter the text to search for on the terminal.")]
-		[SampleUsage("Hello, World! || {vText}")]
+		[SampleUsage("\"Hello, World!\" || vText")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FieldText { get; set; }
 
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Field Index Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
-		[SampleUsage("{vUserVariable}")]
+		[SampleUsage("vUserVariable")]
 		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
 		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_OutputUserVariableName { get; set; }
@@ -96,10 +99,10 @@ namespace OpenBots.Commands.Terminal
 			v_InstanceName = "DefaultTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var terminalObject = (OpenEmulator)v_InstanceName.GetAppInstance(engine);
+			var terminalObject = (OpenEmulator)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			
 			if (terminalObject.TN3270 == null || !terminalObject.TN3270.IsConnected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
@@ -109,13 +112,13 @@ namespace OpenBots.Commands.Terminal
 
 			if (v_Option == "Row/Col Position")
             {
-				var mouseX = int.Parse(v_XMousePosition.ConvertUserVariableToString(engine));
-				var mouseY = int.Parse(v_YMousePosition.ConvertUserVariableToString(engine));
+				var mouseX = (int)await v_XMousePosition.EvaluateCode(engine);
+				var mouseY = (int)await v_YMousePosition.EvaluateCode(engine);
 				field = fields.Where(f => (mouseY * 80 + mouseX) >= f.Location.position && (mouseY * 80 + mouseX) < f.Location.position + f.Location.length).FirstOrDefault();
 			}
             else
             {
-				var fieldText = v_FieldText.ConvertUserVariableToString(engine);
+				var fieldText = (string)await v_FieldText.EvaluateCode(engine);
 				field = fields.Where(f => f.Text != null && f.Text.ToLower().Contains(fieldText.ToLower())).FirstOrDefault();
 			}
 
@@ -123,7 +126,7 @@ namespace OpenBots.Commands.Terminal
 			if (field != null)
 				fieldIndex = Array.IndexOf(terminalObject.TN3270.CurrentScreenXML.Fields, field);
 
-			fieldIndex.StoreInUserVariable(engine, v_OutputUserVariableName, nameof(v_OutputUserVariableName), this);
+			fieldIndex.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -133,7 +136,7 @@ namespace OpenBots.Commands.Terminal
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
 
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += searchOptionComboBox_SelectedIndexChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += searchOptionComboBox_SelectedIndexChanged;
 
 			_rowColumnControls = new List<Control>();
 			_rowColumnControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_YMousePosition", this, editor));
@@ -167,14 +170,14 @@ namespace OpenBots.Commands.Terminal
 			if (v_Option == null)
 			{
 				v_Option = "Row/Col Position";
-				((ComboBox)RenderedControls[3]).Text = v_Option;
+				((ComboBox)RenderedControls[4]).Text = v_Option;
 			}
-			searchOptionComboBox_SelectedIndexChanged(this, null);
+			searchOptionComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void searchOptionComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Row/Col Position" && _hasRendered)
+			if (((ComboBox)RenderedControls[4]).Text == "Row/Col Position" && _hasRendered)
 			{
 				foreach (var ctrl in _rowColumnControls)
 					ctrl.Visible = true;

@@ -3,21 +3,22 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
 namespace OpenBots.Commands.Excel
 {
-	[Serializable]
+    [Serializable]
 	[Category("Excel Commands")]
 	[Description("This command creates an Excel Instance.")]
 	public class ExcelCreateApplicationCommand : ScriptCommand
@@ -28,7 +29,8 @@ namespace OpenBots.Commands.Excel
 		[SampleUsage("MyExcelInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(Application) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -43,11 +45,11 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("Workbook File Path")]
 		[Description("Enter or Select the path to the Workbook file.")]
-		[SampleUsage(@"C:\temp\myfile.xlsx || {vFilePath} || {ProjectPath}\myfile.xlsx")]
+		[SampleUsage("@\"C:\\temp\\myfile.xlsx\" || ProjectPath + @\"\\myfile.xlsx\" || vFilePath")]
 		[Remarks("This input should only be used for opening existing Workbooks.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFileSelectionHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_FilePath { get; set; }
 
 		[Required]
@@ -81,7 +83,7 @@ namespace OpenBots.Commands.Excel
 			CommandName = "ExcelCreateApplicationCommand";
 			SelectionName = "Create Excel Application";
 			CommandEnabled = true;
-			CommandIcon = Resources.command_spreadsheet;
+			CommandIcon = Resources.command_excel;
 
 			v_InstanceName = "DefaultExcel";
 			v_NewOpenWorkbook = "New Workbook";
@@ -89,10 +91,10 @@ namespace OpenBots.Commands.Excel
 			v_CloseAllInstances = "Yes";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var vFilePath = v_FilePath.ConvertUserVariableToString(engine);
+			var vFilePath = (string)await v_FilePath.EvaluateCode(engine);
 
 			if (v_CloseAllInstances == "Yes")
 			{
@@ -109,7 +111,7 @@ namespace OpenBots.Commands.Excel
 			else
 				newExcelSession.Visible = false;
 
-			newExcelSession.AddAppInstance(engine, v_InstanceName); 
+			new OBAppInstance(v_InstanceName, newExcelSession).SetVariableValue(engine, v_InstanceName);
 
 			if (v_NewOpenWorkbook == "New Workbook")
 			{
@@ -133,7 +135,7 @@ namespace OpenBots.Commands.Excel
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_NewOpenWorkbook", this, editor));
-			((ComboBox)RenderedControls[3]).SelectedIndexChanged += OpenFileComboBox_SelectedIndexChanged;
+			((ComboBox)RenderedControls[4]).SelectedIndexChanged += OpenFileComboBox_SelectedIndexChanged;
 
 			_openFileControls = new List<Control>();
 			_openFileControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
@@ -155,12 +157,12 @@ namespace OpenBots.Commands.Excel
 		{
 			base.Shown();
 			_hasRendered = true;
-			OpenFileComboBox_SelectedIndexChanged(this, null);
+			OpenFileComboBox_SelectedIndexChanged(null, null);
 		}
 
 		private void OpenFileComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (((ComboBox)RenderedControls[3]).Text == "Open Workbook" && _hasRendered)
+			if (((ComboBox)RenderedControls[4]).Text == "Open Workbook" && _hasRendered)
 			{
 				foreach (var ctrl in _openFileControls)
 					ctrl.Visible = true;

@@ -1,13 +1,16 @@
 ﻿using OpenBots.Commands.Terminal.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.BZTerminal
@@ -22,7 +25,8 @@ namespace OpenBots.Commands.BZTerminal
 		[Description("Enter the unique instance that was specified in the **Create BZ Terminal Session** command.")]
 		[SampleUsage("MyBZTerminalInstance")]
 		[Remarks("Failure to enter the correct instance or failure to first call the **Create BZ Terminal Session** command will cause an error.")]
-		[CompatibleTypes(new Type[] { typeof(BZTerminalContext) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		public CloseBZTerminalSessionCommand()
@@ -35,10 +39,10 @@ namespace OpenBots.Commands.BZTerminal
 			v_InstanceName = "DefaultBZTerminal";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var terminalContext = (BZTerminalContext)v_InstanceName.GetAppInstance(engine);
+			var terminalContext = (BZTerminalContext)((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 
 			if (terminalContext.BZTerminalObj == null || !terminalContext.BZTerminalObj.Connected)
 				throw new Exception($"Terminal Instance {v_InstanceName} is not connected.");
@@ -46,9 +50,6 @@ namespace OpenBots.Commands.BZTerminal
 			string sessionName = terminalContext.BZTerminalObj.GetSessionName();
 			terminalContext.BZTerminalObj.Disconnect();
 			terminalContext.BZTerminalObj.DeleteSession(sessionName);
-
-			//remove instance
-			v_InstanceName.RemoveAppInstance(engine);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

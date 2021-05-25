@@ -1,0 +1,1 @@
+{"ProjectID":"e3eb5fa5-9472-4cf9-a7f7-072a988dbcbf","ProjectName":"Sample_StringManipulation","ProjectType":"OpenBots","Main":"Main.obscript","Version":"1.4.0.0","Dependencies":{"OpenBots.Commands.Core":"1.4.0","OpenBots.Commands.DataManipulation":"1.4.0","OpenBots.Commands.Microsoft":"1.4.0","OpenBots.Commands.SystemAutomation":"1.4.0","OpenBots.Commands.UIAutomation":"1.4.0"}}

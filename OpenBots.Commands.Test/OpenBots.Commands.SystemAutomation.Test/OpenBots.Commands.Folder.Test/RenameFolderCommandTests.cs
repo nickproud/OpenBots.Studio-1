@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Folder.Test
         }
 
         [Fact]
-        public void HandlesInvalidSourceFolderInput()
+        public async global::System.Threading.Tasks.Task HandlesInvalidSourceFolderInput()
         {
             _engine = new AutomationEngineInstance(null);
             _renameFolder = new RenameFolderCommand();
@@ -50,7 +50,7 @@ namespace OpenBots.Commands.Folder.Test
             _renameFolder.v_SourceFolderPath = "{inputPath}";
             _renameFolder.v_NewName = "{newName}";
 
-            Assert.Throws<DirectoryNotFoundException>(() => _renameFolder.RunCommand(_engine));
+            await Assert.ThrowsAsync<DirectoryNotFoundException>(() => _renameFolder.RunCommand(_engine));
         }
 
         private void resetFolderName()

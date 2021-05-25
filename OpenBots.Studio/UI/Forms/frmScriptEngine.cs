@@ -12,19 +12,21 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
+using Autofac;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
 using OpenBots.Core.IO;
 using OpenBots.Core.Model.EngineModel;
-using OpenBots.Nuget;
 using OpenBots.Core.Project;
-using OpenBots.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.DTOs;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Engine;
+using OpenBots.Nuget;
+using OpenBots.Properties;
 using OpenBots.UI.CustomControls;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
@@ -32,12 +34,11 @@ using OpenBots.Utilities;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Autofac;
-using System.Data;
 
 namespace OpenBots.UI.Forms
 {
@@ -255,7 +256,9 @@ namespace OpenBots.UI.Forms
             {
                 List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, true);
                 Dictionary<string, List<Type>> groupedTypes = new Dictionary<string, List<Type>>();
-                var builder = AppDomainSetupManager.LoadBuilder(assemblyList, groupedTypes);
+                Dictionary<string, List<AssemblyReference>> allNamespaces = new Dictionary<string, List<AssemblyReference>>();
+                Dictionary<string, List<AssemblyReference>> importedNamespaces = new Dictionary<string, List<AssemblyReference>>();
+                var builder = AppDomainSetupManager.LoadBuilder(assemblyList, groupedTypes, allNamespaces, importedNamespaces);
                 ScriptEngineContext.Container = builder.Build();
             }
 
@@ -265,6 +268,9 @@ namespace OpenBots.UI.Forms
                 BringToFront();
                 MoveFormToBottomRight(this);
             }
+
+            if (!ScriptEngineContext.IsDebugMode)
+                FormsHelper.HideForm(this);
 
             CommandControls = new CommandControls();
 
@@ -432,13 +438,16 @@ namespace OpenBots.UI.Forms
                 {
                     var assignedParentVariable = parentVariableList.Where(v => v.VariableName == argument.AssignedVariable).FirstOrDefault();
                     var assignedParentArgument = parentArgumentList.Where(a => a.ArgumentName == argument.AssignedVariable).FirstOrDefault();
+
                     if (assignedParentVariable != null)
                     {
-                        assignedParentVariable.VariableValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+                        var newVarValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+                        newVarValue.SetVariableValue(parentAutomationEngineIntance, assignedParentVariable.VariableName);
                     }
                     else if (assignedParentArgument != null)
                     {
-                        assignedParentArgument.ArgumentValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+                        var newArgValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
+                        newArgValue.SetVariableValue(parentAutomationEngineIntance, assignedParentArgument.ArgumentName);
                     }
                     else
                     {
@@ -447,9 +456,6 @@ namespace OpenBots.UI.Forms
                     }
                 }
             }
-
-            //get updated app instance dictionary after the new engine finishes running
-            parentAutomationEngineIntance.AutomationEngineContext.AppInstances = childEngine.AutomationEngineContext.AppInstances;
 
             //get errors from new engine (if any)
             var newEngineErrors = childEngine.ErrorsOccured;
@@ -709,6 +715,7 @@ namespace OpenBots.UI.Forms
         private void autoCloseTimer_Tick(object sender, EventArgs e)
         {
             Close();
+            Dispose();
         }
 
         public delegate void uiBtnCancel_ClickDelegate(object sender, EventArgs e);
@@ -725,7 +732,8 @@ namespace OpenBots.UI.Forms
                 {
                     UpdateLineNumber(0);
                     ClosingAllEngines = true;
-                    Close();                   
+                    Close();
+                    Dispose();
                     return;
                 }
 

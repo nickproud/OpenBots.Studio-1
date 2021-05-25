@@ -3,6 +3,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
@@ -15,6 +16,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.If
 {
@@ -25,16 +27,16 @@ namespace OpenBots.Commands.If
 	{
 		[Required]
 		[DisplayName("Condition Type")]
-		[PropertyUISelectionOption("Value Compare")]
+		[PropertyUISelectionOption("Number Compare")]
 		[PropertyUISelectionOption("Date Compare")]
-		[PropertyUISelectionOption("Variable Compare")]
-		[PropertyUISelectionOption("Variable Has Value")]
-		[PropertyUISelectionOption("Variable Is Numeric")]
+		[PropertyUISelectionOption("Text Compare")]
+		[PropertyUISelectionOption("Has Value")]
+		[PropertyUISelectionOption("Is Numeric")]
 		[PropertyUISelectionOption("Window Name Exists")]
 		[PropertyUISelectionOption("Active Window Name Is")]
 		[PropertyUISelectionOption("File Exists")]
 		[PropertyUISelectionOption("Folder Exists")]
-		[PropertyUISelectionOption("Web Element Exists")]
+		[PropertyUISelectionOption("Selenium Web Element Exists")]
 		[PropertyUISelectionOption("GUI Element Exists")]
 		[PropertyUISelectionOption("Image Element Exists")]
 		[PropertyUISelectionOption("App Instance Exists")]
@@ -47,10 +49,10 @@ namespace OpenBots.Commands.If
 		[Required]
 		[DisplayName("Additional Parameters")]
 		[Description("Supply or Select the required comparison parameters.")]
-		[SampleUsage("Param Value || {vParamValue}")]
+		[SampleUsage("Param Value || vParamValue")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(object), typeof(Bitmap), typeof(DateTime), typeof(string)}, true)]
+		[CompatibleTypes(new Type[] { typeof(Bitmap), typeof(DateTime), typeof(string), typeof(double), typeof(int), typeof(bool), typeof(OBAppInstance) })]
 		public DataTable v_ActionParameterTable { get; set; }
 
 		[JsonIgnore]
@@ -85,20 +87,14 @@ namespace OpenBots.Commands.If
 			v_ActionParameterTable.Columns.Add("Parameter Name");
 			v_ActionParameterTable.Columns.Add("Parameter Value");
 
-			_recorderControl = new CommandItemControl();
-			_recorderControl.Padding = new Padding(10, 0, 0, 0);
-			_recorderControl.ForeColor = Color.AliceBlue;
-			_recorderControl.Font = new Font("Segoe UI Semilight", 10);
-			_recorderControl.Name = "guirecorder_helper";
-			_recorderControl.CommandImage = Resources.command_camera;
-			_recorderControl.CommandDisplay = "Element Recorder";
+			_recorderControl = new CommandItemControl("guirecorder_helper", Resources.command_camera, "Element Recorder");
 			_recorderControl.Hide();
 		}
 
-		public override void RunCommand(object sender, ScriptAction parentCommand)
+		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var ifResult = CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
+			var ifResult = await CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
 
 			int startIndex, endIndex, elseIndex;
 			if (parentCommand.AdditionalScriptCommands.Any(item => item.ScriptCommand is ElseCommand))
@@ -131,7 +127,7 @@ namespace OpenBots.Commands.If
 				if ((engine.IsCancellationPending) || (engine.CurrentLoopCancelled) || (engine.CurrentLoopContinuing))
 					return;
 
-				engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[i]);
+				await engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[i]);
 			}
 
 		}
@@ -169,28 +165,50 @@ namespace OpenBots.Commands.If
 		{
 			switch (v_IfActionType)
 			{
-				case "Value Compare":
-				case "Date Compare":
-				case "Variable Compare":
-					string value1 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Value1"
+				case "Number Compare":
+					string number1 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Number1"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 					string operand = ((from rw in v_ActionParameterTable.AsEnumerable()
 									   where rw.Field<string>("Parameter Name") == "Operand"
 									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string value2 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Value2"
+					string number2 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Number2"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-					return $"If ('{value1}' {operand} '{value2}')";
+					return $"If ('{number1}' {operand} '{number2}')";
+				case "Date Compare":
+					string date1 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Date1"
+									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+					string operand2 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									   where rw.Field<string>("Parameter Name") == "Operand"
+									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
+					string date2 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Date2"
+									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
-				case "Variable Has Value":
+					return $"If ('{date1}' {operand2} '{date2}')";
+				case "Text Compare":
+					string text1 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Text1"
+									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+					string operand3 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									   where rw.Field<string>("Parameter Name") == "Operand"
+									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
+					string text2 = ((from rw in v_ActionParameterTable.AsEnumerable()
+									  where rw.Field<string>("Parameter Name") == "Text2"
+									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+					return $"If ('{text1}' {operand3} '{text2}')";
+
+				case "Has Value":
 					string variableName = ((from rw in v_ActionParameterTable.AsEnumerable()
 									  where rw.Field<string>("Parameter Name") == "Variable Name"
 									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
 					return $"If (Variable '{variableName}' Has Value)";
-				case "Variable Is Numeric":
+				case "Is Numeric":
 					string varName = ((from rw in v_ActionParameterTable.AsEnumerable()
 											where rw.Field<string>("Parameter Name") == "Variable Name"
 											select rw.Field<string>("Parameter Value")).FirstOrDefault());
@@ -249,7 +267,7 @@ namespace OpenBots.Commands.If
 					else
 						return $"If Folder Exists [Folder '{folderPath}']";
 
-				case "Web Element Exists":
+				case "Selenium Web Element Exists":
 
 
 					string parameterName = ((from rw in v_ActionParameterTable.AsEnumerable()
@@ -267,7 +285,7 @@ namespace OpenBots.Commands.If
 					if (webElementCompareType == "It Does Not Exist")
 						return $"If Web Element Does Not Exist [{searchMethod} '{parameterName}']";
 					else
-						return $"If Web Element Exists [{searchMethod} '{parameterName}']";
+						return $"If Selenium Web Element Exists [{searchMethod} '{parameterName}']";
 
 				case "GUI Element Exists":
 
@@ -337,15 +355,15 @@ namespace OpenBots.Commands.If
 
 			switch (_actionDropdown.SelectedItem)
 			{
-				case "Value Compare":
-				case "Date Compare":
+				case "Number Compare":
+
 					ifActionParameterBox.Visible = true;
 
 					if (sender != null)
 					{
-						actionParameters.Rows.Add("Value1", "");
+						actionParameters.Rows.Add("Number1", "");
 						actionParameters.Rows.Add("Operand", "");
-						actionParameters.Rows.Add("Value2", "");
+						actionParameters.Rows.Add("Number2", "");
 						ifActionParameterBox.DataSource = actionParameters;
 					}
 
@@ -362,15 +380,40 @@ namespace OpenBots.Commands.If
 					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
 
 					break;
-				case "Variable Compare":
+				case "Date Compare":
 
 					ifActionParameterBox.Visible = true;
 
 					if (sender != null)
 					{
-						actionParameters.Rows.Add("Value1", "");
+						actionParameters.Rows.Add("Date1", "");
 						actionParameters.Rows.Add("Operand", "");
-						actionParameters.Rows.Add("Value2", "");
+						actionParameters.Rows.Add("Date2", "");
+						ifActionParameterBox.DataSource = actionParameters;
+					}
+
+					//combobox cell for Variable Name
+					comparisonComboBox = new DataGridViewComboBoxCell();
+					comparisonComboBox.Items.Add("is equal to");
+					comparisonComboBox.Items.Add("is greater than");
+					comparisonComboBox.Items.Add("is greater than or equal to");
+					comparisonComboBox.Items.Add("is less than");
+					comparisonComboBox.Items.Add("is less than or equal to");
+					comparisonComboBox.Items.Add("is not equal to");
+
+					//assign cell as a combobox
+					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
+
+					break;
+				case "Text Compare":
+
+					ifActionParameterBox.Visible = true;
+
+					if (sender != null)
+					{
+						actionParameters.Rows.Add("Text1", "");
+						actionParameters.Rows.Add("Operand", "");
+						actionParameters.Rows.Add("Text2", "");
 						actionParameters.Rows.Add("Case Sensitive", "No");
 						ifActionParameterBox.DataSource = actionParameters;
 					}
@@ -393,7 +436,7 @@ namespace OpenBots.Commands.If
 					ifActionParameterBox.Rows[3].Cells[1] = comparisonComboBox;
 
 					break;
-				case "Variable Has Value":
+				case "Has Value":
 
 					ifActionParameterBox.Visible = true;
 					if (sender != null)
@@ -403,7 +446,7 @@ namespace OpenBots.Commands.If
 					}
 
 					break;
-				case "Variable Is Numeric":
+				case "Is Numeric":
 
 					ifActionParameterBox.Visible = true;
 					if (sender != null)
@@ -483,7 +526,7 @@ namespace OpenBots.Commands.If
 					//assign cell as a combobox
 					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
 					break;
-				case "Web Element Exists":
+				case "Selenium Web Element Exists":
 
 					ifActionParameterBox.Visible = true;
 
@@ -572,6 +615,7 @@ namespace OpenBots.Commands.If
 						actionParameters.Rows.Add("Captured Image Variable", "");
 						actionParameters.Rows.Add("Accuracy (0-1)", "0.8");
 						actionParameters.Rows.Add("True When", "It Does Exist");
+						actionParameters.Rows.Add("Timeout (Seconds)", "30");
 						ifActionParameterBox.DataSource = actionParameters;
 					}
 

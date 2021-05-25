@@ -13,7 +13,7 @@ namespace OpenBots.Commands.List.Test
         private GetListItemCommand _getListItem;
 
         [Fact]
-        public void GetsStringListItem()
+        public async void GetsStringListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _getListItem = new GetListItemCommand();
@@ -30,11 +30,11 @@ namespace OpenBots.Commands.List.Test
 
             _getListItem.RunCommand(_engine);
 
-            Assert.Equal("item2", "{output}".ConvertUserVariableToString(_engine));
+            Assert.Equal("item2", (string)await "{output}".EvaluateCode(_engine));
         }
 
         [Fact]
-        public void GetsDataTableListItem()
+        public async void GetsDataTableListItem()
         {
             _engine = new AutomationEngineInstance(null);
             _getListItem = new GetListItemCommand();
@@ -55,7 +55,7 @@ namespace OpenBots.Commands.List.Test
 
             _getListItem.RunCommand(_engine);
 
-            Assert.Equal(item2, (OBDataTable)"{output}".ConvertUserVariableToObject(_engine, typeof(OBDataTable)));
+            Assert.Equal(item2, (OBDataTable)await "{output}".EvaluateCode(_engine));
         }
     }
 }

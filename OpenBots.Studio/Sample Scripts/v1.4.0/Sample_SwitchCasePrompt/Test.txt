@@ -1,0 +1,9 @@
+Switch Case execution started"B is executed"
+Switch Case execution started 
+Default is executed 
+Switch Case execution started 
+"A is executed"
+Switch Case execution started 
+"A is executed"
+Switch Case execution started 
+Default is executed 

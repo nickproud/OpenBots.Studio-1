@@ -1,6 +1,7 @@
 ﻿using Autofac;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 using Newtonsoft.Json;
-using OpenBots.Core.App;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
@@ -9,7 +10,6 @@ using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Engine.Enums;
 using RestSharp;
 using Serilog;
 using Serilog.Core;
@@ -22,7 +22,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using OBScript = OpenBots.Core.Script.Script;
+using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 
 namespace OpenBots.Engine
 {
@@ -45,9 +48,8 @@ namespace OpenBots.Engine
         private bool _isScriptSteppedIntoBeforeException { get; set; }
         [JsonIgnore]
         private Stopwatch _stopWatch { get; set; }
-        private EngineStatus _currentStatus { get; set; }
         public EngineSettings EngineSettings { get; set; }
-        private string _privateCommandLog { get; set; }
+        public string PrivateCommandLog { get; set; }
         public List<DataTable> DataTables { get; set; }
         public string FileName { get; set; }
         public bool IsServerExecution { get; set; }
@@ -72,20 +74,20 @@ namespace OpenBots.Engine
                 Log.Information("Engine Class has been initialized");
             }
             
-            _privateCommandLog = "Can't log display value as the command contains sensitive data";
+            PrivateCommandLog = "Can't log display value as the command contains sensitive data";
 
             //initialize error tracking list
             ErrorsOccured = new List<ScriptError>();
 
             //set to initialized
-            _currentStatus = EngineStatus.Loaded;
+            AutomationEngineContext.CurrentEngineStatus = EngineStatus.Loaded;
 
             //get engine settings
             var settings = new ApplicationSettings().GetOrCreateApplicationSettings();
             EngineSettings = settings.EngineSettings;
 
             if (AutomationEngineContext.Variables == null)
-                AutomationEngineContext.Variables = new List<ScriptVariable>();
+                AutomationEngineContext.Variables = new List<OBScriptVariable>();
 
             if (AutomationEngineContext.Arguments == null)
                 AutomationEngineContext.Arguments = new List<ScriptArgument>();
@@ -93,16 +95,24 @@ namespace OpenBots.Engine
             if (AutomationEngineContext.Elements == null)
                 AutomationEngineContext.Elements = new List<ScriptElement>();
 
-            if (AutomationEngineContext.AppInstances == null)
-                AutomationEngineContext.AppInstances = new Dictionary<string, object>();
+            if (AutomationEngineContext.ImportedNamespaces == null)
+                AutomationEngineContext.ImportedNamespaces = new Dictionary<string, List<AssemblyReference>>(ScriptDefaultNamespaces.DefaultNamespaces);
 
-                ServiceResponses = new List<IRestResponse>();
-                DataTables = new List<DataTable>();
+            ServiceResponses = new List<IRestResponse>();
+            DataTables = new List<DataTable>();
 
             //this value can be later overriden by script
             AutoCalculateVariables = EngineSettings.AutoCalcVariables;
 
             ErrorHandlingAction = string.Empty;
+
+            //initialize roslyn instance
+            AutomationEngineContext.AssembliesList = NamespaceMethods.GetAssemblies(this);
+            AutomationEngineContext.NamespacesList = NamespaceMethods.GetNamespacesList(this);
+
+            AutomationEngineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(AutomationEngineContext.AssembliesList)
+                                                                                                .WithImports(AutomationEngineContext.NamespacesList));
+            AutomationEngineContext.EngineScriptState = null;
         }
 
         public IAutomationEngineInstance CreateAutomationEngineInstance(EngineContext engineContext)
@@ -156,11 +166,11 @@ namespace OpenBots.Engine
             }).Start();
         }
 
-        private void ExecuteScript(bool dataIsFile)
+        private async void ExecuteScript(bool dataIsFile)
         {
             try
             {
-                _currentStatus = EngineStatus.Running;
+                AutomationEngineContext.CurrentEngineStatus = EngineStatus.Running;
 
                 //create stopwatch for metrics tracking
                 _stopWatch = new Stopwatch();
@@ -170,18 +180,18 @@ namespace OpenBots.Engine
                 ReportProgress("Bot Engine Started: " + DateTime.Now.ToString());
 
                 //get automation script
-                Script automationScript;
+                OBScript automationScript;
                 if (dataIsFile)
                 {
                     ReportProgress("Deserializing File");
                     Log.Information("Script Path: " + AutomationEngineContext.FilePath);
                     FileName = AutomationEngineContext.FilePath;
-                    automationScript = Script.DeserializeFile(AutomationEngineContext);
+                    automationScript = OBScript.DeserializeFile(AutomationEngineContext);
                 }
                 else
                 {
                     ReportProgress("Deserializing JSON");
-                    automationScript = Script.DeserializeJsonString(AutomationEngineContext.FilePath);
+                    automationScript = OBScript.DeserializeJsonString(AutomationEngineContext.FilePath);
                 }
                 
                 ReportProgress("Creating Variable List");
@@ -201,21 +211,27 @@ namespace OpenBots.Engine
                 }
 
                 AutomationEngineContext.Variables = automationScript.Variables;
-
+                
                 //update ProjectPath variable
                 var projectPathVariable = AutomationEngineContext.Variables.Where(v => v.VariableName == "ProjectPath").SingleOrDefault();
                 if (projectPathVariable != null)
-                    projectPathVariable.VariableValue = AutomationEngineContext.ProjectPath;
+                    projectPathVariable.VariableValue = "@\"" + AutomationEngineContext.ProjectPath + '"';
                 else
                 {
-                    projectPathVariable = new ScriptVariable
+                    projectPathVariable = new OBScriptVariable
                     {
                         VariableName = "ProjectPath",
                         VariableType = typeof(string),
-                        VariableValue = AutomationEngineContext.ProjectPath
+                        VariableValue = "@\"" + AutomationEngineContext.ProjectPath + '"'
                     };
                     AutomationEngineContext.Variables.Add(projectPathVariable);
                 }
+
+                foreach (OBScriptVariable var in AutomationEngineContext.Variables)
+                {
+                    dynamic evaluatedValue = await VariableMethods.InstantiateVariable(var.VariableName, (string)var.VariableValue, var.VariableType, this);
+                    VariableMethods.SetVariableValue(evaluatedValue, this, var.VariableName);
+                }           
 
                 ReportProgress("Creating Argument List");
 
@@ -234,6 +250,24 @@ namespace OpenBots.Engine
                 }
 
                 AutomationEngineContext.Arguments = automationScript.Arguments;
+                
+                //used by RunTaskCommand to assign parent values to child arguments 
+                if(AutomationEngineContext.IsChildEngine)
+                {
+                    foreach (ScriptArgument arg in AutomationEngineContext.Arguments)
+                    {
+                        await VariableMethods.InstantiateVariable(arg.ArgumentName, "", arg.ArgumentType, this);
+                        VariableMethods.SetVariableValue(arg.ArgumentValue, this, arg.ArgumentName);
+                    }
+                }
+                else
+                {
+                    foreach (ScriptArgument arg in AutomationEngineContext.Arguments)
+                    {
+                        dynamic evaluatedValue = await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, this);
+                        VariableMethods.SetVariableValue(evaluatedValue, this, arg.ArgumentName);
+                    }
+                }
 
                 ReportProgress("Creating Element List");
 
@@ -251,16 +285,9 @@ namespace OpenBots.Engine
 
                 AutomationEngineContext.Elements = automationScript.Elements;
 
-                ReportProgress("Creating App Instance Tracking List");
-                //create app instances and merge in global instances
-                if (AutomationEngineContext.AppInstances == null)
+                if (AutomationEngineContext.ImportedNamespaces == null)
                 {
-                    AutomationEngineContext.AppInstances = new Dictionary<string, object>();
-                }
-                var GlobalInstances = GlobalAppInstances.GetInstances();
-                foreach (var instance in GlobalInstances)
-                {
-                    AutomationEngineContext.AppInstances[instance.Key] = instance.Value;
+                    AutomationEngineContext.ImportedNamespaces = new Dictionary<string, List<AssemblyReference>>(ScriptDefaultNamespaces.DefaultNamespaces);
                 }
 
                 //execute commands
@@ -278,7 +305,7 @@ namespace OpenBots.Engine
                         return;
                     }
 
-                    ExecuteCommand(automationScript.Commands[startCommandIndex]);
+                    await ExecuteCommand(automationScript.Commands[startCommandIndex]);
                     startCommandIndex++;
                 }
 
@@ -301,7 +328,7 @@ namespace OpenBots.Engine
                 AutomationEngineContext.EngineLogger.Dispose();
         }
 
-        public void ExecuteCommand(ScriptAction command)
+        public async Task ExecuteCommand(ScriptAction command)
         {
             //get command
             ScriptCommand parentCommand = command.ScriptCommand;
@@ -340,9 +367,9 @@ namespace OpenBots.Engine
                 //only show pause first loop
                 if (isFirstWait)
                 {
-                    _currentStatus = EngineStatus.Paused;
+                    AutomationEngineContext.CurrentEngineStatus = EngineStatus.Paused;
                     ReportProgress("Paused on Line " + parentCommand.LineNumber + ": "
-                        + (parentCommand.v_IsPrivate ? _privateCommandLog : parentCommand.GetDisplayValue()));
+                        + (parentCommand.v_IsPrivate ? PrivateCommandLog : parentCommand.GetDisplayValue()));
                     ReportProgress("[Please select 'Resume' when ready]");
                     isFirstWait = false;
                 }
@@ -373,7 +400,7 @@ namespace OpenBots.Engine
                 Thread.Sleep(1000);
             }
 
-            _currentStatus = EngineStatus.Running;
+            AutomationEngineContext.CurrentEngineStatus = EngineStatus.Running;
 
             //handle if cancellation was requested
             if (IsCancellationPending)
@@ -391,7 +418,7 @@ namespace OpenBots.Engine
 
             //report intended execution
             if (parentCommand.CommandName != "LogMessageCommand")
-                ReportProgress($"Running Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? _privateCommandLog : parentCommand.GetDisplayValue())}", parentCommand.LogLevel);
+                ReportProgress($"Running Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? PrivateCommandLog : parentCommand.GetDisplayValue())}");
 
             //handle any errors
             try
@@ -406,12 +433,12 @@ namespace OpenBots.Engine
                     //run the command and pass bgw/command as this command will recursively call this method for sub commands
                     //TODO: Make sure that removing these lines doesn't create any other issues
                     //command.IsExceptionIgnored = true;
-                    parentCommand.RunCommand(this, command);
+                    await parentCommand.RunCommand(this, command);
                 }
                 else if (parentCommand.CommandName == "SequenceCommand")
                 {
                     //command.IsExceptionIgnored = true;
-                    parentCommand.RunCommand(this, command);
+                    await parentCommand.RunCommand(this, command);
                 }
                 else if (parentCommand.CommandName == "StopCurrentTaskCommand")
                 {
@@ -442,32 +469,23 @@ namespace OpenBots.Engine
                     //run the command
                     try
                     {
-                        parentCommand.RunCommand(this);
+                        await parentCommand.RunCommand(this);
                     }
                     catch (Exception ex)
                     {
                         switch (ErrorHandlingAction)
                         {
                             case "Ignore Error":
-                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), LogEventLevel.Error);
+                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), Enum.GetName(typeof(LogEventLevel), LogEventLevel.Error));
                                 ReportProgress("Ignoring Per Error Handling");
                                 break;
                             case "Report Error":
-                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), LogEventLevel.Error);
+                                ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), Enum.GetName(typeof(LogEventLevel), LogEventLevel.Error));
                                 ReportProgress("Handling Error and Attempting to Continue");
                                 throw ex;
                             default:
                                 throw ex;
                         }
-                    }
-
-                    if (parentCommand.CommandName == "LogMessageCommand")
-                    {
-                        string displayValue = parentCommand.GetDisplayValue().Replace("Log Message ['", "").Replace("']", "");
-                        string logMessage = displayValue.Split('-').Last().ConvertUserVariableToString(this);
-                        displayValue = displayValue.Replace(displayValue.Split('-').Last(), logMessage);
-                        ReportProgress($"Logging Line {parentCommand.LineNumber}: {(parentCommand.v_IsPrivate ? _privateCommandLog : displayValue)}",
-                            parentCommand.LogLevel);
                     }
                 }
             }
@@ -505,7 +523,7 @@ namespace OpenBots.Engine
                     DialogResult result = DialogResult.OK;
                     if (ErrorHandlingAction != "Ignore Error")
                         result = AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.LoadErrorForm(errorMessage);
-                    ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), LogEventLevel.Debug);
+                    ReportProgress("Error Occured at Line " + parentCommand.LineNumber + ":" + ex.ToString(), Enum.GetName(typeof(LogEventLevel), LogEventLevel.Debug));
                     AutomationEngineContext.ScriptEngine.ScriptEngineContext.ScriptBuilder.IsUnhandledException = false;
 
                     if (result == DialogResult.OK)
@@ -568,11 +586,12 @@ namespace OpenBots.Engine
             _isScriptSteppedIntoBeforeException = true;
         }
 
-        public virtual void ReportProgress(string progress, LogEventLevel eventLevel = LogEventLevel.Information)
+        public virtual void ReportProgress(string progress, string eventLevel = "Information")
         {
             ReportProgressEventArgs args = new ReportProgressEventArgs();
+            LogEventLevel logEventLevel = (LogEventLevel)Enum.Parse(typeof(LogEventLevel), eventLevel);
 
-            switch (eventLevel)
+            switch (logEventLevel)
             {
                 case LogEventLevel.Verbose:
                     Log.Verbose(progress);
@@ -628,7 +647,7 @@ namespace OpenBots.Engine
             //handle if variable is missing
             if (resultVar == null)
             {
-                resultVar = new ScriptVariable() { VariableName = "OpenBots.Result", VariableValue = "" };
+                resultVar = new OBScriptVariable() { VariableName = "OpenBots.Result", VariableValue = "" };
             }
 
             //check value
@@ -650,9 +669,10 @@ namespace OpenBots.Engine
 
             else
             {
-                error = ErrorsOccured.OrderByDescending(x => x.LineNumber).FirstOrDefault().StackTrace;
-                Log.Error("Error: " + error);
+                if (ErrorsOccured.Count > 0)
+                    error = ErrorsOccured.OrderByDescending(x => x.LineNumber).FirstOrDefault().StackTrace;
 
+                Log.Error("Error: " + error);
                 TaskResult = error;
             }
 
@@ -662,7 +682,7 @@ namespace OpenBots.Engine
             if (IsServerExecution && !IsServerChildExecution)
                 Log.CloseAndFlush();
 
-            _currentStatus = EngineStatus.Finished;
+            AutomationEngineContext.CurrentEngineStatus = EngineStatus.Finished;
             ScriptFinishedEventArgs args = new ScriptFinishedEventArgs
             {
                 LoggedOn = DateTime.Now,

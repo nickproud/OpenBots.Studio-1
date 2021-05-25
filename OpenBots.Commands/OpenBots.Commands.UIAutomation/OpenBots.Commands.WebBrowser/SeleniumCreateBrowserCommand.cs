@@ -1,11 +1,10 @@
-﻿using OpenBots.Core.App;
-using OpenBots.Core.Attributes.PropertyAttributes;
+﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
@@ -15,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenBots.Commands.WebBrowser
@@ -32,7 +32,8 @@ namespace OpenBots.Commands.WebBrowser
 		[SampleUsage("MyBrowserInstance")]
 		[Remarks("This unique name allows you to refer to the instance by name in future commands, " +
 				 "ensuring that the commands you specify run against the correct application.")]
-		[CompatibleTypes(new Type[] { typeof(IWebDriver) })]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
 		[Required]
@@ -49,23 +50,11 @@ namespace OpenBots.Commands.WebBrowser
 
 		[DisplayName("URL (Optional)")]
 		[Description("Enter the URL that you want the selenium instance to navigate to.")]
-		[SampleUsage("https://mycompany.com/orders || {vURL}")]
+		[SampleUsage("\"https://mycompany.com/orders\" || vURL")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_URL { get; set; }
-
-		[Required]
-		[DisplayName("Instance Tracking")]
-		[PropertyUISelectionOption("Forget Instance")]
-		[PropertyUISelectionOption("Keep Instance Alive")]
-		[Description("Select **Forget Instance** to forget the instance after execution finishes, " +
-							"or **Keep Instance Alive** to allow subsequent tasks to call the instance by name.")]
-		[SampleUsage("")]
-		[Remarks("Calling the **Close Browser** command or ending the browser session will end the instance. " +
-				 "This command only works during the lifetime of the application. " +
-				 "If the application is closed, the references will be forgotten automatically.")]
-		public string v_InstanceTracking { get; set; }
 
 		[Required]
 		[DisplayName("Window State")]
@@ -78,31 +67,34 @@ namespace OpenBots.Commands.WebBrowser
 
 		[DisplayName("Selenium Command Line Options (Chrome - Optional)")]
 		[Description("Select options to be passed to the Selenium command.")]
-		[SampleUsage("user-data-dir=c:\\users\\public\\SeleniumOpenBotsProfile || {vOptions}")]
+		[SampleUsage("@\"user-data-dir=c:\\users\\public\\SeleniumOpenBotsProfile\" || vOptions")]
 		[Remarks("This input is optional.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(null, true)]
+		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SeleniumOptions { get; set; }
 
 		public SeleniumCreateBrowserCommand()
 		{
 			CommandName = "SeleniumCreateBrowserCommand";
-			SelectionName = "Create Browser";
+			SelectionName = "Selenium Create Browser";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
 			v_InstanceName = "DefaultBrowser";
-			v_InstanceTracking = "Forget Instance";
 			v_BrowserWindowOption = "Maximize";
 			v_EngineType = "Chrome";
-			v_URL = "https://";
+			v_URL = "\"https://\"";
 		}
 
-		public override void RunCommand(object sender)
+		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var convertedOptions = v_SeleniumOptions.ConvertUserVariableToString(engine);
-			var vURL = v_URL.ConvertUserVariableToString(engine);
+
+			string convertedOptions = "";
+			if (!string.IsNullOrEmpty(v_SeleniumOptions))
+				convertedOptions = (string)await v_SeleniumOptions.EvaluateCode(engine);
+
+			var vURL = (string)await v_URL.EvaluateCode(engine);
 
 			IWebDriver webDriver;
 
@@ -147,11 +139,7 @@ namespace OpenBots.Commands.WebBrowser
 			}
 
 			//add app instance
-			webDriver.AddAppInstance(engine, v_InstanceName);
-
-			//handle app instance tracking
-			if (v_InstanceTracking == "Keep Instance Alive")
-				GlobalAppInstances.AddInstance(v_InstanceName, webDriver);
+			new OBAppInstance(v_InstanceName, webDriver).SetVariableValue(engine, v_InstanceName);
 
 			switch (v_BrowserWindowOption)
 			{
@@ -187,7 +175,6 @@ namespace OpenBots.Commands.WebBrowser
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_EngineType", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_URL", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_InstanceTracking", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_BrowserWindowOption", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_SeleniumOptions", this, editor));
 
@@ -196,7 +183,7 @@ namespace OpenBots.Commands.WebBrowser
 
 		public override string GetDisplayValue()
 		{
-			return $"Create {v_EngineType} Browser [Navigate To URL '{v_URL}' - New Instance Name '{v_InstanceName}']";
+			return $"Selenium Create {v_EngineType} Browser [Navigate To URL '{v_URL}' - New Instance Name '{v_InstanceName}']";
 		}
 	}
 }
