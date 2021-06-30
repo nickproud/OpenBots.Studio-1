@@ -950,6 +950,9 @@
     <None Include="Supplementary Files\Script Conversion Files\1.2.0.0.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Supplementary Files\Script Conversion Files\1.5.0.0.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Supplementary Files\Script Conversion Files\1.4.1.0.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

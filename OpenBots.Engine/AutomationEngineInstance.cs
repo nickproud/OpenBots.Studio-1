@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
 using OBScript = OpenBots.Core.Script.Script;
 using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 
@@ -729,7 +730,13 @@ namespace OpenBots.Engine
                 Formatting = Formatting.Indented
             };
 
-            return  JsonConvert.SerializeObject(this, settings);
+            var strippedContext = new Dictionary<string, object>();
+            foreach (PropertyInfo pi in this.AutomationEngineContext.GetType().GetProperties())
+            {
+                if (pi.Name != "ScriptEngine" && pi.Name != "EngineScript" && pi.Name != "EngineScriptState" && pi.Name != "ScriptBuilder")
+                    strippedContext.Add(pi.Name, pi.GetValue(this.AutomationEngineContext));
+            }
+            return JsonConvert.SerializeObject(strippedContext, settings);
         }
 
         public string GetProjectPath()

@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace OpenBots.Server.SDK.Client
 {
@@ -50,10 +52,13 @@ namespace OpenBots.Server.SDK.Client
         public static readonly ExceptionFactory DefaultExceptionFactory = (methodName, response) =>
         {
             var status = (int)response.StatusCode;
+            var content = response.Content;
             if (status >= 400)
             {
+                var resultDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
+                var error = resultDict["title"].ToString();
                 return new ApiException(status,
-                    string.Format("Error calling {0}: {1}", methodName, response.StatusCode),
+                    string.Format("Error calling {0} with status {1}: {2}", methodName, response.StatusCode, error),
                     response.Content);
             }
             if (status == 0)

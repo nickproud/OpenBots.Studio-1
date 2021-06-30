@@ -150,8 +150,12 @@ namespace OpenBots.UI.Supplement_Forms
                 }
                 catch (Exception ex)
                 {
-                    NotificationMessage = $"'{_projectName}' was published locally. To publish to an OpenBots Server please install and connect the OpenBots Agent." +
-                        $" Error: {ex.Message}";
+                    if (ex.Message != "Agent is not connected" && !string.IsNullOrEmpty(ex.InnerException.Message))
+                        NotificationMessage = $"'{_projectName}' was published locally. To publish to an OpenBots Server please install and connect the OpenBots Agent." +
+                            $" Error: {ex.InnerException.Message}";
+                    else
+                        NotificationMessage = $"'{_projectName}' was published locally. To publish to an OpenBots Server please install and connect the OpenBots Agent." +
+                            $" Error: {ex.Message}";
                 }
 
                 return true;             

@@ -354,7 +354,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="apiVersion"></param>
         /// <param name="body"> (optional)</param>
         /// <returns>Task of List&lt;AutomationParameter&gt;</returns>
-        System.Threading.Tasks.Task<List<AutomationParameter>> ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsync (string automationId, string apiVersion, List<AutomationParameter> body = null);
+        System.Threading.Tasks.Task<List<AutomationParameter>> ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsync (string automationId, string organizationId, string apiVersion, List<AutomationParameter> body = null);
 
         /// <summary>
         /// Update an Automation&#x27;s parameters
@@ -367,7 +367,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="apiVersion"></param>
         /// <param name="body"> (optional)</param>
         /// <returns>Task of ApiResponse (List&lt;AutomationParameter&gt;)</returns>
-        System.Threading.Tasks.Task<ApiResponse<List<AutomationParameter>>> ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsyncWithHttpInfo (string automationId, string apiVersion, List<AutomationParameter> body = null);
+        System.Threading.Tasks.Task<ApiResponse<List<AutomationParameter>>> ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsyncWithHttpInfo (string automationId, string organizationId, string apiVersion, List<AutomationParameter> body = null);
         /// <summary>
         /// Gets count of Automations in database
         /// </summary>
@@ -548,7 +548,7 @@ namespace OpenBots.Server.SDK.Api
         /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="apiVersion"></param>
         /// <returns>Task of Automation</returns>
-        System.Threading.Tasks.Task<Automation> ApiVapiVersionAutomationsPostAsync (string apiVersion);
+        System.Threading.Tasks.Task<Automation> ApiVapiVersionAutomationsPostAsync (string apiVersion, string organizationId, string name, System.IO.FileStream _file, string automationEngine);
 
         /// <summary>
         /// Create a new Automation entity and file
@@ -559,7 +559,7 @@ namespace OpenBots.Server.SDK.Api
         /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="apiVersion"></param>
         /// <returns>Task of ApiResponse (Automation)</returns>
-        System.Threading.Tasks.Task<ApiResponse<Automation>> ApiVapiVersionAutomationsPostAsyncWithHttpInfo (string apiVersion);
+        System.Threading.Tasks.Task<ApiResponse<Automation>> ApiVapiVersionAutomationsPostAsyncWithHttpInfo (string apiVersion, string organizationId, string name, System.IO.FileStream _file, string automationEngine);
         /// <summary>
         /// Provides a view model list of all Automations and corresponding Automation version information
         /// </summary>
@@ -873,9 +873,9 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="apiVersion"></param>
         /// <param name="body"> (optional)</param>
         /// <returns>Task of List&lt;AutomationParameter&gt;</returns>
-        public async System.Threading.Tasks.Task<List<AutomationParameter>> ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsync (string automationId, string apiVersion, List<AutomationParameter> body = null)
+        public async System.Threading.Tasks.Task<List<AutomationParameter>> ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsync (string automationId, string organizationId, string apiVersion, List<AutomationParameter> body = null)
         {
-             ApiResponse<List<AutomationParameter>> localVarResponse = await ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsyncWithHttpInfo(automationId, apiVersion, body);
+             ApiResponse<List<AutomationParameter>> localVarResponse = await ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsyncWithHttpInfo(automationId, organizationId, apiVersion, body);
              return localVarResponse.Data;
 
         }
@@ -888,7 +888,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="apiVersion"></param>
         /// <param name="body"> (optional)</param>
         /// <returns>Task of ApiResponse (List&lt;AutomationParameter&gt;)</returns>
-        public async System.Threading.Tasks.Task<ApiResponse<List<AutomationParameter>>> ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsyncWithHttpInfo (string automationId, string apiVersion, List<AutomationParameter> body = null)
+        public async System.Threading.Tasks.Task<ApiResponse<List<AutomationParameter>>> ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsyncWithHttpInfo (string automationId, string organizationId, string apiVersion, List<AutomationParameter> body = null)
         {
             // verify the required parameter 'automationId' is set
             if (automationId == null)
@@ -898,6 +898,8 @@ namespace OpenBots.Server.SDK.Api
                 throw new ApiException(400, "Missing required parameter 'apiVersion' when calling AutomationsApi->ApiVapiVersionAutomationsAutomationIdUpdateParametersPost");
 
             var localVarPath = "/api/v{apiVersion}/Automations/{automationId}/UpdateParameters";
+            if (!string.IsNullOrEmpty(organizationId))
+                localVarPath = "/api/v{apiVersion}/Organizations/{organizationId}/Automations/{automationId}/UpdateParameters";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new List<KeyValuePair<String, String>>();
             var localVarHeaderParams = new Dictionary<String, String>(this.Configuration.DefaultHeader);
@@ -924,6 +926,7 @@ namespace OpenBots.Server.SDK.Api
 
             if (automationId != null) localVarPathParams.Add("automationId", this.Configuration.ApiClient.ParameterToString(automationId)); // path parameter
             if (apiVersion != null) localVarPathParams.Add("apiVersion", this.Configuration.ApiClient.ParameterToString(apiVersion)); // path parameter
+            if (!string.IsNullOrEmpty(organizationId)) localVarPathParams.Add("organizationId", this.Configuration.ApiClient.ParameterToString(organizationId)); // path parameter
             if (body != null && body.GetType() != typeof(byte[]))
             {
                 localVarPostBody = this.Configuration.ApiClient.Serialize(body); // http body (model) parameter
@@ -2245,9 +2248,9 @@ namespace OpenBots.Server.SDK.Api
         /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="apiVersion"></param>
         /// <returns>Task of Automation</returns>
-        public async System.Threading.Tasks.Task<Automation> ApiVapiVersionAutomationsPostAsync (string apiVersion)
+        public async System.Threading.Tasks.Task<Automation> ApiVapiVersionAutomationsPostAsync (string apiVersion, string organizationId, string name, System.IO.FileStream _file, string automationEngine)
         {
-             ApiResponse<Automation> localVarResponse = await ApiVapiVersionAutomationsPostAsyncWithHttpInfo(apiVersion);
+             ApiResponse<Automation> localVarResponse = await ApiVapiVersionAutomationsPostAsyncWithHttpInfo(apiVersion, organizationId, name, _file, automationEngine);
              return localVarResponse.Data;
 
         }
@@ -2258,13 +2261,15 @@ namespace OpenBots.Server.SDK.Api
         /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="apiVersion"></param>
         /// <returns>Task of ApiResponse (Automation)</returns>
-        public async System.Threading.Tasks.Task<ApiResponse<Automation>> ApiVapiVersionAutomationsPostAsyncWithHttpInfo (string apiVersion)
+        public async System.Threading.Tasks.Task<ApiResponse<Automation>> ApiVapiVersionAutomationsPostAsyncWithHttpInfo (string apiVersion, string organizationId, string name, System.IO.FileStream _file, string automationEngine)
         {
             // verify the required parameter 'apiVersion' is set
             if (apiVersion == null)
                 throw new ApiException(400, "Missing required parameter 'apiVersion' when calling AutomationsApi->ApiVapiVersionAutomationsPost");
 
             var localVarPath = "/api/v{apiVersion}/Automations";
+            if (!string.IsNullOrEmpty(organizationId))
+                localVarPath = "/api/v{apiVersion}/Organizations/{organizationId}/Automations";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new List<KeyValuePair<String, String>>();
             var localVarHeaderParams = new Dictionary<String, String>(this.Configuration.DefaultHeader);
@@ -2287,18 +2292,19 @@ namespace OpenBots.Server.SDK.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (apiVersion != null) localVarPathParams.Add("apiVersion", this.Configuration.ApiClient.ParameterToString(apiVersion)); // path parameter
+            if (!string.IsNullOrEmpty(organizationId)) localVarPathParams.Add("organizationId", this.Configuration.ApiClient.ParameterToString(organizationId)); // path parameter
             //if (versionNumber != null) localVarFormParams.Add("VersionNumber", this.Configuration.ApiClient.ParameterToString(versionNumber)); // form parameter
             //if (versionId != null) localVarFormParams.Add("VersionId", this.Configuration.ApiClient.ParameterToString(versionId)); // form parameter
             //if (status != null) localVarFormParams.Add("Status", this.Configuration.ApiClient.ParameterToString(status)); // form parameter
-            //if (_file != null) localVarFileParams.Add("File", this.Configuration.ApiClient.ParameterToFile("File", _file));
+            if (_file != null) localVarFileParams.Add(_file.Name, this.Configuration.ApiClient.ParameterToFile("File", _file));
             //if (fileId != null) localVarFormParams.Add("FileId", this.Configuration.ApiClient.ParameterToString(fileId)); // form parameter
             //if (originalPackageName != null) localVarFormParams.Add("OriginalPackageName", this.Configuration.ApiClient.ParameterToString(originalPackageName)); // form parameter
             //if (publishedBy != null) localVarFormParams.Add("PublishedBy", this.Configuration.ApiClient.ParameterToString(publishedBy)); // form parameter
             //if (publishedOnUTC != null) localVarFormParams.Add("PublishedOnUTC", this.Configuration.ApiClient.ParameterToString(publishedOnUTC)); // form parameter
-            //if (automationEngine != null) localVarFormParams.Add("AutomationEngine", this.Configuration.ApiClient.ParameterToString(automationEngine)); // form parameter
+            if (automationEngine != null) localVarFormParams.Add("AutomationEngine", this.Configuration.ApiClient.ParameterToString(automationEngine)); // form parameter
             //if (driveName != null) localVarFormParams.Add("DriveName", this.Configuration.ApiClient.ParameterToString(driveName)); // form parameter
             //if (automtationParameters != null) localVarFormParams.Add("AutomtationParameters", this.Configuration.ApiClient.ParameterToString(automtationParameters)); // form parameter
-            //if (name != null) localVarFormParams.Add("Name", this.Configuration.ApiClient.ParameterToString(name)); // form parameter
+            if (name != null) localVarFormParams.Add("Name", this.Configuration.ApiClient.ParameterToString(name)); // form parameter
             //if (id != null) localVarFormParams.Add("Id", this.Configuration.ApiClient.ParameterToString(id)); // form parameter
             //if (isDeleted != null) localVarFormParams.Add("IsDeleted", this.Configuration.ApiClient.ParameterToString(isDeleted)); // form parameter
             //if (createdBy != null) localVarFormParams.Add("CreatedBy", this.Configuration.ApiClient.ParameterToString(createdBy)); // form parameter
@@ -2328,9 +2334,11 @@ namespace OpenBots.Server.SDK.Api
                 if (exception != null) throw exception;
             }
 
+            var automation = JsonConvert.DeserializeObject<Automation>(localVarResponse.Content);
+
             return new ApiResponse<Automation>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
-                (Automation) this.Configuration.ApiClient.Deserialize(localVarResponse, typeof(Automation)));
+                automation);
         }
 
         /// <summary>

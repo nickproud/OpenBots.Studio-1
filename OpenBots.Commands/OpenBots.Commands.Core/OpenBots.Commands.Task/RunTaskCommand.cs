@@ -358,6 +358,7 @@ namespace OpenBots.Commands.Task
 
 			EngineContext childEngineContext = new EngineContext
 			{
+				IsChildEngine = true,
 				FilePath = childTaskPath,
 				ProjectPath = parentAutomationEngineInstance.GetProjectPath(),
 				EngineLogger = (Logger)engineLogger,

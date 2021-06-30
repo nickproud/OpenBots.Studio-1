@@ -32,7 +32,7 @@ namespace OpenBots.Core.Server.HelperMethods
             }
         }
 
-        public static QueueItemModel GetQueueItemByLockTransactionKey(string token, string serverurl, string organizationId, string transactionKey)
+        public static QueueItemModel GetQueueItemByLockTransactionKey(string token, string serverUrl, string organizationId, string transactionKey)
         {
             var apiInstance = GetQueueItemApiInstance(token, serverUrl);
 
@@ -113,8 +113,12 @@ namespace OpenBots.Core.Server.HelperMethods
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Exception when calling QueueItemsApi.ApiVapiVersionQueueItemsDequeueGetAsyncWithHttpInfo: "
-                    + ex.Message);
+                if (ex.Message != "One or more errors occurred.")
+                    throw new InvalidOperationException("Exception when calling QueueItemsApi.ApiVapiVersionQueueItemsDequeueGetAsyncWithHttpInfo: "
+                        + ex.Message);
+                else if (ex.InnerException.Message == "Error calling DequeueQueueItem with status BadRequest: Entity Does Not Exist. No item to dequeue from list of queue items")
+                    return null;
+                else throw new InvalidOperationException(ex.InnerException.Message);
             }
         }
 

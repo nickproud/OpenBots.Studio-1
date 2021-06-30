@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using OpenBots.Core.Properties;
 using System.Threading.Tasks;
 using OpenBots.Core.Server.HelperMethods;
+using CredentialModel = OpenBots.Core.Server.Models.Credential;
 
 namespace OpenBots.Commands.Credential
 {
@@ -63,7 +64,7 @@ namespace OpenBots.Commands.Credential
 			var vCredentialName = (string)await v_CredentialName.EvaluateCode(engine);
 
 			var userInfo = AuthMethods.GetUserInfo();
-            var credential = CredentialMethods.GetCredential(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vCredentialName);
+			CredentialModel credential = CredentialMethods.GetCredential(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vCredentialName);
 
             if (credential == null)
                 throw new Exception($"No Credential was found for '{vCredentialName}'");

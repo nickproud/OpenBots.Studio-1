@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Server.Models;
+using OpenBots.Core.Server.User;
 using OpenBots.Server.SDK.Api;
 using System;
 using System.Collections.Generic;
@@ -12,18 +13,17 @@ namespace OpenBots.Core.Server.HelperMethods
 {
     public class AutomationMethods
     {
-        public static UserInfo userInfo = AuthMethods.GetUserInfo();
-
-        //public static AutomationModel UploadAutomation(string token, string serverUrl, string organizationId, string name, string filePath, string automationEngine)
         public static AutomationModel UploadAutomation(string name, string filePath, string automationEngine)
         {
-            var apiInstance = GetApiInstance(userInfo.Token, serverUrl);
+            UserInfo userInfo = AuthMethods.GetUserInfo();
+            var settings = new EnvironmentSettings();
+            var apiInstance = GetApiInstance(userInfo.Token, settings.ServerUrl);
 
             try
             {
                 using (FileStream _file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    var result = apiInstance.ApiVapiVersionAutomationsPostWithHttpInfo(apiVersion, userInfo.OrganizationId, name, _file, automationEngine);
+                    var result = apiInstance.ApiVapiVersionAutomationsPostAsyncWithHttpInfo(apiVersion, userInfo.OrganizationId, name, _file, automationEngine).Result.Data;
                     string automationString = JsonConvert.SerializeObject(result);
                     var automation = JsonConvert.DeserializeObject<AutomationModel>(automationString);
                     return automation;
@@ -38,7 +38,9 @@ namespace OpenBots.Core.Server.HelperMethods
 
         public static void UpdateParameters(Guid? automationId, IEnumerable<AutomationParameter> automationParameters)
         {
-            var apiInstance = GetApiInstance(userInfo.Token, serverUrl);
+            UserInfo userInfo = AuthMethods.GetUserInfo();
+            var settings = new EnvironmentSettings();
+            var apiInstance = GetApiInstance(userInfo.Token, settings.ServerUrl);
 
             try
             {
@@ -49,7 +51,7 @@ namespace OpenBots.Core.Server.HelperMethods
                     var parameterSDK = JsonConvert.DeserializeObject<SDKAutomationParameter>(parameterString);
                     automationParametersList.Add(parameterSDK);
                 }
-                apiInstance.ApiVapiVersionAutomationsAutomationIdUpdateParametersPostWithHttpInfo(automationId.ToString(), userInfo.OrganizationId, apiVersion, automationParametersList);
+                apiInstance.ApiVapiVersionAutomationsAutomationIdUpdateParametersPostAsyncWithHttpInfo(automationId.ToString(), userInfo.OrganizationId, apiVersion, automationParametersList).Wait();
             }
             catch (Exception ex)
             {

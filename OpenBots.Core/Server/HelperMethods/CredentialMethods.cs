@@ -23,7 +23,7 @@ namespace OpenBots.Core.Server.HelperMethods
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Exception when calling CredentialsApi.ApiVapiVersionCredentialsGetAsyncWithHttpInfo: "
+                throw new InvalidOperationException("Exception when calling CredentialsApi.ApiVapiVersionCredentialsGetAsyncWithHttpInfoApiVapiVersionCredentialsGetCredentialByNameCredentialNameGetAsyncWithHttpInfo: "
                     + ex.Message);
             }
         }

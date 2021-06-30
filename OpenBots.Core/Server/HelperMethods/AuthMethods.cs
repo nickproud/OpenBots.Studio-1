@@ -2,6 +2,7 @@
 using OpenBots.Core.Server.Models;
 using static OpenBots.Core.Server.User.EnvironmentSettings;
 using OpenBots.Server.SDK.Api;
+using OpenBots.Core.Server.User;
 
 namespace OpenBots.Core.Server.HelperMethods
 {
@@ -9,9 +10,10 @@ namespace OpenBots.Core.Server.HelperMethods
     {
         public static UserInfo GetUserInfo()
         {
-            var apiInstance = new AuthApi(serverUrl);
+            var settings = new EnvironmentSettings();
+            var apiInstance = new AuthApi(settings.ServerUrl);
 
-            var response = apiInstance.GetUserInfo(apiVersion, agentId, serverType, organizationName, environment, serverUrl, username, password);
+            var response = apiInstance.GetUserInfo(apiVersion, settings.AgentId, settings.ServerType, settings.OrganizationName, environment, settings.ServerUrl, username, password);
             string responseString = JsonConvert.SerializeObject(response);
             var userInfo = JsonConvert.DeserializeObject<UserInfo>(responseString);
 

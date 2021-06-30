@@ -469,7 +469,7 @@ namespace OpenBots.Server.SDK.Api
                 }
 
                 if (serverType == "Cloud")
-                    loginUrl = "https://dev.login.openbots.io/"; // user authentication
+                    loginUrl = "https://test.login.openbots.io/"; // user authentication
             }
 
             if (string.IsNullOrEmpty(serverUrl))
@@ -545,7 +545,7 @@ namespace OpenBots.Server.SDK.Api
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Exception when calling AuthApi.ApiVapiVersionAuthTokenPostWithHttpInfo: " + ex.Message);
+                throw new InvalidOperationException("Exception when calling OrganizationsApi.ApiVapiVersionOrganizationsGetAsyncWithHttpInfo: " + ex.Message);
             }
         }
 
@@ -560,14 +560,14 @@ namespace OpenBots.Server.SDK.Api
 
                 try
                 {
-                    var result = apiInstance.ApiVapiVersionAuthTokenPostWithHttpInfo(apiVersion, login).Data.ToString();
+                    var result = apiInstance.ApiVapiVersionAuthTokenPostAsyncWithHttpInfo(apiVersion, login).Result.Data.ToString();
                     JObject jsonObj = JObject.Parse(result.Replace("[]", "null"));
                     Dictionary<string, string> resultDict = jsonObj.ToObject<Dictionary<string, string>>();
                     token = resultDict["token"].ToString();
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidOperationException("Exception when calling AuthApi.ApiVapiVersionAuthTokenPostWithHttpInfo: " + ex.Message);
+                    throw new InvalidOperationException("Exception when calling AuthApi.ApiVapiVersionAuthTokenPostAsyncWithHttpInfo: " + ex.Message);
                 }
             }
             else if (serverType == "Cloud") //get machine token for cloud Server
@@ -930,7 +930,7 @@ namespace OpenBots.Server.SDK.Api
 
             return new ApiResponse<Object>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
-                null);
+                localVarResponse.Content);
         }
      }
 }

@@ -71,7 +71,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="credentialName">Credential name</param>
         /// <param name="apiVersion"></param>
         /// <returns>Credential</returns>
-        Credential ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGet(string credentialName, string apiVersion);
+        Credential ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGet(string credentialName, string apiVersion, string organizationId);
 
         /// <summary>
         /// Provides a Credential&#x27;s details for a particular Credential name
@@ -83,7 +83,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="credentialName">Credential name</param>
         /// <param name="apiVersion"></param>
         /// <returns>ApiResponse of Credential</returns>
-        ApiResponse<Credential> ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGetWithHttpInfo(string credentialName, string apiVersion);
+        ApiResponse<Credential> ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGetWithHttpInfo(string credentialName, string apiVersion, string organizationId);
         /// <summary>
         /// Provides a list of all credentials
         /// </summary>
@@ -981,9 +981,9 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="credentialName">Credential name</param>
         /// <param name="apiVersion"></param>
         /// <returns>Credential</returns>
-        public Credential ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGet(string credentialName, string apiVersion)
+        public Credential ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGet(string credentialName, string apiVersion, string organizationId)
         {
-            ApiResponse<Credential> localVarResponse = ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGetWithHttpInfo(credentialName, apiVersion);
+            ApiResponse<Credential> localVarResponse = ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGetWithHttpInfo(credentialName, apiVersion, organizationId);
             return localVarResponse.Data;
         }
 
@@ -994,7 +994,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="credentialName">Credential name</param>
         /// <param name="apiVersion"></param>
         /// <returns>ApiResponse of Credential</returns>
-        public ApiResponse<Credential> ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGetWithHttpInfo(string credentialName, string apiVersion)
+        public ApiResponse<Credential> ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGetWithHttpInfo(string credentialName, string apiVersion, string organizationId)
         {
             // verify the required parameter 'credentialName' is set
             if (credentialName == null)
@@ -1004,6 +1004,8 @@ namespace OpenBots.Server.SDK.Api
                 throw new ApiException(400, "Missing required parameter 'apiVersion' when calling CredentialsApi->ApiVapiVersionCredentialsGetCredentialByNameCredentialNameGet");
 
             var localVarPath = "/api/v{apiVersion}/Credentials/GetCredentialByName/{credentialName}";
+            if (!string.IsNullOrEmpty(organizationId))
+                localVarPath = "/api/v{apiVersion}/Organizations/{organizationId}/Credentials/GetCredentialByName/{credentialName}";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new List<KeyValuePair<String, String>>();
             var localVarHeaderParams = new Dictionary<String, String>(this.Configuration.DefaultHeader);
@@ -1026,6 +1028,7 @@ namespace OpenBots.Server.SDK.Api
 
             if (credentialName != null) localVarPathParams.Add("credentialName", this.Configuration.ApiClient.ParameterToString(credentialName)); // path parameter
             if (apiVersion != null) localVarPathParams.Add("apiVersion", this.Configuration.ApiClient.ParameterToString(apiVersion)); // path parameter
+            if (!string.IsNullOrEmpty(organizationId)) localVarPathParams.Add("organizationId", this.Configuration.ApiClient.ParameterToString(organizationId)); // path parameter
             // authentication (oauth2) required
             // bearer required
             if (!String.IsNullOrEmpty(this.Configuration.AccessToken))
@@ -1046,9 +1049,11 @@ namespace OpenBots.Server.SDK.Api
                 if (exception != null) throw exception;
             }
 
+            var credential = JsonConvert.DeserializeObject<Credential>(localVarResponse.Content);
+
             return new ApiResponse<Credential>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
-                (Credential)this.Configuration.ApiClient.Deserialize(localVarResponse, typeof(Credential)));
+                credential);
         }
 
         /// <summary>

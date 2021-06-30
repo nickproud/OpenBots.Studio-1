@@ -7,6 +7,20 @@ namespace OpenBots.Core.Server.User
 {
     public class EnvironmentSettings
     {
+        public string AgentId { get; set; }
+        public string ServerType { get; set; }
+        public string OrganizationName { get; set; }
+        public string ServerUrl { get; set; }
+
+        public EnvironmentSettings()
+        {
+            var settings = GetAgentSettings();
+            AgentId = settings["AgentId"];
+            ServerType = settings["OpenBotsServerType"];
+            OrganizationName = settings["OpenBotsOrganizationName"];
+            ServerUrl = settings["OpenBotsServerUrl"];
+        }
+
         public static string EnvironmentVariableName { get; } = "OpenBots_Agent_Data_Path";
         public static string EnvironmentVariableValue { get; } = Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -15,11 +29,6 @@ namespace OpenBots.Core.Server.User
                         );
         public static string SettingsFileName { get; } = "OpenBots.settings";
         public static string apiVersion { get; } = "1";
-        public static Dictionary<string, string> settings = GetAgentSettings();
-        public static string agentId { get; } = settings["AgentId"];
-        public static string serverType = settings["OpenBotsServerType"];
-        public static string organizationName = settings["OpenBotsOrganizationName"];
-        public static string serverUrl = settings["OpenBotsServerUrl"];
         public static string environment { get; } = "DEV"; // use when developing
         //string environment = "LIVE"; // default is LIVE
 
