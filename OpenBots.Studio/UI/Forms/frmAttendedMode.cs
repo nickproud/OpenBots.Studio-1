@@ -73,7 +73,7 @@ namespace OpenBots.UI.Forms
             Left = (area.Width - Width) / 2;
         }
 
-        private void uiBtnRun_Click(object sender, EventArgs e)
+        private async void uiBtnRun_Click(object sender, EventArgs e)
         {
             if (cboSelectedProject.Text == $"No published projects in '{_publishedProjectsPath}'")
                 return;
@@ -128,14 +128,14 @@ namespace OpenBots.UI.Forms
                     switch (_appSettings.EngineSettings.LoggingSinkType)
                     {
                         case SinkType.File:
-                            if (string.IsNullOrEmpty(_appSettings.EngineSettings.LoggingValue1.Trim()))
-                                _appSettings.EngineSettings.LoggingValue1 = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
+                            if (string.IsNullOrEmpty(_appSettings.EngineSettings.LoggingValue.Trim()))
+                                _appSettings.EngineSettings.LoggingValue = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
 
-                            engineLogger = new Logging().CreateFileLogger(_appSettings.EngineSettings.LoggingValue1, Serilog.RollingInterval.Day,
+                            engineLogger = new LoggingMethods().CreateFileLogger(_appSettings.EngineSettings.LoggingValue, Serilog.RollingInterval.Day,
                                 _appSettings.EngineSettings.MinLogLevel);
                             break;
                         case SinkType.HTTP:
-                            engineLogger = new Logging().CreateHTTPLogger(projectName, _appSettings.EngineSettings.LoggingValue1, _appSettings.EngineSettings.MinLogLevel);
+                            engineLogger = new LoggingMethods().CreateHTTPLogger(projectName, _appSettings.EngineSettings.LoggingValue, _appSettings.EngineSettings.MinLogLevel);
                             break;
                     }
 
@@ -146,7 +146,8 @@ namespace OpenBots.UI.Forms
                 case ProjectType.Python:
                 case ProjectType.TagUI:
                 case ProjectType.CSScript:
-                    ExecutionManager.RunTextEditorProject(configPath, project.ProjectArguments);
+                case ProjectType.PowerShell:
+                    await ExecutionManager.RunTextEditorProject(configPath, project.ProjectArguments);
                     break;
             }
             

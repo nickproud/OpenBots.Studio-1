@@ -71,6 +71,8 @@ namespace OpenBots.NativeServer
 
                 string command = serverCommunication.ReadMessage();
                 var j = new ResponseConfirmation(command);
+                var commandData = JObject.Parse(j.Message);
+                var timeout = Convert.ToInt32(commandData["Timeout"]);
 
                 bool waitForReponse = true;
                 bool processResponse = true;
@@ -83,7 +85,16 @@ namespace OpenBots.NativeServer
                         reply = a.Data;
                     }
 
-                    waitForReponse = false;
+                    if(reply != null)
+                    {
+                        if (reply.ToString().Contains("CommandSuccess") || reply.ToString().Contains("outerText") || reply.ToString().Contains("stopped"))
+                        {
+                            processResponse = false;
+                            waitForReponse = false;
+                        }
+                        else if (processResponse)
+                            Host.SendMessage(j.GetJObject());
+                    }
                 };
                 Host.SendMessage(j.GetJObject());
 
@@ -91,16 +102,19 @@ namespace OpenBots.NativeServer
                 sw.Start();
                 while (waitForReponse)
                 {
-                    if (sw.ElapsedMilliseconds == (60 * 1000))
+                    if (sw.ElapsedMilliseconds > (timeout * 1000))
                     {
-                        //We've timed out
-                        waitForReponse = false;
-                        processResponse = false;
+                        if (sw.ElapsedMilliseconds > (30 * 1000) || reply != null)
+                        {
+                            //We've timed out
+                            waitForReponse = false;
+                            processResponse = false;
+                        }
                     }
                 }
 
                 string response = "";
-                if (processResponse && reply != null)
+                if (reply != null)
                 {
                     //Send reply back
                     response = reply.ToString();
@@ -149,4 +163,4 @@ namespace OpenBots.NativeServer
             }
         }
     }
-    }
+}

@@ -1,11 +1,10 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -36,8 +35,6 @@ namespace OpenBots.Commands.WebBrowser
 			SelectionName = "Selenium Navigate Forward";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
-
-			v_InstanceName = "DefaultBrowser";
 		}
 
 		public async override Task RunCommand(object sender)

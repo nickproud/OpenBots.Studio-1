@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommandUtilities;
@@ -53,6 +53,7 @@ namespace OpenBots.Commands.Image
 		[Required]
 		[DisplayName("Element Action")]
 		[PropertyUISelectionOption("Click Image")]
+		[PropertyUISelectionOption("Hover Over Image")]
 		[PropertyUISelectionOption("Set Text")]
 		[PropertyUISelectionOption("Set Secure Text")]
 		[PropertyUISelectionOption("Image Exists")]
@@ -201,7 +202,7 @@ namespace OpenBots.Commands.Image
 
 			if (element == null)
             {
-				FormsHelper.ShowAllForms(engine.AutomationEngineContext.IsDebugMode);
+				FormsHelper.ShowAllForms(engine.EngineContext.IsDebugMode);
 				throw new Exception("Specified image was not found in window!");
 			}
 
@@ -284,6 +285,31 @@ namespace OpenBots.Commands.Image
 						var mouseY = clickPositionPoint.Y + yAdjust;
 						User32Functions.SendMouseMove(mouseX, mouseY, clickType);
 						break;
+					case "Hover Over Image":
+						string hoverPosition = (from rw in v_ImageActionParameterTable.AsEnumerable()
+										 where rw.Field<string>("Parameter Name") == "Hover Position"
+										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						string hoverTime = (from rw in v_ImageActionParameterTable.AsEnumerable()
+												where rw.Field<string>("Parameter Name") == "Hover Time (Seconds)"
+												select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						xAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
+										 where rw.Field<string>("Parameter Name") == "X Adjustment"
+										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						xAdjust = (int)await xAdjustString.EvaluateCode(engine);
+						yAdjustString = (from rw in v_ImageActionParameterTable.AsEnumerable()
+										 where rw.Field<string>("Parameter Name") == "Y Adjustment"
+										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						yAdjust = (int)await yAdjustString.EvaluateCode(engine);
+						int evaluatedHoverTime = (int)await hoverTime.EvaluateCode(engine) * 1000;
+
+						Point hoverPositionPoint = GetClickPosition(hoverPosition, element);
+
+						//move mouse to position
+						var hoverX = hoverPositionPoint.X + xAdjust;
+						var hoverY = hoverPositionPoint.Y + yAdjust;
+						User32Functions.SendMouseMove(hoverX, hoverY, "");
+						Thread.Sleep(evaluatedHoverTime);
+						break;
 
 					case "Set Text":
 						string textToSet = (from rw in v_ImageActionParameterTable.AsEnumerable()
@@ -361,11 +387,11 @@ namespace OpenBots.Commands.Image
 					default:
 						break;
 				}
-				FormsHelper.ShowAllForms(engine.AutomationEngineContext.IsDebugMode);
+				FormsHelper.ShowAllForms(engine.EngineContext.IsDebugMode);
 			}
 			catch (Exception ex)
 			{
-				FormsHelper.ShowAllForms(engine.AutomationEngineContext.IsDebugMode);
+				FormsHelper.ShowAllForms(engine.EngineContext.IsDebugMode);
 				throw ex;
 			}
 		}
@@ -419,7 +445,20 @@ namespace OpenBots.Commands.Image
 					_imageGridViewHelper.Rows[1].Cells[1] = mouseClickPositionBox;
 
 					break;
+				case "Hover Over Image":
+					foreach (var ctrl in _imageParameterControls)
+						ctrl.Show();
 
+					if (sender != null)
+					{
+						actionParameters.Rows.Add("Hover Position", "Center");
+						actionParameters.Rows.Add("Hover Time (Seconds)", 1);
+						actionParameters.Rows.Add("X Adjustment", 0);
+						actionParameters.Rows.Add("Y Adjustment", 0);
+					}
+
+					_imageGridViewHelper.Rows[0].Cells[1] = mouseClickPositionBox;
+					break;
 				case "Set Text":
 					foreach (var ctrl in _imageParameterControls)
 						ctrl.Show();

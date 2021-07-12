@@ -1,5 +1,5 @@
 ﻿using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
@@ -10,16 +10,17 @@ namespace OpenBots.Commands.If
 {
     [Serializable]
     [Category("If Commands")]
-    [Description("This command signifies the exit point of If action(s) and is required for all the Begin If commands.")]
+    [Description("This command signifies the exit point of an If command and is required for all If commands.")]
     public class EndIfCommand : ScriptCommand
     {
+        public string IfType { get; set; }
+
         public EndIfCommand()
         {
             CommandName = "EndIfCommand";
             SelectionName = "End If";
             CommandEnabled = true;
             CommandIcon = Resources.command_end_if;
-
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -31,7 +32,7 @@ namespace OpenBots.Commands.If
 
         public override string GetDisplayValue()
         {
-            return "End If";
+            return $"End {IfType}";
         }
     }
 }

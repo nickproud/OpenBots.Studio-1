@@ -168,6 +168,7 @@ namespace OpenBots.Server.SDK.Client
                 pathParams, contentType);
 
             // set timeout
+            
             RestClient.Timeout = Configuration.Timeout;
             // set user agent
             RestClient.UserAgent = Configuration.UserAgent;
@@ -201,7 +202,7 @@ namespace OpenBots.Server.SDK.Client
                 path, method, queryParams, postBody, headerParams, formParams, fileParams,
                 pathParams, contentType);
             InterceptRequest(request);
-            var response = RestClient.ExecuteAsync(request).Result;
+            var response = RestClient.ExecuteTaskAsync(request).Result;
             InterceptResponse(request, response);
             return (Object)response;
         }

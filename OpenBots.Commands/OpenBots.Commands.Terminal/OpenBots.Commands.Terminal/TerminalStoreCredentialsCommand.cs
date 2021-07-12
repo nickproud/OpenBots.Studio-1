@@ -3,7 +3,7 @@ using OpenBots.Commands.Terminal.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -55,7 +55,6 @@ namespace OpenBots.Commands.Terminal
 			SelectionName = "Store Credentials";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_system;
-			v_InstanceName = "DefaultTerminal";
 		}
 
 		public async override Task RunCommand(object sender)

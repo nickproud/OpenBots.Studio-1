@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using OpenBots.UI.CustomControls.CustomUIControls;
+using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms.Supplement_Forms
 {
@@ -40,7 +41,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.uiBtnOk = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnCancel = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.lblElementNameError = new System.Windows.Forms.Label();
-            this.dgvDefaultValue = new System.Windows.Forms.DataGridView();
+            this.dgvDefaultValue = new OpenBots.UI.CustomControls.CustomUIControls.UIDataGridView();
             this.enabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.parameterName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.parameterValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -82,7 +83,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.txtElementName.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtElementName.ForeColor = System.Drawing.Color.SteelBlue;
             this.txtElementName.Location = new System.Drawing.Point(21, 167);
-            this.txtElementName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtElementName.Margin = new System.Windows.Forms.Padding(4);
             this.txtElementName.Name = "txtElementName";
             this.txtElementName.Size = new System.Drawing.Size(563, 32);
             this.txtElementName.TabIndex = 16;
@@ -181,18 +182,22 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.dgvDefaultValue.AllowUserToResizeRows = false;
             this.dgvDefaultValue.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvDefaultValue.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.dgvDefaultValue.BorderColor = System.Drawing.Color.Empty;
             this.dgvDefaultValue.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvDefaultValue.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.enabled,
             this.parameterName,
             this.parameterValue});
             this.dgvDefaultValue.DataBindings.Add(new System.Windows.Forms.Binding("DataSource", this, "ElementValueDT", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.dgvDefaultValue.IsDoubleBuffered = false;
+            this.dgvDefaultValue.ListBoxShown = false;
             this.dgvDefaultValue.Location = new System.Drawing.Point(21, 345);
             this.dgvDefaultValue.Name = "dgvDefaultValue";
             this.dgvDefaultValue.RowHeadersWidth = 51;
             this.dgvDefaultValue.RowTemplate.Height = 24;
             this.dgvDefaultValue.Size = new System.Drawing.Size(563, 283);
             this.dgvDefaultValue.TabIndex = 28;
+            this.dgvDefaultValue.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgvDefaultValue_EditingControlShowing);
             // 
             // enabled
             // 
@@ -237,11 +242,12 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.Controls.Add(this.lblDefineName);
             this.Controls.Add(this.lblHeader);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.MinimumSize = new System.Drawing.Size(627, 629);
             this.Name = "frmAddElement";
             this.Text = "Add Element";
             this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmAddElement_FormClosing);
             this.Load += new System.EventHandler(this.frmAddElement_Load);
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnOk)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).EndInit();
@@ -262,7 +268,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private OpenBots.Core.UI.Controls.UIPictureButton uiBtnCancel;
         public System.Windows.Forms.TextBox txtElementName;
         private System.Windows.Forms.Label lblElementNameError;
-        private System.Windows.Forms.DataGridView dgvDefaultValue;
+        private UIDataGridView dgvDefaultValue;
         private DataGridViewCheckBoxColumn enabled;
         private DataGridViewTextBoxColumn parameterName;
         private DataGridViewTextBoxColumn parameterValue;

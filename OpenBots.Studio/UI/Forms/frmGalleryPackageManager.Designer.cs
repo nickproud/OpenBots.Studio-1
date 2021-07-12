@@ -62,6 +62,7 @@ namespace OpenBots.UI.Forms
             this.pnlProjectDetails = new OpenBots.UI.CustomControls.CustomUIControls.UIPanel();
             this.tlpMetadata = new System.Windows.Forms.TableLayoutPanel();
             this.pnlMetadata = new OpenBots.UI.CustomControls.CustomUIControls.UIPanel();
+            this.cbxDefaultPackage = new System.Windows.Forms.CheckBox();
             this.lblDescription = new System.Windows.Forms.Label();
             this.lblPublishDate = new System.Windows.Forms.Label();
             this.lblDownloadsLabel = new System.Windows.Forms.Label();
@@ -84,7 +85,6 @@ namespace OpenBots.UI.Forms
             this.uiBtnCancel = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.tvPackageFeeds = new OpenBots.UI.CustomControls.CustomUIControls.UITreeView();
             this.imlNodes = new System.Windows.Forms.ImageList(this.components);
-            this.btnSyncCommandsAndStudio = new System.Windows.Forms.Button();
             this.tlpPackageLayout.SuspendLayout();
             this.pnlNugetPackages.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tpbLoadingSpinner)).BeginInit();
@@ -113,7 +113,6 @@ namespace OpenBots.UI.Forms
             this.tlpPackageLayout.Controls.Add(this.pnlProjectDetails, 2, 1);
             this.tlpPackageLayout.Controls.Add(this.pnlFinishButtons, 2, 2);
             this.tlpPackageLayout.Controls.Add(this.tvPackageFeeds, 0, 1);
-            this.tlpPackageLayout.Controls.Add(this.btnSyncCommandsAndStudio, 0, 0);
             this.tlpPackageLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpPackageLayout.Location = new System.Drawing.Point(0, 0);
             this.tlpPackageLayout.Name = "tlpPackageLayout";
@@ -405,6 +404,7 @@ namespace OpenBots.UI.Forms
             // 
             // pnlMetadata
             // 
+            this.pnlMetadata.Controls.Add(this.cbxDefaultPackage);
             this.pnlMetadata.Controls.Add(this.lblDescription);
             this.pnlMetadata.Controls.Add(this.lblPublishDate);
             this.pnlMetadata.Controls.Add(this.lblDownloadsLabel);
@@ -429,6 +429,20 @@ namespace OpenBots.UI.Forms
             theme4.BgGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             theme4.BgGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             this.pnlMetadata.Theme = theme4;
+            // 
+            // cbxDefaultPackage
+            // 
+            this.cbxDefaultPackage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxDefaultPackage.AutoSize = true;
+            this.cbxDefaultPackage.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
+            this.cbxDefaultPackage.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.cbxDefaultPackage.Location = new System.Drawing.Point(379, 3);
+            this.cbxDefaultPackage.Name = "cbxDefaultPackage";
+            this.cbxDefaultPackage.Size = new System.Drawing.Size(180, 32);
+            this.cbxDefaultPackage.TabIndex = 61;
+            this.cbxDefaultPackage.Text = "Default Package";
+            this.cbxDefaultPackage.UseVisualStyleBackColor = true;
+            this.cbxDefaultPackage.CheckedChanged += new System.EventHandler(this.cbxDefaultPackage_CheckedChanged);
             // 
             // lblDescription
             // 
@@ -690,20 +704,6 @@ namespace OpenBots.UI.Forms
             this.imlNodes.Images.SetKeyName(2, "nugetIcon");
             this.imlNodes.Images.SetKeyName(3, "settings.png");
             // 
-            // btnSyncCommandsAndStudio
-            // 
-            this.btnSyncCommandsAndStudio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSyncCommandsAndStudio.Font = new System.Drawing.Font("Segoe UI Semibold", 12F);
-            this.btnSyncCommandsAndStudio.Location = new System.Drawing.Point(3, 114);
-            this.btnSyncCommandsAndStudio.Name = "btnSyncCommandsAndStudio";
-            this.btnSyncCommandsAndStudio.Size = new System.Drawing.Size(294, 36);
-            this.btnSyncCommandsAndStudio.TabIndex = 41;
-            this.btnSyncCommandsAndStudio.Text = "Sync Commands and Studio";
-            this.btnSyncCommandsAndStudio.UseVisualStyleBackColor = true;
-            this.btnSyncCommandsAndStudio.Visible = false;
-            this.btnSyncCommandsAndStudio.Click += new System.EventHandler(this.btnSyncCommandsAndStudio_Click);
-            // 
             // frmGalleryPackageManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -774,7 +774,6 @@ namespace OpenBots.UI.Forms
         private UITreeView tvPackageFeeds;
         private System.Windows.Forms.ImageList imlNodes;
         private System.Windows.Forms.Button btnInstall;
-        private UITransparentPictureBox tpbLoadingSpinner;
         private UIPanel pnlNugetPackages;
         private UIListBox lbxNugetPackages;
         public System.Windows.Forms.TextBox txtInstalled;
@@ -783,6 +782,7 @@ namespace OpenBots.UI.Forms
         private System.Windows.Forms.CheckBox chbxIncludePrerelease;
         private UIPanel pnlMetadata;
         private System.Windows.Forms.TableLayoutPanel tlpMetadata;
-        private System.Windows.Forms.Button btnSyncCommandsAndStudio;
+        private UITransparentPictureBox tpbLoadingSpinner;
+        private System.Windows.Forms.CheckBox cbxDefaultPackage;
     }
 }

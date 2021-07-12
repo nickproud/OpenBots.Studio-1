@@ -1,11 +1,10 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using OpenQA.Selenium;
 using SHDocVw;
 using System;
@@ -20,7 +19,7 @@ namespace OpenBots.Commands.WebBrowser
 {
 	[Serializable]
 	[Category("Web Browser Commands")]
-	[Description("This command allows you to navigate a Selenium web browser session to a given URL or resource.")]
+	[Description("This command navigates a Selenium web browser session to a provided URL.")]
 	public class SeleniumNavigateToURLCommand : ScriptCommand
 	{
 		[Required]
@@ -48,7 +47,6 @@ namespace OpenBots.Commands.WebBrowser
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
-			v_InstanceName = "DefaultBrowser";
 			v_URL = "\"https://\"";
 		}
 

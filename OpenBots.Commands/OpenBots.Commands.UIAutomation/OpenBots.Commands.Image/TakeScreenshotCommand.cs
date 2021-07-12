@@ -1,11 +1,10 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +16,7 @@ using System.Windows.Forms;
 
 namespace OpenBots.Commands.Image
 {
-	[Serializable]
+    [Serializable]
 	[Category("Image Commands")]
 	[Description("This command takes a screenshot and saves it to a specified location.")]
 	public class TakeScreenshotCommand : ScriptCommand
@@ -25,7 +24,7 @@ namespace OpenBots.Commands.Image
 		[Required]
 		[DisplayName("Window Name")]
 		[Description("Select the name of the window to take a screenshot of.")]
-		[SampleUsage("\"Untitled - Notepad\" || \"Current Window\" || vWindow")]
+		[SampleUsage("\"Untitled - Notepad\" || \"Current Window\" || \"Desktop\" || vWindow")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("CaptureWindowHelper", typeof(UIAdditionalHelperType))]
@@ -67,7 +66,7 @@ namespace OpenBots.Commands.Image
 			CommandEnabled = true;
 			CommandIcon = Resources.command_camera;
 
-			v_WindowName = "\"Current Window\"";
+			v_WindowName = "\"Desktop\"";
 		}
 
 		public async override Task RunCommand(object sender)
@@ -76,18 +75,14 @@ namespace OpenBots.Commands.Image
 			string windowName = (string)await v_WindowName.EvaluateCode(engine);
 			string vFolderPath = (string)await v_FolderPath.EvaluateCode(engine);
 			string vFileName = (string)await v_FileName.EvaluateCode(engine);
+			
 			string vFilePath = Path.Combine(vFolderPath, vFileName);
-
-			Bitmap image;
-
-			if (windowName == "Current Window")
-				image = ImageMethods.Screenshot();
-			else
-				image = User32Functions.CaptureWindow(windowName);
+			Bitmap image = User32Functions.CaptureWindow(windowName);
 
 			image.Save(vFilePath);
 			image.SetVariableValue(engine, v_OutputUserVariableName);
 		}
+
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
@@ -99,7 +94,6 @@ namespace OpenBots.Commands.Image
 
 			return RenderedControls;
 		}
-
 
 		public override string GetDisplayValue()
 		{

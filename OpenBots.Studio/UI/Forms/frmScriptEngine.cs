@@ -12,29 +12,25 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-using Autofac;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
-using OpenBots.Core.IO;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.DTOs;
 using OpenBots.Core.UI.Forms;
-using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Engine;
 using OpenBots.Nuget;
 using OpenBots.Properties;
-using OpenBots.UI.CustomControls;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.Utilities;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -44,28 +40,19 @@ namespace OpenBots.UI.Forms
 {
     public partial class frmScriptEngine : UIForm, IfrmScriptEngine
     {
-        //all variables used by this form
         #region Form Variables
-        private EngineSettings _engineSettings;
-        public string JsonData { get; set; }
-        public bool ServerExecution { get; set; }
-        private bool _advancedDebug;
-        public AutomationEngineInstance EngineInstance { get; set; }
-        public string Result { get; set; }
+        public EngineContext EngineContext { get; set; } = new EngineContext();
+        public IAutomationEngineInstance EngineInstance { get; set; }
         public bool IsNewTaskSteppedInto { get; set; }
         public bool IsNewTaskResumed { get; set; }
         public bool IsNewTaskCancelled { get; set; }
         public bool IsHiddenTaskEngine { get; set; }
         public int DebugLineNumber { get; set; }
-        public bool IsDebugMode { get; set; }
         public bool CloseWhenDone { get; set; }
-        public bool ClosingAllEngines { get; set; }
-        public bool IsChildEngine { get; set; }
-        public ICommandControls CommandControls { get; set; }
-        public bool IsScheduledOrAttendedTask { get; set; }
+        public bool ClosingAllEngines { get; set; }   
+        
         private string _configPath;
         private bool _isParentScheduledTask;
-        public EngineContext ScriptEngineContext { get; set; } = new EngineContext();
         #endregion
 
         private const int CP_NOCLOSE_BUTTON = 0x200;
@@ -81,56 +68,13 @@ namespace OpenBots.UI.Forms
 
         //events and methods
         #region Form Events/Methods
-        public frmScriptEngine(EngineContext engineContext, bool blnCloseWhenDone = false, bool isDebugMode = false)
+        public frmScriptEngine(EngineContext engineContext, bool blnCloseWhenDone = false)
         {
             InitializeComponent();
 
-            ScriptEngineContext = engineContext;
-
+            EngineContext = engineContext;
             engineContext.ScriptEngine = this;
-
-            IsDebugMode = isDebugMode;
-
-            CloseWhenDone = blnCloseWhenDone;
-
-            //get engine settings
-            _engineSettings = new ApplicationSettings().GetOrCreateApplicationSettings().EngineSettings;
-
-            if (isDebugMode)
-            {
-                _engineSettings.ShowDebugWindow = true;
-                _engineSettings.ShowAdvancedDebugOutput = true;
-            }
-
-            //determine whether to show listbox or not
-            _advancedDebug = _engineSettings.ShowAdvancedDebugOutput;
-
-            //if listbox should be shown
-            if (_advancedDebug)
-            {
-                lstSteppingCommands.Show();
-                lblMainLogo.Show();
-                pbBotIcon.Hide();
-                lblAction.Hide();
-            }
-            else
-            {
-                lstSteppingCommands.Hide();
-                lblMainLogo.Hide();
-                pbBotIcon.Show();
-                lblAction.Show();
-            }
-
-            //apply debug window setting
-            if (!_engineSettings.ShowDebugWindow)
-            {
-                Visible = false;
-                Opacity = 0;
-            }
-
-            //add hooks for hot key cancellation
-            GlobalHook.HookStopped += new EventHandler(OnHookStopped);
-            GlobalHook.StartEngineCancellationHook(_engineSettings.CancellationKey);
+            CloseWhenDone = blnCloseWhenDone;      
         }
 
         //Used for Scheduled/Attended Tasks
@@ -139,143 +83,81 @@ namespace OpenBots.UI.Forms
             InitializeComponent();
             
             uiBtnScheduleManagement.Visible = true;
-
-            IsScheduledOrAttendedTask = true;
+          
             _configPath = pathToConfig;
             _isParentScheduledTask = true;
-            
+
             var scriptProject = Project.OpenProject(_configPath);
             string mainFileName = scriptProject.Main;
-            ScriptEngineContext.ProjectPath = new DirectoryInfo(_configPath).Parent.FullName;
-            string mainFilePath = Directory.GetFiles(ScriptEngineContext.ProjectPath, mainFileName, SearchOption.AllDirectories).FirstOrDefault();
+            EngineContext.ProjectPath = new DirectoryInfo(_configPath).Parent.FullName;
+            string mainFilePath = Directory.GetFiles(EngineContext.ProjectPath, mainFileName, SearchOption.AllDirectories).FirstOrDefault();
+
             if (mainFilePath == null)
                 throw new FileNotFoundException("Main script not found");
 
-            ScriptEngineContext.EngineLogger = engineLogger;
-
-            IsDebugMode = false;
-
+            EngineContext.EngineLogger = engineLogger;
+            EngineContext.IsDebugMode = false;
+            EngineContext.IsScheduledOrAttendedTask = true;
             CloseWhenDone = true;
 
             //set file
-            ScriptEngineContext.FilePath = mainFilePath;
+            EngineContext.FilePath = mainFilePath;   
+        }
 
+        public IfrmScriptEngine CreateScriptEngineForm(EngineContext engineContext, bool blnCloseWhenDone)
+        {
+            return new frmScriptEngine(engineContext, blnCloseWhenDone);
+        }
+
+        private void frmProcessingStatus_Load(object sender, EventArgs e)
+        {
             //get engine settings
-            _engineSettings = new ApplicationSettings().GetOrCreateApplicationSettings().EngineSettings;
-
-            //determine whether to show listbox or not
-            _advancedDebug = _engineSettings.ShowAdvancedDebugOutput;
-
-            //if listbox should be shown
-            if (_advancedDebug)
-            {
-                lstSteppingCommands.Show();
-                lblMainLogo.Show();
-                pbBotIcon.Hide();
-                lblAction.Hide();
-            }
-            else
-            {
-                lstSteppingCommands.Hide();
-                lblMainLogo.Hide();
-                pbBotIcon.Show();
-                lblAction.Show();
-            }
-
-            //apply debug window setting
-            if (!_engineSettings.ShowDebugWindow)
-            {
-                Visible = false;
-                Opacity = 0;
-            }
+            EngineContext.EngineSettings = new ApplicationSettings().GetOrCreateApplicationSettings().EngineSettings;
 
             //add hooks for hot key cancellation
             GlobalHook.HookStopped += new EventHandler(OnHookStopped);
-            GlobalHook.StartEngineCancellationHook(_engineSettings.CancellationKey);
-        }
+            GlobalHook.StartEngineCancellationHook(EngineContext.EngineSettings.CancellationKey);
+            GlobalHook.KeyDownEvent += GlobalHook_KeyDownEvent;
 
-        public frmScriptEngine()
-        {
-            InitializeComponent();
-
-            //set file
-            ScriptEngineContext.FilePath = null;
-
-            //get engine settings
-            _engineSettings = new ApplicationSettings().GetOrCreateApplicationSettings().EngineSettings;
-
-            //initialize Logger
-            switch (_engineSettings.LoggingSinkType)
-            {
-                case SinkType.File:
-                    if (string.IsNullOrEmpty(_engineSettings.LoggingValue1.Trim()))
-                        _engineSettings.LoggingValue1 = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
-
-                    ScriptEngineContext.EngineLogger = new Logging().CreateFileLogger(_engineSettings.LoggingValue1, Serilog.RollingInterval.Day,
-                        _engineSettings.MinLogLevel);
-                    break;
-                case SinkType.HTTP:
-                    ScriptEngineContext.EngineLogger = new Logging().CreateHTTPLogger("", _engineSettings.LoggingValue1, _engineSettings.MinLogLevel);
-                    break;
-            }
-
-            //determine whether to show listbox or not
-            _advancedDebug = _engineSettings.ShowAdvancedDebugOutput;
-
-            //if listbox should be shown
-            if (_advancedDebug)
-            {
-                lstSteppingCommands.Show();
-                lblMainLogo.Show();
-                pbBotIcon.Hide();
-                lblAction.Hide();
-            }
-            else
-            {
-                lstSteppingCommands.Hide();
-                lblMainLogo.Hide();
-                pbBotIcon.Show();
-                lblAction.Show();
-            }
-
-            //apply debug window setting
-            if (!_engineSettings.ShowDebugWindow)
-            {
-                Visible = false;
-                Opacity = 0;
-            }
-
-            //add hooks for hot key cancellation
-            GlobalHook.HookStopped += new EventHandler(OnHookStopped);
-            GlobalHook.StartEngineCancellationHook(_engineSettings.CancellationKey);
-        }
-
-        private void frmProcessingStatus_LoadAsync(object sender, EventArgs e)
-        {
             if (_isParentScheduledTask)
             {
                 List<string> assemblyList = NugetPackageManager.LoadPackageAssemblies(_configPath, true);
                 Dictionary<string, List<Type>> groupedTypes = new Dictionary<string, List<Type>>();
                 Dictionary<string, List<AssemblyReference>> allNamespaces = new Dictionary<string, List<AssemblyReference>>();
-                Dictionary<string, List<AssemblyReference>> importedNamespaces = new Dictionary<string, List<AssemblyReference>>();
-                var builder = AppDomainSetupManager.LoadBuilder(assemblyList, groupedTypes, allNamespaces, importedNamespaces);
-                ScriptEngineContext.Container = builder.Build();
+                var builder = AppDomainSetupManager.LoadBuilder(assemblyList, groupedTypes, allNamespaces, ScriptDefaultNamespaces.DefaultNamespaces);// EngineContext.ImportedNamespaces);
+                EngineContext.Container = builder.Build();
             }
 
             //move engine form to bottom right and bring to front
-            if (_engineSettings.ShowDebugWindow)
+            if (EngineContext.EngineSettings.ShowDebugWindow || EngineContext.IsDebugMode)
             {
                 BringToFront();
                 MoveFormToBottomRight(this);
             }
+            else
+                MoveFormToBottomRight(this);
 
-            if (!ScriptEngineContext.IsDebugMode)
+            if (!EngineContext.IsDebugMode && !EngineContext.EngineSettings.ShowDebugWindow)
                 FormsHelper.HideForm(this);
 
-            CommandControls = new CommandControls();
+            //if listbox should be shown
+            if (EngineContext.EngineSettings.ShowAdvancedDebugOutput || EngineContext.IsDebugMode)
+            {
+                lstSteppingCommands.Show();
+                lblMainLogo.Show();
+                pbBotIcon.Hide();
+                lblAction.Hide();
+            }
+            else
+            {
+                lstSteppingCommands.Hide();
+                lblMainLogo.Hide();
+                pbBotIcon.Show();
+                lblAction.Show();
+            }
 
             //start running
-            EngineInstance = new AutomationEngineInstance(ScriptEngineContext);
+            EngineInstance = new AutomationEngineInstance(EngineContext);
 
             if (IsNewTaskSteppedInto)
             {
@@ -285,28 +167,20 @@ namespace OpenBots.UI.Forms
                 uiBtnStepOver.Visible = true;
                 uiBtnStepInto.Visible = true;
 
-                ScriptEngineContext.ScriptBuilder.CurrentEngine = this;
+                EngineContext.ScriptBuilder.CurrentEngine = this;
 
                 //toggle running flag to allow for tab selection
-                ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-                ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenOpenBotsFile(ScriptEngineContext.FilePath, true);
-                ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
+                EngineContext.ScriptBuilder.IsScriptRunning = false;
+                ((frmScriptBuilder)EngineContext.ScriptBuilder).OpenOpenBotsFile(EngineContext.FilePath, true);
+                EngineContext.ScriptBuilder.IsScriptRunning = true;
             }
 
             EngineInstance.ReportProgressEvent += Engine_ReportProgress;
             EngineInstance.ScriptFinishedEvent += Engine_ScriptFinishedEvent;
             EngineInstance.LineNumberChangedEvent += EngineInstance_LineNumberChangedEvent;
-            EngineInstance.AutomationEngineContext.ScriptEngine = this;
-            EngineInstance.IsServerExecution = ServerExecution;
+            EngineInstance.EngineContext.ScriptEngine = this;
 
-            if (JsonData == null)
-            {
-                EngineInstance.ExecuteScriptAsync();
-            }
-            else
-            {
-                EngineInstance.ExecuteScriptJson();
-            }
+            EngineInstance.ExecuteScriptAsync();
         }
 
         /// <summary>
@@ -314,14 +188,21 @@ namespace OpenBots.UI.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OnHookStopped(object sender, EventArgs e)
+        private void OnHookStopped(object sender, EventArgs e)
         {
             if (EngineInstance != null)
-            {
                 uiBtnCancel_Click(null, null);
-                EngineInstance.CancelScript();
-            }  
-            GlobalHook.HookStopped -= new EventHandler(OnHookStopped);
+
+            GlobalHook.HookStopped -= OnHookStopped;
+        }
+
+        private void GlobalHook_KeyDownEvent(object sender, KeyDownEventArgs e)
+        {
+            if (e.Key == GlobalHook.StopHookKey)
+            {
+                GlobalHook.KeyDownEvent -= GlobalHook_KeyDownEvent;
+                GlobalHook.StopHook();
+            }
         }
         #endregion
 
@@ -344,7 +225,7 @@ namespace OpenBots.UI.Forms
         /// <param name="e"></param>
         private void Engine_ScriptFinishedEvent(object sender, ScriptFinishedEventArgs e)
         {
-            if (IsChildEngine)
+            if (EngineContext.IsChildEngine)
                 CloseWhenDone = true;
 
             switch (e.Result)
@@ -354,15 +235,17 @@ namespace OpenBots.UI.Forms
                     UpdateUI("debug info (success)");
                     break;
                 case ScriptFinishedResult.Error:
-                    AddStatus("Error: " + e.Error, Color.Red);
+                    AddStatus($"Error: {e.Error}", Color.Red);
                     AddStatus("Script Completed With Errors!");
                     UpdateUI("debug info (error)");
+
                     if (_isParentScheduledTask)
                         CloseWhenDone = false;
                     break;
                 case ScriptFinishedResult.Cancelled:
                     AddStatus("Script Cancelled By User");
                     UpdateUI("debug info (cancelled)");
+
                     if (_isParentScheduledTask)
                         CloseWhenDone = false;
                     break;
@@ -370,8 +253,8 @@ namespace OpenBots.UI.Forms
                     break;
             }
 
-            Result = EngineInstance.TaskResult;
             AddStatus("Total Execution Time: " + e.ExecutionTime.ToString());
+
             try
             {
                 UpdateLineNumber(0);
@@ -383,9 +266,7 @@ namespace OpenBots.UI.Forms
             }
             
             if(CloseWhenDone)
-            {
-                ((frmScriptEngine)EngineInstance.AutomationEngineContext.ScriptEngine).Invoke((Action)delegate () { Close(); });
-            }
+                ((frmScriptEngine)EngineInstance.EngineContext.ScriptEngine).Invoke((Action)delegate () { Close(); });
         }
 
         private void EngineInstance_LineNumberChangedEvent(object sender, LineNumberChangedEventArgs e)
@@ -413,58 +294,10 @@ namespace OpenBots.UI.Forms
                     else
                     {
                         e.DrawBackground();
-                        e.Graphics.DrawString(item.Text, e.Font, new SolidBrush(item.Color),
-                                              e.Bounds);
+                        e.Graphics.DrawString(item.Text, e.Font, new SolidBrush(item.Color), e.Bounds);
                     }
+
                     e.DrawFocusRectangle();
-                }
-            }
-        }
-
-        public void UpdateCurrentEngineContext(IAutomationEngineInstance parentAutomationEngineIntance, IfrmScriptEngine childfrmScriptEngine, List<ScriptArgument> argumentList)
-        {
-            //get new variable list from the new task engine after it finishes running
-            var childEngine = ((frmScriptEngine)childfrmScriptEngine).EngineInstance;
-
-            var parentVariableList = parentAutomationEngineIntance.AutomationEngineContext.Variables;
-            var parentArgumentList = parentAutomationEngineIntance.AutomationEngineContext.Arguments;
-
-            //get new argument list from the new task engine after it finishes running
-            var childArgumentList = childfrmScriptEngine.ScriptEngineContext.Arguments;
-            foreach (var argument in argumentList)
-            {
-                if ((argument.Direction == ScriptArgumentDirection.Out || argument.Direction == ScriptArgumentDirection.InOut)
-                    && argument.AssignedVariable != null)
-                {
-                    var assignedParentVariable = parentVariableList.Where(v => v.VariableName == argument.AssignedVariable).FirstOrDefault();
-                    var assignedParentArgument = parentArgumentList.Where(a => a.ArgumentName == argument.AssignedVariable).FirstOrDefault();
-
-                    if (assignedParentVariable != null)
-                    {
-                        var newVarValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
-                        newVarValue.SetVariableValue(parentAutomationEngineIntance, assignedParentVariable.VariableName);
-                    }
-                    else if (assignedParentArgument != null)
-                    {
-                        var newArgValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
-                        newArgValue.SetVariableValue(parentAutomationEngineIntance, assignedParentArgument.ArgumentName);
-                    }
-                    else
-                    {
-                        throw new ArgumentException($"Unable to assign the value of '{argument.ArgumentName}' to '{argument.AssignedVariable}' " +
-                                                     "because no variable/argument with this name exists.");
-                    }
-                }
-            }
-
-            //get errors from new engine (if any)
-            var newEngineErrors = childEngine.ErrorsOccured;
-            if (newEngineErrors.Count > 0 && !(parentAutomationEngineIntance.LastExecutedCommand.CommandName == "RunTaskCommand" && parentAutomationEngineIntance.LastExecutedCommand.v_ErrorHandling == "Ignore Error"))
-            {
-                parentAutomationEngineIntance.ChildScriptFailed = true;
-                foreach (var error in newEngineErrors)
-                {
-                    parentAutomationEngineIntance.ErrorsOccured.Add(error);
                 }
             }
         }
@@ -499,16 +332,17 @@ namespace OpenBots.UI.Forms
                     if (IsHiddenTaskEngine)
                     {
                         //toggle running flag to allow for tab selection
-                        ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-                        ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenOpenBotsFile(ScriptEngineContext.FilePath, true);
-                        ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
+                        EngineContext.ScriptBuilder.IsScriptRunning = false;
+                        ((frmScriptBuilder)EngineContext.ScriptBuilder).OpenOpenBotsFile(EngineContext.FilePath, true);
+                        EngineContext.ScriptBuilder.IsScriptRunning = true;
 
-                        ScriptEngineContext.ScriptBuilder.CurrentEngine = this;
+                        EngineContext.ScriptBuilder.CurrentEngine = this;
                         IsNewTaskSteppedInto = true;
                         IsHiddenTaskEngine = false;
-                        ScriptEngineContext.ScriptBuilder.IsScriptPaused = false;                       
+                        EngineContext.ScriptBuilder.IsScriptPaused = false;                       
                     }
-                    ScriptEngineContext.ScriptBuilder.IsScriptPaused = false;
+
+                    EngineContext.ScriptBuilder.IsScriptPaused = false;
                     UpdateLineNumber(DebugLineNumber);
                 }
                 else if (text == "Pausing Before Exception")
@@ -519,17 +353,18 @@ namespace OpenBots.UI.Forms
                     
                     if (IsHiddenTaskEngine)
                     {
-                        ScriptEngineContext.ScriptBuilder.CurrentEngine = this;
+                        EngineContext.ScriptBuilder.CurrentEngine = this;
 
                         //toggle running flag to allow for tab selection
-                        ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-                        ((frmScriptBuilder)ScriptEngineContext.ScriptBuilder).OpenOpenBotsFile(ScriptEngineContext.FilePath, true);
-                        ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
+                        EngineContext.ScriptBuilder.IsScriptRunning = false;
+                        ((frmScriptBuilder)EngineContext.ScriptBuilder).OpenOpenBotsFile(EngineContext.FilePath, true);
+                        EngineContext.ScriptBuilder.IsScriptRunning = true;
 
                         IsNewTaskSteppedInto = true;
                         IsHiddenTaskEngine = false;
                     }
-                    ScriptEngineContext.ScriptBuilder.IsScriptPaused = false;
+
+                    EngineContext.ScriptBuilder.IsScriptPaused = false;
                     UpdateLineNumber(DebugLineNumber);
                 }
                 else
@@ -551,8 +386,8 @@ namespace OpenBots.UI.Forms
         /// <summary>
         /// Delegate for updating UI after Automation Engine finishes
         /// </summary>
-        /// <param name="message"></param>
-        public delegate void UpdateUIDelegate(string message);
+        /// <param name="mainLogoText"></param>
+        public delegate void UpdateUIDelegate(string mainLogoText);
         /// <summary>
         /// Standard UI updates after automation is finished running
         /// </summary>
@@ -576,10 +411,8 @@ namespace OpenBots.UI.Forms
                 uiBtnCancel.Visible = true;
                 uiBtnCancel.DisplayText = "Close";
 
-                if ((!_advancedDebug) && (mainLogoText.Contains("(error)")))
-                {
+                if ((!EngineContext.EngineSettings.ShowAdvancedDebugOutput) && (mainLogoText.Contains("(error)")))
                     pbBotIcon.Image = Resources.error;
-                }
 
                 if (mainLogoText.Contains("(error)"))
                 {
@@ -595,7 +428,7 @@ namespace OpenBots.UI.Forms
                 }
 
                 //begin auto close
-                if ((_engineSettings.AutoCloseDebugWindow) || (ServerExecution))
+                if (EngineContext.EngineSettings.AutoCloseDebugWindow)
                     tmrNotify.Enabled = true;
             }
         }
@@ -692,10 +525,8 @@ namespace OpenBots.UI.Forms
             {
                 DebugLineNumber = lineNumber;
 
-                if (ScriptEngineContext.ScriptBuilder != null && !IsHiddenTaskEngine)
-                {
-                    ScriptEngineContext.ScriptBuilder.DebugLine = lineNumber;
-                }
+                if (EngineContext.ScriptBuilder != null && !IsHiddenTaskEngine)
+                    EngineContext.ScriptBuilder.DebugLine = lineNumber;
             }
         }
         #endregion
@@ -755,6 +586,7 @@ namespace OpenBots.UI.Forms
                     Text = "[User Requested Cancellation]",
                     Color = Color.Black
                 };
+
                 lstSteppingCommands.Items.Add(commandsItem);
                 lstSteppingCommands.SelectedIndex = lstSteppingCommands.Items.Count - 1;
                 lblMainLogo.Text = "debug info (cancelling)";
@@ -779,6 +611,7 @@ namespace OpenBots.UI.Forms
                         Text = "[User Requested Pause]",
                         Color = Color.Red
                     };
+
                     lstSteppingCommands.Items.Add(commandsItem);
                     uiBtnPause.Image = Resources.engine_resume;
                     uiBtnPause.DisplayText = "Resume";
@@ -791,18 +624,22 @@ namespace OpenBots.UI.Forms
                         Text = "[User Requested Resume]",
                         Color = Color.Green
                     };
+
                     lstSteppingCommands.Items.Add(commandsItem);
                     uiBtnPause.Image = Resources.engine_pause;
                     uiBtnPause.DisplayText = "Pause";
                     uiBtnStepOver.Visible = false;
                     uiBtnStepInto.Visible = false;
-                    if (ScriptEngineContext.ScriptBuilder != null)
+
+                    if (EngineContext.ScriptBuilder != null)
                     {
-                        ScriptEngineContext.ScriptBuilder.IsScriptSteppedOver = false;
-                        ScriptEngineContext.ScriptBuilder.IsScriptSteppedInto = false;
+                        EngineContext.ScriptBuilder.IsScriptSteppedOver = false;
+                        EngineContext.ScriptBuilder.IsScriptSteppedInto = false;
                     }
+
                     if (IsNewTaskSteppedInto || !IsHiddenTaskEngine)
                         IsNewTaskResumed = true;
+
                     EngineInstance.ResumeScript();
                 }
 
@@ -824,32 +661,39 @@ namespace OpenBots.UI.Forms
                 uiBtnPause.DisplayText = "Pause";
                 uiBtnStepOver.Visible = false;
                 uiBtnStepInto.Visible = false;
-                if (ScriptEngineContext.ScriptBuilder != null)
+
+                if (EngineContext.ScriptBuilder != null)
                 {
-                    ScriptEngineContext.ScriptBuilder.IsScriptSteppedOver = false;
-                    ScriptEngineContext.ScriptBuilder.IsScriptSteppedInto = false;
+                    EngineContext.ScriptBuilder.IsScriptSteppedOver = false;
+                    EngineContext.ScriptBuilder.IsScriptSteppedInto = false;
                 }
+
                 if (IsNewTaskSteppedInto || !IsHiddenTaskEngine)
                     IsNewTaskResumed = true;
+
                 EngineInstance.ResumeScript();
             }
         }
 
         public void uiBtnStepOver_Click(object sender, EventArgs e)
         {
-            if (ScriptEngineContext.ScriptBuilder != null)
-                ScriptEngineContext.ScriptBuilder.IsScriptSteppedOver = true;
+            if (EngineContext.ScriptBuilder != null)
+                EngineContext.ScriptBuilder.IsScriptSteppedOver = true;
+
             if (IsNewTaskSteppedInto)
                 IsNewTaskResumed = false;
+
             EngineInstance.StepOverScript();
         }
 
         public void uiBtnStepInto_Click(object sender, EventArgs e)
         {
-            if (ScriptEngineContext.ScriptBuilder != null)
-                ScriptEngineContext.ScriptBuilder.IsScriptSteppedInto = true;
+            if (EngineContext.ScriptBuilder != null)
+                EngineContext.ScriptBuilder.IsScriptSteppedInto = true;
+
             if (IsNewTaskSteppedInto)
                 IsNewTaskResumed = false;
+
             EngineInstance.StepIntoScript();
         }
 
@@ -874,8 +718,10 @@ namespace OpenBots.UI.Forms
 
         private void frmScriptEngine_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (ScriptEngineContext.ScriptBuilder != null && !IsChildEngine)
-                ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
+            GlobalHook.KeyDownEvent -= GlobalHook_KeyDownEvent;
+
+            if (EngineContext.ScriptBuilder != null && !EngineContext.IsChildEngine)
+                EngineContext.ScriptBuilder.IsScriptRunning = false;
         }
     }
 }

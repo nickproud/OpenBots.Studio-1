@@ -31,11 +31,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCommandEditor));
             this.cboSelectedCommand = new System.Windows.Forms.ComboBox();
             this.flw_InputVariables = new System.Windows.Forms.FlowLayoutPanel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tlpCommandControls = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.uiBtnAdd = new OpenBots.Core.UI.Controls.UIPictureButton();
             this.uiBtnCancel = new OpenBots.Core.UI.Controls.UIPictureButton();
-            this.tableLayoutPanel1.SuspendLayout();
+            this.tlpCommandControls.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnAdd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).BeginInit();
@@ -74,23 +74,23 @@
             this.flw_InputVariables.TabIndex = 3;
             this.flw_InputVariables.WrapContents = false;
             // 
-            // tableLayoutPanel1
+            // tlpCommandControls
             // 
-            this.tableLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.cboSelectedCommand, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.flw_InputVariables, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 2);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 73F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(631, 761);
-            this.tableLayoutPanel1.TabIndex = 17;
+            this.tlpCommandControls.BackColor = System.Drawing.Color.Transparent;
+            this.tlpCommandControls.ColumnCount = 1;
+            this.tlpCommandControls.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpCommandControls.Controls.Add(this.cboSelectedCommand, 0, 0);
+            this.tlpCommandControls.Controls.Add(this.flw_InputVariables, 0, 1);
+            this.tlpCommandControls.Controls.Add(this.flowLayoutPanel1, 0, 2);
+            this.tlpCommandControls.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpCommandControls.Location = new System.Drawing.Point(0, 0);
+            this.tlpCommandControls.Name = "tlpCommandControls";
+            this.tlpCommandControls.RowCount = 3;
+            this.tlpCommandControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
+            this.tlpCommandControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpCommandControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 73F));
+            this.tlpCommandControls.Size = new System.Drawing.Size(631, 761);
+            this.tlpCommandControls.TabIndex = 17;
             // 
             // flowLayoutPanel1
             // 
@@ -144,20 +144,20 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
             this.BackColor = System.Drawing.Color.SteelBlue;
             this.ClientSize = new System.Drawing.Size(631, 761);
-            this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.tlpCommandControls);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.Name = "frmCommandEditor";
             this.Text = "Add New Command";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmCommandEditor_FormClosing);
             this.Load += new System.EventHandler(this.frmNewCommand_Load);
             this.Shown += new System.EventHandler(this.frmCommandEditor_Shown);
             this.Resize += new System.EventHandler(this.frmCommandEditor_Resize);
-            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tlpCommandControls.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnAdd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).EndInit();
@@ -169,8 +169,7 @@
         private System.Windows.Forms.ComboBox cboSelectedCommand;
         private OpenBots.Core.UI.Controls.UIPictureButton uiBtnCancel;
         private OpenBots.Core.UI.Controls.UIPictureButton uiBtnAdd;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        public System.Windows.Forms.FlowLayoutPanel flw_InputVariables;
+        private System.Windows.Forms.TableLayoutPanel tlpCommandControls;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;        
     }
 }

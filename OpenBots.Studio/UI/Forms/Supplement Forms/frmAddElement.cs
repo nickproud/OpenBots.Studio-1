@@ -1,5 +1,7 @@
 ﻿using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
+using OpenBots.UI.CustomControls.CustomUIControls;
+using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -49,7 +51,13 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         }
 
         private void frmAddElement_Load(object sender, EventArgs e)
-        {            
+        {
+            ScriptContext.AddIntellisenseControls(Controls);
+        }
+
+        private void frmAddElement_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ScriptContext.RemoveIntellisenseControls(Controls);
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
@@ -92,5 +100,24 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         {
             DialogResult = DialogResult.Cancel;
         }
+
+        private void dgvDefaultValue_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            ScriptContext.ActiveGridView = (UIDataGridView)sender;
+
+            var txtBox = e.Control as TextBox;
+            if (txtBox != null)
+            {
+                //Remove an existing event-handler, if present, to avoid adding multiple handlers when the editing control is reused
+                txtBox.KeyDown -= new KeyEventHandler(ScriptContext.CodeInput_KeyDown);
+                txtBox.TextChanged -= new EventHandler(ScriptContext.CodeDGVInput_TextChanged);
+                txtBox.Leave -= new EventHandler(ScriptContext.CodeInput_Leave);
+
+                //Add the event handler
+                txtBox.KeyDown += new KeyEventHandler(ScriptContext.CodeInput_KeyDown);
+                txtBox.TextChanged += new EventHandler(ScriptContext.CodeDGVInput_TextChanged);
+                txtBox.Leave += new EventHandler(ScriptContext.CodeInput_Leave);
+            }
+        }       
     }
 }

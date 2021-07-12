@@ -125,6 +125,8 @@
             this.txtDefaultValue.Name = "txtDefaultValue";
             this.txtDefaultValue.Size = new System.Drawing.Size(566, 32);
             this.txtDefaultValue.TabIndex = 19;
+            this.txtDefaultValue.TextChanged += new System.EventHandler(this.txtDefaultValue_TextChanged);
+            this.txtDefaultValue.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtDefaultValue_KeyDown);
             // 
             // lblDefineDefaultValue
             // 
@@ -313,6 +315,7 @@
             this.Name = "frmAddArgument";
             this.Text = "Add Argument";
             this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmAddArgument_FormClosing);
             this.Load += new System.EventHandler(this.frmAddArgument_Load);
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnOk)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).EndInit();

@@ -1,6 +1,6 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -34,8 +34,7 @@ namespace OpenBots.Commands.NativeChrome
 		{
 			CommandName = "NativeChromeCloseBrowserCommand";
 			SelectionName = "Native Chrome Close Browser";
-			v_InstanceName = "DefaultChromeBrowser";
-			CommandEnabled = false;
+			CommandEnabled = true;
 			CommandIcon = Resources.command_nativechrome;
 		}
 

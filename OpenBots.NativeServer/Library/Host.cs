@@ -11,28 +11,11 @@ namespace OpenBots.NativeServer.Library
         public event EventHandler LostConnectionToChrome;
         public abstract string Hostname { get; }
 
-        private readonly string _manifestPath;
-
-        private const string RegKeyBaseLocation = "SOFTWARE\\Google\\Chrome\\NativeMessagingHosts\\";
-        
-        /// <summary>
-        /// Creates the Host Object
-        /// </summary>
-        /// <param name="hostname"></param>
-        /// <param name="sendConfirmationReceipt"></param>
-        public Host()
-        {
-            _manifestPath = Path.Combine(Utils.AssemblyLoadDirectory(), Hostname + "-manifest.json");
-        }
-
         /// <summary>
         /// Starts listening for input.
         /// </summary>
         public void Listen()
         {
-            if (!IsRegisteredWithChrome()) throw new NotRegisteredWithChromeException(Hostname);
-
-            
             JObject data;
             while ((data = Read()) != null)
             {
@@ -76,22 +59,5 @@ namespace OpenBots.NativeServer.Library
         }
         
         protected abstract void ProcessReceivedMessage(JObject data);
-        
-        public bool IsRegisteredWithChrome()
-        {
-            var regHostnameKeyLocation = RegKeyBaseLocation + Hostname;
-            RegistryKey regKey = Registry.CurrentUser.OpenSubKey(regHostnameKeyLocation, true);
-
-            if (regKey != null)
-            {
-                string keyString = regKey.GetValue("").ToString();
-                if (keyString == _manifestPath)
-                {
-                    return true;
-                }
-            }
-            
-            return false;
-        }
     }
 }

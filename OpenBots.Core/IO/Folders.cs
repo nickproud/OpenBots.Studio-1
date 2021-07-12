@@ -16,13 +16,8 @@ namespace OpenBots.Core.IO
                 case FolderType.RootFolder:
                     //return root folder from settings
                     var rootSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
-                    folderPath = rootSettings.ClientSettings.RootFolder;
-                    break;
-                case FolderType.AttendedTasksFolder:
-                    //return attended tasks folder from settings
-                    var attendedSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
-                    folderPath = attendedSettings.ClientSettings.AttendedTasksFolder;
-                    break;
+                    folderPath = rootSettings.ClientSettings.RootFolder2;
+                    break;               
                 case FolderType.SettingsFolder:
                     //return app data OpenBots folder
                     folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenBots Inc");
@@ -33,7 +28,8 @@ namespace OpenBots.Core.IO
                     break;
                 case FolderType.ScriptsFolder:
                     //return scripts folder
-                    folderPath = Path.Combine(GetFolder(FolderType.RootFolder), "My Scripts");
+                    var scriptSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
+                    folderPath = scriptSettings.ClientSettings.ScriptsFolder;
                     break;
                 case FolderType.PublishedFolder:
                     //return scripts folder
@@ -45,7 +41,7 @@ namespace OpenBots.Core.IO
                     break;
                 case FolderType.TempFolder:
                     //return temp folder
-                    folderPath = Path.Combine(Path.GetTempPath(), "OpenBotsStudio");
+                    folderPath = Path.Combine(Path.GetTempPath(), "OpenBots Studio");
                     break;
                 case FolderType.LocalAppDataPackagesFolder:
                     //return local app data packages folder
@@ -56,7 +52,7 @@ namespace OpenBots.Core.IO
                     folderPath = Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "Packages", Application.ProductVersion);
                     break;
                 case FolderType.ProgramFilesExtensionsFolder:
-                    //return program files packages folder
+                    //return program files extensions folder
                     folderPath = Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "Extensions");
                     break;
                 case FolderType.LocalAppDataExtensionsFolder:

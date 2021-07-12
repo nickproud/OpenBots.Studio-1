@@ -1,6 +1,8 @@
-﻿using OpenBots.Core.Server.HelperMethods;
+﻿using OpenBots.Commands.Server.Library;
+using OpenBots.Core.Server_Documents.User;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Engine;
+using OpenBots.Server.SDK.HelperMethods;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,9 +27,9 @@ namespace OpenBots.Commands.QueueItem.Test
             AddQueueItem(name);
             var queueItemDict = await WorkQueueItem();
 
-            var userInfo = AuthMethods.GetUserInfo();
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
+            var userInfo = ServerSessionVariableMethods.GetUserInfo(_engine);
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo, transactionKey.ToString());
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
@@ -36,7 +38,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _setQueueItem.RunCommand(_engine);
 
-            queueItem = QueueItemMethods.GetQueueItemById(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem.Id);
+            queueItem = QueueItemMethods.GetQueueItemById(userInfo, queueItem.Id);
 
             Assert.Equal("Success", queueItem.State);
         }
@@ -51,9 +53,9 @@ namespace OpenBots.Commands.QueueItem.Test
             AddQueueItem(name);
             var queueItemDict = await WorkQueueItem();
 
-            var userInfo = AuthMethods.GetUserInfo();
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
+            var userInfo = ServerSessionVariableMethods.GetUserInfo(_engine);
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo, transactionKey.ToString());
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
@@ -62,7 +64,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _setQueueItem.RunCommand(_engine);
 
-            queueItem = QueueItemMethods.GetQueueItemById(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem.Id);
+            queueItem = QueueItemMethods.GetQueueItemById(userInfo, queueItem.Id);
 
             Assert.Equal("New", queueItem.State);
         }
@@ -77,9 +79,9 @@ namespace OpenBots.Commands.QueueItem.Test
             AddQueueItem(name);
             var queueItemDict = await WorkQueueItem();
 
-            var userInfo = AuthMethods.GetUserInfo();
             var transactionKey = queueItemDict["LockTransactionKey"].ToString();
-            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
+            var userInfo = ServerSessionVariableMethods.GetUserInfo(_engine);
+            var queueItem = QueueItemMethods.GetQueueItemByLockTransactionKey(userInfo, transactionKey.ToString());
 
             VariableMethods.CreateTestVariable(null, _engine, "vQueueItem", typeof(Dictionary<,>));
             _setQueueItem.v_QueueItem = "{vQueueItem}";
@@ -88,7 +90,7 @@ namespace OpenBots.Commands.QueueItem.Test
 
             _setQueueItem.RunCommand(_engine);
 
-            queueItem = QueueItemMethods.GetQueueItemById(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem.Id);
+            queueItem = QueueItemMethods.GetQueueItemById(userInfo, queueItem.Id);
 
             Assert.Equal("Failed", queueItem.State);
         }

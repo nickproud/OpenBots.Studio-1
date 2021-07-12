@@ -1,12 +1,12 @@
 ﻿using Microsoft.Office.Interop.Excel;
+using OpenBots.Commands.Microsoft.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,7 +21,7 @@ using DataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Excel
 {
-	[Serializable]
+    [Serializable]
 	[Category("Excel Commands")]
 	[Description("This command takes a specific Excel range, splits it into separate ranges by column, and stores them in new Workbooks.")]
 	public class ExcelSplitRangeByColumnCommand : ScriptCommand
@@ -88,7 +88,6 @@ namespace OpenBots.Commands.Excel
 			CommandEnabled = true;
 			CommandIcon = Resources.command_excel;
 
-			v_InstanceName = "DefaultExcel";
 			v_FileType = "xlsx";
 			v_Range = "\"A1:\"";
 		}
@@ -104,23 +103,7 @@ namespace OpenBots.Commands.Excel
 
 			excelInstance.DisplayAlerts = false;
 			Worksheet excelSheet = excelInstance.ActiveSheet;
-
-			var splitRange = vRange.Split(':');
-			Range cellRange;
-
-			try
-			{
-				Range last = excelSheet.Cells.SpecialCells(XlCellType.xlCellTypeLastCell, Type.Missing);
-				if (splitRange[1] == "")
-					cellRange = excelSheet.Range[splitRange[0], last];
-				else
-					cellRange = excelSheet.Range[splitRange[0], splitRange[1]];
-			}
-			//Attempt to extract a single cell
-			catch (Exception)
-			{
-				throw new Exception("Selected range is invalid");
-			}
+			Range cellRange = excelInstance.GetRange(vRange, excelSheet);
 
 			//Convert Range to DataTable
 			List<object> lst = new List<object>();

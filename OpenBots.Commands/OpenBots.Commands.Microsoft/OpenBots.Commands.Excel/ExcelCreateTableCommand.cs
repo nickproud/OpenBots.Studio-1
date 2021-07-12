@@ -3,7 +3,7 @@ using OpenBots.Commands.Microsoft.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -64,8 +64,6 @@ namespace OpenBots.Commands.Excel
             SelectionName = "Create Excel Table";
             CommandEnabled = true;
             CommandIcon = Resources.command_excel;
-
-            v_InstanceName = "DefaultExcel";
         }
 
         public async override Task RunCommand(object sender)
@@ -75,26 +73,11 @@ namespace OpenBots.Commands.Excel
             var vRange = (string)await v_Range.EvaluateCode(engine);
             var vTableName = (string)await v_TableName.EvaluateCode(engine);
             var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
+            
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
-
-            //Extract a range of cells
-            var splitRange = vRange.Split(':');
-            Range cellRange;
-            Range sourceRange = workSheetExcelTable.UsedRange;
-
-            if (splitRange[1] == "")
-            {
-                var cell = excelInstance.GetLastIndexOfNonEmptyCell(sourceRange, sourceRange.Range["A1"]);
-                if (cell == "")
-                    throw new Exception("No data found in sheet.");
-                cellRange = workSheetExcelTable.Range[splitRange[0], cell];
-            }
-            else
-            {
-                cellRange = workSheetExcelTable.Range[splitRange[0], splitRange[1]];
-            }
-
+            Range cellRange = excelInstance.GetRange(vRange, workSheetExcelTable);
+            
             workSheetExcelTable.ListObjects.Add(XlListObjectSourceType.xlSrcRange, cellRange,
                 Type.Missing, XlYesNoGuess.xlYes, Type.Missing).Name = vTableName;
         }

@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -35,7 +35,6 @@ namespace OpenBots.Commands.WebBrowser
 		{
 			CommandName = "SeleniumCloseBrowserCommand";
 			SelectionName = "Selenium Close Browser";
-			v_InstanceName = "DefaultBrowser";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 

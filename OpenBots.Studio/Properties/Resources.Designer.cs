@@ -437,6 +437,19 @@ namespace OpenBots.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://openbots.ai/
+        ///
+        ///click Register
+        ///
+        ///wait 5.
+        /// </summary>
+        internal static string DefaultPowerShellScript {
+            get {
+                return ResourceManager.GetString("DefaultPowerShellScript", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to import ctypes
         ///import argparse
         ///
@@ -592,6 +605,156 @@ namespace OpenBots.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap intellisense_class {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_class", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_constant {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_constant", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_delegate {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_delegate", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_enumerator {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_enumerator", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_event {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_event", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_extensionmethod {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_extensionmethod", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_field {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_field", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_interface {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_interface", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_keyword {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_keyword", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_method {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_method", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_namespace {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_namespace", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_parameter {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_parameter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_property {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_property", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_structure {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_structure", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap intellisense_typeparameter {
+            get {
+                object obj = ResourceManager.GetObject("intellisense_typeparameter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap links_header {
             get {
                 object obj = ResourceManager.GetObject("links_header", resourceCulture);
@@ -715,6 +878,16 @@ namespace OpenBots.Properties {
         internal static System.Drawing.Bitmap pdf_icon {
             get {
                 object obj = ResourceManager.GetObject("pdf_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap powershell_icon {
+            get {
+                object obj = ResourceManager.GetObject("powershell_icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

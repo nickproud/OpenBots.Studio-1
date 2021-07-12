@@ -1,0 +1,17 @@
+param ($message = "Welcome to OpenBots. Ready to automate?")
+
+Add-Type -AssemblyName PresentationFramework
+
+$msgBoxInput = [System.Windows.MessageBox]::Show($message, "OpenBots", "YesNo", "Info")
+
+switch ($msgBoxInput)
+{
+    'Yes'
+    {
+        [System.Windows.MessageBox]::Show("Hello World!")
+    }
+    'No'
+    {
+        [System.Windows.MessageBox]::Show("Goodbye")
+    }
+}

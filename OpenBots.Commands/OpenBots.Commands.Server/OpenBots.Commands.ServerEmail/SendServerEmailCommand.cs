@@ -1,11 +1,12 @@
-﻿using OpenBots.Core.Attributes.PropertyAttributes;
+﻿using OpenBots.Commands.Server.Library;
+using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.HelperMethods;
-using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Server.SDK.HelperMethods;
+using OpenBots.Server.SDK.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -85,7 +86,7 @@ namespace OpenBots.Commands.ServerEmail
             CommandName = "SendServerEmailCommand";
             SelectionName = "Send Server Email";
             CommandEnabled = true;
-            CommandIcon = Resources.command_smtp;
+            CommandIcon = Resources.command_servermail;
 
             v_AccountName = null;
             v_Attachments = null;
@@ -126,13 +127,12 @@ namespace OpenBots.Commands.ServerEmail
             if (vToRecipients == null)
                 throw new NullReferenceException("To Recipient(s) cannot be empty");
 
-            var userInfo = AuthMethods.GetUserInfo();
-
             List<string> vAttachments = null;
             if (!string.IsNullOrEmpty(v_Attachments))
                 vAttachments = (List<string>)await v_Attachments.EvaluateCode(engine);
 
-            ServerEmailMethods.SendServerEmail(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, emailMessage, vAttachments, vAccountName);
+            var userInfo = ServerSessionVariableMethods.GetUserInfo(engine);
+            ServerEmailMethods.SendServerEmail(userInfo, emailMessage, vAttachments, vAccountName);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

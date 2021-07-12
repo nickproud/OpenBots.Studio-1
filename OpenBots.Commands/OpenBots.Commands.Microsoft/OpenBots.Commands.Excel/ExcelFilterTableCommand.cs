@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -82,7 +82,6 @@ namespace OpenBots.Commands.Microsoft
             CommandEnabled = true;
             CommandIcon = Resources.command_excel;
 
-            v_InstanceName = "DefaultExcel";
             v_Option = "Column Index";
         }
 
@@ -94,6 +93,7 @@ namespace OpenBots.Commands.Microsoft
             dynamic vColumnValue = await v_DataValueIndex.EvaluateCode(engine);
             var filterArray = ((List<string>)await v_FilterList.EvaluateCode(engine)).ToArray();
             var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
+           
             var excelInstance = (Application)excelObject;
             var workSheetExcelTable = excelInstance.Sheets[vSheetExcelTable] as Worksheet;
             var excelTable = workSheetExcelTable.ListObjects[vTableName];

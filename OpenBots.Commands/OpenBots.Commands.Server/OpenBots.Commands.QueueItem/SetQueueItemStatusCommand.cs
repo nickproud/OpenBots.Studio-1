@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
+using OpenBots.Commands.Server.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.HelperMethods;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Server.SDK.HelperMethods;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -81,8 +82,7 @@ namespace OpenBots.Commands.QueueItem
 			var vQueueItemErrorMessage = (string)await v_QueueItemErrorMessage.EvaluateCode(engine);
 			var vQueueItemErrorCode = (string)await v_QueueItemErrorCode.EvaluateCode(engine);
 
-			var userInfo = AuthMethods.GetUserInfo();
-
+			var userInfo = ServerSessionVariableMethods.GetUserInfo(engine);
 			Guid transactionKey = (Guid)vQueueItem["LockTransactionKey"];
 
 			if (transactionKey == null || transactionKey == Guid.Empty)
@@ -91,14 +91,14 @@ namespace OpenBots.Commands.QueueItem
             switch (v_QueueItemStatusType)
             {
                 case "Successful":
-                    QueueItemMethods.CommitQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
-                    break;
+                    QueueItemMethods.CommitQueueItem(userInfo, transactionKey);
+					break;
                 case "Failed - Should Retry":
-                    QueueItemMethods.RollbackQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, false);
-                    break;
+                    QueueItemMethods.RollbackQueueItem(userInfo, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, false);
+					break;
                 case "Failed - Fatal":
-                    QueueItemMethods.RollbackQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, true);
-                    break;
+                    QueueItemMethods.RollbackQueueItem(userInfo, transactionKey, vQueueItemErrorCode, vQueueItemErrorMessage, true);
+					break;
             }
         }
 

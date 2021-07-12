@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack, Version=1.11.33.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HtmlAgilityPack.1.11.33\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.11.34.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HtmlAgilityPack.1.11.34\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -42,9 +42,6 @@
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpSimpleNLG, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SharpSimpleNLG.1.2.1\lib\net462\SharpSimpleNLG.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -183,11 +180,6 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Xml.XmlDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Xml.XmlDocument.4.3.0\lib\net46\System.Xml.XmlDocument.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.XPath, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Xml.XPath.4.3.0\lib\net46\System.Xml.XPath.dll</HintPath>
       <Private>True</Private>
@@ -221,9 +213,15 @@
       <DependentUpon>frmUserInput.cs</DependentUpon>
     </Compile>
     <Compile Include="Library\NativeHelper.cs" />
+    <Compile Include="OpenBots.Commands.Image\LoadImageCommand.cs" />
+    <Compile Include="OpenBots.Commands.Image\SaveImageCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeActivateTabCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeCloseTabCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetAttributeCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetOptionsCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetTableCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeHoverOverElementCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeInjectJsScriptCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeMaximizeBrowserCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\CaptureImageCommand.cs" />
     <Compile Include="OpenBots.Commands.Image\PerformOCRCommand.cs" />
@@ -242,6 +240,11 @@
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeElementExistsCommand.cs.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeGetTextCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeClickCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeNavigateBackCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeNavigateForwardCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeNavigateToURLCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeOpenNewTabCommand.cs" />
+    <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeRefreshTabCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeScrollToElementCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeSetOptionCommand.cs" />
     <Compile Include="OpenBots.Commands.NativeChrome\NativeChromeSetSecureTextCommand.cs" />

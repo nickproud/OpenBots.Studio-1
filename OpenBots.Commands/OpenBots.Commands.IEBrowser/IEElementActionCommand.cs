@@ -4,7 +4,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Utilities;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -94,8 +94,6 @@ namespace OpenBots.Commands.IEBrowser
             SelectionName = "IE Element Action";
             CommandEnabled = true;
             CommandIcon = Resources.command_web;
-
-            v_InstanceName = "DefaultIEBrowser";
 
             v_WebSearchParameter = new DataTable();
             v_WebSearchParameter.TableName = DateTime.Now.ToString("WebSearchParamTable" + DateTime.Now.ToString("MMddyy.hhmmss"));

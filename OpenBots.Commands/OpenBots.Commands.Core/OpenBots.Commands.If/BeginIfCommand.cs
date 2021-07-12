@@ -1,32 +1,50 @@
 ﻿using Newtonsoft.Json;
+using OpenBots.Commands.Core.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
-using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommandUtilities;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.If
 {
-	[Serializable]
+    [Serializable]
 	[Category("If Commands")]
 	[Description("This command evaluates a logical statement to determine if the statement is 'true' or 'false' and subsequently performs action(s) based on either condition.")]
 	public class BeginIfCommand : ScriptCommand, IConditionCommand
 	{
 		[Required]
-		[DisplayName("Condition Type")]
+		[DisplayName("Condition Option")]
+		[PropertyUISelectionOption("Inline")]
+		[PropertyUISelectionOption("Builder")]
+		[Description("Select whether to create the condition using C# or with the condition builder")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_Option { get; set; }
+
+		[Required]
+		[DisplayName("If Condition")]
+		[Description("Enter the condition to evaluate in C#.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(bool) })]
+		public string v_Condition { get; set; }
+
+		[Required]
+		[DisplayName("If Condition")]
 		[PropertyUISelectionOption("Number Compare")]
 		[PropertyUISelectionOption("Date Compare")]
 		[PropertyUISelectionOption("Text Compare")]
@@ -44,7 +62,7 @@ namespace OpenBots.Commands.If
 		[PropertyUISelectionOption("Error Did Not Occur")]
 		[Description("Select the necessary condition type.")]
 		[Remarks("")]
-		public string v_IfActionType { get; set; }
+		public string v_ActionType { get; set; }
 
 		[Required]
 		[DisplayName("Additional Parameters")]
@@ -57,24 +75,24 @@ namespace OpenBots.Commands.If
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private DataGridView _ifGridViewHelper;
+		private List<Control> _noCSharpControls;
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private ComboBox _actionDropdown;
+		private List<Control> _cSharpControls;
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private List<Control> _parameterControls;
+		private bool _hasRendered;
 
 		[JsonIgnore]
 		[Browsable(false)]
-		private CommandItemControl _recorderControl;
+		private ConditionCommandHelper _commandHelper;
 
 		public BeginIfCommand()
 		{
 			CommandName = "BeginIfCommand";
-			SelectionName = "Begin If";
+			SelectionName = "If";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_begin_if;
 			ScopeStartCommand = true;
@@ -87,587 +105,194 @@ namespace OpenBots.Commands.If
 			v_ActionParameterTable.Columns.Add("Parameter Name");
 			v_ActionParameterTable.Columns.Add("Parameter Value");
 
-			_recorderControl = new CommandItemControl("guirecorder_helper", Resources.command_camera, "Element Recorder");
-			_recorderControl.Hide();
+			_commandHelper = new ConditionCommandHelper(this);
 		}
 
 		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
-			var ifResult = await CommandsHelper.DetermineStatementTruth(engine, v_IfActionType, v_ActionParameterTable);
 
-			int startIndex, endIndex, elseIndex;
-			if (parentCommand.AdditionalScriptCommands.Any(item => item.ScriptCommand is ElseCommand))
+			bool ifResult;
+			if (v_Option == "Inline")
+				ifResult = (bool)await v_Condition.EvaluateCode(engine);
+			else
+				ifResult = await CommandsHelper.DetermineStatementTruth(engine, v_ActionType, v_ActionParameterTable);
+
+			int startIndex = 0, endIndex = 0, elseIndex = 0;
+			elseIndex = parentCommand.AdditionalScriptCommands.FindIndex(a => a.ScriptCommand is ElseCommand && a.ScriptCommand.IsCommented == false);
+
+			var elseIfIndices = FindAllElseIfIndices(parentCommand.AdditionalScriptCommands);
+			ScriptAction elseIfCommandItem;
+			BeginElseIfCommand targetElseIfCommand;
+
+			if (ifResult)
 			{
-				elseIndex = parentCommand.AdditionalScriptCommands.FindIndex(a => a.ScriptCommand is ElseCommand);
-
-				if (ifResult)
-				{
-					startIndex = 0;
-					endIndex = elseIndex;
-				}
+				startIndex = 0;
+				int nextIndex = FindNextElseIndex(elseIfIndices, -1, elseIndex);
+				if (nextIndex != -1)
+					endIndex = nextIndex;
 				else
+					endIndex = parentCommand.AdditionalScriptCommands.Count;
+			}
+			else if (elseIfIndices != null)
+			{
+				foreach (var elseIfIndex in elseIfIndices)
+				{
+					elseIfCommandItem = parentCommand.AdditionalScriptCommands[elseIfIndex];
+					targetElseIfCommand = (BeginElseIfCommand)elseIfCommandItem.ScriptCommand;
+					ifResult = await CommandsHelper.DetermineStatementTruth(engine, targetElseIfCommand.v_ActionType,
+						targetElseIfCommand.v_ActionParameterTable, targetElseIfCommand.v_Condition);
+					if (ifResult)
+					{
+						startIndex = elseIfIndex + 1;
+						int nextIndex = FindNextElseIndex(elseIfIndices, elseIfIndex, elseIndex);
+						if (nextIndex != elseIfIndex)
+							endIndex = nextIndex;
+						else
+							endIndex = parentCommand.AdditionalScriptCommands.Count;
+						break;
+					}
+				}
+				if (!ifResult && elseIndex != -1)
 				{
 					startIndex = elseIndex + 1;
 					endIndex = parentCommand.AdditionalScriptCommands.Count;
 				}
+				else if (!ifResult && elseIndex == -1)
+					return;
 			}
-			else if (ifResult)
+			else if (elseIndex != -1)
 			{
-				startIndex = 0;
+				startIndex = elseIndex + 1;
 				endIndex = parentCommand.AdditionalScriptCommands.Count;
 			}
 			else
-			{
 				return;
-			}
 
 			for (int i = startIndex; i < endIndex; i++)
 			{
-				if ((engine.IsCancellationPending) || (engine.CurrentLoopCancelled) || (engine.CurrentLoopContinuing))
+				if (engine.IsCancellationPending || engine.CurrentLoopCancelled || engine.CurrentLoopContinuing)
 					return;
 
 				await engine.ExecuteCommand(parentCommand.AdditionalScriptCommands[i]);
 			}
-
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
 		{
 			base.Render(editor, commandControls);
 
-			_actionDropdown = commandControls.CreateDropdownFor("v_IfActionType", this);
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_IfActionType", this));
-			RenderedControls.AddRange(commandControls.CreateUIHelpersFor("v_IfActionType", this, new Control[] { _actionDropdown }, editor));
-			_actionDropdown.SelectionChangeCommitted += ifAction_SelectionChangeCommitted;
-			RenderedControls.Add(_actionDropdown);
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
+			((ComboBox)RenderedControls[1]).SelectedIndexChanged += OptionComboBox_SelectedIndexChanged;
 
-			_parameterControls = new List<Control>();
-			_parameterControls.Add(commandControls.CreateDefaultLabelFor("v_ActionParameterTable", this));
+			//CSharp Controls
+			_cSharpControls = new List<Control>();
+			_cSharpControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Condition", this, editor));
+			RenderedControls.AddRange(_cSharpControls);
 
-			_recorderControl.Click += (sender, e) => ShowIfElementRecorder(sender, e, editor, commandControls);
-			_parameterControls.Add(_recorderControl);
-
-			_ifGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_ActionParameterTable", this);
-			_ifGridViewHelper.AllowUserToAddRows = false;
-			_ifGridViewHelper.AllowUserToDeleteRows = false;
-			_ifGridViewHelper.MouseEnter += IfGridViewHelper_MouseEnter;
-
-			_parameterControls.AddRange(commandControls.CreateUIHelpersFor("v_ActionParameterTable", this, new Control[] { _ifGridViewHelper }, editor));
-			_parameterControls.Add(_ifGridViewHelper);
-
-			RenderedControls.AddRange(_parameterControls);
+			//no CSharp Controls
+			_noCSharpControls = _commandHelper.CreateConditionActionParameterTable(editor, commandControls);
+			RenderedControls.AddRange(_noCSharpControls);
 
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			switch (v_IfActionType)
+			if (v_Option == "Inline")
+				return $"If ({v_Condition})";
+			else
+				return _commandHelper.GetConditionDisplayValue(v_ActionType, v_ActionParameterTable, "If");
+		}
+
+		public override void Shown()
+		{
+			base.Shown();
+			_hasRendered = true;
+			if (v_Option == null)
 			{
-				case "Number Compare":
-					string number1 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Number1"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string operand = ((from rw in v_ActionParameterTable.AsEnumerable()
-									   where rw.Field<string>("Parameter Name") == "Operand"
-									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string number2 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Number2"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+				v_Option = "Inline";
+				((ComboBox)RenderedControls[1]).Text = v_Option;
+			}
+			OptionComboBox_SelectedIndexChanged(null, null);
+		}
 
-					return $"If ('{number1}' {operand} '{number2}')";
-				case "Date Compare":
-					string date1 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Date1"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string operand2 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									   where rw.Field<string>("Parameter Name") == "Operand"
-									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string date2 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Date2"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+		private void OptionComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[1]).Text == "Inline" && _hasRendered)
+			{
+				foreach (var ctrl in _cSharpControls)
+					ctrl.Visible = true;
 
-					return $"If ('{date1}' {operand2} '{date2}')";
-				case "Text Compare":
-					string text1 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Text1"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string operand3 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									   where rw.Field<string>("Parameter Name") == "Operand"
-									   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-					string text2 = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Text2"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+				foreach (var ctrl in _noCSharpControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is DataGridView)
+						v_ActionParameterTable.Rows.Clear();
+					else if (ctrl is ComboBox)
+						((ComboBox)ctrl).SelectedIndex = -1;
+				}
+			}
+			else if (_hasRendered)
+			{
+				foreach (var ctrl in _cSharpControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is TextBox)
+						((TextBox)ctrl).Clear();
+				}
 
-					return $"If ('{text1}' {operand3} '{text2}')";
-
-				case "Has Value":
-					string variableName = ((from rw in v_ActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Variable Name"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					return $"If (Variable '{variableName}' Has Value)";
-				case "Is Numeric":
-					string varName = ((from rw in v_ActionParameterTable.AsEnumerable()
-											where rw.Field<string>("Parameter Name") == "Variable Name"
-											select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					return $"If (Variable '{varName}' Is Numeric)";
-
-				case "Error Occured":
-
-					string lineNumber = ((from rw in v_ActionParameterTable.AsEnumerable()
-										  where rw.Field<string>("Parameter Name") == "Line Number"
-										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					return $"If (Error Occured on Line Number '{lineNumber}')";
-				case "Error Did Not Occur":
-
-					string lineNum = ((from rw in v_ActionParameterTable.AsEnumerable()
-										  where rw.Field<string>("Parameter Name") == "Line Number"
-										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					return $"If (Error Did Not Occur on Line Number '{lineNum}')";
-				case "Window Name Exists":
-				case "Active Window Name Is":
-
-					string windowName = ((from rw in v_ActionParameterTable.AsEnumerable()
-										  where rw.Field<string>("Parameter Name") == "Window Name"
-										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					return $"If {v_IfActionType} [Window Name '{windowName}']";
-				case "File Exists":
-
-					string filePath = ((from rw in v_ActionParameterTable.AsEnumerable()
-										where rw.Field<string>("Parameter Name") == "File Path"
-										select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					string fileCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
-											   where rw.Field<string>("Parameter Name") == "True When"
-											   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					if (fileCompareType == "It Does Not Exist")
-						return $"If File Does Not Exist [File '{filePath}']";
-					else
-						return $"If File Exists [File '{filePath}']";
-
-				case "Folder Exists":
-
-					string folderPath = ((from rw in v_ActionParameterTable.AsEnumerable()
-										  where rw.Field<string>("Parameter Name") == "Folder Path"
-										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					string folderCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
-											   where rw.Field<string>("Parameter Name") == "True When"
-											   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					if (folderCompareType == "It Does Not Exist")
-						return $"If Folder Does Not [Folder '{folderPath}']";
-					else
-						return $"If Folder Exists [Folder '{folderPath}']";
-
-				case "Selenium Web Element Exists":
-
-
-					string parameterName = ((from rw in v_ActionParameterTable.AsEnumerable()
-											 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
-											 select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					string searchMethod = ((from rw in v_ActionParameterTable.AsEnumerable()
-											where rw.Field<string>("Parameter Name") == "Element Search Method"
-											select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					string webElementCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
-												 where rw.Field<string>("Parameter Name") == "True When"
-												 select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					if (webElementCompareType == "It Does Not Exist")
-						return $"If Web Element Does Not Exist [{searchMethod} '{parameterName}']";
-					else
-						return $"If Selenium Web Element Exists [{searchMethod} '{parameterName}']";
-
-				case "GUI Element Exists":
-
-
-					string guiWindowName = ((from rw in v_ActionParameterTable.AsEnumerable()
-										 where rw.Field<string>("Parameter Name") == "Window Name"
-										 select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					string guiSearch = ((from rw in v_ActionParameterTable.AsEnumerable()
-											 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
-											 select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					string guiElementCompareType = ((from rw in v_ActionParameterTable.AsEnumerable()
-													 where rw.Field<string>("Parameter Name") == "True When"
-													 select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					if (guiElementCompareType == "It Does Not Exist")
-						return $"If GUI Element Does Not Exist [Find '{guiSearch}' Element In '{guiWindowName}']";
-					else
-						return $"If GUI Element Exists [Find '{guiSearch}' Element In '{guiWindowName}']";
-
-				case "Image Element Exists":
-					string imageCompareType = (from rw in v_ActionParameterTable.AsEnumerable()
-											   where rw.Field<string>("Parameter Name") == "True When"
-											   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-					if (imageCompareType == "It Does Not Exist")
-						return $"If Image Does Not Exist on Screen";
-					else
-						return $"If Image Exists on Screen";
-				case "App Instance Exists":
-					string instanceName = ((from rw in v_ActionParameterTable.AsEnumerable()
-											 where rw.Field<string>("Parameter Name") == "Instance Name"
-											 select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-					string instanceCompareType = (from rw in v_ActionParameterTable.AsEnumerable()
-											   where rw.Field<string>("Parameter Name") == "True When"
-											   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-					if (instanceCompareType == "It Does Not Exist")
-						return $"If App Instance Does Not Exist [Instance Name '{instanceName}']";
-					else
-						return $"If App Instance Exists [Instance Name '{instanceName}']";
-				default:
-					return "If ...";
+				foreach (var ctrl in _noCSharpControls)
+					ctrl.Visible = true;
 			}
 		}
 
-		private void ifAction_SelectionChangeCommitted(object sender, EventArgs e)
+		private List<int> FindAllElseIfIndices(List<ScriptAction> additionalCommands)
 		{
-			DataGridView ifActionParameterBox = _ifGridViewHelper;
+			// get the count of all (Enabled) Case Commands
+			int totalElseIfCommands = additionalCommands.FindAll(
+				action => action.ScriptCommand is BeginElseIfCommand &&
+				action.ScriptCommand.IsCommented == false
+				).Count;
 
-			BeginIfCommand cmd = this;
-			DataTable actionParameters = cmd.v_ActionParameterTable;
-
-			//sender is null when command is updating
-			if (sender != null)
-				actionParameters.Rows.Clear();
-
-			DataGridViewComboBoxCell comparisonComboBox;
-
-			//remove if exists            
-			if (_recorderControl.Visible)
+			if (totalElseIfCommands == 0)
+				return null;
+			else
 			{
-				_recorderControl.Hide();
+				List<int> elseIfIndices = new List<int>();
+				int startIndex = 0;
+
+				// get the indices of all (Enabled) Case Commands
+				while (startIndex < additionalCommands.Count && (startIndex = additionalCommands.FindIndex(
+					startIndex, (a => a.ScriptCommand is BeginElseIfCommand && a.ScriptCommand.IsCommented == false))) != -1)
+				{
+					elseIfIndices.Add(startIndex++);
+				}
+
+				return elseIfIndices;
 			}
-
-			switch (_actionDropdown.SelectedItem)
-			{
-				case "Number Compare":
-
-					ifActionParameterBox.Visible = true;
-
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Number1", "");
-						actionParameters.Rows.Add("Operand", "");
-						actionParameters.Rows.Add("Number2", "");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					//combobox cell for Variable Name
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("is equal to");
-					comparisonComboBox.Items.Add("is greater than");
-					comparisonComboBox.Items.Add("is greater than or equal to");
-					comparisonComboBox.Items.Add("is less than");
-					comparisonComboBox.Items.Add("is less than or equal to");
-					comparisonComboBox.Items.Add("is not equal to");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
-
-					break;
-				case "Date Compare":
-
-					ifActionParameterBox.Visible = true;
-
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Date1", "");
-						actionParameters.Rows.Add("Operand", "");
-						actionParameters.Rows.Add("Date2", "");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					//combobox cell for Variable Name
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("is equal to");
-					comparisonComboBox.Items.Add("is greater than");
-					comparisonComboBox.Items.Add("is greater than or equal to");
-					comparisonComboBox.Items.Add("is less than");
-					comparisonComboBox.Items.Add("is less than or equal to");
-					comparisonComboBox.Items.Add("is not equal to");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
-
-					break;
-				case "Text Compare":
-
-					ifActionParameterBox.Visible = true;
-
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Text1", "");
-						actionParameters.Rows.Add("Operand", "");
-						actionParameters.Rows.Add("Text2", "");
-						actionParameters.Rows.Add("Case Sensitive", "No");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					//combobox cell for Variable Name
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("contains");
-					comparisonComboBox.Items.Add("does not contain");
-					comparisonComboBox.Items.Add("is equal to");
-					comparisonComboBox.Items.Add("is not equal to");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
-
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("Yes");
-					comparisonComboBox.Items.Add("No");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[3].Cells[1] = comparisonComboBox;
-
-					break;
-				case "Has Value":
-
-					ifActionParameterBox.Visible = true;
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Variable Name", "");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					break;
-				case "Is Numeric":
-
-					ifActionParameterBox.Visible = true;
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Variable Name", "");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					break;
-				case "Error Occured":
-
-					ifActionParameterBox.Visible = true;
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Line Number", "");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					break;
-				case "Error Did Not Occur":
-
-					ifActionParameterBox.Visible = true;
-
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Line Number", "");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					break;
-				case "Window Name Exists":
-				case "Active Window Name Is":
-
-					ifActionParameterBox.Visible = true;
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Window Name", "");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					break;
-				case "File Exists":
-
-					ifActionParameterBox.Visible = true;
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("File Path", "");
-						actionParameters.Rows.Add("True When", "It Does Exist");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					//combobox cell for Variable Name
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("It Does Exist");
-					comparisonComboBox.Items.Add("It Does Not Exist");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
-
-					break;
-				case "Folder Exists":
-
-					ifActionParameterBox.Visible = true;
-
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Folder Path", "");
-						actionParameters.Rows.Add("True When", "It Does Exist");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					//combobox cell for Variable Name
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("It Does Exist");
-					comparisonComboBox.Items.Add("It Does Not Exist");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
-					break;
-				case "Selenium Web Element Exists":
-
-					ifActionParameterBox.Visible = true;
-
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Selenium Instance Name", "DefaultBrowser");
-						actionParameters.Rows.Add("Element Search Method", "");
-						actionParameters.Rows.Add("Element Search Parameter", "");
-						actionParameters.Rows.Add("Timeout (Seconds)", "30");
-						actionParameters.Rows.Add("True When", "It Does Exist");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("It Does Exist");
-					comparisonComboBox.Items.Add("It Does Not Exist");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[4].Cells[1] = comparisonComboBox;
-
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("XPath");
-					comparisonComboBox.Items.Add("ID");
-					comparisonComboBox.Items.Add("Name");
-					comparisonComboBox.Items.Add("Tag Name");
-					comparisonComboBox.Items.Add("Class Name");
-					comparisonComboBox.Items.Add("CSS Selector");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
-
-					break;
-				case "GUI Element Exists":
-
-					ifActionParameterBox.Visible = true;
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Window Name", "Current Window");
-						actionParameters.Rows.Add("Element Search Method", "AutomationId");
-						actionParameters.Rows.Add("Element Search Parameter", "");
-						actionParameters.Rows.Add("Timeout (Seconds)", "30");
-						actionParameters.Rows.Add("True When", "It Does Exist");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("It Does Exist");
-					comparisonComboBox.Items.Add("It Does Not Exist");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[4].Cells[1] = comparisonComboBox;
-
-					var parameterName = new DataGridViewComboBoxCell();
-					parameterName.Items.Add("AcceleratorKey");
-					parameterName.Items.Add("AccessKey");
-					parameterName.Items.Add("AutomationId");
-					parameterName.Items.Add("ClassName");
-					parameterName.Items.Add("FrameworkId");
-					parameterName.Items.Add("HasKeyboardFocus");
-					parameterName.Items.Add("HelpText");
-					parameterName.Items.Add("IsContentElement");
-					parameterName.Items.Add("IsControlElement");
-					parameterName.Items.Add("IsEnabled");
-					parameterName.Items.Add("IsKeyboardFocusable");
-					parameterName.Items.Add("IsOffscreen");
-					parameterName.Items.Add("IsPassword");
-					parameterName.Items.Add("IsRequiredForForm");
-					parameterName.Items.Add("ItemStatus");
-					parameterName.Items.Add("ItemType");
-					parameterName.Items.Add("LocalizedControlType");
-					parameterName.Items.Add("Name");
-					parameterName.Items.Add("NativeWindowHandle");
-					parameterName.Items.Add("ProcessID");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[1].Cells[1] = parameterName;
-
-					_recorderControl.Show();
-
-					break;
-				case "Image Element Exists":
-					ifActionParameterBox.Visible = true;
-
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Captured Image Variable", "");
-						actionParameters.Rows.Add("Accuracy (0-1)", "0.8");
-						actionParameters.Rows.Add("True When", "It Does Exist");
-						actionParameters.Rows.Add("Timeout (Seconds)", "30");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("It Does Exist");
-					comparisonComboBox.Items.Add("It Does Not Exist");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[2].Cells[1] = comparisonComboBox;
-					break;
-				case "App Instance Exists":
-					ifActionParameterBox.Visible = true;
-
-					if (sender != null)
-					{
-						actionParameters.Rows.Add("Instance Name", "");
-						actionParameters.Rows.Add("True When", "It Does Exist");
-						ifActionParameterBox.DataSource = actionParameters;
-					}
-
-					comparisonComboBox = new DataGridViewComboBoxCell();
-					comparisonComboBox.Items.Add("It Does Exist");
-					comparisonComboBox.Items.Add("It Does Not Exist");
-
-					//assign cell as a combobox
-					ifActionParameterBox.Rows[1].Cells[1] = comparisonComboBox;
-					break;
-				default:
-					break;
-			}
-
-			ifActionParameterBox.Columns[0].ReadOnly = true;
 		}
 
-		private void IfGridViewHelper_MouseEnter(object sender, EventArgs e)
+		private int FindNextElseIndex(List<int> elseIfIndices, int currIndex, int elseIndex)
 		{
+			int nextIndex;
+
 			try
 			{
-				ifAction_SelectionChangeCommitted(null, null);
+				var currentElseIfIndex = elseIfIndices.IndexOf(currIndex);
+				nextIndex = elseIfIndices[currentElseIfIndex + 1];
 			}
 			catch (Exception)
 			{
-				ifAction_SelectionChangeCommitted(sender, e);
-			}           
-		}
+				if (elseIndex != -1)
+					nextIndex = elseIndex;
+				else
+					nextIndex = currIndex;
+			}
 
-		private void ShowIfElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor, ICommandControls commandControls)
-		{
-			var result = commandControls.ShowConditionElementRecorder(sender, e, editor);
-
-			_ifGridViewHelper.Rows[0].Cells[1].Value = result.Item1;
-			_ifGridViewHelper.Rows[2].Cells[1].Value = result.Item2;
+			return nextIndex;
 		}
 	}
+
+	
 }

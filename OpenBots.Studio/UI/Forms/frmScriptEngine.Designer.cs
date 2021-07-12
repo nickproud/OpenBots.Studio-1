@@ -1,4 +1,5 @@
-﻿using OpenBots.Utilities;
+﻿using OpenBots.Core.User32;
+using OpenBots.Utilities;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms
@@ -28,7 +29,7 @@ namespace OpenBots.UI.Forms
                 pbBotIcon.Click -= pbBotIcon_Click;
                 uiBtnScheduleManagement.Click -= uiBtnScheduleManagement_Click;
                 FormClosing -= frmScriptEngine_FormClosing;
-                Load -= frmProcessingStatus_LoadAsync;
+                Load -= frmProcessingStatus_Load;
                 GlobalHook.HookStopped -= OnHookStopped;
                 EngineInstance.ReportProgressEvent -= Engine_ReportProgress;
                 EngineInstance.ScriptFinishedEvent -= Engine_ScriptFinishedEvent;
@@ -280,7 +281,7 @@ namespace OpenBots.UI.Forms
             this.Text = "OpenBots Engine";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmScriptEngine_FormClosing);
-            this.Load += new System.EventHandler(this.frmProcessingStatus_LoadAsync);
+            this.Load += new System.EventHandler(this.frmProcessingStatus_Load);
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnStepInto)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnStepOver)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uiBtnCancel)).EndInit();

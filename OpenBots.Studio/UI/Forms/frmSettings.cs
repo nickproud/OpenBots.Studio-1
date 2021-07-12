@@ -35,6 +35,7 @@ namespace OpenBots.UI.Forms
     {
         private ApplicationSettings _newAppSettings;
         private AContainer _container;
+        private string startingRootFolder;
 
         public frmSettings(AContainer container)
         {
@@ -52,14 +53,13 @@ namespace OpenBots.UI.Forms
             var engineSettings = _newAppSettings.EngineSettings;
             chkShowDebug.DataBindings.Add("Checked", engineSettings, "ShowDebugWindow", false, DataSourceUpdateMode.OnPropertyChanged);
             chkAutoCloseWindow.DataBindings.Add("Checked", engineSettings, "AutoCloseDebugWindow", false, DataSourceUpdateMode.OnPropertyChanged);
-            chkEnableLogging.DataBindings.Add("Checked", engineSettings, "EnableDiagnosticLogging", false, DataSourceUpdateMode.OnPropertyChanged);
             chkAdvancedDebug.DataBindings.Add("Checked", engineSettings, "ShowAdvancedDebugOutput", false, DataSourceUpdateMode.OnPropertyChanged);
             chkTrackMetrics.DataBindings.Add("Checked", engineSettings, "TrackExecutionMetrics", false, DataSourceUpdateMode.OnPropertyChanged);
             txtCommandDelay.DataBindings.Add("Text", engineSettings, "DelayBetweenCommands", false, DataSourceUpdateMode.OnPropertyChanged);
-            chkAutoCalcVariables.DataBindings.Add("Checked", engineSettings, "AutoCalcVariables", false, DataSourceUpdateMode.OnPropertyChanged);
 
+            Keys cancellationKey = engineSettings.CancellationKey;
             cbxCancellationKey.DataSource = Enum.GetValues(typeof(Keys));
-            cbxCancellationKey.DataBindings.Add("Text", engineSettings, "CancellationKey", false, DataSourceUpdateMode.OnPropertyChanged);
+            cbxCancellationKey.SelectedIndex = cbxCancellationKey.Items.IndexOf(cancellationKey);
 
             SinkType loggingSinkType = engineSettings.LoggingSinkType;
             cbxSinkType.DataSource = Enum.GetValues(typeof(SinkType));           
@@ -69,32 +69,81 @@ namespace OpenBots.UI.Forms
             cbxMinLogLevel.DataSource = Enum.GetValues(typeof(LogEventLevel));
             cbxMinLogLevel.SelectedIndex = cbxMinLogLevel.Items.IndexOf(minLogLevel);
 
-            txtLogging1.DataBindings.Add("Text", engineSettings, "LoggingValue1", false, DataSourceUpdateMode.OnPropertyChanged);
+            txtLoggingValue.DataBindings.Add("Text", engineSettings, "LoggingValue", false, DataSourceUpdateMode.OnPropertyChanged);
 
             var clientSettings = _newAppSettings.ClientSettings;
             chkAntiIdle.DataBindings.Add("Checked", clientSettings, "AntiIdleWhileOpen", false, DataSourceUpdateMode.OnPropertyChanged);
-            txtAppFolderPath.DataBindings.Add("Text", clientSettings, "RootFolder", false, DataSourceUpdateMode.OnPropertyChanged);
-            txtAttendedTaskFolder.DataBindings.Add("Text", clientSettings, "AttendedTasksFolder", false, DataSourceUpdateMode.OnPropertyChanged);
+            txtAppFolderPath.DataBindings.Add("Text", clientSettings, "RootFolder2", false, DataSourceUpdateMode.OnPropertyChanged);
+            txtScriptsFolder.DataBindings.Add("Text", clientSettings, "ScriptsFolder", false, DataSourceUpdateMode.OnPropertyChanged);
             chkInsertCommandsInline.DataBindings.Add("Checked", clientSettings, "InsertCommandsInline", false, DataSourceUpdateMode.OnPropertyChanged);
             chkSequenceDragDrop.DataBindings.Add("Checked", clientSettings, "EnableSequenceDragDrop", false, DataSourceUpdateMode.OnPropertyChanged);
             chkMinimizeToTray.DataBindings.Add("Checked", clientSettings, "MinimizeToTray", false, DataSourceUpdateMode.OnPropertyChanged);
+            chkCloseToTray.DataBindings.Add("Checked", clientSettings, "CloseToTray", false, DataSourceUpdateMode.OnPropertyChanged);
             cboStartUpMode.DataBindings.Add("Text", clientSettings, "StartupMode", false, DataSourceUpdateMode.OnPropertyChanged);
-            chkPreloadCommands.DataBindings.Add("Checked", clientSettings, "PreloadBuilderCommands", false, DataSourceUpdateMode.OnPropertyChanged);
             chkSlimActionBar.DataBindings.Add("Checked", clientSettings, "UseSlimActionBar", false, DataSourceUpdateMode.OnPropertyChanged);
 
             //get metrics
             bgwMetrics.RunWorkerAsync();
+            startingRootFolder = _newAppSettings.ClientSettings.RootFolder2;
         }
 
-        private void uiBtnOpen_Click(object sender, EventArgs e)
+        private void uiBtnOk_Click(object sender, EventArgs e)
         {
-            Keys key = (Keys)Enum.Parse(typeof(Keys), cbxCancellationKey.Text);
-            _newAppSettings.EngineSettings.CancellationKey = key;
+            //create references to old and new root folders
+            var oldRootFolder = startingRootFolder;
+            var newRootFolder = txtAppFolderPath.Text;
 
-            if ((SinkType)cbxSinkType.SelectedItem == SinkType.File && string.IsNullOrEmpty(txtLogging1.Text.Trim()))
-                _newAppSettings.EngineSettings.LoggingValue1 = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
+            if (oldRootFolder != newRootFolder)
+            {
+                //ask user to confirm
+                var confirmNewFolderSelection = MessageBox.Show("Please confirm the changes below:" +
+                    Environment.NewLine + Environment.NewLine + "Old Root Folder: " + oldRootFolder +
+                    Environment.NewLine + Environment.NewLine + "New Root Folder: " + newRootFolder,
+                    "Change Default Root Folder", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 
-            _newAppSettings.Save(_newAppSettings);
+                //handle if user decides to cancel
+                if (confirmNewFolderSelection == DialogResult.Cancel)
+                {
+                    txtAppFolderPath.Text = oldRootFolder;
+                    return;
+                }
+                //ask if we should migrate the data
+                var migrateCopyData = MessageBox.Show("Would you like to attempt to move the data from" +
+                    " the old folder to the new folder?  Please note, depending on how many files you have," +
+                    " this could take a few minutes.", "Migrate Data?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                //check if user wants to migrate data
+                if (migrateCopyData == DialogResult.Yes)
+                {
+                    try
+                    {
+                        //find and copy files
+                        foreach (string dirPath in Directory.GetDirectories(oldRootFolder, "*", SearchOption.AllDirectories))
+                        {
+                            Directory.CreateDirectory(dirPath.Replace(oldRootFolder, newRootFolder));
+                        }
+                        foreach (string newPath in Directory.GetFiles(oldRootFolder, "*.*", SearchOption.AllDirectories))
+                        {
+                            File.Copy(newPath, newPath.Replace(oldRootFolder, newRootFolder), true);
+                        }
+
+                        MessageBox.Show("Data Migration Complete", "Data Migration Complete", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        //handle any unexpected errors
+                        MessageBox.Show("An Error Occurred during Data Migration Copy: " + ex.ToString());
+                    }
+                }
+            }
+
+            _newAppSettings.EngineSettings.CancellationKey = (Keys)cbxCancellationKey.SelectedValue;
+
+            if ((SinkType)cbxSinkType.SelectedItem == SinkType.File && string.IsNullOrEmpty(txtLoggingValue.Text.Trim()))
+                _newAppSettings.EngineSettings.LoggingValue = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
+
+            _newAppSettings.Save();
 
             Close();
         }
@@ -143,64 +192,20 @@ namespace OpenBots.UI.Forms
             //user folder browser to let user select top level folder
             using (var fbd = new FolderBrowserDialog())
             {
-
                 //check if user selected a folder
                 if (fbd.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                {
-                    //create references to old and new root folders
-                    var oldRootFolder = txtAppFolderPath.Text;
-                    var newRootFolder = Path.Combine(fbd.SelectedPath, "OpenBotsStudio");
-
-                    //ask user to confirm
-                    var confirmNewFolderSelection = MessageBox.Show("Please confirm the changes below:" +
-                        Environment.NewLine + Environment.NewLine + "Old Root Folder: " + oldRootFolder +
-                        Environment.NewLine + Environment.NewLine + "New Root Folder: " + newRootFolder,
-                        "Change Default Root Folder", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-
-                    //handle if user decides to cancel
-                    if (confirmNewFolderSelection == DialogResult.Cancel)
-                        return;
-
-                    //ask if we should migrate the data
-                    var migrateCopyData = MessageBox.Show("Would you like to attempt to move the data from" +
-                        " the old folder to the new folder?  Please note, depending on how many files you have," +
-                        " this could take a few minutes.", "Migrate Data?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                    //check if user wants to migrate data
-                    if (migrateCopyData == DialogResult.Yes)
-                    {
-                        try
-                        {
-                            //find and copy files
-                            foreach (string dirPath in Directory.GetDirectories(oldRootFolder, "*", SearchOption.AllDirectories))
-                            {
-                                Directory.CreateDirectory(dirPath.Replace(oldRootFolder, newRootFolder));
-                            }
-                            foreach (string newPath in Directory.GetFiles(oldRootFolder, "*.*", SearchOption.AllDirectories))
-                            {
-                                File.Copy(newPath, newPath.Replace(oldRootFolder, newRootFolder), true);
-                            }
-
-                            MessageBox.Show("Data Migration Complete", "Data Migration Complete", MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);                            
-                        }
-                        catch (Exception ex)
-                        {
-                            //handle any unexpected errors
-                            MessageBox.Show("An Error Occurred during Data Migration Copy: " + ex.ToString());
-                        }
-                    }
+                { 
                     //update textbox which will be updated once user selects "Ok"
-                    txtAppFolderPath.Text = newRootFolder;
-                    _newAppSettings.Save(_newAppSettings);
+                    txtAppFolderPath.Text = Path.Combine(fbd.SelectedPath, "OpenBots Studio"); ;
                 }
             }
         }
 
         private void bgwMetrics_DoWork(object sender, DoWorkEventArgs e)
         {
-            e.Result = new Metric().ExecutionMetricsSummary();
+            e.Result = Metric.ExecutionMetricsSummary();
         }
+
         private void bgwMetrics_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error != null)
@@ -255,14 +260,23 @@ namespace OpenBots.UI.Forms
 
         private void btnClearMetrics_Click(object sender, EventArgs e)
         {
-            new Metric().ClearExecutionMetrics();
+            Metric.ClearExecutionMetrics();
             bgwMetrics.RunWorkerAsync();
         }
+
         private void btnGenerateWikiDocs_Click(object sender, EventArgs e)
         {
             DocumentationGeneration docGeneration = new DocumentationGeneration();
-            var docsRoot = docGeneration.GenerateMarkdownFiles(_container);
-            Process.Start(docsRoot);
+            if (Directory.Exists(txtAppFolderPath.Text))
+            {
+                var docsRoot = docGeneration.GenerateMarkdownFiles(_container, txtAppFolderPath.Text);
+                Process.Start(docsRoot);
+            }
+            else
+            {
+                MessageBox.Show("Root path is not valid.");
+            }
+            
         }
 
         private void btnLaunchAttendedMode_Click(object sender, EventArgs e)
@@ -272,24 +286,17 @@ namespace OpenBots.UI.Forms
             Close();
         }
 
-        private void btnSelectAttendedTaskFolder_Click(object sender, EventArgs e)
+        private void btnSelectScriptsFolder_Click(object sender, EventArgs e)
         {
             using (var fbd = new FolderBrowserDialog())
             {
                 if (fbd.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    var newAttendedTaskFolder = Path.Combine(fbd.SelectedPath);
-                    txtAttendedTaskFolder.Text = newAttendedTaskFolder;
+                    var newScriptsFolder = Path.Combine(fbd.SelectedPath);
+                    txtScriptsFolder.Text = newScriptsFolder;
                 }
             }
         }
-
-        //private void btnLaunchDisplayManager_Click(object sender, EventArgs e)
-        //{
-        //    frmDisplayManager displayManager = new frmDisplayManager();
-        //    displayManager.Show();
-        //    Close();
-        //}  
 
         private void cbxSinkType_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -307,16 +314,16 @@ namespace OpenBots.UI.Forms
 
         private void LoadFileLoggingSettings()
         {
-            lblLogging1.Text = "File Path: ";
-            txtLogging1.Clear();
-            txtLogging1.Text = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
+            lblLoggingValue.Text = "File Path: ";
+            txtLoggingValue.Clear();
+            txtLoggingValue.Text = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
             btnFileManager.Visible = true;        
         }
 
         private void LoadHTTPLoggingSettings()
         {
-            lblLogging1.Text = "URI: ";
-            txtLogging1.Clear();
+            lblLoggingValue.Text = "URI: ";
+            txtLoggingValue.Clear();
             btnFileManager.Visible = false;
         }
 
@@ -331,7 +338,7 @@ namespace OpenBots.UI.Forms
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                txtLogging1.Text = ofd.FileName;
+                txtLoggingValue.Text = ofd.FileName;
             }
         }
 

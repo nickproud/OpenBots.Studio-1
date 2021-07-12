@@ -1,4 +1,5 @@
 ﻿using OpenBots.Core.Script;
+using OpenBots.UI.CustomControls.CustomUIControls;
 using System;
 using System.Windows.Forms;
 
@@ -56,7 +57,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.viewCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openShortcutMenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runFromThisCommandToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.notifyTray = new System.Windows.Forms.NotifyIcon(this.components);
+            this.debugFromThisCommandToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.notifyTrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.cmsNotifyTrayIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsmiNotifyIconStudioSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiNotifyIconPackageManager = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiNotifyIconRun = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiNotifyIconQuit = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlControlContainer = new System.Windows.Forms.Panel();
             this.grpSearch = new OpenBots.UI.CustomControls.CustomUIControls.UIGroupBox();
             this.pbSearch = new System.Windows.Forms.PictureBox();
@@ -114,15 +121,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiScriptTabControl = new OpenBots.UI.CustomControls.CustomUIControls.UITabControl();
             this.uiVariableArgumentTabs = new OpenBots.UI.CustomControls.CustomUIControls.UITabControl();
             this.variables = new System.Windows.Forms.TabPage();
-            this.dgvVariables = new System.Windows.Forms.DataGridView();
+            this.dgvVariables = new OpenBots.UI.CustomControls.CustomUIControls.UIDataGridView();
             this.variableName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.variableType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.variableValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.VariableEditor = new System.Windows.Forms.DataGridViewButtonColumn();
             this.arguments = new System.Windows.Forms.TabPage();
-            this.dgvArguments = new System.Windows.Forms.DataGridView();
+            this.dgvArguments = new OpenBots.UI.CustomControls.CustomUIControls.UIDataGridView();
             this.argumentName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.argumentType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.argumentValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ArgumentEditor = new System.Windows.Forms.DataGridViewButtonColumn();
             this.direction = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.imports = new System.Windows.Forms.TabPage();
             this.tlpImports = new System.Windows.Forms.TableLayoutPanel();
@@ -181,7 +190,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsSearchBox = new System.Windows.Forms.ToolStripTextBox();
             this.tsSearchButton = new System.Windows.Forms.ToolStripMenuItem();
             this.tsSearchResult = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.tlpControls = new System.Windows.Forms.TableLayoutPanel();
             this.cmsProjectFileActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCopyFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -195,9 +203,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.cmsProjectMainFolderActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiMainRenameFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.ttScriptBuilder = new System.Windows.Forms.ToolTip(this.components);
-            this.debugFromThisCommandToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imgListIntellisense = new System.Windows.Forms.ImageList(this.components);
             this.cmsProjectFolderActions.SuspendLayout();
             this.cmsScriptActions.SuspendLayout();
+            this.cmsNotifyTrayIcon.SuspendLayout();
             this.pnlControlContainer.SuspendLayout();
             this.grpSearch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSearch)).BeginInit();
@@ -382,7 +391,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.runFromThisCommandToolStripMenuItem,
             this.debugFromThisCommandToolStripMenuItem});
             this.cmsScriptActions.Name = "cmsScriptActions";
-            this.cmsScriptActions.Size = new System.Drawing.Size(329, 340);
+            this.cmsScriptActions.Size = new System.Drawing.Size(329, 312);
             // 
             // enableSelectedCodeToolStripMenuItem
             // 
@@ -462,15 +471,62 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.runFromThisCommandToolStripMenuItem.Text = "Run From This Command";
             this.runFromThisCommandToolStripMenuItem.Click += new System.EventHandler(this.runFromThisCommandToolStripMenuItem_Click);
             // 
-            // notifyTray
+            // debugFromThisCommandToolStripMenuItem
             // 
-            this.notifyTray.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-            this.notifyTray.BalloonTipText = "OpenBots Studio is still running in your system tray. Double-click to restore Ope" +
+            this.debugFromThisCommandToolStripMenuItem.Name = "debugFromThisCommandToolStripMenuItem";
+            this.debugFromThisCommandToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
+            this.debugFromThisCommandToolStripMenuItem.Text = "Debug From This Command";
+            this.debugFromThisCommandToolStripMenuItem.Click += new System.EventHandler(this.debugFromThisCommandToolStripMenuItem_Click);
+            // 
+            // notifyTrayIcon
+            // 
+            this.notifyTrayIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.notifyTrayIcon.BalloonTipText = "OpenBots Studio is still running in your system tray. Double-click to restore Ope" +
     "nBots Studio to full size!\r\n";
-            this.notifyTray.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyTray.Icon")));
-            this.notifyTray.Text = "OpenBots Studio, Open Source Automation for All";
-            this.notifyTray.Visible = true;
-            this.notifyTray.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyTray_MouseDoubleClick);
+            this.notifyTrayIcon.ContextMenuStrip = this.cmsNotifyTrayIcon;
+            this.notifyTrayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyTrayIcon.Icon")));
+            this.notifyTrayIcon.Text = "OpenBots Studio";
+            this.notifyTrayIcon.Visible = true;
+            this.notifyTrayIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyTray_MouseDoubleClick);
+            // 
+            // cmsNotifyTrayIcon
+            // 
+            this.cmsNotifyTrayIcon.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.cmsNotifyTrayIcon.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiNotifyIconStudioSettings,
+            this.tsmiNotifyIconPackageManager,
+            this.tsmiNotifyIconRun,
+            this.tsmiNotifyIconQuit});
+            this.cmsNotifyTrayIcon.Name = "cmsNotifyTrayIcon";
+            this.cmsNotifyTrayIcon.Size = new System.Drawing.Size(196, 100);
+            // 
+            // tsmiNotifyIconStudioSettings
+            // 
+            this.tsmiNotifyIconStudioSettings.Name = "tsmiNotifyIconStudioSettings";
+            this.tsmiNotifyIconStudioSettings.Size = new System.Drawing.Size(195, 24);
+            this.tsmiNotifyIconStudioSettings.Text = "Studio Settings";
+            this.tsmiNotifyIconStudioSettings.Click += new System.EventHandler(this.tsmiNotifyIconStudioSettings_Click);
+            // 
+            // tsmiNotifyIconPackageManager
+            // 
+            this.tsmiNotifyIconPackageManager.Name = "tsmiNotifyIconPackageManager";
+            this.tsmiNotifyIconPackageManager.Size = new System.Drawing.Size(195, 24);
+            this.tsmiNotifyIconPackageManager.Text = "Package Manager";
+            this.tsmiNotifyIconPackageManager.Click += new System.EventHandler(this.tsmiNotifyIconPackageManager_Click);
+            // 
+            // tsmiNotifyIconRun
+            // 
+            this.tsmiNotifyIconRun.Name = "tsmiNotifyIconRun";
+            this.tsmiNotifyIconRun.Size = new System.Drawing.Size(195, 24);
+            this.tsmiNotifyIconRun.Text = "Run";
+            this.tsmiNotifyIconRun.Click += new System.EventHandler(this.tsmiNotifyIconRun_Click);
+            // 
+            // tsmiNotifyIconQuit
+            // 
+            this.tsmiNotifyIconQuit.Name = "tsmiNotifyIconQuit";
+            this.tsmiNotifyIconQuit.Size = new System.Drawing.Size(195, 24);
+            this.tsmiNotifyIconQuit.Text = "Quit";
+            this.tsmiNotifyIconQuit.Click += new System.EventHandler(this.tsmiNotifyIconQuit_Click);
             // 
             // pnlControlContainer
             // 
@@ -1195,6 +1251,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.imgListProjectPane.Images.SetKeyName(6, "python-icon.png");
             this.imgListProjectPane.Images.SetKeyName(7, "tagui-icon.png");
             this.imgListProjectPane.Images.SetKeyName(8, "c-sharp-icon.png");
+            this.imgListProjectPane.Images.SetKeyName(9, "powershell-icon.png");
             // 
             // pnlProjectButtons
             // 
@@ -1449,6 +1506,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiVariableArgumentTabs.Size = new System.Drawing.Size(1429, 236);
             this.uiVariableArgumentTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.uiVariableArgumentTabs.TabIndex = 0;
+            this.uiVariableArgumentTabs.SelectedIndexChanged += new System.EventHandler(this.uiVariableArgumentTabs_SelectedIndexChanged);
             // 
             // variables
             // 
@@ -1464,18 +1522,23 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // dgvVariables
             // 
             this.dgvVariables.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvVariables.BorderColor = System.Drawing.Color.Empty;
             this.dgvVariables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvVariables.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.variableName,
             this.variableType,
-            this.variableValue});
+            this.variableValue,
+            this.VariableEditor});
             this.dgvVariables.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvVariables.IsDoubleBuffered = false;
+            this.dgvVariables.ListBoxShown = false;
             this.dgvVariables.Location = new System.Drawing.Point(3, 3);
             this.dgvVariables.Name = "dgvVariables";
             this.dgvVariables.RowHeadersWidth = 51;
             this.dgvVariables.RowTemplate.Height = 24;
             this.dgvVariables.Size = new System.Drawing.Size(1415, 194);
             this.dgvVariables.TabIndex = 0;
+            this.dgvVariables.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellContentClick);
             this.dgvVariables.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEndEdit);
             this.dgvVariables.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEnter);
             this.dgvVariables.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellValueChanged);
@@ -1483,6 +1546,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.dgvVariables.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvVariablesArguments_DataBindingComplete);
             this.dgvVariables.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgvVariablesArguments_DataError);
             this.dgvVariables.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvVariablesArguments_DefaultValuesNeeded);
+            this.dgvVariables.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgvVariablesArguments_EditingControlShowing);
             this.dgvVariables.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvVariables.SelectionChanged += new System.EventHandler(this.dgvVariables_SelectionChanged);
             this.dgvVariables.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
@@ -1491,6 +1555,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // variableName
             // 
             this.variableName.DataPropertyName = "VariableName";
+            this.variableName.FillWeight = 130.4813F;
             this.variableName.HeaderText = "Variable Name";
             this.variableName.MinimumWidth = 6;
             this.variableName.Name = "variableName";
@@ -1498,6 +1563,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // variableType
             // 
             this.variableType.DataPropertyName = "VariableType";
+            this.variableType.FillWeight = 130.4813F;
             this.variableType.HeaderText = "Variable Type";
             this.variableType.MinimumWidth = 6;
             this.variableType.Name = "variableType";
@@ -1506,9 +1572,19 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // variableValue
             // 
             this.variableValue.DataPropertyName = "VariableValue";
+            this.variableValue.FillWeight = 130.4813F;
             this.variableValue.HeaderText = "Variable Value";
             this.variableValue.MinimumWidth = 6;
             this.variableValue.Name = "variableValue";
+            // 
+            // VariableEditor
+            // 
+            this.VariableEditor.FillWeight = 8.55615F;
+            this.VariableEditor.HeaderText = "";
+            this.VariableEditor.MinimumWidth = 4;
+            this.VariableEditor.Name = "VariableEditor";
+            this.VariableEditor.Text = "...";
+            this.VariableEditor.UseColumnTextForButtonValue = true;
             // 
             // arguments
             // 
@@ -1524,26 +1600,32 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // dgvArguments
             // 
             this.dgvArguments.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvArguments.BorderColor = System.Drawing.Color.Empty;
             this.dgvArguments.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvArguments.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.argumentName,
             this.argumentType,
             this.argumentValue,
+            this.ArgumentEditor,
             this.direction});
             this.dgvArguments.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvArguments.IsDoubleBuffered = false;
+            this.dgvArguments.ListBoxShown = false;
             this.dgvArguments.Location = new System.Drawing.Point(3, 3);
             this.dgvArguments.Name = "dgvArguments";
             this.dgvArguments.RowHeadersWidth = 51;
             this.dgvArguments.RowTemplate.Height = 24;
             this.dgvArguments.Size = new System.Drawing.Size(1415, 194);
             this.dgvArguments.TabIndex = 2;
+            this.dgvArguments.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellContentClick);
             this.dgvArguments.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEndEdit);
             this.dgvArguments.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellEnter);
             this.dgvArguments.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvVariablesArguments_CellValueChanged);
             this.dgvArguments.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgvVariablesArguments_CurrentCellDirtyStateChanged);
             this.dgvArguments.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dgvVariablesArguments_DataBindingComplete);
-            this.dgvArguments.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvVariablesArguments_DefaultValuesNeeded);
             this.dgvArguments.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgvVariablesArguments_DataError);
+            this.dgvArguments.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvVariablesArguments_DefaultValuesNeeded);
+            this.dgvArguments.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgvVariablesArguments_EditingControlShowing);
             this.dgvArguments.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvVariablesArguments_RowsAdded);
             this.dgvArguments.SelectionChanged += new System.EventHandler(this.dgvArguments_SelectionChanged);
             this.dgvArguments.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvVariablesArguments_UserDeletingRow);
@@ -1552,6 +1634,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // argumentName
             // 
             this.argumentName.DataPropertyName = "ArgumentName";
+            this.argumentName.FillWeight = 145.205F;
             this.argumentName.HeaderText = "Argument Name";
             this.argumentName.MinimumWidth = 6;
             this.argumentName.Name = "argumentName";
@@ -1559,6 +1642,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // argumentType
             // 
             this.argumentType.DataPropertyName = "ArgumentType";
+            this.argumentType.FillWeight = 145.205F;
             this.argumentType.HeaderText = "Argument Type";
             this.argumentType.MinimumWidth = 6;
             this.argumentType.Name = "argumentType";
@@ -1567,13 +1651,24 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // argumentValue
             // 
             this.argumentValue.DataPropertyName = "ArgumentValue";
+            this.argumentValue.FillWeight = 145.205F;
             this.argumentValue.HeaderText = "Argument Value";
             this.argumentValue.MinimumWidth = 6;
             this.argumentValue.Name = "argumentValue";
             // 
+            // ArgumentEditor
+            // 
+            this.ArgumentEditor.FillWeight = 10.69519F;
+            this.ArgumentEditor.HeaderText = "";
+            this.ArgumentEditor.MinimumWidth = 4;
+            this.ArgumentEditor.Name = "ArgumentEditor";
+            this.ArgumentEditor.Text = "...";
+            this.ArgumentEditor.UseColumnTextForButtonValue = true;
+            // 
             // direction
             // 
             this.direction.DataPropertyName = "Direction";
+            this.direction.FillWeight = 53.68988F;
             this.direction.HeaderText = "Direction";
             this.direction.MinimumWidth = 6;
             this.direction.Name = "direction";
@@ -1852,8 +1947,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.installDefaultToolStripMenuItem,
             this.tsSearchBox,
             this.tsSearchButton,
-            this.tsSearchResult,
-            this.toolStripMenuItem1});
+            this.tsSearchResult});
             this.msOpenBotsMenu.Location = new System.Drawing.Point(0, 0);
             this.msOpenBotsMenu.Name = "msOpenBotsMenu";
             this.msOpenBotsMenu.Size = new System.Drawing.Size(1771, 38);
@@ -2198,12 +2292,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsSearchResult.Size = new System.Drawing.Size(14, 34);
             this.tsSearchResult.Visible = false;
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(27, 34);
-            this.toolStripMenuItem1.Text = " ";
-            // 
             // tlpControls
             // 
             this.tlpControls.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(59)))));
@@ -2327,12 +2415,25 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.tsmiMainRenameFolder.Text = "Rename Project";
             this.tsmiMainRenameFolder.Click += new System.EventHandler(this.tsmiRenameFolder_Click);
             // 
-            // debugFromThisCommandToolStripMenuItem
+            // imgListIntellisense
             // 
-            this.debugFromThisCommandToolStripMenuItem.Name = "debugFromThisCommandToolStripMenuItem";
-            this.debugFromThisCommandToolStripMenuItem.Size = new System.Drawing.Size(328, 28);
-            this.debugFromThisCommandToolStripMenuItem.Text = "Debug From This Command";
-            this.debugFromThisCommandToolStripMenuItem.Click += new System.EventHandler(this.debugFromThisCommandToolStripMenuItem_Click);
+            this.imgListIntellisense.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgListIntellisense.ImageStream")));
+            this.imgListIntellisense.TransparentColor = System.Drawing.Color.Transparent;
+            this.imgListIntellisense.Images.SetKeyName(0, "intellisense-method.png");
+            this.imgListIntellisense.Images.SetKeyName(1, "intellisense-extensionmethod.png");
+            this.imgListIntellisense.Images.SetKeyName(2, "intellisense-property.png");
+            this.imgListIntellisense.Images.SetKeyName(3, "intellisense-class.png");
+            this.imgListIntellisense.Images.SetKeyName(4, "intellisense-enumerator.png");
+            this.imgListIntellisense.Images.SetKeyName(5, "intellisense-event.png");
+            this.imgListIntellisense.Images.SetKeyName(6, "intellisense-interface.png");
+            this.imgListIntellisense.Images.SetKeyName(7, "intellisense-namespace.png");
+            this.imgListIntellisense.Images.SetKeyName(8, "intellisense-structure.png");
+            this.imgListIntellisense.Images.SetKeyName(9, "intellisense-field.png");
+            this.imgListIntellisense.Images.SetKeyName(10, "intellisense-delegate.png");
+            this.imgListIntellisense.Images.SetKeyName(11, "intellisense-keyword.png");
+            this.imgListIntellisense.Images.SetKeyName(12, "intellisense-typeparameter.png");
+            this.imgListIntellisense.Images.SetKeyName(13, "intellisense-parameter.png");
+            this.imgListIntellisense.Images.SetKeyName(14, "intellisense-constant.png");
             // 
             // frmScriptBuilder
             // 
@@ -2355,6 +2456,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.Resize += new System.EventHandler(this.frmScriptBuilder_Resize);
             this.cmsProjectFolderActions.ResumeLayout(false);
             this.cmsScriptActions.ResumeLayout(false);
+            this.cmsNotifyTrayIcon.ResumeLayout(false);
             this.pnlControlContainer.ResumeLayout(false);
             this.grpSearch.ResumeLayout(false);
             this.grpSearch.PerformLayout();
@@ -2441,7 +2543,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private System.Windows.Forms.ToolStripMenuItem copySelectedCodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteSelectedCodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cutSelectedCodeToolStripMenuItem;
-        private System.Windows.Forms.NotifyIcon notifyTray;
+        private System.Windows.Forms.NotifyIcon notifyTrayIcon;
         private System.Windows.Forms.ToolStripMenuItem viewCodeToolStripMenuItem;
         private ContextMenuStrip cmsProjectFolderActions;
         private ToolStripMenuItem tsmiDeleteFolder;
@@ -2565,7 +2667,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private ToolStripMenuItem clearAllToolStripMenuItem;
         private ToolStripMenuItem packageManagerToolStripMenuItem;
         private Core.UI.Controls.UIPictureButton uiBtnPackageManager;
-        private ToolStripMenuItem toolStripMenuItem1;
         private CustomControls.CustomUIControls.UIIconButton uiBtnReloadCommands;
         private ToolStripMenuItem tsmiReloadTab;
         private ToolTip ttScriptBuilder;
@@ -2577,16 +2678,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private CustomControls.CustomUIControls.UITabControl uiVariableArgumentTabs;
         private TabPage variables;
         private TabPage arguments;
-        private DataGridView dgvVariables;
-        private DataGridView dgvArguments;
+        private UIDataGridView dgvVariables;
+        private UIDataGridView dgvArguments;
         private Core.UI.Controls.UIPictureButton uiBtnAddArgument;
-        private DataGridViewTextBoxColumn argumentName;
-        private DataGridViewComboBoxColumn argumentType;
-        private DataGridViewTextBoxColumn argumentValue;
-        private DataGridViewComboBoxColumn direction;
-        private DataGridViewTextBoxColumn variableName;
-        private DataGridViewComboBoxColumn variableType;
-        private DataGridViewTextBoxColumn variableValue;
         private ToolStripMenuItem runFromThisCommandToolStripMenuItem;
         private TabPage imports;
         private TableLayoutPanel tlpImports;
@@ -2595,6 +2689,21 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private ToolStripMenuItem extensionManagerToolStripMenuItem;
         private Core.UI.Controls.UIPictureButton uiBtnExtensionsManager;
         private ToolStripMenuItem debugFromThisCommandToolStripMenuItem;
+        private ImageList imgListIntellisense;
+        private ContextMenuStrip cmsNotifyTrayIcon;
+        private ToolStripMenuItem tsmiNotifyIconQuit;
+        private ToolStripMenuItem tsmiNotifyIconStudioSettings;
+        private ToolStripMenuItem tsmiNotifyIconPackageManager;
+        private ToolStripMenuItem tsmiNotifyIconRun;
+        private DataGridViewTextBoxColumn variableName;
+        private DataGridViewComboBoxColumn variableType;
+        private DataGridViewTextBoxColumn variableValue;
+        private DataGridViewButtonColumn VariableEditor;
+        private DataGridViewTextBoxColumn argumentName;
+        private DataGridViewComboBoxColumn argumentType;
+        private DataGridViewTextBoxColumn argumentValue;
+        private DataGridViewButtonColumn ArgumentEditor;
+        private DataGridViewComboBoxColumn direction;
     }
 }
 

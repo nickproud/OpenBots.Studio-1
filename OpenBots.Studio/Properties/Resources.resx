@@ -226,6 +226,9 @@
   <data name="DefaultCSScript" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ScriptFiles\DefaultCSScript.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="DefaultPowerShellScript" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScriptFiles\DefaultPowerShellScript.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="DefaultPythonScript" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ScriptFiles\DefaultPythonScript.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -268,6 +271,51 @@
   <data name="header_backing_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Misc\header_backing_dark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="intellisense_class" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-class.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_constant" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-constant.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_delegate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-delegate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_enumerator" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-enumerator.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_event" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-event.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_extensionmethod" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-extensionmethod.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_field" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-field.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_interface" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-interface.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_keyword" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-keyword.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_method" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-method.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_namespace" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-namespace.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_parameter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-parameter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_property" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-property.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_structure" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-structure.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="intellisense_typeparameter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Intellisense\intellisense-typeparameter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="links_header" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Buttons\links-header.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -306,6 +354,9 @@
   </data>
   <data name="pdf_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\FileIcons\pdf-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="powershell_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FileIcons\powershell-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ProjectFolderIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\FileIcons\ProjectFolderIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

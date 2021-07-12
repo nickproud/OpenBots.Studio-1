@@ -74,9 +74,6 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SharpSimpleNLG, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SharpSimpleNLG.1.2.1\lib\net462\SharpSimpleNLG.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.AppContext.4.3.0\lib\net463\System.AppContext.dll</HintPath>
@@ -219,11 +216,6 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Xml.XmlDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SharpSimpleNLG.1.2.1\lib\net462\System.Xml.XmlDocument.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.XPath, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Xml.XPath.4.3.0\lib\net46\System.Xml.XPath.dll</HintPath>
       <Private>True</Private>
@@ -257,6 +249,7 @@
     <Compile Include="OpenBots.Commands.Email\GetMimeMessagePropertyCommand.cs" />
     <Compile Include="OpenBots.Commands.Email\MoveCopyIMAPEmailCommand.cs" />
     <Compile Include="OpenBots.Commands.Email\ReplyToSMTPEmailCommand.cs" />
+    <Compile Include="OpenBots.Commands.Email\SaveIMAPEmailCommand.cs" />
     <Compile Include="OpenBots.Commands.Email\SendSMTPEmailCommand.cs" />
     <Compile Include="OpenBots.Commands.File\CompressFilesCommand.cs" />
     <Compile Include="OpenBots.Commands.File\DeleteFileCommand.cs" />

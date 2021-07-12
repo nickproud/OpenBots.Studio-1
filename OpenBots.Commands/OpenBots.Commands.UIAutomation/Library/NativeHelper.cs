@@ -2,15 +2,17 @@
 using OpenBots.Core.ChromeNative.Extension;
 using OpenBots.Core.ChromeNativeClient;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -46,6 +48,15 @@ namespace OpenBots.Commands.UIAutomation.Library
 				(string)await SearchParametersDT.Rows[6].ItemArray[2].ToString().EvaluateCode(engine) : "";
 			webElement.CssSelector = (SearchParametersDT.Rows[7].ItemArray[0].ToString().ToLower() == "true") ?
 				(string)await SearchParametersDT.Rows[7].ItemArray[2].ToString().EvaluateCode(engine) : "";
+
+			List<string> selectorList = new List<string>();
+			for(int i = 8; SearchParametersDT.HasRowAt(i); i++)
+            {
+				if ((SearchParametersDT.Rows[i].ItemArray[0].ToString().ToLower() == "true"))
+					selectorList.Add((string)await SearchParametersDT.Rows[i].ItemArray[2].ToString().EvaluateCode(engine));
+			}
+			webElement.CssSelectors = GetQuerySelectorFromCSSSelectorsList(selectorList);
+
 			return webElement;
 		}
 
@@ -60,6 +71,9 @@ namespace OpenBots.Commands.UIAutomation.Library
 			SearchParameters.Rows.Add(false, "\"Class Name\"", $"\"{webElement.ClassName}\"");
 			SearchParameters.Rows.Add(false, "\"Link Text\"", $"\"{webElement.LinkText}\"");
 			SearchParameters.Rows.Add(false, "\"CSS Selector\"", $"\"{webElement.CssSelector}\"");
+			var _cssSelectors = webElement.CssSelectors.Split(new string[] {",,"}, StringSplitOptions.None).ToList();
+			for (int i = 0; i < _cssSelectors.Count; i++)
+				SearchParameters.Rows.Add(false, $"\"CSS Selector {i + 1}\"", $"\"{_cssSelectors[i]}\"");
 			return SearchParameters;
 		}
 
@@ -99,9 +113,15 @@ namespace OpenBots.Commands.UIAutomation.Library
 					User32Functions.BringChromeWindowToTop();
 
 					string webElementStr;
-					NativeRequest.ProcessRequest("getelement", "", out webElementStr);
-					if (!string.IsNullOrEmpty(webElementStr))
+					NativeRequest.ProcessRequest("getelement", "", 60, out webElementStr);
+					if (!string.IsNullOrEmpty(webElementStr) && webElementStr != "stopped")
 					{
+                        if (!webElementStr.Contains("tagName"))
+                        {
+							NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(webElementStr);
+							if (responseObject.Status == "Failed")
+								throw new Exception(responseObject.Result);
+						}
 						WebElement webElement = JsonConvert.DeserializeObject<WebElement>(webElementStr);
 						DataTable SearchParameters = WebElementToDataTable(webElement);
 
@@ -125,7 +145,15 @@ namespace OpenBots.Commands.UIAutomation.Library
 						}
 						));
 					}
-                    else
+					else if (ex.Message.ToLower().Contains("arithmetic operation resulted in an overflow"))
+					{
+						var result = ((Form)editor).Invoke(new Action(() =>
+						{
+							editor.ShowMessage("Chrome Native Extension stopped responding.", "MessageBox", DialogType.OkOnly, 10);
+						}
+						));
+					}
+					else
                     {
 						var result = ((Form)editor).Invoke(new Action(() =>
 						{
@@ -194,6 +222,44 @@ namespace OpenBots.Commands.UIAutomation.Library
 										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
 
 			return $"{searchParameterName} = {searchParameterValue}";
+		}
+		public static bool HasRowAt(this DataTable dt, int index)
+		{
+			return index < dt.Rows.Count;
+		}
+
+		public static string GetQuerySelectorFromCSSSelectorsList(List<string> cssSelectorsList)
+        {
+			if (cssSelectorsList.Count == 0)
+				return "";
+			StringBuilder cssQuerySelector = new StringBuilder();
+			if (cssSelectorsList.Count > 1)
+			{
+				var elementTag = cssSelectorsList.First().GetUntilOrEmpty();
+				cssQuerySelector.Append(elementTag);
+
+				foreach (var cssSelector in cssSelectorsList)
+				{
+					cssQuerySelector.Append("["+cssSelector.Split('[', ']')[1]+"]");
+				}
+			}
+			else
+				cssQuerySelector.Append(cssSelectorsList.First());
+			return cssQuerySelector.ToString();
+		}
+		public static string GetUntilOrEmpty(this string text, string stopAt = "[")
+		{
+			if (!String.IsNullOrWhiteSpace(text))
+			{
+				int charLocation = text.IndexOf(stopAt, StringComparison.Ordinal);
+
+				if (charLocation > 0)
+				{
+					return text.Substring(0, charLocation);
+				}
+			}
+
+			return String.Empty;
 		}
 	}
 }

@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
+using OpenBots.Commands.Server.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.HelperMethods;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Server.SDK.HelperMethods;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -77,25 +78,25 @@ namespace OpenBots.Commands.Asset
                 v_AssetActionValue = "0";
             var vAssetActionValue = (int)await v_AssetActionValue.EvaluateCode(engine);
 
-            var userInfo = AuthMethods.GetUserInfo();
-            var asset = AssetMethods.GetAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vAssetName, "Number");
-
+            var userInfo = ServerSessionVariableMethods.GetUserInfo(engine);
+            var asset = AssetMethods.GetAsset(userInfo, vAssetName, "Number");
+           
             if (asset == null)
                 throw new DataException($"No Asset was found for '{vAssetName}' and type 'Number'");
 
             switch (v_AssetActionType)
             {
                 case "Increment":
-                    AssetMethods.IncrementAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id);
+                    AssetMethods.IncrementAsset(userInfo, asset.Id);
                     break;
                 case "Decrement":
-                    AssetMethods.DecrementAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id);
+                    AssetMethods.DecrementAsset(userInfo, asset.Id);
                     break;
                 case "Add":
-                    AssetMethods.AddAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id, vAssetActionValue);
+                    AssetMethods.AddAsset(userInfo, asset.Id, vAssetActionValue);
                     break;
                 case "Subtract":
-                    AssetMethods.SubtractAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset.Id, vAssetActionValue);
+                    AssetMethods.SubtractAsset(userInfo, asset.Id, vAssetActionValue);
                     break;
             }
         }

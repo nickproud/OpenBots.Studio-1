@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Commands.Microsoft.Library;
@@ -48,42 +48,17 @@ namespace OpenBots.Commands.Excel
 			SelectionName = "Activate Range";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_excel;
-
-			v_InstanceName = "DefaultExcel";
 		}
 
 		public async override Task RunCommand(object sender)
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
+			var vRange = (string)await v_Range.EvaluateCode(engine);
+
 			var excelInstance = (Application)excelObject;
 			Worksheet excelSheet = excelInstance.ActiveSheet;
-
-			var vRange = (string)await v_Range.EvaluateCode(engine);
-			var splitRange = vRange.Split(':');
-			Range cellRange;
-			Range sourceRange = excelSheet.UsedRange;
-
-			//Select a range of cells
-			try
-			{
-				if (splitRange[1] == "")
-				{
-					var last = excelInstance.GetLastIndexOfNonEmptyCell(sourceRange, sourceRange.Range["A1"]);
-					if (last == "")
-						throw new Exception("No data found in sheet.");
-					cellRange = excelSheet.Range[splitRange[0], last];
-				}
-				else
-				{
-					cellRange = excelSheet.Range[splitRange[0], splitRange[1]];
-				}
-			}
-			//Select a cell
-			catch (Exception)
-			{
-				cellRange = excelSheet.Range[splitRange[0], Type.Missing];
-			}
+			Range cellRange = excelInstance.GetRange(vRange, excelSheet);	
 
 			excelSheet.Range[cellRange.Address].Select();           
 		}

@@ -57,7 +57,7 @@ namespace OpenBots.Server.SDK.Model
         /// <param name="errorReason">errorReason.</param>
         /// <param name="errorCode">errorCode.</param>
         /// <param name="serializedErrorString">serializedErrorString.</param>
-        public Job(Guid? id = default(Guid?), bool? isDeleted = false, string createdBy = default(string), DateTime? createdOn = default(DateTime?), string deletedBy = default(string), DateTime? deleteOn = default(DateTime?), byte[] timestamp = default(byte[]), DateTime? updatedOn = default(DateTime?), string updatedBy = default(string), Guid? agentId = default(Guid?), Guid? agentGroupId = default(Guid?), DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), double? executionTimeInMinutes = default(double?), DateTime? enqueueTime = default(DateTime?), DateTime? dequeueTime = default(DateTime?), Guid? automationId = default(Guid?), int? automationVersion = default(int?), Guid? automationVersionId = default(Guid?), JobStatusType jobStatus = default(JobStatusType), string message = default(string), bool? isSuccessful = default(bool?), string errorReason = default(string), string errorCode = default(string), string serializedErrorString = default(string))
+        public Job(Guid? id = default(Guid?), bool? isDeleted = false, string createdBy = default(string), DateTime? createdOn = default(DateTime?), string deletedBy = default(string), DateTime? deleteOn = default(DateTime?), byte[] timestamp = default(byte[]), DateTime? updatedOn = default(DateTime?), string updatedBy = default(string), Guid? scheduleId = default(Guid?), Guid? agentId = default(Guid?), Guid? agentGroupId = default(Guid?), DateTime? startTime = default(DateTime?), DateTime? endTime = default(DateTime?), int? startDay = default(int?), int? endDay = default(int?), double? executionTimeInMinutes = default(double?), DateTime? enqueueTime = default(DateTime?), DateTime? dequeueTime = default(DateTime?), Guid? automationId = default(Guid?), int? automationVersion = default(int?), Guid? automationVersionId = default(Guid?), JobStatusType jobStatus = default(JobStatusType), string message = default(string), bool? isSuccessful = default(bool?), string errorReason = default(string), string errorCode = default(string), string serializedErrorString = default(string), int automationLogCount = default(int), int automationExecutionLogCount = default(int))
         {
             // to ensure "automationId" is required (not null)
             if (automationId == null)
@@ -103,10 +103,13 @@ namespace OpenBots.Server.SDK.Model
             this.Timestamp = timestamp;
             this.UpdatedOn = updatedOn;
             this.UpdatedBy = updatedBy;
+            this.ScheduleId = scheduleId;
             this.AgentId = agentId;
             this.AgentGroupId = agentGroupId;
             this.StartTime = startTime;
             this.EndTime = endTime;
+            this.StartDay = startDay;
+            this.EndDay = endDay;
             this.ExecutionTimeInMinutes = executionTimeInMinutes;
             this.EnqueueTime = enqueueTime;
             this.DequeueTime = dequeueTime;
@@ -116,6 +119,8 @@ namespace OpenBots.Server.SDK.Model
             this.ErrorReason = errorReason;
             this.ErrorCode = errorCode;
             this.SerializedErrorString = serializedErrorString;
+            this.AutomationLogCount = automationLogCount;
+            this.AutomationExecutionLogCount = automationExecutionLogCount;
         }
         
         /// <summary>
@@ -173,6 +178,11 @@ namespace OpenBots.Server.SDK.Model
         public string UpdatedBy { get; set; }
 
         /// <summary>
+        /// Gets or Sets ScheduleId
+        /// </summary>
+        public Guid? ScheduleId { get; set; }
+
+        /// <summary>
         /// Gets or Sets AgentId
         /// </summary>
         [DataMember(Name="agentId", EmitDefaultValue=false)]
@@ -195,6 +205,16 @@ namespace OpenBots.Server.SDK.Model
         /// </summary>
         [DataMember(Name="endTime", EmitDefaultValue=false)]
         public DateTime? EndTime { get; set; }
+
+        /// <summary>
+        /// Get or Sets StartDay
+        /// </summary>
+        public int? StartDay { get; set; }//number of days since Jan 1st 2020
+        
+        /// <summary>
+        /// Gets or Sets EndDay
+        /// </summary>
+        public int? EndDay { get; set; }
 
         /// <summary>
         /// Gets or Sets ExecutionTimeInMinutes
@@ -269,6 +289,16 @@ namespace OpenBots.Server.SDK.Model
         public string SerializedErrorString { get; set; }
 
         /// <summary>
+        /// Gets or Sets AutomationLogCount
+        /// </summary>
+        public int AutomationLogCount { get; set; }
+
+        /// <summary>
+        /// Gets or Sets AutomationExecutionLogCount
+        /// </summary>
+        public int AutomationExecutionLogCount { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -285,10 +315,13 @@ namespace OpenBots.Server.SDK.Model
             sb.Append("  Timestamp: ").Append(Timestamp).Append("\n");
             sb.Append("  UpdatedOn: ").Append(UpdatedOn).Append("\n");
             sb.Append("  UpdatedBy: ").Append(UpdatedBy).Append("\n");
+            sb.Append("  ScheduleId: ").Append(ScheduleId).Append("\n");
             sb.Append("  AgentId: ").Append(AgentId).Append("\n");
             sb.Append("  AgentGroupId: ").Append(AgentGroupId).Append("\n");
             sb.Append("  StartTime: ").Append(StartTime).Append("\n");
             sb.Append("  EndTime: ").Append(EndTime).Append("\n");
+            sb.Append("  StartDay: ").Append(StartDay).Append("\n");
+            sb.Append("  EndDay: ").Append(EndDay).Append("\n");
             sb.Append("  ExecutionTimeInMinutes: ").Append(ExecutionTimeInMinutes).Append("\n");
             sb.Append("  EnqueueTime: ").Append(EnqueueTime).Append("\n");
             sb.Append("  DequeueTime: ").Append(DequeueTime).Append("\n");
@@ -301,6 +334,8 @@ namespace OpenBots.Server.SDK.Model
             sb.Append("  ErrorReason: ").Append(ErrorReason).Append("\n");
             sb.Append("  ErrorCode: ").Append(ErrorCode).Append("\n");
             sb.Append("  SerializedErrorString: ").Append(SerializedErrorString).Append("\n");
+            sb.Append("  AutomationLogCount: ").Append(AutomationLogCount).Append("\n");
+            sb.Append("  AutomationExecutionLogCount: ").Append(AutomationExecutionLogCount).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }

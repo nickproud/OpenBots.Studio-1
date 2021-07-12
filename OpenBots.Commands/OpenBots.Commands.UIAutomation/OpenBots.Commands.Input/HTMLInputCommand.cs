@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -51,7 +51,7 @@ namespace OpenBots.Commands.Input
 		{
 			var engine = (IAutomationEngineInstance)sender;
 
-			if (engine.AutomationEngineContext.ScriptEngine == null)
+			if (engine.EngineContext.ScriptEngine == null)
 			{
 				engine.ReportProgress("HTML UserInput Supported With UI Only");
 				MessageBox.Show("HTML UserInput Supported With UI Only", "UserInput Command", 
@@ -63,9 +63,9 @@ namespace OpenBots.Commands.Input
 			var htmlInput = v_InputHTML;
 
 			//invoke ui for data collection
-			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
+			var result = ((Form)engine.EngineContext.ScriptEngine).Invoke(new Action(() =>
 			{				
-				var variables = engine.AutomationEngineContext.ScriptEngine.ShowHTMLInput(htmlInput);
+				var variables = engine.EngineContext.ScriptEngine.ShowHTMLInput(htmlInput);
 
 				//if user selected Ok then process variables
 				//null result means user cancelled/closed

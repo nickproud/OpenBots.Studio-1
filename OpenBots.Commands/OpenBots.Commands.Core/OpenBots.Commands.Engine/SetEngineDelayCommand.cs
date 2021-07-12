@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Engine
 			var delay = (int)await v_EngineDelay.EvaluateCode(engine);
 
 			//update delay setting
-			engine.EngineSettings.DelayBetweenCommands = delay;
+			engine.EngineContext.EngineSettings.DelayBetweenCommands = delay;
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

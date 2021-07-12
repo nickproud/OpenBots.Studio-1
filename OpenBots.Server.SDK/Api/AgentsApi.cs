@@ -296,6 +296,29 @@ namespace OpenBots.Server.SDK.Api
         /// <returns>ApiResponse of Agent</returns>
         ApiResponse<Agent> ApiVapiVersionAgentsPostWithHttpInfo (string apiVersion, CreateAgentViewModel body = null);
         /// <summary>
+        /// Fetches values for an Agent that matches the provided details
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="apiVersion"></param>
+        /// <param name="body"> (optional)</param>
+        /// <returns>ResolvedAgentResponseViewModel</returns>
+        ResolvedAgentResponseViewModel ApiVapiVersionAgentsResolvePost(string apiVersion, string organizationId, ResolveAgentViewModel body = null);
+
+        /// <summary>
+        /// Fetches values for an Agent that matches the provided details
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="apiVersion"></param>
+        /// <param name="body"> (optional)</param>
+        /// <returns>ApiResponse of ResolvedAgentResponseViewModel</returns>
+        ApiResponse<ResolvedAgentResponseViewModel> ApiVapiVersionAgentsResolvePostWithHttpInfo(string apiVersion, string organizationId, ResolveAgentViewModel body = null);
+        /// <summary>
         /// Provides a view model list of all Agents and their most recent heartbeat information
         /// </summary>
         /// <remarks>
@@ -925,7 +948,7 @@ namespace OpenBots.Server.SDK.Api
 
             if (ExceptionFactory != null)
             {
-                Exception exception = ExceptionFactory("ApiVapiVersionAgentsAgentIDConnectPatch", localVarResponse);
+                Exception exception = ExceptionFactory("Connect Agent", localVarResponse);
                 if (exception != null) throw exception;
             }
 
@@ -1101,7 +1124,7 @@ namespace OpenBots.Server.SDK.Api
 
             if (ExceptionFactory != null)
             {
-                Exception exception = ExceptionFactory("ApiVapiVersionAgentsAgentIDDisconnectPatch", localVarResponse);
+                Exception exception = ExceptionFactory("Disconnect Agent", localVarResponse);
                 if (exception != null) throw exception;
             }
 
@@ -1282,7 +1305,7 @@ namespace OpenBots.Server.SDK.Api
 
             if (ExceptionFactory != null)
             {
-                Exception exception = ExceptionFactory("ApiVapiVersionAgentsAgentIdAddHeartbeatPost", localVarResponse);
+                Exception exception = ExceptionFactory("AddHeartbeat", localVarResponse);
                 if (exception != null) throw exception;
             }
 
@@ -2687,6 +2710,94 @@ namespace OpenBots.Server.SDK.Api
             return new ApiResponse<Agent>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
                 (Agent) this.Configuration.ApiClient.Deserialize(localVarResponse, typeof(Agent)));
+        }
+
+        /// <summary>
+        /// Fetches values for an Agent that matches the provided details 
+        /// </summary>
+        /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="apiVersion"></param>
+        /// <param name="body"> (optional)</param>
+        /// <returns>ResolvedAgentResponseViewModel</returns>
+        public ResolvedAgentResponseViewModel ApiVapiVersionAgentsResolvePost(string apiVersion, string organizationId, ResolveAgentViewModel body = null)
+        {
+            ApiResponse<ResolvedAgentResponseViewModel> localVarResponse = ApiVapiVersionAgentsResolvePostWithHttpInfo(apiVersion, organizationId, body);
+            return localVarResponse.Data;
+        }
+
+        /// <summary>
+        /// Fetches values for an Agent that matches the provided details 
+        /// </summary>
+        /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="apiVersion"></param>
+        /// <param name="body"> (optional)</param>
+        /// <returns>ApiResponse of ResolvedAgentResponseViewModel</returns>
+        public ApiResponse<ResolvedAgentResponseViewModel> ApiVapiVersionAgentsResolvePostWithHttpInfo(string apiVersion, string organizationId, ResolveAgentViewModel body = null)
+        {
+            // verify the required parameter 'apiVersion' is set
+            if (apiVersion == null)
+                throw new ApiException(400, "Missing required parameter 'apiVersion' when calling AgentsApi->ApiVapiVersionAgentsResolvePost");
+
+            var localVarPath = "/api/v{apiVersion}/Agents/Resolve";
+            if (!string.IsNullOrEmpty(organizationId))
+                localVarPath = "/api/v{apiVersion}/Organizations/{organizationId}/Agents/Resolve";
+            var localVarPathParams = new Dictionary<String, String>();
+            var localVarQueryParams = new List<KeyValuePair<String, String>>();
+            var localVarHeaderParams = new Dictionary<String, String>(this.Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<String, String>();
+            var localVarFileParams = new Dictionary<String, FileParameter>();
+            Object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            String[] localVarHttpContentTypes = new String[] {
+                "application/json-patch+json",
+                "application/json",
+                "text/json",
+                "application/_*+json"
+            };
+            String localVarHttpContentType = this.Configuration.ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            String[] localVarHttpHeaderAccepts = new String[] {
+                "application/json"
+            };
+            String localVarHttpHeaderAccept = this.Configuration.ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            if (apiVersion != null) localVarPathParams.Add("apiVersion", this.Configuration.ApiClient.ParameterToString(apiVersion)); // path parameter
+            if (!string.IsNullOrEmpty(organizationId)) localVarPathParams.Add("organizationId", this.Configuration.ApiClient.ParameterToString(organizationId)); // path parameter
+            if (body != null && body.GetType() != typeof(byte[]))
+            {
+                localVarPostBody = this.Configuration.ApiClient.Serialize(body); // http body (model) parameter
+            }
+            else
+            {
+                localVarPostBody = body; // byte array
+            }
+            // authentication (oauth2) required
+            // bearer required
+            if (!String.IsNullOrEmpty(this.Configuration.AccessToken))
+            {
+                localVarHeaderParams["Authorization"] = "Bearer " + this.Configuration.AccessToken;
+            }
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)this.Configuration.ApiClient.CallApi(localVarPath,
+                Method.POST, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (ExceptionFactory != null)
+            {
+                Exception exception = ExceptionFactory("ResolveAgent", localVarResponse);
+                if (exception != null) throw exception;
+            }
+
+            return new ApiResponse<ResolvedAgentResponseViewModel>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
+                (ResolvedAgentResponseViewModel)this.Configuration.ApiClient.Deserialize(localVarResponse, typeof(ResolvedAgentResponseViewModel)));
         }
 
         /// <summary>

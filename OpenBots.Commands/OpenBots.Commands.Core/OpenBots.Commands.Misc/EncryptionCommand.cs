@@ -1,11 +1,10 @@
-﻿using OpenBots.Core.Attributes.PropertyAttributes;
+﻿using OpenBots.Commands.Core.Library;
+using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Utilities.CommandUtilities;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +14,7 @@ using Tasks = System.Threading.Tasks;
 
 namespace OpenBots.Commands.Misc
 {
-	[Serializable]
+    [Serializable]
 	[Category("Misc Commands")]
 	[Description("This command encrypts or decrypts text.")]
 	public class EncryptionCommand : ScriptCommand

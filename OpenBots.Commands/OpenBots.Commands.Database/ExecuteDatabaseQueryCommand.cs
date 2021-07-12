@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
@@ -38,7 +38,6 @@ namespace OpenBots.Commands.Database
 		[DisplayName("Define Query Execution Type")]
 		[PropertyUISelectionOption("Return Dataset")]
 		[PropertyUISelectionOption("Execute NonQuery")]
-		[PropertyUISelectionOption("Execute Stored Procedure")]
 		[Description("Select the appropriate query execution type.")]
 		[SampleUsage("")]
 		[Remarks("")]
@@ -93,8 +92,6 @@ namespace OpenBots.Commands.Database
 			SelectionName = "Execute Database Query";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_database;
-
-			v_InstanceName = "DefaultDatabase";
 
 			v_QueryParameters = new DataTable
 			{
@@ -190,14 +187,6 @@ namespace OpenBots.Commands.Database
 			}
 			else if (v_QueryType == "Execute NonQuery")
 			{
-				databaseConnection.Open();
-				var result = oleCommand.ExecuteNonQuery();
-				databaseConnection.Close();
-				result.SetVariableValue(engine, v_OutputUserVariableName);
-			}
-			else if (v_QueryType == "Execute Stored Procedure")
-			{
-				oleCommand.CommandType = CommandType.StoredProcedure;
 				databaseConnection.Open();
 				var result = oleCommand.ExecuteNonQuery();
 				databaseConnection.Close();

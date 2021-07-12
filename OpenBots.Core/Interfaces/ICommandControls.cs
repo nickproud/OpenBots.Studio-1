@@ -5,11 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace OpenBots.Core.Infrastructure
+namespace OpenBots.Core.Interfaces
 {
     public interface ICommandControls
     {
-        List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300, bool shouldValidate = true, bool isEvaluateSnippet = false);
+        List<Control> CreateDefaultInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor, int height = 30, int width = 300, bool 
+            shouldValidate = true, bool isEvaluateSnippet = false, Control[] additionalHelpers = null);
         TextBox CreateDefaultNoValidationInputFor(string parameterName, ScriptCommand parent, int height = 30, int width = 300);
         List<Control> CreateDefaultPasswordInputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
         List<Control> CreateDefaultOutputGroupFor(string parameterName, ScriptCommand parent, IfrmCommandEditor editor);
@@ -27,12 +28,12 @@ namespace OpenBots.Core.Infrastructure
         ComboBox CreateStandardComboboxFor(string parameterName, ScriptCommand parent);
         List<Control> CreateUIHelpersFor(string parameterName, ScriptCommand parent, Control[] targetControls, IfrmCommandEditor editor);
         Tuple<string, string> ShowConditionElementRecorder(object sender, EventArgs e, IfrmCommandEditor editor);
-        IfrmScriptEngine CreateScriptEngineForm(EngineContext engineContext, bool blnCloseWhenDone, bool isDebugMode);
         IAutomationEngineInstance CreateAutomationEngineInstance(EngineContext engineContext);
         IfrmWebElementRecorder CreateWebElementRecorderForm(string startURL);
         IfrmAdvancedUIElementRecorder CreateAdvancedUIElementRecorderForm();
         IfrmCommandEditor CreateCommandEditorForm(List<AutomationCommand> commands, List<ScriptCommand> existingCommands);
         ScriptCommand CreateBeginIfCommand(string commandData = null);
         Type GetCommandType(string commandName);
+        void AddIntellisenseListBoxToCommandForm();
     }
 }

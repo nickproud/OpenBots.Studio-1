@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -44,7 +44,7 @@ namespace OpenBots.Commands.Engine
 			var engine = (IAutomationEngineInstance)sender;
 			int closeAfter = (int)await v_AutoCloseAfter.EvaluateCode(engine);
 
-			if (engine.AutomationEngineContext.ScriptEngine == null)
+			if (engine.EngineContext.ScriptEngine == null)
 			{
 				MessageBox.Show(engine.GetEngineContext(), "Engine Context Command", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
@@ -54,9 +54,9 @@ namespace OpenBots.Commands.Engine
 			if (closeAfter < 0)
 				v_AutoCloseAfter = "10";
 
-			var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
+			var result = ((Form)engine.EngineContext.ScriptEngine).Invoke(new Action(() =>
 				{
-					engine.AutomationEngineContext.ScriptEngine.ShowEngineContext(engine.GetEngineContext(), closeAfter);
+					engine.EngineContext.ScriptEngine.ShowEngineContext(engine.GetEngineContext(), closeAfter);
 				}
 			));
 		}

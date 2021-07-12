@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -80,7 +80,6 @@ namespace OpenBots.Commands.WebBrowser
 			CommandEnabled = true;
 			CommandIcon = Resources.command_web;
 
-			v_InstanceName = "DefaultBrowser";
 			v_BrowserWindowOption = "Maximize";
 			v_EngineType = "Chrome";
 			v_URL = "\"https://\"";
@@ -99,7 +98,7 @@ namespace OpenBots.Commands.WebBrowser
 			IWebDriver webDriver;
 
 			string driverDirectory;
-			if (engine.AutomationEngineContext.ScriptEngine != null && engine.AutomationEngineContext.ScriptEngine.IsScheduledOrAttendedTask)
+			if (engine.EngineContext.ScriptEngine != null && engine.EngineContext.IsScheduledOrAttendedTask)
 				driverDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "OpenBots Inc", "OpenBots Studio");
 			else
 				driverDirectory = AppDomain.CurrentDomain.BaseDirectory;

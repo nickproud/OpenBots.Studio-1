@@ -203,6 +203,16 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap command_documents {
+            get {
+                object obj = ResourceManager.GetObject("command_documents", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap command_element {
             get {
                 object obj = ResourceManager.GetObject("command_element", resourceCulture);
@@ -303,6 +313,16 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap command_file {
+            get {
+                object obj = ResourceManager.GetObject("command_file", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap command_files {
             get {
                 object obj = ResourceManager.GetObject("command_files", resourceCulture);
@@ -346,6 +366,16 @@ namespace OpenBots.Core.Properties {
         public static System.Drawing.Bitmap command_input {
             get {
                 object obj = ResourceManager.GetObject("command_input", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap command_job {
+            get {
+                object obj = ResourceManager.GetObject("command_job", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -473,6 +503,16 @@ namespace OpenBots.Core.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap command_sap {
+            get {
+                object obj = ResourceManager.GetObject("command_sap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap command_script {
             get {
                 object obj = ResourceManager.GetObject("command_script", resourceCulture);
@@ -506,6 +546,16 @@ namespace OpenBots.Core.Properties {
         public static System.Drawing.Bitmap command_server {
             get {
                 object obj = ResourceManager.GetObject("command_server", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap command_servermail {
+            get {
+                object obj = ResourceManager.GetObject("command_servermail", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

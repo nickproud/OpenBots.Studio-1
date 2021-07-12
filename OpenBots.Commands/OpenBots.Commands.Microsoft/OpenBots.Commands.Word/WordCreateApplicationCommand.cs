@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -88,7 +88,6 @@ namespace OpenBots.Commands.Word
 			CommandEnabled = true;
 			CommandIcon = Resources.command_word;
 
-			v_InstanceName = "DefaultWord";
 			v_NewOpenDocument = "New Document";
 			v_Visible = "No";
 			v_CloseAllInstances = "Yes";

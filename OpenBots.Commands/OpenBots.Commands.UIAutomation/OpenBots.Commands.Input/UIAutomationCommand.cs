@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
@@ -41,11 +41,14 @@ namespace OpenBots.Commands.Input
 		[Required]
 		[DisplayName("Element Action")]
 		[PropertyUISelectionOption("Click Element")]
+		[PropertyUISelectionOption("Hover Over Element")]
 		[PropertyUISelectionOption("Set Text")]
 		[PropertyUISelectionOption("Set Secure Text")]
 		[PropertyUISelectionOption("Get Text")]
 		[PropertyUISelectionOption("Clear Element")]
 		[PropertyUISelectionOption("Get Value From Element")]
+		[PropertyUISelectionOption("Toggle Checkbox Element")]
+		[PropertyUISelectionOption("Get Checkbox Element Toggle State")]
 		[PropertyUISelectionOption("Wait For Element To Exist")]
 		[PropertyUISelectionOption("Element Exists")]
 		[Description("Select the appropriate corresponding action to take once the element has been located.")]
@@ -195,6 +198,47 @@ namespace OpenBots.Commands.Input
 					User32Functions.SendMouseMove(Convert.ToInt32(newPoint.X) + xAdjustInt, Convert.ToInt32(newPoint.Y) + yAdjustInt, clickType);
 
 					break;
+				case "Hover Over Element":
+					//if handle was not found
+					if (requiredHandle == null)
+						throw new Exception("Element was not found in window '" + variableWindowName + "'");
+					//create search params
+					var hoverTime = (from rw in v_UIAActionParameters.AsEnumerable()
+									 where rw.Field<string>("Parameter Name") == "Hover Time (Seconds)"
+									 select rw.Field<string>("Parameter Value")).FirstOrDefault();
+					int hoverTimeInt = (int)await hoverTime.EvaluateCode(engine) * 1000;
+					//get x adjust
+					var xHoverAdjust = (from rw in v_UIAActionParameters.AsEnumerable()
+								   where rw.Field<string>("Parameter Name") == "X Adjustment"
+								   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+					//get y adjust
+					var yHoverAdjust = (from rw in v_UIAActionParameters.AsEnumerable()
+								   where rw.Field<string>("Parameter Name") == "Y Adjustment"
+								   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+					int xHoverAdjustInt;
+					int yHoverAdjustInt;
+
+					//parse to int
+					if (!string.IsNullOrEmpty(xHoverAdjust))
+						xHoverAdjustInt = (int)await xHoverAdjust.EvaluateCode(engine);
+					else
+						xHoverAdjustInt = 0;
+
+					if (!string.IsNullOrEmpty(yHoverAdjust))
+						yHoverAdjustInt = (int)await yHoverAdjust.EvaluateCode(engine);
+					else
+						yHoverAdjustInt = 0;
+
+					//get clickable point
+					var newHoverPoint = requiredHandle.GetClickablePoint();
+
+					//send mousemove command
+					User32Functions.SendMouseMove(Convert.ToInt32(newHoverPoint.X) + xHoverAdjustInt, Convert.ToInt32(newHoverPoint.Y) + yHoverAdjustInt, "");
+					Thread.Sleep(hoverTimeInt);
+
+					break;
 				case "Set Text":
 					string textToSet = (from rw in v_UIAActionParameters.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "Text To Set"
@@ -299,7 +343,8 @@ namespace OpenBots.Commands.Input
 								if (requiredHandle.TryGetCurrentPattern(TextPattern.Pattern, out tPattern))
 								{
 									var textPattern = (TextPattern)tPattern;
-									currentText = textPattern.DocumentRange.GetText(-1).TrimEnd('\r').ToString(); // often there is an extra '\r' hanging off the end.
+									// often there is an extra '\r' hanging off the end.
+									currentText = textPattern.DocumentRange.GetText(-1).TrimEnd('\r').ToString(); 
 								}
 								else
 									currentText = requiredHandle.Current.Name.ToString();
@@ -353,7 +398,8 @@ namespace OpenBots.Commands.Input
 						if (requiredHandle.TryGetCurrentPattern(TextPattern.Pattern, out tPattern))
 						{
 							var textPattern = (TextPattern)tPattern;
-							searchResult = textPattern.DocumentRange.GetText(-1).TrimEnd('\r').ToString(); // often there is an extra '\r' hanging off the end.
+							// often there is an extra '\r' hanging off the end.
+							searchResult = textPattern.DocumentRange.GetText(-1).TrimEnd('\r').ToString(); 
 						}
 						else
 							searchResult = requiredHandle.Current.Name.ToString();
@@ -375,9 +421,7 @@ namespace OpenBots.Commands.Input
 					break;
 				case "Wait For Element To Exist":
 					if (requiredHandle == null)
-					{
 						throw new Exception($"Element was not found in the allotted time!");
-					}
 					break;
 
 				case "Get Value From Element":
@@ -398,6 +442,57 @@ namespace OpenBots.Commands.Input
 
 					//store into variable
 					((object)requiredValue).SetVariableValue(engine, applyToVariable2);
+					break;
+				case "Toggle Checkbox Element":
+					//if handle was not found
+					if (requiredHandle == null)
+						throw new Exception("Element was not found in window '" + variableWindowName + "'");
+
+					var toggleType = (from rw in v_UIAActionParameters.AsEnumerable()
+									 where rw.Field<string>("Parameter Name") == "Toggle Type"
+									 select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+					bool toggleState;
+					TogglePattern togPattern;
+
+					if (true == requiredHandle.TryGetCurrentPattern(TogglePattern.Pattern, out object objPattern))
+					{
+						togPattern = objPattern as TogglePattern;
+						toggleState = togPattern.Current.ToggleState == ToggleState.On;
+					}
+					else
+						throw new Exception("Element is not a toggleable control.");
+
+					if ((!toggleState && toggleType == "Check") || (toggleState && toggleType == "Uncheck"))
+                    {
+						//get clickable point
+						var newCheckboxPoint = requiredHandle.GetClickablePoint();
+
+						//send mousemove command
+						User32Functions.SendMouseMove(Convert.ToInt32(newCheckboxPoint.X), Convert.ToInt32(newCheckboxPoint.Y), "Left Click");
+					}					
+					break;
+				case "Get Checkbox Element Toggle State":
+					//if handle was not found
+					if (requiredHandle == null)
+						throw new Exception("Element was not found in window '" + variableWindowName + "'");
+
+					var applyStateToVariable = (from rw in v_UIAActionParameters.AsEnumerable()
+										   where rw.Field<string>("Parameter Name") == "Variable Name"
+										   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+					bool toggleState2;
+					TogglePattern togPattern2;
+
+					if (true == requiredHandle.TryGetCurrentPattern(TogglePattern.Pattern, out object objPattern2))
+					{
+						togPattern2 = objPattern2 as TogglePattern;
+						toggleState2 = togPattern2.Current.ToggleState == ToggleState.On;
+					}
+					else
+						throw new Exception("Element is not a toggleable control.");
+
+					toggleState2.SetVariableValue(engine, applyStateToVariable);
 					break;
 				default:
 					throw new NotImplementedException("Automation type '" + v_AutomationType + "' not supported.");
@@ -501,8 +596,9 @@ namespace OpenBots.Commands.Input
 					return base.GetDisplayValue() + $" [{v_AutomationType} '{textToSet}' in Element in Window '{v_WindowName}']";
 				  
 				case "Get Text":
-				case "Element Exists":          
-					return base.GetDisplayValue() + $" ['{v_AutomationType}' in Window '{v_WindowName}' - Store Result in '{applyToVariable}']";
+				case "Element Exists":
+				case "Get Checkbox Element Toggle State":
+					return base.GetDisplayValue() + $" [{v_AutomationType} in Window '{v_WindowName}' - Store Result in '{applyToVariable}']";
 			   
 				case "Get Value From Element":          
 					//get value from property
@@ -582,6 +678,17 @@ namespace OpenBots.Commands.Input
 					if (_actionParametersGridViewHelper.Rows.Count > 0)
 						_actionParametersGridViewHelper.Rows[0].Cells[1] = mouseClickBox;
 					break;
+				case "Hover Over Element":
+					foreach (var ctrl in _actionParametersControls)
+						ctrl.Show();
+
+					if (sender != null)
+					{
+						actionParameters.Rows.Add("Hover Time (Seconds)", 1);
+						actionParameters.Rows.Add("X Adjustment", 0);
+						actionParameters.Rows.Add("Y Adjustment", 0);
+					}
+					break;
 				case "Set Text":
 					foreach (var ctrl in _actionParametersControls)
 						ctrl.Show();
@@ -628,6 +735,7 @@ namespace OpenBots.Commands.Input
 					break;
 				case "Get Text":
 				case "Element Exists":
+				case "Get Checkbox Element Toggle State":
 					foreach (var ctrl in _actionParametersControls)
 						ctrl.Show();
 
@@ -684,6 +792,23 @@ namespace OpenBots.Commands.Input
 							MessageBox.Show("Unable to select first row, second cell to apply '" + parameterName + "': " + ex.ToString());
 						}
 					}
+					break;
+				case "Toggle Checkbox Element":
+					foreach (var ctrl in _actionParametersControls)
+						ctrl.Show();
+
+					var toggleCheckboxBox = new DataGridViewComboBoxCell();
+					toggleCheckboxBox.Items.Add("Check");
+					toggleCheckboxBox.Items.Add("Uncheck");
+
+					if (sender != null)
+						actionParameters.Rows.Add("Toggle Type");
+
+					if (sender != null)
+						_actionParametersGridViewHelper.Rows[0].Cells[1].Value = "Check";
+
+					if (_actionParametersGridViewHelper.Rows.Count > 0)
+						_actionParametersGridViewHelper.Rows[0].Cells[1] = toggleCheckboxBox;
 					break;
 				default:
 					break;

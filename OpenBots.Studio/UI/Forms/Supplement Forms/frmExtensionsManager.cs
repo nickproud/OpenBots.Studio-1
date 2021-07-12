@@ -13,13 +13,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         public string ErrorMessage { get; set; }
         private bool _isChromeNativeMessagingInstalled = false;
         private string _localAppDataExtensionsDirectory;
-        private string _programFilesExtensionsDirectory;
 
         public frmExtentionsManager()
         {
             InitializeComponent();
             _localAppDataExtensionsDirectory = Folders.GetFolder(FolderType.LocalAppDataExtensionsFolder);
-            _programFilesExtensionsDirectory = Folders.GetFolder(FolderType.ProgramFilesExtensionsFolder);
         }
 
         private void frmExtentionsManager_Load(object sender, EventArgs e)
@@ -43,18 +41,13 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             try
             {
                 //Install here
-                string serverMenifestPath = Path.Combine(_localAppDataExtensionsDirectory, "Native Chrome", "com.openbots.chromeserver.message-manifest.json");
+                string serverMenifestPath = Path.Combine(_localAppDataExtensionsDirectory, "com.openbots.chromeserver.message-manifest.json");
                 ChromeExtensionRegistryManager registryManager = new ChromeExtensionRegistryManager();
                 registryManager.PathValue = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Extensions", "kkepankimcahnjamnimeijpplgjpmdpp_main.crx");
-                registryManager.VersionValue = "1.0";
+                registryManager.VersionValue = "1.5.2.1";
                 registryManager.NativeServerKey = serverMenifestPath;
 
-                //Update Server Manifest
-                string json = File.ReadAllText(serverMenifestPath);
-                dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
-                jsonObj["path"] = Path.Combine(_programFilesExtensionsDirectory, "Native Chrome", "OpenBots.NativeServer.exe");
-                string output = Newtonsoft.Json.JsonConvert.SerializeObject(jsonObj, Newtonsoft.Json.Formatting.Indented);
-                File.WriteAllText(serverMenifestPath, output);
+                MessageBox.Show("Chrome Extension is installed, please make sure its enabled. Restart chrome browser for changes to take effect.");
 
                 DialogResult = DialogResult.OK;
             }

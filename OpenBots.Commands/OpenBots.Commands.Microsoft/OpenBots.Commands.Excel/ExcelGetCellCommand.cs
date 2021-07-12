@@ -2,11 +2,10 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -65,7 +64,6 @@ namespace OpenBots.Commands.Excel
 			CommandEnabled = true;
 			CommandIcon = Resources.command_excel;
 
-			v_InstanceName = "DefaultExcel";
 			v_Formulas = "No";
 		}
 
@@ -74,6 +72,7 @@ namespace OpenBots.Commands.Excel
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var vTargetAddress = (string)await v_CellLocation.EvaluateCode(engine);
+			
 			var excelInstance = (Application)excelObject;
 			Worksheet excelSheet = excelInstance.ActiveSheet;
             string cellValue;

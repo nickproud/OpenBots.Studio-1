@@ -61,7 +61,7 @@ namespace OpenBots.Commands.Engine.Test
             Assert.True(stopwatch.ElapsedMilliseconds > 2000);
             stopwatch.Stop();
 
-            Assert.Equal(int.Parse(newDelay), _engine.EngineSettings.DelayBetweenCommands);
+            Assert.Equal(int.Parse(newDelay), _engine.EngineContext.EngineSettings.DelayBetweenCommands);
         }
     }
 }

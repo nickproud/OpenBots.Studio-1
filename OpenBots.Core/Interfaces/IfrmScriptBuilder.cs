@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace OpenBots.Core.Infrastructure
+namespace OpenBots.Core.Interfaces
 {
     public interface IfrmScriptBuilder
     {

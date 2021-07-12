@@ -1,6 +1,6 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 
@@ -35,7 +35,6 @@ namespace OpenBots.Commands.ErrorHandling
 			SelectionName = "Get Exception Message";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_exception;
-
 		}
 
 		public async override Tasks.Task RunCommand(object sender)

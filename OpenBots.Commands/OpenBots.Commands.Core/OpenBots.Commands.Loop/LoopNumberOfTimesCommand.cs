@@ -1,11 +1,10 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,15 +29,6 @@ namespace OpenBots.Commands.Loop
 		[CompatibleTypes(new Type[] { typeof(int) })]
 		public string v_LoopParameter { get; set; }
 
-		[Required]
-		[DisplayName("Start Index")]
-		[Description("Enter the starting index of the loop.")]
-		[SampleUsage("5 || vStartIndex")]
-		[Remarks("")]
-		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
-		[CompatibleTypes(new Type[] { typeof(int) })]
-		public string v_LoopStart { get; set; }
-
 		public LoopNumberOfTimesCommand()
 		{
 			CommandName = "LoopNumberOfTimesCommand";
@@ -46,8 +36,6 @@ namespace OpenBots.Commands.Loop
 			CommandEnabled = true;
 			CommandIcon = Resources.command_startloop;
 			ScopeStartCommand = true;
-
-			v_LoopStart = "0";
 		}
 
 		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
@@ -56,9 +44,7 @@ namespace OpenBots.Commands.Loop
 			var engine = (IAutomationEngineInstance)sender;
 			int  loopTimes = (int)await loopCommand.v_LoopParameter.EvaluateCode(engine);
 
-			int startIndex = (int)await v_LoopStart.EvaluateCode(engine);
-
-			for (int i = startIndex; i < loopTimes; i++)
+			for (int i = 0; i < loopTimes; i++)
 			{
 				engine.ReportProgress("Starting Loop Number " + (i + 1) + "/" + loopTimes + " From Line " + loopCommand.LineNumber);
 
@@ -92,20 +78,13 @@ namespace OpenBots.Commands.Loop
 			base.Render(editor, commandControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_LoopParameter", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_LoopStart", this, editor));
+
 			return RenderedControls;
 		}
 
 		public override string GetDisplayValue()
 		{
-			if (v_LoopStart != "0")
-			{
-				return "Loop From (" + v_LoopStart + "+1) to " + v_LoopParameter;
-			}
-			else
-			{
-				return "Loop " +  v_LoopParameter + " Times";
-			}
+			return base.GetDisplayValue() + $" [Times '{v_LoopParameter}']";
 		}
 	}
 }

@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using RestSharp;
@@ -42,8 +42,6 @@ namespace OpenBots.Commands.API
 
 		[Required]
 		[DisplayName("Method Type")]
-		[PropertyUISelectionOption("GET")]
-		[PropertyUISelectionOption("POST")]
 		[Description("Select the necessary method type.")]
 		[SampleUsage("")]
 		[Remarks("")]
@@ -51,9 +49,6 @@ namespace OpenBots.Commands.API
 
 		[Required]
 		[DisplayName("Request Format")]
-		[PropertyUISelectionOption("Json")]
-		[PropertyUISelectionOption("Xml")]
-		[PropertyUISelectionOption("None")]
 		[Description("Select the necessary request format.")]
 		[SampleUsage("")]
 		[Remarks("")]
@@ -98,7 +93,9 @@ namespace OpenBots.Commands.API
 			CommandEnabled = true;
 			CommandIcon = Resources.command_run_code;
 
+			v_APIMethodType = "GET";
 			v_RequestFormat = "Json";
+
 			v_Parameters = new DataTable();
 			v_Parameters.Columns.Add("Parameter Type");
 			v_Parameters.Columns.Add("Parameter Name");
@@ -200,9 +197,6 @@ namespace OpenBots.Commands.API
 			IRestResponse response = client.Execute(request);
 			var content = response.Content;
 
-			//add service response for tracking
-			engine.ServiceResponses.Add(response);
-
 			// return response.Content;
 			try
 			{
@@ -226,18 +220,17 @@ namespace OpenBots.Commands.API
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_BaseURL", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_APIEndPoint", this, editor));
 
-			var apiMethodLabel = commandControls.CreateDefaultLabelFor("v_APIMethodType", this);
-			var apiMethodDropdown = commandControls.CreateDropdownFor("v_APIMethodType", this);
-			foreach (Method method in (Method[])Enum.GetValues(typeof(Method)))
-			{
-				apiMethodDropdown.Items.Add(method.ToString());
-			}
-			RenderedControls.Add(apiMethodLabel);
-			RenderedControls.Add(apiMethodDropdown);
+			var methodTypeComboBox = commandControls.CreateDropdownFor("v_APIMethodType", this);
+			methodTypeComboBox.DataSource = Enum.GetValues(typeof(Method));
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_APIMethodType", this));
+			RenderedControls.Add(methodTypeComboBox);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_RequestFormat", this, editor));
+			var requestFormatComboBox = commandControls.CreateDropdownFor("v_RequestFormat", this);
+			requestFormatComboBox.DataSource = Enum.GetValues(typeof(DataFormat));
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_RequestFormat", this));
+			RenderedControls.Add(requestFormatComboBox);
+
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_Parameters", this));
-
 			_parametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_Parameters", this);
 			_parametersGridViewHelper.AutoGenerateColumns = false;
 
@@ -256,12 +249,10 @@ namespace OpenBots.Commands.API
 			paramValueColumn.HeaderText = "Value";
 			paramValueColumn.DataPropertyName = "Parameter Value";
 			_parametersGridViewHelper.Columns.Add(paramValueColumn);
-
 			RenderedControls.Add(_parametersGridViewHelper);
 
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_AdvancedParameters", this));
-
 			//advanced parameters
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_AdvancedParameters", this));
 			_advancedParametersGridViewHelper = commandControls.CreateDefaultDataGridViewFor("v_AdvancedParameters", this);
 			_advancedParametersGridViewHelper.AutoGenerateColumns = false;
 
@@ -283,7 +274,7 @@ namespace OpenBots.Commands.API
 			var advParamType = new DataGridViewComboBoxColumn();
 			advParamType.HeaderText = "Parameter Type";
 			advParamType.DataPropertyName = "Parameter Type";
-			advParamType.DataSource = new string[] { "Cookie", "GetOrPost", "HttpHeader", "QueryString", "RequestBody", "URLSegment", "QueryStringWithoutEncode" };
+			advParamType.DataSource = Enum.GetValues(typeof(ParameterType));
 			_advancedParametersGridViewHelper.Columns.Add(advParamType);			
 			RenderedControls.Add(_advancedParametersGridViewHelper);
 

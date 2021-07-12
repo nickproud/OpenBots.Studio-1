@@ -4,17 +4,18 @@ using NuGet.Versioning;
 using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
 using OpenBots.Core.Project;
-using OpenBots.Core.Server.Models;
 using OpenBots.Core.UI.Forms;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using SystemFile = System.IO;
 using System.Windows.Forms;
 using OBNuget = OpenBots.Nuget;
 using File = System.IO.File;
 using OpenBots.Core.Script;
 using System.Linq;
-using OpenBots.Core.Server.HelperMethods;
+using OpenBots.Core.Server_Documents.User;
+using OpenBots.Server.SDK.HelperMethods;
+using OpenBots.Server.SDK.Model;
 
 namespace OpenBots.UI.Supplement_Forms
 {
@@ -66,7 +67,7 @@ namespace OpenBots.UI.Supplement_Forms
         {
             try
             {
-                string[] scriptFiles = Directory.GetFiles(_projectPath, "*.*", SearchOption.AllDirectories);
+                string[] scriptFiles = SystemFile.Directory.GetFiles(_projectPath, "*.*", SystemFile.SearchOption.AllDirectories);
                 List<ManifestContentFiles> manifestFiles = new List<ManifestContentFiles>();
                 foreach (string file in scriptFiles)
                 {
@@ -118,11 +119,11 @@ namespace OpenBots.UI.Supplement_Forms
                 builder.PopulateFiles(_projectPath, new[] { new ManifestFile() { Source = "**" } });
                 builder.Populate(metadata);
 
-                if (!Directory.Exists(txtLocation.Text))
-                    Directory.CreateDirectory(txtLocation.Text);
+                if (!SystemFile.Directory.Exists(txtLocation.Text))
+                    SystemFile.Directory.CreateDirectory(txtLocation.Text);
 
-                string nugetFilePath = Path.Combine(txtLocation.Text.Trim(), $"{_projectName}_{txtVersion.Text.Trim()}.nupkg");
-                using (FileStream stream = File.Open(nugetFilePath, FileMode.OpenOrCreate))
+                string nugetFilePath = SystemFile.Path.Combine(txtLocation.Text.Trim(), $"{_projectName}_{txtVersion.Text.Trim()}.nupkg");
+                using (SystemFile.FileStream stream = File.Open(nugetFilePath, SystemFile.FileMode.OpenOrCreate))
                     builder.Save(stream);
 
                 NotificationMessage = $"'{_projectName}' published successfully";
@@ -133,7 +134,12 @@ namespace OpenBots.UI.Supplement_Forms
                 try {
                     lblError.Text = $"Publishing {_projectName} to the server...";
 
-                    var automation = AutomationMethods.UploadAutomation( _projectName, nugetFilePath, _automationEngine);
+                    var environmentSettings = new EnvironmentSettings();
+                    environmentSettings.Load();
+                    AuthMethods authMethods = new AuthMethods();
+                    authMethods.Initialize(environmentSettings.ServerType, environmentSettings.OrganizationName, environmentSettings.ServerUrl, environmentSettings.Username, environmentSettings.Password);
+
+                    var automation = AutomationMethods.UploadAutomation(_projectName, nugetFilePath, _automationEngine, authMethods);
 
                     if (_projectArguments.Count > 0)
                     {
@@ -145,7 +151,7 @@ namespace OpenBots.UI.Supplement_Forms
                             AutomationId = automation.Id
                         });
 
-                        AutomationMethods.UpdateParameters(automation.Id, automationParameters);
+                        AutomationMethods.UpdateParameters(automation.Id, automationParameters, authMethods);
                     }
                 }
                 catch (Exception ex)
@@ -155,16 +161,16 @@ namespace OpenBots.UI.Supplement_Forms
                             $" Error: {ex.InnerException.Message}";
                     else
                         NotificationMessage = $"'{_projectName}' was published locally. To publish to an OpenBots Server please install and connect the OpenBots Agent." +
-                            $" Error: {ex.Message}";
+                        $" Error: {ex.Message}";
                 }
 
-                return true;             
+                return true;
             }
             catch (Exception ex)
             {
                 lblError.Text = ex.Message;
                 return false;
-            }           
+            }
         }
 
         private string GetServerType(Type studioType)
@@ -214,7 +220,7 @@ namespace OpenBots.UI.Supplement_Forms
         {
             try
             {
-                if (!Directory.Exists(txtLocation.Text))
+                if (!SystemFile.Directory.Exists(txtLocation.Text))
                 {
                     return;
                 }

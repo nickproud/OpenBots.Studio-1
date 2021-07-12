@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Newtonsoft.Json;
 using NuGet;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
@@ -11,12 +10,10 @@ using OpenBots.Core.Settings;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Nuget;
-using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using OpenBots.UI.Supplement_Forms;
 using OpenBots.Utilities;
-using ScintillaNET;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -47,9 +44,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void NewFile()
         {
             ScriptFilePath = null;
-            _scriptFileExtension = null;
-            _isMainScript = false;
+            
+            if (_scriptContext != null)
+                _scriptContext.RemoveIntellisenseControls(Controls);      
+
             _scriptContext = new ScriptContext();
+            _scriptContext.ScriptFileExtension = null;
+            _scriptContext.IsMainScript = false;
+            _scriptContext.IntellisenseListBox.ImageList = imgListIntellisense;
+            _scriptContext.AddIntellisenseControls(Controls);
 
             string title = $"New Tab {(uiScriptTabControl.TabCount + 1)} *";
             TabPage newTabPage = new TabPage(title)
@@ -91,7 +94,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newTabPage.Controls.Add(NewTextEditorActions(ProjectType.Python, title));
                     newTabPage.Tag = _scriptContext;
                     uiScriptTabControl.SelectedTab = newTabPage;
-                    _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
+                    _selectedTabScriptActions = (UIScintilla)uiScriptTabControl.SelectedTab.Controls[0];
 
                     //assign pythonVersion and mainFunction arguments
                     var mainFunctionArgument = new ScriptArgument
@@ -118,7 +121,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newTabPage.Controls.Add(NewTextEditorActions(ProjectType.TagUI, title));
                     newTabPage.Tag = _scriptContext;
                     uiScriptTabControl.SelectedTab = newTabPage;
-                    _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
+                    _selectedTabScriptActions = (UIScintilla)uiScriptTabControl.SelectedTab.Controls[0];
 
                     var reportArgument = new ScriptArgument
                     {
@@ -135,13 +138,23 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     newTabPage.Controls.Add(NewTextEditorActions(ProjectType.CSScript, title));
                     newTabPage.Tag = _scriptContext;
                     uiScriptTabControl.SelectedTab = newTabPage;
-                    _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
+                    _selectedTabScriptActions = (UIScintilla)uiScriptTabControl.SelectedTab.Controls[0];
+
+                    SetVarArgTabControlSettings(ScriptProject.ProjectType);
+                    ResetVariableArgumentBindings();
+                    break;
+                case ProjectType.PowerShell:
+                    newTabPage.Controls.Add(NewTextEditorActions(ProjectType.PowerShell, title));
+                    newTabPage.Tag = _scriptContext;
+                    uiScriptTabControl.SelectedTab = newTabPage;
+                    _selectedTabScriptActions = (UIScintilla)uiScriptTabControl.SelectedTab.Controls[0];
 
                     SetVarArgTabControlSettings(ScriptProject.ProjectType);
                     ResetVariableArgumentBindings();
                     break;
             }
-            
+
+            _scriptContext.LoadCompilerObjects();
         }
 
         private void uiBtnOpen_Click(object sender, EventArgs e)
@@ -156,10 +169,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             //if user selected file
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string extension = Path.GetExtension(openFileDialog.FileName);
+                string extension = Path.GetExtension(openFileDialog.FileName).ToLower();
 
                 //open file
-                switch (extension.ToLower())
+                switch (extension)
                 {
                     case ".obscript":
                         OpenOpenBotsFile(openFileDialog.FileName);
@@ -172,6 +185,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         break;
                     case ".cs":
                         OpenTextEditorFile(openFileDialog.FileName, ProjectType.CSScript);
+                        break;
+                    case ".ps1":
+                        OpenTextEditorFile(openFileDialog.FileName, ProjectType.PowerShell);
                         break;
                     default:
                         Process.Start(openFileDialog.FileName);
@@ -232,21 +248,26 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         FilePath = filePath,
                         Container = AContainer
                     };
+                   
                     Script deserializedScript = Script.DeserializeFile(engineContext);
 
                     //reinitialize
                     _selectedTabScriptActions.Items.Clear();
+
+                    if (_scriptContext != null)                   
+                        _scriptContext.RemoveIntellisenseControls(Controls);               
+
                     _scriptContext = new ScriptContext();
+                    _scriptContext.IntellisenseListBox.ImageList = imgListIntellisense;
+                    _scriptContext.AddIntellisenseControls(Controls);
 
                     if (deserializedScript.Commands.Count == 0)
-                    {
                         Notify("Error Parsing File: Commands not found!", Color.Red);
-                    }
 
                     //update file path and reflect in title bar
                     ScriptFilePath = filePath;
-                    _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
-                    _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
+                    _scriptContext.ScriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                    _scriptContext.IsMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
 
                     string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
                     _selectedTabScriptActions.Name = $"{scriptFileName}ScriptActions";
@@ -257,9 +278,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     _scriptContext.Arguments.AddRange(deserializedScript.Arguments);
                     _scriptContext.ImportedNamespaces.Clear();
                     _scriptContext.ImportedNamespaces.AddRange(deserializedScript.ImportedNamespaces);
-
+                    _scriptContext.LoadCompilerObjects();
+                    
                     uiScriptTabControl.SelectedTab.Tag = _scriptContext;
-
+                    
                     //populate commands
                     PopulateExecutionCommands(deserializedScript.Commands);
 
@@ -271,6 +293,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         ResetVariableArgumentBindings();
 
                         Notify("Script Loaded Successfully!", Color.White);
+                        frmScriptBuilder_SizeChanged(null, null);
                     }
                     else
                         _selectedTabScriptActions.Enabled = false;
@@ -309,8 +332,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                     newtabPage.Controls.Add(NewTextEditorActions(projectType, fileName));
                  
-                    uiScriptTabControl.SelectedTab = newtabPage;
-                    ((Scintilla)uiScriptTabControl.SelectedTab.Controls[0]).Text = File.ReadAllText(filePath);
+                    uiScriptTabControl.SelectedTab = newtabPage;                  
                 }
                 else
                 {
@@ -318,34 +340,57 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return;
                 }
 
-                _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];
+                _selectedTabScriptActions = (UIScintilla)uiScriptTabControl.SelectedTab.Controls[0];
+
+                if (_scriptContext != null)
+                    _scriptContext.RemoveIntellisenseControls(Controls);             
 
                 //reinitialize
                 _scriptContext = new ScriptContext();
 
+                if (projectType == ProjectType.CSScript)
+                {
+                    _scriptContext.IntellisenseListBox.ImageList = imgListIntellisense;
+                    _scriptContext.AddIntellisenseControls(Controls);
+                }                
+
                 //update file path and reflect in title bar
                 ScriptFilePath = filePath;
-                _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
-                _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
+                _scriptContext.ScriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                _scriptContext.IsMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
 
                 string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
                 _selectedTabScriptActions.Name = $"{scriptFileName}ScriptActions";
 
-                //assign project arguments
-                _scriptContext.Arguments.AddRange(ScriptProject.ProjectArguments.Select(arg => new ScriptArgument 
-                                                                                        { 
-                                                                                            ArgumentName = arg.ArgumentName,
-                                                                                            ArgumentType = arg.ArgumentType,
-                                                                                            ArgumentValue = arg.ArgumentValue,
-                                                                                            Direction = arg.Direction,
-                                                                                        })
-                                                                        .ToList());
-
+                if (_scriptContext.IsMainScript)
+                {
+                    //assign project arguments
+                    _scriptContext.Arguments.AddRange(ScriptProject.ProjectArguments.Select(arg => new ScriptArgument
+                    {
+                        ArgumentName = arg.ArgumentName,
+                        ArgumentType = arg.ArgumentType,
+                        ArgumentValue = arg.ArgumentValue,
+                        Direction = arg.Direction,
+                    })
+                                                                            .ToList());
+                }
+                
                 uiScriptTabControl.SelectedTab.Tag = _scriptContext;
                 uiScriptTabControl.SelectedTab.Text = scriptFileName;
 
+                if (projectType == ProjectType.CSScript)
+                {
+                    _scriptContext.ImportedNamespaces.Clear();
+                    _scriptContext.ImportedNamespaces.AddRange(ScriptDefaultNamespaces.DefaultNamespaces);
+                    _scriptContext.LoadCompilerObjects();
+                }
+
                 SetVarArgTabControlSettings(ProjectType.Python);
                 ResetVariableArgumentBindings();
+
+                _scriptContext.ScriptLoading = true;
+                ((UIScintilla)uiScriptTabControl.SelectedTab.Controls[0]).Text = File.ReadAllText(filePath);
+                Notify("Script Loaded Successfully!", Color.White);
             }
             catch (Exception ex)
             {
@@ -399,13 +444,16 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     switch (ScriptProject.ProjectType)
                     {
                         case ProjectType.CSScript:
-                            _scriptFileExtension = ".cs";
+                            _scriptContext.ScriptFileExtension = ".cs";
                             break;
                         case ProjectType.Python:
-                            _scriptFileExtension = ".py";
+                            _scriptContext.ScriptFileExtension = ".py";
                             break;
                         case ProjectType.TagUI:
-                            _scriptFileExtension = ".tag";
+                            _scriptContext.ScriptFileExtension = ".tag";
+                            break;
+                        case ProjectType.PowerShell:
+                            _scriptContext.ScriptFileExtension = ".ps1";
                             break;
                     }
 
@@ -413,7 +461,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     {
                         InitialDirectory = ScriptProjectPath,
                         RestoreDirectory = true,
-                        Filter = $"{_scriptFileExtension.TrimStart('.')} (*{_scriptFileExtension})|*{_scriptFileExtension}"
+                        Filter = $"{_scriptContext.ScriptFileExtension.TrimStart('.')} (*{_scriptContext.ScriptFileExtension})|*{_scriptContext.ScriptFileExtension}"
                     };
 
                     if (saveFileDialog.ShowDialog() != DialogResult.OK)
@@ -426,15 +474,15 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     }
 
                     ScriptFilePath = saveFileDialog.FileName;
-                    _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
-                    _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
+                    _scriptContext.ScriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                    _scriptContext.IsMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
 
                     string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
                     if (uiScriptTabControl.SelectedTab.Text != scriptFileName)
                         UpdateTabPage(uiScriptTabControl.SelectedTab, ScriptFilePath);
                 }
 
-                File.WriteAllText(ScriptFilePath, ((Scintilla)_selectedTabScriptActions).Text);
+                File.WriteAllText(ScriptFilePath, ((UIScintilla)_selectedTabScriptActions).Text);
                 uiScriptTabControl.SelectedTab.Text = uiScriptTabControl.SelectedTab.Text.Replace(" *", "");
 
                 Notify("File has been saved successfully!", Color.White);
@@ -442,7 +490,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 try
                 {
-                    if (_isMainScript)
+                    if (_scriptContext.IsMainScript)
                     {
                         ScriptProject.ProjectArguments.Clear();
                         ScriptProject.ProjectArguments.AddRange(_scriptContext.Arguments.Select(arg => new ProjectArgument()
@@ -485,57 +533,46 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             int beginLoopValidationCount = 0;
             int beginIfValidationCount = 0;
             int tryCatchValidationCount = 0;
-            int retryValidationCount = 0;
             int beginSwitchValidationCount = 0;
 
             foreach (ListViewItem item in _selectedTabScriptActions.Items)
             {
-                if(item.Tag is BrokenCodeCommentCommand)
+                switch (item.Tag.GetType().Name)
                 {
-                    Notify("Please verify that all broken code has been removed or replaced.", Color.Yellow);
-                    return isSuccessfulSave;
-                }
-                else if ((item.Tag.GetType().Name == "LoopCollectionCommand") || (item.Tag.GetType().Name == "LoopContinuouslyCommand") ||
-                    (item.Tag.GetType().Name == "LoopNumberOfTimesCommand") || (item.Tag.GetType().Name == "BeginLoopCommand") ||
-                    (item.Tag.GetType().Name == "BeginMultiLoopCommand"))
-                {
-                    beginLoopValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndLoopCommand")
-                {
-                    beginLoopValidationCount--;
-                }
-                else if ((item.Tag.GetType().Name == "BeginIfCommand") || (item.Tag.GetType().Name == "BeginMultiIfCommand"))
-                {
-                    beginIfValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndIfCommand")
-                {
-                    beginIfValidationCount--;
-                }
-                else if (item.Tag.GetType().Name == "BeginTryCommand")
-                {
-                    tryCatchValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndTryCommand")
-                {
-                    tryCatchValidationCount--;
-                }
-                else if (item.Tag.GetType().Name == "BeginRetryCommand")
-                {
-                    retryValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndRetryCommand")
-                {
-                    retryValidationCount--;
-                }
-                else if(item.Tag.GetType().Name == "BeginSwitchCommand")
-                {
-                    beginSwitchValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndSwitchCommand")
-                {
-                    beginSwitchValidationCount--;
+                    case "BrokenCodeCommentCommand":
+                        Notify("Please verify that all broken code has been removed or replaced.", Color.Yellow);
+                        return isSuccessfulSave;
+                    case "BeginForEachCommand":
+                    case "LoopContinuouslyCommand":
+                    case "LoopNumberOfTimesCommand":
+                    case "BeginWhileCommand":
+                    case "BeginMultiWhileCommand":
+                    case "BeginDoWhileCommand":
+                        beginLoopValidationCount++;
+                        break;
+                    case "EndLoopCommand":
+                        beginLoopValidationCount--;
+                        break;
+                    case "BeginIfCommand":
+                    case "BeginMultiIfCommand":
+                        beginIfValidationCount++;
+                        break;
+                    case "EndIfCommand":
+                        beginIfValidationCount--;
+                        break;
+                    case "BeginTryCommand":
+                    case "BeginRetryCommand":
+                        tryCatchValidationCount++;
+                        break;
+                    case "EndTryCommand":
+                        tryCatchValidationCount--;
+                        break;
+                    case "BeginSwitchCommand":
+                        beginSwitchValidationCount++;
+                        break;
+                    case "EndSwitchCommand":
+                        beginSwitchValidationCount--;
+                        break;
                 }
 
                 //end loop was found first
@@ -555,12 +592,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (tryCatchValidationCount < 0)
                 {
                     Notify("Please verify the ordering of your try/catch blocks.", Color.Yellow);
-                    return isSuccessfulSave;
-                }
-
-                if (retryValidationCount < 0)
-                {
-                    Notify("Please verify the ordering of your retry blocks.", Color.Yellow);
                     return isSuccessfulSave;
                 }
 
@@ -587,13 +618,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             if (tryCatchValidationCount != 0)
             {
-                Notify("Please verify the ordering of your try/catch blocks.", Color.Yellow);
-                return isSuccessfulSave;
-            }
-
-            if (retryValidationCount != 0)
-            {
-                Notify("Please verify the ordering of your retry blocks.", Color.Yellow);
+                Notify("Please verify the ordering of your try/catch/retry blocks.", Color.Yellow);
                 return isSuccessfulSave;
             }
 
@@ -623,8 +648,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
 
                 ScriptFilePath = saveFileDialog.FileName;
-                _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
-                _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
+                _scriptContext.ScriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
+                _scriptContext.IsMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
 
                 string scriptFileName = Path.GetFileNameWithoutExtension(ScriptFilePath);
                 if (uiScriptTabControl.SelectedTab.Text != scriptFileName)
@@ -651,7 +676,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 isSuccessfulSave = true;
                 try
                 {
-                    if (_isMainScript)
+                    if (_scriptContext.IsMainScript)
                     {
                         ScriptProject.ProjectArguments.Clear();
                         ScriptProject.ProjectArguments.AddRange(_scriptContext.Arguments.Select(arg => new ProjectArgument()
@@ -888,7 +913,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void uiBtnRestart_Click(object sender, EventArgs e)
         {
             _appSettings.ClientSettings.IsRestarting = true;
-            _appSettings.Save(_appSettings);
+            _appSettings.Save();
             Application.Restart();
         }
 
@@ -941,6 +966,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             ResetVariableArgumentBindings();
             scriptVariableEditor.Dispose();
+            _scriptContext.AddIntellisenseControls(Controls);
         }
 
         private void argumentsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -972,6 +998,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
             ResetVariableArgumentBindings();
             scriptArgumentEditor.Dispose();
+            _scriptContext.AddIntellisenseControls(Controls);
         }
 
         private void elementManagerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1001,6 +1028,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
 
             scriptElementEditor.Dispose();
+            _scriptContext.AddIntellisenseControls(Controls);
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1085,7 +1113,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (frmManager.DialogResult == DialogResult.OK)
             {
                 ScriptProject.Dependencies = ScriptProject.Dependencies.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
+                Project.SerializeProjectConfig(ScriptProject, configPath);
 
                 if (frmManager.ShowRestartWarning)
                 {
@@ -1096,7 +1124,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     if (result == DialogResult.Yes)
                     {
                         _appSettings.ClientSettings.IsRestarting = true;
-                        _appSettings.Save(_appSettings);
+                        _appSettings.Save();
                         Application.Restart();
                         return;
                     }
@@ -1112,6 +1140,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ReloadAllFiles();
             }
 
+            _appSettings = _appSettings.GetOrCreateApplicationSettings();
+            _appSettings.ClientSettings.IsInstallingPackages = false;
+            _appSettings.Save();
             frmManager.Dispose();
         }
 
@@ -1132,8 +1163,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     return;
                 }
 
-                //show spinner and disable package manager related buttons
+                //disable package manager related buttons                
                 NotifySync("Installing and loading package assemblies...", Color.White);
+
+                _appSettings.ClientSettings.IsInstallingPackages = true;
+                _appSettings.Save();
 
                 installDefaultToolStripMenuItem.Enabled = false;
                 packageManagerToolStripMenuItem.Enabled = false;
@@ -1144,7 +1178,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
                 //unpack commands using Program Files as the source repository
                 var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
-                Dictionary<string, string> dependencies = Project.DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+                Dictionary<string, string> dependencies = _appSettings.ClientSettings.DefaultPackages.ToDictionary(x => x, x => commandVersion);
 
                 foreach (var dep in dependencies)
                     await NugetPackageManager.InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), 
@@ -1171,6 +1205,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             installDefaultToolStripMenuItem.Enabled = true;
             packageManagerToolStripMenuItem.Enabled = true;
             uiBtnPackageManager.Enabled = true;
+
+            _appSettings.ClientSettings.IsInstallingPackages = false;
+            _appSettings.Save();
         }
         #endregion
 
@@ -1242,30 +1279,30 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             switch (_appSettings.EngineSettings.LoggingSinkType)
             {
                 case SinkType.File:
-                    if (string.IsNullOrEmpty(_appSettings.EngineSettings.LoggingValue1.Trim()))
-                        _appSettings.EngineSettings.LoggingValue1 = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
+                    if (string.IsNullOrEmpty(_appSettings.EngineSettings.LoggingValue.Trim()))
+                        _appSettings.EngineSettings.LoggingValue = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
 
-                    EngineLogger = new Logging().CreateFileLogger(_appSettings.EngineSettings.LoggingValue1, Serilog.RollingInterval.Day,
+                    EngineLogger = new LoggingMethods().CreateFileLogger(_appSettings.EngineSettings.LoggingValue, Serilog.RollingInterval.Day,
                         _appSettings.EngineSettings.MinLogLevel);
                     break;
                 case SinkType.HTTP:
-                    EngineLogger = new Logging().CreateHTTPLogger(ScriptProject.ProjectName, _appSettings.EngineSettings.LoggingValue1, _appSettings.EngineSettings.MinLogLevel);
+                    EngineLogger = new LoggingMethods().CreateHTTPLogger(ScriptProject.ProjectName, _appSettings.EngineSettings.LoggingValue, _appSettings.EngineSettings.MinLogLevel);
                     break;
             }
 
-            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null, startLineNumber, _isDebugMode, false);
+            EngineContext engineContext = new EngineContext(ScriptFilePath, ScriptProjectPath, AContainer, this, EngineLogger, null, null, null, null, null, null, startLineNumber, _isDebugMode, false);
 
             //initialize Engine
-            CurrentEngine = new frmScriptEngine(engineContext, false, _isDebugMode);
+            CurrentEngine = new frmScriptEngine(engineContext, false);
 
-            CurrentEngine.ScriptEngineContext.ScriptBuilder = this;
+            CurrentEngine.EngineContext.ScriptBuilder = this;
             IsScriptRunning = true;
             ((frmScriptEngine)CurrentEngine).Show();
 
             Notify("", Color.Transparent);
 
             if (!_isDebugMode)
-                FormsHelper.HideAllForms();
+                FormsHelper.HideForm(this);
         }
 
         private void RunFromThisCommand()
@@ -1274,6 +1311,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 SaveToOpenBotsFile(false);
                 var commandLineNumber = ((ScriptCommand)_selectedTabScriptActions.SelectedItems[0].Tag).LineNumber;
+                _isDebugMode = false;
                 RunOBScript(commandLineNumber);
             }
         }
@@ -1289,14 +1327,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
-        private void runToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void runToolStripMenuItem_Click(object sender, EventArgs e)
         {         
             if (IsScriptRunning)
                 return;
 
             _isDebugMode = false;
 
-            switch (_scriptFileExtension)
+            switch (_scriptContext.ScriptFileExtension)
             {
                 case ".obscript":
                     RunOBScript();
@@ -1305,12 +1343,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     if (!SaveAllFiles())
                         return;
 
-                    if (_isMainScript)
+                    if (_scriptContext.IsMainScript)
                     {
                         try
                         {
                             //arguments and outputs not yet implemented
-                            switch (_scriptFileExtension)
+                            switch (_scriptContext.ScriptFileExtension)
                             {
                                 case ".py":
                                     ExecutionManager.RunPythonAutomation(ScriptFilePath, ScriptProject.ProjectArguments);
@@ -1319,7 +1357,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                                     ExecutionManager.RunTagUIAutomation(ScriptFilePath, ScriptProjectPath, ScriptProject.ProjectArguments);
                                     break;
                                 case ".cs":
-                                    ExecutionManager.RunCSharpAutomation(ScriptFilePath, ScriptProject.ProjectArguments);
+                                    await ExecutionManager.RunCSharpAutomation(ScriptFilePath, ScriptProject.ProjectArguments);
+                                    break;
+                                case ".ps1":
+                                    ExecutionManager.RunPowerShellAutomation(ScriptFilePath, ScriptProject.ProjectArguments);
                                     break;
                             }
                         }
@@ -1370,7 +1411,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 ScriptContext = _scriptContext
             };
             elementRecorder.chkStopOnClick.Visible = false;
-            elementRecorder.IsCommandItemSelected = _selectedTabScriptActions.SelectedItems.Count > 0;
 
             CreateUndoSnapshot();
 
@@ -1379,6 +1419,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             HTMLElementRecorderURL = elementRecorder.StartURL;
 
             elementRecorder.Dispose();
+            _scriptContext.AddIntellisenseControls(Controls);
         }
 
         private void uiBtnRecordElementSequence_Click(object sender, EventArgs e)
@@ -1404,8 +1445,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             Hide();
             frmScreenRecorder sequenceRecorder = new frmScreenRecorder(AContainer)
             {
-                CallBackForm = this,
-                IsCommandItemSelected = _selectedTabScriptActions.SelectedItems.Count > 0,               
+                CallBackForm = this              
             };
 
             sequenceRecorder.ShowDialog();
@@ -1422,22 +1462,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (!(_selectedTabScriptActions is ListView))
                 return;
 
-            Hide();
-
             frmAdvancedUIElementRecorder appElementRecorder = new frmAdvancedUIElementRecorder(AContainer)
             {
                 CallBackForm = this,
                 IsRecordingSequence = true
             };
             appElementRecorder.chkStopOnClick.Visible = false;
-            appElementRecorder.IsCommandItemSelected = _selectedTabScriptActions.SelectedItems.Count > 0;
 
             CreateUndoSnapshot();
 
             appElementRecorder.ShowDialog();
             appElementRecorder.Dispose();
 
-            Show();
             BringToFront();
         }
 
@@ -1461,9 +1497,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region Recorder Buttons
         private void extensionManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //disabled for 1.5.0
-            return;
-
             var extensionsForm = new frmExtentionsManager();
             extensionsForm.ShowDialog();
 

@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -75,7 +75,6 @@ namespace OpenBots.Commands.Engine
 			CommandEnabled = true;
 			CommandIcon = Resources.command_stopwatch;
 
-			v_InstanceName = "DefaultStopwatch";
 			v_StopwatchAction = "Start Stopwatch";
 		}
 

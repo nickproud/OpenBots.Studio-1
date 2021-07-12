@@ -1,5 +1,6 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,13 +21,14 @@ namespace OpenBots.Studio.Utilities.Documentation
         /// Returns a path that contains the generated markdown files
         /// </summary>
         /// <returns></returns>
-        public string GenerateMarkdownFiles(AContainer container)
+        public string GenerateMarkdownFiles(AContainer container, string basePath)
         {
             //create directory if required
             var docsFolderName = "docs";
-            if (!Directory.Exists(docsFolderName))
+            var docsPath = Path.Combine(basePath, docsFolderName);
+            if (!Directory.Exists(docsPath))
             {
-                Directory.CreateDirectory(docsFolderName);
+                Directory.CreateDirectory(docsPath);
             }
 
             var commandClasses = TypeMethods.GenerateCommandTypes(container);
@@ -93,7 +95,7 @@ namespace OpenBots.Studio.Utilities.Documentation
                 var kebobFileName = commandName.Replace(" ", "-").Replace("/", "-").ToLower() + "-command.md";
 
                 //create directory if required
-                var destinationdirectory = docsFolderName + "\\" + kebobDestination;
+                var destinationdirectory = Path.Combine(docsPath, kebobDestination);
                 if (!Directory.Exists(destinationdirectory))
                 {
                     Directory.CreateDirectory(destinationdirectory);
@@ -133,10 +135,10 @@ namespace OpenBots.Studio.Utilities.Documentation
             stringBuilder.AppendLine("[Ask a question on the OpenBots forum](https://openbots.ai/forums/)");
 
             //write file
-            fullFileName = Path.Combine(docsFolderName, "automation-commands.md");
+            fullFileName = Path.Combine(docsPath, "automation-commands.md");
             File.WriteAllText(fullFileName, stringBuilder.ToString());
 
-            return docsFolderName;
+            return docsPath;
         }
 
         private string GetPropertyValue(PropertyInfo prop, Type attributeType)

@@ -1,4 +1,4 @@
-﻿namespace OpenBots.Core.Infrastructure
+﻿namespace OpenBots.Core.Interfaces
 {
     public interface IImageCommands
     {

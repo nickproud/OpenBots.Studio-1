@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\OpenBots.Studio\bin\Debug\NativeServer\</OutputPath>
+    <OutputPath>..\OpenBots.Studio\bin\Extensions\NativeServer\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\OpenBots.Studio\bin\Extensions\NativeServer\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -47,20 +47,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Library\ChromeServerHost.cs" />
-    <Compile Include="Library\Exceptions.cs" />
     <Compile Include="Library\Host.cs" />
-    <Compile Include="Library\Manifest.cs" />
     <Compile Include="Library\ResponseConfirmation.cs" />
     <Compile Include="Library\ServerCommunication.cs" />
-    <Compile Include="Library\Utils.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="com.openbots.chromeserver.message-manifest.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

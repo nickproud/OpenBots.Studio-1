@@ -1,5 +1,5 @@
 ﻿using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.Forms.Supplement_Forms;
@@ -116,7 +116,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 debugTab.Controls[0].Controls.Add(argumentLabel);
                 debugTab.Controls[0].Controls.Add(argumentGridViewHelper);
 
-                List<ScriptVariable> engineVariables = ((frmScriptEngine)CurrentEngine).EngineInstance.AutomationEngineContext.Variables;
+                List<ScriptVariable> engineVariables = ((frmScriptEngine)CurrentEngine).EngineInstance.EngineContext.Variables;
 
                 foreach (var variable in engineVariables)
                 {
@@ -131,7 +131,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     }
                 }
 
-                List<ScriptArgument> engineArguments = ((frmScriptEngine)CurrentEngine).EngineInstance.AutomationEngineContext.Arguments;
+                List<ScriptArgument> engineArguments = ((frmScriptEngine)CurrentEngine).EngineInstance.EngineContext.Arguments;
 
                 foreach (var argument in engineArguments)
                 {
@@ -156,7 +156,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void DebugGridViewHelper_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             //if the column is 'Value'
-            if (e.ColumnIndex == 2)
+            if (e.ColumnIndex == 2 && e.RowIndex != -1)
             {
                 string debugName = ((DataGridView)sender).Rows[e.RowIndex].Cells[0].Value.ToString();               
                 string debugType = ((DataGridView)sender).Rows[e.RowIndex].Cells[1].Value.ToString();               

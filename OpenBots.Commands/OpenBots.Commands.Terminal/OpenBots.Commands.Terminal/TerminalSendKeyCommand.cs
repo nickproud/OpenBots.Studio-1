@@ -4,7 +4,7 @@ using OpenBots.Commands.Terminal.Forms;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -70,7 +70,6 @@ namespace OpenBots.Commands.Terminal
 			CommandEnabled = true;
 			CommandIcon = Resources.command_system;
 
-			v_InstanceName = "DefaultTerminal";
 			v_Timeout = "30";
 		}
 
@@ -109,7 +108,7 @@ namespace OpenBots.Commands.Terminal
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_XMousePosition", this, editor));
 
 			var terminalKeyNameLabel = commandControls.CreateDefaultLabelFor("v_TerminalKey", this);
-			var terminalKeyNameComboBox = (ComboBox)commandControls.CreateDropdownFor("v_TerminalKey", this);
+			var terminalKeyNameComboBox = commandControls.CreateDropdownFor("v_TerminalKey", this);
 			terminalKeyNameComboBox.DataSource = Enum.GetValues(typeof(TnKey));
 
 			RenderedControls.Add(terminalKeyNameLabel);

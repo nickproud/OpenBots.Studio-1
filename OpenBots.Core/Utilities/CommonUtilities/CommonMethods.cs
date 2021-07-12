@@ -12,23 +12,18 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-using Newtonsoft.Json;
-using OpenBots.Core.Enums;
-using OpenBots.Core.IO;
-using OpenBots.Core.Script;
-using OpenBots.Core.User32;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Reflection;
-using System.Windows.Forms;
-using System.Net;
 using System.Linq;
+using System.Net;
 using System.Security.Principal;
+using System.Windows.Forms;
 
 namespace OpenBots.Core.Utilities.CommonUtilities
 {
@@ -53,45 +48,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return JsonConvert.DeserializeObject<T>(serializedObject, serializerSettings);
         }
 
-        /// <summary>
-        /// Returns a list of system-generated variables for use with automation.
-        /// </summary>
-        public static List<ScriptVariable> GenerateSystemVariables()
-        {
-            List<ScriptVariable> systemVariableList = new List<ScriptVariable>
-            {
-                new ScriptVariable { VariableName = "Folder.Desktop", VariableValue = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) },
-                new ScriptVariable { VariableName = "Folder.Documents", VariableValue = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) },
-                new ScriptVariable { VariableName = "Folder.AppData", VariableValue = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) },
-                new ScriptVariable { VariableName = "Folder.ScriptPath", VariableValue = Folders.GetFolder(FolderType.ScriptsFolder) },
-                new ScriptVariable { VariableName = "Folder.RootPath", VariableValue = Folders.GetFolder(FolderType.RootFolder) },
-                new ScriptVariable { VariableName = "Folder.AttendedTasksPath", VariableValue = Folders.GetFolder(FolderType.AttendedTasksFolder) },
-                new ScriptVariable { VariableName = "DateTime.Now", VariableValue = DateTime.Now.ToString() },
-                new ScriptVariable { VariableName = "DateTime.Now.Month", VariableValue = DateTime.Now.ToString("MM") },
-                new ScriptVariable { VariableName = "DateTime.Now.Day", VariableValue = DateTime.Now.ToString("dd") },
-                new ScriptVariable { VariableName = "DateTime.Now.Year", VariableValue = DateTime.Now.ToString("yy") },
-                new ScriptVariable { VariableName = "DateTime.Now.YearLong", VariableValue = DateTime.Now.ToString("yyyy") },
-                new ScriptVariable { VariableName = "DateTime.Now.Hour", VariableValue = DateTime.Now.ToString("HH") },
-                new ScriptVariable { VariableName = "DateTime.Now.Minute", VariableValue = DateTime.Now.ToString("mm") },
-                new ScriptVariable { VariableName = "DateTime.Now.Second", VariableValue = DateTime.Now.ToString("ss") },
-                new ScriptVariable { VariableName = "DateTime.Now.FileSafe", VariableValue = DateTime.Now.ToString("MM-dd-yy hh.mm.ss") },
-                new ScriptVariable { VariableName = "System.InputLanguage", VariableValue = InputLanguage.CurrentInputLanguage.Culture.Name },
-                new ScriptVariable { VariableName = "System.KeyboardLayout", VariableValue = InputLanguage.CurrentInputLanguage.LayoutName },
-                new ScriptVariable { VariableName = "Error.Message", VariableValue = "An Error Occurred!" },
-                new ScriptVariable { VariableName = "Error.Line", VariableValue = "1" },
-                new ScriptVariable { VariableName = "Error.StackTrace", VariableValue = "An Error Occurred + StackTrace" },
-                new ScriptVariable { VariableName = "PC.MachineName", VariableValue = Environment.MachineName },
-                new ScriptVariable { VariableName = "PC.UserName", VariableValue = Environment.UserName },
-                new ScriptVariable { VariableName = "PC.DomainName", VariableValue = Environment.UserDomainName },
-                new ScriptVariable { VariableName = "Env.ActiveWindowTitle", VariableValue = User32Functions.GetActiveWindowTitle() },
-                new ScriptVariable { VariableName = "OpenBots.EngineContext", VariableValue = "{JsonContext}" },
-                new ScriptVariable { VariableName = "OpenBots.Location", VariableValue = Assembly.GetEntryAssembly()?.Location }
-            };
-
-            systemVariableList.ForEach(v => v.VariableType = typeof(string));
-            return systemVariableList;
-        }
-
         public static string ImageToBase64(Image image)
         {
             using (MemoryStream m = new MemoryStream())
@@ -110,33 +66,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             ms.Write(imageBytes, 0, imageBytes.Length);
             Image image = Image.FromStream(ms, true);
             return image;
-        }
-
-        public static List<string> GetAvailableWindowNames()
-        {
-            List<string> windowList = new List<string>();
-            //get all running processes
-            Process[] processlist = Process.GetProcesses();
-            //pull the main window title for each
-            foreach (Process process in processlist)
-            {
-                if (!String.IsNullOrEmpty(process.MainWindowTitle))
-                {
-                    //add to the control list of available windows
-                    windowList.Add(process.MainWindowTitle);
-                }
-            }
-
-            SHDocVw.ShellWindows shellWindows = new SHDocVw.ShellWindows();
-
-            foreach (SHDocVw.InternetExplorer window in shellWindows)
-            {
-                windowList.Add("Windows Explorer - " + window.LocationName);
-            }
-            windowList.Sort();
-
-            return windowList;
-        }
+        }     
 
         public static string GetKeyDescription(Keys key)
         {

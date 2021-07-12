@@ -1,5 +1,5 @@
 ﻿using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 
@@ -17,7 +17,7 @@ namespace OpenBots.Commands.ErrorHandling
     [Description("This command defines a try/catch block which will execute the associated catch block if any " +
                  "exceptions are thrown.")]
     public class BeginTryCommand : ScriptCommand
-    {
+    {      
         public BeginTryCommand()
         {
             CommandName = "BeginTryCommand";

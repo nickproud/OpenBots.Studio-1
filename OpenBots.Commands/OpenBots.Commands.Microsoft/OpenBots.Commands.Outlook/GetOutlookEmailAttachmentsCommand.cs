@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -18,7 +18,6 @@ namespace OpenBots.Commands.Outlook
     [Serializable]
     [Category("Outlook Commands")]
     [Description("This command gets attachments from a selected email in Outlook.")]
-
     public class GetOutlookEmailAttachmentsCommand : ScriptCommand
     {
         [Required]
@@ -78,6 +77,7 @@ namespace OpenBots.Commands.Outlook
             foreach (Attachment attachment in email.Attachments)
             {
                 bool isEmbed = email.HTMLBody.Contains(attachment.FileName);
+
                 if (isEmbed && includeEmbeds)
                 {
                     attachmentList.Add(Path.Combine(attDirectory, attachment.FileName));

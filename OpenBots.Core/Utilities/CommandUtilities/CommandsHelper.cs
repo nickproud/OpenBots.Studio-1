@@ -1,5 +1,5 @@
 ﻿using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.User32;
@@ -65,7 +65,7 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             return descriptions[0].Description;
         }
 
-        public async static Task<AutomationElement> SearchForGUIElement(IAutomationEngineInstance engine, DataTable uiaSearchParams, string variableWindowName)
+		public async static Task<AutomationElement> SearchForGUIElement(IAutomationEngineInstance engine, DataTable uiaSearchParams, string variableWindowName)
         {
             User32Functions.ActivateWindow(variableWindowName);
             //create search params
@@ -306,428 +306,418 @@ namespace OpenBots.Core.Utilities.CommandUtilities
             return element;
         }
 
-		public async static Task<bool> DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable)
+		public async static Task<bool> DetermineStatementTruth(IAutomationEngineInstance engine, string ifActionType, DataTable IfActionParameterTable, string condition = "false")
 		{
 			bool ifResult = false;
-
-			if (ifActionType == "Number Compare")
-			{
-				string value1 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Number1"
-								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-				string operand = ((from rw in IfActionParameterTable.AsEnumerable()
-								   where rw.Field<string>("Parameter Name") == "Operand"
-								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-				string value2 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Number2"
-								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				var cdecValue1 = Convert.ToDecimal(await value1.EvaluateCode(engine));
-				var cdecValue2 = Convert.ToDecimal(await value2.EvaluateCode(engine));
-
-				switch (operand)
-				{
-					case "is equal to":
-						ifResult = cdecValue1 == cdecValue2;
-						break;
-
-					case "is not equal to":
-						ifResult = cdecValue1 != cdecValue2;
-						break;
-
-					case "is greater than":
-						ifResult = cdecValue1 > cdecValue2;
-						break;
-
-					case "is greater than or equal to":
-						ifResult = cdecValue1 >= cdecValue2;
-						break;
-
-					case "is less than":
-						ifResult = cdecValue1 < cdecValue2;
-						break;
-
-					case "is less than or equal to":
-						ifResult = cdecValue1 <= cdecValue2;
-						break;
-				}
-			}
-			else if (ifActionType == "Date Compare")
-			{
-				string value1 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Date1"
-								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-				string operand = ((from rw in IfActionParameterTable.AsEnumerable()
-								   where rw.Field<string>("Parameter Name") == "Operand"
-								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-				string value2 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Date2"
-								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				var dt1 = (DateTime)await value1.EvaluateCode(engine);
-				var dt2 = (DateTime)await value2.EvaluateCode(engine);
-
-				switch (operand)
-				{
-					case "is equal to":
-						ifResult = dt1 == dt2;
-						break;
-
-					case "is not equal to":
-						ifResult = dt1 != dt2;
-						break;
-
-					case "is greater than":
-						ifResult = dt1 > dt2;
-						break;
-
-					case "is greater than or equal to":
-						ifResult = dt1 >= dt2;
-						break;
-
-					case "is less than":
-						ifResult = dt1 < dt2;
-						break;
-
-					case "is less than or equal to":
-						ifResult = dt1 <= dt2;
-						break;
-				}
-			}
-			else if (ifActionType == "Text Compare")
-			{
-				string value1 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Text1"
-								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-				string operand = ((from rw in IfActionParameterTable.AsEnumerable()
-								   where rw.Field<string>("Parameter Name") == "Operand"
-								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-				string value2 = ((from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Text2"
-								  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				string caseSensitive = ((from rw in IfActionParameterTable.AsEnumerable()
-										 where rw.Field<string>("Parameter Name") == "Case Sensitive"
-										 select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				value1 = (string)await value1.EvaluateCode(engine);
-				value2 = (string)await value2.EvaluateCode(engine);
-
-				if (caseSensitive == "No")
-				{
-					value1 = value1.ToUpper();
-					value2 = value2.ToUpper();
-				}
-
-				switch (operand)
-				{
-					case "contains":
-						ifResult = value1.Contains(value2);
-						break;
-
-					case "does not contain":
-						ifResult = !value1.Contains(value2);
-						break;
-
-					case "is equal to":
-						ifResult = value1 == value2;
-						break;
-
-					case "is not equal to":
-						ifResult = value1 != value2;
-						break;
-				}
-			}
-			else if (ifActionType == "Has Value")
-			{
-				string variableName = ((from rw in IfActionParameterTable.AsEnumerable()
-										where rw.Field<string>("Parameter Name") == "Variable Name"
-										select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				dynamic actualVariable = variableName.EvaluateCode(engine);
-
-				if (actualVariable.Result != null)
-					ifResult = true;
-				else
-					ifResult = false;
-			}
-			else if (ifActionType == "Is Numeric")
-			{
-				string variableName = ((from rw in IfActionParameterTable.AsEnumerable()
-										where rw.Field<string>("Parameter Name") == "Variable Name"
-										select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				ifResult = decimal.TryParse((await variableName.EvaluateCode(engine)).ToString(), out decimal decimalResult);
-			}
-			else if (ifActionType == "Error Occured")
-			{
-				//get line number
-				string userLineNumber = ((from rw in IfActionParameterTable.AsEnumerable()
-										  where rw.Field<string>("Parameter Name") == "Line Number"
-										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				//convert to int
-				int lineNumber = (int)await userLineNumber.EvaluateCode(engine);
-
-				//determine if error happened
-				if (engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).Count() > 0)
-				{
-
-					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.SetVariableValue(engine, "Error.Message");
-					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line");
-					error.StackTrace.SetVariableValue(engine, "Error.StackTrace");
-
-					ifResult = true;
-				}
-				else
-					ifResult = false;
-			}
-			else if (ifActionType == "Error Did Not Occur")
-			{
-				//get line number
-				string userLineNumber = ((from rw in IfActionParameterTable.AsEnumerable()
-										  where rw.Field<string>("Parameter Name") == "Line Number"
-										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-				//convert to int
-				int lineNumber = (int)await userLineNumber.EvaluateCode(engine);
-
-				//determine if error happened
-				if (engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).Count() == 0)
-					ifResult = true;
-				else
-				{
-					var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
-					error.ErrorMessage.SetVariableValue(engine, "Error.Message");
-					error.LineNumber.ToString().SetVariableValue(engine, "Error.Line");
-					error.StackTrace.SetVariableValue(engine, "Error.StackTrace");
-
-					ifResult = false;
-				}
-			}
-			else if (ifActionType == "Window Name Exists")
-			{
-				//get user supplied name
-				string windowName = ((from rw in IfActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Window Name"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-				//variable translation
-				string variablizedWindowName = (string)await windowName.EvaluateCode(engine);
-
-				//search for window
-				IntPtr windowPtr = User32Functions.FindWindow(variablizedWindowName);
-
-				//conditional
-				if (windowPtr != IntPtr.Zero)
-					ifResult = true;
-			}
-			else if (ifActionType == "Active Window Name Is")
-			{
-				string windowName = ((from rw in IfActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Window Name"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				string variablizedWindowName = (string)await windowName.EvaluateCode(engine);
-
-				var currentWindowTitle = User32Functions.GetActiveWindowTitle();
-
-				if (currentWindowTitle == variablizedWindowName)
-					ifResult = true;
-			}
-			else if (ifActionType == "File Exists")
-			{
-
-				string fileName = ((from rw in IfActionParameterTable.AsEnumerable()
-									where rw.Field<string>("Parameter Name") == "File Path"
-									select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				string trueWhenFileExists = ((from rw in IfActionParameterTable.AsEnumerable()
-											  where rw.Field<string>("Parameter Name") == "True When"
-											  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				var userFileSelected = (string)await fileName.EvaluateCode(engine);
-
-				bool existCheck = false;
-				if (trueWhenFileExists == "It Does Exist")
-					existCheck = true;
-
-				if (File.Exists(userFileSelected) == existCheck)
-					ifResult = true;
-			}
-			else if (ifActionType == "Folder Exists")
-			{
-				string folderName = ((from rw in IfActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Folder Path"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				string trueWhenFileExists = ((from rw in IfActionParameterTable.AsEnumerable()
-											  where rw.Field<string>("Parameter Name") == "True When"
-											  select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				var userFolderSelected = (string)await folderName.EvaluateCode(engine);
-
-				bool existCheck = false;
-				if (trueWhenFileExists == "It Does Exist")
-					existCheck = true;
-
-				if (Directory.Exists(userFolderSelected) == existCheck)
-					ifResult = true;
-			}
-			else if (ifActionType == "Selenium Web Element Exists")
-			{
-				string instanceName = ((from rw in IfActionParameterTable.AsEnumerable()
-										where rw.Field<string>("Parameter Name") == "Selenium Instance Name"
-										select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				OBAppInstance instance = (OBAppInstance)await instanceName.EvaluateCode(engine);
-
-				string parameterName = ((from rw in IfActionParameterTable.AsEnumerable()
-										 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
-										 select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				string searchMethod = ((from rw in IfActionParameterTable.AsEnumerable()
-										where rw.Field<string>("Parameter Name") == "Element Search Method"
-										select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				string timeoutStr = ((from rw in IfActionParameterTable.AsEnumerable()
-								   where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
-								   select rw.Field<string>("Parameter Value")).FirstOrDefault());
-
-				int timeout = (int)await timeoutStr.EvaluateCode(engine);
-
-				string trueWhenElementExists = (from rw in IfActionParameterTable.AsEnumerable()
-												where rw.Field<string>("Parameter Name") == "True When"
-												select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-				bool elementExists = await ElementExists(engine, instance, searchMethod, parameterName, "Find Element", timeout);
-				ifResult = elementExists;
-
-				if (trueWhenElementExists == "It Does Not Exist")
-					ifResult = !ifResult;
-			}
-			else if (ifActionType == "GUI Element Exists")
-			{
-				string windowName = (from rw in IfActionParameterTable.AsEnumerable()
-									  where rw.Field<string>("Parameter Name") == "Window Name"
-									  select rw.Field<string>("Parameter Value")).FirstOrDefault();
-				windowName = (string)await windowName.EvaluateCode(engine);
-
-				string elementSearchParam = (from rw in IfActionParameterTable.AsEnumerable()
-											  where rw.Field<string>("Parameter Name") == "Element Search Parameter"
-											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
-				elementSearchParam = (string)await elementSearchParam.EvaluateCode(engine);
-
-				string elementSearchMethod = (from rw in IfActionParameterTable.AsEnumerable()
-											   where rw.Field<string>("Parameter Name") == "Element Search Method"
-											   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-				elementSearchMethod = (string)await elementSearchMethod.EvaluateCode(engine);
-
-				string trueWhenElementExists = (from rw in IfActionParameterTable.AsEnumerable()
-												where rw.Field<string>("Parameter Name") == "True When"
-												select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-				string timeoutString = (from rw in IfActionParameterTable.AsEnumerable()
-								  where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
-								  select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-				//set up search parameter table
-				var uiASearchParameters = new DataTable();
-				uiASearchParameters.Columns.Add("Enabled");
-				uiASearchParameters.Columns.Add("Parameter Name");
-				uiASearchParameters.Columns.Add("Parameter Value");
-				uiASearchParameters.Rows.Add(true, elementSearchMethod, elementSearchParam);
-
-				int vTimeout = (int)await timeoutString.EvaluateCode(engine);
-				AutomationElement handle = null;
-				var timeToEnd = DateTime.Now.AddSeconds(vTimeout);
-				while (timeToEnd >= DateTime.Now)
-				{
-					try
-					{
-						handle = await SearchForGUIElement(engine, uiASearchParameters, windowName);
-						break;
-					}
-					catch (Exception)
-					{
-						engine.ReportProgress("Element Not Yet Found... " + (timeToEnd - DateTime.Now).Seconds + "s remain");
-						Thread.Sleep(500);
-					}
-				}
-
-				if (handle is null)
-					ifResult = false;
-				else
-					ifResult = true;
-
-				if (trueWhenElementExists == "It Does Not Exist")
-					ifResult = !ifResult;
-			}
-			else if (ifActionType == "Image Element Exists")
-			{
-				string imageName = (from rw in IfActionParameterTable.AsEnumerable()
-									where rw.Field<string>("Parameter Name") == "Captured Image Variable"
-									select rw.Field<string>("Parameter Value")).FirstOrDefault();
-				string accuracyString;
-				double accuracy;
-				try
-				{
-					accuracyString = (from rw in IfActionParameterTable.AsEnumerable()
-											 where rw.Field<string>("Parameter Name") == "Accuracy (0-1)"
-											 select rw.Field<string>("Parameter Value")).FirstOrDefault();
-					accuracy = (double)await accuracyString.EvaluateCode(engine);
-					if (accuracy > 1 || accuracy < 0)
-						throw new ArgumentOutOfRangeException("Accuracy value is out of range (0-1)");
-				}
-				catch (Exception)
-				{
-					throw new InvalidDataException("Accuracy value is invalid");
-				}
-
-				string trueWhenImageExists = (from rw in IfActionParameterTable.AsEnumerable()
-											  where rw.Field<string>("Parameter Name") == "True When"
-											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-				var capturedImage = (Bitmap)await imageName.EvaluateCode(engine);
-				string timeoutString = (from rw in IfActionParameterTable.AsEnumerable()
-										 where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
-										 select rw.Field<string>("Parameter Value")).FirstOrDefault();
-				int timeout = (int)await timeoutString.EvaluateCode(engine);
-
-				var element = FindImageElement(capturedImage, accuracy, engine, DateTime.Now.AddSeconds(timeout));
-				FormsHelper.ShowAllForms(engine.AutomationEngineContext.IsDebugMode);
-
-				if (element != null)
-					ifResult = true;
-				else
-					ifResult = false;
-
-				if (trueWhenImageExists == "It Does Not Exist")
-					ifResult = !ifResult;
-			}
-			else if (ifActionType == "App Instance Exists")
-			{
-				string instanceName = (from rw in IfActionParameterTable.AsEnumerable()
-									   where rw.Field<string>("Parameter Name") == "Instance Name"
-									   select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-
-				string trueWhenImageExists = (from rw in IfActionParameterTable.AsEnumerable()
-											  where rw.Field<string>("Parameter Name") == "True When"
-											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
-
-				var appInstanceObj = (OBAppInstance)await instanceName.EvaluateCode(engine);
-
-				if (appInstanceObj == null)
-					ifResult = false;
-				else
-					ifResult = appInstanceObj.Value.InstanceExists();
-
-				if (trueWhenImageExists == "It Does Not Exist")
-					ifResult = !ifResult;
-			}
+			if (ifActionType == null)
+				ifResult = (bool)await condition.EvaluateCode(engine);
 			else
-				throw new Exception("If type not recognized!");
+			{
+				switch (ifActionType)
+				{
+					case "Number Compare":				
+						string num1 = ((from rw in IfActionParameterTable.AsEnumerable()
+										  where rw.Field<string>("Parameter Name") == "Number1"
+										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+						string numOperand = ((from rw in IfActionParameterTable.AsEnumerable()
+										   where rw.Field<string>("Parameter Name") == "Operand"
+										   select rw.Field<string>("Parameter Value")).FirstOrDefault());
+						string num2 = ((from rw in IfActionParameterTable.AsEnumerable()
+										  where rw.Field<string>("Parameter Name") == "Number2"
+										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
 
+						var cdecValue1 = Convert.ToDecimal(await num1.EvaluateCode(engine));
+						var cdecValue2 = Convert.ToDecimal(await num2.EvaluateCode(engine));
+
+						switch (numOperand)
+						{
+							case "is equal to":
+								ifResult = cdecValue1 == cdecValue2;
+								break;
+
+							case "is not equal to":
+								ifResult = cdecValue1 != cdecValue2;
+								break;
+
+							case "is greater than":
+								ifResult = cdecValue1 > cdecValue2;
+								break;
+
+							case "is greater than or equal to":
+								ifResult = cdecValue1 >= cdecValue2;
+								break;
+
+							case "is less than":
+								ifResult = cdecValue1 < cdecValue2;
+								break;
+
+							case "is less than or equal to":
+								ifResult = cdecValue1 <= cdecValue2;
+								break;
+						}
+						break;
+					case "Date Compare":			
+						string date1 = ((from rw in IfActionParameterTable.AsEnumerable()
+										  where rw.Field<string>("Parameter Name") == "Date1"
+										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+						string dateOperand = ((from rw in IfActionParameterTable.AsEnumerable()
+										   where rw.Field<string>("Parameter Name") == "Operand"
+										   select rw.Field<string>("Parameter Value")).FirstOrDefault());
+						string date2 = ((from rw in IfActionParameterTable.AsEnumerable()
+										  where rw.Field<string>("Parameter Name") == "Date2"
+										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						var dt1 = (DateTime)await date1.EvaluateCode(engine);
+						var dt2 = (DateTime)await date2.EvaluateCode(engine);
+
+						switch (dateOperand)
+						{
+							case "is equal to":
+								ifResult = dt1 == dt2;
+								break;
+
+							case "is not equal to":
+								ifResult = dt1 != dt2;
+								break;
+
+							case "is greater than":
+								ifResult = dt1 > dt2;
+								break;
+
+							case "is greater than or equal to":
+								ifResult = dt1 >= dt2;
+								break;
+
+							case "is less than":
+								ifResult = dt1 < dt2;
+								break;
+
+							case "is less than or equal to":
+								ifResult = dt1 <= dt2;
+								break;
+						}
+						break;
+					case "Text Compare":				
+						string text1 = ((from rw in IfActionParameterTable.AsEnumerable()
+										  where rw.Field<string>("Parameter Name") == "Text1"
+										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+						string textOperand = ((from rw in IfActionParameterTable.AsEnumerable()
+										   where rw.Field<string>("Parameter Name") == "Operand"
+										   select rw.Field<string>("Parameter Value")).FirstOrDefault());
+						string text2 = ((from rw in IfActionParameterTable.AsEnumerable()
+										  where rw.Field<string>("Parameter Name") == "Text2"
+										  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						string caseSensitive = ((from rw in IfActionParameterTable.AsEnumerable()
+												 where rw.Field<string>("Parameter Name") == "Case Sensitive"
+												 select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						text1 = (string)await text1.EvaluateCode(engine);
+						text2 = (string)await text2.EvaluateCode(engine);
+
+						if (caseSensitive == "No")
+						{
+							text1 = text1.ToUpper();
+							text2 = text2.ToUpper();
+						}
+
+						switch (textOperand)
+						{
+							case "contains":
+								ifResult = text1.Contains(text2);
+								break;
+
+							case "does not contain":
+								ifResult = !text1.Contains(text2);
+								break;
+
+							case "is equal to":
+								ifResult = text1 == text2;
+								break;
+
+							case "is not equal to":
+								ifResult = text1 != text2;
+								break;
+						}
+						break;
+					case "Has Value":				
+						string variableName = ((from rw in IfActionParameterTable.AsEnumerable()
+												where rw.Field<string>("Parameter Name") == "Variable Name"
+												select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						dynamic actualVariable = variableName.EvaluateCode(engine);
+
+						if (actualVariable.Result != null)
+							ifResult = true;
+						else
+							ifResult = false;
+						break;
+					case "Is Numeric":				
+						string isNumericVariableName = ((from rw in IfActionParameterTable.AsEnumerable()
+												where rw.Field<string>("Parameter Name") == "Variable Name"
+												select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						ifResult = decimal.TryParse((await isNumericVariableName.EvaluateCode(engine)).ToString(), out decimal decimalResult);
+						break;
+					case "Error Occured":			
+						//get line number
+						string userLineNumber = ((from rw in IfActionParameterTable.AsEnumerable()
+												  where rw.Field<string>("Parameter Name") == "Line Number"
+												  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						//convert to int
+						int lineNumber = (int)await userLineNumber.EvaluateCode(engine);
+
+						//determine if error happened
+						if (engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).Count() > 0)
+						{
+
+							var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber).FirstOrDefault();
+							error.ErrorMessage.SetVariableValue(engine, "Error.Message");
+							error.LineNumber.ToString().SetVariableValue(engine, "Error.Line");
+							error.StackTrace.SetVariableValue(engine, "Error.StackTrace");
+
+							ifResult = true;
+						}
+						else
+							ifResult = false;
+						break;
+					case "Error Did Not Occur":				
+						//get line number
+						string userLineNumber2 = ((from rw in IfActionParameterTable.AsEnumerable()
+												  where rw.Field<string>("Parameter Name") == "Line Number"
+												  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+						//convert to int
+						int lineNumber2 = (int)await userLineNumber2.EvaluateCode(engine);
+
+						//determine if error happened
+						if (engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber2).Count() == 0)
+							ifResult = true;
+						else
+						{
+							var error = engine.ErrorsOccured.Where(f => f.LineNumber == lineNumber2).FirstOrDefault();
+							error.ErrorMessage.SetVariableValue(engine, "Error.Message");
+							error.LineNumber.ToString().SetVariableValue(engine, "Error.Line");
+							error.StackTrace.SetVariableValue(engine, "Error.StackTrace");
+
+							ifResult = false;
+						}
+						break;
+					case "Window Name Exists":				
+						//get user supplied name
+						string windowName = ((from rw in IfActionParameterTable.AsEnumerable()
+											  where rw.Field<string>("Parameter Name") == "Window Name"
+											  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+						//variable translation
+						string variablizedWindowName = (string)await windowName.EvaluateCode(engine);
+
+						//search for window
+						IntPtr windowPtr = User32Functions.FindWindow(variablizedWindowName);
+
+						//conditional
+						if (windowPtr != IntPtr.Zero)
+							ifResult = true;
+						break;
+					case "Active Window Name Is":			
+						string activeWindowName = ((from rw in IfActionParameterTable.AsEnumerable()
+											  where rw.Field<string>("Parameter Name") == "Window Name"
+											  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						string variablizedActiveWindowName = (string)await activeWindowName.EvaluateCode(engine);
+
+						var currentWindowTitle = User32Functions.GetActiveWindowTitle();
+
+						if (currentWindowTitle == variablizedActiveWindowName)
+							ifResult = true;
+						break;
+					case "File Exists":
+						string fileName = ((from rw in IfActionParameterTable.AsEnumerable()
+											where rw.Field<string>("Parameter Name") == "File Path"
+											select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						string trueWhenFileExists = ((from rw in IfActionParameterTable.AsEnumerable()
+													  where rw.Field<string>("Parameter Name") == "True When"
+													  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						var userFileSelected = (string)await fileName.EvaluateCode(engine);
+
+						bool fileExistCheck = false;
+						if (trueWhenFileExists == "It Does Exist")
+							fileExistCheck = true;
+
+						if (File.Exists(userFileSelected) == fileExistCheck)
+							ifResult = true;
+						break;
+					case "Folder Exists":			
+						string folderName = ((from rw in IfActionParameterTable.AsEnumerable()
+											  where rw.Field<string>("Parameter Name") == "Folder Path"
+											  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						string trueWhenFolderExists = ((from rw in IfActionParameterTable.AsEnumerable()
+													  where rw.Field<string>("Parameter Name") == "True When"
+													  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						var userFolderSelected = (string)await folderName.EvaluateCode(engine);
+
+						bool folderExistCheck = false;
+						if (trueWhenFolderExists == "It Does Exist")
+							folderExistCheck = true;
+
+						if (Directory.Exists(userFolderSelected) == folderExistCheck)
+							ifResult = true;
+						break;
+					case "Selenium Web Element Exists":				
+						string instanceName = ((from rw in IfActionParameterTable.AsEnumerable()
+												where rw.Field<string>("Parameter Name") == "Selenium Instance Name"
+												select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						OBAppInstance instance = (OBAppInstance)await instanceName.EvaluateCode(engine);
+
+						string parameterName = ((from rw in IfActionParameterTable.AsEnumerable()
+												 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
+												 select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						string searchMethod = ((from rw in IfActionParameterTable.AsEnumerable()
+												where rw.Field<string>("Parameter Name") == "Element Search Method"
+												select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						string timeoutStr = ((from rw in IfActionParameterTable.AsEnumerable()
+											  where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
+											  select rw.Field<string>("Parameter Value")).FirstOrDefault());
+
+						int timeout = (int)await timeoutStr.EvaluateCode(engine);
+
+						string trueWhenElementExists = (from rw in IfActionParameterTable.AsEnumerable()
+														where rw.Field<string>("Parameter Name") == "True When"
+														select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+						bool elementExists = await ElementExists(engine, instance, searchMethod, parameterName, "Find Element", timeout);
+						ifResult = elementExists;
+
+						if (trueWhenElementExists == "It Does Not Exist")
+							ifResult = !ifResult;
+						break;
+					case "GUI Element Exists":			
+						string guiWindowName = (from rw in IfActionParameterTable.AsEnumerable()
+											 where rw.Field<string>("Parameter Name") == "Window Name"
+											 select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						windowName = (string)await guiWindowName.EvaluateCode(engine);
+
+						string elementSearchParam = (from rw in IfActionParameterTable.AsEnumerable()
+													 where rw.Field<string>("Parameter Name") == "Element Search Parameter"
+													 select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						elementSearchParam = (string)await elementSearchParam.EvaluateCode(engine);
+
+						string elementSearchMethod = (from rw in IfActionParameterTable.AsEnumerable()
+													  where rw.Field<string>("Parameter Name") == "Element Search Method"
+													  select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						elementSearchMethod = (string)await elementSearchMethod.EvaluateCode(engine);
+
+						string trueWhenGUIElementExists = (from rw in IfActionParameterTable.AsEnumerable()
+														where rw.Field<string>("Parameter Name") == "True When"
+														select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+						string timeoutString = (from rw in IfActionParameterTable.AsEnumerable()
+												where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
+												select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+						//set up search parameter table
+						var uiASearchParameters = new DataTable();
+						uiASearchParameters.Columns.Add("Enabled");
+						uiASearchParameters.Columns.Add("Parameter Name");
+						uiASearchParameters.Columns.Add("Parameter Value");
+						uiASearchParameters.Rows.Add(true, elementSearchMethod, elementSearchParam);
+
+						int vTimeout = (int)await timeoutString.EvaluateCode(engine);
+						AutomationElement handle = null;
+						var timeToEnd = DateTime.Now.AddSeconds(vTimeout);
+						while (timeToEnd >= DateTime.Now)
+						{
+							try
+							{
+								handle = await SearchForGUIElement(engine, uiASearchParameters, windowName);
+								break;
+							}
+							catch (Exception)
+							{
+								engine.ReportProgress("Element Not Yet Found... " + (timeToEnd - DateTime.Now).Seconds + "s remain");
+								Thread.Sleep(500);
+							}
+						}
+
+						if (handle is null)
+							ifResult = false;
+						else
+							ifResult = true;
+
+						if (trueWhenGUIElementExists == "It Does Not Exist")
+							ifResult = !ifResult;
+						break;
+					case "Image Element Exists":				
+						string imageName = (from rw in IfActionParameterTable.AsEnumerable()
+											where rw.Field<string>("Parameter Name") == "Captured Image Variable"
+											select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						string accuracyString;
+						double accuracy;
+						try
+						{
+							accuracyString = (from rw in IfActionParameterTable.AsEnumerable()
+											  where rw.Field<string>("Parameter Name") == "Accuracy (0-1)"
+											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
+							accuracy = (double)await accuracyString.EvaluateCode(engine);
+							if (accuracy > 1 || accuracy < 0)
+								throw new ArgumentOutOfRangeException("Accuracy value is out of range (0-1)");
+						}
+						catch (Exception)
+						{
+							throw new InvalidDataException("Accuracy value is invalid");
+						}
+
+						string trueWhenImageExists = (from rw in IfActionParameterTable.AsEnumerable()
+													  where rw.Field<string>("Parameter Name") == "True When"
+													  select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+						var capturedImage = (Bitmap)await imageName.EvaluateCode(engine);
+						string imageTimeoutString = (from rw in IfActionParameterTable.AsEnumerable()
+												where rw.Field<string>("Parameter Name") == "Timeout (Seconds)"
+												select rw.Field<string>("Parameter Value")).FirstOrDefault();
+						int imageTimeout = (int)await imageTimeoutString.EvaluateCode(engine);
+
+						var element = FindImageElement(capturedImage, accuracy, engine, DateTime.Now.AddSeconds(imageTimeout));
+						FormsHelper.ShowAllForms(engine.EngineContext.IsDebugMode);
+
+						if (element != null)
+							ifResult = true;
+						else
+							ifResult = false;
+
+						if (trueWhenImageExists == "It Does Not Exist")
+							ifResult = !ifResult;
+						break;
+					case "App Instance Exists":				
+						string appInstanceName = (from rw in IfActionParameterTable.AsEnumerable()
+											   where rw.Field<string>("Parameter Name") == "Instance Name"
+											   select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+
+						string trueWhenAppInstanceExists = (from rw in IfActionParameterTable.AsEnumerable()
+													  where rw.Field<string>("Parameter Name") == "True When"
+													  select rw.Field<string>("Parameter Value")).FirstOrDefault();
+
+						var appInstanceObj = (OBAppInstance)await appInstanceName.EvaluateCode(engine);
+
+						if (appInstanceObj == null)
+							ifResult = false;
+						else
+							ifResult = appInstanceObj.Value.InstanceExists();
+
+						if (trueWhenAppInstanceExists == "It Does Not Exist")
+							ifResult = !ifResult;
+						break;
+					default:
+						throw new Exception("If type not recognized!");
+				}
+			}
 			return ifResult;
 		}
 

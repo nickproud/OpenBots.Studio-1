@@ -2,10 +2,8 @@
 using MimeKit;
 using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -24,6 +22,9 @@ namespace OpenBots.Core.Utilities.CommonUtilities
         /// <returns></returns>
         public static string EncryptText(string plainText, string additionalEntropy)
         {
+            if (string.IsNullOrEmpty(plainText))
+                return plainText;
+
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
             var entropyBytes = Encoding.UTF8.GetBytes(additionalEntropy);
             var encryptedBytes = ProtectedData.Protect(plainTextBytes, entropyBytes, DataProtectionScope.CurrentUser);
@@ -170,7 +171,8 @@ namespace OpenBots.Core.Utilities.CommonUtilities
                     case "System.Data.DataRow":
                         return ConvertDataRowToString((DataRow)obj);
                     case "System.__ComObject":
-                        return ConvertMailItemToString((MailItem)obj);
+                    case "Microsoft.Office.Interop.Outlook.MailItem":
+                        return ConvertMailItemToString(obj);
                     case "MimeKit.MimeMessage":
                         return ConvertMimeMessageToString((MimeMessage)obj);
                     case "OpenQA.Selenium.Remote.RemoteWebElement":
@@ -245,10 +247,16 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return stringBuilder.ToString();
         }
 
-        public static string ConvertMailItemToString(MailItem mail)
+        public static string ConvertMailItemToString(object mailObj)
         {
-            if (mail == null)
+            if (mailObj == null)
                 return "null";
+
+            MailItem mail;
+            if (mailObj is MailItem)
+                mail = (MailItem)mailObj;
+            else
+                return mailObj.ToString();
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append($"[Subject: {mail.Subject}, \n" +

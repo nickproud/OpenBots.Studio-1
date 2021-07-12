@@ -1,6 +1,6 @@
 ﻿using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

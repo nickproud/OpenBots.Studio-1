@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -36,7 +36,7 @@ namespace OpenBots.Commands.Excel
 		[Required]
 		[DisplayName("PDF Location")]
 		[Description("Enter or Select the path of the folder to export the PDF to.")]
-		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath")]
+		[SampleUsage("@\"C:\\temp\" || ProjectPath + @\"\\temp\" || vDirectoryPath || ProjectPath")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[Editor("ShowFolderSelectionHelper", typeof(UIAdditionalHelperType))]
@@ -77,7 +77,6 @@ namespace OpenBots.Commands.Excel
 			CommandEnabled = true;
 			CommandIcon = Resources.command_excel;
 
-			v_InstanceName = "DefaultExcel";
 			v_AutoFitCells = "Yes";
 			v_DisplayGridlines = "Yes";
 		}

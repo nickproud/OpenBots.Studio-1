@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,8 @@ using System.Windows.Forms;
 using OpenBots.Core.Properties;
 using System.Threading.Tasks;
 using System.Security;
-using OpenBots.Core.Server.HelperMethods;
+using OpenBots.Server.SDK.HelperMethods;
+using OpenBots.Commands.Server.Library;
 
 namespace OpenBots.Commands.Credential
 {
@@ -66,8 +67,8 @@ namespace OpenBots.Commands.Credential
 			var vCredentialUsername = (string)await v_CredentialUsername.EvaluateCode(engine);
 			var vCredentialPassword = ((SecureString)await v_CredentialPassword.EvaluateCode(engine)).ConvertSecureStringToString();
 
-			var userInfo = AuthMethods.GetUserInfo();
-			var credential = CredentialMethods.GetCredential(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vCredentialName);
+			var userInfo = ServerSessionVariableMethods.GetUserInfo(engine);
+			var credential = CredentialMethods.GetCredential(userInfo, vCredentialName);
 
 			if (credential == null)
 				throw new Exception($"No Credential was found for '{vCredentialName}'");
@@ -75,7 +76,7 @@ namespace OpenBots.Commands.Credential
             credential.UserName = vCredentialUsername;
             credential.PasswordSecret = vCredentialPassword;
 
-            CredentialMethods.PutCredential(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, credential);
+            CredentialMethods.PutCredential(userInfo, credential);
         }
 
         public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

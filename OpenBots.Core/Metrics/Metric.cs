@@ -10,18 +10,16 @@ using System.Linq;
 
 namespace OpenBots.Core.Metrics
 {
-    public class Metric
+    public static class Metric
     {
-        public List<ExecutionMetric> ExecutionMetricsSummary()
+        public static List<ExecutionMetric> ExecutionMetricsSummary()
         {
             //create execution file path
             var filePath = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Execution Summary Logs.txt");
 
             //throw if file doesnt exist
             if (!File.Exists(filePath))
-            {
                 throw new FileNotFoundException("Execution Summary Log does not exist!");
-            }
 
             //create list for sorting data
             var scriptsFinishedArgs = new List<ScriptFinishedEventArgs>();
@@ -92,7 +90,7 @@ namespace OpenBots.Core.Metrics
 
         }
 
-        public void ClearExecutionMetrics()
+        public static void ClearExecutionMetrics()
         {
             var filePath = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Execution Summary Logs.txt");
             File.WriteAllText(filePath, string.Empty);

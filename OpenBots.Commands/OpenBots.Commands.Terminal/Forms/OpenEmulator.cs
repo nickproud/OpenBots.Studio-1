@@ -1,5 +1,6 @@
 ﻿using Open3270;
 using OpenBots.Commands.Terminal.Library;
+using OpenBots.Core.User32;
 using System;
 using System.Drawing;
 using System.Security;

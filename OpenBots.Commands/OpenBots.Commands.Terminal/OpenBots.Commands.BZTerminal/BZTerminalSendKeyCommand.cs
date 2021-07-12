@@ -3,7 +3,7 @@ using OpenBots.Commands.Terminal.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -60,8 +60,6 @@ namespace OpenBots.Commands.BZTerminal
 			SelectionName = "BZ Send Key";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_system;
-
-			v_InstanceName = "DefaultBZTerminal";
 		}
 
 		public async override Task RunCommand(object sender)
@@ -99,7 +97,7 @@ namespace OpenBots.Commands.BZTerminal
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_XMousePosition", this, editor));
 
 			var terminalKeyNameLabel = commandControls.CreateDefaultLabelFor("v_TerminalKey", this);
-			var terminalKeyNameComboBox = (ComboBox)commandControls.CreateDropdownFor("v_TerminalKey", this);
+			var terminalKeyNameComboBox = commandControls.CreateDropdownFor("v_TerminalKey", this);
 			terminalKeyNameComboBox.DataSource = Enum.GetValues(typeof(BZ3270Keys));
 
 			RenderedControls.Add(terminalKeyNameLabel);

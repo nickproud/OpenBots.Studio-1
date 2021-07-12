@@ -3,7 +3,7 @@ using OpenBots.Commands.If;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
@@ -46,6 +46,24 @@ namespace OpenBots.Commands.ErrorHandling
 		public string v_RetryInterval { get; set; }
 
 		[Required]
+		[DisplayName("Condition Option")]
+		[PropertyUISelectionOption("Inline")]
+		[PropertyUISelectionOption("Builder")]
+		[Description("Select whether to create the condition using C# or with the condition builder")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_Option { get; set; }
+
+		[Required]
+		[DisplayName("Retry Condition")]
+		[Description("Enter the condition to evaluate in C#.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(bool) })]
+		public string v_Condition { get; set; }
+
+		[Required]
 		[DisplayName("Logic Type")]
 		[PropertyUISelectionOption("And")]
 		[PropertyUISelectionOption("Or")]
@@ -55,7 +73,7 @@ namespace OpenBots.Commands.ErrorHandling
 		public string v_LogicType { get; set; }
 
 		[Required]
-		[DisplayName("Condition")]
+		[DisplayName("Retry Condition")]
 		[Description("Add a condition.")]
 		[SampleUsage("")]
 		[Remarks("Items in the retry scope will be executed if the condition doesn't satisfy.")]
@@ -71,10 +89,22 @@ namespace OpenBots.Commands.ErrorHandling
 		[Browsable(false)]
 		private Exception _exception;
 
+		[JsonIgnore]
+		[Browsable(false)]
+		private List<Control> _noCSharpControls;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private List<Control> _cSharpControls;
+
+		[JsonIgnore]
+		[Browsable(false)]
+		private bool _hasRendered;
+
 		public BeginRetryCommand()
 		{
 			CommandName = "BeginRetryCommand";
-			SelectionName = "Begin Retry";
+			SelectionName = "Retry";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_try;
 			ScopeStartCommand = true;
@@ -123,7 +153,12 @@ namespace OpenBots.Commands.ErrorHandling
 					}
 				}
 				// If no exception is thrown out and the Condition's satisfied	
-				var result = await GetConditionResult(engine);
+				bool result;
+				if (v_Option == "Inline")
+					result = (bool)await v_Condition.EvaluateCode(engine);
+				else
+					result = await GetConditionResult(engine);
+
 				if (!exceptionOccurred && result)
 				{
 					engine.ErrorsOccured.Clear();
@@ -153,7 +188,17 @@ namespace OpenBots.Commands.ErrorHandling
 
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_RetryCount", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_RetryInterval", this, editor));
-			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_LogicType", this, editor));
+			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_Option", this, editor));
+			((ComboBox)RenderedControls[7]).SelectedIndexChanged += optionComboBox_SelectedIndexChanged;
+
+			//CSharp Controls
+			_cSharpControls = new List<Control>();
+			_cSharpControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Condition", this, editor));
+			RenderedControls.AddRange(_cSharpControls);
+
+			//no CSharp Controls
+			_noCSharpControls = new List<Control>();
+			_noCSharpControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_LogicType", this, editor));
 
 			//create controls
 			var controls = commandControls.CreateDefaultDataGridViewGroupFor("v_IfConditionsTable", this, editor);
@@ -164,7 +209,7 @@ namespace OpenBots.Commands.ErrorHandling
 			helper.Click += (sender, e) => CreateIfCondition(sender, e, editor, commandControls);
 
 			//add for rendering
-			RenderedControls.AddRange(controls);
+			_noCSharpControls.AddRange(controls);
 
 			//define if condition helper
 			_ifConditionHelper.Width = 450;
@@ -178,6 +223,7 @@ namespace OpenBots.Commands.ErrorHandling
 			_ifConditionHelper.AllowUserToAddRows = false;
 			_ifConditionHelper.AllowUserToDeleteRows = true;
 			_ifConditionHelper.CellContentClick += (sender, e) => IfConditionHelper_CellContentClick(sender, e, editor, commandControls);
+			RenderedControls.AddRange(_noCSharpControls);
 
 			return RenderedControls;
 		}
@@ -185,6 +231,49 @@ namespace OpenBots.Commands.ErrorHandling
 		public override string GetDisplayValue()
 		{
 			return base.GetDisplayValue() + $" [Number of Retries '{v_RetryCount}' - Retry Interval '{v_RetryInterval}']";
+		}
+
+
+		public override void Shown()
+		{
+			base.Shown();
+			_hasRendered = true;
+			if (v_Option == null)
+			{
+				v_Option = "Inline";
+				((ComboBox)RenderedControls[7]).Text = v_Option;
+			}
+			optionComboBox_SelectedIndexChanged(null, null);
+		}
+
+		private void optionComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (((ComboBox)RenderedControls[7]).Text == "Inline" && _hasRendered)
+			{
+				foreach (var ctrl in _cSharpControls)
+					ctrl.Visible = true;
+
+				foreach (var ctrl in _noCSharpControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is DataGridView)
+						v_IfConditionsTable.Rows.Clear();
+					else if (ctrl is ComboBox)
+						((ComboBox)ctrl).SelectedIndex = 0;
+				}
+			}
+			else if (_hasRendered)
+			{
+				foreach (var ctrl in _cSharpControls)
+				{
+					ctrl.Visible = false;
+					if (ctrl is TextBox)
+						((TextBox)ctrl).Clear();
+				}
+
+				foreach (var ctrl in _noCSharpControls)
+					ctrl.Visible = true;
+			}
 		}
 
 		private void IfConditionHelper_CellContentClick(object sender, DataGridViewCellEventArgs e, IfrmCommandEditor parentEditor, ICommandControls commandControls)
@@ -222,6 +311,8 @@ namespace OpenBots.Commands.ErrorHandling
 						selectedRow["Statement"] = displayText;
 						selectedRow["CommandData"] = serializedData;
 					}
+
+					commandControls.AddIntellisenseListBoxToCommandForm();
 				}
 				else if (buttonSelected.Value.ToString() == "Delete")
 				{
@@ -255,6 +346,8 @@ namespace OpenBots.Commands.ErrorHandling
 				//add to list
 				v_IfConditionsTable.Rows.Add(displayText, serializedData);
 			}
+
+			commandControls.AddIntellisenseListBoxToCommandForm();
 		}
 
 		private async Tasks.Task<bool> GetConditionResult(IAutomationEngineInstance engine)
@@ -264,7 +357,7 @@ namespace OpenBots.Commands.ErrorHandling
 			{
 				var commandData = rw["CommandData"].ToString();
 				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
-				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
+				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_ActionType, ifCommand.v_ActionParameterTable);
 
 				if (!statementResult && v_LogicType == "And")
 				{

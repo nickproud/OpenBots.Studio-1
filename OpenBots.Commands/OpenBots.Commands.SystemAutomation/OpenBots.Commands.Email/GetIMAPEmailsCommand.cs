@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -184,6 +184,12 @@ namespace OpenBots.Commands.Email
 			string vIMAPMessageDirectory = (string)await v_IMAPMessageDirectory.EvaluateCode(engine);
 			string vIMAPAttachmentDirectory = (string)await v_IMAPAttachmentDirectory.EvaluateCode(engine);
 
+			if (!string.IsNullOrEmpty(vIMAPMessageDirectory) && !Directory.Exists(vIMAPMessageDirectory))
+				Directory.CreateDirectory(vIMAPMessageDirectory);
+
+			if (!string.IsNullOrEmpty(vIMAPAttachmentDirectory) && !Directory.Exists(vIMAPAttachmentDirectory))
+				Directory.CreateDirectory(vIMAPAttachmentDirectory);
+
 			using (var client = new ImapClient())
 			{
 				client.ServerCertificateValidationCallback = (sndr, certificate, chain, sslPolicyErrors) => true;
@@ -318,7 +324,7 @@ namespace OpenBots.Commands.Email
 		private void ProcessEmail(MimeMessage message, string msgDirectory, string attDirectory)
 		{
 			if (Directory.Exists(msgDirectory))
-				message.WriteTo(Path.Combine(msgDirectory, message.Subject + ".eml"));
+				message.WriteTo(Path.Combine(msgDirectory, message.Subject + Guid.NewGuid() + ".eml"));
 
 			if (Directory.Exists(attDirectory))
 			{

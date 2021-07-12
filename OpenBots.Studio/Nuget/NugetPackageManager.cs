@@ -169,23 +169,23 @@ namespace OpenBots.Nuget
                 {
                     var sourceRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(installDefaultSource, "Default Packages Source", true));
                     repositories.Add(sourceRepo);
-                }                  
-                else
-                {
-                    foreach (DataRow row in packageSources.Rows)
-                    {
-                        if (row[0].ToString() == "True")
-                        {
-                            var sourceRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(row[2].ToString(), row[1].ToString(), true));
-                            repositories.Add(sourceRepo);
-                        }
-                    }
                 }
+                for (int i = 0; i < packageSources.Rows.Count; i++)
+                {
+                    if (packageSources.Rows[i][0].ToString() == "True")
+                    {
+                        var sourceRepo = sourceRepositoryProvider.CreateRepository(new PackageSource(packageSources.Rows[i][2].ToString(), packageSources.Rows[i][1].ToString(), true));
+                        repositories.Add(sourceRepo);
+                    }
+                }                 
                 
                 var availablePackages = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
-                await GetPackageDependencies(
+
+                var dependencyTasks = repositories.Select(repository => GetPackageDependencies(
                     new PackageIdentity(packageId, packageVersion),
-                    nuGetFramework, cacheContext, NullLogger.Instance, repositories, availablePackages);
+                    nuGetFramework, cacheContext, NullLogger.Instance, repository, repositories, availablePackages)).ToArray();
+
+                await Task.WhenAll(dependencyTasks);
 
                 var resolverContext = new PackageResolverContext(
                     DependencyBehavior.Lowest,
@@ -195,7 +195,7 @@ namespace OpenBots.Nuget
                     Enumerable.Empty<PackageIdentity>(),
                     availablePackages,
                     sourceRepositoryProvider.GetRepositories().Select(s => s.PackageSource),
-                    NullLogger.Instance);
+                    NullLogger.Instance);       
 
                 var resolver = new PackageResolver();
 
@@ -214,14 +214,14 @@ namespace OpenBots.Nuget
                 PackageReaderBase packageReader;
                 PackageDownloadContext downloadContext = new PackageDownloadContext(cacheContext);
 
-                foreach(var packageToInstall in packagesToInstall)
+                for(int i = 0; i < packagesToInstall.ToList().Count; i++)
                 {
-                    var installedPath = packagePathResolver.GetInstalledPath(packageToInstall);
+                    var installedPath = packagePathResolver.GetInstalledPath(packagesToInstall.ToList()[i]);
                     if (installedPath == null)
                     {
-                        var downloadResource = await packageToInstall.Source.GetResourceAsync<DownloadResource>(CancellationToken.None);
+                        var downloadResource = await packagesToInstall.ToList()[i].Source.GetResourceAsync<DownloadResource>(CancellationToken.None);
                         var downloadResult = await downloadResource.GetDownloadResourceResultAsync(
-                            packageToInstall,
+                            packagesToInstall.ToList()[i],
                             downloadContext,
                             SettingsUtility.GetGlobalPackagesFolder(settings),
                             NullLogger.Instance, CancellationToken.None);
@@ -238,12 +238,12 @@ namespace OpenBots.Nuget
                     else
                         packageReader = new PackageFolderReader(installedPath);
 
-                    if (packageToInstall.Id == packageId)
+                    if (packagesToInstall.ToList()[i].Id == packageId)
                     {
-                        if (projectDependenciesDict.ContainsKey(packageToInstall.Id))
-                            projectDependenciesDict[packageToInstall.Id] = packageToInstall.Version.ToString();
+                        if (projectDependenciesDict.ContainsKey(packagesToInstall.ToList()[i].Id))
+                            projectDependenciesDict[packagesToInstall.ToList()[i].Id] = packagesToInstall.ToList()[i].Version.ToString();
                         else
-                            projectDependenciesDict.Add(packageToInstall.Id, packageToInstall.Version.ToString());
+                            projectDependenciesDict.Add(packagesToInstall.ToList()[i].Id, packagesToInstall.ToList()[i].Version.ToString());
                     }
                 }
             }            
@@ -253,31 +253,31 @@ namespace OpenBots.Nuget
                 NuGetFramework framework,
                 SourceCacheContext cacheContext,
                 ILogger logger,
+                SourceRepository repository,
                 IEnumerable<SourceRepository> repositories,
                 ISet<SourcePackageDependencyInfo> availablePackages,
                 bool ignoreCommandPackages = false)
         {
-            if (availablePackages.Contains(package)) 
+            if (availablePackages.Contains(package))
                 return;
 
-            foreach (var sourceRepository in repositories)
+            var dependencyInfoResource = await repository.GetResourceAsync<DependencyInfoResource>();
+            var dependencyInfo = await dependencyInfoResource.ResolvePackage(
+                package, framework, cacheContext, logger, CancellationToken.None);
+
+            if (dependencyInfo == null)
+                return;
+
+            if (!(ignoreCommandPackages && (dependencyInfo.Id.StartsWith("OpenBots.Commands") || dependencyInfo.Id.StartsWith("OpenBots.Core"))))
+                availablePackages.Add(dependencyInfo);
+
+            for(int i = 0; i < dependencyInfo.Dependencies.ToList().Count; i++)
             {
-                var dependencyInfoResource = await sourceRepository.GetResourceAsync<DependencyInfoResource>();
-                var dependencyInfo = await dependencyInfoResource.ResolvePackage(
-                    package, framework, cacheContext, logger, CancellationToken.None);
+                var dependencyTasks = repositories.Select(innerRepository => GetPackageDependencies(
+                    new PackageIdentity(dependencyInfo.Dependencies.ToList()[i].Id, dependencyInfo.Dependencies.ToList()[i].VersionRange.MinVersion),
+                    framework, cacheContext, NullLogger.Instance, innerRepository, repositories, availablePackages, ignoreCommandPackages)).ToList();
 
-                if (dependencyInfo == null) 
-                    continue;
-
-                if (!(ignoreCommandPackages && (dependencyInfo.Id.StartsWith("OpenBots.Commands") || dependencyInfo.Id.StartsWith("OpenBots.Core"))))
-                    availablePackages.Add(dependencyInfo);
-   
-                foreach (var dependency in dependencyInfo.Dependencies)
-                {
-                    await GetPackageDependencies(
-                        new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion),
-                        framework, cacheContext, logger, repositories, availablePackages, ignoreCommandPackages);
-                }
+                await Task.WhenAll(dependencyTasks);
             }
         }
 
@@ -309,9 +309,12 @@ namespace OpenBots.Nuget
                     using (var cacheContext = new SourceCacheContext())
                     {
                         var availablePackages = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
-                        await GetPackageDependencies(
+
+                        var dependencyTasks = repositories.Select(repository => GetPackageDependencies(
                             new PackageIdentity(dependency.Key, NuGetVersion.Parse(dependency.Value)),
-                            nuGetFramework, cacheContext, NullLogger.Instance, repositories, availablePackages);
+                            nuGetFramework, cacheContext, NullLogger.Instance, repository, repositories, availablePackages)).ToList();
+
+                        await Task.WhenAll(dependencyTasks);
 
                         var resolverContext = new PackageResolverContext(
                             DependencyBehavior.Lowest,
@@ -351,13 +354,12 @@ namespace OpenBots.Nuget
                 {
                     //Only true for scheduled and attended executions
                     if (throwException)
-                    {
-                        MessageBox.Show($"Unable to load {packagesPath}\\{dependency.Key}.{dependency.Value}. " +
-                                        "Please install this package using the OpenBots Studio Package Manager.", "Error");
+                        {
+                            MessageBox.Show($"Unable to load {packagesPath}\\{dependency.Key}.{dependency.Value}. " +
+                                            "Please install this package using the OpenBots Studio Package Manager.", "Error");
 
-                        Application.Exit();
-                    }
-                                       
+                            Application.Exit();
+                        }
                     else
                         Console.WriteLine(ex);
                 }
@@ -392,8 +394,6 @@ namespace OpenBots.Nuget
         //moves all package files from OpenBots.Packages to Program Files (x86)/OpenBots Inc/packages
         public static List<string> MovePackagesToProgramFiles()
         {
-            List<string> defaultCommandsList = Project.DefaultCommandGroups;
-
             string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string openBotsPackagesBuildPath = Path.Combine(new DirectoryInfo(projectDirectory).Parent.Parent.Parent.FullName, "OpenBots.Packages");
 
@@ -402,11 +402,14 @@ namespace OpenBots.Nuget
             string applicationVersion = Application.ProductVersion;
             var commandVersion = Regex.Matches(applicationVersion, @"\d+\.\d+\.\d+")[0].ToString();
 
+            var appSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
+            List<string> defaultCommandsList = appSettings.ClientSettings.DefaultPackages.Select(x => $"{x}.{commandVersion}").ToList();
+
             List<string> packageFilePaths = Directory.GetFiles(openBotsPackagesBuildPath)
                                                      .Where(x => x.EndsWith(commandVersion + ".nupkg") &&
-                                                     (defaultCommandsList.Contains(Path.GetFileNameWithoutExtension(x).Split('.')[2]) ||
-                                                     Path.GetFileNameWithoutExtension(x).Split('.')[1] == "Core" ||
-                                                     Path.GetFileNameWithoutExtension(x).Split('.')[2] == "SDK"))
+                                                        (defaultCommandsList.Contains(Path.GetFileNameWithoutExtension(x)) ||
+                                                        Path.GetFileNameWithoutExtension(x).Split('.')[1] == "Core" ||
+                                                        Path.GetFileNameWithoutExtension(x).Split('.')[2] == "SDK"))
                                                      .ToList();
 
             foreach (string packagePath in packageFilePaths)
@@ -415,7 +418,12 @@ namespace OpenBots.Nuget
                 File.Copy(packagePath, Path.Combine(programPackagesSource, fileName), true);
             }
 
-            List<string> newPackageFilePaths = Directory.GetFiles(programPackagesSource).Where(x => x.EndsWith(commandVersion + ".nupkg")).ToList();
+            List<string> newPackageFilePaths = Directory.GetFiles(programPackagesSource)
+                                                        .Where(x => x.EndsWith(commandVersion + ".nupkg") &&
+                                                            (defaultCommandsList.Contains(Path.GetFileNameWithoutExtension(x)) ||
+                                                            Path.GetFileNameWithoutExtension(x).Split('.')[1] == "Core" ||
+                                                            Path.GetFileNameWithoutExtension(x).Split('.')[2] == "SDK"))
+                                                        .ToList();
             return newPackageFilePaths;
         }
 
@@ -455,9 +463,12 @@ namespace OpenBots.Nuget
                     {                        
 
                         var availablePackages = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
-                        await GetPackageDependencies(
+
+                        var dependencyTasks = repositories.Select(repository => GetPackageDependencies(
                             new PackageIdentity(packageId, packageVersion),
-                            nuGetFramework, cacheContext, NullLogger.Instance, repositories, availablePackages, true);
+                            nuGetFramework, cacheContext, NullLogger.Instance, repository, repositories, availablePackages)).ToList();
+
+                        await Task.WhenAll(dependencyTasks);
 
                         foreach (var package in availablePackages)
                             packageList.Add($"{package.Id}*{package.Version}");
@@ -480,6 +491,8 @@ namespace OpenBots.Nuget
         public static async Task SetupFirstTimeUserEnvironment()
         {
             bool isSplashLabelVisible = false;
+            var applicationSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
+
             string packagesPath = Folders.GetFolder(FolderType.LocalAppDataPackagesFolder);
             string programPackagesSource = Folders.GetFolder(FolderType.ProgramFilesPackagesFolder);
 
@@ -488,25 +501,38 @@ namespace OpenBots.Nuget
 
             var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
 
-            Dictionary<string, string> dependencies = Project.DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+            Dictionary<string, string> dependencies = applicationSettings.ClientSettings.DefaultPackages.ToDictionary(x => x, x => commandVersion);
 
             List<string> existingOpenBotsPackages = Directory.GetDirectories(packagesPath)
                                                              .Where(x => new DirectoryInfo(x).Name.StartsWith("OpenBots"))
                                                              .ToList();
-            foreach(var dep in dependencies)
-            {
-                string existingDirectory = existingOpenBotsPackages.Where(x => new DirectoryInfo(x).Name.Equals($"{dep.Key}.{dep.Value}"))
+
+            var intallationTasks = dependencies.ToList().Select(dependency => InstallMissingPackage(existingOpenBotsPackages, dependency, 
+                isSplashLabelVisible, programPackagesSource)).ToList();
+
+            await Task.WhenAll(intallationTasks);
+        }
+
+        public static async Task InstallMissingPackage(List<string> existingOpenBotsPackages, KeyValuePair<string, string> dependency, bool isSplashLabelVisible, string programPackagesSource)
+        {
+            string existingDirectory = existingOpenBotsPackages.Where(x => new DirectoryInfo(x).Name.Equals($"{dependency.Key}.{dependency.Value}"))
                                                                    .FirstOrDefault();
-                if (existingDirectory == null)
+            if (existingDirectory == null)
+            {
+                if (!isSplashLabelVisible)
                 {
-                    if (!isSplashLabelVisible)
-                    {
-                        Program.SplashForm.lblFirstTimeSetup.Visible = true;
-                        Program.SplashForm.Refresh();
-                        isSplashLabelVisible = true;
-                    }
-                    
-                    await InstallPackage(dep.Key, dep.Value, new Dictionary<string, string>(), programPackagesSource);
+                    Program.SplashForm.lblFirstTimeSetup.Visible = true;
+                    Program.SplashForm.Refresh();
+                    isSplashLabelVisible = true;
+                }
+
+                try
+                {
+                    await InstallPackage(dependency.Key, dependency.Value, new Dictionary<string, string>(), programPackagesSource);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

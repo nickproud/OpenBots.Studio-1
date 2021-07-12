@@ -1,12 +1,11 @@
 ﻿using Microsoft.VisualBasic;
-using Newtonsoft.Json;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
+using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Nuget;
-using OpenBots.Studio.Utilities;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
@@ -15,6 +14,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using VBFileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
 
@@ -69,7 +69,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 string configPath = Path.Combine(ScriptProjectPath, "project.obconfig");
 
                 //create config file
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(ScriptProject));
+                Project.SerializeProjectConfig(ScriptProject, configPath);
 
                 NotifySync("Loading package assemblies...", Color.White);               
 
@@ -88,6 +88,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     case ProjectType.Python:
                     case ProjectType.TagUI:
                     case ProjectType.CSScript:
+                    case ProjectType.PowerShell:
                         CreateTextEditorProject(mainScriptName, mainScriptPath);
                         break;
                 }
@@ -148,6 +149,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         case ProjectType.Python:
                         case ProjectType.TagUI:
                         case ProjectType.CSScript:
+                        case ProjectType.PowerShell:
                             OpenTextEditorFile(mainFilePath, ScriptProject.ProjectType);
                             break;
                     }
@@ -182,8 +184,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LoadCommands();
 
             //save to recent projects 
-            if (_appSettings.ClientSettings.RecentProjects == null)
-                _appSettings.ClientSettings.RecentProjects = new List<string>();
+            _appSettings = _appSettings.GetOrCreateApplicationSettings();
 
             if (_appSettings.ClientSettings.RecentProjects.Contains(ScriptProjectPath))
                 _appSettings.ClientSettings.RecentProjects.Remove(ScriptProjectPath);
@@ -193,7 +194,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (_appSettings.ClientSettings.RecentProjects.Count > 10)
                 _appSettings.ClientSettings.RecentProjects.RemoveAt(10);
 
-            _appSettings.Save(_appSettings);
+            _appSettings.Save();
 
             return DialogResult.OK;
         }
@@ -242,9 +243,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 _mainFileName = ScriptProject.Main;
 
                 OpenOpenBotsFile(mainScriptPath);
-                ScriptFilePath = mainScriptPath;
-                _scriptFileExtension = ".obscript";
-                _isMainScript = true;
             }
             catch (Exception ex)
             {
@@ -291,13 +289,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         break;
                     case ProjectType.CSScript:
                         File.WriteAllText(mainScriptPath, _helloWorldTextCSScript);
-                        break;                       
+                        break;
+                    case ProjectType.PowerShell:
+                        File.WriteAllText(mainScriptPath, _helloWorldTextPowerShell);
+                        break;
                 }
                 
                 OpenTextEditorFile(mainScriptPath, ScriptProject.ProjectType);
-                ScriptFilePath = mainScriptPath;
-                _scriptFileExtension = Path.GetExtension(mainScriptPath);
-                _isMainScript = true;
             }
             catch (Exception ex)
             {
@@ -359,9 +357,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             LoadCommands();
 
             //save to recent projects 
-            if (_appSettings.ClientSettings.RecentProjects == null)
-                _appSettings.ClientSettings.RecentProjects = new List<string>();
-
             if (_appSettings.ClientSettings.RecentProjects.Contains(ScriptProjectPath))
                 _appSettings.ClientSettings.RecentProjects.Remove(ScriptProjectPath);
 
@@ -370,7 +365,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (_appSettings.ClientSettings.RecentProjects.Count > 10)
                 _appSettings.ClientSettings.RecentProjects.RemoveAt(10);
 
-            _appSettings.Save(_appSettings);
+            _appSettings.Save();
         }
 
         private void LoadChildren(TreeNode parentNode, string directory)
@@ -455,6 +450,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         fileNode.ImageIndex = 8; //c-sharp file icon
                         fileNode.SelectedImageIndex = 8;
                         break;
+                    case ".ps1":
+                        fileNode.ImageIndex = 9; //powershell file icon
+                        fileNode.SelectedImageIndex = 9;
+                        break;
                     default:
                         fileNode.ImageIndex = 2; //default file icon
                         fileNode.SelectedImageIndex = 2;
@@ -506,6 +505,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                                 break;
                             case ".cs":
                                 OpenTextEditorFile(selectedNodePath, ProjectType.CSScript);
+                                break;
+                            case ".ps1":
+                                OpenTextEditorFile(selectedNodePath, ProjectType.PowerShell);
                                 break;
                             default:
                                 Process.Start(selectedNodePath);
@@ -736,10 +738,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
 
                 string newPath = Path.Combine(selectedNodeDirectoryInfo.Parent.FullName, newName);
-                bool isInvalidProjectName = new[] { @"/", @"\" }.Any(c => newName.Contains(c));
 
-                if (isInvalidProjectName)
-                    throw new Exception("Illegal characters in path");
+                string pattern = @"^[A-Za-z0-9_.-]{3,100}$";
+                Match m = Regex.Match(newName, pattern);
+                if (!m.Success)
+                    throw new Exception("Project Name contains illegal characters or isn't 3-100 characters long.");
 
                 if (Directory.Exists(newPath))
                     throw new Exception("A folder with this name already exists");
@@ -760,7 +763,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         Project.RenameProject(ScriptProject, ScriptProjectPath);
                         _appSettings.ClientSettings.RecentProjects.RemoveAt(0);
                         _appSettings.ClientSettings.RecentProjects.Insert(0, ScriptProjectPath);
-                        _appSettings.Save(_appSettings);
+                        _appSettings.Save();
                     }
 
                     string mainFilePath = Path.Combine(ScriptProjectPath, ScriptProject.Main);
@@ -794,6 +797,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     case ProjectType.CSScript:
                         newNameForm.txtInput.Text = ".cs";
                         break;
+                    case ProjectType.PowerShell:
+                        newNameForm.txtInput.Text = ".ps1";
+                        break;
                 }
 
                 newNameForm.ShowDialog();
@@ -812,12 +818,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 if (!Path.HasExtension(newName))
                     throw new FileFormatException($"No extension provided for '{newName}'");
 
-                if (newName.Trim() == Path.GetExtension(newName))
+                if (newName.Trim().ToLower() == Path.GetExtension(newName).ToLower())
                     throw new FileFormatException($"No file name provided");
 
                 string selectedNodePath = tvProject.SelectedNode.Tag.ToString();
                 string newFilePath = Path.Combine(selectedNodePath, newName);
-                string extension = Path.GetExtension(newFilePath);
+
+                bool isInvalidScriptName = new[] { @"/", @"\" }.Any(c => newName.Contains(c));
+                if (isInvalidScriptName)
+                    throw new Exception("Illegal characters in path");
+
+                string extension = Path.GetExtension(newFilePath).ToLower();
 
                 if (File.Exists(newFilePath))
                 {
@@ -884,6 +895,11 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         File.WriteAllText(newFilePath, _helloWorldTextCSScript);
                         NewNode(tvProject.SelectedNode, newFilePath, "file");
                         OpenTextEditorFile(newFilePath, ProjectType.CSScript);
+                        break;
+                    case ".ps1":
+                        File.WriteAllText(newFilePath, _helloWorldTextPowerShell);
+                        NewNode(tvProject.SelectedNode, newFilePath, "file");
+                        OpenTextEditorFile(newFilePath, ProjectType.PowerShell);
                         break;
                     default:
                         File.Create(newFilePath).Close();
@@ -972,13 +988,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     if (!Path.HasExtension(newName))
                         throw new FileFormatException($"No extension provided for '{newName}'");
 
-                    if (newName.Trim() == Path.GetExtension(newName))
+                    if (newName.Trim().ToLower() == Path.GetExtension(newName).ToLower())
                         throw new FileFormatException($"No file name provided");
 
                     string newPath = Path.Combine(selectedNodeDirectoryInfo.DirectoryName, newName);
 
-                    bool isInvalidProjectName = new[] { @"/", @"\" }.Any(c => newName.Contains(c));
-                    if (isInvalidProjectName)
+                    bool isInvalidScriptName = new[] { @"/", @"\" }.Any(c => newName.Contains(c));
+                    if (isInvalidScriptName)
                         throw new Exception("Illegal characters in path");
 
                     if (File.Exists(newPath))

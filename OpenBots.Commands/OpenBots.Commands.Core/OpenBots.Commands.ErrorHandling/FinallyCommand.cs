@@ -1,5 +1,5 @@
 ﻿using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using System;
@@ -21,7 +21,6 @@ namespace OpenBots.Commands.ErrorHandling
             SelectionName = "Finally";
             CommandEnabled = true;
             CommandIcon = Resources.command_try;
-
         }
 
         public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)

@@ -1,12 +1,13 @@
 ﻿using Newtonsoft.Json;
+using OpenBots.Commands.Server.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.HelperMethods;
-using OpenBots.Core.Server.Models;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Server.SDK.HelperMethods;
+using OpenBots.Server.SDK.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using QueueItemModel = OpenBots.Core.Server.Models.QueueItem;
+using QueueItemModel = OpenBots.Server.SDK.Model.QueueItem;
 
 namespace OpenBots.Commands.QueueItem
 {
@@ -135,14 +136,15 @@ namespace OpenBots.Commands.QueueItem
 			int priority = (int)await v_Priority.EvaluateCode(engine);
 			var vQueueItemTextValue = (string)await v_QueueItemTextValue.EvaluateCode(engine);
 
-			var userInfo = AuthMethods.GetUserInfo();
-            Queue queue = QueueMethods.GetQueue(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, $"Name eq '{vQueueName}'");
+			var userInfo = ServerSessionVariableMethods.GetUserInfo(engine);
+			Queue queue = QueueMethods.GetQueue(userInfo, $"Name eq '{vQueueName}'");
 
             if (queue == null)
                 throw new DataException($"Queue with name '{vQueueName}' not found");
 
-            QueueItemModel queueItem = new QueueItemModel()
-            {
+			QueueItemModel queueItem = new QueueItemModel()
+			{
+				Id = Guid.NewGuid(),
                 IsLocked = false,
                 QueueId = queue.Id,
                 Type = v_QueueItemType,
@@ -155,12 +157,12 @@ namespace OpenBots.Commands.QueueItem
                 Event = vEvent
             };
 
-            QueueItemMethods.EnqueueQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem);
+            QueueItemMethods.EnqueueQueueItem(userInfo, queueItem);
 
 			if (!string.IsNullOrEmpty(v_Attachments))
             {
 				var vAttachments = (List<string>)await v_Attachments.EvaluateCode(engine);
-				QueueItemMethods.AttachFiles(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem.Id, vAttachments);
+				QueueItemMethods.AttachFiles(userInfo, queueItem.Id, vAttachments);
 			}
 		}
 

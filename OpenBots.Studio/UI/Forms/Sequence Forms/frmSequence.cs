@@ -6,6 +6,7 @@ using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Controls;
 using OpenBots.UI.CustomControls.CustomUIControls;
+using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -111,6 +112,8 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
             //set listview column size
             frmSequence_SizeChanged(null, null);
+
+            ScriptContext.AddIntellisenseControls(Controls);
         }
 
         public void LoadCommands()
@@ -157,35 +160,18 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 if (result == DialogResult.Yes)
                     DialogResult = DialogResult.OK;
                 else if (result == DialogResult.Cancel)
+                {
                     e.Cancel = true;
-
-                return;
+                    return;
+                }
             }
-        }
 
-        private void frmSequence_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            notifyTray.Dispose();
+            ScriptContext.RemoveIntellisenseControls(Controls);
         }
 
         private void frmSequence_SizeChanged(object sender, EventArgs e)
         {
             SelectedTabScriptActions.Columns[2].Width = Width - 340;
-        }
-
-        private void frmSequence_Resize(object sender, EventArgs e)
-        {
-            //check when minimized
-            if ((WindowState == FormWindowState.Minimized) && (_appSettings.ClientSettings.MinimizeToTray))
-            {
-                _appSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
-                if (_appSettings.ClientSettings.MinimizeToTray)
-                {
-                    notifyTray.Visible = true;
-                    notifyTray.ShowBalloonTip(3000);
-                    ShowInTaskbar = false;
-                }
-            }
         }
         #endregion
 
@@ -286,20 +272,10 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             MessageBox.Show(_notificationText, caption);
         }
 
-        private void notifyTray_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (_appSettings.ClientSettings.MinimizeToTray)
-            {
-                WindowState = FormWindowState.Normal;
-                ShowInTaskbar = true;
-                notifyTray.Visible = false;
-            }
-        }
-
         private void PerformAntiIdle()
         {
             _lastAntiIdleEvent = DateTime.Now;
-            Notify("Anti-Idle Triggered", Color.White);
+            Notify("Anti-idle triggered", Color.White);
         }
 
         #endregion
@@ -337,6 +313,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
             ResetVariableArgumentBindings();
             newCommandForm.Dispose();
+            ScriptContext.AddIntellisenseControls(Controls);
         }
 
         private List<ScriptCommand> GetConfiguredCommands()
@@ -480,7 +457,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
         {
             txtCommandSearch.Clear();
         }
-        #endregion        
+        #endregion       
     }
 }
 

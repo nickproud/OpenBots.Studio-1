@@ -748,7 +748,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="id">Job id</param>
         /// <param name="apiVersion"></param>
         /// <returns>Task of Job</returns>
-        System.Threading.Tasks.Task<Job> GetJobAsync (string id, string apiVersion);
+        System.Threading.Tasks.Task<Job> GetJobAsync (string id, string apiVersion, string organizationId);
 
         /// <summary>
         /// Provides a job&#x27;s details for a particular job id
@@ -760,7 +760,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="id">Job id</param>
         /// <param name="apiVersion"></param>
         /// <returns>Task of ApiResponse (Job)</returns>
-        System.Threading.Tasks.Task<ApiResponse<Job>> GetJobAsyncWithHttpInfo (string id, string apiVersion);
+        System.Threading.Tasks.Task<ApiResponse<Job>> GetJobAsyncWithHttpInfo (string id, string apiVersion, string organizationId);
         /// <summary>
         /// Provides a checkpoint&#x27;s view model details for a particular job id
         /// </summary>
@@ -3189,9 +3189,9 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="id">Job id</param>
         /// <param name="apiVersion"></param>
         /// <returns>Task of Job</returns>
-        public async System.Threading.Tasks.Task<Job> GetJobAsync (string id, string apiVersion)
+        public async System.Threading.Tasks.Task<Job> GetJobAsync (string id, string apiVersion, string organizationId)
         {
-             ApiResponse<Job> localVarResponse = await GetJobAsyncWithHttpInfo(id, apiVersion);
+             ApiResponse<Job> localVarResponse = await GetJobAsyncWithHttpInfo(id, apiVersion, organizationId);
              return localVarResponse.Data;
 
         }
@@ -3203,7 +3203,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="id">Job id</param>
         /// <param name="apiVersion"></param>
         /// <returns>Task of ApiResponse (Job)</returns>
-        public async System.Threading.Tasks.Task<ApiResponse<Job>> GetJobAsyncWithHttpInfo (string id, string apiVersion)
+        public async System.Threading.Tasks.Task<ApiResponse<Job>> GetJobAsyncWithHttpInfo (string id, string apiVersion, string organizationId)
         {
             // verify the required parameter 'id' is set
             if (id == null)
@@ -3213,6 +3213,8 @@ namespace OpenBots.Server.SDK.Api
                 throw new ApiException(400, "Missing required parameter 'apiVersion' when calling JobsApi->GetJob");
 
             var localVarPath = "/api/v{apiVersion}/Jobs/{id}";
+            if (!string.IsNullOrEmpty(organizationId))
+                localVarPath = "/api/v{apiVersion}/Organizations/{organizationId}/Jobs/{id}";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new List<KeyValuePair<String, String>>();
             var localVarHeaderParams = new Dictionary<String, String>(this.Configuration.DefaultHeader);
@@ -3235,6 +3237,8 @@ namespace OpenBots.Server.SDK.Api
 
             if (id != null) localVarPathParams.Add("id", this.Configuration.ApiClient.ParameterToString(id)); // path parameter
             if (apiVersion != null) localVarPathParams.Add("apiVersion", this.Configuration.ApiClient.ParameterToString(apiVersion)); // path parameter
+            if (!string.IsNullOrEmpty(organizationId)) localVarPathParams.Add("organizationId", this.Configuration.ApiClient.ParameterToString(organizationId)); // path parameter
+            
             // authentication (oauth2) required
             // bearer required
             if (!String.IsNullOrEmpty(this.Configuration.AccessToken))
@@ -3255,9 +3259,11 @@ namespace OpenBots.Server.SDK.Api
                 if (exception != null) throw exception;
             }
 
+            var job = JsonConvert.DeserializeObject<Job>(localVarResponse.Content);
+
             return new ApiResponse<Job>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
-                (Job) this.Configuration.ApiClient.Deserialize(localVarResponse, typeof(Job)));
+                job);
         }
 
         /// <summary>

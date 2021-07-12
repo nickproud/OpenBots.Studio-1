@@ -2,11 +2,12 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommandUtilities;
+using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,7 +50,7 @@ namespace OpenBots.Commands.If
 		public BeginMultiIfCommand()
 		{
 			CommandName = "BeginMultiIfCommand";
-			SelectionName = "Begin Multi If";
+			SelectionName = "Multi If";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_begin_multi_if;
 			ScopeStartCommand = true;
@@ -60,7 +61,7 @@ namespace OpenBots.Commands.If
 			v_IfConditionsTable.Columns.Add("Statement");
 			v_IfConditionsTable.Columns.Add("CommandData");
 		}
-	   
+
 		public async override Tasks.Task RunCommand(object sender, ScriptAction parentCommand)
 		{
 			var engine = (IAutomationEngineInstance)sender;
@@ -70,7 +71,12 @@ namespace OpenBots.Commands.If
 			{
 				var commandData = rw["CommandData"].ToString();
 				var ifCommand = JsonConvert.DeserializeObject<BeginIfCommand>(commandData);
-				var statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_IfActionType, ifCommand.v_ActionParameterTable);
+
+				bool statementResult;
+				if (ifCommand.v_Option == "Builder")
+					statementResult = await CommandsHelper.DetermineStatementTruth(engine, ifCommand.v_ActionType, ifCommand.v_ActionParameterTable);
+				else
+					statementResult = (bool)await ifCommand.v_Condition.EvaluateCode(engine);
 
 				if (!statementResult && v_LogicType == "And")
 				{
@@ -78,27 +84,21 @@ namespace OpenBots.Commands.If
 					break;
 				}
 
-				if(statementResult && v_LogicType == "Or")
-                {
+				if (statementResult && v_LogicType == "Or")
+				{
 					isTrueStatement = true;
 					break;
-                }
+				}
 				else if (v_LogicType == "Or")
-                {
 					isTrueStatement = false;
-                }
 			}
 
 			//report evaluation
 			if (isTrueStatement)
-			{
 				engine.ReportProgress("If Conditions Evaluated True");
-			}
 			else
-			{
 				engine.ReportProgress("If Conditions Evaluated False");
-			}
-			
+
 			int startIndex, endIndex, elseIndex;
 			if (parentCommand.AdditionalScriptCommands.Any(item => item.ScriptCommand is ElseCommand))
 			{
@@ -121,9 +121,7 @@ namespace OpenBots.Commands.If
 				endIndex = parentCommand.AdditionalScriptCommands.Count;
 			}
 			else
-			{
 				return;
-			}
 
 			for (int i = startIndex; i < endIndex; i++)
 			{
@@ -158,7 +156,7 @@ namespace OpenBots.Commands.If
 			_ifConditionHelper.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 			_ifConditionHelper.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = "Condition", DataPropertyName = "Statement", ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
 			_ifConditionHelper.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = "CommandData", DataPropertyName = "CommandData", ReadOnly = true, Visible = false });
-			_ifConditionHelper.Columns.Add(new DataGridViewButtonColumn() { HeaderText = "Edit", UseColumnTextForButtonValue = true,  Text = "Edit", Width = 45 });
+			_ifConditionHelper.Columns.Add(new DataGridViewButtonColumn() { HeaderText = "Edit", UseColumnTextForButtonValue = true, Text = "Edit", Width = 45 });
 			_ifConditionHelper.Columns.Add(new DataGridViewButtonColumn() { HeaderText = "Delete", UseColumnTextForButtonValue = true, Text = "Delete", Width = 60 });
 			_ifConditionHelper.AllowUserToAddRows = false;
 			_ifConditionHelper.AllowUserToDeleteRows = true;
@@ -170,16 +168,14 @@ namespace OpenBots.Commands.If
 		public override string GetDisplayValue()
 		{
 			if (v_IfConditionsTable.Rows.Count == 0)
-			{
 				return "If <Not Configured>";
-			}
 			else if (v_LogicType == "And")
 			{
 				var statements = v_IfConditionsTable.AsEnumerable().Select(f => f.Field<string>("Statement")).ToList();
 				return string.Join(" && ", statements);
 			}
 			else
-            {
+			{
 				var statements = v_IfConditionsTable.AsEnumerable().Select(f => f.Field<string>("Statement")).ToList();
 				return string.Join(" || ", statements);
 			}
@@ -220,6 +216,8 @@ namespace OpenBots.Commands.If
 						selectedRow["Statement"] = displayText;
 						selectedRow["CommandData"] = serializedData;
 					}
+
+					commandControls.AddIntellisenseListBoxToCommandForm();
 				}
 				else if (buttonSelected.Value.ToString() == "Delete")
 				{
@@ -227,9 +225,7 @@ namespace OpenBots.Commands.If
 					v_IfConditionsTable.Rows.Remove(selectedRow);
 				}
 				else
-				{
 					throw new NotImplementedException("Requested Action is not implemented.");
-				}
 			}
 		}
 
@@ -237,7 +233,7 @@ namespace OpenBots.Commands.If
 		{
 			var automationCommands = new List<AutomationCommand>() { CommandsHelper.ConvertToAutomationCommand(typeof(BeginIfCommand)) };
 			IfrmCommandEditor editor = commandControls.CreateCommandEditorForm(automationCommands, null);
-            editor.SelectedCommand = new BeginIfCommand();
+			editor.SelectedCommand = new BeginIfCommand();
 			editor.ScriptContext = parentEditor.ScriptContext;
 			editor.TypeContext = parentEditor.TypeContext;
 
@@ -253,6 +249,8 @@ namespace OpenBots.Commands.If
 				//add to list
 				v_IfConditionsTable.Rows.Add(displayText, serializedData);
 			}
+
+			commandControls.AddIntellisenseListBoxToCommandForm();
 		}
 	}
 }

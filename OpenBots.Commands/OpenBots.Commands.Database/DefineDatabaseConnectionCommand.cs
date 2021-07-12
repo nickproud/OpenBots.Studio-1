@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Properties;
@@ -73,7 +73,6 @@ namespace OpenBots.Commands.Database
 			CommandEnabled = true;
 			CommandIcon = Resources.command_database;
 
-			v_InstanceName = "DefaultDatabase";
 			v_TestConnection = "Yes";
 		}
 

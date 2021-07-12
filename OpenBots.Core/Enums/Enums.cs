@@ -40,7 +40,6 @@ namespace OpenBots.Core.Enums
         ScriptsFolder,
         LogFolder,
         TempFolder,
-        AttendedTasksFolder,
         PublishedFolder,
         LocalAppDataPackagesFolder,
         ProgramFilesPackagesFolder,
@@ -56,11 +55,8 @@ namespace OpenBots.Core.Enums
         ShowFolderSelectionHelper,
         ShowImageCaptureHelper,
         ShowImageRecognitionTestHelper,
-        ShowCodeBuilder,
         ShowMouseCaptureHelper,
         ShowElementRecorder,
-        GenerateDLLParameters,
-        ShowDLLExplorer,
         AddInputParameter,
         ShowHTMLBuilder,
         ShowIfBuilder,
@@ -94,6 +90,7 @@ namespace OpenBots.Core.Enums
         File,
         HTTP
     }
+
     public enum MouseMessages
     {
         WmLButtonDown = 0x0201,
@@ -111,7 +108,8 @@ namespace OpenBots.Core.Enums
         OpenBots,
         Python,
         TagUI,
-        CSScript
+        CSScript,
+        PowerShell
     }
 
     public enum ProjectAction
@@ -134,5 +132,11 @@ namespace OpenBots.Core.Enums
         Running, 
         Paused, 
         Finished
+    }
+
+    public enum ServerConfigurationSource
+    {
+        Environment,
+        Registry
     }
 }

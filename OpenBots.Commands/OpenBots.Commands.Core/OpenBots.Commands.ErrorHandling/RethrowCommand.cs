@@ -1,5 +1,5 @@
 ﻿using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,6 @@ namespace OpenBots.Commands.ErrorHandling
             SelectionName = "Rethrow";
             CommandEnabled = true;
             CommandIcon = Resources.command_exception;
-
         }
 
         public async override Tasks.Task RunCommand(object sender)

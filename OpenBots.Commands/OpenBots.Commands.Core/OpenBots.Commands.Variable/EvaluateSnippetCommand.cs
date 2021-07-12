@@ -1,6 +1,6 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -46,7 +46,7 @@ namespace OpenBots.Commands.Variable
 		{
 			base.Render(editor, commandControls);
 
-			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Input", this, editor, 200, 300, true, true));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Input", this, editor, 350, 300, true, true));
 
 			return RenderedControls;
 		}

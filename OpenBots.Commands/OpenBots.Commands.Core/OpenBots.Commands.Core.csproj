@@ -116,33 +116,35 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Library\ConditionCommandHelper.cs" />
+    <Compile Include="Library\EncryptionServices.cs" />
     <Compile Include="OpenBots.Commands.Engine\LogMessageCommand.cs" />
     <Compile Include="OpenBots.Commands.Engine\PauseScriptCommand.cs" />
     <Compile Include="OpenBots.Commands.Engine\SetEngineDelayCommand.cs" />
-    <Compile Include="OpenBots.Commands.Engine\SetEnginePreferenceCommand.cs" />
     <Compile Include="OpenBots.Commands.Engine\ShowEngineContextCommand.cs" />
     <Compile Include="OpenBots.Commands.Engine\StopwatchCommand.cs" />
     <Compile Include="OpenBots.Commands.ErrorHandling\BeginRetryCommand.cs" />
     <Compile Include="OpenBots.Commands.ErrorHandling\BeginTryCommand.cs" />
     <Compile Include="OpenBots.Commands.ErrorHandling\CatchCommand.cs" />
-    <Compile Include="OpenBots.Commands.ErrorHandling\EndRetryCommand.cs" />
     <Compile Include="OpenBots.Commands.ErrorHandling\EndTryCommand.cs" />
     <Compile Include="OpenBots.Commands.ErrorHandling\FinallyCommand.cs" />
     <Compile Include="OpenBots.Commands.ErrorHandling\GetExceptionMessageCommand.cs" />
     <Compile Include="OpenBots.Commands.ErrorHandling\RethrowCommand.cs" />
     <Compile Include="OpenBots.Commands.ErrorHandling\ThrowCommand.cs" />
+    <Compile Include="OpenBots.Commands.If\BeginElseIfCommand.cs" />
     <Compile Include="OpenBots.Commands.If\BeginIfCommand.cs" />
     <Compile Include="OpenBots.Commands.If\BeginMutliIfCommand.cs" />
     <Compile Include="OpenBots.Commands.If\ElseCommand.cs" />
     <Compile Include="OpenBots.Commands.If\EndIfCommand.cs" />
-    <Compile Include="OpenBots.Commands.Loop\BeginLoopCommand.cs" />
-    <Compile Include="OpenBots.Commands.Loop\BeginMultiLoopCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\BeginDoWhileCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\BeginWhileCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\BeginMultiWhileCommand.cs" />
     <Compile Include="OpenBots.Commands.Loop\EndLoopCommand.cs" />
-    <Compile Include="OpenBots.Commands.Loop\ExitLoopCommand.cs" />
-    <Compile Include="OpenBots.Commands.Loop\LoopCollectionCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\BreakCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\BeginForEachCommand.cs" />
     <Compile Include="OpenBots.Commands.Loop\LoopContinuouslyCommand.cs" />
     <Compile Include="OpenBots.Commands.Loop\LoopNumberOfTimesCommand.cs" />
-    <Compile Include="OpenBots.Commands.Loop\NextLoopCommand.cs" />
+    <Compile Include="OpenBots.Commands.Loop\ContinueCommand.cs" />
     <Compile Include="OpenBots.Commands.Misc\AddCodeCommentCommand.cs" />
     <Compile Include="OpenBots.Commands.Misc\EncryptionCommand.cs" />
     <Compile Include="OpenBots.Commands.Misc\GetClipboardTextCommand.cs" />
@@ -160,14 +162,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\OpenBots.Core\OpenBots.Core.csproj">
-      <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
-      <Name>OpenBots.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Forms\" />
-    <Folder Include="Library\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +172,12 @@
   <ItemGroup>
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenBots.Core\OpenBots.Core.csproj">
+      <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
+      <Name>OpenBots.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,37 +1,22 @@
-﻿using Newtonsoft.Json;
-using OpenBots.Core.Command;
-using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Project;
-using OpenBots.Core.Script;
-using OpenBots.Core.UI.DTOs;
-using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Properties;
-using OpenBots.Studio.Utilities;
+﻿using OpenBots.Core.Enums;
 using OpenBots.UI.CustomControls.CustomUIControls;
-using OpenBots.UI.Forms.Sequence_Forms;
-using OpenBots.UI.Forms.Supplement_Forms;
 using ScintillaNET;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
-using CoreResources = OpenBots.Core.Properties.Resources;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
     public partial class frmScriptBuilder : Form
     {
         #region TextEditor Events
-        private Scintilla NewTextEditorActions(ProjectType projecttype, string title = "newTextEditorActions")
+        private UIScintilla NewTextEditorActions(ProjectType projecttype, string title = "newTextEditorActions")
         {
-            Scintilla scintilla = new Scintilla();
+            UIScintilla scintilla = new UIScintilla();
             scintilla.Dock = DockStyle.Fill;
-            scintilla.KeyDown += new KeyEventHandler(newTextEditorActions_KeyDown);
-            scintilla.TextChanged += new EventHandler(newTextEditorActions_TextChanged);
+            scintilla.KeyDown += newTextEditorActions_KeyDown;
+            scintilla.TextChanged += newTextEditorActions_TextChanged;
+            scintilla.Leave += newTextEditorActions_Leave;
 
             // Reset the styles
             scintilla.StyleResetDefault();
@@ -115,7 +100,27 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     scintilla.Styles[Style.Cpp.Operator].ForeColor = Color.Purple;
                     scintilla.Styles[Style.Cpp.Preprocessor].ForeColor = Color.Maroon;
                     break;
-                
+                case ProjectType.PowerShell:
+                    scintilla.Lexer = Lexer.PowerShell;
+                    scintilla.Styles[Style.PowerShell.Default].ForeColor = Color.Black;
+                    scintilla.Styles[Style.PowerShell.Comment].ForeColor = Color.Green;
+                    scintilla.Styles[Style.PowerShell.CommentDocKeyword].ForeColor = Color.Green;
+                    scintilla.Styles[Style.PowerShell.CommentStream].ForeColor = Color.Green;
+                    scintilla.Styles[Style.PowerShell.Number].ForeColor = Color.Gray;
+                    scintilla.Styles[Style.PowerShell.Cmdlet].ForeColor = Color.LimeGreen;
+                    scintilla.Styles[Style.PowerShell.Variable].ForeColor = Color.Gray;
+                    scintilla.Styles[Style.PowerShell.Operator].ForeColor = Color.Teal;
+                    scintilla.Styles[Style.PowerShell.String].ForeColor = Color.LimeGreen;
+                    scintilla.Styles[Style.PowerShell.Keyword].ForeColor = Color.ForestGreen;
+                    scintilla.Styles[Style.PowerShell.User1].ForeColor = Color.Magenta;
+                    scintilla.Styles[Style.PowerShell.Character].ForeColor = Color.LimeGreen;
+                    scintilla.Styles[Style.PowerShell.Alias].ForeColor = Color.MediumBlue;               
+                    scintilla.Styles[Style.PowerShell.Function].ForeColor = Color.MediumBlue;
+                    scintilla.Styles[Style.PowerShell.HereCharacter].ForeColor = Color.LimeGreen;
+                    scintilla.Styles[Style.PowerShell.HereString].ForeColor = Color.LimeGreen;
+                    scintilla.Styles[Style.PowerShell.Identifier].ForeColor = Color.Black;            
+                    break;
+
                     //Could be useful later if we decide to allow users to open/edit the config file
                     //case Json:
                     //    // Configure the JSON lexer styles
@@ -134,8 +139,17 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             return scintilla;
         }
 
+        private void newTextEditorActions_Leave(object sender, EventArgs e)
+        {
+            if (ScriptProject.ProjectType == ProjectType.CSScript)
+                _scriptContext.CodeInput_Leave(sender, e);
+        }
+
         private void newTextEditorActions_TextChanged(object sender, EventArgs e)
         {
+            if (ScriptProject.ProjectType == ProjectType.CSScript)
+                _scriptContext.CodeTBXInput_TextChanged(sender, e);
+
             if (!uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                 uiScriptTabControl.SelectedTab.Text += " *";
         }
@@ -143,6 +157,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         #region TextEdtior Copy, Paste, Edit, Delete
         private void newTextEditorActions_KeyDown(object sender, KeyEventArgs e)
         {
+            if (ScriptProject.ProjectType == ProjectType.CSScript)
+                _scriptContext.CodeInput_KeyDown(sender, e);
+
             if (e.Control)
             {
                 if (e.Shift)

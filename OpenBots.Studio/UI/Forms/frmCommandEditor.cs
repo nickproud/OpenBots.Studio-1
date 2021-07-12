@@ -17,7 +17,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.UI.Forms;
@@ -25,6 +25,7 @@ using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.CustomControls;
 using OpenBots.UI.CustomControls.CustomUIControls;
 using OpenBots.UI.Forms.Supplement_Forms;
+using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -40,7 +41,7 @@ namespace OpenBots.UI.Forms
         //list of available commands
         public List<AutomationCommand> CommandList { get; set; } = new List<AutomationCommand>();
         //engine context assigned from frmScriptBuilder
-        public ScriptContext ScriptContext { get; set; }
+        public IScriptContext ScriptContext { get; set; }
         public string ProjectPath { get; set; }
         public IContainer AContainer { get; set; }
         //reference to currently selected command
@@ -59,6 +60,7 @@ namespace OpenBots.UI.Forms
         public TypeContext TypeContext { get; set; }
         private ICommandControls _commandControls;
         private ToolTip _errorToolTip;
+        public FlowLayoutPanel flw_InputVariables { get; set; }
 
         #region Form Events
         //handle events for the form
@@ -141,6 +143,12 @@ namespace OpenBots.UI.Forms
 
             //gracefully handle post initialization setups (drop downs, etc)
             AfterFormInitialization();
+            ScriptContext.AddIntellisenseControls(Controls);
+        }
+
+        private void frmCommandEditor_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ScriptContext.RemoveIntellisenseControls(Controls);
         }
 
         private void frmCommandEditor_Shown(object sender, EventArgs e)
@@ -215,7 +223,8 @@ namespace OpenBots.UI.Forms
             foreach (var ctrl in userSelectedCommand.UIControls)
                 flw_InputVariables.Controls.Add(ctrl);
 
-            OnResize(EventArgs.Empty);          
+            OnResize(EventArgs.Empty);
+            SelectedCommand.Shown();
         }
 
         public void cboSelectedCommand_MouseWheel(object sender, MouseEventArgs e)
@@ -465,5 +474,7 @@ namespace OpenBots.UI.Forms
                 confirmationForm.Dispose();
             }
         }
+
+        
     }
 }

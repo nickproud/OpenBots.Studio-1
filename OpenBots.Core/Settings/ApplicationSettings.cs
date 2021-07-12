@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
+using OpenBots.Core.Project;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -23,7 +24,7 @@ namespace OpenBots.Core.Settings
             ClientSettings = new ClientSettings();
         }
 
-        public void Save(ApplicationSettings appSettings, string settingsDir = "")
+        public void Save(string settingsDir = "")
         {
             //create settings directory if not provided
             if (string.IsNullOrEmpty(settingsDir))
@@ -45,7 +46,7 @@ namespace OpenBots.Core.Settings
                 using (StreamWriter sw = new StreamWriter(filePath))
                 using (JsonWriter writer = new JsonTextWriter(sw) { Formatting = Formatting.Indented })
                 {
-                    serializer.Serialize(writer, appSettings, typeof(ApplicationSettings));
+                    serializer.Serialize(writer, this, typeof(ApplicationSettings));
                 }
             }
             catch (Exception ex)
@@ -83,17 +84,23 @@ namespace OpenBots.Core.Settings
                 catch (Exception)
                 {
                     appSettings = new ApplicationSettings();
-                    appSettings.ClientSettings.PackageSourceDT = DefaultPackageSourceDT();
-                    appSettings.ClientSettings.RecentProjects = new List<string>();
                 }
             }
             else
             {
-                appSettings = new ApplicationSettings();
-                appSettings.ClientSettings.PackageSourceDT = DefaultPackageSourceDT();
-                appSettings.ClientSettings.RecentProjects = new List<string>();
+                appSettings = new ApplicationSettings();               
             }
 
+            if (appSettings.ClientSettings.RecentProjects == null)
+                appSettings.ClientSettings.RecentProjects = new List<string>();
+
+            if (appSettings.ClientSettings.PackageSourceDT == null)
+                appSettings.ClientSettings.PackageSourceDT = DefaultPackageSourceDT();
+
+            if (appSettings.ClientSettings.DefaultPackages == null)
+                appSettings.ClientSettings.DefaultPackages = ProjectDefaultPackages.DefaultPackages;                
+
+            appSettings.Save();
             return appSettings;
         }
 

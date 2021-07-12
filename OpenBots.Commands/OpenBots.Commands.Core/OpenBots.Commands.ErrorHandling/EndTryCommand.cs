@@ -1,5 +1,5 @@
 ﻿using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
@@ -14,6 +14,8 @@ namespace OpenBots.Commands.ErrorHandling
     [Description("This command specifies the end of a try/catch block.")]
     public class EndTryCommand : ScriptCommand
     {
+        public string TryType { get; set; }
+
         public EndTryCommand()
         {
             CommandName = "EndTryCommand";
@@ -37,7 +39,7 @@ namespace OpenBots.Commands.ErrorHandling
 
         public override string GetDisplayValue()
         {
-            return base.GetDisplayValue();
+            return $"End {TryType}";
         }
     }
 }

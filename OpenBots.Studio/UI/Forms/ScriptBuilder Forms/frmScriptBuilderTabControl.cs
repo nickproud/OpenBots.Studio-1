@@ -1,8 +1,7 @@
 ﻿using OpenBots.Core.Enums;
-using OpenBots.Core.Script;
 using OpenBots.Properties;
 using OpenBots.UI.CustomControls.CustomUIControls;
-using ScintillaNET;
+using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,10 +18,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             if (uiScriptTabControl.TabCount > 0)
             {
                 ScriptFilePath = uiScriptTabControl.SelectedTab.ToolTipText.ToString();
-                _scriptFileExtension = Path.GetExtension(ScriptFilePath).ToLower();
-                _isMainScript = Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath;
 
-                switch (_scriptFileExtension)
+                switch (Path.GetExtension(ScriptFilePath).ToLower())
                 {
                     case ".obscript":
                         if (!IsScriptRunning)
@@ -33,15 +30,20 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     case ".py":
                     case ".tag":
                     case ".cs":
+                    case ".ps1":
                         if (!IsScriptRunning)
                             SetVarArgTabControlSettings(ProjectType.Python);
 
-                        _selectedTabScriptActions = (Scintilla)uiScriptTabControl.SelectedTab.Controls[0];                       
+                        _selectedTabScriptActions = (UIScintilla)uiScriptTabControl.SelectedTab.Controls[0];                       
                         break;
                 }
 
                 if (uiScriptTabControl.SelectedTab.Tag != null)
+                {
+                    _scriptContext.RemoveIntellisenseControls(Controls);
                     _scriptContext = (ScriptContext)uiScriptTabControl.SelectedTab.Tag;
+                    _scriptContext.AddIntellisenseControls(Controls);
+                }
 
                 if (!_isRunTaskCommand)
                     ResetVariableArgumentBindings();
@@ -190,6 +192,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         break;
                     case ".cs":
                         OpenTextEditorFile(path, ProjectType.CSScript);
+                        break;
+                    case ".ps1":
+                        OpenTextEditorFile(path, ProjectType.PowerShell);
                         break;
                 }
             }               

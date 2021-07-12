@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="DefineDatabaseConnectionCommand.cs" />
     <Compile Include="ExecuteDatabaseQueryCommand.cs" />
+    <Compile Include="ExecuteDatabaseStoredProcedureCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,11 @@
+{
+  "Replace": {
+    "1\\.5\\.1\\.0": "1.5.2.0",
+    "BeginLoopCommand": "BeginWhileCommand",
+    "BeginMultiLoopCommand": "BeginMultiWhileCommand",
+    "ExitLoopCommand": "BreakCommand",
+    "NextLoopCommand": "ContinueCommand",
+    "LoopCollectionCommand": "BeginForEachCommand",
+    "EndRetryCommand": "EndTryCommand"
+  }
+}

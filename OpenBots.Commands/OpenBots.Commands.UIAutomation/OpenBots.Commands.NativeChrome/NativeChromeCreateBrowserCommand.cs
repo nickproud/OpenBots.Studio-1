@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
@@ -32,7 +32,8 @@ namespace OpenBots.Commands.NativeChrome
 		[CompatibleTypes(new Type[] { typeof(OBAppInstance) })]
 		public string v_InstanceName { get; set; }
 
-		[DisplayName("URL (Optional)")]
+		[Required]
+		[DisplayName("URL")]
         [Description("Enter the URL that you want the chrome instance to navigate to.")]
         [SampleUsage("\"https://mycompany.com/orders\" || vURL")]
         [Remarks("This input is optional.")]
@@ -44,10 +45,9 @@ namespace OpenBots.Commands.NativeChrome
         {
             CommandName = "NativeChromeCreateBrowserCommand";
             SelectionName = "Native Chrome Create Browser";
-            CommandEnabled = false;
+            CommandEnabled = true;
             CommandIcon = Resources.command_nativechrome;
 
-			v_InstanceName = "DefaultChromeBrowser";
 			v_URL = "\"https://\"";
         }
 

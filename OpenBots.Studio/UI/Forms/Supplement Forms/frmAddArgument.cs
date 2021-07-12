@@ -3,6 +3,7 @@ using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Utilities;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -67,6 +68,12 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             _typeToolTip = AddTypeToolTip();
             _typeToolTip.SetToolTip(cbxDefaultType, _preEditType.GetRealTypeName());
             _provider = CodeDomProvider.CreateProvider("C#");
+            ScriptContext.AddIntellisenseControls(Controls);
+        }
+
+        private void frmAddArgument_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ScriptContext.RemoveIntellisenseControls(Controls);
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
@@ -191,5 +198,15 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             typeToolTip.AutoPopDelay = 5000;
             return typeToolTip;
         }
+
+        private void txtDefaultValue_TextChanged(object sender, EventArgs e)
+        {
+            ScriptContext.CodeTBXInput_TextChanged(sender, e);
+        }
+
+        private void txtDefaultValue_KeyDown(object sender, KeyEventArgs e)
+        {
+            ScriptContext.CodeInput_KeyDown(sender, e);
+        }      
     }
 }

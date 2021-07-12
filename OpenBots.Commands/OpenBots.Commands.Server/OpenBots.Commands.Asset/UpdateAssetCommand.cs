@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Utilities.CommonUtilities;
 using System;
 using System.Data;
@@ -12,7 +12,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
 using System.Threading.Tasks;
-using OpenBots.Core.Server.HelperMethods;
+using OpenBots.Server.SDK.HelperMethods;
+using OpenBots.Commands.Server.Library;
 
 namespace OpenBots.Commands.Asset
 {
@@ -89,8 +90,8 @@ namespace OpenBots.Commands.Asset
 			var vAssetFilePath = (string)await v_AssetFilePath.EvaluateCode(engine);
 			var vAssetValue = (string)await v_AssetValue.EvaluateCode(engine);
 
-			var userInfo = AuthMethods.GetUserInfo();
-			var asset = AssetMethods.GetAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vAssetName, v_AssetType);
+			var userInfo = ServerSessionVariableMethods.GetUserInfo(engine);
+			var asset = AssetMethods.GetAsset(userInfo, vAssetName, v_AssetType);
 
 			if (asset == null)
 				throw new DataException($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
@@ -107,12 +108,12 @@ namespace OpenBots.Commands.Asset
 					asset.JsonValue = vAssetValue;
 					break;
 				case "File":
-					AssetMethods.UpdateFileAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset, vAssetFilePath);
+					AssetMethods.UpdateFileAsset(userInfo, asset, vAssetFilePath);
 					break;
 			}
 
             if (v_AssetType != "File")
-                AssetMethods.PutAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset);
+				AssetMethods.PutAsset(userInfo, asset);
         }
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)

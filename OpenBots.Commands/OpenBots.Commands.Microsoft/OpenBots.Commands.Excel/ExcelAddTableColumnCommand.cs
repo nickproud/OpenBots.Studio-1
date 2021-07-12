@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -71,8 +71,6 @@ namespace OpenBots.Commands.Microsoft
             SelectionName = "Add Table Column";
             CommandEnabled = true;
             CommandIcon = Resources.command_excel;
-
-            v_InstanceName = "DefaultExcel";
         }
 
         public async override Task RunCommand(object sender)
@@ -87,7 +85,7 @@ namespace OpenBots.Commands.Microsoft
             var excelTable = workSheetExcelTable.ListObjects[vTableName];
 
             int vColumnIndex = -1;
-            if (string.IsNullOrEmpty(v_ColumnIndex))
+            if (!string.IsNullOrEmpty(v_ColumnIndex))
                 vColumnIndex = (int)await v_ColumnIndex.EvaluateCode(engine);
 
             var excelColumn = excelTable.ListColumns.Add(string.IsNullOrEmpty(v_ColumnIndex) ? excelTable.ListColumns.Count + 1 : vColumnIndex);

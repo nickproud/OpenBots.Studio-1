@@ -1,4 +1,4 @@
-﻿using OpenBots.Core.Infrastructure;
+﻿using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.EngineModel;
 using System;
 using System.Collections.Generic;
@@ -13,24 +13,6 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 {
     public static class VariableMethods
     {
-        public async static Task<object> InstantiateVariable(string varName, string code, Type varType, IAutomationEngineInstance engine)
-        {
-            string type = varType.GetRealTypeFullName();
-
-            if (string.IsNullOrEmpty(code))
-                code = "null";
-
-            if (engine.AutomationEngineContext.EngineScriptState == null)
-                engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScript.RunAsync();
-
-            string script = $"{type}? {varName} = {code};";
-
-            engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScriptState
-                .ContinueWithAsync(script);
-
-            return engine.AutomationEngineContext.EngineScriptState.GetVariable(varName).Value;
-        }
-
         public async static Task<object> InstantiateVariable(string varName, string code, Type varType, EngineContext engineContext)
         {
             string type = varType.GetRealTypeFullName();
@@ -49,16 +31,14 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             return engineContext.EngineScriptState.GetVariable(varName).Value;
         }
 
-
-
         public async static Task<bool> EvaluateSnippet(this string code, IAutomationEngineInstance engine)
         {
-            if (engine.AutomationEngineContext.EngineScriptState == null)
-                engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScript.RunAsync();
+            if (engine.EngineContext.EngineScriptState == null)
+                engine.EngineContext.EngineScriptState = await engine.EngineContext.EngineScript.RunAsync();
 
             string script = $"{code};";
 
-            engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScriptState
+            engine.EngineContext.EngineScriptState = await engine.EngineContext.EngineScriptState
                 .ContinueWithAsync(script);
 
             return true;
@@ -69,15 +49,15 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             if (string.IsNullOrEmpty(code))
                 return null;
 
-            if (engine.AutomationEngineContext.EngineScriptState == null)
-                engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScript.RunAsync();
+            if (engine.EngineContext.EngineScriptState == null)
+                engine.EngineContext.EngineScriptState = await engine.EngineContext.EngineScript.RunAsync();
 
-            string script = $"object {engine.AutomationEngineContext.GuidPlaceholder} = {code};";
+            string script = $"object {engine.EngineContext.GuidPlaceholder} = {code};";
 
-            engine.AutomationEngineContext.EngineScriptState = await engine.AutomationEngineContext.EngineScriptState
+            engine.EngineContext.EngineScriptState = await engine.EngineContext.EngineScriptState
                 .ContinueWithAsync(script);
 
-            return engine.AutomationEngineContext.EngineScriptState.GetVariable($"{engine.AutomationEngineContext.GuidPlaceholder}").Value;
+            return engine.EngineContext.EngineScriptState.GetVariable($"{engine.EngineContext.GuidPlaceholder}").Value;
         }
 
         public async static Task<object> EvaluateCode(this string code, EngineContext engineContext)
@@ -98,38 +78,45 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public static void SetVariableValue(this object newVal, IAutomationEngineInstance engine, string varName)
         {
-            engine.AutomationEngineContext.EngineScriptState.Variables.Where(x => x.Name == varName).FirstOrDefault().Value = newVal;
+            engine.EngineContext.EngineScriptState.Variables.Where(x => x.Name == varName).FirstOrDefault().Value = newVal;
 
-            var existingVar = engine.AutomationEngineContext.Variables.Where(x => x.VariableName == varName).FirstOrDefault();
+            var existingVar = engine.EngineContext.Variables.Where(x => x.VariableName == varName).FirstOrDefault();
             if (existingVar != null)
                 existingVar.VariableValue = newVal;
-            var existingArg = engine.AutomationEngineContext.Arguments.Where(x => x.ArgumentName == varName).FirstOrDefault();
+            var existingArg = engine.EngineContext.Arguments.Where(x => x.ArgumentName == varName).FirstOrDefault();
+            if (existingArg != null)
+                existingArg.ArgumentValue = newVal;
+        }
+
+        public static void SetVariableValue(this object newVal, EngineContext engineContext, string varName)
+        {
+            engineContext.EngineScriptState.Variables.Where(x => x.Name == varName).FirstOrDefault().Value = newVal;
+
+            var existingVar = engineContext.Variables.Where(x => x.VariableName == varName).FirstOrDefault();
+            if (existingVar != null)
+                existingVar.VariableValue = newVal;
+            var existingArg = engineContext.Arguments.Where(x => x.ArgumentName == varName).FirstOrDefault();
             if (existingArg != null)
                 existingArg.ArgumentValue = newVal;
         }
 
         public static dynamic GetVariableValue(this string varName, IAutomationEngineInstance engine)
         {
-            return engine.AutomationEngineContext.EngineScriptState.GetVariable(varName).Value;
+            return engine.EngineContext.EngineScriptState.GetVariable(varName).Value;
         }
-
-        public static Type GetVariableType(this string varName, IAutomationEngineInstance engine)
-        {
-            return engine.AutomationEngineContext.EngineScriptState.GetVariable(varName).Type;
-        } 
 
         public static void SyncVariableValues(IAutomationEngineInstance engine)
         {
-            engine.AutomationEngineContext.Variables.ForEach(v => v.VariableValue = v.VariableName.GetVariableValue(engine));
-            engine.AutomationEngineContext.Arguments.ForEach(a => a.ArgumentValue = a.ArgumentName.GetVariableValue(engine));
+            engine.EngineContext.Variables.ForEach(v => v.VariableValue = v.VariableName.GetVariableValue(engine));
+            engine.EngineContext.Arguments.ForEach(a => a.ArgumentValue = a.ArgumentName.GetVariableValue(engine));
         }
 
         public static Type GetVarArgType(this string varArgName, IAutomationEngineInstance engine)
         {
             OBScriptVariable requiredVariable;
 
-            var variableList = engine.AutomationEngineContext.Variables;
-            var argumentsAsVariablesList = engine.AutomationEngineContext.Arguments
+            var variableList = engine.EngineContext.Variables;
+            var argumentsAsVariablesList = engine.EngineContext.Arguments
                 .Select(arg => new OBScriptVariable
                 {
                     VariableName = arg.ArgumentName,
@@ -168,7 +155,7 @@ namespace OpenBots.Core.Utilities.CommonUtilities
             newVar.VariableName = variableName;
             newVar.VariableValue = variableValue;
             newVar.VariableType = variableType;
-            engine.AutomationEngineContext.Variables.Add(newVar);
+            engine.EngineContext.Variables.Add(newVar);
         }
     }
 }

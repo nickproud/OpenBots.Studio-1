@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>OpenBots.Server.SDK</id>
-    <version>1.5.1.0</version>
+    <version>1.5.2.0</version>
     <title>OpenBots Server SDK</title>
     <authors>OpenBots Inc</authors>
     <owners>OpenBots Inc</owners>
@@ -11,7 +11,7 @@
     <iconUrl>https://openbots.ai/wp-content/uploads/2021/05/ob-server-icon.png</iconUrl>
     <repository type="git" url="https://github.com/OpenBotsAI/OpenBots.Server.SDK" branch="master" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>OpenBots library generated from a Swagger document to utilize API requests from OpenBots Server</description>
+    <description>OpenBots library generated from a Swagger document to utilize API requests from OpenBots Server and Documents</description>
     <releaseNotes>https://openbots.ai/category/release-notes/</releaseNotes>
     <copyright>(C) OpenBots Inc 2020-2021</copyright>
     <tags>OpenBots Studio Server Commands Asset Credential QueueItem ServerEmail API SDK</tags>

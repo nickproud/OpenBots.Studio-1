@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -62,6 +62,16 @@ namespace OpenBots.Commands.Excel
 		public string v_Visible { get; set; }
 
 		[Required]
+		[DisplayName("Update External Links")]
+		[PropertyUISelectionOption("Always")]
+		[PropertyUISelectionOption("Never")]
+		[PropertyUISelectionOption("Ask User")]
+		[Description("Indicate workbook's setting for updating external links.")]
+		[SampleUsage("")]
+		[Remarks("")]
+		public string v_UpdateLinks { get; set; }
+
+		[Required]
 		[DisplayName("Close All Existing Excel Instances")]
 		[PropertyUISelectionOption("Yes")]
 		[PropertyUISelectionOption("No")]
@@ -85,9 +95,9 @@ namespace OpenBots.Commands.Excel
 			CommandEnabled = true;
 			CommandIcon = Resources.command_excel;
 
-			v_InstanceName = "DefaultExcel";
 			v_NewOpenWorkbook = "New Workbook";
 			v_Visible = "No";
+			v_UpdateLinks = "Always";
 			v_CloseAllInstances = "Yes";
 		}
 
@@ -111,6 +121,8 @@ namespace OpenBots.Commands.Excel
 			else
 				newExcelSession.Visible = false;
 
+			newExcelSession.AskToUpdateLinks = false;
+
 			new OBAppInstance(v_InstanceName, newExcelSession).SetVariableValue(engine, v_InstanceName);
 
 			if (v_NewOpenWorkbook == "New Workbook")
@@ -124,8 +136,22 @@ namespace OpenBots.Commands.Excel
 			{
 				if (string.IsNullOrEmpty(vFilePath))
 					throw new NullReferenceException("File path for Excel Workbook not provided");
-				else
-					newExcelSession.Workbooks.Open(vFilePath);
+                else
+                {
+                    switch(v_UpdateLinks)
+						{
+						case "Always":
+							newExcelSession.Workbooks.Open(vFilePath, 1);
+							break;
+						case "Never":
+							newExcelSession.Workbooks.Open(vFilePath, 0);
+							break;
+						case "Ask User":
+							newExcelSession.AskToUpdateLinks = true;
+							newExcelSession.Workbooks.Open(vFilePath);
+							break;
+						}
+                }
 			}
 		}
 
@@ -139,6 +165,7 @@ namespace OpenBots.Commands.Excel
 
 			_openFileControls = new List<Control>();
 			_openFileControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_FilePath", this, editor));
+			_openFileControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_UpdateLinks", this, editor));
 
 			RenderedControls.AddRange(_openFileControls);
 			

@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ErrorEventArgs = Newtonsoft.Json.Serialization.ErrorEventArgs;
 using Formatting = Newtonsoft.Json.Formatting;
@@ -80,15 +81,9 @@ namespace OpenBots.Core.Script
         {
             var script = new Script();
 
-            //save variables to file
             script.Variables = engineContext.Variables;
-
-            //save arguments to file
             script.Arguments = engineContext.Arguments;
-
-            //save elements to file
             script.Elements = engineContext.Elements;
-
             script.ImportedNamespaces = engineContext.ImportedNamespaces;
 
             //set version to current application version
@@ -104,10 +99,11 @@ namespace OpenBots.Core.Script
                 command.LineNumber = lineNumber;
 
                 if ((command.CommandName == "LoopNumberOfTimesCommand") || (command.CommandName == "LoopContinuouslyCommand") ||
-                    (command.CommandName == "LoopCollectionCommand") || (command.CommandName == "BeginIfCommand") ||
+                    (command.CommandName == "BeginForEachCommand") || (command.CommandName == "BeginIfCommand") ||
                     (command.CommandName == "BeginMultiIfCommand") || (command.CommandName == "BeginTryCommand") ||
-                    (command.CommandName == "BeginLoopCommand") || (command.CommandName == "BeginMultiLoopCommand") ||
-                    (command.CommandName == "BeginRetryCommand") || (command.CommandName == "BeginSwitchCommand"))
+                    (command.CommandName == "BeginWhileCommand") || (command.CommandName == "BeginMultiWhileCommand") ||
+                    (command.CommandName == "BeginDoWhileCommand") || (command.CommandName == "BeginRetryCommand") || 
+                    (command.CommandName == "BeginSwitchCommand"))
                 {
                     //if this is the first loop
                     if (subCommands.Count == 0)
@@ -129,8 +125,7 @@ namespace OpenBots.Core.Script
                 }
                 //if current loop scenario is ending
                 else if ((command.CommandName == "EndLoopCommand") || (command.CommandName == "EndIfCommand") ||
-                         (command.CommandName == "EndTryCommand") || (command.CommandName == "EndRetryCommand") ||
-                         (command.CommandName == "EndSwitchCommand"))
+                         (command.CommandName == "EndTryCommand") || (command.CommandName == "EndSwitchCommand"))
                 {
                     //get reference to previous node
                     var parentCommand = subCommands[subCommands.Count - 1];
@@ -140,9 +135,7 @@ namespace OpenBots.Core.Script
                     subCommands.RemoveAt(subCommands.Count - 1);
                 }
                 else if (subCommands.Count == 0) //add command as a root item
-                {
                     script.AddNewParentCommand(command);
-                }
                 else //we are within a loop so add to the latest tracked loop item
                 {
                     var parentCommand = subCommands[subCommands.Count - 1];
@@ -157,7 +150,7 @@ namespace OpenBots.Core.Script
             {
                 TypeNameHandling = TypeNameHandling.Objects,
                 Error = HandleDeserializationError,
-                ContractResolver = new ScriptAutofacContractResolver(engineContext.Container)
+                ContractResolver = new ScriptAutofacContractResolver(engineContext.Container),
             };
 
             JsonSerializer serializer = JsonSerializer.Create(serializerSettings);
@@ -169,19 +162,17 @@ namespace OpenBots.Core.Script
                 //write to file
                 using (StreamWriter sw = new StreamWriter(engineContext.FilePath))
                 using (JsonWriter writer = new JsonTextWriter(sw){ Formatting = Formatting.Indented })
-                {
                     serializer.Serialize(writer, script, typeof(Script));
-                }
             }
 
             return script;
         }
+
         /// <summary>
         /// Deserializes a valid JSON file back into user-defined commands
         /// </summary>
         public static Script DeserializeFile(EngineContext engineContext, bool isDialogResultYes = false)
         {
-            
             var serializerSettings = new JsonSerializerSettings();
             if (engineContext.IsTest)
             {
@@ -196,7 +187,7 @@ namespace OpenBots.Core.Script
                 {
                     TypeNameHandling = TypeNameHandling.Objects,
                     Error = HandleDeserializationError,
-                    ContractResolver = new ScriptAutofacContractResolver(engineContext.Container)
+                    ContractResolver = new ScriptAutofacContractResolver(engineContext.Container),
                 };
             }
 
@@ -214,9 +205,7 @@ namespace OpenBots.Core.Script
                 deserializedScriptVersion = new Version(deserializedData.Version);
             }
             else
-            {
                 deserializedScriptVersion = new Version("0.0.0.0");
-            }
 
             //if deserialized Script version is lower than than the current application version
             if (!engineContext.IsTest && deserializedScriptVersion.CompareTo(new Version(Application.ProductVersion)) < 0 && !isDialogResultYes)
@@ -245,7 +234,6 @@ namespace OpenBots.Core.Script
                 VariableValue = "\"Value Provided at Runtime\""
             };
             deserializedData.Variables.Add(projectPathVariable);
-
 
             return deserializedData;
         }
@@ -305,6 +293,23 @@ namespace OpenBots.Core.Script
                 
             if (e.CurrentObject is ScriptAction)
                 ((ScriptAction)e.CurrentObject).SerializationError = deserializationError;
+            else if (e.CurrentObject is ScriptVariable)
+            {
+                var splitErrorMessage = e.ErrorContext.Error.Message.Split(new char[] { '"', ',' });
+                if (splitErrorMessage.Length > 1)
+                    ((ScriptVariable)e.CurrentObject).VariableType = GetTypeByFullName(splitErrorMessage[1]);
+                else
+                    ((ScriptVariable)e.CurrentObject).VariableType = typeof(object);
+            }
+            else if (e.CurrentObject is ScriptArgument)
+            {
+                var splitErrorMessage = e.ErrorContext.Error.Message.Split(new char[] { '"', ',' });
+                if (splitErrorMessage.Length > 1)
+                    ((ScriptArgument)e.CurrentObject).ArgumentType = GetTypeByFullName(splitErrorMessage[1]);
+                else
+                    ((ScriptArgument)e.CurrentObject).ArgumentType = typeof(object);
+            }
+        
             e.ErrorContext.Handled = true;
         }
 
@@ -331,9 +336,10 @@ namespace OpenBots.Core.Script
 
             foreach (var x in conversionObject["Replace"])
             {
-                if (((JProperty)(x)).Name.StartsWith("__comment"))
+                if (((JProperty)x).Name.StartsWith("__comment"))
                     continue;
-                scriptText = Regex.Replace(scriptText, ((JProperty)(x)).Name, ((JProperty)(x)).Value.ToString());
+
+                scriptText = Regex.Replace(scriptText, ((JProperty)x).Name, ((JProperty)x).Value.ToString());
             }
                                
             File.WriteAllText(filePath, scriptText);
@@ -343,7 +349,27 @@ namespace OpenBots.Core.Script
                 FilePath = filePath,
                 Container = container
             };
+
             return DeserializeFile(engineContext, true);
-        }       
+        }
+
+        public static Type GetTypeByFullName(string typeFullName)
+        {
+            var allTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a =>
+                {
+                    try
+                    {
+                        return a.GetTypes();
+                    }
+                    catch (Exception)
+                    {
+                        return new Type[] { };
+                    }
+                });
+
+            Type type = allTypes.FirstOrDefault(t => t.FullName == typeFullName);
+
+            return type == null ? typeof(object) : type;                  
+        }          
     }
 }

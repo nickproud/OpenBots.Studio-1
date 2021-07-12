@@ -44,6 +44,9 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.10.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
       <HintPath>..\packages\Portable.BouncyCastle.1.8.10\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetZip, Version=1.15.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.15.0\lib\net40\DotNetZip.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.3.2.10, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.1.3.2\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -156,9 +159,6 @@
     </Reference>
     <Reference Include="Serilog.Sinks.RollingFile, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.Sinks.RollingFile.3.3.0\lib\net45\Serilog.Sinks.RollingFile.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Sinks.SignalR, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Sinks.SignalR.2.0.10\lib\net46\Serilog.Sinks.SignalR.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -355,35 +355,31 @@
     <Compile Include="Attributes\PropertyAttributes\Remarks.cs" />
     <Compile Include="Attributes\PropertyAttributes\CompatibleTypes.cs" />
     <Compile Include="Attributes\PropertyAttributes\SampleUsage.cs" />
-    <Compile Include="ChromeNativeClient\NativeResponse.cs" />
-    <Compile Include="ChromeNativeClient\RequestMessage.cs" />
-    <Compile Include="ChromeNativeClient\NativeRequest.cs" />
-    <Compile Include="ChromeNativeClient\ServerCommunication.cs" />
-    <Compile Include="ChromeNativeClient\WebElement.cs" />
+    <Compile Include="ChromeNative\ChromeNativeClient\NativeResponse.cs" />
+    <Compile Include="ChromeNative\ChromeNativeClient\RequestMessage.cs" />
+    <Compile Include="ChromeNative\ChromeNativeClient\NativeRequest.cs" />
+    <Compile Include="ChromeNative\ChromeNativeClient\ServerCommunication.cs" />
+    <Compile Include="ChromeNative\ChromeNativeClient\WebElement.cs" />
+    <Compile Include="ChromeNative\ChromeNativeServer\ManifestSettings.cs" />
+    <Compile Include="ChromeNative\ChromeNativeServer\ManifestSettingsManager.cs" />
     <Compile Include="Command\BrokenCodeCommentCommand.cs" />
     <Compile Include="Command\ScriptCommand.cs" />
+    <Compile Include="Enums\EnumsHelper.cs" />
+    <Compile Include="Interfaces\IScriptContext.cs" />
     <Compile Include="Model\ApplicationModel\OBAppInstance.cs" />
     <Compile Include="ChromeNative\Extension\ChromeExtensionRegistryKeys.cs" />
     <Compile Include="ChromeNative\Extension\ChromeExtensionRegistryManager.cs" />
     <Compile Include="Project\ProjectArgument.cs" />
+    <Compile Include="Project\ProjectDefaultPackages.cs" />
     <Compile Include="Script\AssemblyReference.cs" />
-    <Compile Include="Script\ScriptContext.cs" />
     <Compile Include="Script\ScriptDefaultNamespaces.cs" />
     <Compile Include="Script\ScriptDefaultTypes.cs" />
     <Compile Include="Script\TypeContext.cs" />
-    <Compile Include="Server\HelperMethods\AssetMethods.cs" />
-    <Compile Include="Server\HelperMethods\AuthMethods.cs" />
-    <Compile Include="Server\HelperMethods\AutomationMethods.cs" />
-    <Compile Include="Server\HelperMethods\CredentialMethods.cs" />
-    <Compile Include="Server\HelperMethods\QueueItemMethods.cs" />
-    <Compile Include="Server\HelperMethods\QueueMethods.cs" />
-    <Compile Include="Server\HelperMethods\ServerEmailMethods.cs" />
-    <Compile Include="Server\Models\Automation.cs" />
-    <Compile Include="Server\Models\AutomationParameter.cs" />
-    <Compile Include="Server\Models\Credential.cs" />
-    <Compile Include="Server\Models\ServiceRegistration.cs" />
-    <Compile Include="Server\Models\ServerInfo.cs" />
-    <Compile Include="Server\Models\UserInfo.cs" />
+    <Compile Include="Server Documents\Interfaces\IGetStatusRequest.cs" />
+    <Compile Include="Server Documents\Interfaces\ISaveRequest.cs" />
+    <Compile Include="Server Documents\Interfaces\ISubmitFileRequest.cs" />
+    <Compile Include="Server Documents\Models\TaskStatusTypes.cs" />
+    <Compile Include="Server Documents\User\ConfigurationKeys.cs" />
     <Compile Include="Utilities\CommonUtilities\CommonMethods.cs" />
     <Compile Include="Enums\Enums.cs" />
     <Compile Include="Interfaces\Commands\IConditionCommand.cs" />
@@ -425,22 +421,9 @@
     <Compile Include="Script\ScriptAutofacContractResolver.cs" />
     <Compile Include="Script\ScriptElement.cs" />
     <Compile Include="Script\ScriptVariable.cs" />
-    <Compile Include="Server\Interfaces\IEntity.cs" />
-    <Compile Include="Server\Interfaces\INamedEntity.cs" />
-    <Compile Include="Server\Interfaces\INameIDPair.cs" />
-    <Compile Include="Server\Models\Asset.cs" />
-    <Compile Include="Server\Models\File.cs" />
-    <Compile Include="Server\Models\EmailAddress.cs" />
-    <Compile Include="Server\Models\EmailMessage.cs" />
-    <Compile Include="Server\Models\Entity.cs" />
-    <Compile Include="Server\Models\NamedEntity.cs" />
-    <Compile Include="Server\Models\Queue.cs" />
-    <Compile Include="Server\Models\QueueItem.cs" />
-    <Compile Include="Server\Models\QueueItemAttachment.cs" />
-    <Compile Include="Server\User\EnvironmentSettings.cs" />
-    <Compile Include="Server\User\SystemInfo.cs" />
-    <Compile Include="Server\User\RegistryKeys.cs" />
-    <Compile Include="Server\User\RegistryManager.cs" />
+    <Compile Include="Server Documents\User\EnvironmentSettings.cs" />
+    <Compile Include="Server Documents\User\SystemInfo.cs" />
+    <Compile Include="Server Documents\User\RegistryManager.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
     <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="Settings\EngineSettings.cs" />
@@ -455,11 +438,10 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Utilities\CommonUtilities\NamespaceMethods.cs" />
+    <Compile Include="Utilities\CommonUtilities\SessionVariableMethods.cs" />
+    <Compile Include="Utilities\CommonUtilities\TypeMethods.cs" />
     <Compile Include="Utilities\FormsUtilities\FormsHelper.cs" />
-    <Compile Include="UI\DTOs\Class.cs" />
     <Compile Include="UI\DTOs\MachineConfiguration.cs" />
-    <Compile Include="UI\DTOs\Method.cs" />
-    <Compile Include="UI\DTOs\Parameter.cs" />
     <Compile Include="UI\DTOs\ScriptActionTag.cs" />
     <Compile Include="UI\DTOs\SteppingCommandsItem.cs" />
     <Compile Include="UI\Forms\UIForm.cs">
@@ -467,18 +449,17 @@
     </Compile>
     <Compile Include="User32\KeyDownEventArgs.cs" />
     <Compile Include="User32\MouseCoordinateEventArgs.cs" />
-    <Compile Include="User32\RECT.cs" />
+    <Compile Include="User32\Rect.cs" />
     <Compile Include="User32\User32Functions.cs" />
     <Compile Include="User32\WindowHandleInfo.cs" />
-    <Compile Include="Utilities\CommandUtilities\CompilerServices.cs" />
-    <Compile Include="Utilities\CommandUtilities\EncryptionServices.cs" />
     <Compile Include="Utilities\CommandUtilities\CommandsHelper.cs" />
     <Compile Include="Utilities\CommandUtilities\ImageElement.cs" />
     <Compile Include="Utilities\CommonUtilities\ImageMethods.cs" />
     <Compile Include="Utilities\CommonUtilities\InstanceMethods.cs" />
-    <Compile Include="Utilities\CommonUtilities\Logging.cs" />
+    <Compile Include="Utilities\CommonUtilities\LoggingMethods.cs" />
     <Compile Include="Utilities\CommonUtilities\StringMethods.cs" />
     <Compile Include="Utilities\CommonUtilities\VariableMethods.cs" />
+    <Compile Include="User32\GlobalHook.cs" />
     <Compile Include="Utilities\FormsUtilities\Theme.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -526,6 +507,7 @@
     <Content Include="Resources\Icons\Commands\command-database.png" />
     <Content Include="Resources\Icons\Commands\command-dictionary.png" />
     <Content Include="Resources\Icons\Commands\command-disabled.png" />
+    <None Include="Resources\Icons\Commands\command-documents.png" />
     <Content Include="Resources\Icons\Commands\command-element.png" />
     <Content Include="Resources\Icons\Commands\command-else.png" />
     <Content Include="Resources\Icons\Commands\command-end-if.png" />
@@ -536,9 +518,11 @@
     <None Include="Resources\Icons\Commands\command-excel.png" />
     <Content Include="Resources\Icons\Commands\command-exception.png" />
     <Content Include="Resources\Icons\Commands\command-exitloop.png" />
+    <None Include="Resources\Icons\Commands\command-file.png" />
     <Content Include="Resources\Icons\Commands\command-files.png" />
     <Content Include="Resources\Icons\Commands\command-function.png" />
     <Content Include="Resources\Icons\Commands\command-input.png" />
+    <None Include="Resources\Icons\Commands\command-job.png" />
     <Content Include="Resources\Icons\Commands\command-message.png" />
     <None Include="Resources\Icons\Commands\command-nativechrome.png" />
     <Content Include="Resources\Icons\Commands\command-nextloop.png" />
@@ -551,10 +535,12 @@
     <Content Include="Resources\Icons\Commands\command-regex.png" />
     <Content Include="Resources\Icons\Commands\command-remote.png" />
     <Content Include="Resources\Icons\Commands\command-run-code.png" />
+    <None Include="Resources\Icons\Commands\command-sap.png" />
     <Content Include="Resources\Icons\Commands\command-script.png" />
     <Content Include="Resources\Icons\Commands\command-search.png" />
     <Content Include="Resources\Icons\Commands\command-sequence.png" />
     <Content Include="Resources\Icons\Commands\command-server.png" />
+    <None Include="Resources\Icons\Commands\command-servermail.png" />
     <Content Include="Resources\Icons\Commands\command-smtp.png" />
     <Content Include="Resources\Icons\Commands\command-spreadsheet.png" />
     <Content Include="Resources\Icons\Commands\command-start-process.png" />
@@ -575,12 +561,6 @@
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\OpenBots.Server.SDK\OpenBots.Server.SDK.csproj">
-      <Project>{9f13c5ca-eee7-49d1-bea1-2a0bbf6df261}</Project>
-      <Name>OpenBots.Server.SDK</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

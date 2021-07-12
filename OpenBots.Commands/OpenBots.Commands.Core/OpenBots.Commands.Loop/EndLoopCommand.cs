@@ -1,5 +1,5 @@
 ﻿using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using System;
 using System.Collections.Generic;
@@ -8,12 +8,13 @@ using System.Windows.Forms;
 
 namespace OpenBots.Commands.Loop
 {
-
     [Serializable]
     [Category("Loop Commands")]
-    [Description("This command signifies the exit point of Loop command(s) and is required for all the Loop commands.")]
+    [Description("This command signifies the exit point of a Loop command and is required for all Loop commands.")]
     public class EndLoopCommand : ScriptCommand
     {
+        public string LoopType { get; set; }
+
         public EndLoopCommand()
         {
             CommandName = "EndLoopCommand";
@@ -31,7 +32,7 @@ namespace OpenBots.Commands.Loop
 
         public override string GetDisplayValue()
         {
-            return "End Loop";
+            return $"End {LoopType}";
         }
     }
 }

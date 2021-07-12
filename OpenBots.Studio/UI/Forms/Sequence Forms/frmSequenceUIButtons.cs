@@ -1,9 +1,6 @@
-﻿using OpenBots.Core.Command;
-using OpenBots.Core.Script;
-using OpenBots.Core.Settings;
+﻿using OpenBots.Core.Settings;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -50,6 +47,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
             ResetVariableArgumentBindings();
             scriptVariableEditor.Dispose();
+            ScriptContext.AddIntellisenseControls(Controls);
         }
 
         private void uiBtnAddArgument_Click(object sender, EventArgs e)
@@ -73,6 +71,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
 
             ResetVariableArgumentBindings();
             scriptArgumentEditor.Dispose();
+            ScriptContext.AddIntellisenseControls(Controls);
         }
 
         private void uiBtnAddElement_Click(object sender, EventArgs e)
@@ -94,6 +93,7 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             }
 
             scriptElementEditor.Dispose();
+            ScriptContext.AddIntellisenseControls(Controls);
         }
 
         private void uiBtnSettings_Click(object sender, EventArgs e)
@@ -146,57 +146,46 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             int beginLoopValidationCount = 0;
             int beginIfValidationCount = 0;
             int tryCatchValidationCount = 0;
-            int retryValidationCount = 0;
             int beginSwitchValidationCount = 0;
 
             foreach (ListViewItem item in SelectedTabScriptActions.Items)
             {
-                if (item.Tag is BrokenCodeCommentCommand)
+                switch (item.Tag.GetType().Name)
                 {
-                    Notify("Please verify that all broken code has been removed or replaced.", Color.Yellow);
-                    return;
-                }
-                else if ((item.Tag.GetType().Name == "LoopCollectionCommand") || (item.Tag.GetType().Name == "LoopContinuouslyCommand") ||
-                    (item.Tag.GetType().Name == "LoopNumberOfTimesCommand") || (item.Tag.GetType().Name == "BeginLoopCommand") ||
-                    (item.Tag.GetType().Name == "BeginMultiLoopCommand"))
-                {
-                    beginLoopValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndLoopCommand")
-                {
-                    beginLoopValidationCount--;
-                }
-                else if ((item.Tag.GetType().Name == "BeginIfCommand") || (item.Tag.GetType().Name == "BeginMultiIfCommand"))
-                {
-                    beginIfValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndIfCommand")
-                {
-                    beginIfValidationCount--;
-                }
-                else if (item.Tag.GetType().Name == "BeginTryCommand")
-                {
-                    tryCatchValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndTryCommand")
-                {
-                    tryCatchValidationCount--;
-                }
-                else if (item.Tag.GetType().Name == "BeginRetryCommand")
-                {
-                    retryValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndRetryCommand")
-                {
-                    retryValidationCount--;
-                }
-                else if (item.Tag.GetType().Name == "BeginSwitchCommand")
-                {
-                    beginSwitchValidationCount++;
-                }
-                else if (item.Tag.GetType().Name == "EndSwitchCommand")
-                {
-                    beginSwitchValidationCount--;
+                    case "BrokenCodeCommentCommand":
+                        Notify("Please verify that all broken code has been removed or replaced.", Color.Yellow);
+                        return;
+                    case "BeginForEachCommand":
+                    case "LoopContinuouslyCommand":
+                    case "LoopNumberOfTimesCommand":
+                    case "BeginWhileCommand":
+                    case "BeginMultiWhileCommand":
+                    case "BeginDoWhileCommand":
+                        beginLoopValidationCount++;
+                        break;
+                    case "EndLoopCommand":
+                        beginLoopValidationCount--;
+                        break;
+                    case "BeginIfCommand":
+                    case "BeginMultiIfCommand":
+                        beginIfValidationCount++;
+                        break;
+                    case "EndIfCommand":
+                        beginIfValidationCount--;
+                        break;
+                    case "BeginTryCommand":
+                    case "BeginRetryCommand":
+                        tryCatchValidationCount++;
+                        break;
+                    case "EndTryCommand":
+                        tryCatchValidationCount--;
+                        break;
+                    case "BeginSwitchCommand":
+                        beginSwitchValidationCount++;
+                        break;
+                    case "EndSwitchCommand":
+                        beginSwitchValidationCount--;
+                        break;
                 }
 
                 //end loop was found first
@@ -216,12 +205,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
                 if (tryCatchValidationCount < 0)
                 {
                     Notify("Please verify the ordering of your try/catch blocks.", Color.Yellow);
-                    return;
-                }
-
-                if (retryValidationCount < 0)
-                {
-                    Notify("Please verify the ordering of your retry blocks.", Color.Yellow);
                     return;
                 }
 
@@ -249,12 +232,6 @@ namespace OpenBots.UI.Forms.Sequence_Forms
             if (tryCatchValidationCount != 0)
             {
                 Notify("Please verify the ordering of your try/catch blocks.", Color.Yellow);
-                return;
-            }
-
-            if (retryValidationCount != 0)
-            {
-                Notify("Please verify the ordering of your retry blocks.", Color.Yellow);
                 return;
             }
 

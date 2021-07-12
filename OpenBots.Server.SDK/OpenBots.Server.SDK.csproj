@@ -66,7 +66,7 @@ OpenAPI spec version: v1
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Common, Version=4.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Drawing.Common.5.0.2\lib\net461\System.Drawing.Common.dll</HintPath>
+      <HintPath>..\packages\System.Drawing.Common.5.0.2\lib\net461\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
@@ -156,6 +156,18 @@ OpenAPI spec version: v1
     <Compile Include="Exceptions\CannotRetrieveQueuesException.cs" />
     <Compile Include="Exceptions\CannotSubmitDocumentException.cs" />
     <Compile Include="Exceptions\UnableToFindQueueException.cs" />
+    <Compile Include="HelperMethods\AgentMethods.cs" />
+    <Compile Include="HelperMethods\AssetMethods.cs" />
+    <Compile Include="HelperMethods\AuthMethods.cs" />
+    <Compile Include="HelperMethods\AutomationMethods.cs" />
+    <Compile Include="HelperMethods\CredentialMethods.cs" />
+    <Compile Include="HelperMethods\DocumentMethods.cs" />
+    <Compile Include="HelperMethods\ExecutionLogMethods.cs" />
+    <Compile Include="HelperMethods\JobMethods.cs" />
+    <Compile Include="HelperMethods\QueueItemMethods.cs" />
+    <Compile Include="HelperMethods\QueueMethods.cs" />
+    <Compile Include="HelperMethods\ServerEmailMethods.cs" />
+    <Compile Include="HelperMethods\UtilityMethods.cs" />
     <Compile Include="Model\AccessRequest.cs" />
     <Compile Include="Model\Agent.cs" />
     <Compile Include="Model\AgentGroup.cs" />
@@ -250,8 +262,10 @@ OpenAPI spec version: v1
     <Compile Include="Model\EmailAccountPaginatedList.cs" />
     <Compile Include="Model\EmailAccountViewModel.cs" />
     <Compile Include="Model\EmailAccountViewModelPaginatedList.cs" />
+    <Compile Include="Model\EmailAddress.cs" />
     <Compile Include="Model\EmailAttachment.cs" />
     <Compile Include="Model\EmailAttachmentPaginatedList.cs" />
+    <Compile Include="Model\EmailMessage.cs" />
     <Compile Include="Model\EmailPaginatedList.cs" />
     <Compile Include="Model\EmailSettings.cs" />
     <Compile Include="Model\EmailSettingsPaginatedList.cs" />
@@ -348,6 +362,8 @@ OpenAPI spec version: v1
     <Compile Include="Model\RefreshModel.cs" />
     <Compile Include="Model\RefreshTokenResult.cs" />
     <Compile Include="Model\ResetPasswordBindingModel.cs" />
+    <Compile Include="Model\ResolveAgentViewModel.cs" />
+    <Compile Include="Model\ResolvedAgentResponseViewModel.cs" />
     <Compile Include="Model\RuleType.cs" />
     <Compile Include="Model\RunNowViewModel.cs" />
     <Compile Include="Model\SafeFileHandle.cs" />
@@ -390,13 +406,11 @@ OpenAPI spec version: v1
     <Compile Include="Model\StorageDrive.cs" />
     <Compile Include="Model\StorageDrivePaginatedList.cs" />
     <Compile Include="Model\TableComparisonManager.cs" />
-    <Compile Include="Model\UserInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MsBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>nuget pack $(ProjectPath) -Properties Configuration=$(ConfigurationName) -IncludeReferencedProjects -OutputDirectory $(ProjectDir)..\OpenBots.Packages</PostBuildEvent>

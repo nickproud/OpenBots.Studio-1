@@ -5,7 +5,7 @@ using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.ChromeNativeClient;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.User32;
@@ -49,6 +49,15 @@ namespace OpenBots.Commands.NativeChrome
 		public DataTable v_NativeSearchParameters { get; set; }
 
 		[Required]
+		[DisplayName("Timeout (Seconds)")]
+		[Description("Specify how many seconds to wait before throwing an exception.")]
+		[SampleUsage("30 || vSeconds")]
+		[Remarks("")]
+		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
+		[CompatibleTypes(new Type[] { typeof(int) })]
+		public string v_Timeout { get; set; }
+
+		[Required]
 		[Editable(false)]
 		[DisplayName("Output DataTable Variable")]
 		[Description("Create a new variable or select a variable from the list.")]
@@ -61,11 +70,11 @@ namespace OpenBots.Commands.NativeChrome
 		{
 			CommandName = "NativeChromeGetTableCommand";
 			SelectionName = "Native Chrome Get Table";
-			CommandEnabled = false;
+			CommandEnabled = true;
 			CommandIcon = Resources.command_nativechrome;
 
-			v_InstanceName = "DefaultChromeBrowser";
 			v_NativeSearchParameters = NativeHelper.CreateSearchParametersDT();
+			v_Timeout = "30";
 		}
 
 		public async override Task RunCommand(object sender)
@@ -73,13 +82,14 @@ namespace OpenBots.Commands.NativeChrome
 			var engine = (IAutomationEngineInstance)sender;
 			var browserObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var chromeProcess = (Process)browserObject;
+			var vTimeout = (int)await v_Timeout.EvaluateCode(engine);
 
 			WebElement webElement = await NativeHelper.DataTableToWebElement(v_NativeSearchParameters, engine);
 
-			User32Functions.BringWindowToFront(chromeProcess.Handle);
+			User32Functions.BringWindowToFront(chromeProcess.MainWindowHandle);
 
 			string responseText;
-			NativeRequest.ProcessRequest("gettable", JsonConvert.SerializeObject(webElement), out responseText);
+			NativeRequest.ProcessRequest("gettable", JsonConvert.SerializeObject(webElement), vTimeout, out responseText);
 			NativeResponse responseObject = JsonConvert.DeserializeObject<NativeResponse>(responseText);
 			if (responseObject.Status == "Failed")
 				throw new Exception(responseObject.Result);
@@ -121,6 +131,7 @@ namespace OpenBots.Commands.NativeChrome
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_InstanceName", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_NativeSearchParameters", this, editor, 
 				new Control[] { NativeHelper.NativeChromeRecorderControl(v_NativeSearchParameters, editor) }));
+			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_Timeout", this, editor));
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 			return RenderedControls;

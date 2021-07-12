@@ -328,7 +328,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="id"></param>
         /// <param name="apiVersion"></param>
         /// <returns>AutomationPaginatedList</returns>
-        AutomationPaginatedList GetAutomation (string id, string apiVersion, string organizationId);
+        Automation GetAutomation (string id, string apiVersion, string organizationId);
 
         /// <summary>
         /// Get Automation by id
@@ -340,7 +340,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="id"></param>
         /// <param name="apiVersion"></param>
         /// <returns>ApiResponse of AutomationPaginatedList</returns>
-        ApiResponse<AutomationPaginatedList> GetAutomationWithHttpInfo (string id, string apiVersion, string organizationId);
+        ApiResponse<Automation> GetAutomationWithHttpInfo (string id, string apiVersion, string organizationId);
         #endregion Synchronous Operations
         #region Asynchronous Operations
         /// <summary>
@@ -951,7 +951,7 @@ namespace OpenBots.Server.SDK.Api
 
             if (ExceptionFactory != null)
             {
-                Exception exception = ExceptionFactory("ApiVapiVersionAutomationsAutomationIdUpdateParametersPost", localVarResponse);
+                Exception exception = ExceptionFactory("UpdateParameters", localVarResponse);
                 if (exception != null) throw exception;
             }
 
@@ -2330,7 +2330,7 @@ namespace OpenBots.Server.SDK.Api
 
             if (ExceptionFactory != null)
             {
-                Exception exception = ExceptionFactory("ApiVapiVersionAutomationsPost", localVarResponse);
+                Exception exception = ExceptionFactory("UploadAutomation", localVarResponse);
                 if (exception != null) throw exception;
             }
 
@@ -2838,9 +2838,9 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="id"></param>
         /// <param name="apiVersion"></param>
         /// <returns>AutomationPaginatedList</returns>
-        public AutomationPaginatedList GetAutomation (string id, string apiVersion, string organizationId)
+        public Automation GetAutomation (string id, string apiVersion, string organizationId)
         {
-             ApiResponse<AutomationPaginatedList> localVarResponse = GetAutomationWithHttpInfo(id, apiVersion, organizationId);
+             ApiResponse<Automation> localVarResponse = GetAutomationWithHttpInfo(id, apiVersion, organizationId);
              return localVarResponse.Data;
         }
 
@@ -2851,7 +2851,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="id"></param>
         /// <param name="apiVersion"></param>
         /// <returns>ApiResponse of AutomationPaginatedList</returns>
-        public ApiResponse< AutomationPaginatedList > GetAutomationWithHttpInfo (string id, string apiVersion, string organizationId)
+        public ApiResponse< Automation > GetAutomationWithHttpInfo (string id, string apiVersion, string organizationId)
         {
             // verify the required parameter 'id' is set
             if (id == null)
@@ -2906,9 +2906,9 @@ namespace OpenBots.Server.SDK.Api
                 if (exception != null) throw exception;
             }
 
-            return new ApiResponse<AutomationPaginatedList>(localVarStatusCode,
+            return new ApiResponse<Automation>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
-                JsonConvert.DeserializeObject<AutomationPaginatedList>(localVarResponse.Content));
+                JsonConvert.DeserializeObject<Automation>(localVarResponse.Content));
         }
 
         /// <summary>

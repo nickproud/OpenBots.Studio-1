@@ -2,11 +2,12 @@
 using Gecko;
 using HtmlAgilityPack;
 using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Script;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
-using OpenBots.Studio.Utilities;
+using OpenBots.Core.User32;
+using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Supplement_Forms;
 using OpenBots.Utilities;
@@ -23,12 +24,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 {
     public partial class frmWebElementRecorder : UIForm, IfrmWebElementRecorder
     {
-        public ScriptContext ScriptContext { get; set; }
+        public IScriptContext ScriptContext { get; set; }
         public DataTable SearchParameters { get; set; }
         public string LastItemClicked { get; set; }
         public string StartURL { get; set; }
         public bool IsRecordingSequence { get; set; }
-        public bool IsCommandItemSelected { get; set; }
         public frmScriptBuilder CallBackForm { get; set; }
 
         private List<ScriptCommand> _sequenceCommandList;
@@ -252,7 +252,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
                     if (IsRecordingSequence && _isRecording)
                         BuildElementSetTextActionCommand(e.KeyCode);
-                    else if (((Keys)Enum.ToObject(typeof(Keys), e.KeyCode)).ToString() == GlobalHook.StopHookKey)
+                    else if ((Keys)Enum.ToObject(typeof(Keys), e.KeyCode) == GlobalHook.StopHookKey)
                     {
                         //STOP HOOK
                         GlobalHook.StopHook();
@@ -401,7 +401,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 return;
 
             frmAddElement addElementForm = new frmAddElement("", SearchParameters);
-            addElementForm.ScriptContext = ScriptContext;
+            addElementForm.ScriptContext = (ScriptContext)ScriptContext;
             addElementForm.ShowDialog();
 
             if (addElementForm.DialogResult == DialogResult.OK)
@@ -421,7 +421,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void pbElements_Click(object sender, EventArgs e)
         {
             frmScriptElements scriptElementForm = new frmScriptElements();
-            scriptElementForm.ScriptContext = ScriptContext;
+            scriptElementForm.ScriptContext = (ScriptContext)ScriptContext;
             scriptElementForm.ShowDialog();
 
             scriptElementForm.Dispose();
@@ -516,7 +516,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             string selectedKey = buf.ToString();
 
             //translate key press to sendkeys identifier
-            if (((Keys)Enum.ToObject(typeof(Keys), key)).ToString() == GlobalHook.StopHookKey)
+            if ((Keys)Enum.ToObject(typeof(Keys), key) == GlobalHook.StopHookKey)
             {
                 //STOP HOOK
                 GlobalHook.StopHook();

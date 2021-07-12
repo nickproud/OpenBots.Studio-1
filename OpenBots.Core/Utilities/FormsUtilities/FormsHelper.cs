@@ -1,4 +1,4 @@
-﻿using OpenBots.Core.Infrastructure;
+﻿using OpenBots.Core.Interfaces;
 using System.Threading;
 using System.Windows.Forms;
 

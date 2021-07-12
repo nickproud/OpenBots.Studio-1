@@ -22,6 +22,8 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
         static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprc, IntPtr hrgn, uint flags);
 
         public bool IsEvaluateSnippet { get; set; }
+        public bool ListBoxShown { get; set; }
+        public int TabSize { get; set; } = 4;
 
         private Color _borderColor;
         public Color BorderColor
@@ -56,7 +58,7 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
                     pi.SetValue(this, true, null);
                 }
             }
-        }
+        }       
 
         protected override void WndProc(ref Message m)
         {
@@ -76,6 +78,39 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
             base.OnSizeChanged(e);
             RedrawWindow(Handle, IntPtr.Zero, IntPtr.Zero,
                    RDW_FRAME | RDW_IUPDATENOW | RDW_INVALIDATE);
+        }
+
+        protected override bool ProcessCmdKey(ref Message Msg, Keys keyData)
+        {          
+            if (ListBoxShown && keyData == Keys.Enter)
+            {
+                OnKeyDown(new KeyEventArgs(keyData));
+                return true;
+            }
+            else if (keyData == Keys.Tab)
+            {
+                SelectedText += new string(' ', TabSize);
+                return true;
+            }
+            return base.ProcessCmdKey(ref Msg, keyData);
+        }
+
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
+            Keys key = (keyData & Keys.KeyCode);
+
+            if (ListBoxShown && key == Keys.Enter)
+            {
+                OnKeyDown(new KeyEventArgs(key));
+                return true;
+            }
+            else if (keyData == Keys.Tab)
+            {
+                SelectedText += new string(' ', TabSize);
+                return true;
+            }
+
+            return base.ProcessDialogKey(keyData);
         }
     }
 }

@@ -423,29 +423,24 @@ namespace OpenBots.Core.User32
         {
             IntPtr hWnd;
             if (windowName == "Desktop")
-            {
                 hWnd = GetDesktopWindow();
-            }
+            else if (windowName == "Current Window")
+                hWnd = GetActiveWindow();
             else
             {
                 hWnd = FindWindow(windowName);
-                SetWindowState(hWnd, WindowState.SwRestore);
-                BringWindowToFront(hWnd);
+                ActivateWindow(windowName);
             }
-
-            var rect = new Rect();
 
             //sleep to allow repaint
             Thread.Sleep(500);
 
-            GetWindowRect(hWnd, out rect);
+            GetWindowRect(hWnd, out Rect rect);
             var bounds = new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
             var screenshot = new Bitmap(bounds.Width, bounds.Height);
 
             using (var graphics = Graphics.FromImage(screenshot))
-            {
                 graphics.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
-            }
 
             return screenshot;
         }

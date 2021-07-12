@@ -128,7 +128,7 @@ namespace OpenBots.Core.ChromeNative.Extension
                 if (nativeRegistryKey != null)
                     nativeRegistryKey.DeleteSubKeyTree("");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //throw ex;
             }

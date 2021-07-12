@@ -35,7 +35,7 @@
             this.lblRecording = new System.Windows.Forms.Label();
             this.pnlOptions = new System.Windows.Forms.Panel();
             this.lblStopCaptureHotKey = new System.Windows.Forms.Label();
-            this.txtHookStop = new System.Windows.Forms.TextBox();
+            this.cbxHookStop = new System.Windows.Forms.ComboBox();
             this.chkTrackWindowsOpenLocation = new System.Windows.Forms.CheckBox();
             this.lblOtherOptions = new System.Windows.Forms.Label();
             this.lblCommandGroupingOptions = new System.Windows.Forms.Label();
@@ -115,7 +115,7 @@
             // 
             this.pnlOptions.BackColor = System.Drawing.Color.Transparent;
             this.pnlOptions.Controls.Add(this.lblStopCaptureHotKey);
-            this.pnlOptions.Controls.Add(this.txtHookStop);
+            this.pnlOptions.Controls.Add(this.cbxHookStop);
             this.pnlOptions.Controls.Add(this.chkTrackWindowsOpenLocation);
             this.pnlOptions.Controls.Add(this.lblOtherOptions);
             this.pnlOptions.Controls.Add(this.lblCommandGroupingOptions);
@@ -151,13 +151,12 @@
             // 
             // txtHookStop
             // 
-            this.txtHookStop.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtHookStop.Location = new System.Drawing.Point(284, 251);
-            this.txtHookStop.Margin = new System.Windows.Forms.Padding(5);
-            this.txtHookStop.Name = "txtHookStop";
-            this.txtHookStop.Size = new System.Drawing.Size(89, 26);
-            this.txtHookStop.TabIndex = 17;
-            this.txtHookStop.Text = "F2";
+            this.cbxHookStop.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbxHookStop.Location = new System.Drawing.Point(284, 251);
+            this.cbxHookStop.Margin = new System.Windows.Forms.Padding(5);
+            this.cbxHookStop.Name = "cbxHookStop";
+            this.cbxHookStop.Size = new System.Drawing.Size(89, 26);
+            this.cbxHookStop.TabIndex = 17;
             // 
             // chkTrackWindowsOpenLocation
             // 
@@ -379,6 +378,6 @@
         private System.Windows.Forms.Label lblCaptureOptions;
         private System.Windows.Forms.CheckBox chkTrackWindowsOpenLocation;
         private System.Windows.Forms.Label lblStopCaptureHotKey;
-        private System.Windows.Forms.TextBox txtHookStop;
+        private System.Windows.Forms.ComboBox cbxHookStop;
     }
 }

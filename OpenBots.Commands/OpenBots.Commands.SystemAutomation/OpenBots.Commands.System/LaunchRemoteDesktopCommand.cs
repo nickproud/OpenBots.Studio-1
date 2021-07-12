@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -86,9 +86,9 @@ namespace OpenBots.Commands.System
 			var width = (int)await v_RDPWidth.EvaluateCode(engine);
 			var height = (int)await v_RDPHeight.EvaluateCode(engine);
 
-			if (engine.AutomationEngineContext.ScriptEngine != null)
+			if (engine.EngineContext.ScriptEngine != null)
 			{
-				var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
+				var result = ((Form)engine.EngineContext.ScriptEngine).Invoke(new Action(() =>
 				{
 					LaunchRDPSession(machineName, userName, password, width, height);
 				}));

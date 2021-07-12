@@ -2,8 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
-using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Core.Interfaces;
 using System;
 using System.Data;
 using System.Collections.Generic;
@@ -12,7 +11,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
 using OpenBots.Core.Properties;
 using System.Threading.Tasks;
-using OpenBots.Core.Server.HelperMethods;
+using OpenBots.Server.SDK.HelperMethods;
+using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Commands.Server.Library;
 
 namespace OpenBots.Commands.Asset
 {
@@ -88,8 +89,8 @@ namespace OpenBots.Commands.Asset
 			var vAssetName = (string)await v_AssetName.EvaluateCode(engine);
 			var vOutputDirectoryPath = (string)await v_OutputDirectoryPath.EvaluateCode(engine);
 
-			var userInfo = AuthMethods.GetUserInfo();
-			var asset = AssetMethods.GetAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, vAssetName, v_AssetType);
+			var userInfo = ServerSessionVariableMethods.GetUserInfo(engine);
+			var asset = AssetMethods.GetAsset(userInfo, vAssetName, v_AssetType);
 
 			if (asset == null)
 				throw new DataException($"No Asset was found for '{vAssetName}' with type '{v_AssetType}'");
@@ -107,8 +108,7 @@ namespace OpenBots.Commands.Asset
 					assetValue = asset.JsonValue;
 					break;
 				case "File":
-					var fileId = asset.FileId;
-					AssetMethods.DownloadFileAsset(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, asset, vOutputDirectoryPath);
+					AssetMethods.DownloadFileAsset(userInfo, asset, vOutputDirectoryPath);
 					assetValue = string.Empty;
 					break;
 				default:

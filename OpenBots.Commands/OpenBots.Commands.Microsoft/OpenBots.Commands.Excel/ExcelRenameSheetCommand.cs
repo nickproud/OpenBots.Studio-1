@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -55,8 +55,6 @@ namespace OpenBots.Commands.Excel
 			SelectionName = "Rename Sheet";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_excel;
-
-			v_InstanceName = "DefaultExcel";
 		}
 
 		public async override Task RunCommand(object sender)

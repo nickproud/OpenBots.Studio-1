@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json;
+using OpenBots.Commands.Server.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.HelperMethods;
-using OpenBots.Core.Server.Models;
-using OpenBots.Core.Server.User;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Server.SDK.HelperMethods;
+using OpenBots.Server.SDK.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -90,29 +90,23 @@ namespace OpenBots.Commands.QueueItem
 			var vAttachmentDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
 			Dictionary<string, object> queueItemDict = new Dictionary<string, object>();
 
-			var userInfo = AuthMethods.GetUserInfo();
-
-			var settings = EnvironmentSettings.GetAgentSettings();
-			string agentId = settings["AgentId"];
-
-			if (string.IsNullOrEmpty(agentId))
-				throw new NullReferenceException("Agent is not connected");
-
-            Queue queue = QueueMethods.GetQueue(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, $"name eq '{vQueueName}'");
+			var userInfo = ServerSessionVariableMethods.GetUserInfo(engine);
+			Queue queue = QueueMethods.GetQueue(userInfo, $"name eq '{vQueueName}'");
 
             if (queue == null)
                 throw new DataException($"Queue with name '{vQueueName}' not found");
 
-            var queueItem = QueueItemMethods.DequeueQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, agentId, queue.Id);
+            var queueItem = QueueItemMethods.DequeueQueueItem(userInfo, queue.Id);
 
 			if (queueItem == null)
 			{
 				queueItemDict = null;
-				queueItemDict.SetVariableValue(engine, v_OutputUserVariableName);
 				return;
 			}
 
-            queueItemDict = queueItem.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
+			queueItemDict.SetVariableValue(engine, v_OutputUserVariableName);
+
+			queueItemDict = queueItem.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                                .ToDictionary(prop => prop.Name, prop => prop.GetValue(queueItem, null));
 
             queueItemDict = queueItemDict.Where(kvp => kvp.Key == "LockTransactionKey" ||
@@ -133,13 +127,13 @@ namespace OpenBots.Commands.QueueItem
                 if (Directory.Exists(vAttachmentDirectory))
                 {
                     //get all queue item attachments
-                    var attachments = QueueItemMethods.GetAttachments(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, queueItem.Id);
-                    //save each attachment in the directory
-                    foreach (var attachment in attachments)
+                    var attachments = QueueItemMethods.GetAttachments(userInfo, queueItem.Id);
+					//save each attachment in the directory
+					foreach (var attachment in attachments)
                     {
                         //export (save) in appropriate directory
-                        QueueItemMethods.DownloadFile(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, attachment, vAttachmentDirectory);
-                    }
+                        QueueItemMethods.DownloadFile(userInfo, attachment, vAttachmentDirectory);
+					}
                 }
             }
         }

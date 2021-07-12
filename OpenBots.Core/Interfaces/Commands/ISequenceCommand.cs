@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Command;
 using System.Collections.Generic;
 
-namespace OpenBots.Core.Infrastructure
+namespace OpenBots.Core.Interfaces
 {
     public interface ISequenceCommand
     {

@@ -2,7 +2,7 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
@@ -86,7 +86,6 @@ namespace OpenBots.Commands.Terminal
 			CommandEnabled = true;
 			CommandIcon = Resources.command_system;
 
-			v_InstanceName = "DefaultTerminal";
 			v_UseSsl = "No";
 			v_CloseAllInstances = "Yes";
 		}
@@ -111,9 +110,9 @@ namespace OpenBots.Commands.Terminal
 				terminalForms.ForEach(f => f.CloseForm());
 			}
 
-			if (engine.AutomationEngineContext.ScriptEngine != null)
+			if (engine.EngineContext.ScriptEngine != null)
 			{
-				var result = ((Form)engine.AutomationEngineContext.ScriptEngine).Invoke(new Action(() =>
+				var result = ((Form)engine.EngineContext.ScriptEngine).Invoke(new Action(() =>
 				{
 					LaunchTerminalSession(host, port, terminalType, useSsl);
 				}));

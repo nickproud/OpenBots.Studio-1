@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using SHDocVw;
 using System;
 using System.Collections.Generic;
@@ -51,8 +51,6 @@ namespace OpenBots.Commands.IEBrowser
             SelectionName = "Find IE Browser";          
             CommandEnabled = true;
             CommandIcon = Resources.command_web;
-
-            v_InstanceName = "DefaultIEBrowser";
         }
 
         public async override Task RunCommand(object sender)

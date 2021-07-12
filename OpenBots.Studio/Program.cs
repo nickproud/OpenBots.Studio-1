@@ -12,6 +12,7 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
+using OpenBots.Core.ChromeNative.ChromeNativeServer;
 using OpenBots.Core.Enums;
 using OpenBots.Core.IO;
 using OpenBots.Core.Project;
@@ -54,6 +55,10 @@ namespace OpenBots
             var appSettings = new ApplicationSettings();
             appSettings = appSettings.GetOrCreateApplicationSettings();
 
+            //create native chrome manifest file
+            var manifestSettingsManger = new ManifestSettingsManager();
+            manifestSettingsManger.Save();
+
             //if the exe was passed a filename argument then run the script
             if (args.Length > 0)
             {
@@ -75,7 +80,7 @@ namespace OpenBots
 
                 //initialize Logger
                 string engineLoggerFilePath = Path.Combine(Folders.GetFolder(FolderType.LogFolder), "OpenBots Engine Logs.txt");
-                Logger engineLogger = new Logging().CreateFileLogger(engineLoggerFilePath, Serilog.RollingInterval.Day);
+                Logger engineLogger = new LoggingMethods().CreateFileLogger(engineLoggerFilePath, Serilog.RollingInterval.Day);
 
                 ProjectType projectType = Project.OpenProject(configPath).ProjectType;
                 switch (projectType)
@@ -86,7 +91,8 @@ namespace OpenBots
                     case ProjectType.Python:
                     case ProjectType.TagUI:
                     case ProjectType.CSScript:
-                        ExecutionManager.RunTextEditorProject(configPath, Project.OpenProject(configPath).ProjectArguments);
+                    case ProjectType.PowerShell:
+                        ExecutionManager.RunTextEditorProject(configPath, Project.OpenProject(configPath).ProjectArguments).Wait();
                         break;
                 }                
             }

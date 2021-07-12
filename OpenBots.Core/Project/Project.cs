@@ -5,6 +5,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
+using OpenBots.Core.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,18 +28,8 @@ namespace OpenBots.Core.Project
         public List<ProjectArgument> ProjectArguments { get; set; }
         public Dictionary<string, string> Dependencies { get; set; }
 
-        [JsonIgnore]
-        public static List<string> DefaultCommandGroups = new List<string>()
-        {
-            "Core",
-            "DataManipulation",
-            "Microsoft",
-            "SystemAutomation",
-            "UIAutomation"
-        };
-
         public Project(string projectName, ProjectType projectType)
-        {
+        {      
             ProjectID = Guid.NewGuid();
             ProjectName = projectName;
             ProjectType = projectType;
@@ -51,7 +42,8 @@ namespace OpenBots.Core.Project
             {
                 case ProjectType.OpenBots:
                     Main = "Main.obscript";
-                    Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
+                    var appSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
+                    Dependencies = appSettings.ClientSettings.DefaultPackages.ToDictionary(x => x, x => commandVersion);
                     break;
                 case ProjectType.Python:
                     Main = "Main.py";
@@ -65,7 +57,19 @@ namespace OpenBots.Core.Project
                     Main = "Main.cs";
                     Dependencies = new Dictionary<string, string>();
                     break;
+                case ProjectType.PowerShell:
+                    Main = "Main.ps1";
+                    Dependencies = new Dictionary<string, string>();
+                    break;
             }
+        }
+
+        public static void SerializeProjectConfig(Project project, string configPath)
+        {
+            JsonSerializer serializer = JsonSerializer.Create();
+            using (StreamWriter sw = new StreamWriter(configPath))
+            using (JsonWriter writer = new JsonTextWriter(sw) { Formatting = Formatting.Indented })
+                serializer.Serialize(writer, project, typeof(Project));
         }
 
         public void SaveProject(string scriptPath)
@@ -90,7 +94,7 @@ namespace OpenBots.Core.Project
                 if (dirName == ProjectName && File.Exists(configPath))
                 {
                     Version = Application.ProductVersion;
-                    File.WriteAllText(configPath, JsonConvert.SerializeObject(this));
+                    SerializeProjectConfig(this, configPath);
                 }
             }
             catch (Exception)
@@ -104,7 +108,7 @@ namespace OpenBots.Core.Project
             string configPath = Path.Combine(newProjectPath, "project.obconfig");
 
             if (File.Exists(configPath))
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(newProject));
+                SerializeProjectConfig(newProject, configPath);
             else
                 throw new FileNotFoundException("project.obconfig not found. Unable to save project.");
         }
@@ -142,8 +146,10 @@ namespace OpenBots.Core.Project
 
                             project.Version = Application.ProductVersion;
                             var commandVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
-                            project.Dependencies = DefaultCommandGroups.ToDictionary(x => $"OpenBots.Commands.{x}", x => commandVersion);
-                            File.WriteAllText(configFilePath, JsonConvert.SerializeObject(project));
+
+                            var appSettings = new ApplicationSettings().GetOrCreateApplicationSettings();
+                            project.Dependencies = appSettings.ClientSettings.DefaultPackages.ToDictionary(x => x, x => commandVersion);
+                            SerializeProjectConfig(project, configFilePath);
                         }
                     }
                 }
@@ -198,7 +204,11 @@ namespace OpenBots.Core.Project
             string configFilePath = Directory.GetFiles(projectDirectory, "project.obconfig", SearchOption.AllDirectories).First();
             var config = JObject.Parse(File.ReadAllText(configFilePath));
             config["ProjectName"] = new DirectoryInfo(projectDirectory).Name;
-            File.WriteAllText(configFilePath, JsonConvert.SerializeObject(config));
+
+            JsonSerializer serializer = JsonSerializer.Create();
+            using (StreamWriter sw = new StreamWriter(configFilePath))
+            using (JsonWriter writer = new JsonTextWriter(sw) { Formatting = Formatting.Indented })
+                serializer.Serialize(writer, config);
 
             // Return "Main" Script File Path of the Process
             return configFilePath;

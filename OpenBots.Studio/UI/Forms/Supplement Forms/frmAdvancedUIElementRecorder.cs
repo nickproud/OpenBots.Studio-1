@@ -1,19 +1,20 @@
 ﻿using Autofac;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
 using OpenBots.Core.User32;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Core.Utilities.FormsUtilities;
 using OpenBots.Studio.Utilities;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
 using OpenBots.UI.Supplement_Forms;
-using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -29,7 +30,6 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         public DataTable SearchParameters { get; set; }
         public string LastItemClicked { get; set; }
         public bool IsRecordingSequence { get; set; }
-        public bool IsCommandItemSelected { get; set; }
         public string WindowName { get; set; }
         public frmScriptBuilder CallBackForm { get; set; }
         private List<ScriptCommand> _sequenceCommandList;
@@ -46,6 +46,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
         private Point _lastClickedMouseCoordinates;
         private IContainer _container;
+        public CheckBox chkStopOnClick { get; set; }
 
         public frmAdvancedUIElementRecorder(IContainer container)
         {
@@ -63,7 +64,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void frmThickAppElementRecorder_Load(object sender, EventArgs e)
         {
             //create data source from windows
-            cboWindowTitle.DataSource = CommonMethods.GetAvailableWindowNames();
+            cboWindowTitle.DataSource = GetAvailableWindowNames();
             if (!string.IsNullOrEmpty(WindowName))
                 cboWindowTitle.SelectedItem = WindowName;
         }
@@ -74,6 +75,12 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             if (!_isRecording)
             {
                 _isRecording = true;
+
+                foreach (Form form in Application.OpenForms)
+                {
+                    if (form.Text != Text)
+                        form.Hide();
+                }
 
                 SearchParameters = NewSearchParameterDataTable();
 
@@ -116,6 +123,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     }
 
                     dynamic activateWindowCommand = TypeMethods.CreateTypeInstance(_container, "ActivateWindowCommand");
+
+                    //window commands not loaded
+                    if (activateWindowCommand == null)
+                    {
+                        Close();
+                        return;
+                    }
+
                     activateWindowCommand.v_WindowName = $"\"{WindowName}\"";
                     _sequenceCommandList.Add(activateWindowCommand);
                 }
@@ -167,8 +182,12 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 {                    
                     if (_isRecording)
                     {
-                        var windowName = GetWindowName((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
+                        var process = GetProcess((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
 
+                        if (process.ProcessName == "OpenBots.Studio")
+                            return;
+
+                        var windowName = process.MainWindowTitle;
                         if (WindowName != windowName && !string.IsNullOrEmpty(windowName))
                         {
                             WindowName = windowName;
@@ -235,9 +254,14 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                 //invoke UIA
                 try
                 {
-                    if (_isRecording && e.Key.ToString() != GlobalHook.StopHookKey)
+                    if (_isRecording && e.Key != GlobalHook.StopHookKey)
                     {
-                        var windowName = GetWindowName((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
+                        var process = GetProcess((int)e.MouseCoordinates.X, (int)e.MouseCoordinates.Y);
+
+                        if (process.ProcessName == "OpenBots.Studio")
+                            return;
+
+                        var windowName = process.MainWindowTitle;
 
                         if (WindowName != windowName && !string.IsNullOrEmpty(windowName))
                         {
@@ -252,11 +276,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                         lblDescription.Text = _recordingMessage;
                     }
 
-                    if (IsRecordingSequence && _isRecording && e.Key.ToString() != GlobalHook.StopHookKey)
+                    if (IsRecordingSequence && _isRecording && e.Key != GlobalHook.StopHookKey)
                     {
                         BuildElementSetTextActionCommand(e.Key);
                     }
-                    else if (e.Key.ToString() == GlobalHook.StopHookKey)
+                    else if (e.Key == GlobalHook.StopHookKey)
                     {
                         //STOP HOOK
                         GlobalHook.StopHook();
@@ -271,7 +295,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             }
         }
 
-        private string GetWindowName(int XCoordinate, int YCoordinate)
+        private Process GetProcess(int XCoordinate, int YCoordinate)
         {
             DPoint point = new DPoint(XCoordinate, YCoordinate);
             var window = User32Functions.WindowFromPoint(point);
@@ -279,8 +303,33 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             User32Functions.GetWindowThreadProcessId(window, out uint processId);
             Process process = Process.GetProcessById((int)processId);
 
-            var windowName = process.MainWindowTitle;
-            return windowName;
+            return process;
+        }
+
+        public List<string> GetAvailableWindowNames()
+        {
+            List<string> windowList = new List<string>();
+            //get all running processes
+            Process[] processlist = Process.GetProcesses();
+            //pull the main window title for each
+            foreach (Process process in processlist)
+            {
+                if (process.ProcessName != "OpenBots.Studio" && !string.IsNullOrEmpty(process.MainWindowTitle))
+                {
+                    //add to the control list of available windows
+                    windowList.Add(process.MainWindowTitle);
+                }
+            }
+
+            SHDocVw.ShellWindows shellWindows = new SHDocVw.ShellWindows();
+
+            foreach (SHDocVw.InternetExplorer window in shellWindows)
+            {
+                windowList.Add("Windows Explorer - " + window.LocationName);
+            }
+            windowList.Sort();
+
+            return windowList;
         }
 
         private void LoadSearchParameters(Point point)
@@ -326,7 +375,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("Error Iterating over properties in window: " + ex.ToString());
+                            Console.WriteLine("Error Iterating over properties in window: " + ex.ToString());
                         }
                     }
                 }
@@ -347,7 +396,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error Iterating over properties in window: " + ex.ToString());
+                        Console.WriteLine("Error Iterating over properties in window: " + ex.ToString());
                     }
                 }
             }
@@ -356,7 +405,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
         private void pbRefresh_Click(object sender, EventArgs e)
         {
             //handle window refresh requests
-            cboWindowTitle.DataSource = CommonMethods.GetAvailableWindowNames();
+            cboWindowTitle.DataSource = GetAvailableWindowNames();
         }
 
         private void uiBtnOk_Click(object sender, EventArgs e)
@@ -419,7 +468,7 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             var selectedKey = buf.ToString();
 
             //translate key press to sendkeys identifier
-            if (key.ToString() == GlobalHook.StopHookKey)
+            if (key == GlobalHook.StopHookKey)
             {
                 //STOP HOOK
                 GlobalHook.StopHook();
@@ -488,6 +537,13 @@ namespace OpenBots.UI.Forms.Supplement_Forms
 
             GlobalHook.MouseEvent -= GlobalHook_MouseEvent;
             GlobalHook.KeyDownEvent -= GlobalHook_KeyDownEvent;
+
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form.Text != Text)
+                    form.Show();
+            }
+
             DialogResult = DialogResult.Cancel;
         }
 

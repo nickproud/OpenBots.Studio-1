@@ -3,10 +3,9 @@ using Newtonsoft.Json;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,24 +20,21 @@ namespace OpenBots.Commands.Outlook
 	[Serializable]
 	[Category("Outlook Commands")]
 	[Description("This command gets selected emails and their attachments from Outlook.")]
-
 	public class GetOutlookEmailsCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("Source Mail Folder Name")]
 		[Description("Enter the name of the Outlook mail folder the emails are located in.")]
-		[SampleUsage("\"Inbox\" || vFolderName")]
-		[Remarks("Source folder cannot be a subfolder.")]
+		[SampleUsage("\"Inbox\" || \"Inbox\\\\SubFolder\" || vFolderName")]
+		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_SourceFolder { get; set; }
 
-		[Required]
-		[DisplayName("Filter")]
+		[DisplayName("Filter (Optional)")]
 		[Description("Enter a valid Outlook filter string.")]
 		[SampleUsage("\"[Subject] = 'Hello'\" || \"[Subject] = 'Hello' and [SenderName] = 'Jane Doe'\" || vFilter || \"None\"")]
-		[Remarks("*Warning* Using 'None' as the Filter will return every email in the selected Mail Folder.")]
+		[Remarks("*Warning* Not providing a filter will return every email in the selected Mail Folder.")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(string) })]
 		public string v_Filter { get; set; }
@@ -124,8 +120,8 @@ namespace OpenBots.Commands.Outlook
 			CommandIcon = Resources.command_outlook;
 
 			v_SourceFolder = "\"Inbox\"";
-			v_GetUnreadOnly = "No";
-			v_MarkAsRead = "Yes";
+			v_GetUnreadOnly = "Yes";
+			v_MarkAsRead = "No";
 			v_SaveMessagesAndAttachments = "No";
 			v_IncludeEmbeddedImagesAsAttachments = "No";
 		}
@@ -138,26 +134,39 @@ namespace OpenBots.Commands.Outlook
 			var vAttachmentDirectory = (string)await v_AttachmentDirectory.EvaluateCode(engine);
 			var vMessageDirectory = (string)await v_MessageDirectory.EvaluateCode(engine);
 
-			if (vFolder == "") 
+			if (!string.IsNullOrEmpty(vMessageDirectory) && !Directory.Exists(vMessageDirectory))
+				Directory.CreateDirectory(vMessageDirectory);
+
+			if (!string.IsNullOrEmpty(vAttachmentDirectory) && !Directory.Exists(vAttachmentDirectory))
+				Directory.CreateDirectory(vAttachmentDirectory);
+
+			if (vFolder == "")
 				vFolder = "Inbox";
 
 			Application outlookApp = new Application();
-			AddressEntry currentUser = outlookApp.Session.CurrentUser.AddressEntry;
 			NameSpace test = outlookApp.GetNamespace("MAPI");
+			test.Logon("", "", false, true);
+			AddressEntry currentUser = outlookApp.Session.CurrentUser.AddressEntry;
 
 			if (currentUser.Type == "EX")
 			{
-				MAPIFolder inboxFolder = (MAPIFolder)test.GetDefaultFolder(OlDefaultFolders.olFolderInbox).Parent;
-				MAPIFolder userFolder = inboxFolder.Folders[vFolder];
-				Items filteredItems = null;
+				var folderSplit = vFolder.Split('\\');
+				MAPIFolder parentFolder = (MAPIFolder)test.GetDefaultFolder(OlDefaultFolders.olFolderInbox).Parent;
+				MAPIFolder childFolder = null;
 
-				if (string.IsNullOrEmpty(vFilter.Trim()))
-					throw new NullReferenceException("Outlook Filter not specified");
-				else if (vFilter != "None")
+				foreach (var folder in folderSplit)
+				{
+					childFolder = parentFolder.Folders[folder];
+					parentFolder = childFolder;
+				}
+
+				Items filteredItems;
+
+				if (!string.IsNullOrEmpty(vFilter))
 				{
 					try
 					{
-						filteredItems = userFolder.Items.Restrict(vFilter);
+						filteredItems = childFolder.Items.Restrict(vFilter);
 					}
 					catch (System.Exception)
 					{
@@ -165,7 +174,7 @@ namespace OpenBots.Commands.Outlook
 					}
 				}
 				else
-					filteredItems = userFolder.Items;
+					filteredItems = childFolder.Items;
 
 				List<MailItem> outMail = new List<MailItem>();
 
@@ -173,7 +182,6 @@ namespace OpenBots.Commands.Outlook
 				{
 					if (_obj is MailItem)
 					{
-
 						MailItem tempMail = (MailItem)_obj;
 						if (v_GetUnreadOnly == "Yes")
 						{
@@ -183,10 +191,11 @@ namespace OpenBots.Commands.Outlook
 								outMail.Add(tempMail);
 							}
 						}
-						else {
+						else
+						{
 							ProcessEmail(tempMail, vMessageDirectory, vAttachmentDirectory);
 							outMail.Add(tempMail);
-						}   
+						}
 					}
 				}
 
@@ -209,7 +218,6 @@ namespace OpenBots.Commands.Outlook
 			_savingControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_IncludeEmbeddedImagesAsAttachments", this, editor));
 			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_MessageDirectory", this, editor));
 			_savingControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_AttachmentDirectory", this, editor));
-
 			RenderedControls.AddRange(_savingControls);
 
 			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
@@ -232,26 +240,25 @@ namespace OpenBots.Commands.Outlook
 		private void ProcessEmail(MailItem mail, string msgDirectory, string attDirectory)
 		{
 			if (v_MarkAsRead == "Yes")
-			{
 				mail.UnRead = false;
-			}
+
 			if (v_SaveMessagesAndAttachments == "Yes")
 			{
 				if (Directory.Exists(msgDirectory))
 				{
 					if (string.IsNullOrEmpty(mail.Subject))
 						mail.Subject = "(no subject)";
+
 					string mailFileName = string.Join("_", mail.Subject.Split(Path.GetInvalidFileNameChars()));
-					mail.SaveAs(Path.Combine(msgDirectory, mailFileName + ".msg"));
+					mail.SaveAs(Path.Combine(msgDirectory, mailFileName + Guid.NewGuid() + ".msg"));
 				}
 
 				if (Directory.Exists(attDirectory))
 				{
-					if (v_IncludeEmbeddedImagesAsAttachments.Equals("Yes")) {
+					if (v_IncludeEmbeddedImagesAsAttachments.Equals("Yes"))
+					{
 						foreach (Attachment attachment in mail.Attachments)
-						{
 							attachment.SaveAsFile(Path.Combine(attDirectory, attachment.FileName));
-						}
 					}
 					else
 					{
@@ -260,9 +267,7 @@ namespace OpenBots.Commands.Outlook
 							var flags = mail.HTMLBody.Contains(attachment.FileName);
 
 							if (!flags)
-							{
 								attachment.SaveAsFile(Path.Combine(attDirectory, attachment.FileName));
-							}
 						}
 					}
 				}
@@ -276,7 +281,7 @@ namespace OpenBots.Commands.Outlook
 				foreach (var ctrl in _savingControls)
 					ctrl.Visible = true;
 			}
-			else if(_hasRendered)
+			else if (_hasRendered)
 			{
 				foreach (var ctrl in _savingControls)
 				{

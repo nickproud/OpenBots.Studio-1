@@ -17,7 +17,6 @@ using OpenBots.Server.SDK.Model;
 using Newtonsoft.Json;
 using RestSharp.Serialization.Json;
 using Newtonsoft.Json.Linq;
-using IdentityModel.Client;
 using System.Net.Http;
 
 namespace OpenBots.Server.SDK.Api
@@ -60,7 +59,7 @@ namespace OpenBots.Server.SDK.Api
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        UserInfo GetUserInfo(string apiVersion, string agentId, string serverType, string organizationName, string environment, string serverUrl, string username, string password);
+        UserInfo GetUserInfo(string apiVersion, string serverType, string organizationName, string environment, string serverUrl, string username, string password, string agentId);
         /// <summary>
         /// Get user info for logged in authenticated user
         /// </summary>
@@ -108,6 +107,29 @@ namespace OpenBots.Server.SDK.Api
         ApiResponse<Object> ApiVapiVersionAuthTokenPostWithHttpInfo (string apiVersion, Login body = null);
         #endregion Synchronous Operations
         #region Asynchronous Operations
+        /// <summary>
+        /// Refresh expired access and old refresh token
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="apiVersion"></param>
+        /// <param name="body"> (optional)</param>
+        /// <returns>Task of void</returns>
+        System.Threading.Tasks.Task ApiVapiVersionAuthRefreshPostAsync(string apiVersion, RefreshModel body = null);
+
+        /// <summary>
+        /// Refresh expired access and old refresh token
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="apiVersion"></param>
+        /// <param name="body"> (optional)</param>
+        /// <returns>Task of ApiResponse</returns>
+        System.Threading.Tasks.Task<ApiResponse<Object>> ApiVapiVersionAuthRefreshPostAsyncWithHttpInfo(string apiVersion, RefreshModel body = null);
         /// <summary>
         /// Used to get current user&#x27;s IP Address
         /// </summary>
@@ -180,7 +202,7 @@ namespace OpenBots.Server.SDK.Api
     /// <summary>
     /// Represents a collection of functions to interact with the API endpoints
     /// </summary>
-        public partial class AuthApi : IAuthApi
+    public partial class AuthApi : IAuthApi
     {
         private OpenBots.Server.SDK.Client.ExceptionFactory _exceptionFactory = (name, response) => null;
 
@@ -245,7 +267,7 @@ namespace OpenBots.Server.SDK.Api
         /// Gets or sets the configuration object
         /// </summary>
         /// <value>An instance of the Configuration</value>
-        public OpenBots.Server.SDK.Client.Configuration Configuration {get; set;}
+        public OpenBots.Server.SDK.Client.Configuration Configuration { get; set; }
 
         /// <summary>
         /// Provides a factory method hook for the creation of exceptions.
@@ -283,6 +305,89 @@ namespace OpenBots.Server.SDK.Api
         public void AddDefaultHeader(string key, string value)
         {
             this.Configuration.AddDefaultHeader(key, value);
+        }
+
+        /// <summary>
+        /// Refresh expired access and old refresh token 
+        /// </summary>
+        /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="apiVersion"></param>
+        /// <param name="body"> (optional)</param>
+        /// <returns>Task of void</returns>
+        public async System.Threading.Tasks.Task ApiVapiVersionAuthRefreshPostAsync(string apiVersion, RefreshModel body = null)
+        {
+            await ApiVapiVersionAuthRefreshPostAsyncWithHttpInfo(apiVersion, body);
+
+        }
+
+        /// <summary>
+        /// Refresh expired access and old refresh token 
+        /// </summary>
+        /// <exception cref="OpenBots.Server.SDK.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="apiVersion"></param>
+        /// <param name="body"> (optional)</param>
+        /// <returns>Task of ApiResponse</returns>
+        public async System.Threading.Tasks.Task<ApiResponse<Object>> ApiVapiVersionAuthRefreshPostAsyncWithHttpInfo(string apiVersion, RefreshModel body = null)
+        {
+            // verify the required parameter 'apiVersion' is set
+            if (apiVersion == null)
+                throw new ApiException(400, "Missing required parameter 'apiVersion' when calling AuthApi->ApiVapiVersionAuthRefreshPost");
+
+            var localVarPath = "/api/v{apiVersion}/Auth/Refresh";
+            var localVarPathParams = new Dictionary<String, String>();
+            var localVarQueryParams = new List<KeyValuePair<String, String>>();
+            var localVarHeaderParams = new Dictionary<String, String>(this.Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<String, String>();
+            var localVarFileParams = new Dictionary<String, FileParameter>();
+            Object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            String[] localVarHttpContentTypes = new String[] {
+                "application/json-patch+json",
+                "application/json",
+                "text/json",
+                "application/_*+json"
+            };
+            String localVarHttpContentType = this.Configuration.ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            String[] localVarHttpHeaderAccepts = new String[] {
+            };
+            String localVarHttpHeaderAccept = this.Configuration.ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            if (apiVersion != null) localVarPathParams.Add("apiVersion", this.Configuration.ApiClient.ParameterToString(apiVersion)); // path parameter
+            if (body != null && body.GetType() != typeof(byte[]))
+            {
+                localVarPostBody = this.Configuration.ApiClient.Serialize(body); // http body (model) parameter
+            }
+            else
+            {
+                localVarPostBody = body; // byte array
+            }
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)await this.Configuration.ApiClient.CallApiAsync(localVarPath,
+                Method.POST, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (ExceptionFactory != null)
+            {
+                Exception exception = ExceptionFactory("ApiVapiVersionAuthRefreshPost", localVarResponse);
+                if (exception != null) throw exception;
+            }
+
+            var response = localVarResponse.Content;
+            var responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
+            body.Token = responseDict["jwt"];
+            body.RefreshToken = responseDict["refreshToken"];
+
+            return new ApiResponse<Object>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
+                body);
         }
 
         /// <summary>
@@ -420,12 +525,10 @@ namespace OpenBots.Server.SDK.Api
                 (string)this.Configuration.ApiClient.Deserialize(localVarResponse, typeof(string)));
         }
 
-        public UserInfo GetUserInfo(string apiVersion, string agentId, string serverType, string organizationName, string environment, string serverUrl, string username, string password)
+        public UserInfo GetUserInfo(string apiVersion, string serverType, string organizationName, string environment, string serverUrl, string username, string password, string agentId)
         {
-            if (string.IsNullOrEmpty(agentId))
-                throw new Exception("Agent is not connected");
-
-            string organizationId = string.Empty;
+            ServerInfo serverInfo = new ServerInfo();
+            OrganizationListing organization = new OrganizationListing();
             string loginUrl = serverUrl;
             string documentsUrl = string.Empty;
 
@@ -456,20 +559,8 @@ namespace OpenBots.Server.SDK.Api
                         if (serviceRegistration.IsCurrentlyUnderMaintenance)
                             throw new Exception($"Server {serviceRegistration.Name} is currently undergoing maintenance and cannot be accessed at this time");
                         else documentsUrl = serviceRegistration.ServiceBaseUri.ToString();
-
-                        if (environment == "LIVE")
-                            loginUrl = "https://login.openbots.io/";
-                        if (environment == "DEV")
-                            loginUrl = "https://dev.login.openbots.io/";
-                        if (environment == "TEST")
-                            loginUrl = "https://test.login.openbots.io/";
-                        if (environment == "DEMO")
-                            loginUrl = "https://demo.login.openbots.io/";
                     }
                 }
-
-                if (serverType == "Cloud")
-                    loginUrl = "https://test.login.openbots.io/"; // user authentication
             }
 
             if (string.IsNullOrEmpty(serverUrl))
@@ -481,22 +572,33 @@ namespace OpenBots.Server.SDK.Api
                 throw new Exception("Credential values are null or an empty string");
 
 
-            string token = GetAuthToken(apiVersion, serverType, username, password, loginUrl);
+            var authDict = GetAuthToken(apiVersion, serverType, username, password, loginUrl);
+            string token = authDict["AuthToken"];
+            string refreshToken = authDict["RefreshToken"];
+            string userId = null;
+            if (serverType == "Local")
+                userId = authDict["UserId"];
 
             if (serverType == "Cloud")
             {
-                var serverInfo = GetServerInfo(apiVersion, serverUrl, token);
-                organizationId = GetOrganizationId(token, apiVersion, organizationName, serverUrl, serverInfo.MyOrganizations);
+                serverInfo = GetServerInfo(apiVersion, serverUrl, token);
+                organization = GetOrganization(token, apiVersion, organizationName, serverUrl, serverInfo.MyOrganizations);
             }
 
             var userInfo = new UserInfo()
             {
-                OrganizationId = organizationId,
+                OrganizationId = organization?.Id.ToString(),
+                OrganizationName = organization?.Name,
                 ServerType = serverType,
                 Token = token,
+                RefreshToken = refreshToken,
                 ServerUrl = serverUrl,
                 LoginUrl = loginUrl,
-                DocumentsUrl = documentsUrl
+                DocumentsUrl = documentsUrl,
+                ApiVersion = apiVersion,
+                Environment = environment,
+                UserId = userId ?? serverInfo?.PersonId.ToString(),
+                AgentId = agentId
             };
 
             return userInfo;
@@ -520,108 +622,84 @@ namespace OpenBots.Server.SDK.Api
             return JsonConvert.DeserializeObject<List<ServiceRegistration>>(items);
         }
 
-        public static string GetOrganizationId(string token, string apiVersion, string organizationName, string serverUrl, List<OrganizationListing> orgList)
+        public static OrganizationListing GetOrganization(string token, string apiVersion, string organizationName, string serverUrl, List<OrganizationListing> orgList)
         {
             var apiInstance = new OrganizationsApi(serverUrl);
             apiInstance.Configuration.AccessToken = token;
+            OrganizationListing organization = null;
+
             try
             {
-                bool IsUserInOrg = false;
-                foreach (var org in orgList)
+                if (string.IsNullOrEmpty(organizationName))
                 {
-                    if (org.Name == organizationName)
-                        IsUserInOrg = true;
+                    if (orgList.Count == 1)
+                    {
+                        organization = orgList.FirstOrDefault();
+                    }
+
+                    if (orgList.Count == 0) throw new Exception("No Organizations were found for the current user");
+                    if (orgList.Count > 1) throw new Exception("Multiple Organizations exist for the current user, please specify an Organization name");
+                }
+                else
+                {
+                    bool IsUserInOrg = false;
+                    foreach (var org in orgList)
+                    {
+                        if (org.Name == organizationName)
+                        {
+                            IsUserInOrg = true;
+                            organization = org;
+                            break;
+                        }
+                    }
+
+                    if (!IsUserInOrg)
+                        throw new Exception($"Organization {organizationName} does not match user's existing organizations");
                 }
 
-                if (!IsUserInOrg)
-                    throw new Exception($"Organization {organizationName} does not match user's existing organizations");
-
-                string filter = $"Name eq '{organizationName}'";
-                var result = apiInstance.ApiVapiVersionOrganizationsGetAsyncWithHttpInfo(apiVersion, filter).Result.Data.Items.FirstOrDefault();
-                if (result == null)
-                    throw new Exception($"Organization {organizationName} could not be found");
-
-                return result.Id.ToString();
+                return organization;
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Exception when calling OrganizationsApi.ApiVapiVersionOrganizationsGetAsyncWithHttpInfo: " + ex.Message);
+                if (ex.Message != "One or more errors occurred.")
+                    throw new InvalidOperationException("Exception when calling OrganizationsApi.GetOrganizations: " + ex.Message);
+                else
+                    throw new InvalidOperationException(ex.InnerException.Message);
             }
         }
 
-        public static string GetAuthToken(string apiVersion, string serverType, string username, string password, string loginUrl)
+        public static Dictionary<string, string> GetAuthToken(string apiVersion, string serverType, string username, string password, string loginUrl)
         {
-            string token;
+            var tokenDict = new Dictionary<string, string>();
             var login = new Login(username, password);
+            var apiInstance = new AuthApi(loginUrl);
 
             if (serverType == "Local") //get token from open source Server
             {
-                var apiInstance = new AuthApi(loginUrl);
-
                 try
                 {
                     var result = apiInstance.ApiVapiVersionAuthTokenPostAsyncWithHttpInfo(apiVersion, login).Result.Data.ToString();
                     JObject jsonObj = JObject.Parse(result.Replace("[]", "null"));
                     Dictionary<string, string> resultDict = jsonObj.ToObject<Dictionary<string, string>>();
-                    token = resultDict["token"].ToString();
+                    var token = resultDict["token"].ToString();
+                    var refreshToken = resultDict["refreshToken"].ToString();
+                    var personId = resultDict["personId"].ToString();
+                    tokenDict.Add("AuthToken", token);
+                    tokenDict.Add("RefreshToken", refreshToken);
+                    tokenDict.Add("UserId", personId);
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidOperationException("Exception when calling AuthApi.ApiVapiVersionAuthTokenPostAsyncWithHttpInfo: " + ex.Message);
+                    if (ex.Message != "One or more errors occurred.")
+                        throw new InvalidOperationException("Exception when calling AuthApi.GetAuthToken: " + ex.Message);
+                    else
+                        throw new InvalidOperationException(ex.InnerException.Message);
                 }
             }
-            else if (serverType == "Cloud") //get machine token for cloud Server
-            {
-                //user authentication
-                var httpClient = new HttpClient();
-                var identityServerResponse = httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
-                {
-                    Address = loginUrl + "connect/token",
-                    ClientId = "client",
-                    UserName = username,
-                    Password = password
-                }).Result;
+            else //if (serverType == "Cloud" || serverType == "Documents") //get machine token for cloud Server
+                tokenDict = apiInstance.GetCloudToken(loginUrl, apiVersion, username, password);
 
-                if (identityServerResponse.IsError) throw new Exception(identityServerResponse.ErrorDescription);
-
-                token = identityServerResponse.AccessToken;
-
-                ////agent authentication
-                //var client = new RestClient(loginUrl);
-                //var request = new RestRequest($"api/v{apiVersion}/Auth/machine/token", Method.POST);
-                //request.RequestFormat = DataFormat.Json;
-                ////request.AddJsonBody(login);
-                //request.AddJsonBody($"{{ \"userName\": \"{username}\", \"password\": \"{password}\" }} ");
-
-                //var response = client.Execute(request);
-
-                //if (!response.IsSuccessful)
-                //    throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
-
-                //var deserializer = new JsonDeserializer();
-                //var output = deserializer.Deserialize<Dictionary<string, string>>(response);
-                //var items = output["items"];
-                //return JsonConvert.DeserializeObject<List<ServiceRegistration>>(items);
-                //token = "";
-            }
-            else // (serverType == "Documents") get user token for Documents
-            {
-                //TODO: Switch this to the same logic to authenticate machine/agent
-                //user authentication
-                var httpClient = new HttpClient();
-                var identityServerResponse = httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
-                {
-                    Address = loginUrl + "connect/token",
-                    ClientId = "client",
-                    UserName = username,
-                    Password = password
-                }).Result;
-
-                if (identityServerResponse.IsError) throw new Exception(identityServerResponse.ErrorDescription);
-
-                token = identityServerResponse.AccessToken;
-            }
-            return token;
+            return tokenDict;
         }
 
         public static ServerInfo GetServerInfo(string apiVersion, string serverUrl, string token)
@@ -637,10 +715,78 @@ namespace OpenBots.Server.SDK.Api
             catch (Exception ex)
             {
                 if (ex.Message != "One or more errors occurred.")
-                    throw new InvalidOperationException("Exception when calling AuthApi.ApiVapiVersionAuthGetUserInfoGetAsyncWithHttpInfo: " + ex.Message);
+                    throw new InvalidOperationException("Exception when calling AuthApi.GetUserInfo: " + ex.Message);
                 else
                     throw new InvalidOperationException(ex.InnerException.Message);
             }
+        }
+
+        public Dictionary<string, string> GetCloudToken(string loginUrl, string apiVersion, string username, string password)
+        {
+            var client = new RestClient(loginUrl);
+            var request = new RestRequest($"api/v{apiVersion}/Auth/machine/token", Method.POST);
+            request.RequestFormat = DataFormat.Json;
+            request.AddJsonBody($"{{ \"userName\": \"{username}\", \"password\": \"{password}\" }}");
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+
+            var deserializer = new JsonDeserializer();
+            var output = deserializer.Deserialize<Dictionary<string, string>>(response);
+            string token = output["accessToken"];
+            string refreshToken = output["refreshToken"];
+            var authDict = new Dictionary<string, string>();
+            authDict.Add("AuthToken", token);
+            authDict.Add("RefreshToken", refreshToken);
+
+            return authDict;
+        }
+
+        public RefreshModel RefreshToken(UserInfo userInfo)
+        {
+            var tokens = new RefreshModel()
+            {
+                Token = userInfo.Token,
+                RefreshToken = userInfo.RefreshToken
+            };
+
+            if (userInfo.ServerType == "Local")
+            {
+                tokens = (RefreshModel)ApiVapiVersionAuthRefreshPostAsyncWithHttpInfo(userInfo.ApiVersion, tokens).Result.Data;
+            }
+            else //server type == "Cloud"
+            {
+                tokens = CloudRefreshToken(userInfo.LoginUrl, userInfo.ApiVersion, userInfo.RefreshToken);
+            }
+
+            return tokens;
+        }
+
+        public RefreshModel CloudRefreshToken(string loginUrl, string apiVersion, string refreshToken)
+        {
+            var client = new RestClient(loginUrl);
+            var request = new RestRequest($"api/v{apiVersion}/Auth/machine/RefreshToken/{refreshToken}", Method.GET);
+            request.RequestFormat = DataFormat.Json;
+
+            var response = client.Execute(request);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException($"Status Code: {response.StatusCode} - Error Message: {response.ErrorMessage}");
+
+            var deserializer = new JsonDeserializer();
+            var output = deserializer.Deserialize<Dictionary<string, string>>(response);
+            string token = output["accessToken"];
+            refreshToken = output["refreshToken"];
+
+            var refreshModel = new RefreshModel()
+            {
+                Token = token,
+                RefreshToken = refreshToken
+            };
+
+            return refreshModel;
         }
 
         /// <summary>
@@ -769,7 +915,7 @@ namespace OpenBots.Server.SDK.Api
 
             if (ExceptionFactory != null)
             {
-                Exception exception = ExceptionFactory("ApiVapiVersionAuthGetUserInfoGet", localVarResponse);
+                Exception exception = ExceptionFactory("GetUserInfo", localVarResponse);
                 if (exception != null) throw exception;
             }
 
@@ -924,7 +1070,7 @@ namespace OpenBots.Server.SDK.Api
 
             if (ExceptionFactory != null)
             {
-                Exception exception = ExceptionFactory("ApiVapiVersionAuthTokenPost", localVarResponse);
+                Exception exception = ExceptionFactory("GetAuthToken", localVarResponse);
                 if (exception != null) throw exception;
             }
 

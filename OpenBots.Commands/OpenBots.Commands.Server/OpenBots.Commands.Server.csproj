@@ -84,12 +84,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Library\ServerSessionVariableMethods.cs" />
     <Compile Include="OpenBots.Commands.Asset\AppendTextAssetCommand.cs" />
     <Compile Include="OpenBots.Commands.Asset\CalculateNumberAssetCommand.cs" />
     <Compile Include="OpenBots.Commands.Asset\GetAssetCommand.cs" />
     <Compile Include="OpenBots.Commands.Asset\UpdateAssetCommand.cs" />
     <Compile Include="OpenBots.Commands.Credential\GetCredentialCommand.cs" />
     <Compile Include="OpenBots.Commands.Credential\UpdateCredentialCommand.cs" />
+    <Compile Include="OpenBots.Commands.Job\StopJobCommand.cs" />
     <Compile Include="OpenBots.Commands.QueueItem\AddQueueItemCommand.cs" />
     <Compile Include="OpenBots.Commands.QueueItem\ExtendQueueItemCommand.cs" />
     <Compile Include="OpenBots.Commands.QueueItem\SetQueueItemStatusCommand.cs" />
@@ -102,10 +104,13 @@
       <Project>{6956836d-d2b0-4b7a-b06d-fa3a22b4c4ff}</Project>
       <Name>OpenBots.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\OpenBots.Server.SDK\OpenBots.Server.SDK.csproj">
+      <Project>{9f13c5ca-eee7-49d1-bea1-2a0bbf6df261}</Project>
+      <Name>OpenBots.Server.SDK</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Forms\" />
-    <Folder Include="Library\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>

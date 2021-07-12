@@ -3,11 +3,10 @@ using OpenBots.Commands.Microsoft.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,12 +20,11 @@ using DataTable = System.Data.DataTable;
 
 namespace OpenBots.Commands.Excel
 {
-	[Serializable]
+    [Serializable]
 	[Category("Excel Commands")]
 	[Description("This command reads an Excel Config Worksheet and stores it in a Dictionary.")]
 	public class LoadDictionaryCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("Excel Instance Name")]
 		[Description("Enter the unique instance that was specified in the **Create Application** command.")]
@@ -70,7 +68,6 @@ namespace OpenBots.Commands.Excel
 			CommandEnabled = true;
 			CommandIcon = Resources.command_excel;
 
-			v_InstanceName = "DefaultExcel";
 			v_KeyColumn = "\"Name\"";
 			v_ValueColumn = "\"Value\"";
 		}
@@ -85,12 +82,9 @@ namespace OpenBots.Commands.Excel
 			var excelInstance = (Application)excelObject;
 
 			Worksheet excelSheet = excelInstance.ActiveSheet;
+			Range sourceRange = excelInstance.GetRange("A1:", excelSheet);
 
-			Range sourceRange = excelSheet.UsedRange;
-			var last = excelInstance.GetAddressOfLastCell(excelSheet);
-			Range cellValue = excelSheet.Range["A1", last];
-			
-			int rw = cellValue.Rows.Count;
+			int rw = sourceRange.Rows.Count;
 			int cl = 2;
 			int rCnt;
 			int cCnt;
@@ -102,21 +96,21 @@ namespace OpenBots.Commands.Excel
 				DataRow newRow = DT.NewRow();
 				for (cCnt = 1; cCnt <= cl; cCnt++)
 				{
-					if (((cellValue.Cells[rCnt, cCnt] as Range).Value2) != null)
+					if (((sourceRange.Cells[rCnt, cCnt] as Range).Value2) != null)
 					{
 						if (!DT.Columns.Contains(cCnt.ToString()))
 						{
 							DT.Columns.Add(cCnt.ToString());
 						}
-						newRow[cCnt.ToString()] = ((cellValue.Cells[rCnt, cCnt] as Range).Value2).ToString();
+						newRow[cCnt.ToString()] = ((sourceRange.Cells[rCnt, cCnt] as Range).Value2).ToString();
 					}
 				}
 				DT.Rows.Add(newRow);
 			}
 
-			string cKeyName = ((cellValue.Cells[1, 1] as Range).Value2).ToString();
+			string cKeyName = ((sourceRange.Cells[1, 1] as Range).Value2).ToString();
 			DT.Columns[0].ColumnName = cKeyName;
-			string cValueName = ((cellValue.Cells[1, 2] as Range).Value2).ToString();
+			string cValueName = ((sourceRange.Cells[1, 2] as Range).Value2).ToString();
 			DT.Columns[1].ColumnName = cValueName;
 
 			var dictlist = DT.AsEnumerable().Select(x => new

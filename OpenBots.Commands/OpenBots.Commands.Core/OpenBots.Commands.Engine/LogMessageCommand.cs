@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using Serilog;
@@ -101,7 +101,7 @@ namespace OpenBots.Commands.Engine
 			if (loggerFilePath != "Engine Logs")
 			{
 				//create new logger and log to custom file
-				using (var logger = new Logging().CreateFileLogger(loggerFilePath, RollingInterval.Infinite))
+				using (var logger = new LoggingMethods().CreateFileLogger(loggerFilePath, RollingInterval.Infinite))
 				{
 					switch (v_LogType)
 					{

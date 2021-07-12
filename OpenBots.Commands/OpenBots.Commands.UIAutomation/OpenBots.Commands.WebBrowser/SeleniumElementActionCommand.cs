@@ -4,7 +4,7 @@ using OpenBots.Commands.UIAutomation.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.UI.Controls;
@@ -24,6 +24,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
@@ -70,6 +71,7 @@ namespace OpenBots.Commands.WebBrowser
 		[PropertyUISelectionOption("Right Click")]
 		[PropertyUISelectionOption("Middle Click")]
 		[PropertyUISelectionOption("Double Left Click")]
+		[PropertyUISelectionOption("Hover Over Element")]
 		[PropertyUISelectionOption("Set Text")]
 		[PropertyUISelectionOption("Set Secure Text")]
 		[PropertyUISelectionOption("Get Text")]
@@ -93,10 +95,10 @@ namespace OpenBots.Commands.WebBrowser
 		[Description("Action Parameters will be determined based on the action settings selected.")]
 		[SampleUsage("\"data\" || vData || vOutputVariable")]
 		[Remarks("Action Parameters range from adding offset coordinates to specifying a variable to apply element text to.\n"+
-				 "Advanced keystrokes may be set the following way: Hello[tab]World[enter]")]
+				 "Advanced keystrokes may be set the following way: \"Hello[tab]World[enter]\"")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
 		[CompatibleTypes(new Type[] { typeof(SecureString), typeof(IWebElement), typeof(List<IWebElement>), typeof(List<string>), 
-			typeof(DataTable), typeof(string), typeof(bool) })]
+			typeof(DataTable), typeof(string), typeof(bool),  typeof(int) })]
 		public DataTable v_WebActionParameterTable { get; set; }
 
 		[Required]
@@ -203,7 +205,15 @@ namespace OpenBots.Commands.WebBrowser
 				case "Double Left Click":
 					actions.DoubleClick((IWebElement)element).Perform();
 					break;
+				case "Hover Over Element":
+					string hoverTime = (from rw in v_WebActionParameterTable.AsEnumerable()
+											  where rw.Field<string>("Parameter Name") == "Hover Time (Seconds)"
+											  select rw.Field<string>("Parameter Value")).FirstOrDefault();
+					int hoverTimeInt = (int)await hoverTime.EvaluateCode(engine) * 1000;
 
+					actions.MoveToElement((IWebElement)element).Perform();
+					Thread.Sleep(hoverTimeInt);
+					break;
 				case "Set Text":
 					string textToSetString = (from rw in v_WebActionParameterTable.AsEnumerable()
 										where rw.Field<string>("Parameter Name") == "Text To Set"
@@ -224,7 +234,6 @@ namespace OpenBots.Commands.WebBrowser
 
 					Type seleniumKeys = typeof(OpenQA.Selenium.Keys);
 					FieldInfo[] fields = seleniumKeys.GetFields(BindingFlags.Static | BindingFlags.Public);
-					string finalTextToSet = "";
 
 					//check if chunked string contains a key press command like {ENTER}
 					foreach (string chunkedString in potentialKeyPresses)
@@ -232,15 +241,14 @@ namespace OpenBots.Commands.WebBrowser
 						if (chunkedString == "")
 							continue;
 
-						if (fields.Any(f => f.Name.ToLower() == chunkedString.ToLower()) && textToSet.Contains("["+ chunkedString +"]"))
+						if (fields.Any(f => f.Name.ToLower() == chunkedString.ToLower()) && textToSet.Contains($"[{chunkedString}]"))
 						{
 							string keyPress = (string)fields.Where(f => f.Name.ToLower() == chunkedString.ToLower()).FirstOrDefault().GetValue(null);
-							finalTextToSet += keyPress;
+							textToSet = textToSet.Replace($"[{chunkedString}]", keyPress);
 						}
-						else
-							finalTextToSet += chunkedString;
 					}
-					((IWebElement)element).SendKeys(finalTextToSet);
+
+					((IWebElement)element).SendKeys(textToSet);
 					break;
 
 				case "Set Secure Text":
@@ -475,7 +483,7 @@ namespace OpenBots.Commands.WebBrowser
 
 			//disabled native chrome recorder for 1.5.0
 			var searchParameterControls = commandControls.CreateDefaultWebElementDataGridViewGroupFor("v_SeleniumSearchParameters", this, editor,
-				new Control[] { obWebRecorderControl /*, NativeHelper.NativeChromeRecorderControl(v_SeleniumSearchParameters, editor) */});
+				new Control[] { obWebRecorderControl , NativeHelper.NativeChromeRecorderControl(v_SeleniumSearchParameters, editor)});
 			searchParameterControls.Last().MouseEnter += ActionParametersGridViewHelper_MouseEnter;
 			RenderedControls.AddRange(searchParameterControls);
 
@@ -541,6 +549,8 @@ namespace OpenBots.Commands.WebBrowser
 			{
 				//Search parameter not found
 			}
+
+			commandControls.AddIntellisenseListBoxToCommandForm();
 		}
 
 		public void SeleniumAction_SelectionChangeCommitted(object sender, EventArgs e)
@@ -571,6 +581,14 @@ namespace OpenBots.Commands.WebBrowser
 						actionParameters.Rows.Add("X Adjustment", 0);
 						actionParameters.Rows.Add("Y Adjustment", 0);
 					}
+					break;
+
+				case "Hover Over Element":
+					foreach (var ctrl in _actionParametersControls)
+						ctrl.Show();
+
+					if (sender != null)
+						actionParameters.Rows.Add("Hover Time (Seconds)", 1);
 					break;
 
 				case "Set Text":

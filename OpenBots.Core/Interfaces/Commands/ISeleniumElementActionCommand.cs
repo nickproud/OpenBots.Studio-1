@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace OpenBots.Core.Infrastructure
+namespace OpenBots.Core.Interfaces
 {
     public interface ISeleniumElementActionCommand
     {

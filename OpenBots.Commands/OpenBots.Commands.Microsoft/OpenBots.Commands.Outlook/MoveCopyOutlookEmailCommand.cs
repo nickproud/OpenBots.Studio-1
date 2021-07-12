@@ -2,10 +2,9 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,10 +18,8 @@ namespace OpenBots.Commands.Outlook
 	[Serializable]
 	[Category("Outlook Commands")]
 	[Description("This command moves or copies a selected email in Outlook.")]
-
 	public class MoveCopyOutlookEmailCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("MailItem")]
 		[Description("Enter the MailItem to move or copy.")]
@@ -75,10 +72,11 @@ namespace OpenBots.Commands.Outlook
 			var engine = (IAutomationEngineInstance)sender;
 			MailItem vMailItem = (MailItem)await v_MailItem.EvaluateCode(engine);
 			var vDestinationFolder = (string)await v_DestinationFolder.EvaluateCode(engine);
-			
+
 			Application outlookApp = new Application();
-			AddressEntry currentUser = outlookApp.Session.CurrentUser.AddressEntry;
 			NameSpace test = outlookApp.GetNamespace("MAPI");
+			test.Logon("", "", false, true);
+			AddressEntry currentUser = outlookApp.Session.CurrentUser.AddressEntry;
 
 			if (currentUser.Type == "EX")
 			{
@@ -93,14 +91,13 @@ namespace OpenBots.Commands.Outlook
 							vMailItem.Move(destinationFolder);
 					}
 					else
-					{
 						vMailItem.Move(destinationFolder);
-					}
 				}
 				else if (v_OperationType == "Copy MailItem")
 				{
-					MailItem copyMail = null;
-					if (v_MoveCopyUnreadOnly == "Yes")
+                    MailItem copyMail;
+
+                    if (v_MoveCopyUnreadOnly == "Yes")
 					{
 						if (vMailItem.UnRead == true)
 						{

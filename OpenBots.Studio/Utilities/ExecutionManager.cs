@@ -1,5 +1,8 @@
 ﻿using CSScriptLibrary;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 using OpenBots.Core.Enums;
+using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Project;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -11,6 +14,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
+using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 
 namespace OpenBots.Utilities
 {
@@ -21,7 +26,7 @@ namespace OpenBots.Utilities
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = false)]
         public static extern bool PathFindOnPath([In, Out] StringBuilder pszFile, [In] string[] ppszOtherDirs);
 
-        public static void RunTextEditorProject(string configPath, List<ProjectArgument> scriptArgs)
+        public static async Task RunTextEditorProject(string configPath, List<ProjectArgument> scriptArgs)
         {
             Project project = Project.OpenProject(configPath);
             string mainPath = Path.Combine(new FileInfo(configPath).DirectoryName, project.Main);
@@ -34,7 +39,10 @@ namespace OpenBots.Utilities
                     RunTagUIAutomation(mainPath, new FileInfo(configPath).DirectoryName, scriptArgs);
                     break;
                 case ProjectType.CSScript:
-                    RunCSharpAutomation(mainPath, scriptArgs);
+                    await RunCSharpAutomation(mainPath, scriptArgs);
+                    break;
+                case ProjectType.PowerShell:
+                    RunPowerShellAutomation(mainPath, scriptArgs);
                     break;
             }
         }
@@ -77,21 +85,75 @@ namespace OpenBots.Utilities
                 throw new Exception(error);
         }
 
-        public static void RunCSharpAutomation(string scriptPath, List<ProjectArgument> scriptArgs)
+        public static async Task RunCSharpAutomation(string scriptPath, List<ProjectArgument> scriptArgs)
         {
+            var csEngineContext = new EngineContext();
+            csEngineContext.Variables = new List<OBScriptVariable>();
+            csEngineContext.Arguments = new List<ScriptArgument>();
+            csEngineContext.Arguments.AddRange(scriptArgs.Select(arg => new ScriptArgument
+                                                                {
+                                                                    ArgumentName = arg.ArgumentName,
+                                                                    ArgumentType = arg.ArgumentType,
+                                                                    ArgumentValue = arg.ArgumentValue,
+                                                                    Direction = arg.Direction,
+                                                                })
+                                                          .ToList());
+            //initialize roslyn instance
+            csEngineContext.ImportedNamespaces = ScriptDefaultNamespaces.DefaultNamespaces;           
+            csEngineContext.AssembliesList = NamespaceMethods.GetAssemblies(csEngineContext.ImportedNamespaces);
+            csEngineContext.NamespacesList = NamespaceMethods.GetNamespacesList(csEngineContext.ImportedNamespaces);
+
+            csEngineContext.EngineScript = CSharpScript.Create("", ScriptOptions.Default.WithReferences(csEngineContext.AssembliesList)
+                                                                                        .WithImports(csEngineContext.NamespacesList));
+            csEngineContext.EngineScriptState = null;
+
+            foreach (ScriptArgument arg in csEngineContext.Arguments)
+            {
+                dynamic evaluatedValue = await VariableMethods.InstantiateVariable(arg.ArgumentName, (string)arg.ArgumentValue, arg.ArgumentType, csEngineContext);
+                VariableMethods.SetVariableValue(evaluatedValue, csEngineContext, arg.ArgumentName);
+            }
+
             string code = File.ReadAllText(scriptPath);
             MethodInfo mainMethod = CSScript.LoadCode(code).CreateObject("*").GetType().GetMethod("Main");
 
             object[] scriptArgsArray;
-            if (scriptArgs.Count == 0)
+            if (csEngineContext.Arguments.Count == 0)
                 scriptArgsArray = new object[] { null };
             else
-                scriptArgsArray = new object[] { scriptArgs.Select(x => x.ArgumentValue).ToArray() };
+                scriptArgsArray = new object[] { csEngineContext.Arguments.Select(x => x.ArgumentValue).ToArray() };
             
             if (mainMethod.GetParameters().Length == 0)
                 mainMethod.Invoke(null, null);
             else
                 mainMethod.Invoke(null, scriptArgsArray);
+        }
+
+        public static void RunPowerShellAutomation(string scriptPath, List<ProjectArgument> scriptArgs)
+        {
+            string error = "";
+            Process scriptProc = new Process();
+            string strScriptArgs = string.Join(" ", scriptArgs.Select(x => $"{x.ArgumentName} {x.ArgumentValue}".Trim())
+                                                              .ToList());
+
+            scriptProc.StartInfo = new ProcessStartInfo()
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-NoProfile -ExecutionPolicy unrestricted -file \"{scriptPath}\" " + strScriptArgs,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            scriptProc.Start();
+            scriptProc.WaitForExit();
+
+            scriptProc.StandardOutput.ReadToEnd();
+            error = scriptProc.StandardError.ReadToEnd();
+            scriptProc.Close();
+
+            if (!string.IsNullOrEmpty(error))
+                throw new Exception(error);
         }
 
         public static void RunTagUIAutomation(string scriptPath, string projectPath, List<ProjectArgument> scriptArgs)

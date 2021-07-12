@@ -1,26 +1,25 @@
 ﻿using Microsoft.Office.Interop.Excel;
+using OpenBots.Commands.Microsoft.Library;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
+using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-using OpenBots.Commands.Microsoft.Library;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using DataTable = System.Data.DataTable;
-using System.Threading.Tasks;
-using OpenBots.Core.Model.ApplicationModel;
 
 namespace OpenBots.Commands.Excel
 {
-	[Serializable]
+    [Serializable]
 	[Category("Excel Commands")]
 	[Description("This command gets the range from an Excel Worksheet and stores it in a DataTable.")]
 	public class ExcelGetRangeCommand : ScriptCommand
@@ -78,7 +77,6 @@ namespace OpenBots.Commands.Excel
 			CommandEnabled = true;
 			CommandIcon = Resources.command_excel;
 
-			v_InstanceName = "DefaultExcel";
 			v_AddHeaders = "Yes";
 			v_Formulas = "No";
 			v_Range = "\"A1:\"";
@@ -89,31 +87,12 @@ namespace OpenBots.Commands.Excel
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
 			var vRange = (string)await v_Range.EvaluateCode(engine);
-			var excelInstance = (Application)excelObject;
-
-			Worksheet excelSheet = excelInstance.ActiveSheet;
-			//Extract a range of cells
-			var splitRange = vRange.Split(':');
-			Range cellRange;
-			Range sourceRange = excelSheet.UsedRange;
 			
+			var excelInstance = (Application)excelObject;
+			Worksheet excelSheet = excelInstance.ActiveSheet;
+			Range cellRange = excelInstance.GetRange(vRange, excelSheet);
 
-			//Attempt to extract a single cell
-
-			if (splitRange[1] == "")
-            {
-				var cell = excelInstance.GetAddressOfLastCell(excelSheet);
-
-				if (cell == "")
-					throw new Exception("No data found in sheet.");
-				cellRange = excelSheet.Range[splitRange[0], cell];
-			}
-			else
-            {
-				cellRange = excelSheet.Range[splitRange[0], splitRange[1]];
-			}
-
-			int rowStart =1, rowEnd = 0, columnEnd = cellRange.Columns.Count, movingRangeSize = 3000;
+			int rowStart = 1, rowEnd = 0, columnEnd = cellRange.Columns.Count, movingRangeSize = 3000;
 
 			using (DataTable DT = new DataTable())
 			{
@@ -130,7 +109,6 @@ namespace OpenBots.Commands.Excel
 						movingRange = excelSheet.Range[cellRange.Cells[rowStart, 1], cellRange.Cells[cellRange.Rows.Count, columnEnd]];
 
 					rowStart = rowEnd + 1;
-
 
 					int rw = movingRange.Rows.Count;
 					int cl = movingRange.Columns.Count;

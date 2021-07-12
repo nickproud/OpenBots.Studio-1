@@ -1,24 +1,20 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Forms;
-using System.IO;
-using CSScriptLibrary;
-using Diagnostics = System.Diagnostics;
-using OBFile = System.IO.File;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using Diagnostics = System.Diagnostics;
 
 namespace OpenBots.Commands.Process
 {
-	[Serializable]
+    [Serializable]
 	[Category("Programs/Process Commands")]
 	[Description("This command runs a Python script or program and waits for it to exit before proceeding.")]
 

@@ -1,15 +1,16 @@
 ﻿using Autofac;
 using OpenBots.Core.Command;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Settings;
 using OpenBots.Core.UI.Forms;
-using OpenBots.Studio.Utilities;
+using OpenBots.Core.User32;
+using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Properties;
 using OpenBots.UI.Forms.ScriptBuilder_Forms;
-using OpenBots.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using OpenBots.Properties;
+using System.Windows.Forms;
 
 namespace OpenBots.UI.Supplement_Forms
 {
@@ -17,7 +18,6 @@ namespace OpenBots.UI.Supplement_Forms
     {
         public frmScriptBuilder CallBackForm { get; set; }
         private List<ScriptCommand> _scriptCommandList;
-        public bool IsCommandItemSelected { get; set; }
         private ApplicationSettings _appSettings;
         private IContainer _container;
 
@@ -32,7 +32,8 @@ namespace OpenBots.UI.Supplement_Forms
 
         private void frmSequenceRecorder_Load(object sender, EventArgs e)
         {
-
+            cbxHookStop.DataSource = Enum.GetValues(typeof(Keys));
+            cbxHookStop.SelectedIndex = cbxHookStop.Items.IndexOf(Keys.F2);
         }        
 
         private void chkGroupIntoSequences_CheckedChanged(object sender, EventArgs e)
@@ -80,8 +81,8 @@ namespace OpenBots.UI.Supplement_Forms
                 GlobalHook.StartScreenRecordingHook(chkCaptureClicks.Checked, chkCaptureMouse.Checked,
                     chkGroupMovesIntoSequences.Checked, chkCaptureKeyboard.Checked, chkCaptureWindowEvents.Checked,
                     chkActivateTopLeft.Checked, chkTrackWindowSize.Checked, chkTrackWindowsOpenLocation.Checked,
-                    samplingResolution, txtHookStop.Text, _container);
-                lblRecording.Text = "Press '" + txtHookStop.Text + "' key to stop recording!";
+                    samplingResolution, (Keys)cbxHookStop.SelectedValue, _container);
+                lblRecording.Text = "Press '" + cbxHookStop.Text + "' key to stop recording!";
                 // WindowHook.StartHook();
 
                 _scriptCommandList = new List<ScriptCommand>();

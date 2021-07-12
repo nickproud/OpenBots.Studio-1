@@ -67,15 +67,7 @@ namespace OpenBots.Server.SDK.Model
         /// <param name="payloadSizeInBytes">Total bytes of all attached files.</param>
         public QueueItem(Guid? id = default(Guid?), bool? isDeleted = false, string createdBy = default(string), DateTime? createdOn = default(DateTime?), string deletedBy = default(string), DateTime? deleteOn = default(DateTime?), byte[] timestamp = default(byte[]), DateTime? updatedOn = default(DateTime?), string updatedBy = default(string), string name = default(string), bool? isLocked = default(bool?), DateTime? lockedOnUTC = default(DateTime?), DateTime? lockedUntilUTC = default(DateTime?), Guid? lockedBy = default(Guid?), Guid? queueId = default(Guid?), string type = default(string), string jsonType = default(string), string dataJson = default(string), string state = default(string), string stateMessage = default(string), Guid? lockTransactionKey = default(Guid?), DateTime? lockedEndTimeUTC = default(DateTime?), int? retryCount = default(int?), int? priority = default(int?), DateTime? expireOnUTC = default(DateTime?), DateTime? postponeUntilUTC = default(DateTime?), string errorCode = default(string), string errorMessage = default(string), string errorSerialized = default(string), string source = default(string), string _event = default(string), string resultJSON = default(string), long? payloadSizeInBytes = default(long?))
         {
-            // to ensure "name" is required (not null)
-            if (name == null)
-            {
-                throw new InvalidDataException("name is a required property for QueueItem and cannot be null");
-            }
-            else
-            {
-                this.Name = name;
-            }
+            this.Name = name;
             this.Id = id;
             // use default value if no "isDeleted" provided
             if (isDeleted == null)

@@ -1,4 +1,5 @@
-﻿ using OpenBots.Core.Enums;
+﻿using Microsoft.CodeAnalysis;
+using OpenBots.Core.Enums;
 using OpenBots.Core.Script;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Studio.Utilities;
@@ -8,9 +9,9 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Microsoft.CodeAnalysis;
 
 namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 {
@@ -56,7 +57,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //deletes an empty row if it's created without assigning values
                     if ((cellValue == null && _preEditVarArgName != null) ||
                         (cellValue != null && string.IsNullOrEmpty(cellValue.ToString().Trim())) || 
-                        (cellValue != null && !provider.IsValidIdentifier(cellValue.ToString())))
+                        (cellValue != null && !provider.IsValidIdentifier(cellValue.ToString()) && 
+                        (_scriptContext.ScriptFileExtension == ".obscript" || 
+                        _scriptContext.ScriptFileExtension == ".cs")))
                     {
                         dgv.Rows.RemoveAt(e.RowIndex);
                         return;
@@ -72,14 +75,13 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     //prevents user from creating a new variable/argument with an already used name
                     if (_existingVarArgSearchList.Contains(variableName) && variableName != _preEditVarArgName)
                     {
-                        Notify($"An Error Occurred: A variable or argument with the name '{variableName}' already exists", Color.Red);
                         dgv.Rows.RemoveAt(e.RowIndex);
                         return;
                     }
                     //if the variable/argument name is valid, set value cell's readonly as false
                     else
                     {
-                        if (_scriptFileExtension == ".obscript")
+                        if (_scriptContext.ScriptFileExtension == ".obscript")
                         {
                             foreach (DataGridViewCell cell in dgv.Rows[e.RowIndex].Cells)
                                 cell.ReadOnly = false;
@@ -93,16 +95,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 }
 
                 else if (e.ColumnIndex == 2)
-                {
-                    var result = _scriptContext.EvaluateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
-                    if (result.Success)
-                        valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Black };
-                    else
-                    {
-                        valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Red };
-                        string errorMessage = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
-                    }
-                }
+                    EvaluateVariableArgumentValue(nameCell, typeCell, valueCell);
 
                 //marks the script as unsaved with changes
                 if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))
@@ -143,10 +136,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             try
             {
                 string varArgName = e.Row.Cells[0].Value?.ToString();
-                    //prevents the ProjectPath row from being deleted
-                if (varArgName == "ProjectPath" && _scriptFileExtension == ".obscript")
+                //prevents the ProjectPath row from being deleted
+                if (varArgName == "ProjectPath" && _scriptContext.ScriptFileExtension == ".obscript")
                     e.Cancel = true;
-                else if((varArgName == "--PythonVersion" || varArgName == "--MainFunction") && _scriptFileExtension == ".py")
+                else if((varArgName == "--PythonVersion" || varArgName == "--MainFunction") && _scriptContext.ScriptFileExtension == ".py")
                     e.Cancel = true;
                 else
                 {
@@ -180,9 +173,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     string varArgName = nameCell.Value?.ToString();
 
                     //sets the entire ProjectPath row as readonly
-                    if (varArgName == "ProjectPath" && _scriptFileExtension == ".obscript")
+                    if (varArgName == "ProjectPath" && _scriptContext.ScriptFileExtension == ".obscript")
                         row.ReadOnly = true;
-                    else if ((varArgName == "--PythonVersion" || varArgName == "--MainFunction") && _scriptFileExtension == ".py")
+                    else if ((varArgName == "--PythonVersion" || varArgName == "--MainFunction") && _scriptContext.ScriptFileExtension == ".py")
                         row.Cells[0].ReadOnly = true;
 
                     //adds new type to default list when a script containing non-defaults is loaded
@@ -190,19 +183,12 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                         _typeContext.DefaultTypes.Add(((Type)typeCell.Value).GetRealTypeName(), (Type)typeCell.Value);
 
                     //sets Value cell to readonly if the Direction is Out
-                    if (row.Cells.Count == 4 && row.Cells["Direction"].Value != null && 
+                    if (row.Cells.Count == 5 && row.Cells["Direction"].Value != null && 
                         ((ScriptArgumentDirection)row.Cells["Direction"].Value == ScriptArgumentDirection.Out || 
                          (ScriptArgumentDirection)row.Cells["Direction"].Value == ScriptArgumentDirection.InOut))
                         row.Cells["ArgumentValue"].ReadOnly = true;
 
-                    var result = _scriptContext.EvaluateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
-                    if (result.Success)
-                        valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Black };
-                    else
-                    {
-                        valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Red };
-                        string errorMessage = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
-                    }
+                    EvaluateVariableArgumentValue(nameCell, typeCell, valueCell);
                 }
             }
             catch (Exception ex)
@@ -252,7 +238,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     if (selectedCell.Value == null)
                         return;
 
-                    else if (e.RowIndex != -1 && e.ColumnIndex == 3)
+                    else if (e.RowIndex != -1 && e.ColumnIndex == 4)
                     {
                         //sets value cell to read only if the argument direction is set to Out
                         if ((ScriptArgumentDirection)selectedCell.Value == ScriptArgumentDirection.Out || 
@@ -300,15 +286,8 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                             SendKeys.Send("+{TAB}");
                         }
 
-                        var result = _scriptContext.EvaluateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
-                        if (result.Success)
-                            valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Black };
-                        else
-                        {
-                            valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Red };
-                            string errorMessage = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).FirstOrDefault()?.ToString();
-                        }
-                    }
+                        EvaluateVariableArgumentValue(nameCell, typeCell, valueCell);
+                    }                
                 }
             }
             catch (Exception ex)
@@ -324,7 +303,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             {
                 DataGridView dgv = (DataGridView)sender;
 
-                if (dgv.Columns.Count == 4)
+                if (dgv.Columns.Count == 5)
                 {
                     //sets Direction to In by default when a new row is added. Prevents cell from ever being null
                     e.Row.Cells["Direction"].Value = ScriptArgumentDirection.In;
@@ -342,7 +321,39 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
 
         private void dgvVariablesArguments_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            
+            //handles initial binding error
+        }
+
+        private void dgvVariablesArguments_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                var dgv = (DataGridView)sender;
+                var nameCell = dgv.Rows[e.RowIndex].Cells[0];
+                var typeCell = dgv.Rows[e.RowIndex].Cells[1];
+                var valueCell = dgv.Rows[e.RowIndex].Cells[2];
+
+                if (nameCell.Value?.ToString() == "ProjectPath" || valueCell.ReadOnly)
+                    return;
+                else if (dgv.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+                {
+                    frmTextEditor textEditor = new frmTextEditor(_scriptContext, valueCell.Value?.ToString());
+
+                    textEditor.ShowDialog();
+                    if (textEditor.DialogResult == DialogResult.OK)
+                    {
+                        valueCell.Value = textEditor.txtEditor.Text;
+                        EvaluateVariableArgumentValue(nameCell, typeCell, valueCell);
+                    }
+
+                    _scriptContext.AddIntellisenseControls(Controls);
+                }
+            }
+            catch (Exception ex)
+            {
+                //datagridview event failure
+                Console.WriteLine(ex);
+            }
         }
 
         private void dgvVariables_SelectionChanged(object sender, EventArgs e)
@@ -385,6 +396,26 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             }
         }
 
+        private void EvaluateVariableArgumentValue(DataGridViewCell nameCell, DataGridViewCell typeCell, DataGridViewCell valueCell)
+        {
+            if (_scriptContext.ScriptFileExtension == ".obscript" || _scriptContext.ScriptFileExtension == ".cs")
+            {
+                var result = _scriptContext.EvaluateVariable(nameCell.Value.ToString(), (Type)typeCell.Value, valueCell.Value?.ToString());
+                if (result.Success)
+                {
+                    valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Black };
+                    valueCell.ToolTipText = "";
+                }
+                else
+                {
+                    valueCell.Style = new DataGridViewCellStyle { ForeColor = Color.Red };
+                    var errorMessages = result.Diagnostics.ToList().Where(x => x.DefaultSeverity == DiagnosticSeverity.Error).Select(x => x.ToString()).ToArray();
+                    string errorMessage = string.Join(Environment.NewLine, errorMessages);
+                    valueCell.ToolTipText = errorMessage;
+                }
+            }        
+        }
+
         private void ResetVariableArgumentBindings()
         {
             dgvVariables.DataSource = new BindingList<ScriptVariable>(_scriptContext.Variables);
@@ -419,9 +450,10 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     dgvArguments.Columns["direction"].ReadOnly = false;
                     break;
                 case ProjectType.Python:
-                case ProjectType.TagUI:
+                case ProjectType.TagUI: 
                 case ProjectType.CSScript:
-                    if (_isMainScript)
+                case ProjectType.PowerShell:
+                    if (Path.Combine(ScriptProjectPath, ScriptProject.Main) == ScriptFilePath)
                         splitContainerScript.Panel2Collapsed = false;           
                     else
                         splitContainerScript.Panel2Collapsed = true;
@@ -433,7 +465,6 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                     dgvArguments.Columns["direction"].ReadOnly = true;
                     break;
             }
-
         }
 
         private void dgvVariablesArguments_KeyDown(object sender, KeyEventArgs e)
@@ -493,7 +524,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
 
                 TypeMethods.GenerateAllVariableTypes(NamespaceMethods.GetAssemblies(_scriptContext.ImportedNamespaces), _typeContext.GroupedTypes);
-                _scriptContext.ReloadCompilerObjects();
+                _scriptContext.LoadCompilerObjects();
 
                 //marks the script as unsaved with changes
                 if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))
@@ -518,16 +549,14 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
                 lbxImportedNamespaces.DataSource = importedNameSpacesBinding;
 
                 TypeMethods.GenerateAllVariableTypes(NamespaceMethods.GetAssemblies(_scriptContext.ImportedNamespaces), _typeContext.GroupedTypes);
-                _scriptContext.ReloadCompilerObjects();
+                _scriptContext.LoadCompilerObjects();
 
                 //marks the script as unsaved with changes
                 if (uiScriptTabControl.SelectedTab != null && !uiScriptTabControl.SelectedTab.Text.Contains(" *"))
                     uiScriptTabControl.SelectedTab.Text += " *";
             }
             else
-            {
                 dgvVariablesArguments_KeyDown(null, e);
-            }
         }
 
         private void lbxImportedNamespaces_KeyPress(object sender, KeyPressEventArgs e)
@@ -543,6 +572,18 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void cbxAllNamespaces_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = true;
+        }
+        #endregion
+
+        #region Intellisense
+        private void dgvVariablesArguments_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            _scriptContext.CodeDGV_EditingControlShowing(sender, e);
+        }
+
+        private void uiVariableArgumentTabs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _scriptContext.IntellisenseListBox.Hide();
         }
         #endregion
     }

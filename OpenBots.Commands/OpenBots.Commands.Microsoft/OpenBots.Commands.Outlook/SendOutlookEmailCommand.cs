@@ -2,10 +2,9 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,10 +18,8 @@ namespace OpenBots.Commands.Outlook
 	[Serializable]
 	[Category("Outlook Commands")]
 	[Description("This command sends an email with optional attachment(s) in Outlook.")]
-
 	public class SendOutlookEmailCommand : ScriptCommand
 	{
-
 		[Required]
 		[DisplayName("Recipient(s)")]
 		[Description("Enter the email address(es) of the recipient(s).")]
@@ -85,11 +82,15 @@ namespace OpenBots.Commands.Outlook
 			var vBody = (string)await v_Body.EvaluateCode(engine);
 
 			Application outlookApp = new Application();
-			MailItem mail = (MailItem)outlookApp.CreateItem(OlItemType.olMailItem);
+			NameSpace test = outlookApp.GetNamespace("MAPI");
+			test.Logon("", "", false, true);
 			AddressEntry currentUser = outlookApp.Session.CurrentUser.AddressEntry;
+
+			MailItem mail = (MailItem)outlookApp.CreateItem(OlItemType.olMailItem);
+
 			if (currentUser.Type == "EX")
 			{
-				ExchangeUser manager = currentUser.GetExchangeUser().GetExchangeUserManager();
+				currentUser.GetExchangeUser().GetExchangeUserManager();
 
 				foreach (var t in vRecipients)
 					mail.Recipients.Add(t);
@@ -106,9 +107,11 @@ namespace OpenBots.Commands.Outlook
 				if (!string.IsNullOrEmpty(v_Attachments))
 				{
 					var vAttachment = (List<string>)await v_Attachments.EvaluateCode(engine);
+
 					foreach (var attachment in vAttachment)
 						mail.Attachments.Add(attachment);
 				}
+
 				mail.Send();
 			}
 		}

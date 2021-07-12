@@ -1,7 +1,7 @@
 ﻿using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.ApplicationModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
@@ -45,8 +45,6 @@ namespace OpenBots.Commands.IEBrowser
             SelectionName = "IE Navigate to URL";           
             CommandEnabled = true;
             CommandIcon = Resources.command_web;
-
-            v_InstanceName = "DefaultIEBrowser";
         }
 
         public async override Task RunCommand(object sender)

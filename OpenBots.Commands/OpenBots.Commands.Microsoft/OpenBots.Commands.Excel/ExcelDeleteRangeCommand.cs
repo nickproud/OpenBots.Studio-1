@@ -2,11 +2,10 @@
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Utilities.CommonUtilities;
 using OpenBots.Commands.Microsoft.Library;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -57,7 +56,6 @@ namespace OpenBots.Commands.Excel
 			CommandEnabled = true;
 			CommandIcon = Resources.command_excel;
 
-			v_InstanceName = "DefaultExcel";
 			v_ShiftUp = "Yes";
 		}
 
@@ -65,29 +63,12 @@ namespace OpenBots.Commands.Excel
 		{
 			var engine = (IAutomationEngineInstance)sender;
 			var excelObject = ((OBAppInstance)await v_InstanceName.EvaluateCode(engine)).Value;
+			string vRange = (string)await v_Range.EvaluateCode(engine);
+
 			var excelInstance = (Application)excelObject;
 			Worksheet excelSheet = excelInstance.ActiveSheet;
-
-			string vRange = (string)await v_Range.EvaluateCode(engine);
-			var splitRange = vRange.Split(':');
-			Range cellRange;
-            Range sourceRange = excelSheet.UsedRange;
-
-			//Delete a range of cells
-			try
-			{
-				var last = excelInstance.GetLastIndexOfNonEmptyCell(sourceRange, sourceRange.Range["A1"]);
-				if (splitRange[1] == "")
-					cellRange = excelSheet.Range[splitRange[0], last];
-				else
-					cellRange = excelSheet.Range[splitRange[0], splitRange[1]];
-			}
-			//Delete a cell
-			catch (Exception)
-			{
-				cellRange = excelSheet.Range[splitRange[0], Type.Missing];
-			}
-
+			Range cellRange = excelInstance.GetRange(vRange, excelSheet);
+			
 			if (v_ShiftUp == "Yes")
 				cellRange.Delete();          
 			else

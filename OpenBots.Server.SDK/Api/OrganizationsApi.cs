@@ -632,7 +632,7 @@ namespace OpenBots.Server.SDK.Api
 
             if (ExceptionFactory != null)
             {
-                Exception exception = ExceptionFactory("ApiVapiVersionOrganizationsGet", localVarResponse);
+                Exception exception = ExceptionFactory("GetOrganizations", localVarResponse);
                 if (exception != null) throw exception;
             }
 

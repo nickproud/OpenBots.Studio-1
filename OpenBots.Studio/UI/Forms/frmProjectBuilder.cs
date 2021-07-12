@@ -5,7 +5,7 @@ using OpenBots.Core.UI.Forms;
 using OpenBots.UI.Forms.Supplement_Forms;
 using System;
 using System.IO;
-using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace OpenBots.UI.Forms
@@ -97,9 +97,11 @@ namespace OpenBots.UI.Forms
                 try
                 {
                     NewProjectPath = Path.Combine(_newProjectLocation, NewProjectName);
-                    bool isInvalidProjectName = new[] { @"/", @"\" }.Any(c => NewProjectName.Contains(c));
-                    if (isInvalidProjectName)
-                        throw new Exception("Illegal characters in path");
+
+                    string pattern = @"^[A-Za-z0-9_.-]{3,100}$";
+                    Match m = Regex.Match(NewProjectName, pattern);
+                    if (!m.Success)
+                        throw new Exception("Project Name contains illegal characters or isn't 3-100 characters long.");
 
                     if (!Directory.Exists(NewProjectPath))
                     {

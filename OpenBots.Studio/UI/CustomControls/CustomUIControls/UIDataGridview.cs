@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenBots.Core.Interfaces;
+using System;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -57,6 +58,8 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
             }
         }
 
+        public bool ListBoxShown { get; set; } = false;
+
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
@@ -74,6 +77,23 @@ namespace OpenBots.UI.CustomControls.CustomUIControls
             base.OnSizeChanged(e);
             RedrawWindow(Handle, IntPtr.Zero, IntPtr.Zero,
                    RDW_FRAME | RDW_IUPDATENOW | RDW_INVALIDATE);
+        }
+
+        protected override bool ProcessDataGridViewKey(KeyEventArgs e)
+        {
+            if (EditingControl != null && ListBoxShown && (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Tab || e.KeyCode == Keys.Space || e.KeyCode == Keys.Down || e.KeyCode == Keys.Up))
+                return false;
+
+            return base.ProcessDataGridViewKey(e);
+        }
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
+            Keys key = (keyData & Keys.KeyCode);
+
+            if (EditingControl != null && (key == Keys.Enter || key == Keys.Tab || key == Keys.Space || key == Keys.Down || key == Keys.Up))
+                return false;
+
+            return base.ProcessDialogKey(keyData);
         }
     }
 }

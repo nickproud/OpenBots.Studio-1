@@ -72,8 +72,8 @@ namespace OpenBots.Commands.Task.Test
             _textFile.v_FilePath = Path.Combine(filePath, @"test.txt");
             _textFile.v_TextToWrite = "{inputArg}";
             _textFile.v_Overwrite = "Overwrite";
-            _engine.AutomationEngineContext.FilePath = Path.Combine(filePath, "task.obscript");
-            _engine.AutomationEngineContext.IsTest = true;
+            _engine.EngineContext.FilePath = Path.Combine(filePath, "task.obscript");
+            _engine.EngineContext.IsTest = true;
             List<ScriptAction> commands = new List<ScriptAction>();
             ScriptAction com1 = new ScriptAction();
             com1.ScriptCommand = _textFile;
@@ -93,7 +93,7 @@ namespace OpenBots.Commands.Task.Test
                 TypeNameHandling = TypeNameHandling.Objects,
             };
             JsonSerializer serializer = JsonSerializer.Create(serializerSettings);
-            using (StreamWriter sw = new StreamWriter(_engine.AutomationEngineContext.FilePath))
+            using (StreamWriter sw = new StreamWriter(_engine.EngineContext.FilePath))
             using (JsonWriter writer = new JsonTextWriter(sw) { Formatting = Formatting.Indented })
             {
                 serializer.Serialize(writer, _taskScript, typeof(Script));
@@ -118,7 +118,7 @@ namespace OpenBots.Commands.Task.Test
             argumentTable.Rows.Add(arg1row);
             argumentTable.Rows.Add(arg2row);
 
-            _runTask.v_TaskPath = _engine.AutomationEngineContext.FilePath;
+            _runTask.v_TaskPath = _engine.EngineContext.FilePath;
             _runTask.v_AssignArguments = true;
             _runTask.v_ArgumentAssignments = argumentTable;
 

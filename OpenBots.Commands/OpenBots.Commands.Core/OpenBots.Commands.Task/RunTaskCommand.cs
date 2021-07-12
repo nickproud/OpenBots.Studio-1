@@ -1,11 +1,9 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Model.EngineModel;
 using OpenBots.Core.Properties;
 using OpenBots.Core.Script;
@@ -20,10 +18,8 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using Tasks = System.Threading.Tasks;
-using OBScriptVariable = OpenBots.Core.Script.ScriptVariable;
 
 namespace OpenBots.Commands.Task
 {
@@ -69,10 +65,6 @@ namespace OpenBots.Commands.Task
 		[JsonIgnore]
 		[Browsable(false)]
 		private List<ScriptArgument> _argumentList;
-		 
-		[JsonIgnore]
-		[Browsable(false)]
-		private IfrmScriptEngine _childfrmScriptEngine;
 
 		public RunTaskCommand()
 		{
@@ -95,7 +87,7 @@ namespace OpenBots.Commands.Task
 		public async override Tasks.Task RunCommand(object sender)
 		{
 			var parentAutomationEngineInstance = (IAutomationEngineInstance)sender;
-			if(parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine == null)
+			if(parentAutomationEngineInstance.EngineContext.ScriptEngine == null)
 			{
 				RunServerTask(sender);
 				return;
@@ -105,31 +97,30 @@ namespace OpenBots.Commands.Task
 			if (!File.Exists(childTaskPath))
 				throw new FileNotFoundException("Task file was not found");
 
-			IfrmScriptEngine parentfrmScriptEngine = parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine;
-			string parentTaskPath = parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.ScriptEngineContext.FilePath;
-			int parentDebugLine = parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.DebugLineNumber;
+			IfrmScriptEngine parentfrmScriptEngine = parentAutomationEngineInstance.EngineContext.ScriptEngine;
+			string parentTaskPath = parentAutomationEngineInstance.EngineContext.ScriptEngine.EngineContext.FilePath;
+			int parentDebugLine = parentAutomationEngineInstance.EngineContext.ScriptEngine.DebugLineNumber;
 
 			//create argument list
 			await InitializeArgumentLists(parentAutomationEngineInstance);
 
-			string projectPath = parentfrmScriptEngine.ScriptEngineContext.ProjectPath;
+			string projectPath = parentfrmScriptEngine.EngineContext.ProjectPath;
 
-			EngineContext childEngineContext = new EngineContext(childTaskPath, projectPath, parentAutomationEngineInstance.AutomationEngineContext.Container, CurrentScriptBuilder,
-				parentfrmScriptEngine.ScriptEngineContext.EngineLogger, null, _argumentList, null, null, null, 1,
-				parentfrmScriptEngine.ScriptEngineContext.IsDebugMode, true);
+			EngineContext childEngineContext = new EngineContext(childTaskPath, projectPath, parentAutomationEngineInstance.EngineContext.Container, CurrentScriptBuilder,
+				parentfrmScriptEngine.EngineContext.EngineLogger, null, _argumentList, null, null, parentfrmScriptEngine.EngineContext.SessionVariables, null, 1,
+				parentfrmScriptEngine.EngineContext.IsDebugMode, true);
 
-			_childfrmScriptEngine = parentfrmScriptEngine.CommandControls.CreateScriptEngineForm(childEngineContext, false, parentfrmScriptEngine.IsDebugMode);
+			IfrmScriptEngine childfrmScriptEngine = parentfrmScriptEngine.CreateScriptEngineForm(childEngineContext, false);
 
-			if (parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.IsScheduledOrAttendedTask)
-				_childfrmScriptEngine.IsScheduledOrAttendedTask = true;
+			if (parentAutomationEngineInstance.EngineContext.IsScheduledOrAttendedTask)
+				childfrmScriptEngine.EngineContext.IsScheduledOrAttendedTask = true;
 
-			_childfrmScriptEngine.IsChildEngine = true;
-			_childfrmScriptEngine.IsHiddenTaskEngine = true;
+			childfrmScriptEngine.IsHiddenTaskEngine = true;
 
 			if (IsSteppedInto)
 			{                
-				_childfrmScriptEngine.IsNewTaskSteppedInto = true;
-				_childfrmScriptEngine.IsHiddenTaskEngine = false;
+				childfrmScriptEngine.IsNewTaskSteppedInto = true;
+				childfrmScriptEngine.IsHiddenTaskEngine = false;
 			}
 
 			if (CurrentScriptBuilder != null)
@@ -137,57 +128,57 @@ namespace OpenBots.Commands.Task
 			else
 				Log.Information("Executing Child Task: " + Path.GetFileName(childTaskPath));
 
-			((Form)parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine).Invoke((Action)delegate()
+			((Form)parentAutomationEngineInstance.EngineContext.ScriptEngine).Invoke((Action)delegate()
 			{
-				((Form)parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine).TopMost = false;
+				((Form)parentAutomationEngineInstance.EngineContext.ScriptEngine).TopMost = false;
 			});
-			Application.Run((Form)_childfrmScriptEngine);
+			Application.Run((Form)childfrmScriptEngine);
 			
-			if (_childfrmScriptEngine.ClosingAllEngines)
+			if (childfrmScriptEngine.ClosingAllEngines)
 			{
-				parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.ClosingAllEngines = true;
-				parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine.CloseWhenDone = true;
+				parentAutomationEngineInstance.EngineContext.ScriptEngine.ClosingAllEngines = true;
+				parentAutomationEngineInstance.EngineContext.ScriptEngine.CloseWhenDone = true;
 			}
 
 			// Update Current Engine Context Post Run Task
-			_childfrmScriptEngine.UpdateCurrentEngineContext(parentAutomationEngineInstance, _childfrmScriptEngine, _argumentList);
+			UpdateCurrentEngineContext(parentAutomationEngineInstance, childfrmScriptEngine.EngineInstance);
 
 			if (CurrentScriptBuilder != null)
 				CurrentScriptBuilder.EngineLogger.Information("Resuming Parent Task: " + Path.GetFileName(parentTaskPath));
 			else
 				Log.Information("Resuming Parent Task: " + Path.GetFileName(parentTaskPath));
 
-			if (parentfrmScriptEngine.IsDebugMode)
+			if (parentfrmScriptEngine.EngineContext.IsDebugMode)
 			{
-				((Form)parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine).Invoke((Action)delegate()
+				((Form)parentAutomationEngineInstance.EngineContext.ScriptEngine).Invoke((Action)delegate()
 				{
 					((Form)parentfrmScriptEngine).TopMost = true;
 					parentfrmScriptEngine.IsHiddenTaskEngine = true;
 
-					if ((IsSteppedInto || !_childfrmScriptEngine.IsHiddenTaskEngine) && !_childfrmScriptEngine.IsNewTaskResumed && !_childfrmScriptEngine.IsNewTaskCancelled)
+					if ((IsSteppedInto || !childfrmScriptEngine.IsHiddenTaskEngine) && !childfrmScriptEngine.IsNewTaskResumed && !childfrmScriptEngine.IsNewTaskCancelled)
 					{
-						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.CurrentEngine = parentfrmScriptEngine;
-						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptSteppedInto = true;
+						parentfrmScriptEngine.EngineContext.ScriptBuilder.CurrentEngine = parentfrmScriptEngine;
+						parentfrmScriptEngine.EngineContext.ScriptBuilder.IsScriptSteppedInto = true;
 						parentfrmScriptEngine.IsHiddenTaskEngine = false;
 
 						//toggle running flag to allow for tab selection
-						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptRunning = false;
-						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.OpenScriptFile(parentTaskPath, true);
-						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptRunning = true;
+						parentfrmScriptEngine.EngineContext.ScriptBuilder.IsScriptRunning = false;
+						parentfrmScriptEngine.EngineContext.ScriptBuilder.OpenScriptFile(parentTaskPath, true);
+						parentfrmScriptEngine.EngineContext.ScriptBuilder.IsScriptRunning = true;
 
 						parentfrmScriptEngine.UpdateLineNumber(parentDebugLine + 1);
 						parentfrmScriptEngine.AddStatus("Pausing Before Execution");
 					}
-					else if (_childfrmScriptEngine.IsNewTaskResumed)
+					else if (childfrmScriptEngine.IsNewTaskResumed)
 					{
-						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.CurrentEngine = parentfrmScriptEngine;
+						parentfrmScriptEngine.EngineContext.ScriptBuilder.CurrentEngine = parentfrmScriptEngine;
 						parentfrmScriptEngine.IsNewTaskResumed = true;
 						parentfrmScriptEngine.IsHiddenTaskEngine = true;
-						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptSteppedInto = false;
-						parentfrmScriptEngine.ScriptEngineContext.ScriptBuilder.IsScriptPaused = false;
+						parentfrmScriptEngine.EngineContext.ScriptBuilder.IsScriptSteppedInto = false;
+						parentfrmScriptEngine.EngineContext.ScriptBuilder.IsScriptPaused = false;
 						parentfrmScriptEngine.ResumeParentTask();
 					}
-					else if (_childfrmScriptEngine.IsNewTaskCancelled)
+					else if (childfrmScriptEngine.IsNewTaskCancelled)
 						parentfrmScriptEngine.uiBtnCancel_Click(null, null);
 					else //child task never stepped into
 						parentfrmScriptEngine.IsHiddenTaskEngine = false;
@@ -195,19 +186,19 @@ namespace OpenBots.Commands.Task
 			}
 			else
 			{
-				((Form)parentAutomationEngineInstance.AutomationEngineContext.ScriptEngine).Invoke((Action)delegate()
+				((Form)parentAutomationEngineInstance.EngineContext.ScriptEngine).Invoke((Action)delegate()
 				{
 					((Form)parentfrmScriptEngine).TopMost = true;
 
-					if (_childfrmScriptEngine.IsNewTaskCancelled)
+					if (childfrmScriptEngine.IsNewTaskCancelled)
 						parentfrmScriptEngine.uiBtnCancel_Click(null, null);
 				});
 			}
 
-			if (_childfrmScriptEngine != null)
+			if (childfrmScriptEngine != null)
             {
-				((Form)_childfrmScriptEngine).Dispose();
-				_childfrmScriptEngine = null;
+				((Form)childfrmScriptEngine).Dispose();
+				childfrmScriptEngine = null;
 				GC.Collect();
             }			
 		}
@@ -337,39 +328,37 @@ namespace OpenBots.Commands.Task
 				}
 			}
 			else if (!assignArgCheckBox.Checked)
-			{
 				v_ArgumentAssignments.Clear();
-			}
 		}       
 
 		private async void RunServerTask(object sender)
 		{
 			var parentAutomationEngineInstance = (IAutomationEngineInstance)sender;
 			string childTaskPath = (string)await v_TaskPath.EvaluateCode(parentAutomationEngineInstance);
-			string parentTaskPath = parentAutomationEngineInstance.FileName;
+			string parentTaskPath = parentAutomationEngineInstance.EngineContext.FilePath;
 
 			//create argument list
 			await InitializeArgumentLists(parentAutomationEngineInstance);
 
 			object engineLogger = Log.Logger;
 
-			if(parentAutomationEngineInstance.AutomationEngineContext.IsTest == true)
+			if(parentAutomationEngineInstance.EngineContext.IsTest == true)
 				engineLogger = null;
 
 			EngineContext childEngineContext = new EngineContext
 			{
 				IsChildEngine = true,
 				FilePath = childTaskPath,
-				ProjectPath = parentAutomationEngineInstance.GetProjectPath(),
+				ProjectPath = parentAutomationEngineInstance.EngineContext.ProjectPath,
 				EngineLogger = (Logger)engineLogger,
-				Container = parentAutomationEngineInstance.AutomationEngineContext.Container,
+				Container = parentAutomationEngineInstance.EngineContext.Container,
 			};
 
 			var childAutomationEngineInstance = parentAutomationEngineInstance.CreateAutomationEngineInstance(childEngineContext);
 
-			childAutomationEngineInstance.AutomationEngineContext.IsTest = parentAutomationEngineInstance.AutomationEngineContext.IsTest;
-			childAutomationEngineInstance.AutomationEngineContext.Arguments = _argumentList;
-			childAutomationEngineInstance.IsServerChildExecution = true;
+			childAutomationEngineInstance.EngineContext.IsTest = parentAutomationEngineInstance.EngineContext.IsTest;
+			childAutomationEngineInstance.EngineContext.Arguments = _argumentList;
+			childAutomationEngineInstance.EngineContext.IsServerChildExecution = true;
 
 			Log.Information("Executing Child Task: " + Path.GetFileName(childTaskPath));
 			childAutomationEngineInstance.ExecuteScriptSync();
@@ -409,6 +398,7 @@ namespace OpenBots.Commands.Task
 					await ((string)rw.ItemArray[2]).EvaluateCode(parentAutomationEngineInstance);
 
 					var existingArg = _argumentList.Where(x => x.ArgumentName == argumentName).FirstOrDefault();
+
 					if (existingArg != null)
 						existingArg.AssignedVariable = (string)rw.ItemArray[2];
                     else
@@ -427,11 +417,14 @@ namespace OpenBots.Commands.Task
 
 		private void UpdateCurrentEngineContext(IAutomationEngineInstance parentAutomationEngineIntance, IAutomationEngineInstance childAutomationEngineInstance)
 		{
-			var parentVariableList = parentAutomationEngineIntance.AutomationEngineContext.Variables;
-			var parentArgumentList = parentAutomationEngineIntance.AutomationEngineContext.Arguments;
+			parentAutomationEngineIntance.EngineContext.SessionVariables = childAutomationEngineInstance.EngineContext.SessionVariables;
+
+			var parentVariableList = parentAutomationEngineIntance.EngineContext.Variables;
+			var parentArgumentList = parentAutomationEngineIntance.EngineContext.Arguments;
 
 			//get new argument list from the new task engine after it finishes running
-			var childArgumentList = childAutomationEngineInstance.AutomationEngineContext.Arguments;
+			var childArgumentList = childAutomationEngineInstance.EngineContext.Arguments;
+
 			foreach(var argument in _argumentList)
             {
 				if ((argument.Direction == ScriptArgumentDirection.Out || argument.Direction == ScriptArgumentDirection.InOut) 
@@ -439,6 +432,7 @@ namespace OpenBots.Commands.Task
                 {
 					var assignedParentVariable = parentVariableList.Where(v => v.VariableName == argument.AssignedVariable).FirstOrDefault();
 					var assignedParentArgument = parentArgumentList.Where(a => a.ArgumentName == argument.AssignedVariable).FirstOrDefault();
+
 					if (assignedParentVariable != null)
 					{
 						var newVarValue = childArgumentList.Where(a => a.ArgumentName == argument.ArgumentName).First().ArgumentValue;
@@ -459,13 +453,13 @@ namespace OpenBots.Commands.Task
 
 			//get errors from new engine (if any)
 			var newEngineErrors = childAutomationEngineInstance.ErrorsOccured;
+
 			if (newEngineErrors.Count > 0 && v_ErrorHandling != "Ignore Error")
 			{
 				parentAutomationEngineIntance.ChildScriptFailed = true;
+
 				foreach (var error in newEngineErrors)
-				{
 					parentAutomationEngineIntance.ErrorsOccured.Add(error);
-				}
 			}
 		}
 	}

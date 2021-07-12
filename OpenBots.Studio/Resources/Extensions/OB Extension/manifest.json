@@ -1,0 +1,32 @@
+{
+  "name": "OpenBots Web Automation",
+  "description": "OpenBots extension for browser communication",
+	"version": "1.5.2.1",
+		"content_scripts": [
+		{
+			"matches": ["http://*/*", "https://*/*"],
+			"run_at": "document_idle",
+			"js": ["jquery.min.js", "contentScript.js","ContentLibrary.js","ContentListener.js"]
+		}
+	],
+  "background": {
+    "scripts": ["jquery.min.js", "main.js"],
+    "persistent": true
+  },
+	"permissions": [
+		"nativeMessaging",
+		"tabs",
+		"http://*/*", 
+		"https://*/*"
+	],
+	"icons": {
+		"16": "icon.png",
+		"48": "icon.png",
+		"128": "icon.png"
+	 },
+	"browser_action": {
+		"default_icon": "icon.png"
+	},
+	"key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAneM4LakIIaAwWZZlV6Hy5Cy0DKrTU+a6Yp7+/VcQDU+LWkENlbdStdRFG3794hUKj3Ek4a8xcONtJRmBc24+cnfYEKZGVciPlqMOpg8RAxMbhKhhcDCv2oAfQC8+mRcFuvfsg7xauGZ5nk+gsm1KcFHPY7kwg7FqeZSL2Ylm4f2bhTAlZ8eXcVULmcjyBkgXoDn1Y/ppqZuYI5WRvhgdI51nlxwVT6iBbI647J4NpSfAhYSak4KGBOXiiR1pBnrwAR+1XHOIbwXabUBqgpWQo/9WvrQWneVdNgg1KPRWDPpcFDFiTZMwPIaXoZMynH6s+kr5Um6uNxqxJfjtvE4N/QIDAQAB",
+	"manifest_version": 2
+}

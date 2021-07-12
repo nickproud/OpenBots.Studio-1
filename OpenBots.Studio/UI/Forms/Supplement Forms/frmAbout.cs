@@ -18,7 +18,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using OpenBots.Core.Server.User;
+using OpenBots.Core.Server_Documents.User;
+using OpenBots.Server.SDK.HelperMethods;
 
 namespace OpenBots.UI.Forms.Supplement_Forms
 {
@@ -36,32 +37,60 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             lblAppVersion.Text = $"Version: {Application.ProductVersion}";
             lblBuildDate.Text = $"Build Date: {buildDate:MM-dd-yyyy}";
             lblMachineName.Text = $"Machine Name: {SystemInfo.MachineName}";
-            lblIPAddress.Text = $"IP Address: {SystemInfo.IPAddress}";
             lblMacAddress.Text = $"Mac Address: {SystemInfo.GetMacAddress()}";
 
-            if (EnvironmentSettings.GetEnvironmentVariable() == null)
+            var environmentSettings = new EnvironmentSettings();
+            if (environmentSettings.GetEnvironmentVariable() == null)
             {
                 lblServer.Text = "Server: Agent environment variable not found";
                 return;
             }
 
-            string agentSettingsPath = Path.Combine(EnvironmentSettings.GetEnvironmentVariable(), EnvironmentSettings.SettingsFileName);
+            string agentSettingsPath = Path.Combine(environmentSettings.GetEnvironmentVariable(), environmentSettings.SettingsFileName);
 
             if (!File.Exists(agentSettingsPath))
+            {
+                lblIPAddress.Text = "IP Address: Agent settings file not found";
                 lblServer.Text = "Server: Agent settings file not found";
+            }
             else
             {
-                string agentSettingsText = File.ReadAllText(agentSettingsPath);
-                var settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(agentSettingsText);
+                try
+                {
+                    environmentSettings.Load();
+                }
+                catch
+                {
+                    /* Suppress Exception ("Agent is not connected") to avoid crashing and still load the Agent settings
+                     to be used in the following statements */
+                }
 
-                string agentId = settings["AgentId"];
-                string serverURL = settings["OpenBotsServerUrl"];
-
-                if (string.IsNullOrEmpty(agentId))
+                if (string.IsNullOrEmpty(environmentSettings.AgentId))
+                {
+                    lblIPAddress.Text = "IP Address: Agent is not connected";
                     lblServer.Text = "Server: Agent is not connected";
+                }
                 else
-                    lblServer.Text = $"Server: {serverURL}";
+                {
+                    lblIPAddress.Text = $"IP Address: {GetPublicIP(environmentSettings)}";
+                    lblServer.Text = $"Server: {environmentSettings.ServerUrl}";
+                }
             }           
+        }
+
+        private string GetPublicIP(EnvironmentSettings environmentSettings)
+        {
+            try
+            {
+                AuthMethods authMethods = new AuthMethods();
+                authMethods.Initialize(environmentSettings.ServerType, environmentSettings.OrganizationName, environmentSettings.ServerUrl, environmentSettings.Username, environmentSettings.Password);
+
+                return authMethods.Ping();
+            }
+            catch(Exception)
+            {
+                return "Server is not responding";
+            }
         }
     }
 }

@@ -35,7 +35,6 @@ namespace OpenBots.UI.Forms
         private bool _includePrerelease;
         private DataTable _packageSourceDT;
         private string _packagesPath;
-        private string _currentCommandsVersion;
         private ApplicationSettings _settings;
 
         public frmGalleryPackageManager(Dictionary<string, string> projectDependenciesDict)
@@ -58,16 +57,6 @@ namespace OpenBots.UI.Forms
             PopulatetvPackageFeeds();
             pnlProjectVersion.Hide();
             pnlProjectDetails.Hide();
-
-            _currentCommandsVersion = Regex.Matches(Application.ProductVersion, @"\d+\.\d+\.\d+")[0].ToString();
-
-            //TODO: Will be implemented in future versions
-            //check if command dependencies include any that don't match the current app version
-            //var outdatedPackage = _projectDependenciesDict.Where(x => x.Key.StartsWith("OpenBots") && x.Value != _currentCommandsVersion).FirstOrDefault().Key;
-            //if (!string.IsNullOrEmpty(outdatedPackage))
-            //    btnSyncCommandsAndStudio.Visible = true;
-            //else
-            //    btnSyncCommandsAndStudio.Visible = false;
 
             try
             {
@@ -159,7 +148,11 @@ namespace OpenBots.UI.Forms
 
                 _projectVersions.Clear();
 
-                if (lblPackageCategory.Text == "All Packages" || lblPackageCategory.Text == "Project Dependencies")
+                if (lblPackageCategory.Text == "Project Dependencies")
+                {
+                    _projectVersions.AddRange(await NugetPackageManager.GetPackageVersions(projectId, _packagesPath, _includePrerelease));
+                }
+                else if (lblPackageCategory.Text == "All Packages")
                 {
                     foreach (DataRow row in _packageSourceDT.Rows)
                     {
@@ -203,7 +196,7 @@ namespace OpenBots.UI.Forms
                 }
 
                 pnlProjectVersion.Show();
-                pnlProjectDetails.Show();
+                pnlProjectDetails.Show();               
             }
             catch (Exception)
             {
@@ -214,7 +207,11 @@ namespace OpenBots.UI.Forms
 
         private void PopulateProjectDetails(string version)
         {
-            _catalog = _selectedPackageMetaData.Where(x => x.Identity.Version.ToString() == version).SingleOrDefault();
+            _catalog = _selectedPackageMetaData.Where(x => x.Identity.Version.ToString() == version).FirstOrDefault();
+            if (_catalog.Identity.Id.StartsWith("OpenBots.Commands"))
+                cbxDefaultPackage.Visible = true;
+            else
+                cbxDefaultPackage.Visible = false;
 
             if (_catalog != null)
             {
@@ -285,8 +282,7 @@ namespace OpenBots.UI.Forms
                     btnInstall.Enabled = false;
                 else
                     btnInstall.Enabled = true;
-            }
-                              
+            }                             
             else
             {
                 btnInstall.Text = "Install";
@@ -294,7 +290,12 @@ namespace OpenBots.UI.Forms
                 txtInstalled.Visible = false;
                 btnUninstall.Visible = false;
                 btnInstall.Enabled = true;
-            }               
+            }
+
+            if (_settings.ClientSettings.DefaultPackages.Contains(_catalog.Identity.Id))
+                cbxDefaultPackage.Checked = true;
+            else
+                cbxDefaultPackage.Checked = false;
         }
 
         private void llblLicense_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -330,7 +331,8 @@ namespace OpenBots.UI.Forms
                 string packageName = $"{packageId}.{version}";
                 Cursor.Current = Cursors.WaitCursor;
                 lblError.Text = $"Installing {packageName}";
-
+                _settings.ClientSettings.IsInstallingPackages = true;
+                _settings.Save();
                 await NugetPackageManager.InstallPackage(packageId, version, _projectDependenciesDict);                   
 
                 lblError.Text = string.Empty;
@@ -413,7 +415,7 @@ namespace OpenBots.UI.Forms
                         {
                             _packageSourceDT = addPackageSource.PackageSourceDT;
                             PopulatetvPackageFeeds();
-                            _settings.Save(_settings);                           
+                            _settings.Save();                           
                         }
 
                         addPackageSource.Dispose();
@@ -535,14 +537,24 @@ namespace OpenBots.UI.Forms
             if (btnInstall.Text == "Install")
             {
                 await DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
-                DialogResult = DialogResult.OK;
+
+                if (!string.IsNullOrEmpty(lblError.Text))
+                    return;
+                else
+                    DialogResult = DialogResult.OK;
             }
             else if (btnInstall.Text == "Update")
             {
                 _projectDependenciesDict.Remove(_catalog.Identity.Id);
                 await DownloadAndOpenPackage(_catalog.Identity.Id, cbxVersion.SelectedItem.ToString());
-                ShowRestartWarning = true;
-                DialogResult = DialogResult.OK;
+
+                if (!string.IsNullOrEmpty(lblError.Text))
+                    return;
+                else
+                {
+                    ShowRestartWarning = true;
+                    DialogResult = DialogResult.OK;
+                }              
             }
         }
 
@@ -576,18 +588,14 @@ namespace OpenBots.UI.Forms
                 //ScrolledToBottom(e.NewValue, scrollmax);
         }
 
-        private async void btnSyncCommandsAndStudio_Click(object sender, EventArgs e)
+        private void cbxDefaultPackage_CheckedChanged(object sender, EventArgs e)
         {
-            var projectDependenciesDictCopy = _projectDependenciesDict.Where(x => x.Key.StartsWith("OpenBots") && x.Value != _currentCommandsVersion)
-                                                                      .ToDictionary(x => x.Key, x => x.Value);
+            if (cbxDefaultPackage.Checked && !_settings.ClientSettings.DefaultPackages.Contains(_catalog.Identity.Id))
+                _settings.ClientSettings.DefaultPackages.Add(_catalog.Identity.Id);
+            else if (!cbxDefaultPackage.Checked && _settings.ClientSettings.DefaultPackages.Contains(_catalog.Identity.Id))
+                _settings.ClientSettings.DefaultPackages.Remove(_catalog.Identity.Id);
 
-            foreach (var dep in projectDependenciesDictCopy)
-            {
-                _projectDependenciesDict.Remove(dep.Key);
-                await DownloadAndOpenPackage(dep.Key, _currentCommandsVersion);
-            }
-             
-            DialogResult = DialogResult.OK;
+            _settings.Save();
         }
     }
 }

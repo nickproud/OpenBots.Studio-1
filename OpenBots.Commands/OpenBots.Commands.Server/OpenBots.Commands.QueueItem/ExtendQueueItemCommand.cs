@@ -1,10 +1,11 @@
-﻿using OpenBots.Core.Attributes.PropertyAttributes;
+﻿using OpenBots.Commands.Server.Library;
+using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
-using OpenBots.Core.Infrastructure;
+using OpenBots.Core.Interfaces;
 using OpenBots.Core.Properties;
-using OpenBots.Core.Server.HelperMethods;
 using OpenBots.Core.Utilities.CommonUtilities;
+using OpenBots.Server.SDK.HelperMethods;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,14 +44,13 @@ namespace OpenBots.Commands.QueueItem
 			var engine = (IAutomationEngineInstance)sender;
 			var vQueueItem = (Dictionary<string, object>)await v_QueueItem.EvaluateCode(engine);
 
-			var userInfo = AuthMethods.GetUserInfo();
-
 			Guid transactionKey = (Guid)vQueueItem["LockTransactionKey"];
 
 			if (transactionKey == null || transactionKey == Guid.Empty)
 				throw new NullReferenceException($"Transaction key {transactionKey} is invalid or not found");
 
-			QueueItemMethods.ExtendQueueItem(userInfo.Token, userInfo.ServerUrl, userInfo.OrganizationId, transactionKey);
+			var userInfo = ServerSessionVariableMethods.GetUserInfo(engine);
+			QueueItemMethods.ExtendQueueItem(userInfo, transactionKey);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
