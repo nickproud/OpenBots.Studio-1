@@ -102,6 +102,15 @@ namespace OpenBots.Core.Utilities.CommonUtilities
 
         public static dynamic GetVariableValue(this string varName, IAutomationEngineInstance engine)
         {
+            var variable = engine.EngineContext.EngineScriptState.GetVariable(varName);
+            if(variable == null)
+            {
+                if (varName.StartsWith("\""))
+                { 
+                    varName = varName.Substring(1, varName.Length - 2);
+                }
+                return varName;
+            }
             return engine.EngineContext.EngineScriptState.GetVariable(varName).Value;
         }
 
