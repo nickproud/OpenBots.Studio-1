@@ -19,7 +19,7 @@ using System.Windows.Forms;
 namespace NexBots.Commands.Platform
 { 
 	[Serializable]
-	[Category("Platform Commands")]
+	[Category("NexBotix Platform Commands")]
 	[Description("Creates an action in the NexBotix platform to be attended to by an assigned user.")]
 	public class CreatePlatformTaskCommand : ScriptCommand
 	{
@@ -136,6 +136,16 @@ namespace NexBots.Commands.Platform
 		public string v_jobId { get; set; } //holds value added to field
 
 
+		[Required]
+		[Editable(false)]
+		[DisplayName("Output Platform Response Variable")]
+		[Description("Create a new variable or select a variable from the list.")]
+		[SampleUsage("vUserVariable")]
+		[Remarks("New variables/arguments may be instantiated by utilizing the Ctrl+K/Ctrl+J shortcuts.")]
+		[CompatibleTypes(new Type[] { typeof(string) })]
+		public string v_OutputUserVariableName { get; set; }
+
+
 
 		//examples of grid view that can be added
 		//[JsonIgnore]
@@ -180,7 +190,8 @@ namespace NexBots.Commands.Platform
 				var platformTaskJson = JsonConvert.SerializeObject(platformTask);
 				var platformTaskPayload = new StringContent(platformTaskJson);
 				platformTaskPayload.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-				var result = client.PostAsync(platformUrl, platformTaskPayload).Result;
+				string result = client.PostAsync(platformUrl, platformTaskPayload).Result.Content.ReadAsStringAsync().Result;
+				result.SetVariableValue(engine, v_OutputUserVariableName);
 			}
 			
 		}
@@ -212,6 +223,7 @@ namespace NexBots.Commands.Platform
 			RenderedControls.AddRange(commandControls.CreateDefaultDropdownGroupFor("v_taskType", this, editor));
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_jobId", this));
 			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_jobId", this));
+			RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
 
 
 			//RenderedControls.AddRange(commandControls.CreateDefaultOutputGroupFor("v_OutputUserVariableName", this, editor));
