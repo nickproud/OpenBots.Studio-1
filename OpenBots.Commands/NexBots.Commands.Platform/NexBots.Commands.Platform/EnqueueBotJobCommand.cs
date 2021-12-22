@@ -26,7 +26,7 @@ namespace NexBots.Commands.Template
 	{
 		[Required] //remove if not required
 		[DisplayName("Platform Url")]
-		[Description("URL of the platform instance you are posting to.")]
+		[Description("URL of the platform instance you are queueing to.")]
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
@@ -46,7 +46,7 @@ namespace NexBots.Commands.Template
 
 		[Required]
 		[DisplayName("Phase")]
-		[Description("The phase relating to the action")]
+		[Description("The phase relating to the jobn")]
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
