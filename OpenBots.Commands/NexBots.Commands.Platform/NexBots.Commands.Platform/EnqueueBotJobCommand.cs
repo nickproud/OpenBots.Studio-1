@@ -21,7 +21,7 @@ namespace NexBots.Commands.Template
 {
 	[Serializable]
 	[Category("NexBotix Platform Commands")]
-	[Description("This command does something really cool")]
+	[Description("This command queues jobs into the NexBotix platform on a specific tenant")]
 	public class EnqueueBotJobCommand : ScriptCommand
 	{
 		[Required] //remove if not required
@@ -126,9 +126,9 @@ namespace NexBots.Commands.Template
             {
 				var job = new BotJob()
 				{
-					OutputGroup = v_outputGroup.GetVariableValue(engine),
+					DocumentUrl = v_outputGroup.GetVariableValue(engine),
 					Data = v_jobData.GetVariableValue(engine),
-					ProcessId = int.Parse(v_processId.GetVariableValue(engine)),
+					AutomationId = int.Parse(v_processId.GetVariableValue(engine)),
 					Phase = int.Parse(v_phase.GetVariableValue(engine)),
 					UniqueId = v_uniqueId.GetVariableValue(engine),
 					SecondaryId = v_secondaryId.GetVariableValue(engine),
