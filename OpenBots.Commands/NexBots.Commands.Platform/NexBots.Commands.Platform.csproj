@@ -59,6 +59,7 @@
     <Compile Include="NexBots.Commands.Platform\DequeueBotJobCommand.cs" />
     <Compile Include="NexBots.Commands.Platform\EnqueueBotJobCommand.cs" />
     <Compile Include="NexBots.Commands.Platform\GetTotalPendingBotJobsCommand.cs" />
+    <Compile Include="NexBots.Commands.Platform\UpdateJobPhaseCommand.cs" />
     <Compile Include="NexBots.Commands.Platform\UpdateJobStatusCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
