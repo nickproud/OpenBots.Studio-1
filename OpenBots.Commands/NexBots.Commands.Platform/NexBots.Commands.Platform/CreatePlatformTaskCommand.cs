@@ -136,6 +136,7 @@ namespace NexBots.Commands.Platform
 		public string v_jobId { get; set; } //holds value added to field
 
 
+
 		[Required]
 		[Editable(false)]
 		[DisplayName("Output Platform Response Variable")]

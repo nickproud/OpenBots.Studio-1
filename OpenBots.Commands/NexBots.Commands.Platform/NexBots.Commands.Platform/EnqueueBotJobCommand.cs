@@ -46,7 +46,7 @@ namespace NexBots.Commands.Template
 
 		[Required]
 		[DisplayName("Phase")]
-		[Description("The phase relating to the jobn")]
+		[Description("The phase relating to the job")]
 		[SampleUsage("")]
 		[Remarks("")]
 		[Editor("ShowVariableHelper", typeof(UIAdditionalHelperType))]
