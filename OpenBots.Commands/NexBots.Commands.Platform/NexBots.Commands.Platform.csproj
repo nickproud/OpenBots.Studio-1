@@ -58,6 +58,7 @@
     <Compile Include="NexBots.Commands.Platform\DequeueBotJobByUniqueIdCommand.cs" />
     <Compile Include="NexBots.Commands.Platform\DequeueBotJobCommand.cs" />
     <Compile Include="NexBots.Commands.Platform\EnqueueBotJobCommand.cs" />
+    <Compile Include="NexBots.Commands.Platform\GetOutcomesByDateCommand.cs" />
     <Compile Include="NexBots.Commands.Platform\GetTotalPendingBotJobsCommand.cs" />
     <Compile Include="NexBots.Commands.Platform\ProcessHistory.cs" />
     <Compile Include="NexBots.Commands.Platform\UpdateJobPhaseCommand.cs" />
@@ -67,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="NexBots.Commands.Platform\NexBots.Commands.Platform.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -57,7 +57,7 @@ namespace NexBots.Commands.Platform
 
 		public UpdateJobStatusCommand()
 		{
-			CommandName = "UpdateJobStatusCommandCommand";
+			CommandName = "UpdateJobStatusCommand";
 			SelectionName = "Update BotJob Status";
 			CommandEnabled = true;
 			CommandIcon = Resources.command_run_code; //change this as needed
