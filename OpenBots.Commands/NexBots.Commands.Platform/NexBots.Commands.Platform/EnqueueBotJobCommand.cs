@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using NexBots.Commands.Platform.NexBots.Commands.Platform;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;
@@ -17,7 +16,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace NexBots.Commands.Template
+namespace NexBots.Commands.Platform
 {
 	[Serializable]
 	[Category("NexBotix Platform Commands")]

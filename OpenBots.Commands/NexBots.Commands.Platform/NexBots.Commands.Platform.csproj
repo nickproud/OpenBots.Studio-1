@@ -36,9 +36,8 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OpenBots.Core, Version=1.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\OpenBots.Core\bin\Release\OpenBots.Core.dll</HintPath>
+    <Reference Include="OpenBots.Core">
+      <HintPath>..\..\OpenBots.Core\bin\Debug\OpenBots.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -69,7 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="NexBots.Commands.Platform\NexBots.Commands.Platform.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

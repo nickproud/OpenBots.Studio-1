@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using NexBots.Commands.Platform.NexBots.Commands.Platform;
+using NexBots.Commands.Platform;
 using OpenBots.Core.Attributes.PropertyAttributes;
 using OpenBots.Core.Command;
 using OpenBots.Core.Enums;

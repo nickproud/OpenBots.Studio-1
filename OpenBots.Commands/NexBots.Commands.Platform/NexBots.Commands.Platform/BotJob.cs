@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NexBots.Commands.Platform.NexBots.Commands.Platform
+namespace NexBots.Commands.Platform
 {
     public class BotJob
     {
