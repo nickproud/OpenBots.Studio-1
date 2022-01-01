@@ -112,12 +112,12 @@ namespace NexBots.Commands.Azure
 
 			//render controls for your field variables - access methods on commandsControls to do this
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_blobUrl", this));
-			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_blobUrl", this));
+			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_blobUrl", this));	
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_filePath", this));
 			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_filePath", this));
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_storageAccount", this)); 
 			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_storageAccount", this));
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_containerName", this));
+			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_containerName", this)); 
 			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_containerName", this));
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_accessKey", this));
 			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_accessKey", this));
