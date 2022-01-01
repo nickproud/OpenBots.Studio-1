@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nexbots.Commands.Azure\DownloadBlobFromUrlCommand.cs" />
+    <Compile Include="Nexbots.Commands.Azure\UploadBlobCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
