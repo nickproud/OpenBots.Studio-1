@@ -39,7 +39,7 @@
             this.lblAppVersion.BackColor = System.Drawing.Color.Transparent;
             this.lblAppVersion.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAppVersion.ForeColor = System.Drawing.Color.Black;
-            this.lblAppVersion.Location = new System.Drawing.Point(297, 211);
+            this.lblAppVersion.Location = new System.Drawing.Point(-1, 0);
             this.lblAppVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAppVersion.Name = "lblAppVersion";
             this.lblAppVersion.Size = new System.Drawing.Size(30, 37);
@@ -53,7 +53,7 @@
             this.lblFirstTimeSetup.BackColor = System.Drawing.Color.Transparent;
             this.lblFirstTimeSetup.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.lblFirstTimeSetup.ForeColor = System.Drawing.Color.Black;
-            this.lblFirstTimeSetup.Location = new System.Drawing.Point(1, 271);
+            this.lblFirstTimeSetup.Location = new System.Drawing.Point(1, 121);
             this.lblFirstTimeSetup.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblFirstTimeSetup.Name = "lblFirstTimeSetup";
             this.lblFirstTimeSetup.Size = new System.Drawing.Size(289, 25);
@@ -66,9 +66,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.BackgroundImage = global::OpenBots.Properties.Resources.OpenBots_splash;
+            this.BackgroundImage = global::OpenBots.Properties.Resources.OpenBots_logo;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(450, 300);
+            this.ClientSize = new System.Drawing.Size(352, 150);
             this.Controls.Add(this.lblFirstTimeSetup);
             this.Controls.Add(this.lblAppVersion);
             this.DoubleBuffered = true;

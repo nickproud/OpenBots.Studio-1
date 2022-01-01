@@ -44,7 +44,6 @@ namespace OpenBots.UI.Forms
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Templates");
             this.tlpProjectLayout = new System.Windows.Forms.TableLayoutPanel();
             this.lblError = new System.Windows.Forms.Label();
-            this.imlNodes = new System.Windows.Forms.ImageList(this.components);
             this.pnlProjectVersion = new OpenBots.UI.CustomControls.CustomUIControls.UIPanel();
             this.pbxOBStudio = new System.Windows.Forms.PictureBox();
             this.cbxVersion = new System.Windows.Forms.ComboBox();
@@ -83,6 +82,7 @@ namespace OpenBots.UI.Forms
             this.tpbLoadingSpinner = new OpenBots.UI.CustomControls.CustomUIControls.UITransparentPictureBox();
             this.lbxGalleryProjects = new OpenBots.UI.CustomControls.CustomUIControls.UIListBox();
             this.tvProjectFeeds = new OpenBots.UI.CustomControls.CustomUIControls.UITreeView();
+            this.imlNodes = new System.Windows.Forms.ImageList(this.components);
             this.tlpProjectLayout.SuspendLayout();
             this.pnlProjectVersion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbxOBStudio)).BeginInit();
@@ -133,12 +133,6 @@ namespace OpenBots.UI.Forms
             this.lblError.Size = new System.Drawing.Size(520, 28);
             this.lblError.TabIndex = 39;
             // 
-            // imlNodes
-            // 
-            this.imlNodes.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imlNodes.ImageStream")));
-            this.imlNodes.TransparentColor = System.Drawing.Color.Transparent;
-            this.imlNodes.Images.SetKeyName(0, "openbots-gallery-icon.png");
-            // 
             // pnlProjectVersion
             // 
             this.pnlProjectVersion.Controls.Add(this.pbxOBStudio);
@@ -186,7 +180,7 @@ namespace OpenBots.UI.Forms
             this.lblVersionTitleLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.lblVersionTitleLabel.Location = new System.Drawing.Point(8, 69);
             this.lblVersionTitleLabel.Name = "lblVersionTitleLabel";
-            this.lblVersionTitleLabel.Size = new System.Drawing.Size(100, 32);
+            this.lblVersionTitleLabel.Size = new System.Drawing.Size(99, 32);
             this.lblVersionTitleLabel.TabIndex = 2;
             this.lblVersionTitleLabel.Text = "Version:";
             // 
@@ -235,7 +229,7 @@ namespace OpenBots.UI.Forms
             this.lblSearch.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.lblSearch.Location = new System.Drawing.Point(7, 71);
             this.lblSearch.Name = "lblSearch";
-            this.lblSearch.Size = new System.Drawing.Size(94, 32);
+            this.lblSearch.Size = new System.Drawing.Size(93, 32);
             this.lblSearch.TabIndex = 35;
             this.lblSearch.Text = "Search:";
             // 
@@ -641,6 +635,12 @@ namespace OpenBots.UI.Forms
             this.tvProjectFeeds.TabIndex = 41;
             this.tvProjectFeeds.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvProjectFeeds_BeforeCollapse);
             this.tvProjectFeeds.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvProjectFeeds_NodeMouseDoubleClick);
+            // 
+            // imlNodes
+            // 
+            this.imlNodes.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imlNodes.ImageStream")));
+            this.imlNodes.TransparentColor = System.Drawing.Color.Transparent;
+            this.imlNodes.Images.SetKeyName(0, "openbots-gallery-icon.png");
             // 
             // frmGalleryProjectManager
             // 

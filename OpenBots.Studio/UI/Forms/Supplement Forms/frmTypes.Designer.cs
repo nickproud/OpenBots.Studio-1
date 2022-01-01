@@ -238,6 +238,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(838, 670);
             this.Controls.Add(this.tlpCommands);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmTypes";
             this.Text = "Types";
             this.TopMost = true;

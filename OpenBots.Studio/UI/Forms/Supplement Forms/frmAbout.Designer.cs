@@ -31,8 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAbout));
             this.lblAppVersion = new System.Windows.Forms.Label();
             this.lblBuildDate = new System.Windows.Forms.Label();
-            this.lblThankYou = new System.Windows.Forms.Label();
-            this.lblSpecialThanks = new System.Windows.Forms.Label();
             this.lblMachineName = new System.Windows.Forms.Label();
             this.lblMacAddress = new System.Windows.Forms.Label();
             this.lblIPAddress = new System.Windows.Forms.Label();
@@ -64,32 +62,6 @@
             this.lblBuildDate.Size = new System.Drawing.Size(144, 37);
             this.lblBuildDate.TabIndex = 5;
             this.lblBuildDate.Text = "Build Date:";
-            // 
-            // lblThankYou
-            // 
-            this.lblThankYou.AutoSize = true;
-            this.lblThankYou.BackColor = System.Drawing.Color.Transparent;
-            this.lblThankYou.Font = new System.Drawing.Font("Segoe UI Semibold", 26.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblThankYou.ForeColor = System.Drawing.Color.Black;
-            this.lblThankYou.Location = new System.Drawing.Point(27, 161);
-            this.lblThankYou.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblThankYou.Name = "lblThankYou";
-            this.lblThankYou.Size = new System.Drawing.Size(246, 60);
-            this.lblThankYou.TabIndex = 6;
-            this.lblThankYou.Text = "Thank you!";
-            // 
-            // lblSpecialThanks
-            // 
-            this.lblSpecialThanks.BackColor = System.Drawing.Color.Transparent;
-            this.lblSpecialThanks.Font = new System.Drawing.Font("Segoe UI Light", 14F);
-            this.lblSpecialThanks.ForeColor = System.Drawing.Color.Black;
-            this.lblSpecialThanks.Location = new System.Drawing.Point(31, 221);
-            this.lblSpecialThanks.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblSpecialThanks.Name = "lblSpecialThanks";
-            this.lblSpecialThanks.Size = new System.Drawing.Size(836, 71);
-            this.lblSpecialThanks.TabIndex = 7;
-            this.lblSpecialThanks.Text = "To all of the community members and projects that make this software possible. \r\n" +
-    "And a special thanks to Jason Bayldon for Taskt that inspired this.\r\n";
             // 
             // lblMachineName
             // 
@@ -155,9 +127,7 @@
             this.Controls.Add(this.lblMacAddress);
             this.Controls.Add(this.lblMachineName);
             this.Controls.Add(this.lblAppVersion);
-            this.Controls.Add(this.lblSpecialThanks);
             this.Controls.Add(this.lblBuildDate);
-            this.Controls.Add(this.lblThankYou);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -173,8 +143,6 @@
         #endregion
         private System.Windows.Forms.Label lblAppVersion;
         private System.Windows.Forms.Label lblBuildDate;
-        private System.Windows.Forms.Label lblThankYou;
-        private System.Windows.Forms.Label lblSpecialThanks;
         private System.Windows.Forms.Label lblMachineName;
         private System.Windows.Forms.Label lblMacAddress;
         private System.Windows.Forms.Label lblIPAddress;

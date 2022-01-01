@@ -61,7 +61,7 @@
             this.lblLocal.Location = new System.Drawing.Point(11, 135);
             this.lblLocal.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblLocal.Name = "lblLocal";
-            this.lblLocal.Size = new System.Drawing.Size(142, 32);
+            this.lblLocal.Size = new System.Drawing.Size(141, 32);
             this.lblLocal.TabIndex = 3;
             this.lblLocal.Text = "localVersion";
             // 
@@ -74,7 +74,7 @@
             this.lblRemote.Location = new System.Drawing.Point(11, 167);
             this.lblRemote.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblRemote.Name = "lblRemote";
-            this.lblRemote.Size = new System.Drawing.Size(170, 32);
+            this.lblRemote.Size = new System.Drawing.Size(169, 32);
             this.lblRemote.TabIndex = 4;
             this.lblRemote.Text = "remoteVersion";
             // 

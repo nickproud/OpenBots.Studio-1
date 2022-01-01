@@ -114,9 +114,9 @@
             this.lblAppPath.Location = new System.Drawing.Point(10, 270);
             this.lblAppPath.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAppPath.Name = "lblAppPath";
-            this.lblAppPath.Size = new System.Drawing.Size(396, 23);
+            this.lblAppPath.Size = new System.Drawing.Size(384, 23);
             this.lblAppPath.TabIndex = 8;
-            this.lblAppPath.Text = "OpenBots.Studio.exe location (executing assembly)";
+            this.lblAppPath.Text = "NexBots.Studio.exe location (executing assembly)";
             // 
             // lblScriptName
             // 
@@ -127,9 +127,9 @@
             this.lblScriptName.Location = new System.Drawing.Point(10, 330);
             this.lblScriptName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblScriptName.Name = "lblScriptName";
-            this.lblScriptName.Size = new System.Drawing.Size(476, 29);
+            this.lblScriptName.Size = new System.Drawing.Size(369, 23);
             this.lblScriptName.TabIndex = 9;
-            this.lblScriptName.Text = "Published Projects (..\\OpenBotsStudio\\Published)";
+            this.lblScriptName.Text = "Published Projects (..\\NexBotsStudio\\Published)";
             // 
             // dgvScheduledTasks
             // 

@@ -230,7 +230,7 @@ namespace OpenBots.UI.Forms
             this.lblInstalled.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.lblInstalled.Location = new System.Drawing.Point(8, 72);
             this.lblInstalled.Name = "lblInstalled";
-            this.lblInstalled.Size = new System.Drawing.Size(113, 32);
+            this.lblInstalled.Size = new System.Drawing.Size(112, 32);
             this.lblInstalled.TabIndex = 45;
             this.lblInstalled.Text = "Installed:";
             this.lblInstalled.Visible = false;
@@ -279,7 +279,7 @@ namespace OpenBots.UI.Forms
             this.lblVersionTitleLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.lblVersionTitleLabel.Location = new System.Drawing.Point(8, 111);
             this.lblVersionTitleLabel.Name = "lblVersionTitleLabel";
-            this.lblVersionTitleLabel.Size = new System.Drawing.Size(100, 32);
+            this.lblVersionTitleLabel.Size = new System.Drawing.Size(99, 32);
             this.lblVersionTitleLabel.TabIndex = 2;
             this.lblVersionTitleLabel.Text = "Version:";
             // 
@@ -319,7 +319,7 @@ namespace OpenBots.UI.Forms
             this.chbxIncludePrerelease.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.chbxIncludePrerelease.Location = new System.Drawing.Point(13, 72);
             this.chbxIncludePrerelease.Name = "chbxIncludePrerelease";
-            this.chbxIncludePrerelease.Size = new System.Drawing.Size(236, 36);
+            this.chbxIncludePrerelease.Size = new System.Drawing.Size(235, 36);
             this.chbxIncludePrerelease.TabIndex = 46;
             this.chbxIncludePrerelease.Text = "Include Prerelease";
             this.chbxIncludePrerelease.UseVisualStyleBackColor = true;
@@ -342,7 +342,7 @@ namespace OpenBots.UI.Forms
             this.lblSearch.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.lblSearch.Location = new System.Drawing.Point(8, 111);
             this.lblSearch.Name = "lblSearch";
-            this.lblSearch.Size = new System.Drawing.Size(94, 32);
+            this.lblSearch.Size = new System.Drawing.Size(93, 32);
             this.lblSearch.TabIndex = 35;
             this.lblSearch.Text = "Search:";
             // 

@@ -700,7 +700,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnPackageManager.DisplayText = "Packages";
             this.uiBtnPackageManager.DisplayTextBrush = System.Drawing.Color.AliceBlue;
             this.uiBtnPackageManager.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.uiBtnPackageManager.Image = global::OpenBots.Properties.Resources.action_bar_project;
+            this.uiBtnPackageManager.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnPackageManager.Image")));
             this.uiBtnPackageManager.IsMouseOver = false;
             this.uiBtnPackageManager.Location = new System.Drawing.Point(480, 24);
             this.uiBtnPackageManager.Margin = new System.Windows.Forms.Padding(4);
@@ -754,7 +754,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.uiBtnProject.DisplayText = "Project";
             this.uiBtnProject.DisplayTextBrush = System.Drawing.Color.AliceBlue;
             this.uiBtnProject.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.uiBtnProject.Image = global::OpenBots.Properties.Resources.action_bar_project;
+            this.uiBtnProject.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnProject.Image")));
             this.uiBtnProject.IsMouseOver = false;
             this.uiBtnProject.Location = new System.Drawing.Point(0, 24);
             this.uiBtnProject.Margin = new System.Windows.Forms.Padding(4);
@@ -2447,7 +2447,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmScriptBuilder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OpenBots Studio";
+            this.Text = "NexBots Studio";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmScriptBuilder_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmScriptBuilder_FormClosed);
             this.Load += new System.EventHandler(this.frmScriptBuilder_LoadAsync);

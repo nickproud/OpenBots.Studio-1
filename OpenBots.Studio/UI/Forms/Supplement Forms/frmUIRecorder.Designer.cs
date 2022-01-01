@@ -149,13 +149,13 @@
             this.lblStopCaptureHotKey.TabIndex = 18;
             this.lblStopCaptureHotKey.Text = "Stop Capture HotKey";
             // 
-            // txtHookStop
+            // cbxHookStop
             // 
             this.cbxHookStop.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbxHookStop.Location = new System.Drawing.Point(284, 251);
             this.cbxHookStop.Margin = new System.Windows.Forms.Padding(5);
             this.cbxHookStop.Name = "cbxHookStop";
-            this.cbxHookStop.Size = new System.Drawing.Size(89, 26);
+            this.cbxHookStop.Size = new System.Drawing.Size(89, 27);
             this.cbxHookStop.TabIndex = 17;
             // 
             // chkTrackWindowsOpenLocation

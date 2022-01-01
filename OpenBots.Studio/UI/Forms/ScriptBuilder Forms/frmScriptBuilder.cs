@@ -263,9 +263,9 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
         private void UpdateWindowTitle()
         {
             if (ScriptProject.ProjectName != null)
-                Text = $"OpenBots Studio - {ScriptProject.ProjectName} - {ScriptProject.ProjectType}";
+                Text = $"NexBots Studio - {ScriptProject.ProjectName} - {ScriptProject.ProjectType}";
             else
-                Text = "OpenBots Studio";
+                Text = "NexBots Studio";
         }
 
         private async void frmScriptBuilder_LoadAsync(object sender, EventArgs e)

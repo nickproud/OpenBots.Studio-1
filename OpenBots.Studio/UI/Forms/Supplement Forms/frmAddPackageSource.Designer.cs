@@ -49,10 +49,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.lblHeader.BackColor = System.Drawing.Color.Transparent;
             this.lblHeader.Font = new System.Drawing.Font("Segoe UI Semilight", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblHeader.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblHeader.Location = new System.Drawing.Point(9, 5);
+            this.lblHeader.Location = new System.Drawing.Point(8, 4);
             this.lblHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(443, 65);
+            this.lblHeader.Size = new System.Drawing.Size(367, 54);
             this.lblHeader.TabIndex = 14;
             this.lblHeader.Text = "add package source";
             // 
@@ -66,10 +66,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.uiBtnOk.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnOk.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOk.Image")));
             this.uiBtnOk.IsMouseOver = false;
-            this.uiBtnOk.Location = new System.Drawing.Point(22, 342);
-            this.uiBtnOk.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
+            this.uiBtnOk.Location = new System.Drawing.Point(20, 274);
+            this.uiBtnOk.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnOk.Name = "uiBtnOk";
-            this.uiBtnOk.Size = new System.Drawing.Size(68, 75);
+            this.uiBtnOk.Size = new System.Drawing.Size(60, 60);
             this.uiBtnOk.TabIndex = 21;
             this.uiBtnOk.TabStop = false;
             this.uiBtnOk.Text = "Ok";
@@ -85,10 +85,10 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.uiBtnCancel.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnCancel.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCancel.Image")));
             this.uiBtnCancel.IsMouseOver = false;
-            this.uiBtnCancel.Location = new System.Drawing.Point(90, 342);
-            this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(9, 8, 9, 8);
+            this.uiBtnCancel.Location = new System.Drawing.Point(80, 274);
+            this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.uiBtnCancel.Name = "uiBtnCancel";
-            this.uiBtnCancel.Size = new System.Drawing.Size(68, 75);
+            this.uiBtnCancel.Size = new System.Drawing.Size(60, 60);
             this.uiBtnCancel.TabIndex = 22;
             this.uiBtnCancel.TabStop = false;
             this.uiBtnCancel.Text = "Cancel";
@@ -108,12 +108,11 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             this.packageName,
             this.packageSource});
             this.dgvPackageSources.DataBindings.Add(new System.Windows.Forms.Binding("DataSource", this, "PackageSourceDT", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.dgvPackageSources.Location = new System.Drawing.Point(19, 76);
-            this.dgvPackageSources.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.dgvPackageSources.Location = new System.Drawing.Point(17, 61);
             this.dgvPackageSources.Name = "dgvPackageSources";
             this.dgvPackageSources.RowHeadersWidth = 51;
             this.dgvPackageSources.RowTemplate.Height = 24;
-            this.dgvPackageSources.Size = new System.Drawing.Size(969, 255);
+            this.dgvPackageSources.Size = new System.Drawing.Size(861, 204);
             this.dgvPackageSources.TabIndex = 28;
             // 
             // enabled
@@ -145,16 +144,16 @@ namespace OpenBots.UI.Forms.Supplement_Forms
             // 
             // frmAddPackageSource
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1001, 438);
+            this.ClientSize = new System.Drawing.Size(890, 350);
             this.Controls.Add(this.dgvPackageSources);
             this.Controls.Add(this.uiBtnOk);
             this.Controls.Add(this.uiBtnCancel);
             this.Controls.Add(this.lblHeader);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.MinimumSize = new System.Drawing.Size(703, 398);
+            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.MinimumSize = new System.Drawing.Size(627, 328);
             this.Name = "frmAddPackageSource";
             this.Text = "Add Package Source";
             this.TopMost = true;
