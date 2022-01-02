@@ -21,7 +21,7 @@ namespace OpenBots.Core.Script
             var commandType = GetTypeByName(_container, objectType.Name);
             if (commandType != null)
             {
-                JsonObjectContract contract = base.CreateObjectContract(commandType);
+                 JsonObjectContract contract = base.CreateObjectContract(commandType);
                 contract.DefaultCreator = () => Activator.CreateInstance(commandType);
                 return contract;
             }

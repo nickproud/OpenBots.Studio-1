@@ -137,10 +137,10 @@ namespace NexBots.Commands.Azure
 				v_filePath = v_filePath.Substring(2, v_filePath.Length - 3);
 			}
 			var additionalTrainingId = v_trainingSetId.Length > 0 ? "" : v_trainingSetId.GetVariableValue(engine);
-			var result = GetOCRJSON(v_containerName.GetVariableValue(engine), v_storageAccount.GetVariableValue(engine), v_blobAccessKey.GetVariableValue(engine),
+			string result = GetOCRJSON(v_containerName.GetVariableValue(engine), v_storageAccount.GetVariableValue(engine), v_blobAccessKey.GetVariableValue(engine),
 				v_filePath.GetVariableValue(engine), v_endpointUrl.GetVariableValue(engine), v_subscriptionKey.GetVariableValue(engine),
 				v_trainingSetId.GetVariableValue(engine), additionalTrainingId);
-			result.SetVariableValue(v_OutputUserVariableName);
+			result.SetVariableValue(engine, v_OutputUserVariableName);
 		}
 
 		public override List<Control> Render(IfrmCommandEditor editor, ICommandControls commandControls)
@@ -157,8 +157,6 @@ namespace NexBots.Commands.Azure
 			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_blobAccessKey", this));
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_containerName", this));
 			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_containerName", this));
-			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_accessKey", this));
-			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_accessKey", this));
 			RenderedControls.AddRange(commandControls.CreateDefaultInputGroupFor("v_filePath", this, editor));
 			RenderedControls.Add(commandControls.CreateDefaultLabelFor("v_endpointUrl", this));
 			RenderedControls.Add(commandControls.CreateDefaultInputFor("v_endpointUrl", this));
@@ -348,8 +346,8 @@ namespace NexBots.Commands.Azure
 								default:
 									throw new InvalidOperationException($"Cannot parse item value of type {lineItemColumn.Value.ValueType.ToString()}");
 							}
-							lineItemObject.Add("Content", lineItem.Content);
 						}
+						lineItemObject.Add("OriginalContent", lineItem.Content);
 						lineItemArray.Add(lineItemObject);
 					}
 				}

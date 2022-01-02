@@ -56,10 +56,9 @@
             this.lblHeader.BackColor = System.Drawing.Color.Transparent;
             this.lblHeader.Font = new System.Drawing.Font("Segoe UI Light", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblHeader.ForeColor = System.Drawing.Color.White;
-            this.lblHeader.Location = new System.Drawing.Point(9, 5);
-            this.lblHeader.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblHeader.Location = new System.Drawing.Point(7, 4);
             this.lblHeader.Name = "lblHeader";
-            this.lblHeader.Size = new System.Drawing.Size(506, 41);
+            this.lblHeader.Size = new System.Drawing.Size(407, 32);
             this.lblHeader.TabIndex = 1;
             this.lblHeader.Text = "Insert a variable/argument from the list";
             // 
@@ -73,10 +72,10 @@
             this.uiBtnOk.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnOk.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnOk.Image")));
             this.uiBtnOk.IsMouseOver = false;
-            this.uiBtnOk.Location = new System.Drawing.Point(17, 529);
-            this.uiBtnOk.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
+            this.uiBtnOk.Location = new System.Drawing.Point(13, 430);
+            this.uiBtnOk.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.uiBtnOk.Name = "uiBtnOk";
-            this.uiBtnOk.Size = new System.Drawing.Size(60, 60);
+            this.uiBtnOk.Size = new System.Drawing.Size(45, 49);
             this.uiBtnOk.TabIndex = 18;
             this.uiBtnOk.TabStop = false;
             this.uiBtnOk.Text = "Ok";
@@ -92,10 +91,10 @@
             this.uiBtnCancel.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.uiBtnCancel.Image = ((System.Drawing.Image)(resources.GetObject("uiBtnCancel.Image")));
             this.uiBtnCancel.IsMouseOver = false;
-            this.uiBtnCancel.Location = new System.Drawing.Point(77, 529);
-            this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
+            this.uiBtnCancel.Location = new System.Drawing.Point(58, 430);
+            this.uiBtnCancel.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.uiBtnCancel.Name = "uiBtnCancel";
-            this.uiBtnCancel.Size = new System.Drawing.Size(60, 60);
+            this.uiBtnCancel.Size = new System.Drawing.Size(45, 49);
             this.uiBtnCancel.TabIndex = 19;
             this.uiBtnCancel.TabStop = false;
             this.uiBtnCancel.Text = "Cancel";
@@ -107,10 +106,11 @@
             this.tcVariableArgument.Controls.Add(this.variables);
             this.tcVariableArgument.Controls.Add(this.arguments);
             this.tcVariableArgument.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tcVariableArgument.Location = new System.Drawing.Point(16, 49);
+            this.tcVariableArgument.Location = new System.Drawing.Point(12, 40);
+            this.tcVariableArgument.Margin = new System.Windows.Forms.Padding(2);
             this.tcVariableArgument.Name = "tcVariableArgument";
             this.tcVariableArgument.SelectedIndex = 0;
-            this.tcVariableArgument.Size = new System.Drawing.Size(562, 462);
+            this.tcVariableArgument.Size = new System.Drawing.Size(422, 375);
             this.tcVariableArgument.TabIndex = 21;
             this.tcVariableArgument.SelectedIndexChanged += new System.EventHandler(this.tcVariableArgument_SelectedIndexChanged);
             // 
@@ -118,10 +118,11 @@
             // 
             this.variables.Controls.Add(this.tlpVariables);
             this.variables.Font = new System.Drawing.Font("Segoe UI Semilight", 12F);
-            this.variables.Location = new System.Drawing.Point(4, 29);
+            this.variables.Location = new System.Drawing.Point(4, 26);
+            this.variables.Margin = new System.Windows.Forms.Padding(2);
             this.variables.Name = "variables";
-            this.variables.Padding = new System.Windows.Forms.Padding(3);
-            this.variables.Size = new System.Drawing.Size(554, 429);
+            this.variables.Padding = new System.Windows.Forms.Padding(2);
+            this.variables.Size = new System.Drawing.Size(414, 345);
             this.variables.TabIndex = 0;
             this.variables.Text = "Variables";
             this.variables.UseVisualStyleBackColor = true;
@@ -133,12 +134,13 @@
             this.tlpVariables.Controls.Add(this.txtVariableSearch, 0, 0);
             this.tlpVariables.Controls.Add(this.lstVariables, 0, 1);
             this.tlpVariables.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpVariables.Location = new System.Drawing.Point(3, 3);
+            this.tlpVariables.Location = new System.Drawing.Point(2, 2);
+            this.tlpVariables.Margin = new System.Windows.Forms.Padding(2);
             this.tlpVariables.Name = "tlpVariables";
             this.tlpVariables.RowCount = 2;
-            this.tlpVariables.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tlpVariables.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tlpVariables.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpVariables.Size = new System.Drawing.Size(548, 423);
+            this.tlpVariables.Size = new System.Drawing.Size(410, 341);
             this.tlpVariables.TabIndex = 0;
             // 
             // txtVariableSearch
@@ -146,10 +148,9 @@
             this.txtVariableSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtVariableSearch.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtVariableSearch.ForeColor = System.Drawing.Color.LightGray;
-            this.txtVariableSearch.Location = new System.Drawing.Point(4, 4);
-            this.txtVariableSearch.Margin = new System.Windows.Forms.Padding(4);
+            this.txtVariableSearch.Location = new System.Drawing.Point(3, 3);
             this.txtVariableSearch.Name = "txtVariableSearch";
-            this.txtVariableSearch.Size = new System.Drawing.Size(540, 32);
+            this.txtVariableSearch.Size = new System.Drawing.Size(404, 27);
             this.txtVariableSearch.TabIndex = 20;
             this.txtVariableSearch.Text = "Type Here to Search";
             this.txtVariableSearch.TextChanged += new System.EventHandler(this.txtVariableSearch_TextChanged);
@@ -161,21 +162,21 @@
             this.lstVariables.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstVariables.Font = new System.Drawing.Font("Segoe UI Semilight", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstVariables.FormattingEnabled = true;
-            this.lstVariables.ItemHeight = 28;
-            this.lstVariables.Location = new System.Drawing.Point(4, 39);
-            this.lstVariables.Margin = new System.Windows.Forms.Padding(4);
+            this.lstVariables.ItemHeight = 21;
+            this.lstVariables.Location = new System.Drawing.Point(3, 31);
             this.lstVariables.Name = "lstVariables";
-            this.lstVariables.Size = new System.Drawing.Size(540, 380);
+            this.lstVariables.Size = new System.Drawing.Size(404, 307);
             this.lstVariables.TabIndex = 0;
             this.lstVariables.DoubleClick += new System.EventHandler(this.lstVariables_DoubleClick);
             // 
             // arguments
             // 
             this.arguments.Controls.Add(this.tlpArguments);
-            this.arguments.Location = new System.Drawing.Point(4, 29);
+            this.arguments.Location = new System.Drawing.Point(4, 26);
+            this.arguments.Margin = new System.Windows.Forms.Padding(2);
             this.arguments.Name = "arguments";
-            this.arguments.Padding = new System.Windows.Forms.Padding(3);
-            this.arguments.Size = new System.Drawing.Size(554, 429);
+            this.arguments.Padding = new System.Windows.Forms.Padding(2);
+            this.arguments.Size = new System.Drawing.Size(414, 345);
             this.arguments.TabIndex = 1;
             this.arguments.Text = "Arguments";
             this.arguments.UseVisualStyleBackColor = true;
@@ -187,12 +188,13 @@
             this.tlpArguments.Controls.Add(this.txtArgumentSearch, 0, 0);
             this.tlpArguments.Controls.Add(this.lstArguments, 0, 1);
             this.tlpArguments.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpArguments.Location = new System.Drawing.Point(3, 3);
+            this.tlpArguments.Location = new System.Drawing.Point(2, 2);
+            this.tlpArguments.Margin = new System.Windows.Forms.Padding(2);
             this.tlpArguments.Name = "tlpArguments";
             this.tlpArguments.RowCount = 2;
-            this.tlpArguments.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tlpArguments.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tlpArguments.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpArguments.Size = new System.Drawing.Size(548, 423);
+            this.tlpArguments.Size = new System.Drawing.Size(410, 341);
             this.tlpArguments.TabIndex = 22;
             // 
             // txtArgumentSearch
@@ -200,10 +202,9 @@
             this.txtArgumentSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtArgumentSearch.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtArgumentSearch.ForeColor = System.Drawing.Color.LightGray;
-            this.txtArgumentSearch.Location = new System.Drawing.Point(4, 4);
-            this.txtArgumentSearch.Margin = new System.Windows.Forms.Padding(4);
+            this.txtArgumentSearch.Location = new System.Drawing.Point(3, 3);
             this.txtArgumentSearch.Name = "txtArgumentSearch";
-            this.txtArgumentSearch.Size = new System.Drawing.Size(540, 32);
+            this.txtArgumentSearch.Size = new System.Drawing.Size(404, 27);
             this.txtArgumentSearch.TabIndex = 20;
             this.txtArgumentSearch.Text = "Type Here to Search";
             this.txtArgumentSearch.TextChanged += new System.EventHandler(this.txtArgumentSearch_TextChanged);
@@ -215,26 +216,25 @@
             this.lstArguments.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstArguments.Font = new System.Drawing.Font("Segoe UI Semilight", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstArguments.FormattingEnabled = true;
-            this.lstArguments.ItemHeight = 28;
-            this.lstArguments.Location = new System.Drawing.Point(4, 39);
-            this.lstArguments.Margin = new System.Windows.Forms.Padding(4);
+            this.lstArguments.ItemHeight = 21;
+            this.lstArguments.Location = new System.Drawing.Point(3, 31);
             this.lstArguments.Name = "lstArguments";
-            this.lstArguments.Size = new System.Drawing.Size(540, 380);
+            this.lstArguments.Size = new System.Drawing.Size(404, 307);
             this.lstArguments.TabIndex = 0;
             this.lstArguments.DoubleClick += new System.EventHandler(this.lstArguments_DoubleClick);
             // 
             // frmVariableArgumentSelector
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(596, 604);
+            this.ClientSize = new System.Drawing.Size(447, 491);
             this.Controls.Add(this.tcVariableArgument);
             this.Controls.Add(this.uiBtnOk);
             this.Controls.Add(this.uiBtnCancel);
             this.Controls.Add(this.lblHeader);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(5);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmVariableArgumentSelector";
             this.Text = "Insert a Variable/Argument";
             this.Load += new System.EventHandler(this.frmVariableSelector_Load);
