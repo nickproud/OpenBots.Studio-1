@@ -2220,7 +2220,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // packageManagerToolStripMenuItem
             // 
             this.packageManagerToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.packageManagerToolStripMenuItem.Image = global::OpenBots.Properties.Resources.action_bar_project;
+            this.packageManagerToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("packageManagerToolStripMenuItem.Image")));
             this.packageManagerToolStripMenuItem.Name = "packageManagerToolStripMenuItem";
             this.packageManagerToolStripMenuItem.Size = new System.Drawing.Size(133, 26);
             this.packageManagerToolStripMenuItem.Text = "Package Manager";
@@ -2229,7 +2229,7 @@ namespace OpenBots.UI.Forms.ScriptBuilder_Forms
             // installDefaultToolStripMenuItem
             // 
             this.installDefaultToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.installDefaultToolStripMenuItem.Image = global::OpenBots.Properties.Resources.action_bar_project;
+            this.installDefaultToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("installDefaultToolStripMenuItem.Image")));
             this.installDefaultToolStripMenuItem.Name = "installDefaultToolStripMenuItem";
             this.installDefaultToolStripMenuItem.Size = new System.Drawing.Size(176, 26);
             this.installDefaultToolStripMenuItem.Text = "Install Default Commands";
