@@ -54,7 +54,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>OpenBots-ico.ico</ApplicationIcon>
+    <ApplicationIcon>nexbots-ico.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -1031,6 +1031,7 @@
     <Content Include="Firefox\sandboxbroker.dll" />
     <Content Include="Firefox\softokn3.dll" />
     <Content Include="Firefox\xul.dll" />
+    <Content Include="nexbots-ico.ico" />
     <Content Include="OpenBots-ico.ico" />
     <None Include="Resources\ActionBar\action-bar-extensions.png" />
     <Content Include="Resources\Extensions\OB Extension\ContentLibrary.js" />
